@@ -22,7 +22,7 @@ public class CommandManager {
     public static String command = "";
 
     public static String[] initCommand() {
-        String cmd = "";
+        String cmd = "--list-var-anno --out test";
 
         options = cmd.split("( )+");
 

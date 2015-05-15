@@ -176,10 +176,10 @@ public class GeneManager {
     }
 
     private static void initArtifactsGeneMap() throws Exception {
-        String artifactsGeneFile = "data" + File.separator + "artifacts_gene.txt";
+        String artifactsGeneFile = Data.ARTIFACTS_GENE_PATH;
 
         if (CommandValue.isDebug) {
-            artifactsGeneFile = Data.ARTIFACTS_GENE_PATH;
+            artifactsGeneFile = Data.RECOURCE_PATH + artifactsGeneFile;
         }
 
         File f = new File(artifactsGeneFile);
@@ -249,10 +249,10 @@ public class GeneManager {
 
     public static void initGeneStableIdNmNpMap() {
         try {
-            String geneEnsemblFile = "data" + File.separator + "gene_ensembl.txt";
+            String geneEnsemblFile = Data.GENE_ENSEMBL_PATH;
 
             if (CommandValue.isDebug) {
-                geneEnsemblFile = Data.GENE_ENSEMBL_PATH;
+                geneEnsemblFile = Data.RECOURCE_PATH + geneEnsemblFile;
             }
 
             File f = new File(geneEnsemblFile);

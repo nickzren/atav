@@ -1,0 +1,85 @@
+################################################################
+### Mandatory!
+################################################################
+labfile=ONE-OR-MORE-MUST-BE-SUPPLIED
+
+################################################################
+### Global option.
+################################################################
+useqsub=yes # Use qsub on linux cluster, if available.
+
+################################################################
+### makeped options
+################################################################
+# chip description
+chipdirectory=/research/labs/goldsteinlab/Infinium
+chipfile=""   # usually inferred
+# whole genome heterozygosity
+wghetmax=0.35
+wghetmin=0.20
+ifbadwghet=drop
+# sex checks
+mxhetmax=0.02
+fxhetmin=0.20
+fymax=0.10
+ifstrangesex=drop
+# not in iid file
+ifunfamiliar=drop
+# missing snps
+badsnpsmax=1
+ifbadsnps=drop
+# hardy-weinberg and missingness-by-phenotype tests
+hardyother=""   # miscellaneous parameters for --hardy
+casecontrol=""  # file containing case-control phenotype for --missing
+ccmissingother="" # miscellaneous parameters for --missing
+
+################################################################
+### linkdis optiona
+################################################################
+# SNPs that will be eliminated prior to LD analysis in two ways:
+# 1) excludesnps: SNPs in this file will be eliminated
+# 2) excluderegions: SNPs in the *intervals* in this file will be
+#    eliminated. By default, these are regions of high LD specified
+#    in an installation file.
+##excluderegions=/research/labs/goldsteinlab/Rex/chip2pca/highLD.hild
+excluderegions=/nfs/goldstein/goldsteinlab/software/CHIP2PCA2/highLD37.hild
+excludesnps=""
+# other plink options
+ldgeno=0.10
+ldmaf=0.01
+ldmind=0.70
+ldwindow=1500
+ldshift=150
+ldrsq=0.30
+ldother=""
+
+################################################################
+### cryptrel options
+################################################################
+pimax=.2
+ifhighpi=cull
+crgeno=0.10
+crmaf=0.01
+crmind=0.70
+crother="--min 0.05"
+
+################################################################
+### snppca options
+################################################################
+altnormstyle=no
+# first pca run (typically, smartpca doesn't find outliers.)
+numoutevec1=20
+numoutlieriter1=0  # keep outliers
+nsnpldregress1=5
+numoutlierevec1=20
+outliersigmathresh1=6
+# 2nd pca run (typically, smartpca removes outliers.)
+numoutevec2=20
+numoutlieriter2=100  # remove outliers
+nsnpldregress2=5
+numoutlierevec2=20
+outliersigmathresh2=6
+# eigensoftplus options
+numgamma=10  # number of principal components for which
+numplot=10   #  to compute snp loadings and draw plots
+kmeans=no
