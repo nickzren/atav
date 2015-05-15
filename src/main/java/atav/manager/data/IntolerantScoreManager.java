@@ -21,10 +21,10 @@ public class IntolerantScoreManager {
     }
 
     public static void init() throws Exception {
-        String intolerantScoreFile = "data" + File.separator + "intolerant_score.txt";
+        String intolerantScoreFile = Data.INTOLERANT_SCORE_PATH;
 
         if (CommandValue.isDebug) {
-            intolerantScoreFile = Data.INTOLERANT_SCORE_PATH;
+            intolerantScoreFile = Data.RECOURCE_PATH + intolerantScoreFile;
         }
 
         File f = new File(intolerantScoreFile);

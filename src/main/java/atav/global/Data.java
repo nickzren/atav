@@ -1,5 +1,7 @@
 package atav.global;
 
+import java.io.File;
+
 /**
  *
  * @author nick
@@ -27,15 +29,20 @@ public class Data {
     public static final String[] EXAC_POP = {"global", "afr", "amr", "eas", "sas", "fin", "nfe", "oth"};
     public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
-    public static final String DENOVO_RULES_PATH = "/nfs/goldstein/software/atav_home/data/trio_rule.txt";
-    public static final String CCDS_TRANSCRIPT_PATH = "/nfs/goldstein/software/atav_home/data/ccds_transcript.txt";
-    public static final String CANONICAL_TRANSCRIPT_PATH = "/nfs/goldstein/software/atav_home/data/canonical_transcript.txt";
-    public static final String INTOLERANT_SCORE_PATH = "/nfs/goldstein/software/atav_home/data/intolerant_score.txt";
-    public static final String ARTIFACTS_Variant_PATH = "/nfs/goldstein/software/atav_home/data/artifacts_variant.txt";
-    public static final String ARTIFACTS_GENE_PATH = "/nfs/goldstein/software/atav_home/data/artifacts_gene.txt";
-    public static final String GENE_ENSEMBL_PATH = "/nfs/goldstein/software/atav_home/data/gene_ensembl.txt";
-    public static final String EXAMPLE_OPT_PATH = "/nfs/goldstein/software/atav_home/lib/example.opt";
-    public static final String phs000473_SAMPLE_REGION_PATH = "/nfs/goldstein/software/atav_home/data/region/Agilent_SureSelectV2_Covered.50bp_padded.mergedOneBased.txt";
+
+    // system file path for debug
+    public static final String RECOURCE_PATH = new File(".").getAbsolutePath()+ "/src/main/resources/";
+
+    public static final String DB_HOST_CONFIG_PATH = "config/host";
+    public static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
+    public static final String CCDS_TRANSCRIPT_PATH = "data/ccds_transcript.txt";
+    public static final String CANONICAL_TRANSCRIPT_PATH = "data/canonical_transcript.txt";
+    public static final String INTOLERANT_SCORE_PATH = "data/intolerant_score.txt";
+    public static final String ARTIFACTS_Variant_PATH = "data/artifacts_variant.txt";
+    public static final String ARTIFACTS_GENE_PATH = "data/artifacts_gene.txt";
+    public static final String GENE_ENSEMBL_PATH = "data/gene_ensembl.txt";
+    public static final String EXAMPLE_OPT_PATH = "lib/example.opt";
+    public static final String phs000473_SAMPLE_REGION_PATH = "data/region/Agilent_SureSelectV2_Covered.50bp_padded.mergedOneBased.txt";
     public static final int MAX_VARIANT = 100000;
     public static final int NO_FILTER = Integer.MAX_VALUE;
     public static final int NA = Integer.MIN_VALUE;

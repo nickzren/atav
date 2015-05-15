@@ -88,18 +88,18 @@ public class TranscriptManager {
     }
 
     public static void initCCDSTranscriptPath() {
-        ccdsTranscriptFile = "data" + File.separator + "ccds_transcript.txt";
+        ccdsTranscriptFile = Data.CCDS_TRANSCRIPT_PATH;
 
         if (CommandValue.isDebug) {
-            ccdsTranscriptFile = Data.CCDS_TRANSCRIPT_PATH;
+            ccdsTranscriptFile = Data.RECOURCE_PATH + ccdsTranscriptFile;
         }
     }
 
     public static void initCanonicalTranscriptPath() {
-        canonicalTranscriptFile = "data" + File.separator + "canonical_transcript.txt";
+        canonicalTranscriptFile = Data.CANONICAL_TRANSCRIPT_PATH;
 
         if (CommandValue.isDebug) {
-            canonicalTranscriptFile = Data.CANONICAL_TRANSCRIPT_PATH;
+            canonicalTranscriptFile = Data.RECOURCE_PATH + canonicalTranscriptFile;
         }
     }
 

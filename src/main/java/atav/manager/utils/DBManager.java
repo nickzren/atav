@@ -1,6 +1,8 @@
 package atav.manager.utils;
 
+import atav.global.Data;
 import java.io.*;
+import java.net.URL;
 import java.sql.*;
 import java.util.HashMap;
 
@@ -56,15 +58,15 @@ public class DBManager {
         }
     }
 
-    private static void initHostList() {
-        String hostConfig = "config" + File.separator + "host";
+    private static void initHostList() {        
+        String configPath = Data.DB_HOST_CONFIG_PATH;
 
         if (CommandValue.isDebug) {
-            hostConfig = "/nfs/goldstein/software/atav_home/config/host";
+            configPath = Data.RECOURCE_PATH + configPath;
         }
-
-        File f = new File(hostConfig);
-
+        
+        File f = new File(configPath);
+        
         try {
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(new FileInputStream(f));

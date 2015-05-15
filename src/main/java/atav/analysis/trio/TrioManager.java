@@ -72,10 +72,10 @@ public class TrioManager {
     }
 
     public static void initDenovoRules() {
-        String trioRulesPath = "data" + File.separator + "trio_rule.txt";
+        String trioRulesPath = Data.DENOVO_RULES_PATH;
 
         if (CommandValue.isDebug) {
-            trioRulesPath = Data.DENOVO_RULES_PATH;
+            trioRulesPath = Data.RECOURCE_PATH + trioRulesPath;
         }
 
         File RuleFile = new File(trioRulesPath);
