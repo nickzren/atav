@@ -22,9 +22,9 @@ public class CommandManager {
     public static String command = "";
 
     public static String[] initCommand() {
-        String cmd = "--list-var-anno --out test";
+        String cmd = "";
 
-        options = cmd.split("( )+");
+        options = cmd.split("\\s+");
 
         return options;
     }
@@ -41,8 +41,6 @@ public class CommandManager {
 
             LogManager.initPath();
 
-            initCommonOptions();
-
             initMainFunction();
 
             initDataFilter();
@@ -52,6 +50,8 @@ public class CommandManager {
             initMainFunctionSubOptions();
 
             initMaf();
+
+            initOptions4Debug();
 
             outputInvalidOptions();
         } catch (Exception e) {
@@ -153,7 +153,7 @@ public class CommandManager {
         }
     }
 
-    private static void initCommonOptions() {
+    private static void initOptions4Debug() {
         Iterator<CommandOption> iterator = optionList.iterator();
         CommandOption option;
 
@@ -302,7 +302,7 @@ public class CommandManager {
                 CommandValue.isAllSample = true;
             } else if (option.getName().equals("--variant-input-file")) {
                 CommandValue.variantInputFile = getValidPath(option);
-            }else if (option.getName().equals("--mapinfo")
+            } else if (option.getName().equals("--mapinfo")
                     || option.getName().equals("--variant")) {
                 CommandValue.includeVariantInput = getValidPath(option);
             } else if (option.getName().equals("--exclude-variant")) {
