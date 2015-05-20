@@ -46,6 +46,12 @@ public class FunctionManager {
     private static HashSet<String> functionSet = new HashSet<String>();
 
     public static void init() {
+        initDefaultFunctionList();
+        
+        initUserFunctionList();
+    }
+    
+    private static void initDefaultFunctionList() {
         for (int i = 0; i < RANDKING_FUNCTION__LIST.length; i++) {
             rankingFunctionMap.put(RANDKING_FUNCTION__LIST[i], i);
         }
@@ -64,7 +70,7 @@ public class FunctionManager {
         }
     }
 
-    public static void initFunctionList() {
+    private static void initUserFunctionList() {
         String str = CommandValue.functionInput.replaceAll("( )+", "");
 
         if (str.isEmpty()

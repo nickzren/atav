@@ -36,7 +36,7 @@ public class Program {
     public static void main(String[] args) {
         try {
             start = System.currentTimeMillis();
-
+            
             init(args);
 
             startAnalysis();
@@ -53,15 +53,11 @@ public class Program {
 
     private static void init(String[] options) {
         try {
-            CoverageBlockManager.init();
-
-            FunctionManager.init();
-
             CommandManager.initOptions(options);
 
             DBManager.init();
-
-            FunctionManager.initFunctionList();
+            
+            FunctionManager.init();
 
             SampleManager.init();
 
@@ -74,6 +70,8 @@ public class Program {
             IntolerantScoreManager.init();
 
             VariantManager.init();
+
+            CoverageBlockManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

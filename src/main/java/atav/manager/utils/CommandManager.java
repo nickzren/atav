@@ -4,8 +4,12 @@ import atav.analysis.family.FamilyManager;
 import atav.global.Data;
 import atav.manager.data.GeneManager;
 import atav.manager.data.TranscriptManager;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,21 +21,20 @@ import java.util.Iterator;
  */
 public class CommandManager {
 
-    public static String[] options;
-    public static ArrayList<CommandOption> optionList = new ArrayList<CommandOption>();
+    private static String[] optionArray;
+    private static ArrayList<CommandOption> optionList = new ArrayList<CommandOption>();
     public static String command = "";
+    private static String commandFile = "";
 
-    public static String[] initCommand() {
-        String cmd = "--list-var-anno --out test";
+    private static void initCommand4Debug() {
+        String cmd = "";
 
-        options = cmd.split("( )+");
-
-        return options;
+        optionArray = cmd.split("\\s+");
     }
 
-    public static void initOptions(String[] list) {
+    public static void initOptions(String[] options) {
         try {
-            options = doDebugCommand(list);
+            initCommandOptions(options);
 
             LogManager.initBasicInfo();
 
@@ -40,8 +43,6 @@ public class CommandManager {
             initOutput();
 
             LogManager.initPath();
-
-            initCommonOptions();
 
             initMainFunction();
 
@@ -53,22 +54,78 @@ public class CommandManager {
 
             initMaf();
 
+            initOptions4Debug();
+
             outputInvalidOptions();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    private static String[] doDebugCommand(String[] options) {
+    private static void initCommandOptions(String[] options) {
         if (options.length == 0) {
             if (CommandValue.isDebug) {
-                options = CommandManager.initCommand();
+                initCommand4Debug();
             } else {
                 System.out.println("\nError: without any input parameters to run ATAV. \n\nExit...\n");
                 System.exit(0);
             }
+        } else {
+            // init options from command file or command line
+            if (isCommandFileIncluded(options)) {
+                initCommandFromFile();
+            } else {
+                optionArray = options;
+            }
         }
 
+        initCommand4Log();
+    }
+
+    private static boolean isCommandFileIncluded(String[] options) {
+        for (int i = 0; i < options.length; i++) {
+            if (options[i].equals("--command-file")) {
+                if (isFileExist(options[i + 1])) {
+                    commandFile = options[i + 1];
+                } else {
+                    System.out.println("\nInvalid value '" + options[i + 1]
+                            + "' for '--command-file' option.");
+                    System.exit(0);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void initCommandFromFile() {
+        File f = new File(commandFile);
+
+        String lineStr = "";
+        String cmd = "";
+
+        try {
+            FileInputStream fstream = new FileInputStream(f);
+            DataInputStream in = new DataInputStream(new FileInputStream(f));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            while ((lineStr = br.readLine()) != null) {
+                cmd += lineStr + " ";
+            }
+
+            br.close();
+            in.close();
+            fstream.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        optionArray = cmd.split("\\s+");
+    }
+
+    private static void initCommand4Log() {
         String version = Data.version;
 
         if (Data.version.contains(" ")) {
@@ -76,11 +133,14 @@ public class CommandManager {
         }
 
         command = "atav_" + version + ".sh";
-        for (String str : options) {
-            command += " " + str;
-        }
 
-        return options;
+        if (commandFile.isEmpty()) {
+            for (String str : optionArray) {
+                command += " " + str;
+            }
+        } else {
+            command += " " + "--command-file " + commandFile;
+        }
     }
 
     /*
@@ -89,22 +149,23 @@ public class CommandManager {
     private static void initOptionList() {
         int valueIndex;
 
-        for (int i = 0; i < options.length; i++) {
-            if (options[i].startsWith("--")) {
+        for (int i = 0; i < optionArray.length; i++) {
+            if (optionArray[i].startsWith("--")) {
                 valueIndex = i + 1;
 
                 try {
-                    if (valueIndex == options.length
-                            || (options[valueIndex].startsWith("-")
-                            && !FormatManager.isDouble(options[valueIndex]))) {
-                        optionList.add(new CommandOption(options[i], ""));
+                    if (valueIndex == optionArray.length
+                            || (optionArray[valueIndex].startsWith("-")
+                            && !FormatManager.isDouble(optionArray[valueIndex]))) {
+                        optionList.add(new CommandOption(optionArray[i], ""));
                     } else {
-                        optionList.add(new CommandOption(options[i], options[++i]));
+                        optionList.add(new CommandOption(optionArray[i], optionArray[++i]));
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
-                System.out.println("Invalid command option: " + options[i]);
+                System.out.println("Invalid command option: " + optionArray[i]);
                 System.exit(0);
             }
         }
@@ -153,7 +214,7 @@ public class CommandManager {
         }
     }
 
-    private static void initCommonOptions() {
+    private static void initOptions4Debug() {
         Iterator<CommandOption> iterator = optionList.iterator();
         CommandOption option;
 
@@ -302,7 +363,7 @@ public class CommandManager {
                 CommandValue.isAllSample = true;
             } else if (option.getName().equals("--variant-input-file")) {
                 CommandValue.variantInputFile = getValidPath(option);
-            }else if (option.getName().equals("--mapinfo")
+            } else if (option.getName().equals("--mapinfo")
                     || option.getName().equals("--variant")) {
                 CommandValue.includeVariantInput = getValidPath(option);
             } else if (option.getName().equals("--exclude-variant")) {
@@ -1061,25 +1122,26 @@ public class CommandManager {
     public static String getValidPath(CommandOption option) {
         String path = option.getValue();
 
-        boolean isValid = true;
+        if (!isFileExist(path)) {
+            outputInvalidOptionValue(option);
+        }
 
+        return path;
+    }
+
+    private static boolean isFileExist(String path) {
         if (path.isEmpty()) {
-            isValid = false;
+            return false;
         }
 
         if (path.contains(File.separator)) {
             File file = new File(path);
             if (!file.isFile()) {
-                isValid = false;
+                return false;
             }
-
         }
 
-        if (!isValid) {
-            outputInvalidOptionValue(option);
-        }
-
-        return path;
+        return true;
     }
 
     public static void outputInvalidOptionValue(CommandOption option) {
