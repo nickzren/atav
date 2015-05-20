@@ -36,7 +36,7 @@ public class Program {
     public static void main(String[] args) {
         try {
             start = System.currentTimeMillis();
-
+            
             init(args);
 
             startAnalysis();
