@@ -104,11 +104,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
                     int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                     if (output.isQualifiedGeno(geno)) {
-                        if (CommandValue.isRecessive
-//                                || geno == Index.HET
-                                ) {
-                            summary.updateSampleVariantCount4SingleVar(sample.getIndex());
-                        }
+                        summary.updateSampleVariantCount4SingleVar(sample.getIndex());
 
                         if (!countOnce) {
                             summary.updateVariantCount(output);
