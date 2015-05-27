@@ -14,6 +14,7 @@ import atav.analysis.statistics.LinearRegression;
 import atav.analysis.trio.ListTrioCompHet;
 import atav.analysis.trio.ListTrioDenovo;
 import atav.analysis.varanno.ListGeneDx;
+import atav.analysis.varanno.ListNewVarId;
 import atav.analysis.varanno.ListVarAnno;
 import atav.analysis.vargeno.ListVarGeno;
 import atav.annotools.JonEvsTool;
@@ -99,6 +100,8 @@ public class Program {
                 runAnalysis(new FamilyAnalysis());
             } else if (CommandValue.isListVarAnno) {
                 runAnalysis(new ListVarAnno());
+            } else if (CommandValue.isListNewVarId) {
+                runAnalysis(new ListNewVarId());
             } else if (CommandValue.isListGeneDx) {
                 runAnalysis(new ListGeneDx());
             } else if (CommandValue.isListFlankingSeq) {
