@@ -10,7 +10,7 @@ public class CommandValue {
 
     // common values
     public static boolean isDebug = false;
-//    public static boolean isDebug = true;
+    //    public static boolean isDebug = true;
     public static String outputPath = "";
     public static String realOutputPath = "";
     public static String outputDirName = "";
@@ -25,6 +25,8 @@ public class CommandValue {
     public static boolean isSiblingCompHet = false;
     public static boolean isFamilyAnalysis = false;
     public static boolean isLinear = false;
+    
+    public static boolean isListNewVarId = false;
 
     // variant annotation base analysis function
     public static boolean isListVarAnno = false;

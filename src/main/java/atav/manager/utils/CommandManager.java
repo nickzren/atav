@@ -292,6 +292,9 @@ public class CommandManager {
             } else if (option.getName().equals("--var-list")
                     || option.getName().equals("--list-var-geno")) {
                 CommandValue.isListVarGeno = true;
+            } else if (option.getName().equals("--list-new-var-id")) {
+                CommandValue.isNonSampleAnalysis = true;
+                CommandValue.isListNewVarId = true;
             } else if (option.getName().equals("--list-var-anno")) {
                 CommandValue.isNonSampleAnalysis = true;
                 CommandValue.isListVarAnno = true;
