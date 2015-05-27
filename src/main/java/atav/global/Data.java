@@ -10,7 +10,7 @@ public class Data {
 
     // software info
     public static final String AppTitle = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String version = "6.1 trunk";
+    public static String version = "6.1 beta";
     public static final String year = "2012-2015";
     public static final String developer = "Nick Ren, Quanli Wang";
     public static final String insititue = "IGM (Institute for Genomic Medicine)";
