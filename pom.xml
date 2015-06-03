@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.columbia.cumc</groupId>
     <artifactId>atav</artifactId>
-    <version>6.1-trunk</version>
+    <version>trunk</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
