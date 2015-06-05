@@ -9,28 +9,27 @@ import java.util.ArrayList;
  *
  * @author nick
  */
-public class Sibling {
+public class Family {
 
     private String familyId;
-
-    private ArrayList<Sample> childList = new ArrayList<Sample>();
 
     private Sample mother;
     private Sample father;
 
-    public Sibling(Sample sample) {
-        familyId = sample.getFamilyId();
+    private ArrayList<Sample> childList = new ArrayList<Sample>();
 
-        int childId = sample.getId();
-        childList.add(SampleManager.getTable().get(childId));
+    public Family(Sample child) {
+        familyId = child.getFamilyId();
 
-        String fatherName = sample.getPaternalId();
+        String fatherName = child.getPaternalId();
         int fatherId = SampleManager.getIdByName(fatherName);
         father = SampleManager.getTable().get(fatherId);
 
-        String motherName = sample.getMaternalId();
+        String motherName = child.getMaternalId();
         int motherId = SampleManager.getIdByName(motherName);
         mother = SampleManager.getTable().get(motherId);
+
+        childList.add(child);
     }
 
     public void addChild(Sample sample) {
@@ -41,24 +40,8 @@ public class Sibling {
         }
     }
 
-    public boolean isValid() {
-        if (father.getId() != Data.NA
-                && !father.isCase()
-                && mother.getId() != Data.NA
-                && !mother.isCase()
-                && childList.size() > 1) {
-            return true;
-        }
-
-        return false;
-    }
-
     public String getFamilyId() {
         return familyId;
-    }
-
-    public ArrayList<Sample> getChildList() {
-        return childList;
     }
 
     public Sample getMother() {
@@ -67,5 +50,9 @@ public class Sibling {
 
     public Sample getFather() {
         return father;
+    }
+
+    public ArrayList<Sample> getChildList() {
+        return childList;
     }
 }

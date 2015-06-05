@@ -69,7 +69,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
-        SiblingManager.init();
+        FamilyManager.init();
     }
 
     @Override
@@ -153,29 +153,31 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
             for (int j = i + 1; j < outputSize; j++) {
                 output2 = geneOutputList.get(j);
 
-                for (Sibling sibling : SiblingManager.getList()) {
-                    mother = sibling.getMother();
-                    father = sibling.getFather();
+                for (Family family : FamilyManager.getList()) {
+                    childSize = family.getChildList().size();
+                    
+                    if (childSize > 1) {
+                        mother = family.getMother();
+                        father = family.getFather();
 
-                    if (!checkParents(output1, output2, mother, father)) {
-                        continue;
-                    }
+                        if (!checkParents(output1, output2, mother, father)) {
+                            continue;
+                        }
 
-                    childSize = sibling.getChildList().size();
+                        for (int x = 0; x < childSize - 1; x++) {
+                            child1 = family.getChildList().get(x);
 
-                    for (int x = 0; x < childSize - 1; x++) {
-                        child1 = sibling.getChildList().get(x);
+                            for (int y = x + 1; y < childSize; y++) {
+                                child2 = family.getChildList().get(y);
 
-                        for (int y = x + 1; y < childSize; y++) {
-                            child2 = sibling.getChildList().get(y);
+                                if (child1.equals(child2)) {
+                                    continue;
+                                }
 
-                            if (child1.equals(child2)) {
-                                continue;
+                                String flag = getFlag(output1, output2, child1, child2);
+
+                                doOutput(sb, output1, output2, child1, child2, flag);
                             }
-
-                            String flag = getFlag(output1, output2, child1, child2);
-
-                            doOutput(sb, output1, output2, child1, child2, flag);
                         }
                     }
                 }
