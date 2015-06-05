@@ -7,6 +7,7 @@ import atav.analysis.coverage.CoverageSummary;
 import atav.analysis.coverage.CoverageSummaryPipeline;
 import atav.analysis.coverage.CoverageSummarySite;
 import atav.analysis.family.FamilyAnalysis;
+import atav.analysis.parental.ParentalMosaic;
 import atav.analysis.pedmap.PedMapGenerator;
 import atav.analysis.sibling.ListSiblingComphet;
 import atav.analysis.statistics.FisherExactTest;
@@ -37,7 +38,7 @@ public class Program {
     public static void main(String[] args) {
         try {
             start = System.currentTimeMillis();
-            
+
             init(args);
 
             startAnalysis();
@@ -57,7 +58,7 @@ public class Program {
             CommandManager.initOptions(options);
 
             DBManager.init();
-            
+
             FunctionManager.init();
 
             SampleManager.init();
@@ -132,10 +133,9 @@ public class Program {
                 coverageSummary.run();
             } else if (CommandValue.isSiblingCompHet) {
                 runAnalysis(new ListSiblingComphet());
+            } else if (CommandValue.isParentalMosaic) {
+                runAnalysis(new ParentalMosaic());
             }
-//            else if (CommandValue.istest) {
-//                runAnalysis(new ListCalledVariant());
-//            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
