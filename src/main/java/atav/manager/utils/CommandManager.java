@@ -334,6 +334,8 @@ public class CommandManager {
                 CommandValue.isCoverageSummaryPipeline = true;
             } else if (option.getName().equals("--list-sibling-comp-het")) {
                 CommandValue.isSiblingCompHet = true;
+            } else if (option.getName().equals("--parental-mosaic")) {
+                CommandValue.isParentalMosaic = true;
             } else {
                 continue;
             }
@@ -942,6 +944,27 @@ public class CommandManager {
         }
     }
 
+    private static void initParentalMosaic() {
+        Iterator<CommandOption> iterator = optionList.iterator();
+        CommandOption option;
+
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            if (option.getName().equals("--proband-qd")) {
+                CommandValue.probandQD = getValidDouble(option);
+            } else if (option.getName().equals("--proband-het-percent-alt-read")) {
+                checkRangeValid("0-1", option);
+                CommandValue.probandHetPercentAltRead = getValidRange(option);
+            } else if (option.getName().equals("--proband-binomial")) {
+                CommandValue.probandBinomial = getValidDouble(option);
+            } else {
+                continue;
+            }
+
+            iterator.remove();
+        }
+    }
+
     private static void initMainFunctionSubOptions() throws Exception {
         if (CommandValue.isPedMap) {
             initPedMap();
@@ -975,7 +998,10 @@ public class CommandManager {
             initCoverageSummaryPipeline();
         } else if (CommandValue.isListKnownVar) {
             initKnownVar();
+        } else if (CommandValue.isParentalMosaic) {
+            initParentalMosaic();
         }
+
     }
 
     public static void outputInvalidOptions() {

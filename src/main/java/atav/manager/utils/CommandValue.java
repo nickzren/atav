@@ -24,8 +24,9 @@ public class CommandValue {
     public static boolean isTrioCompHet = false;
     public static boolean isSiblingCompHet = false;
     public static boolean isFamilyAnalysis = false;
+    public static boolean isParentalMosaic = false;
     public static boolean isLinear = false;
-    
+
     public static boolean isListNewVarId = false;
 
     // variant annotation base analysis function
@@ -157,18 +158,23 @@ public class CommandValue {
     public static int width = 0;
     public static boolean isJonEvsTool = false;
     public static String jonEvsInput = "";
-    
+
     // list known var
     public static boolean isListKnownVar = false;
     public static int snvWidth = 2;
     public static int indelWidth = 9;
-    
+
+    // parental mosaic
+    public static double probandQD = Data.NO_FILTER;
+    public static double[] probandHetPercentAltRead = null;
+    public static double probandBinomial = Data.NO_FILTER;
+
     // list evs
     public static boolean isListEvs = false;
-    
+
     // list exac
     public static boolean isListExac = false;
-    
+
     // hidden option for slave
     public static boolean isFlipMaf = false;
 }
