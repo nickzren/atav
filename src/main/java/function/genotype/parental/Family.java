@@ -2,6 +2,7 @@ package function.genotype.parental;
 
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Data;
 import java.util.ArrayList;
 
 /**
