@@ -1,6 +1,6 @@
 package function.external.flanking;
 
-import function.base.AnalysisBase;
+import function.AnalysisBase;
 import function.variant.base.RegionManager;
 import utils.CommandValue;
 import utils.DBManager;

@@ -1,6 +1,6 @@
 package function.external.exac;
 
-import function.base.AnalysisBase;
+import function.AnalysisBase;
 import function.variant.base.VariantManager;
 import utils.CommandValue;
 import utils.ErrorManager;

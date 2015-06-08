@@ -1,6 +1,6 @@
 package function.variant.base;
 
-import function.base.AnalysisBase;
+import function.AnalysisBase;
 import function.annotation.base.Annotation;
 import function.annotation.base.FunctionManager;
 import utils.DBManager;

@@ -4,7 +4,7 @@
  */
 package temp;
 
-import function.base.AnalysisBase;
+import function.AnalysisBase;
 import function.genotype.base.Carrier;
 import function.variant.base.Region;
 import function.variant.base.Variant;

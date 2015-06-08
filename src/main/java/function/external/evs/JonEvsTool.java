@@ -1,6 +1,6 @@
 package function.external.evs;
 
-import function.base.AnalysisBase;
+import function.AnalysisBase;
 import function.annotation.base.AnnotatedVariant;
 import utils.CommandValue;
 import utils.ErrorManager;

@@ -1,4 +1,4 @@
-package function.base;
+package function;
 
 import utils.ErrorManager;
 

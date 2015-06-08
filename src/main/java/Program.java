@@ -11,7 +11,7 @@ import utils.DBManager;
 import utils.ErrorManager;
 import utils.CommandValue;
 import utils.LogManager;
-import function.base.AnalysisBase;
+import function.AnalysisBase;
 import function.genotype.collapsing.CollapsingCompHet;
 import function.genotype.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
