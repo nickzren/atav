@@ -24,7 +24,7 @@ public class FamilyManager {
 
         for (Sample sample : SampleManager.getList()) {
             if (!sample.getPaternalId().equals("0")
-                    && !sample.getMaternalId().equals("0")) {
+                    || !sample.getMaternalId().equals("0")) {
                 if (familyMap.containsKey(sample.getFamilyId())) {
                     Family family = familyMap.get(sample.getFamilyId());
                     family.addChild(sample);

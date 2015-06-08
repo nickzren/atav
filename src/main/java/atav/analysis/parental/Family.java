@@ -1,6 +1,7 @@
 package atav.analysis.parental;
 
 import atav.analysis.base.Sample;
+import atav.global.Data;
 import atav.manager.data.SampleManager;
 import java.util.ArrayList;
 
@@ -11,44 +12,53 @@ import java.util.ArrayList;
 public class Family {
 
     private String familyId;
-
-    private Sample father;
-    private Sample mother;
-
+    private ArrayList<Sample> parentList = new ArrayList<Sample>();
     private ArrayList<Sample> childList = new ArrayList<Sample>();
 
     public Family(Sample child) {
         familyId = child.getFamilyId();
 
-        String fatherName = child.getPaternalId();
-        int fatherId = SampleManager.getIdByName(fatherName);
-        father = SampleManager.getTable().get(fatherId);
+        addParentByName(child.getPaternalId());
 
-        String motherName = child.getMaternalId();
-        int motherId = SampleManager.getIdByName(motherName);
-        mother = SampleManager.getTable().get(motherId);
+        addParentByName(child.getMaternalId());
 
         childList.add(child);
     }
 
-    public void addChild(Sample sample) {
-        if (sample.getFamilyId().equals(familyId)
-                && sample.getPaternalId().equals(father.getName())
-                && sample.getMaternalId().equals(mother.getName())) {
-            childList.add(sample);
+    private void addParentByName(String name) {
+        int id = SampleManager.getIdByName(name);
+
+        if (id != Data.NA) {
+            Sample parent = SampleManager.getTable().get(id);
+
+            parentList.add(parent);
         }
+    }
+
+    public void addChild(Sample child) {
+        if (child.getFamilyId().equals(familyId)
+                && hasParent(child)) {
+            childList.add(child);
+        }
+    }
+
+    private boolean hasParent(Sample child) {
+        for (Sample parent : parentList) {
+            if (parent.getName().equals(child.getPaternalId())
+                    || parent.getName().equals(child.getMaternalId())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public String getFamilyId() {
         return familyId;
     }
-
-    public Sample getFather() {
-        return father;
-    }
-
-    public Sample getMother() {
-        return mother;
+    
+    public ArrayList<Sample> getParentList() {
+        return parentList;
     }
 
     public ArrayList<Sample> getChildList() {
