@@ -67,22 +67,23 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
             output.calculate();
 
             if (output.isValid()) {
+
                 for (Family family : FamilyManager.getList()) {
+
                     for (Sample child : family.getChildList()) {
+
                         int childGeno = calledVar.getGenotype(child.getIndex());
 
-                        if (output.isQualifiedGeno(childGeno) &&
-                                isChildValid(childGeno, child, calledVar)) {
-                            int fatherGeno = calledVar.getGenotype(family.getFather().getIndex());
+                        if (output.isQualifiedGeno(childGeno)
+                                && isChildValid(childGeno, child, calledVar)) {
 
-                            if (output.isQualifiedGeno(fatherGeno)) {
-                                doOutput(output.getString(child, childGeno, family.getFather(), fatherGeno));
-                            }
+                            for (Sample parent : family.getParentList()) {
+                                
+                                int parentGeno = calledVar.getGenotype(parent.getIndex());
 
-                            int motherGeno = calledVar.getGenotype(family.getMother().getIndex());
-
-                            if (output.isQualifiedGeno(motherGeno)) {
-                                doOutput(output.getString(child, childGeno, family.getMother(), motherGeno));
+                                if (output.isQualifiedGeno(parentGeno)) {
+                                    doOutput(output.getString(child, childGeno, parent, parentGeno));
+                                }
                             }
                         }
                     }
