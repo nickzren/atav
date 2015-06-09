@@ -2,7 +2,6 @@ package function.genotype.sibling;
 
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
-import function.genotype.sibling.Family;
 import java.util.ArrayList;
 import java.util.HashMap;
 import utils.ErrorManager;
