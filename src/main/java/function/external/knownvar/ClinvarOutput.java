@@ -1,6 +1,5 @@
 package function.external.knownvar;
 
-import utils.CommandValue;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -10,23 +9,23 @@ import java.sql.ResultSet;
  *
  * @author nick
  */
-public class KnownVarOutput {
+public class ClinvarOutput extends Output {
 
-    private String variantId;
     private String clinicalSignificance;
     private String otherIds;
     private String diseaseName;
-    private int clinvarFlankingCount;
 
-    public static final String title
+    public static String title
             = "Variant ID,"
             + "Clinical Significance,"
             + "Other Ids,"
             + "Disease Name,"
-            + "Clinvar Flanking Count";
+            + "Flanking Count";
 
-    public KnownVarOutput(String id) {
+    public ClinvarOutput(String id) {
         variantId = id;
+
+        table = "knownvar.clinvar_2015_04_10";
 
         initClinvar();
 
@@ -40,7 +39,7 @@ public class KnownVarOutput {
             String sql = "SELECT ClinicalSignificance,"
                     + "OtherIds,"
                     + "DiseaseName "
-                    + "From knownvar.clinvar_2015_04_10 "
+                    + "From " + table + " "
                     + "WHERE chr='" + tmp[0] + "' "
                     + "AND pos=" + tmp[1] + " "
                     + "AND ref='" + tmp[2] + "' "
@@ -50,7 +49,7 @@ public class KnownVarOutput {
 
             if (rs.next()) {
                 clinicalSignificance = FormatManager.getString(rs.getString("ClinicalSignificance"));
-                otherIds = FormatManager.getString(rs.getString("OtherIds")).replaceAll(",", ";");
+                otherIds = FormatManager.getString(rs.getString("OtherIds")).replaceAll(",", " | ");
                 diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
             }
 
@@ -60,43 +59,15 @@ public class KnownVarOutput {
         }
     }
 
-    private void initFlankingCount() {
-        try {
-            String[] tmp = variantId.split("-"); // chr-pos-ref-alt
-
-            int pos = Integer.valueOf(tmp[1]);
-            int width = CommandValue.snvWidth;
-
-            if (tmp[2].length() > 1
-                    || tmp[3].length() > 1) {
-                width = CommandValue.indelWidth;
-            }
-
-            String sql = "SELECT count(*) as count "
-                    + "From knownvar.clinvar "
-                    + "WHERE chr='" + tmp[0] + "' "
-                    + "AND pos BETWEEN " + (pos - width) + " AND " + (pos + width);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            if (rs.next()) {
-                clinvarFlankingCount = rs.getInt("count");
-            } 
-            
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
+        
+        sb.append(variantId).append(",");
         sb.append(FormatManager.getString(clinicalSignificance)).append(",");
         sb.append(FormatManager.getString(otherIds)).append(",");
         sb.append(FormatManager.getString(diseaseName)).append(",");
-        sb.append(clinvarFlankingCount);
+        sb.append(flankingCount);
 
         return sb.toString();
     }
