@@ -10,6 +10,8 @@ import utils.FormatManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
+import org.apache.commons.math3.stat.inference.BinomialTest;
 
 /**
  *
@@ -18,7 +20,9 @@ import java.io.IOException;
 public class ParentalMosaic extends AnalysisBase4CalledVar {
 
     BufferedWriter bwOutput = null;
-
+    BinomialTest BT = new BinomialTest();
+    double BT_p = 0.5;
+    
     final String outputFilePath = CommandValue.outputPath + "parental.mosaic.csv";
 
     @Override
@@ -115,9 +119,9 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         }
 
         // --proband-binomial
-        float binomial = Data.NA; // need to calculate real value here
-
-        if (!isProbandBinomialValid(binomial)) {
+        int readsAlt = calledVar.getReadsAlt(child.getId());
+        int readsRef = calledVar.getReadsRef(child.getId());
+        if (!isProbandBinomialValid(readsAlt,readsRef)) {
             return false;
         }
 
@@ -157,11 +161,11 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         return false;
     }
 
-    private boolean isProbandBinomialValid(float value) {
+    private boolean isProbandBinomialValid(int alt, int ref) {
         if (CommandValue.probandBinomial == Data.NO_FILTER) {
             return true;
         }
-
+        double value = BT.binomialTest(alt + ref,alt, BT_p, AlternativeHypothesis.LESS_THAN);
         if (value >= CommandValue.probandBinomial) {
             return true;
         }
