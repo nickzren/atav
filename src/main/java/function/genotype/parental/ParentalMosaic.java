@@ -22,7 +22,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
     BufferedWriter bwOutput = null;
     BinomialTest BT = new BinomialTest();
     double BT_p = 0.5;
-    
+
     final String outputFilePath = CommandValue.outputPath + "parental.mosaic.csv";
 
     @Override
@@ -82,10 +82,11 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
                                 && isChildValid(childGeno, child, calledVar)) {
 
                             for (Sample parent : family.getParentList()) {
-                                
+
                                 int parentGeno = calledVar.getGenotype(parent.getIndex());
 
-                                if (output.isQualifiedGeno(parentGeno)) {
+                                if (output.isQualifiedGeno(parentGeno)
+                                        && isParentValid(parent, calledVar)) {
                                     doOutput(output.getString(child, childGeno, parent, parentGeno));
                                 }
                             }
@@ -99,37 +100,50 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
     }
 
     private boolean isChildValid(int childGeno, Sample child, CalledVariant calledVar) {
-        // --proband-qd
-        float probandQD = calledVar.getQualByDepthQD(child.getId());
+        // --child-qd
+        float childQD = calledVar.getQualByDepthQD(child.getId());
 
-        if (!isProbandQdValid(probandQD)) {
+        if (!isChildQdValid(childQD)) {
             return false;
         }
 
-        // --proband-het-percent-alt-read
+//         --child-het-percent-alt-read
         if (childGeno == 1) {
             int readsAlt = calledVar.getReadsAlt(child.getId());
             int gatkFilteredCoverage = calledVar.getGatkFilteredCoverage(child.getId());
 
             double percAltRead = FormatManager.devide(readsAlt, gatkFilteredCoverage);
 
-            if (!isProbandHetPercentAltReadValid(percAltRead)) {
+            if (!isChildHetPercentAltReadValid(percAltRead)) {
                 return false;
             }
         }
 
-        // --proband-binomial
-        int readsAlt = calledVar.getReadsAlt(child.getId());
-        int readsRef = calledVar.getReadsRef(child.getId());
-        if (!isProbandBinomialValid(readsAlt,readsRef)) {
+        // --child-binomial
+        double childBinomial = getBinomial(calledVar.getReadsAlt(child.getId()),
+                calledVar.getReadsRef(child.getId()));
+
+        if (!isBinomialValid(childBinomial, CommandValue.childBinomial)) {
             return false;
         }
 
         return true;
     }
 
-    private boolean isProbandQdValid(float value) {
-        if (CommandValue.probandQD == Data.NO_FILTER) {
+    private boolean isParentValid(Sample parent, CalledVariant calledVar) {
+        // --parent-binomial
+        double parentBinomial = getBinomial(calledVar.getReadsAlt(parent.getId()),
+                calledVar.getReadsRef(parent.getId()));
+
+        if (!isBinomialValid(parentBinomial, CommandValue.parentBinomial)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isChildQdValid(float value) {
+        if (CommandValue.childQD == Data.NO_FILTER) {
             return true;
         }
 
@@ -138,7 +152,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
                 return true;
             }
         } else {
-            if (value >= CommandValue.probandQD) {
+            if (value >= CommandValue.childQD) {
                 return true;
             }
         }
@@ -146,14 +160,14 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         return false;
     }
 
-    private boolean isProbandHetPercentAltReadValid(double value) {
-        if (CommandValue.probandHetPercentAltRead == null) {
+    private boolean isChildHetPercentAltReadValid(double value) {
+        if (CommandValue.childHetPercentAltRead == null) {
             return true;
         }
 
         if (value != Data.NA) {
-            if (value >= CommandValue.probandHetPercentAltRead[0]
-                    && value <= CommandValue.probandHetPercentAltRead[1]) {
+            if (value >= CommandValue.childHetPercentAltRead[0]
+                    && value <= CommandValue.childHetPercentAltRead[1]) {
                 return true;
             }
         }
@@ -161,16 +175,21 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         return false;
     }
 
-    private boolean isProbandBinomialValid(int alt, int ref) {
-        if (CommandValue.probandBinomial == Data.NO_FILTER) {
+    private boolean isBinomialValid(double value, double filterValue) {
+        if (filterValue == Data.NO_FILTER) {
             return true;
         }
-        double value = BT.binomialTest(alt + ref,alt, BT_p, AlternativeHypothesis.LESS_THAN);
-        if (value >= CommandValue.probandBinomial) {
+
+        if (value >= filterValue) {
             return true;
         }
 
         return false;
+    }
+
+    private double getBinomial(int alt, int ref) {
+        return BT.binomialTest(alt + ref, alt, BT_p,
+                AlternativeHypothesis.LESS_THAN);
     }
 
     private void doOutput(String str) throws IOException {

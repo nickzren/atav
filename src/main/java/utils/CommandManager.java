@@ -950,14 +950,16 @@ public class CommandManager {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--proband-qd")) {
-                CommandValue.probandQD = getValidDouble(option);
-            } else if (option.getName().equals("--proband-het-percent-alt-read")) {
+            if (option.getName().equals("--child-qd")) {
+                CommandValue.childQD = getValidDouble(option);
+            } else if (option.getName().equals("--child-het-percent-alt-read")) {
                 checkRangeValid("0-1", option);
-                CommandValue.probandHetPercentAltRead = getValidRange(option);
-            } else if (option.getName().equals("--proband-binomial")) {
-                CommandValue.probandBinomial = getValidDouble(option);
-            } else {
+                CommandValue.childHetPercentAltRead = getValidRange(option);
+            } else if (option.getName().equals("--child-binomial")) {
+                CommandValue.childBinomial = getValidDouble(option);
+            } else if (option.getName().equals("--parent-binomial")) {
+                CommandValue.parentBinomial = getValidDouble(option);
+            }else {
                 continue;
             }
 
