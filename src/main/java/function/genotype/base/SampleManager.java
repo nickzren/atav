@@ -94,7 +94,7 @@ public class SampleManager {
 
     private static void checkSampleFile() {
         if (CommandValue.sampleFile.isEmpty()
-                && !CommandValue.isNonSampleAnalysis
+                && !CommandValue.isAllSample
                 && CommandValue.evsSample.isEmpty()) {
             ErrorManager.print("Please specify your sample file: --sample $PATH");
         }
