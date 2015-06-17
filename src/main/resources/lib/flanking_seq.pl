@@ -21,7 +21,7 @@ $reg->load_registry_from_db(
      -db_version => '73'
  );
 
-my $slice_adaptor = $reg->get_adaptor( 'human', 'core', 'slice');
+my $slice_adaptor = $reg->get_adaptor('human', 'core', 'slice');
 
 my @vals = @ARGV;
 
@@ -70,7 +70,7 @@ sub getValues{
 my %values = getValues(); # values is a hash container for the command line options
 system "dos2unix -n --newfile $values{\"--variant\"} $values{\"--out\"}variant"; # if the inputFile is created in dos, convert it to the unix version.
 open INPUT,"<", $values{"--out"}."variant" or die $!; 
-my $outputFile = $values{"--out"}."baseflankingseq.csv"; 
+my $outputFile = $values{"--out"}."flanking_seq_base.csv"; 
 my $offset = $values{"--width"};
 
 
@@ -79,55 +79,29 @@ my $offset = $values{"--width"};
 sub get_flankingSeqs{
 	my @var = @_;
 	my $chromosome = $var[0];
-	my $var_ss = $var[1];
-	my ($var_es, $indel_type, $indel_seq);
-	if (scalar(@var) == 3){
-		$var_es = $var[1];
-	}elsif (scalar(@var) == 5){
-		$var_es = $var[2];
-		$indel_type = $var[3];
-		$indel_seq = $var[4];
-	}else{
-		die "Error: Variant type not supported\n";
-	}
+	my $pos = $var[1];
 
 	my $output = "";
-	if (scalar(@var) == 3){
-		my $slice_left = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $var_ss-$offset, $var_ss-1);
-		my $slice_right = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $var_es+1, $var_es+$offset); #inclusive ==> []
-		my $left_seq = $slice_left->seq;
-		my $right_seq = $slice_right->seq;
-		my $ref_allele = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $var_ss, $var_ss);
-		my $ref_allele_seq = $ref_allele->seq;
-		$output= $var[2] . "," . $ref_allele_seq . "," . $left_seq . "[" . $ref_allele_seq."/".$var[2]."]". $right_seq . "\n";
-	}else{
-		if ($indel_type eq "INS"){
-			my $slice_left = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $var_ss+1-$offset, $var_ss);
-			my $slice_right = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $var_ss+1, $var_ss+$offset); #inclusive ==> []
-			my $left_seq = $slice_left->seq;
-			my $right_seq = $slice_right->seq;
-			$output = $var[4].",-,".$left_seq."[-/".$var[4]."]".$right_seq."\n";		
-		}
-		elsif ($indel_type eq "DEL"){ # 11_125301192_125301194_DEL_GAG: GAG position is defined in zero-based counting system.
-			my $slice_left = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $var_ss+1-$offset, $var_ss);
-			my $slice_right = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $var_es+2, $var_es+$offset+1); #inclusive ==> []
-			my $left_seq = $slice_left->seq;
-			my $right_seq = $slice_right->seq;
-			$output= "-,".$var[4].",".$left_seq."[".$var[4]."/-]".$right_seq."\n";
-		}
-	}
+	my $slice_left = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $pos-$offset, $pos-1);
+	my $slice_right = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $pos+1, $pos+$offset); 
+	my $left_seq = $slice_left->seq;
+	my $right_seq = $slice_right->seq;
+	my $ref_allele = $slice_adaptor->fetch_by_region('chromosome', $chromosome, $pos, $pos);
+	my $ref_allele_seq = $ref_allele->seq;
+		$output= $left_seq . "," . $right_seq . "\n";
+
 	return $output;
 }
 
 
 open OUTPUT, ">", $outputFile or die $!;
-my $output_header = "VariantID,Allele,Ref Allele,Flanking Sequence\n";
+my $output_header = "Variant ID,Left Sequence,Right Sequence\n";
 print OUTPUT $output_header;
 
 while(my $line = <INPUT>)
 {
 	chomp ($line);
-	my @var = split("_", $line);
+	my @var = split("-", $line);
 	my $output = get_flankingSeqs(@var);
 	print OUTPUT $line.",".$output;
 }
