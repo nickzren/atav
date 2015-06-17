@@ -50,7 +50,7 @@ public class ClinvarOutput extends Output {
             if (rs.next()) {
                 clinicalSignificance = FormatManager.getString(rs.getString("ClinicalSignificance"));
                 otherIds = FormatManager.getString(rs.getString("OtherIds")).replaceAll(",", " | ");
-                diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
+                diseaseName = FormatManager.getString(rs.getString("DiseaseName")).replaceAll(";", " | ");
             }
 
             rs.close();
