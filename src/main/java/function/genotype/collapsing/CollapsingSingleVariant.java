@@ -5,7 +5,6 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.variant.base.Variant;
 import global.Data;
-import global.Index;
 import function.genotype.base.SampleManager;
 import utils.CommandValue;
 import utils.ErrorManager;

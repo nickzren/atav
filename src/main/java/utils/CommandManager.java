@@ -292,9 +292,6 @@ public class CommandManager {
             } else if (option.getName().equals("--var-list")
                     || option.getName().equals("--list-var-geno")) {
                 CommandValue.isListVarGeno = true;
-            } else if (option.getName().equals("--list-new-var-id")) {
-                CommandValue.isNonSampleAnalysis = true;
-                CommandValue.isListNewVarId = true;
             } else if (option.getName().equals("--list-var-anno")) {
                 CommandValue.isNonSampleAnalysis = true;
                 CommandValue.isListVarAnno = true;
@@ -369,10 +366,12 @@ public class CommandManager {
             } else if (option.getName().equals("--variant-input-file")) {
                 CommandValue.variantInputFile = getValidPath(option);
             } else if (option.getName().equals("--mapinfo")
-                    || option.getName().equals("--variant")) {
-                CommandValue.includeVariantInput = getValidPath(option);
-            } else if (option.getName().equals("--exclude-variant")) {
-                CommandValue.excludeVariantInput = getValidPath(option);
+                    || option.getName().equals("--variant")
+                    || option.getName().equals("--variant-id")) {
+                CommandValue.includeVariantId = getValidPath(option);
+            } else if (option.getName().equals("--exclude-variant")
+                    || option.getName().equals("--exclude-variant-id")) {
+                CommandValue.excludeVariantId = getValidPath(option);
             } else if (option.getName().equals("--gene")) {
                 CommandValue.geneInput = getValidPath(option);
             } else if (option.getName().equals("--transcript")) {

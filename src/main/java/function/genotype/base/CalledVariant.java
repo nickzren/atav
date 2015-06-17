@@ -1,10 +1,6 @@
 package function.genotype.base;
 
 import function.annotation.base.AnnotatedVariant;
-import function.annotation.base.AnnotatedVariant;
-import function.genotype.base.Carrier;
-import function.genotype.base.NonCarrier;
-import function.genotype.base.Sample;
 import function.genotype.family.FamilyManager;
 import global.Data;
 import function.external.evs.EvsManager;

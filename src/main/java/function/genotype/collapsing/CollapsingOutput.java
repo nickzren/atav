@@ -28,7 +28,6 @@ public class CollapsingOutput extends Output implements Comparable {
     double looMhgf = 0;
     public static String title
             = "Variant ID,"
-            + "New Variant ID,"
             + "Variant Type,"
             + "Rs Number,"
             + "Is Minor Ref,"
@@ -227,7 +226,6 @@ public class CollapsingOutput extends Output implements Comparable {
         StringBuilder sb = new StringBuilder();
 
         sb.append(calledVar.getVariantIdStr()).append(",");
-        sb.append(calledVar.getNewVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
         sb.append(isMinorRef).append(",");

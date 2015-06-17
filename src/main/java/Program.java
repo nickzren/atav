@@ -27,7 +27,6 @@ import function.genotype.statistics.LinearRegression;
 import function.genotype.trio.ListTrioCompHet;
 import function.genotype.trio.ListTrioDenovo;
 import function.annotation.genedx.ListGeneDx;
-import function.annotation.varanno.ListNewVarId;
 import function.annotation.varanno.ListVarAnno;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.JonEvsTool;
@@ -111,8 +110,6 @@ public class Program {
                 runAnalysis(new FamilyAnalysis());
             } else if (CommandValue.isListVarAnno) {
                 runAnalysis(new ListVarAnno());
-            } else if (CommandValue.isListNewVarId) {
-                runAnalysis(new ListNewVarId());
             } else if (CommandValue.isListGeneDx) {
                 runAnalysis(new ListGeneDx());
             } else if (CommandValue.isListFlankingSeq) {
