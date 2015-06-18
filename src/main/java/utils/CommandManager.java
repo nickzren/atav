@@ -951,10 +951,10 @@ public class CommandManager {
             } else if (option.getName().equals("--child-het-percent-alt-read")) {
                 checkRangeValid("0-1", option);
                 CommandValue.childHetPercentAltRead = getValidRange(option);
-            } else if (option.getName().equals("--child-binomial")) {
-                CommandValue.childBinomial = getValidDouble(option);
-            } else if (option.getName().equals("--parent-binomial")) {
-                CommandValue.parentBinomial = getValidDouble(option);
+            } else if (option.getName().equals("--min-child-binomial")) {
+                CommandValue.minChildBinomial = getValidDouble(option);
+            } else if (option.getName().equals("--max-parent-binomial")) {
+                CommandValue.maxParentBinomial = getValidDouble(option);
             }else {
                 continue;
             }

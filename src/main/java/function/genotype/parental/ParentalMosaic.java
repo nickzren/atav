@@ -86,8 +86,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
 
                                 int parentGeno = calledVar.getGenotype(parent.getIndex());
 
-                                if (output.isQualifiedGeno(parentGeno)
-                                        && isParentValid(parent, calledVar)) {
+                                if (isParentValid(parent, calledVar)) {
                                     doOutput(output.getString(child, childGeno, parent, parentGeno));
                                 }
                             }
@@ -121,10 +120,10 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         }
 
         // --child-binomial
-        double childBinomial = getBinomial(calledVar.getReadsAlt(child.getId()),
+        double binomial = getBinomial(calledVar.getReadsAlt(child.getId()),
                 calledVar.getReadsRef(child.getId()));
 
-        if (!isBinomialValid(childBinomial, CommandValue.childBinomial,false)) {
+        if (!isChildBinomialValid(binomial)) {
             return false;
         }
 
@@ -133,10 +132,10 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
 
     private boolean isParentValid(Sample parent, CalledVariant calledVar) {
         // --parent-binomial
-        double parentBinomial = getBinomial(calledVar.getReadsAlt(parent.getId()),
+        double binomial = getBinomial(calledVar.getReadsAlt(parent.getId()),
                 calledVar.getReadsRef(parent.getId()));
 
-        if (!isBinomialValid(parentBinomial, CommandValue.parentBinomial,true)) {
+        if (!isParentBinomialValid(binomial)) {
             return false;
         }
 
@@ -176,19 +175,37 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         return false;
     }
 
-    private boolean isBinomialValid(double value, double filterValue, 
-            boolean isParent) {
-        if (filterValue == Data.NO_FILTER) {
+    private boolean isChildBinomialValid(double value) {
+        if (CommandValue.minChildBinomial == Data.NO_FILTER) {
             return true;
         }
-        if (isParent) {
-            return value < filterValue;
-        } else {
-            return value >= filterValue;
+
+        if (value != Data.NA
+                && value >= CommandValue.minChildBinomial) {
+            return true;
         }
+
+        return false;
+    }
+
+    private boolean isParentBinomialValid(double value) {
+        if (CommandValue.maxParentBinomial == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value != Data.NA
+                && value < CommandValue.maxParentBinomial) {
+            return true;
+        }
+
+        return false;
     }
 
     private double getBinomial(int alt, int ref) {
+        if (alt == Data.NA || ref == Data.NA) {
+            return Data.NA;
+        }
+
         return BT.binomialTest(alt + ref, alt, BT_p,
                 AlternativeHypothesis.LESS_THAN);
     }

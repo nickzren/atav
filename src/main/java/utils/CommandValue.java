@@ -165,8 +165,8 @@ public class CommandValue {
     // parental mosaic
     public static double childQD = Data.NO_FILTER;
     public static double[] childHetPercentAltRead = null;
-    public static double childBinomial = Data.NO_FILTER;
-    public static double parentBinomial = Data.NO_FILTER;
+    public static double minChildBinomial = Data.NO_FILTER;
+    public static double maxParentBinomial = Data.NO_FILTER;
 
     // list evs
     public static boolean isListEvs = false;
