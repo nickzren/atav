@@ -2,14 +2,16 @@ package function.variant.base;
 
 import function.annotation.base.GeneManager;
 import global.Data;
+import global.SqlQuery;
 import utils.CommandValue;
 import utils.ErrorManager;
-import utils.FormatManager;
 import utils.LogManager;
 import java.io.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import utils.DBManager;
 
 /**
  *
@@ -92,14 +94,52 @@ public class VariantManager {
         str = str.replaceAll("( )+", "");
 
         if (!variantSet.contains(str)) {
-            if (isInclude) {
-                add2IncludeIdList(str);
+            if (str.startsWith("rs")) { // add by rs#
+                String varPos = getVariantPosition(str);
+
+                if (!varPos.isEmpty()) {
+                    if (isInclude) {
+                        add2IncludeIdList(varPos);
+                    }
+
+                    variantSet.add(str);
+                }
+            } else { // add by variand id
+                if (isInclude) {
+                    add2IncludeIdList(str);
+                }
+
+                str = getPARVariantId(str);
+
+                variantSet.add(str);
             }
-
-            str = getPARVariantId(str);
-
-            variantSet.add(str);
         }
+    }
+
+    private static String getVariantPosition(String rs) throws SQLException {
+        String varPos = getVariantPosition(rs, SqlQuery.SNV_ID, "snv");
+
+        if (varPos.isEmpty()) {
+            varPos = getVariantPosition(rs, SqlQuery.INDEL_ID, "indel");
+        }
+
+        return varPos;
+    }
+
+    private static String getVariantPosition(String rs, String sql, String type) throws SQLException {
+        sql = sql.replace("_RS_", rs);
+
+        ResultSet rset = DBManager.executeQuery(sql);
+
+        String chr = "";
+        int pos = 0;
+        if (rset.next()) {
+            chr = rset.getString("name");
+            pos = rset.getInt("seq_region_pos");
+            return chr + "-" + pos + "-" + type;
+        }
+
+        return "";
     }
 
     private static String getPARVariantId(String str) {
@@ -161,11 +201,12 @@ public class VariantManager {
         return false;
     }
 
-    private static boolean isIncluded(Variant var) {
+    public static boolean isIncluded(Variant var) {
         if (includeVariantSet.isEmpty()) {
             return true;
         } else {
-            if (includeVariantSet.contains(var.getVariantIdStr())) {
+            if (includeVariantSet.contains(var.getVariantIdStr())
+                    || includeVariantSet.contains(var.getRsNumber())) {
                 if (outputVariantIdSet.contains(var.getVariantId())) {
                     return false;
                 } else {
@@ -182,7 +223,8 @@ public class VariantManager {
         if (excludeVariantSet.isEmpty()) {
             return false;
         } else {
-            return excludeVariantSet.contains(var.getVariantIdStr());
+            return excludeVariantSet.contains(var.getVariantIdStr())
+                    || excludeVariantSet.contains(var.getRsNumber());
         }
     }
 

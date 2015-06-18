@@ -229,4 +229,12 @@ public class SqlQuery {
             + "AND v.seq_region_id = r.seq_region_id "
             + "AND coord_system_id = 2 "
             + "LIMIT 1";
+    public static String SNV_ID = "select name, seq_region_pos from snv v, seq_region s "
+            + "where rs_number = '_RS_' and "
+            + "coord_system_id = 2 and "
+            + "v.seq_region_id = s.seq_region_id";
+    public static String INDEL_ID = "select name, seq_region_pos, v.length from indel v, seq_region s "
+            + "where rs_number = '_RS_' and "
+            + "coord_system_id = 2 and "
+            + "v.seq_region_id = s.seq_region_id";
 }

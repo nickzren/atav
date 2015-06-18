@@ -365,12 +365,9 @@ public class CommandManager {
                 CommandValue.isAllSample = true;
             } else if (option.getName().equals("--variant-input-file")) {
                 CommandValue.variantInputFile = getValidPath(option);
-            } else if (option.getName().equals("--mapinfo")
-                    || option.getName().equals("--variant")
-                    || option.getName().equals("--variant-id")) {
+            } else if (option.getName().equals("--variant")) {
                 CommandValue.includeVariantId = getValidPath(option);
-            } else if (option.getName().equals("--exclude-variant")
-                    || option.getName().equals("--exclude-variant-id")) {
+            } else if (option.getName().equals("--exclude-variant")) {
                 CommandValue.excludeVariantId = getValidPath(option);
             } else if (option.getName().equals("--gene")) {
                 CommandValue.geneInput = getValidPath(option);

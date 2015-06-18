@@ -1,7 +1,6 @@
 package function.variant.base;
 
 import utils.FormatManager;
-import utils.LogManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

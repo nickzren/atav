@@ -250,14 +250,19 @@ public class RegionManager {
 
     public static void addRegionByVariantId(String variantId) {
         String[] values = variantId.split("-");
-        String chr = "chr" + values[0];
+        String chr = values[0];
         int pos = Integer.valueOf(values[1]);
 
-        if (values[2].length() == 1
-                && values[3].length() == 1) {
-            VariantManager.addType("snv");
-        } else {
-            VariantManager.addType("indel");
+        if (values.length == 3) // variant position format chr-pos-type
+        {
+            VariantManager.addType(values[2]);
+        } else { // variant id format chr-pos-ref-alt
+            if (values[2].length() == 1
+                    && values[3].length() == 1) {
+                VariantManager.addType("snv");
+            } else {
+                VariantManager.addType("indel");
+            }
         }
 
         regionList.add(new Region(chr, pos, pos));
