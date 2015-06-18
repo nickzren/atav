@@ -18,7 +18,6 @@ public class VarAnnoOutput {
 
     public static final String annotationFileTitle
             = "Variant ID,"
-            + "New Variant ID,"
             + "Variant Type,"
             + "Rs Number,"
             + "Ref Allele,"
@@ -51,7 +50,6 @@ public class VarAnnoOutput {
         StringBuilder sb = new StringBuilder();
 
         sb.append(annotatedVar.getVariantIdStr()).append(",");
-        sb.append(annotatedVar.getNewVariantIdStr()).append(",");
         sb.append(annotatedVar.getType()).append(",");
         sb.append(annotatedVar.getRsNumber()).append(",");
         sb.append(annotatedVar.getRefAllele()).append(",");

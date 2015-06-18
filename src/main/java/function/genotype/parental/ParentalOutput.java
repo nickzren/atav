@@ -90,7 +90,7 @@ public class ParentalOutput extends Output {
         sb.append(parent.getName()).append(",");
         sb.append(getGenoStr(parentGeno)).append(",");
 
-        sb.append(calledVar.getNewVariantIdStr()).append(",");
+        sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
         sb.append(calledVar.getRefAllele()).append(",");

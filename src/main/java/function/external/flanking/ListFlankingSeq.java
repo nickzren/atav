@@ -23,7 +23,7 @@ public class ListFlankingSeq extends AnalysisBase {
 
     BufferedWriter bwUpdateFlankingSeq = null;
 
-    final String updateFlankingSeqFilePath = CommandValue.outputPath + "updateflankingseq.csv";
+    final String updateFlankingSeqFilePath = CommandValue.outputPath + "flanking_seq_annodb.csv";
     final String baseFlankingSeqFilePath = CommandValue.outputPath;
 
     @Override
@@ -64,7 +64,7 @@ public class ListFlankingSeq extends AnalysisBase {
 
     @Override
     public void processDatabaseData() throws Exception {
-        File f = new File(baseFlankingSeqFilePath + "baseflankingseq.csv");
+        File f = new File(baseFlankingSeqFilePath + "flanking_seq_base.csv");
 
         FileInputStream fstream = new FileInputStream(f);
         DataInputStream in = new DataInputStream(fstream);
@@ -76,64 +76,42 @@ public class ListFlankingSeq extends AnalysisBase {
         while ((line = br.readLine()) != null) {
             String[] lineStrArray = line.split(",");
 
-            String seqStr = lineStrArray[3];
-
-            StringBuilder leftSeqSb = new StringBuilder(seqStr.substring(0, seqStr.indexOf("[")));
-            String centerStr = seqStr.substring(seqStr.indexOf("["), seqStr.indexOf("]") + 1);
-            StringBuilder rightSeqSb = new StringBuilder(seqStr.substring(seqStr.indexOf("]") + 1));
+            StringBuilder leftSeqSb = new StringBuilder(lineStrArray[1]);
+            StringBuilder rightSeqSb = new StringBuilder(lineStrArray[2]);
 
             updateFlankingSeq(lineStrArray[0], leftSeqSb, rightSeqSb);
 
             bwUpdateFlankingSeq.write(
                     lineStrArray[0] + "," // variantId
-                    + lineStrArray[1] + "," // allele
-                    + lineStrArray[2] + "," // refAllele
-                    + leftSeqSb + centerStr + rightSeqSb + "\n");
+                    + leftSeqSb + ","
+                    + rightSeqSb + "\n");
         }
     }
 
     private void updateFlankingSeq(String variantId, StringBuilder leftSeqSb,
             StringBuilder rightSeqSb) throws Exception {
-        String[] variantIdStrArray = variantId.split("_");
+        String[] variantIdStrArray = variantId.split("-");
 
         String chr = variantIdStrArray[0];
 
-        String indelType = "";
+        int pos = Integer.valueOf(variantIdStrArray[1]);
 
-        int startPos = Integer.valueOf(variantIdStrArray[1]);
-        int endPos = startPos;
-
-        if (variantIdStrArray.length > 3) {
-            indelType = variantIdStrArray[3];
-
-            endPos = Integer.valueOf(variantIdStrArray[2]);
-        }
-
-        String sql = generateSql(chr, startPos, endPos, indelType);
+        String sql = generateSql(chr, pos);
 
         ResultSet rs = DBManager.executeQuery(sql);
 
         while (rs.next()) {
             int varPos = rs.getInt("seq_region_pos");
 
-            updateFlankingSeqByOnePos(startPos, endPos, indelType,
-                    varPos, leftSeqSb, rightSeqSb);
+            updateFlankingSeqByOnePos(pos, varPos, leftSeqSb, rightSeqSb);
         }
     }
 
-    private String generateSql(String chr, int startPos, int endPos, String indelType) {
+    private String generateSql(String chr, int pos) {
         int regionId = RegionManager.getIdByChr(chr);
 
-        int seqStart = startPos - CommandValue.width;
-        int seqEnd = startPos + CommandValue.width;
-
-        if (!indelType.isEmpty()) {
-            seqStart += 1;
-
-            if (indelType.equals("DEL")) {
-                seqEnd = endPos + 1 + CommandValue.width;
-            }
-        }
+        int seqStart = pos - CommandValue.width;
+        int seqEnd = pos + CommandValue.width;
 
         String sql = "SELECT DISTINCT seq_region_pos"
                 + " FROM snv"
@@ -144,34 +122,16 @@ public class ListFlankingSeq extends AnalysisBase {
         return sql;
     }
 
-    private void updateFlankingSeqByOnePos(int startPos, int endPos, String indelType,
+    private void updateFlankingSeqByOnePos(int pos,
             int varPos, StringBuilder leftSeqSb, StringBuilder rightSeqSb) {
-        if (indelType.isEmpty()) { // snv
-            if (varPos < startPos) {
-                int index = varPos - (startPos - CommandValue.width);
+        if (varPos < pos) {
+            int index = varPos - (pos - CommandValue.width);
 
-                leftSeqSb.setCharAt(index, 'N');
-            } else if (varPos > startPos) {
-                int index = varPos - startPos - 1;
+            leftSeqSb.setCharAt(index, 'N');
+        } else if (varPos > pos) {
+            int index = varPos - pos - 1;
 
-                rightSeqSb.setCharAt(index, 'N');
-            }
-        } else { // indel
-            if (varPos <= startPos) {
-                int index = varPos - (startPos - CommandValue.width + 1);
-
-                leftSeqSb.setCharAt(index, 'N');
-            } else {
-                if (indelType.equals("INS")) {
-                    int index = varPos - startPos - 1;
-
-                    rightSeqSb.setCharAt(index, 'N');
-                } else if (varPos > endPos + 1) {
-                    int index = varPos - (endPos + 2);
-
-                    rightSeqSb.setCharAt(index, 'N');
-                }
-            }
+            rightSeqSb.setCharAt(index, 'N');
         }
     }
 

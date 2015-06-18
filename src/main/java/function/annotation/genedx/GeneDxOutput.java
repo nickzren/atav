@@ -13,7 +13,6 @@ public class GeneDxOutput {
 
     public static final String geneDxFileTitle
             = "Variant ID,"
-            + "New Variant ID,"
             + "Gene Name,"
             + "NM #,"
             + "NP #,"
@@ -29,7 +28,6 @@ public class GeneDxOutput {
         StringBuilder sb = new StringBuilder();
 
         sb.append(annotatedVar.getVariantIdStr()).append(",");
-        sb.append(annotatedVar.getNewVariantIdStr()).append(",");
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
         sb.append(GeneManager.getNmNpValuesByStableId(annotatedVar.getStableId())).append(",");
         sb.append(annotatedVar.getCodingSequenceChange()).append(",");

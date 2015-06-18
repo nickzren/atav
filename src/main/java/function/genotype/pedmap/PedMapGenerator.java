@@ -308,10 +308,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 if (calledVar.isSnv()) {
                     bwTmpPed.write(calledVar.getAllele() + calledVar.getAllele());
                 } else {
-                    if (calledVar.getVariantIdStr().contains("INS")) {
-                        bwTmpPed.write("II");
-                    } else {
+                    if (calledVar.isDel()) {
                         bwTmpPed.write("DD");
+                    } else {
+                        bwTmpPed.write("II");
                     }
                 }
             } else if (geno == 1) {
@@ -324,10 +324,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 if (calledVar.isSnv()) {
                     bwTmpPed.write(calledVar.getRefAllele() + calledVar.getRefAllele());
                 } else {
-                    if (calledVar.getVariantIdStr().contains("INS")) {
-                        bwTmpPed.write("DD");
-                    } else {
+                    if (calledVar.isDel()) {
                         bwTmpPed.write("II");
+                    } else {
+                        bwTmpPed.write("DD");
                     }
                 }
             } else if (geno == Data.NA) {
