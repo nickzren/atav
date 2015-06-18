@@ -16,6 +16,7 @@ import org.apache.commons.math3.stat.inference.BinomialTest;
 /**
  *
  * @author nick
+ * @author Quanli
  */
 public class ParentalMosaic extends AnalysisBase4CalledVar {
 
@@ -123,7 +124,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         double childBinomial = getBinomial(calledVar.getReadsAlt(child.getId()),
                 calledVar.getReadsRef(child.getId()));
 
-        if (!isBinomialValid(childBinomial, CommandValue.childBinomial)) {
+        if (!isBinomialValid(childBinomial, CommandValue.childBinomial,false)) {
             return false;
         }
 
@@ -135,7 +136,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         double parentBinomial = getBinomial(calledVar.getReadsAlt(parent.getId()),
                 calledVar.getReadsRef(parent.getId()));
 
-        if (!isBinomialValid(parentBinomial, CommandValue.parentBinomial)) {
+        if (!isBinomialValid(parentBinomial, CommandValue.parentBinomial,true)) {
             return false;
         }
 
@@ -175,16 +176,16 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
         return false;
     }
 
-    private boolean isBinomialValid(double value, double filterValue) {
+    private boolean isBinomialValid(double value, double filterValue, 
+            boolean isParent) {
         if (filterValue == Data.NO_FILTER) {
             return true;
         }
-
-        if (value >= filterValue) {
-            return true;
+        if (isParent) {
+            return value < filterValue;
+        } else {
+            return value >= filterValue;
         }
-
-        return false;
     }
 
     private double getBinomial(int alt, int ref) {
