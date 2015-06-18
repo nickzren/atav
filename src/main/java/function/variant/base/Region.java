@@ -121,8 +121,8 @@ public class Region implements Comparable {
         int startX2 = 154931044, endX2 = 155260560;
 
         if (chrNum == 23
-                && ((startPosition >= startX1 && startPosition <= endX1)
-                || (endPosition >= startX2 && endPosition <= endX2))) {
+                && ((startPosition >= startX1 && endPosition <= endX1)
+                || (startPosition >= startX2 && endPosition <= endX2))) {
             return true;
         }
 
@@ -137,8 +137,8 @@ public class Region implements Comparable {
         int startY2 = 59034050, endY2 = 59363566;
 
         if (chrNum == 24
-                && ((startPosition >= startY1 && startPosition <= endY1)
-                || (endPosition >= startY2 && endPosition <= endY2))) {
+                && ((startPosition >= startY1 && endPosition <= endY1)
+                || (startPosition >= startY2 && endPosition <= endY2))) {
             return true;
         }
 

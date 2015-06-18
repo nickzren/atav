@@ -84,7 +84,7 @@ public class ThirdPartyToolManager {
 
     public static void callFlankingSeq(String baseFlankingSeqFilePath) {
         String cmd = PERL_SYSTEM_PATH + " " + FLANKING_SEQ_PERL
-                + " --variant " + CommandValue.includeVariantInput
+                + " --variant " + CommandValue.includeVariantId
                 + " --width " + CommandValue.width
                 + " --out " + baseFlankingSeqFilePath;
 

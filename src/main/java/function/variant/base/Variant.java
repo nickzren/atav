@@ -1,7 +1,6 @@
 package function.variant.base;
 
 import utils.FormatManager;
-import utils.LogManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -13,13 +12,11 @@ public class Variant {
 
     public int variantId;
     public String variantIdStr;
-    public String newVariantIdStr;
     public String type;
     public String allele;
     public String refAllele;
     public String rsNumber;
     public Region region;
-    public String positionStr;
     public float cscorePhred;
     //Indel attributes
     public String indelType;
@@ -33,9 +30,7 @@ public class Variant {
             initIndel(rset);
         }
 
-        initStrVariantId();
-        
-        initNewStrVariantId();
+        initVariantIdStr();
     }
 
     public Variant(int v_id, boolean isIndel,
@@ -95,10 +90,6 @@ public class Variant {
         return type;
     }
 
-    public String getPositionStr() {
-        return positionStr;
-    }
-
     public String getAllele() {
         return allele;
     }
@@ -119,61 +110,19 @@ public class Variant {
         return cscorePhred;
     }
 
-    private String initStrVariantId() {
-        variantIdStr = "";
-
+    public void initVariantIdStr() {
         String chrStr = region.getChrStr();
 
         if (region.isInsideXPseudoautosomalRegions()) {
             chrStr = "XY";
         }
 
-        if (isSnv()) {
-            positionStr = chrStr + "_" + region.getStartPosition();
-            variantIdStr = positionStr + "_" + allele;
-        } else if (isIndel()) {
-            String varID_allele = "";
-            if (indelType.equals("INS")) {
-                varID_allele = allele.substring(allele.length() - region.getLength());
-
-                positionStr = chrStr + "_" + region.getStartPosition()
-                        + "_" + (region.getStartPosition() + 1);
-            } else if (indelType.equals("DEL")) {
-                varID_allele = refAllele.substring(refAllele.length() - region.getLength());
-
-                positionStr = chrStr + "_" + region.getStartPosition()
-                        + "_" + region.getEndPosition();
-            } else {
-                LogManager.writeAndPrint("Error indel type: " + indelType);
-            }
-
-            variantIdStr = positionStr + "_" + indelType + "_" + varID_allele;
-        }
-
-        return variantIdStr;
+        variantIdStr = chrStr + "-" + region.getStartPosition()
+                + "-" + refAllele + "-" + allele;
     }
 
     public String getVariantIdStr() {
         return variantIdStr;
-    }
-
-    public void initNewStrVariantId() {
-        String chrStr = region.getChrStr();
-
-        if (region.isInsideXPseudoautosomalRegions()) {
-            chrStr = "XY";
-        }
-
-        newVariantIdStr = chrStr + "-" + region.getStartPosition()
-                + "-" + this.refAllele + "-" + this.allele;
-    }
-
-    public String getNewVariantIdStr() {
-        return newVariantIdStr;
-    }
-
-    public void setVariantIdStr(String id) {
-        variantIdStr = id;
     }
 
     public boolean isSnv() {
@@ -182,5 +131,9 @@ public class Variant {
 
     public boolean isIndel() {
         return type.equals("indel");
+    }
+
+    public boolean isDel() {
+        return refAllele.length() > allele.length();
     }
 }

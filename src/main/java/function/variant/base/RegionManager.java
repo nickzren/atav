@@ -33,8 +33,6 @@ public class RegionManager {
     public static void init() {
         initIdChrMap();
 
-        CommandValue.regionInput.replaceAll("( )+", "");
-
         if (CommandValue.regionInput.isEmpty()) {
             initChrRegionList(Data.ALL_CHR);
         } else {
@@ -251,24 +249,14 @@ public class RegionManager {
     }
 
     public static void addRegionByVariantId(String variantId) {
-        String chr = "";
-        int start = Data.NA;
+        String[] values = variantId.split("-");
+        String chr = values[0];
+        int pos = Integer.valueOf(values[1]);
 
-        if (variantId.contains("_")) {
-            String[] values = variantId.split("_");
-            chr = "chr" + values[0];
-            start = Integer.valueOf(values[1]);
-
-            if (FormatManager.isInteger(values[2])) {
-                VariantManager.addType("indel");
-            } else {
-                VariantManager.addType("snv");
-            }
-        } else if (variantId.contains("-")) {
-            String[] values = variantId.split("-");
-            chr = "chr" + values[0];
-            start = Integer.valueOf(values[1]);
-
+        if (values.length == 3) // variant position format chr-pos-type
+        {
+            VariantManager.addType(values[2]);
+        } else { // variant id format chr-pos-ref-alt
             if (values[2].length() == 1
                     && values[3].length() == 1) {
                 VariantManager.addType("snv");
@@ -277,7 +265,7 @@ public class RegionManager {
             }
         }
 
-        regionList.add(new Region(chr, start, start));
+        regionList.add(new Region(chr, pos, pos));
     }
 
     private static void initIdChrMap() {

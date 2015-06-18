@@ -27,8 +27,6 @@ public class CommandValue {
     public static boolean isParentalMosaic = false;
     public static boolean isLinear = false;
 
-    public static boolean isListNewVarId = false;
-
     // variant annotation base analysis function
     public static boolean isListVarAnno = false;
     public static boolean isListGeneDx = false;
@@ -44,8 +42,8 @@ public class CommandValue {
     public static String sampleFile = "";
     public static boolean isAllSample = false;
     public static String variantInputFile = "";
-    public static String includeVariantInput = "";
-    public static String excludeVariantInput = "";
+    public static String includeVariantId = "";
+    public static String excludeVariantId = "";
     public static String geneInput = "";
     public static String geneBoundariesFile = "";
     public static String transcriptFile = "";

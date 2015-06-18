@@ -32,7 +32,6 @@ public class CompHetOutput extends TrioOutput implements Comparable {
 
     private static String initVarTitleStr(String var) {
         String varTitle = "Variant ID,"
-                + "New Variant ID,"
                 + "Variant Type,"
                 + "Rs Number,"
                 + "Ref Allele,"
@@ -110,7 +109,6 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         StringBuilder sb = new StringBuilder();
 
         sb.append(calledVar.getVariantIdStr()).append(",");
-        sb.append(calledVar.getNewVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
         sb.append(calledVar.getRefAllele()).append(",");
