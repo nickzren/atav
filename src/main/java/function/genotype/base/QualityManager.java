@@ -412,4 +412,63 @@ public class QualityManager {
 
         return false;
     }
+
+    public static boolean isChildQdValid(float value) {
+        if (CommandValue.childQD == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.NA) {
+            if (CommandValue.isQcMissingIncluded) {
+                return true;
+            }
+        } else {
+            if (value >= CommandValue.childQD) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isChildHetPercentAltReadValid(double value) {
+        if (CommandValue.childHetPercentAltRead == null) {
+            return true;
+        }
+
+        if (value != Data.NA) {
+            if (value >= CommandValue.childHetPercentAltRead[0]
+                    && value <= CommandValue.childHetPercentAltRead[1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isChildBinomialValid(double value) {
+        if (CommandValue.minChildBinomial == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value != Data.NA
+                && value >= CommandValue.minChildBinomial) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isParentBinomialValid(double value) {
+        if (CommandValue.maxParentBinomial == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value != Data.NA
+                && value < CommandValue.maxParentBinomial) {
+            return true;
+        }
+
+        return false;
+    }
 }
