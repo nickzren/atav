@@ -69,16 +69,12 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
                 for (Family family : FamilyManager.getList()) {
 
                     for (Sample child : family.getChildList()) {
-                        
-                        output.setChild(child);
 
-                        if (output.isChildValid()) {
+                        if (output.isChildValid(child)) {
 
                             for (Sample parent : family.getParentList()) {
-                                
-                                output.setParent(parent);
 
-                                if (output.isParentValid()) {
+                                if (output.isParentValid(parent)) {
                                     doOutput(output.getString());
                                 }
                             }

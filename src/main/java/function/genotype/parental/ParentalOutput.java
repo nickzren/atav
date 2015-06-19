@@ -93,16 +93,19 @@ public class ParentalOutput extends Output {
         super(c);
     }
 
-    public void setChild(Sample child) {
+    public boolean isChildValid(Sample child) {
         this.child = child;
-        childGeno = calledVar.getGenotype(child.getIndex());
-    }
 
-    public boolean isChildValid() {
-        return isQualifiedGeno(childGeno)
+        return isChildGenoValid()
                 && isChildQdValid()
                 && isChildHetPercentAltReadValid()
                 && isChildBinomialValid();
+    }
+
+    private boolean isChildGenoValid() {
+        childGeno = calledVar.getGenotype(child.getIndex());
+
+        return isQualifiedGeno(childGeno);
     }
 
     private boolean isChildQdValid() {
@@ -142,11 +145,10 @@ public class ParentalOutput extends Output {
         return QualityManager.isChildBinomialValid(childBinomial);
     }
 
-    public void setParent(Sample parent) {
+    public boolean isParentValid(Sample parent) {
         this.parent = parent;
-    }
+        parentGeno = calledVar.getGenotype(parent.getIndex());
 
-    public boolean isParentValid() {
         return isParentBinomialValid();
     }
 
