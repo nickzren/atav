@@ -333,6 +333,9 @@ public class CommandManager {
                 CommandValue.isSiblingCompHet = true;
             } else if (option.getName().equals("--parental-mosaic")) {
                 CommandValue.isParentalMosaic = true;
+            } else if (option.getName().equals("--ppi")) {
+                CommandValue.isPPI = true;
+                CommandValue.isNonDBAnalysis = true;
             } else {
                 continue;
             }
@@ -955,7 +958,23 @@ public class CommandManager {
                 CommandValue.minChildBinomial = getValidDouble(option);
             } else if (option.getName().equals("--max-parent-binomial")) {
                 CommandValue.maxParentBinomial = getValidDouble(option);
-            }else {
+            } else {
+                continue;
+            }
+
+            iterator.remove();
+        }
+    }
+
+    private static void initPPI() {
+        Iterator<CommandOption> iterator = optionList.iterator();
+        CommandOption option;
+
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            if (option.getName().equals("--ppi-option-example")) {
+                CommandValue.ppiOptionExample = getValidDouble(option);
+            } else {
                 continue;
             }
 

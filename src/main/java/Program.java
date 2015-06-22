@@ -35,6 +35,7 @@ import function.external.exac.ListExac;
 import function.external.flanking.ListFlankingSeq;
 import function.external.knownvar.ListKnownVar;
 import function.genotype.base.CoverageBlockManager;
+import function.nondb.ppi.PPI;
 
 /**
  *
@@ -142,6 +143,10 @@ public class Program {
                 runAnalysis(new ListSiblingComphet());
             } else if (CommandValue.isParentalMosaic) {
                 runAnalysis(new ParentalMosaic());
+            } else if (CommandValue.isPPI) {
+                PPI ppi = new PPI();
+                
+                LogManager.writeAndPrint(ppi.toString());
             }
         } catch (Exception e) {
             ErrorManager.send(e);

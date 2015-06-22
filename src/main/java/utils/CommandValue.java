@@ -180,4 +180,8 @@ public class CommandValue {
 
     // hidden option for slave
     public static boolean isFlipMaf = false;
+    
+    // PPI
+    public static boolean isPPI = false;
+    public static double ppiOptionExample = Data.NO_FILTER;
 }
