@@ -57,39 +57,45 @@ public class SampleManager {
     public static HashSet<Integer> phs000473SampleIdSet = new HashSet<Integer>();
 
     public static void init() {
-        if (!CommandValue.isNonSampleAnalysis) {
-            checkSampleFile();
-
-            initAllTempTable();
-
-            initEvsIndelSampleIdSetFromAnnoDB();
-
-            if (CommandValue.isAllSample) {
-                initAllSampleFromAnnoDB();
-            } else {
-                if (!CommandValue.sampleFile.isEmpty()) {
-                    initFromSampleFile();
-                }
-
-                if (!CommandValue.evsSample.isEmpty()) {
-                    initEvsSampleFromAnnoDB();
-                }
-            }
-
-            initCovariate();
-
-            initQuantitative();
-
-            initSampleIndexAndSize();
-
-            for (Sample sample : sampleList) {
-                insertId2AllTable(sample);
-            }
-
-            outputSampleList();
-
-            evsIndelSampleIdSet = null;
+        if (CommandValue.isNonDBAnalysis) {
+            return;
         }
+
+        if (CommandValue.isNonSampleAnalysis) {
+            return;
+        }
+        
+        checkSampleFile();
+
+        initAllTempTable();
+
+        initEvsIndelSampleIdSetFromAnnoDB();
+
+        if (CommandValue.isAllSample) {
+            initAllSampleFromAnnoDB();
+        } else {
+            if (!CommandValue.sampleFile.isEmpty()) {
+                initFromSampleFile();
+            }
+
+            if (!CommandValue.evsSample.isEmpty()) {
+                initEvsSampleFromAnnoDB();
+            }
+        }
+
+        initCovariate();
+
+        initQuantitative();
+
+        initSampleIndexAndSize();
+
+        for (Sample sample : sampleList) {
+            insertId2AllTable(sample);
+        }
+
+        outputSampleList();
+
+        evsIndelSampleIdSet = null;
     }
 
     private static void checkSampleFile() {

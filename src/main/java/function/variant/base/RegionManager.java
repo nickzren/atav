@@ -31,6 +31,10 @@ public class RegionManager {
             = new HashMap<String, ArrayList<TempRange>>();
 
     public static void init() {
+        if (CommandValue.isNonDBAnalysis) {
+            return;
+        }
+        
         initIdChrMap();
 
         if (CommandValue.regionInput.isEmpty()) {

@@ -39,6 +39,10 @@ public class DBManager {
 
     public static void init() {
         try {
+            if (CommandValue.isNonDBAnalysis) {
+                return;
+            }
+
             Class.forName(DRIVER);
 
             initHostList();
@@ -58,15 +62,15 @@ public class DBManager {
         }
     }
 
-    private static void initHostList() {        
+    private static void initHostList() {
         String configPath = Data.DB_HOST_CONFIG_PATH;
 
         if (CommandValue.isDebug) {
             configPath = Data.RECOURCE_PATH + configPath;
         }
-        
+
         File f = new File(configPath);
-        
+
         try {
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(new FileInputStream(f));

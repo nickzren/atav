@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import function.annotation.base.Annotation;
 import function.variant.base.Region;
 import function.coverage.base.Gene;
 import global.Data;
@@ -29,6 +28,10 @@ public class GeneManager {
     private static boolean isUsed = false;
 
     public static void init() throws Exception {
+        if (CommandValue.isNonDBAnalysis) {
+            return;
+        }
+        
         initGeneName();
 
         initGeneBoundaries();
