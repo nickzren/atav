@@ -1018,6 +1018,8 @@ public class CommandManager {
             initKnownVar();
         } else if (CommandValue.isParentalMosaic) {
             initParentalMosaic();
+        } else if (CommandValue.isPPI) {
+            initPPI();
         }
 
     }
