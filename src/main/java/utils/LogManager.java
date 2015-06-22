@@ -42,10 +42,10 @@ public class LogManager {
             writeLog(CommandManager.command + "\n");
 
             writeAndPrint("ATAV news: "
-                    + "http://redmine2.chgv.lsrc.duke.edu/redmine/projects/atav/news");
+                    + "http://redmine.igm.cumc.columbia.edu/projects/atav/news");
 
-            writeAndPrint("ATAV manual: "
-                    + "http://redmine2.chgv.lsrc.duke.edu/redmine/projects/atav/wiki");
+            writeAndPrint("ATAV wiki: "
+                    + "http://redmine.igm.cumc.columbia.edu/projects/atav/wiki");
 
             // write and reopen
             userLog.close();
