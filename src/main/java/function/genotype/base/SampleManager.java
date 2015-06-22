@@ -1,8 +1,5 @@
 package function.genotype.base;
 
-import function.genotype.base.Carrier;
-import function.genotype.base.NonCarrier;
-import function.genotype.base.Sample;
 import function.variant.base.Variant;
 import global.Data;
 import utils.CommandValue;
@@ -57,10 +54,6 @@ public class SampleManager {
     public static HashSet<Integer> phs000473SampleIdSet = new HashSet<Integer>();
 
     public static void init() {
-        if (CommandValue.isNonDBAnalysis) {
-            return;
-        }
-
         if (CommandValue.isNonSampleAnalysis) {
             return;
         }

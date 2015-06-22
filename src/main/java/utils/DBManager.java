@@ -2,7 +2,6 @@ package utils;
 
 import global.Data;
 import java.io.*;
-import java.net.URL;
 import java.sql.*;
 import java.util.HashMap;
 
@@ -112,7 +111,7 @@ public class DBManager {
         return null;
     }
 
-    public static ResultSet executeReadOnlyQuery(String sqlQuery) throws SQLException {
+    public static ResultSet executeReadOnlyQuery(String sqlQuery) throws SQLException {        
         return readOnlyStmt.executeQuery(sqlQuery);
     }
 

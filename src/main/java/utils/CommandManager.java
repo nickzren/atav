@@ -336,6 +336,7 @@ public class CommandManager {
             } else if (option.getName().equals("--ppi")) {
                 CommandValue.isPPI = true;
                 CommandValue.isNonDBAnalysis = true;
+                CommandValue.isNonSampleAnalysis = true;
             } else {
                 continue;
             }

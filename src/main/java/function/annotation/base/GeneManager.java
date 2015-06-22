@@ -27,11 +27,7 @@ public class GeneManager {
     private static HashMap<String, String> genenStableIdNmNpMap = new HashMap<String, String>();
     private static boolean isUsed = false;
 
-    public static void init() throws Exception {
-        if (CommandValue.isNonDBAnalysis) {
-            return;
-        }
-        
+    public static void init() throws Exception {   
         initGeneName();
 
         initGeneBoundaries();

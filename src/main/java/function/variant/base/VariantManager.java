@@ -29,11 +29,7 @@ public class VariantManager {
 
     private static final int maxIncludeNum = 10000000;
 
-    public static void init() throws FileNotFoundException, Exception, SQLException {
-        if (CommandValue.isNonDBAnalysis) {
-            return;
-        }
-        
+    public static void init() throws FileNotFoundException, Exception, SQLException {        
         init(CommandValue.includeVariantId, includeVariantSet, true);
 
         init(CommandValue.excludeVariantId, excludeVariantSet, false);
