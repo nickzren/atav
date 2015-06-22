@@ -145,8 +145,8 @@ public class Program {
                 runAnalysis(new ParentalMosaic());
             } else if (CommandValue.isPPI) {
                 PPI ppi = new PPI();
-                
                 LogManager.writeAndPrint(ppi.toString());
+                ppi.run();
             }
         } catch (Exception e) {
             ErrorManager.send(e);
