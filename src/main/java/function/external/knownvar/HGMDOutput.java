@@ -11,6 +11,8 @@ import utils.FormatManager;
  */
 public class HGMDOutput extends Output {
 
+    public static final String table = "knownvar.hgmd";
+
     private String variantClass;
     private String pmid;
     private String diseaseName;
@@ -25,11 +27,9 @@ public class HGMDOutput extends Output {
     public HGMDOutput(String id) {
         variantId = id;
 
-        table = "knownvar.hgmd";
-
         initHGMD();
 
-        initFlankingCount();
+        initFlankingCount(table);
     }
 
     private void initHGMD() {
@@ -65,7 +65,7 @@ public class HGMDOutput extends Output {
             ErrorManager.send(e);
         }
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -12,10 +12,9 @@ import utils.ErrorManager;
 public class Output {
 
     String variantId;
-    String table;
     int flankingCount;
 
-    void initFlankingCount() {
+    void initFlankingCount(String table) {
         try {
             String[] tmp = variantId.split("-"); // chr-pos-ref-alt
 

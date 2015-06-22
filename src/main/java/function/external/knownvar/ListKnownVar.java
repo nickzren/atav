@@ -93,6 +93,8 @@ public class ListKnownVar extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running a list KnownVar function...";
+        return "It is running a list KnownVar function... \n\n"
+                + "clinvar table: " + ClinvarOutput.table + "\n\n"
+                + "hgmd table: " + HGMDOutput.table;
     }
 }

@@ -11,6 +11,8 @@ import java.sql.ResultSet;
  */
 public class ClinvarOutput extends Output {
 
+    public static final String table = "knownvar.clinvar_2015_06_22";
+    
     private String clinicalSignificance;
     private String otherIds;
     private String diseaseName;
@@ -25,11 +27,9 @@ public class ClinvarOutput extends Output {
     public ClinvarOutput(String id) {
         variantId = id;
 
-        table = "knownvar.clinvar_2015_04_10";
-
         initClinvar();
 
-        initFlankingCount();
+        initFlankingCount(table);
     }
 
     private void initClinvar() {
@@ -48,9 +48,9 @@ public class ClinvarOutput extends Output {
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                clinicalSignificance = FormatManager.getString(rs.getString("ClinicalSignificance"));
+                clinicalSignificance = FormatManager.getString(rs.getString("ClinicalSignificance").replaceAll(";", " | "));
                 otherIds = FormatManager.getString(rs.getString("OtherIds")).replaceAll(",", " | ");
-                diseaseName = FormatManager.getString(rs.getString("DiseaseName")).replaceAll(";", " | ");
+                diseaseName = FormatManager.getString(rs.getString("DiseaseName")).replaceAll(",", "");
             }
 
             rs.close();
