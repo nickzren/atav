@@ -163,9 +163,10 @@ public class CommandValue {
     public static int indelWidth = 9;
 
     // parental mosaic
-    public static double probandQD = Data.NO_FILTER;
-    public static double[] probandHetPercentAltRead = null;
-    public static double probandBinomial = Data.NO_FILTER;
+    public static double childQD = Data.NO_FILTER;
+    public static double[] childHetPercentAltRead = null;
+    public static double minChildBinomial = Data.NO_FILTER;
+    public static double maxParentBinomial = Data.NO_FILTER;
 
     // list evs
     public static boolean isListEvs = false;

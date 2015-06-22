@@ -8,8 +8,11 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
+import function.genotype.base.QualityManager;
+import global.Data;
 import utils.CommandValue;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -17,12 +20,22 @@ import utils.FormatManager;
  */
 public class ParentalOutput extends Output {
 
+    Sample child;
+    int childGeno;
+    double childBinomial;
+
+    Sample parent;
+    int parentGeno;
+    double parentBinomial;
+
     public static final String title
             = "Family Id,"
             + "Sample Name (child),"
             + "Genotype (child),"
+            + "Binomial (child),"
             + "Sample Name (parent),"
             + "Genotype (parent),"
+            + "Binomial (parent),"
             + "Variant ID,"
             + "Variant Type,"
             + "Rs Number,"
@@ -48,21 +61,21 @@ public class ParentalOutput extends Output {
             + "Ctrl Maf,"
             + "Case HWE_P,"
             + "Ctrl HWE_P,"
-            + "Samtools Raw Coverage,"
-            + "Gatk Filtered Coverage,"
-            + "Reads Alt,"
-            + "Reads Ref,"
-            + "Percent Alt Read,"
-            + "Vqslod,"
-            + "Pass Fail Status,"
-            + "Genotype Qual GQ,"
-            + "Strand Bias FS,"
-            + "Haplotype Score,"
-            + "Rms Map Qual MQ,"
-            + "Qual By Depth QD,"
-            + "Qual,"
-            + "Read Pos Rank Sum,"
-            + "Map Qual Rank Sum,"
+            + "Samtools Raw Coverage (child),"
+            + "Gatk Filtered Coverage (child),"
+            + "Reads Alt (child),"
+            + "Reads Ref (child),"
+            + "Percent Alt Read (child),"
+            + "Vqslod (child),"
+            + "Pass Fail Status (child),"
+            + "Genotype Qual GQ (child),"
+            + "Strand Bias FS (child),"
+            + "Haplotype Score (child),"
+            + "Rms Map Qual MQ (child),"
+            + "Qual By Depth QD (child),"
+            + "Qual (child),"
+            + "Read Pos Rank Sum (child),"
+            + "Map Qual Rank Sum (child),"
             + EvsManager.getTitle()
             + "Polyphen Humdiv Score,"
             + "Polyphen Humdiv Prediction,"
@@ -80,15 +93,90 @@ public class ParentalOutput extends Output {
         super(c);
     }
 
-    public String getString(Sample child, int childGeno,
-            Sample parent, int parentGeno) {
+    public boolean isChildValid(Sample child) {
+        this.child = child;
+
+        return isChildGenoValid()
+                && isChildQdValid()
+                && isChildHetPercentAltReadValid()
+                && isChildBinomialValid();
+    }
+
+    private boolean isChildGenoValid() {
+        childGeno = calledVar.getGenotype(child.getIndex());
+
+        return isQualifiedGeno(childGeno);
+    }
+
+    private boolean isChildQdValid() {
+        float value = Data.NA;
+
+        if (CommandValue.childQD != Data.NO_FILTER) {
+            value = calledVar.getQualByDepthQD(child.getId());
+        }
+
+        return QualityManager.isChildQdValid(value);
+    }
+
+    private boolean isChildHetPercentAltReadValid() {
+        double percAltRead = Data.NA;
+
+        if (CommandValue.childHetPercentAltRead != null
+                && childGeno == 1) {
+            int readsAlt = calledVar.getReadsAlt(child.getId());
+            int gatkFilteredCoverage = calledVar.getGatkFilteredCoverage(child.getId());
+
+            percAltRead = FormatManager.devide(readsAlt, gatkFilteredCoverage);
+        }
+
+        return QualityManager.isChildHetPercentAltReadValid(percAltRead);
+    }
+
+    private boolean isChildBinomialValid() {
+        int readsAlt = calledVar.getReadsAlt(child.getId());
+        int readsRef = calledVar.getReadsRef(child.getId());
+
+        if (readsAlt == Data.NA || readsRef == Data.NA) {
+            childBinomial = Data.NA;
+        } else {
+            childBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
+        }
+
+        return QualityManager.isChildBinomialValid(childBinomial);
+    }
+
+    public boolean isParentValid(Sample parent) {
+        this.parent = parent;
+        parentGeno = calledVar.getGenotype(parent.getIndex());
+
+        return isParentBinomialValid();
+    }
+
+    private boolean isParentBinomialValid() {
+        parentBinomial = Data.NA;
+
+        int readsAlt = calledVar.getReadsAlt(parent.getId());
+        int readsRef = calledVar.getReadsRef(parent.getId());
+
+        if (readsAlt == Data.NA || readsRef == Data.NA) {
+            parentBinomial = Data.NA;
+        } else {
+            parentBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
+        }
+
+        return QualityManager.isParentBinomialValid(parentBinomial);
+    }
+
+    public String getString() {
         StringBuilder sb = new StringBuilder();
 
         sb.append(child.getFamilyId()).append(",");
         sb.append(child.getName()).append(",");
         sb.append(getGenoStr(childGeno)).append(",");
+        sb.append(FormatManager.getDouble(childBinomial)).append(",");
         sb.append(parent.getName()).append(",");
         sb.append(getGenoStr(parentGeno)).append(",");
+        sb.append(FormatManager.getDouble(parentBinomial)).append(",");
 
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
