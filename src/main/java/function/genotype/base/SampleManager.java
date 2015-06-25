@@ -629,13 +629,17 @@ public class SampleManager {
     }
 
     private static void insertId2AllTable(Sample sample) {
-        insertId2Table(sample.getId(), Data.ALL_SAMPLE_ID_TABLE);
-
-        if (chgvSampleIdSet.contains(sample.getId())) {
-            if (sample.getType().equalsIgnoreCase("genome")) {
-                insertId2Table(sample.getId(), Data.GENOME_SAMPLE_ID_TABLE);
-            } else {
-                insertId2Table(sample.getId(), Data.EXOME_SAMPLE_ID_TABLE);
+        if (CommandValue.isCoverageSummary 
+                || CommandValue.isSiteCoverageSummary
+                || CommandValue.isCoverageComparison) {
+            insertId2Table(sample.getId(), Data.ALL_SAMPLE_ID_TABLE);
+        } else {
+            if (chgvSampleIdSet.contains(sample.getId())) {
+                if (sample.getType().equalsIgnoreCase("genome")) {
+                    insertId2Table(sample.getId(), Data.GENOME_SAMPLE_ID_TABLE);
+                } else {
+                    insertId2Table(sample.getId(), Data.EXOME_SAMPLE_ID_TABLE);
+                }
             }
         }
     }
