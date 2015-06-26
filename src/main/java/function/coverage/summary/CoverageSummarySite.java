@@ -6,7 +6,6 @@ import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
 import global.Data;
-import function.genotype.base.SampleManager;
 import utils.CommandValue;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -56,8 +55,7 @@ public class CoverageSummarySite extends InputList {
 
     public void run() throws Exception {
         initOutput();
-        String strSamples = SampleManager.getAllSampleId();
-        SampleStatistics ss = new SampleStatistics(strSamples, size());
+        SampleStatistics ss = new SampleStatistics(size());
 
         for (Iterator it = this.iterator(); it.hasNext();) {
             int record = ss.getNextRecord();

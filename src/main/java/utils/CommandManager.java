@@ -28,7 +28,7 @@ public class CommandManager {
 
     private static void initCommand4Debug() {
         String cmd = "";
-
+        
         optionArray = cmd.split("\\s+");
     }
 
@@ -975,10 +975,17 @@ public class CommandManager {
             option = (CommandOption) iterator.next();
             if (option.getName().equals("--ppi-option-example")) {
                 CommandValue.ppiOptionExample = getValidDouble(option);
+            } else if (option.getName().equals("--exclude")) {
+                CommandValue.ppiExclude = option.getValue();
+            } else if (option.getName().equals("--ppiFile")) {
+                CommandValue.ppiFile = getValidPath(option);
+            } else if (option.getName().equals("--geno")) {
+                CommandValue.ppiGenotypeFile = getValidPath(option);
+            } else if (option.getName().equals("--perm")) {
+                CommandValue.ppiPermutaitons = getValidInteger(option);
             } else {
                 continue;
             }
-
             iterator.remove();
         }
     }

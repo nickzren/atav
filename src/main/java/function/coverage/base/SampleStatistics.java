@@ -1,5 +1,6 @@
 package function.coverage.base;
 
+import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
 import utils.CommandValue;
@@ -29,22 +30,19 @@ public class SampleStatistics {
     int NextRecord;
     NumberFormat pformat6 = new DecimalFormat("0.######");
 
-    public SampleStatistics(String database_sample_ids, int NumberOfRecord) {
-        String sample_ids = database_sample_ids.replace("(", "");
-        sample_ids = sample_ids.replace(")", "");
-        String[] ids = sample_ids.split(",");
+    public SampleStatistics(int NumberOfRecord) {
         aLength = new int[NumberOfRecord];
         RecordNames = new String[NumberOfRecord];
         RecordChrs = new String[NumberOfRecord];
-        aSampleRegionCoverage = new int[ids.length];
-        aCoverage = new double[NumberOfRecord][ids.length];
-        SampleNames = new String[ids.length];
+        aSampleRegionCoverage = new int[SampleManager.getListSize()];
+        aCoverage = new double[NumberOfRecord][SampleManager.getListSize()];
+        SampleNames = new String[SampleManager.getListSize()];
 
-        for (int i = 0; i < ids.length; i++) {
-            int id = Integer.parseInt(ids[i]);
-            SampleNames[i] = SampleManager.getTable().get(id).getName();
-            Id2Index.put(id, i);
-            Index2Id.put(i, id);
+        for (int i = 0; i < SampleManager.getListSize(); i++) {
+            Sample sample = SampleManager.getList().get(i);
+            SampleNames[i] = sample.getName();
+            Id2Index.put(sample.getId(), i);
+            Index2Id.put(i, sample.getId());
         }
         NextRecord = 0;
     }
