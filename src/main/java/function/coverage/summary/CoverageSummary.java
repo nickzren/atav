@@ -85,8 +85,7 @@ public class CoverageSummary extends InputList {
 
     public void run() throws Exception {
         initOutput();
-        String strSamples = SampleManager.getAllSampleId();
-        SampleStatistics ss = new SampleStatistics(strSamples, size());
+        SampleStatistics ss = new SampleStatistics(size());
         ss.printMatrixHeader(bwSampleMatrixSummary, false);
 
         if (CommandValue.isByExon) {

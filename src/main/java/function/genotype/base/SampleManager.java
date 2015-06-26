@@ -1,8 +1,5 @@
 package function.genotype.base;
 
-import function.genotype.base.Carrier;
-import function.genotype.base.NonCarrier;
-import function.genotype.base.Sample;
 import function.variant.base.Variant;
 import global.Data;
 import utils.CommandValue;
@@ -30,10 +27,14 @@ public class SampleManager {
     private static Hashtable<Integer, Sample> sampleTable = new Hashtable<Integer, Sample>();
     private static HashSet<Integer> chgvSampleIdSet = new HashSet<Integer>();
 
-    private static int listSize;
-    private static StringBuilder allSampleId = new StringBuilder();
+    private static int listSize; // case + ctrl
     private static int caseNum = 0;
     private static int ctrlNum = 0;
+
+    // sample id StringBuilder is just temp used for creating temp tables
+    private static StringBuilder allSampleIdSb = new StringBuilder();
+    private static StringBuilder exomeSampleIdSb = new StringBuilder();
+    private static StringBuilder genomeSampleIdSb = new StringBuilder();
 
     private static HashSet<Integer> evsSampleIdSet = new HashSet<Integer>();
     private static HashSet<Integer> evsEaSampleIdSet = new HashSet<Integer>();
@@ -60,8 +61,6 @@ public class SampleManager {
         if (!CommandValue.isNonSampleAnalysis) {
             checkSampleFile();
 
-            initAllTempTable();
-
             initEvsIndelSampleIdSetFromAnnoDB();
 
             if (CommandValue.isAllSample) {
@@ -82,9 +81,7 @@ public class SampleManager {
 
             initSampleIndexAndSize();
 
-            for (Sample sample : sampleList) {
-                insertId2AllTable(sample);
-            }
+            initTempTables();
 
             outputSampleList();
 
@@ -606,15 +603,25 @@ public class SampleManager {
         return ctrlNum;
     }
 
-    private static void initAllTempTable() {
-        createSqlTempTable(Data.ALL_SAMPLE_ID_TABLE);
+    private static void initTempTables() {
+        createTempTables();
 
-        createSqlTempTable(Data.GENOME_SAMPLE_ID_TABLE);
+        initSampleIdSbs();
 
-        createSqlTempTable(Data.EXOME_SAMPLE_ID_TABLE);
+        insertSampleId2Tables();
+
+        clearSampleIdSbs();
     }
 
-    private static void createSqlTempTable(String sqlTable) {
+    private static void createTempTables() {
+        createTempTable(Data.ALL_SAMPLE_ID_TABLE);
+
+        createTempTable(Data.GENOME_SAMPLE_ID_TABLE);
+
+        createTempTable(Data.EXOME_SAMPLE_ID_TABLE);
+    }
+
+    private static void createTempTable(String sqlTable) {
         try {
             Statement stmt = DBManager.createStatement();
 
@@ -628,28 +635,26 @@ public class SampleManager {
         }
     }
 
-    private static void insertId2AllTable(Sample sample) {
-        if (CommandValue.isCoverageSummary 
-                || CommandValue.isSiteCoverageSummary
-                || CommandValue.isCoverageComparison) {
-            insertId2Table(sample.getId(), Data.ALL_SAMPLE_ID_TABLE);
-        } else {
-            if (chgvSampleIdSet.contains(sample.getId())) {
-                if (sample.getType().equalsIgnoreCase("genome")) {
-                    insertId2Table(sample.getId(), Data.GENOME_SAMPLE_ID_TABLE);
-                } else {
-                    insertId2Table(sample.getId(), Data.EXOME_SAMPLE_ID_TABLE);
-                }
-            }
-        }
+    private static void insertSampleId2Tables() {
+        insertId2Table(allSampleIdSb.toString(), Data.ALL_SAMPLE_ID_TABLE);
+        insertId2Table(genomeSampleIdSb.toString(), Data.GENOME_SAMPLE_ID_TABLE);
+        insertId2Table(exomeSampleIdSb.toString(), Data.EXOME_SAMPLE_ID_TABLE);
     }
 
-    private static void insertId2Table(int id, String table) {
+    private static void insertId2Table(String ids, String table) {
         try {
-            DBManager.executeUpdate("INSERT IGNORE INTO " + table + " VALUES (" + id + ")");
+            if (!ids.isEmpty()) {
+                DBManager.executeUpdate("INSERT INTO " + table + " VALUES " + ids);
+            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+
+    private static void clearSampleIdSbs() {
+        allSampleIdSb.setLength(0); // free memory
+        genomeSampleIdSb.setLength(0);
+        exomeSampleIdSb.setLength(0);
     }
 
     private static int getSampleId(String sampleName, String sampleType,
@@ -838,24 +843,32 @@ public class SampleManager {
         }
     }
 
-    public static String getAllSampleId() {
-        if (allSampleId.length() == 0) {
-            boolean isFirst = true;
-            int sampleId;
-            for (Sample sample : sampleList) {
-                sampleId = sample.getId();
-                if (isFirst) {
-                    allSampleId.append("(").append(sampleId);
-                    isFirst = false;
+    public static void initSampleIdSbs() {
+        for (Sample sample : sampleList) {
+            addToSampleIdSb(allSampleIdSb, sample.getId());
+
+            if (chgvSampleIdSet.contains(sample.getId())) {
+                if (sample.getType().equalsIgnoreCase("genome")) {
+                    addToSampleIdSb(genomeSampleIdSb, sample.getId());
                 } else {
-                    allSampleId.append(",").append(sampleId);
+                    addToSampleIdSb(exomeSampleIdSb, sample.getId());
                 }
             }
-
-            allSampleId.append(")");
         }
 
-        return allSampleId.toString();
+        deleteLastComma(allSampleIdSb);
+        deleteLastComma(genomeSampleIdSb);
+        deleteLastComma(exomeSampleIdSb);
+    }
+
+    private static void addToSampleIdSb(StringBuilder sb, int id) {
+        sb.append("(").append(id).append(")").append(",");
+    }
+
+    private static void deleteLastComma(StringBuilder sb) {
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.lastIndexOf(","));
+        }
     }
 
     public static boolean isEvsEaSampleId(int id, boolean isIndel) {

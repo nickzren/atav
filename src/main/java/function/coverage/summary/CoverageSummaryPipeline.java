@@ -5,7 +5,6 @@ import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
 import global.Data;
-import function.genotype.base.SampleManager;
 import utils.CommandValue;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -53,11 +52,10 @@ public class CoverageSummaryPipeline extends InputList {
 
     public void run() throws Exception {
         int i;
-        String strSamples = SampleManager.getAllSampleId();
         int[] MinCoverages = {3, 10, 20};
         ArrayList<SampleStatistics> ssList = new ArrayList<SampleStatistics>();
         for (i = 0; i < MinCoverages.length; i++) {
-            ssList.add(new SampleStatistics(strSamples, size()));
+            ssList.add(new SampleStatistics(size()));
         }
         for (Iterator it = this.iterator(); it.hasNext();) {
             int record = ssList.get(0).getNextRecord();
