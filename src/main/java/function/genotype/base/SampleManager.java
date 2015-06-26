@@ -635,6 +635,34 @@ public class SampleManager {
         }
     }
 
+    public static void initSampleIdSbs() {
+        for (Sample sample : sampleList) {
+            addToSampleIdSb(allSampleIdSb, sample.getId());
+
+            if (chgvSampleIdSet.contains(sample.getId())) {
+                if (sample.getType().equalsIgnoreCase("genome")) {
+                    addToSampleIdSb(genomeSampleIdSb, sample.getId());
+                } else {
+                    addToSampleIdSb(exomeSampleIdSb, sample.getId());
+                }
+            }
+        }
+
+        deleteLastComma(allSampleIdSb);
+        deleteLastComma(genomeSampleIdSb);
+        deleteLastComma(exomeSampleIdSb);
+    }
+
+    private static void addToSampleIdSb(StringBuilder sb, int id) {
+        sb.append("(").append(id).append(")").append(",");
+    }
+
+    private static void deleteLastComma(StringBuilder sb) {
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.lastIndexOf(","));
+        }
+    }
+
     private static void insertSampleId2Tables() {
         insertId2Table(allSampleIdSb.toString(), Data.ALL_SAMPLE_ID_TABLE);
         insertId2Table(genomeSampleIdSb.toString(), Data.GENOME_SAMPLE_ID_TABLE);
@@ -840,34 +868,6 @@ public class SampleManager {
             rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    public static void initSampleIdSbs() {
-        for (Sample sample : sampleList) {
-            addToSampleIdSb(allSampleIdSb, sample.getId());
-
-            if (chgvSampleIdSet.contains(sample.getId())) {
-                if (sample.getType().equalsIgnoreCase("genome")) {
-                    addToSampleIdSb(genomeSampleIdSb, sample.getId());
-                } else {
-                    addToSampleIdSb(exomeSampleIdSb, sample.getId());
-                }
-            }
-        }
-
-        deleteLastComma(allSampleIdSb);
-        deleteLastComma(genomeSampleIdSb);
-        deleteLastComma(exomeSampleIdSb);
-    }
-
-    private static void addToSampleIdSb(StringBuilder sb, int id) {
-        sb.append("(").append(id).append(")").append(",");
-    }
-
-    private static void deleteLastComma(StringBuilder sb) {
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.lastIndexOf(","));
         }
     }
 
