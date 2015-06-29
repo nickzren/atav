@@ -2,7 +2,6 @@ package utils;
 
 import global.Data;
 import java.io.*;
-import java.net.URL;
 import java.sql.*;
 import java.util.HashMap;
 
@@ -39,6 +38,10 @@ public class DBManager {
 
     public static void init() {
         try {
+            if (CommandValue.isNonDBAnalysis) {
+                return;
+            }
+
             Class.forName(DRIVER);
 
             initHostList();
@@ -58,15 +61,15 @@ public class DBManager {
         }
     }
 
-    private static void initHostList() {        
+    private static void initHostList() {
         String configPath = Data.DB_HOST_CONFIG_PATH;
 
         if (CommandValue.isDebug) {
             configPath = Data.RECOURCE_PATH + configPath;
         }
-        
+
         File f = new File(configPath);
-        
+
         try {
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(new FileInputStream(f));
@@ -108,7 +111,7 @@ public class DBManager {
         return null;
     }
 
-    public static ResultSet executeReadOnlyQuery(String sqlQuery) throws SQLException {
+    public static ResultSet executeReadOnlyQuery(String sqlQuery) throws SQLException {        
         return readOnlyStmt.executeQuery(sqlQuery);
     }
 

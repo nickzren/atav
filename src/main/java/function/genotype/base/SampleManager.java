@@ -58,35 +58,37 @@ public class SampleManager {
     public static HashSet<Integer> phs000473SampleIdSet = new HashSet<Integer>();
 
     public static void init() {
-        if (!CommandValue.isNonSampleAnalysis) {
-            checkSampleFile();
+        if (CommandValue.isNonSampleAnalysis) {
+            return;
+        }
 
-            initEvsIndelSampleIdSetFromAnnoDB();
+        checkSampleFile();
 
-            if (CommandValue.isAllSample) {
-                initAllSampleFromAnnoDB();
-            } else {
-                if (!CommandValue.sampleFile.isEmpty()) {
-                    initFromSampleFile();
-                }
+        initEvsIndelSampleIdSetFromAnnoDB();
 
-                if (!CommandValue.evsSample.isEmpty()) {
-                    initEvsSampleFromAnnoDB();
-                }
+        if (CommandValue.isAllSample) {
+            initAllSampleFromAnnoDB();
+        } else {
+            if (!CommandValue.sampleFile.isEmpty()) {
+                initFromSampleFile();
             }
 
-            initCovariate();
-
-            initQuantitative();
-
-            initSampleIndexAndSize();
-
-            initTempTables();
-
-            outputSampleList();
-
-            evsIndelSampleIdSet = null;
+            if (!CommandValue.evsSample.isEmpty()) {
+                initEvsSampleFromAnnoDB();
+            }
         }
+
+        initCovariate();
+
+        initQuantitative();
+
+        initSampleIndexAndSize();
+
+        initTempTables();
+
+        outputSampleList();
+
+        evsIndelSampleIdSet = null;
     }
 
     private static void checkSampleFile() {

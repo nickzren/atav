@@ -6,7 +6,6 @@ import utils.ErrorManager;
 import utils.CommandValue;
 import utils.LogManager;
 import temp.TempRange;
-import function.variant.base.Region;
 import global.Data;
 import java.io.*;
 import java.sql.ResultSet;
@@ -30,7 +29,11 @@ public class RegionManager {
     public static HashMap<String, ArrayList<TempRange>> phs000473RegionMap
             = new HashMap<String, ArrayList<TempRange>>();
 
-    public static void init() {
+    public static void init() {      
+        if (CommandValue.isNonDBAnalysis) {
+            return;
+        }
+        
         initIdChrMap();
 
         if (CommandValue.regionInput.isEmpty()) {

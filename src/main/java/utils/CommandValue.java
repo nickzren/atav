@@ -10,10 +10,14 @@ public class CommandValue {
 
     // common values
     public static boolean isDebug = false;
+    
+    public static boolean isNonDBAnalysis = false;
+    
     //    public static boolean isDebug = true;
     public static String outputPath = "";
     public static String realOutputPath = "";
     public static String outputDirName = "";
+
     // variant genotype base analysis function
     public static boolean isPedMap = false;
     public static boolean isFisher = false;
@@ -176,4 +180,11 @@ public class CommandValue {
 
     // hidden option for slave
     public static boolean isFlipMaf = false;
+    
+    // PPI
+    public static boolean isPPI = false;
+    public static String ppiExclude = "#N/A";
+    public static String ppiFile = "";
+    public static String ppiGenotypeFile = "";
+    public static int ppiPermutaitons = 100;
 }

@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import function.annotation.base.Annotation;
 import function.variant.base.Region;
 import function.coverage.base.Gene;
 import global.Data;
@@ -28,7 +27,7 @@ public class GeneManager {
     private static HashMap<String, String> genenStableIdNmNpMap = new HashMap<String, String>();
     private static boolean isUsed = false;
 
-    public static void init() throws Exception {
+    public static void init() throws Exception {   
         initGeneName();
 
         initGeneBoundaries();

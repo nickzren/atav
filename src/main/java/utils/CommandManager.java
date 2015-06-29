@@ -28,7 +28,7 @@ public class CommandManager {
 
     private static void initCommand4Debug() {
         String cmd = "";
-
+        
         optionArray = cmd.split("\\s+");
     }
 
@@ -333,6 +333,10 @@ public class CommandManager {
                 CommandValue.isSiblingCompHet = true;
             } else if (option.getName().equals("--parental-mosaic")) {
                 CommandValue.isParentalMosaic = true;
+            } else if (option.getName().equals("--ppi")) {
+                CommandValue.isPPI = true;
+                CommandValue.isNonDBAnalysis = true;
+                CommandValue.isNonSampleAnalysis = true;
             } else {
                 continue;
             }
@@ -955,10 +959,31 @@ public class CommandManager {
                 CommandValue.minChildBinomial = getValidDouble(option);
             } else if (option.getName().equals("--max-parent-binomial")) {
                 CommandValue.maxParentBinomial = getValidDouble(option);
-            }else {
+            } else {
                 continue;
             }
 
+            iterator.remove();
+        }
+    }
+
+    private static void initPPI() {
+        Iterator<CommandOption> iterator = optionList.iterator();
+        CommandOption option;
+
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            if (option.getName().equals("--exclude")) {
+                CommandValue.ppiExclude = option.getValue();
+            } else if (option.getName().equals("--ppi-file")) {
+                CommandValue.ppiFile = getValidPath(option);
+            } else if (option.getName().equals("--geno")) {
+                CommandValue.ppiGenotypeFile = getValidPath(option);
+            } else if (option.getName().equals("--perm")) {
+                CommandValue.ppiPermutaitons = getValidInteger(option);
+            } else {
+                continue;
+            }
             iterator.remove();
         }
     }
@@ -998,6 +1023,8 @@ public class CommandManager {
             initKnownVar();
         } else if (CommandValue.isParentalMosaic) {
             initParentalMosaic();
+        } else if (CommandValue.isPPI) {
+            initPPI();
         }
 
     }
