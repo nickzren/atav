@@ -25,11 +25,11 @@ public class VariantManager {
     private static ArrayList<String> includeVariantTypeList = new ArrayList<String>();
     private static ArrayList<String> includeChrList = new ArrayList<String>();
 
-    private static HashSet<Integer> outputVariantIdSet = new HashSet<Integer>();
-
+//    private static HashSet<Integer> outputSnvIdSet = new HashSet<Integer>();
+//    private static HashSet<Integer> outputIndelIdSet = new HashSet<Integer>();
     private static final int maxIncludeNum = 10000000;
 
-    public static void init() throws FileNotFoundException, Exception, SQLException {        
+    public static void init() throws FileNotFoundException, Exception, SQLException {
         init(CommandValue.includeVariantId, includeVariantSet, true);
 
         init(CommandValue.excludeVariantId, excludeVariantSet, false);
@@ -211,12 +211,7 @@ public class VariantManager {
         } else {
             if (includeVariantSet.contains(var.getVariantIdStr())
                     || includeVariantSet.contains(var.getRsNumber())) {
-                if (outputVariantIdSet.contains(var.getVariantId())) {
-                    return false;
-                } else {
-                    outputVariantIdSet.add(var.getVariantId());
-                    return true;
-                }
+                return true;
             } else {
                 return false;
             }
