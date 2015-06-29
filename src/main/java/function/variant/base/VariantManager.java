@@ -25,8 +25,6 @@ public class VariantManager {
     private static ArrayList<String> includeVariantTypeList = new ArrayList<String>();
     private static ArrayList<String> includeChrList = new ArrayList<String>();
 
-//    private static HashSet<Integer> outputSnvIdSet = new HashSet<Integer>();
-//    private static HashSet<Integer> outputIndelIdSet = new HashSet<Integer>();
     private static final int maxIncludeNum = 10000000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
