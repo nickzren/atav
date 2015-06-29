@@ -34,7 +34,7 @@ public class PPI {
 
     BufferedWriter bwPPI = null;
     final String outputFilePath = CommandValue.outputPath + "ppi.csv";
-    final String bioGridFilePath = "data/ppi/BioGrid.csv"; // default bio grid file 
+    final String bioGridFilePath = "data/BioGrid.csv"; // default bio grid file 
 
     public void run() {
         try {
