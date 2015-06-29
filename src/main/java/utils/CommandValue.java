@@ -183,7 +183,6 @@ public class CommandValue {
     
     // PPI
     public static boolean isPPI = false;
-    public static double ppiOptionExample = Data.NO_FILTER;
     public static String ppiExclude = "#N/A";
     public static String ppiFile = "";
     public static String ppiGenotypeFile = "";
