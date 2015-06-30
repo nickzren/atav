@@ -5,6 +5,7 @@ import function.genotype.family.FamilyManager;
 import global.Data;
 import function.external.evs.EvsManager;
 import function.variant.base.RegionManager;
+import global.Index;
 import temp.TempRange;
 import utils.CommandValue;
 import utils.FormatManager;
@@ -45,10 +46,22 @@ public class CalledVariant extends AnnotatedVariant {
 
             initCalledInfo();
 
-            evsEaCarrierMap = null;
-            evsAaCarrierMap = null;
-            noncarrierMap = null;
+            checkValid();
+
+            clear();
         }
+    }
+
+    private void clear() { // free memory
+        evsEaCarrierMap = null;
+        evsAaCarrierMap = null;
+        noncarrierMap = null;
+    }
+
+    private void checkValid() {
+        int value = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
+
+        isValid = QualityManager.isMaxQcFailSampleValid(value);
     }
 
     // temp hack solution - phs000473 coverage restriction

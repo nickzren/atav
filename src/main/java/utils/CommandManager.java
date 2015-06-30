@@ -28,7 +28,7 @@ public class CommandManager {
 
     private static void initCommand4Debug() {
         String cmd = "";
-        
+
         optionArray = cmd.split("\\s+");
     }
 
@@ -526,6 +526,9 @@ public class CommandManager {
                 CommandValue.isFlipMaf = true;
             } else if (option.getName().equals("--include-qc-missing")) {
                 CommandValue.isQcMissingIncluded = true;
+            } else if (option.getName().equals("--max-qc-fail-sample")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                CommandValue.maxQcFailSample = getValidInteger(option);
             } else {
                 continue;
             }

@@ -471,4 +471,16 @@ public class QualityManager {
 
         return false;
     }
+
+    public static boolean isMaxQcFailSampleValid(int value) {
+        if (CommandValue.maxQcFailSample == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value < CommandValue.maxQcFailSample) {
+            return true;
+        }
+
+        return false;
+    }
 }

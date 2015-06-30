@@ -104,6 +104,8 @@ public class CommandValue {
     public static int minHomCaseRec = Data.NO_FILTER; // collasping, fisher, linear
     public static double minCscore = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
+    
+    public static int maxQcFailSample = Data.NO_FILTER;
 
     // ped map
     public static boolean isVariantIdOnly = false;
