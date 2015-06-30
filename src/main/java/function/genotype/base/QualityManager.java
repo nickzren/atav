@@ -477,7 +477,7 @@ public class QualityManager {
             return true;
         }
 
-        if (value < CommandValue.maxQcFailSample) {
+        if (value <= CommandValue.maxQcFailSample) {
             return true;
         }
 
