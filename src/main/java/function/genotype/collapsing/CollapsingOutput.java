@@ -185,21 +185,17 @@ public class CollapsingOutput extends Output implements Comparable {
      */
     @Override
     public boolean isQualifiedGeno(int geno) {
-        if (CommandValue.isIncludeAllGeno) {
-            return true;
-        } else {
-            if (CommandValue.isRecessive && geno == 1) { // just for collapsing function now
-                return false;
-            }
+        if (CommandValue.isRecessive && geno == 1) { // just for collapsing function now
+            return false;
+        }
 
-            if (isMinorRef && !CommandValue.isAllNonRef) {
-                if (geno == 0 || geno == 1) {
-                    return true;
-                }
-            } else {
-                if (geno == 2 || geno == 1) {
-                    return true;
-                }
+        if (isMinorRef && !CommandValue.isAllNonRef) {
+            if (geno == 0 || geno == 1) {
+                return true;
+            }
+        } else {
+            if (geno == 2 || geno == 1) {
+                return true;
             }
         }
 

@@ -10,14 +10,8 @@ import utils.CommandValue;
 public class QualityManager {
 
     public static boolean isMafValid(double value) {
-        if (CommandValue.isFlipMaf) {
-            if (value >= CommandValue.maf) {
-                return true;
-            }
-        } else {
-            if (value <= CommandValue.maf) {
-                return true;
-            }
+        if (value <= CommandValue.maf) {
+            return true;
         }
 
         return false;
@@ -28,11 +22,7 @@ public class QualityManager {
             return true;
         }
 
-        if (CommandValue.isFlipMaf) {
-            if (value >= CommandValue.maf) {
-                return true;
-            }
-        } else if (value <= CommandValue.maf4Recessive) {
+        if (value <= CommandValue.maf4Recessive) {
             return true;
         }
 

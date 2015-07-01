@@ -1,17 +1,11 @@
 package function.external.knownvar;
 
-import function.external.knownvar.KnownVarOutput;
 import function.AnalysisBase;
 import function.variant.base.VariantManager;
 import utils.CommandValue;
 import utils.ErrorManager;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 
 /**
  *
@@ -62,11 +56,7 @@ public class ListKnownVar extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-            if (!VariantManager.getIncludeVariantList().isEmpty()) {
-                listByVariantList();
-            } else if (!CommandValue.variantInputFile.isEmpty()) {
-                listByVariantInputFile();
-            }
+            listByVariantList();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -80,41 +70,6 @@ public class ListKnownVar extends AnalysisBase {
             KnownVarOutput output = new KnownVarOutput(variantId);
 
             bwKnownVar.write(variantId + ",");
-            bwKnownVar.write(output.toString());
-            bwKnownVar.newLine();
-
-            countVariant();
-        }
-    }
-
-    private void listByVariantInputFile() throws Exception {
-        String lineStr = "";
-
-        File f = new File(CommandValue.variantInputFile);
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-        boolean isHeader = true;
-
-        while ((lineStr = br.readLine()) != null) {
-            if (isHeader) {
-                isHeader = false;
-                bwKnownVar.write(lineStr + ",");
-                bwKnownVar.write(KnownVarOutput.title);
-                bwKnownVar.newLine();
-                continue;
-            }
-
-            if (lineStr.isEmpty()) {
-                continue;
-            }
-
-            String variantId = lineStr.substring(0, lineStr.indexOf(","));
-
-            KnownVarOutput output = new KnownVarOutput(variantId);
-
-            bwKnownVar.write(lineStr + ",");
             bwKnownVar.write(output.toString());
             bwKnownVar.newLine();
 

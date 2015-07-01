@@ -111,7 +111,6 @@ public class CommandValue {
     //
     // list evs
     public static boolean isListEvs = false;
-    public static String variantInputFile = "";
 
     // list exac
     public static boolean isListExac = false;
@@ -144,6 +143,7 @@ public class CommandValue {
     public static boolean isExcludeArtifacts = false;
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
+    public static String evsMafPop = "all";
     public static double evsMaf = Data.NO_FILTER;
     public static double evsMhgf4Recessive = Data.NO_FILTER;
     public static boolean isOldEvsUsed = false;
@@ -166,9 +166,8 @@ public class CommandValue {
     // Genotype Level Filter Options
     public static String sampleFile = "";
     public static boolean isAllSample = false;
-    public static String evsSample = "";
-    public static String evsMafPop = "all";
     public static boolean isAllNonRef = false;
+    public static String evsSample = "";
     public static double maf = 0.5;
     public static double ctrlMaf = 0.5;
     public static double maf4Recessive = Data.NO_FILTER;
@@ -193,9 +192,4 @@ public class CommandValue {
     public static double mapQualRankSum = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
-
-    // hidden option for slave / below two options needs to be removed soon
-    public static boolean isFlipMaf = false;
-    public static boolean isIncludeAllGeno = false;
-
 }

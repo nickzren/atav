@@ -4,13 +4,8 @@ import function.AnalysisBase;
 import function.variant.base.VariantManager;
 import utils.CommandValue;
 import utils.ErrorManager;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 
 /**
  *
@@ -27,6 +22,8 @@ public class ListEvs extends AnalysisBase {
     public void initOutput() {
         try {
             bwEvs = new BufferedWriter(new FileWriter(evsFilePath));
+            bwEvs.write(EvsOutput.title);
+            bwEvs.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -61,63 +58,17 @@ public class ListEvs extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-            if (!VariantManager.getIncludeVariantList().isEmpty()) {
-                listByVariantList();
-            } else if (!CommandValue.variantInputFile.isEmpty()) {
-                listByVariantInputFile();
+            for (String variantId : VariantManager.getIncludeVariantList()) {
+                EvsOutput output = new EvsOutput(variantId);
+
+                bwEvs.write(variantId + ",");
+                bwEvs.write(output.toString());
+                bwEvs.newLine();
+
+                countVariant();
             }
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    private void listByVariantList() throws Exception {
-        bwEvs.write(EvsOutput.title);
-        bwEvs.newLine();
-
-        for (String variantId : VariantManager.getIncludeVariantList()) {
-            EvsOutput output = new EvsOutput(variantId);
-
-            bwEvs.write(variantId + ",");
-            bwEvs.write(output.toString());
-            bwEvs.newLine();
-
-            countVariant();
-        }
-    }
-
-    private void listByVariantInputFile() throws Exception {
-        String lineStr = "";
-
-        File f = new File(CommandValue.variantInputFile);
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-        boolean isHeader = true;
-
-        while ((lineStr = br.readLine()) != null) {
-            if (isHeader) {
-                isHeader = false;
-                bwEvs.write(lineStr + ",");
-                bwEvs.write(EvsOutput.title);
-                bwEvs.newLine();
-                continue;
-            }
-
-            if (lineStr.isEmpty()) {
-                continue;
-            }
-
-            String variantId = lineStr.substring(0, lineStr.indexOf(","));
-
-            EvsOutput output = new EvsOutput(variantId);
-
-            bwEvs.write(lineStr + ",");
-            bwEvs.write(output.toString());
-            bwEvs.newLine();
-
-            countVariant();
         }
     }
 
@@ -129,6 +80,6 @@ public class ListEvs extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running a list evs function...";
+        return "It is running list evs function...";
     }
 }

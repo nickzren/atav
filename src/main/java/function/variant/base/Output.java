@@ -52,7 +52,7 @@ public class Output implements Cloneable {
     public void countSampleGenoCov() {
         int cov, geno, pheno;
 
-        for (Sample sample : SampleManager.getList()) {           
+        for (Sample sample : SampleManager.getList()) {
             try {
                 cov = calledVar.getCoverage(sample.getIndex());
                 geno = calledVar.getGenotype(sample.getIndex());
@@ -336,17 +336,13 @@ public class Output implements Cloneable {
      * major then only hom & het are qualified samples.
      */
     public boolean isQualifiedGeno(int geno) {
-        if (CommandValue.isIncludeAllGeno) {
-            return true;
+        if (isMinorRef && !CommandValue.isAllNonRef) {
+            if (geno == 0 || geno == 1) {
+                return true;
+            }
         } else {
-            if (isMinorRef && !CommandValue.isAllNonRef) {
-                if (geno == 0 || geno == 1) {
-                    return true;
-                }
-            } else {
-                if (geno == 2 || geno == 1) {
-                    return true;
-                }
+            if (geno == 2 || geno == 1) {
+                return true;
             }
         }
 
