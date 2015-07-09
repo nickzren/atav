@@ -8,9 +8,8 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
-import function.genotype.base.QualityManager;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
-import utils.CommandValue;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -111,17 +110,17 @@ public class ParentalOutput extends Output {
     private boolean isChildQdValid() {
         float value = Data.NA;
 
-        if (CommandValue.childQD != Data.NO_FILTER) {
+        if (ParentalCommand.childQD != Data.NO_FILTER) {
             value = calledVar.getQualByDepthQD(child.getId());
         }
 
-        return QualityManager.isChildQdValid(value);
+        return ParentalCommand.isChildQdValid(value);
     }
 
     private boolean isChildHetPercentAltReadValid() {
         double percAltRead = Data.NA;
 
-        if (CommandValue.childHetPercentAltRead != null
+        if (ParentalCommand.childHetPercentAltRead != null
                 && childGeno == 1) {
             int readsAlt = calledVar.getReadsAlt(child.getId());
             int gatkFilteredCoverage = calledVar.getGatkFilteredCoverage(child.getId());
@@ -129,7 +128,7 @@ public class ParentalOutput extends Output {
             percAltRead = FormatManager.devide(readsAlt, gatkFilteredCoverage);
         }
 
-        return QualityManager.isChildHetPercentAltReadValid(percAltRead);
+        return ParentalCommand.isChildHetPercentAltReadValid(percAltRead);
     }
 
     private boolean isChildBinomialValid() {
@@ -142,7 +141,7 @@ public class ParentalOutput extends Output {
             childBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
         }
 
-        return QualityManager.isChildBinomialValid(childBinomial);
+        return ParentalCommand.isChildBinomialValid(childBinomial);
     }
 
     public boolean isParentValid(Sample parent) {
@@ -164,7 +163,7 @@ public class ParentalOutput extends Output {
             parentBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
         }
 
-        return QualityManager.isParentBinomialValid(parentBinomial);
+        return ParentalCommand.isParentBinomialValid(parentBinomial);
     }
 
     public String getString() {
@@ -221,7 +220,7 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(child.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(child.getId()))).append(",");
 
-        if (CommandValue.isOldEvsUsed) {
+        if (VariantLevelFilterCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

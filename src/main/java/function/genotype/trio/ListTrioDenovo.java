@@ -2,7 +2,7 @@ package function.genotype.trio;
 
 import function.genotype.base.CalledVariant;
 import function.genotype.base.AnalysisBase4CalledVar;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -16,9 +16,9 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
     BufferedWriter bwDetails = null;
     BufferedWriter bwDetails_noflag = null;
     BufferedWriter bwSummary = null;
-    final String flagFilePath = CommandValue.outputPath + "denovoandhom.csv";
-    final String noFlagFilePath = CommandValue.outputPath + "denovoandhom_noflag.csv";
-    final String summaryFilePath = CommandValue.outputPath + "summary.csv";
+    final String flagFilePath = CommonCommand.outputPath + "denovoandhom.csv";
+    final String noFlagFilePath = CommonCommand.outputPath + "denovoandhom_noflag.csv";
+    final String summaryFilePath = CommonCommand.outputPath + "summary.csv";
 
     @Override
     public void initOutput() {
@@ -27,7 +27,7 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
             bwDetails.write(DenovoOutput.title);
             bwDetails.newLine();
 
-            if (CommandValue.isIncludeNoflag) {
+            if (TrioCommand.isIncludeNoflag) {
                 bwDetails_noflag = new BufferedWriter(new FileWriter(noFlagFilePath));
                 bwDetails_noflag.write(DenovoOutput.title);
                 bwDetails_noflag.newLine();
@@ -53,7 +53,7 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
             bwSummary.flush();
             bwSummary.close();
 
-            if (CommandValue.isIncludeNoflag) {
+            if (TrioCommand.isIncludeNoflag) {
                 bwDetails_noflag.flush();
                 bwDetails_noflag.close();
             }
@@ -144,7 +144,7 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
         if (!output.flag.equals("no flag") && !output.flag.equals("unknown")) {
             bwDetails.write(output.getString(trio));
             bwDetails.newLine();
-        } else if (CommandValue.isIncludeNoflag) {
+        } else if (TrioCommand.isIncludeNoflag) {
             bwDetails_noflag.write(output.getString(trio));
             bwDetails_noflag.newLine();
         }

@@ -3,7 +3,7 @@ package function.variant.base;
 import utils.FormatManager;
 import utils.DBManager;
 import utils.ErrorManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.LogManager;
 import temp.TempRange;
 import global.Data;
@@ -30,26 +30,26 @@ public class RegionManager {
             = new HashMap<String, ArrayList<TempRange>>();
 
     public static void init() {      
-        if (CommandValue.isNonDBAnalysis) {
+        if (CommonCommand.isNonDBAnalysis) {
             return;
         }
         
         initIdChrMap();
 
-        if (CommandValue.regionInput.isEmpty()) {
+        if (CommonCommand.regionInput.isEmpty()) {
             initChrRegionList(Data.ALL_CHR);
         } else {
             isUsed = true;
 
-            File f = new File(CommandValue.regionInput);
+            File f = new File(CommonCommand.regionInput);
 
-            if (CommandValue.regionInput.equals("all")) {
+            if (CommonCommand.regionInput.equals("all")) {
                 initChrRegionList(Data.ALL_CHR);
             } else if (f.isFile()) {
                 initMultiChrRegionList(f);
             } else {
-                CommandValue.regionInput = CommandValue.regionInput.toLowerCase();
-                initChrRegionList(CommandValue.regionInput.split(","));
+                CommonCommand.regionInput = CommonCommand.regionInput.toLowerCase();
+                initChrRegionList(CommonCommand.regionInput.split(","));
             }
         }
 

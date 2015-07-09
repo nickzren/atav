@@ -7,7 +7,7 @@ import global.Data;
 import global.Index;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.LogManager;
@@ -23,7 +23,7 @@ import java.util.HashSet;
  */
 public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
-    final String comphetFilePath = CommandValue.outputPath + "comphet.csv";
+    final String comphetFilePath = CommonCommand.outputPath + "comphet.csv";
     BufferedWriter bwCompHet = null;
     ArrayList<CompHetOutput> outputList = new ArrayList<CompHetOutput>();
     ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<ArrayList<CompHetOutput>>();

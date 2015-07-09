@@ -4,7 +4,7 @@ import function.variant.base.Region;
 import global.Data;
 import global.SqlQuery;
 import function.annotation.base.GeneManager;
-import utils.CommandValue;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -232,7 +232,7 @@ public class Gene {
         String strQuery = "SELECT sample_id, coverage_ratio FROM gene_coverage_summary c,"
                 + Data.ALL_SAMPLE_ID_TABLE + " t "
                 + "WHERE gene = '" + name + "' AND c.sample_id = t.id "
-                + "AND min_coverage = " + CommandValue.minCoverage;
+                + "AND min_coverage = " + GenotypeLevelFilterCommand.minCoverage;
 
         try {
             ResultSet rs = DBManager.executeQuery(strQuery);

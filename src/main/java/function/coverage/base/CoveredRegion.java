@@ -4,8 +4,8 @@ import function.variant.base.Region;
 import global.Data;
 import global.SqlQuery;
 import function.external.evs.EvsManager;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -63,9 +63,9 @@ public class CoveredRegion extends Region {
             try {
                 ResultSet rs = DBManager.executeQuery(strQuery);
                 while (rs.next()) {
-                    if (CommandValue.evsSample.equals("ea")) {
+                    if (GenotypeLevelFilterCommand.evsSample.equals("ea")) {
                         totalcount += rs.getInt("EASampleCovered");
-                    } else if (CommandValue.evsSample.equals("aa")) {
+                    } else if (GenotypeLevelFilterCommand.evsSample.equals("aa")) {
                         totalcount += rs.getInt("AASampleCovered");
                     } else {
                         totalcountea += rs.getInt("EASampleCovered");
@@ -74,8 +74,10 @@ public class CoveredRegion extends Region {
                 }
                 rs.close();
 
-                if (CommandValue.evsSample.equals("ea") || CommandValue.evsSample.equals("aa")) {
-                    int averagecount = (int) (totalcount / EvsManager.getTotalEvsNum(CommandValue.evsSample));
+                if (GenotypeLevelFilterCommand.evsSample.equals("ea") || 
+                        GenotypeLevelFilterCommand.evsSample.equals("aa")) {
+                    int averagecount = (int) (totalcount / EvsManager.getTotalEvsNum(
+                            GenotypeLevelFilterCommand.evsSample));
                     if (averagecount > 0) {
                         for (Iterator<Integer> iter = SampleManager.getEvsSampleIdSet().iterator(); iter.hasNext();) {
                             int sample_id = iter.next();
@@ -225,7 +227,7 @@ public class CoveredRegion extends Region {
     public int[] CalculateCoverageForSites(String strQuery) {
         int SiteStart = getStartPosition();
         int[] result = new int[getLength()];
-        int min_coverage = CommandValue.minCoverage;
+        int min_coverage = GenotypeLevelFilterCommand.minCoverage;
         if (!strQuery.isEmpty()) {
             try {
                 ResultSet rs = DBManager.executeQuery(strQuery);

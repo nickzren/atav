@@ -1,8 +1,10 @@
 package function.genotype.base;
 
+import function.genotype.collapsing.CollapsingCommand;
+import function.genotype.statistics.StatisticsCommand;
 import function.variant.base.Variant;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -58,7 +60,7 @@ public class SampleManager {
     public static HashSet<Integer> phs000473SampleIdSet = new HashSet<Integer>();
 
     public static void init() {
-        if (CommandValue.isNonSampleAnalysis) {
+        if (CommonCommand.isNonSampleAnalysis) {
             return;
         }
 
@@ -66,14 +68,14 @@ public class SampleManager {
 
         initEvsIndelSampleIdSetFromAnnoDB();
 
-        if (CommandValue.isAllSample) {
+        if (GenotypeLevelFilterCommand.isAllSample) {
             initAllSampleFromAnnoDB();
         } else {
-            if (!CommandValue.sampleFile.isEmpty()) {
+            if (!GenotypeLevelFilterCommand.sampleFile.isEmpty()) {
                 initFromSampleFile();
             }
 
-            if (!CommandValue.evsSample.isEmpty()) {
+            if (!GenotypeLevelFilterCommand.evsSample.isEmpty()) {
                 initEvsSampleFromAnnoDB();
             }
         }
@@ -92,9 +94,9 @@ public class SampleManager {
     }
 
     private static void checkSampleFile() {
-        if (CommandValue.sampleFile.isEmpty()
-                && !CommandValue.isAllSample
-                && CommandValue.evsSample.isEmpty()) {
+        if (GenotypeLevelFilterCommand.sampleFile.isEmpty()
+                && !GenotypeLevelFilterCommand.isAllSample
+                && GenotypeLevelFilterCommand.evsSample.isEmpty()) {
             ErrorManager.print("Please specify your sample file: --sample $PATH");
         }
     }
@@ -147,7 +149,7 @@ public class SampleManager {
         int lineNum = 0;
 
         try {
-            File f = new File(CommandValue.sampleFile);
+            File f = new File(GenotypeLevelFilterCommand.sampleFile);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -234,8 +236,8 @@ public class SampleManager {
 
         String evsPop = ""; // all
 
-        if (!CommandValue.evsSample.equals("all")) {
-            evsPop = CommandValue.evsSample;
+        if (!GenotypeLevelFilterCommand.evsSample.equals("all")) {
+            evsPop = GenotypeLevelFilterCommand.evsSample;
         }
 
         String sqlCode = "SELECT * FROM sample s, sample_pipeline_step p "
@@ -374,7 +376,7 @@ public class SampleManager {
     }
 
     private static void initCovariate() {
-        if (CommandValue.covariateFile.isEmpty()) {
+        if (StatisticsCommand.covariateFile.isEmpty()) {
             return;
         }
 
@@ -382,7 +384,7 @@ public class SampleManager {
         int lineNum = 0;
 
         try {
-            File f = new File(CommandValue.covariateFile);
+            File f = new File(StatisticsCommand.covariateFile);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -430,7 +432,7 @@ public class SampleManager {
     }
 
     private static void initQuantitative() {
-        if (CommandValue.quantitativeFile.isEmpty()) {
+        if (StatisticsCommand.quantitativeFile.isEmpty()) {
             return;
         }
 
@@ -438,7 +440,7 @@ public class SampleManager {
         int lineNum = 0;
 
         try {
-            File f = new File(CommandValue.quantitativeFile);
+            File f = new File(StatisticsCommand.quantitativeFile);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -486,10 +488,10 @@ public class SampleManager {
     }
 
     public static void generateCovariateFile() {
-        if (CommandValue.isCollapsingDoLogistic
-                || CommandValue.isCollapsingDoLinear) {
+        if (CollapsingCommand.isCollapsingDoLogistic
+                || CollapsingCommand.isCollapsingDoLinear) {
             try {
-                tempCovarFile = CommandValue.outputPath + "covariate.txt";
+                tempCovarFile = CommonCommand.outputPath + "covariate.txt";
 
                 BufferedWriter bwCov = new BufferedWriter(new FileWriter(tempCovarFile));
 
@@ -509,9 +511,9 @@ public class SampleManager {
                     bwCov.write(sample.getFamilyId() + "\t"
                             + sample.getName() + "\t");
 
-                    if (CommandValue.isCollapsingDoLogistic) {
+                    if (CollapsingCommand.isCollapsingDoLogistic) {
                         bwCov.write(String.valueOf((int) (sample.getPheno() + 1)));
-                    } else if (CommandValue.isCollapsingDoLinear) {
+                    } else if (CollapsingCommand.isCollapsingDoLinear) {
                         bwCov.write(String.valueOf(sample.getQuantitativeTrait()));
                     }
 
@@ -816,8 +818,8 @@ public class SampleManager {
 
                     if (!carrierMap.containsKey(noncarrier.getSampleId())) {
 
-                        noncarrier.checkCoverageFilter(CommandValue.minCaseCoverageNoCall,
-                                CommandValue.minCtrlCoverageNoCall);
+                        noncarrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
+                                GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
 
                         noncarrier.checkValidOnXY(var);
 
@@ -852,8 +854,8 @@ public class SampleManager {
                 Carrier carrier = new Carrier();
                 carrier.init(rs);
 
-                carrier.checkCoverageFilter(CommandValue.minCaseCoverageCall,
-                        CommandValue.minCtrlCoverageCall);
+                carrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
+                        GenotypeLevelFilterCommand.minCtrlCoverageCall);
 
                 carrier.checkQualityFilter();
 

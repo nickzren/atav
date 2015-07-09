@@ -6,7 +6,7 @@ import global.Data;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.FormatManager;
 import utils.ThirdPartyToolManager;
 import java.io.BufferedReader;
@@ -176,13 +176,13 @@ public class CollapsingSummary implements Comparable {
 
     public static void calculateLinearAndLogisticP(String geneSampleMatrixFilePath,
             Hashtable<String, CollapsingSummary> summaryTable) throws Exception {
-        String geneLogisticPPath = CommandValue.outputPath + "gene.logistic.p.csv";
-        String geneLinearPPath = CommandValue.outputPath + "gene.linear.p.csv";
+        String geneLogisticPPath = CommonCommand.outputPath + "gene.logistic.p.csv";
+        String geneLinearPPath = CommonCommand.outputPath + "gene.linear.p.csv";
 
-        if (CommandValue.isCollapsingDoLogistic) {
+        if (CollapsingCommand.isCollapsingDoLogistic) {
             calculateRegression(geneSampleMatrixFilePath,
                     summaryTable, geneLogisticPPath, "logistf");
-        } else if (CommandValue.isCollapsingDoLinear) {
+        } else if (CollapsingCommand.isCollapsingDoLinear) {
             calculateRegression(geneSampleMatrixFilePath,
                     summaryTable, geneLinearPPath, "linear");
         }

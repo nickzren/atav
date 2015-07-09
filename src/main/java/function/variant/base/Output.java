@@ -1,13 +1,13 @@
 package function.variant.base;
 
 import function.genotype.base.CalledVariant;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import function.genotype.statistics.HWEExact;
 import global.Data;
 import global.Index;
-import function.genotype.base.QualityManager;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import function.genotype.collapsing.CollapsingCommand;
 import utils.FormatManager;
 import utils.LogManager;
 
@@ -52,7 +52,7 @@ public class Output implements Cloneable {
     public void countSampleGenoCov() {
         int cov, geno, pheno;
 
-        for (Sample sample : SampleManager.getList()) {           
+        for (Sample sample : SampleManager.getList()) {
             try {
                 cov = calledVar.getCoverage(sample.getIndex());
                 geno = calledVar.getGenotype(sample.getIndex());
@@ -116,13 +116,7 @@ public class Output implements Cloneable {
 
         calculateSampleFreq();
 
-        if (CommandValue.isCollapsingSingleVariant
-                || CommandValue.isFisher
-                || CommandValue.isLinear
-                || CommandValue.isListVarGeno
-                || CommandValue.isFamilyAnalysis) {
-            calculateHweP();
-        }
+        calculateHweP(); // only collapsing, fisher, linear, var geno, family output
 
         calculateAvgCov();
 
@@ -307,12 +301,12 @@ public class Output implements Cloneable {
     }
 
     public boolean isValid() {
-        if (QualityManager.isMinVarPresentValid(varPresent)
-                && QualityManager.isMinCaseCarrierValid(caseCarrier)) {
+        if (GenotypeLevelFilterCommand.isMinVarPresentValid(varPresent)
+                && GenotypeLevelFilterCommand.isMinCaseCarrierValid(caseCarrier)) {
             boolean isRecessive = isRecessive();
 
-            if (!CommandValue.isCollapsingSingleVariant
-                    && !CommandValue.isCollapsingCompHet) {
+            if (!CollapsingCommand.isCollapsingSingleVariant
+                    && !CollapsingCommand.isCollapsingCompHet) {
                 if (isCtrlMafValid(isRecessive)) {
                     if (isRecessive) {
                         if (isCtrlMhgf4RecessiveValid()
@@ -336,17 +330,13 @@ public class Output implements Cloneable {
      * major then only hom & het are qualified samples.
      */
     public boolean isQualifiedGeno(int geno) {
-        if (CommandValue.isIncludeAllGeno) {
-            return true;
+        if (isMinorRef && !GenotypeLevelFilterCommand.isAllNonRef) {
+            if (geno == 0 || geno == 1) {
+                return true;
+            }
         } else {
-            if (isMinorRef && !CommandValue.isAllNonRef) {
-                if (geno == 0 || geno == 1) {
-                    return true;
-                }
-            } else {
-                if (geno == 2 || geno == 1) {
-                    return true;
-                }
+            if (geno == 2 || geno == 1) {
+                return true;
             }
         }
 
@@ -371,14 +361,14 @@ public class Output implements Cloneable {
 
     public boolean isCtrlMafValid(boolean isRecessive) {
         if (isRecessive) {
-            return QualityManager.isMaf4RecessiveValid(ctrlMaf);
+            return GenotypeLevelFilterCommand.isMaf4RecessiveValid(ctrlMaf);
         } else {
-            return QualityManager.isMafValid(ctrlMaf);
+            return GenotypeLevelFilterCommand.isMafValid(ctrlMaf);
         }
     }
 
     public boolean isCtrlMhgf4RecessiveValid() {
-        if (QualityManager.isMhgf4RecessiveValid(ctrlMhgf)) {
+        if (GenotypeLevelFilterCommand.isMhgf4RecessiveValid(ctrlMhgf)) {
             return true;
         }
 

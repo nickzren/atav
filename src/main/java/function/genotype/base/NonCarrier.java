@@ -1,10 +1,10 @@
 package function.genotype.base;
 
+import function.genotype.trio.TrioCommand;
 import function.variant.base.Region;
 import function.variant.base.Variant;
 import function.genotype.trio.TrioManager;
 import global.Data;
-import utils.CommandValue;
 import java.sql.ResultSet;
 
 /**
@@ -86,19 +86,19 @@ public class NonCarrier {
 
         if (sample.isCase()) // --min-case-coverage-call or --min-case-coverage-no-call
         {
-            if (!QualityManager.isMinCoverageValid(coverage, minCaseCov)) {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(coverage, minCaseCov)) {
                 setMissing();
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
         {
-            if (!QualityManager.isMinCoverageValid(coverage, minCtrlCov)) {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(coverage, minCtrlCov)) {
                 setMissing();
             }
         }
     }
     
     public void setMissing() {
-        if (CommandValue.isTrioDenovo
+        if (TrioCommand.isTrioDenovo
                 && TrioManager.isParent(sampleId)) {
             // do nothing
         } else {

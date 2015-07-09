@@ -4,7 +4,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -18,8 +18,8 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     BufferedWriter bwDetails = null;
     BufferedWriter bwSampleVariantCount = null;
 
-    final String genotypesFilePath = CommandValue.outputPath + "genotypes.csv";
-    final String sampleVariantCountFilePath = CommandValue.outputPath + "sample.variant.count.csv";
+    final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
+    final String sampleVariantCountFilePath = CommonCommand.outputPath + "sample.variant.count.csv";
 
     @Override
     public void initOutput() {
@@ -99,7 +99,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     }
 
     private boolean isCaseOnlyValid(Sample sample) {
-        if (CommandValue.isCaseOnly) {
+        if (VarGenoCommand.isCaseOnly) {
             if (sample.isCase()) {
                 return true;
             } else {

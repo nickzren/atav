@@ -38,7 +38,7 @@ public class DBManager {
 
     public static void init() {
         try {
-            if (CommandValue.isNonDBAnalysis) {
+            if (CommonCommand.isNonDBAnalysis) {
                 return;
             }
 
@@ -64,7 +64,7 @@ public class DBManager {
     private static void initHostList() {
         String configPath = Data.DB_HOST_CONFIG_PATH;
 
-        if (CommandValue.isDebug) {
+        if (CommonCommand.isDebug) {
             configPath = Data.RECOURCE_PATH + configPath;
         }
 

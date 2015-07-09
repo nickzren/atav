@@ -2,8 +2,9 @@ package function.annotation.base;
 
 import function.variant.base.Region;
 import function.coverage.base.Gene;
+import function.genotype.collapsing.CollapsingCommand;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -40,18 +41,18 @@ public class GeneManager {
     }
 
     private static void initGeneName() throws Exception {
-        if (CommandValue.geneInput.isEmpty()) {
+        if (AnnotationLevelFilterCommand.geneInput.isEmpty()) {
             return;
         }
 
         isUsed = true;
 
-        File f = new File(CommandValue.geneInput);
+        File f = new File(AnnotationLevelFilterCommand.geneInput);
 
         if (f.isFile()) {
             initFromFile(f);
         } else {
-            String[] genes = CommandValue.geneInput.split(",");
+            String[] genes = AnnotationLevelFilterCommand.geneInput.split(",");
             for (String geneName : genes) {
                 HashSet<Gene> set = new HashSet<Gene>();
                 Gene gene = new Gene(geneName);
@@ -92,13 +93,13 @@ public class GeneManager {
     }
 
     private static void initGeneBoundaries() throws Exception {
-        if (CommandValue.geneBoundariesFile.isEmpty()) {
+        if (CollapsingCommand.geneBoundariesFile.isEmpty()) {
             return;
         }
 
         isUsed = true;
 
-        File f = new File(CommandValue.geneBoundariesFile);
+        File f = new File(CollapsingCommand.geneBoundariesFile);
         FileInputStream fstream = new FileInputStream(f);
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -178,7 +179,7 @@ public class GeneManager {
     private static void initArtifactsGeneMap() throws Exception {
         String artifactsGeneFile = Data.ARTIFACTS_GENE_PATH;
 
-        if (CommandValue.isDebug) {
+        if (CommonCommand.isDebug) {
             artifactsGeneFile = Data.RECOURCE_PATH + artifactsGeneFile;
         }
 
@@ -208,11 +209,11 @@ public class GeneManager {
     }
 
     public static void initCoverageSummary() throws Exception {
-        if (CommandValue.coverageSummaryFile.isEmpty()) {
+        if (CollapsingCommand.coverageSummaryFile.isEmpty()) {
             return;
         }
 
-        File f = new File(CommandValue.coverageSummaryFile);
+        File f = new File(CollapsingCommand.coverageSummaryFile);
         FileInputStream fstream = new FileInputStream(f);
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -251,7 +252,7 @@ public class GeneManager {
         try {
             String geneEnsemblFile = Data.GENE_ENSEMBL_PATH;
 
-            if (CommandValue.isDebug) {
+            if (CommonCommand.isDebug) {
                 geneEnsemblFile = Data.RECOURCE_PATH + geneEnsemblFile;
             }
 

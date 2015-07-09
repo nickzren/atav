@@ -3,7 +3,6 @@ package function.annotation.base;
 import function.variant.base.Region;
 import global.Data;
 import function.variant.base.RegionManager;
-import utils.CommandValue;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,8 +53,8 @@ public class Annotation {
     }
 
     public boolean isValid() {
-        if (PolyphenManager.isValid(polyphenHumdiv, function, CommandValue.polyphenHumdiv)
-                && PolyphenManager.isValid(polyphenHumvar, function, CommandValue.polyphenHumvar)
+        if (PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
+                && PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
                 && GeneManager.isValid(this)
                 && TranscriptManager.isValid(stableId)
                 && !function.isEmpty()) {

@@ -1,16 +1,17 @@
 package function.genotype.collapsing;
 
-import function.genotype.base.QualityManager;
 import function.external.evs.EvsManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.genotype.base.CalledVariant;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
+import function.genotype.statistics.StatisticsCommand;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
-import utils.CommandValue;
 import utils.FormatManager;
 
 /**
@@ -156,7 +157,7 @@ public class CollapsingOutput extends Output implements Comparable {
     public boolean isLooFreqValid() {
         boolean isRecessive = false;
 
-        if (CommandValue.isRecessive) {
+        if (CollapsingCommand.isRecessive) {
             isRecessive = isRecessive();
 
             if (!isRecessive) {
@@ -168,7 +169,7 @@ public class CollapsingOutput extends Output implements Comparable {
             if (isRecessive) {
                 if (isLooMhgf4RecessiveValid()
                         && calledVar.isEvsMhgfValid()
-                        && QualityManager.isMinHomCaseRecValid(minorHomCase)) {
+                        && StatisticsCommand.isMinHomCaseRecValid(minorHomCase)) {
                     return true;
                 }
             } else {
@@ -185,21 +186,17 @@ public class CollapsingOutput extends Output implements Comparable {
      */
     @Override
     public boolean isQualifiedGeno(int geno) {
-        if (CommandValue.isIncludeAllGeno) {
-            return true;
-        } else {
-            if (CommandValue.isRecessive && geno == 1) { // just for collapsing function now
-                return false;
-            }
+        if (CollapsingCommand.isRecessive && geno == 1) { // just for collapsing function now
+            return false;
+        }
 
-            if (isMinorRef && !CommandValue.isAllNonRef) {
-                if (geno == 0 || geno == 1) {
-                    return true;
-                }
-            } else {
-                if (geno == 2 || geno == 1) {
-                    return true;
-                }
+        if (isMinorRef && !GenotypeLevelFilterCommand.isAllNonRef) {
+            if (geno == 0 || geno == 1) {
+                return true;
+            }
+        } else {
+            if (geno == 2 || geno == 1) {
+                return true;
             }
         }
 
@@ -208,14 +205,14 @@ public class CollapsingOutput extends Output implements Comparable {
 
     public boolean isLooMafValid(boolean isRecessive) {
         if (isRecessive) {
-            return QualityManager.isMaf4RecessiveValid(looMaf);
+            return GenotypeLevelFilterCommand.isMaf4RecessiveValid(looMaf);
         } else {
-            return QualityManager.isMafValid(looMaf);
+            return GenotypeLevelFilterCommand.isMafValid(looMaf);
         }
     }
 
     public boolean isLooMhgf4RecessiveValid() {
-        if (QualityManager.isMhgf4RecessiveValid(looMhgf)) {
+        if (GenotypeLevelFilterCommand.isMhgf4RecessiveValid(looMhgf)) {
             return true;
         }
 
@@ -270,7 +267,7 @@ public class CollapsingOutput extends Output implements Comparable {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
 
-        if (CommandValue.isOldEvsUsed) {
+        if (VariantLevelFilterCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

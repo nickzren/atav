@@ -8,7 +8,7 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
-import utils.CommandValue;
+import function.variant.base.VariantLevelFilterCommand;
 import utils.FormatManager;
 
 /**
@@ -159,7 +159,7 @@ public class VarGenoOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
 
-        if (CommandValue.isOldEvsUsed) {
+        if (VariantLevelFilterCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

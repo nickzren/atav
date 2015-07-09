@@ -1,17 +1,12 @@
 package function.external.knownvar;
 
-import function.external.knownvar.KnownVarOutput;
 import function.AnalysisBase;
 import function.variant.base.VariantManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.IOException;
 
 /**
  *
@@ -19,15 +14,24 @@ import java.io.InputStreamReader;
  */
 public class ListKnownVar extends AnalysisBase {
 
-    BufferedWriter bwKnownVar = null;
-    final String knownVarFilePath = CommandValue.outputPath + "knownvar.csv";
+    BufferedWriter bwClinvar = null;
+    final String clinvarFilePath = CommonCommand.outputPath + "clinvar.csv";
+
+    BufferedWriter bwHGMD = null;
+    final String hgmdFilePath = CommonCommand.outputPath + "hgmd.csv";
 
     int analyzedRecords = 0;
 
     @Override
     public void initOutput() {
         try {
-            bwKnownVar = new BufferedWriter(new FileWriter(knownVarFilePath));
+            bwClinvar = new BufferedWriter(new FileWriter(clinvarFilePath));
+            bwClinvar.write(ClinvarOutput.title);
+            bwClinvar.newLine();
+
+            bwHGMD = new BufferedWriter(new FileWriter(hgmdFilePath));
+            bwHGMD.write(HGMDOutput.title);
+            bwHGMD.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -40,8 +44,10 @@ public class ListKnownVar extends AnalysisBase {
     @Override
     public void closeOutput() {
         try {
-            bwKnownVar.flush();
-            bwKnownVar.close();
+            bwClinvar.flush();
+            bwClinvar.close();
+            bwHGMD.flush();
+            bwHGMD.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -62,64 +68,21 @@ public class ListKnownVar extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-            if (!VariantManager.getIncludeVariantList().isEmpty()) {
-                listByVariantList();
-            } else if (!CommandValue.variantInputFile.isEmpty()) {
-                listByVariantInputFile();
+            for (String variantId : VariantManager.getIncludeVariantList()) {
+                doOutput(bwClinvar, new ClinvarOutput(variantId));
+
+                doOutput(bwHGMD, new HGMDOutput(variantId));
+
+                countVariant();
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    private void listByVariantList() throws Exception {
-        bwKnownVar.write(KnownVarOutput.title);
-        bwKnownVar.newLine();
-
-        for (String variantId : VariantManager.getIncludeVariantList()) {
-            KnownVarOutput output = new KnownVarOutput(variantId);
-
-            bwKnownVar.write(variantId + ",");
-            bwKnownVar.write(output.toString());
-            bwKnownVar.newLine();
-
-            countVariant();
-        }
-    }
-
-    private void listByVariantInputFile() throws Exception {
-        String lineStr = "";
-
-        File f = new File(CommandValue.variantInputFile);
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-        boolean isHeader = true;
-
-        while ((lineStr = br.readLine()) != null) {
-            if (isHeader) {
-                isHeader = false;
-                bwKnownVar.write(lineStr + ",");
-                bwKnownVar.write(KnownVarOutput.title);
-                bwKnownVar.newLine();
-                continue;
-            }
-
-            if (lineStr.isEmpty()) {
-                continue;
-            }
-
-            String variantId = lineStr.substring(0, lineStr.indexOf(","));
-
-            KnownVarOutput output = new KnownVarOutput(variantId);
-
-            bwKnownVar.write(lineStr + ",");
-            bwKnownVar.write(output.toString());
-            bwKnownVar.newLine();
-
-            countVariant();
-        }
+    private void doOutput(BufferedWriter bw, Output output) throws IOException {
+        bw.write(output.toString());
+        bw.newLine();
     }
 
     protected void countVariant() {
@@ -130,6 +93,8 @@ public class ListKnownVar extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running a list KnownVar function...";
+        return "It is running a list KnownVar function... \n\n"
+                + "clinvar table: " + ClinvarOutput.table + "\n\n"
+                + "hgmd table: " + HGMDOutput.table;
     }
 }

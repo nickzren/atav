@@ -3,7 +3,7 @@ package function.annotation.varanno;
 import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.AnalysisBase4AnnotatedVar;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,7 +15,7 @@ import java.io.FileWriter;
 public class ListVarAnno extends AnalysisBase4AnnotatedVar {
 
     BufferedWriter bwAnnotations = null;
-    final String annotationsFilePath = CommandValue.outputPath + "annotations.csv";
+    final String annotationsFilePath = CommonCommand.outputPath + "annotations.csv";
 
     @Override
     public void initOutput() {

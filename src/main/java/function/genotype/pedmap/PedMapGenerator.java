@@ -6,7 +6,7 @@ import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import utils.ThirdPartyToolManager;
@@ -30,17 +30,17 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     private static final String PLINK_HOME = "/nfs/goldstein/goldsteinlab/software/sh/plink";
     private static final String CHIP2PCA2_HOME = "/nfs/goldstein/goldsteinlab/software/sh/chip2pca2";
 
-    final String pedFile = CommandValue.outputPath + "output.ped";
-    final String mapFile = CommandValue.outputPath + "output.map";
-    final String tmpPedFile = CommandValue.outputPath + "output_tmp.ped";
+    final String pedFile = CommonCommand.outputPath + "output.ped";
+    final String mapFile = CommonCommand.outputPath + "output.map";
+    final String tmpPedFile = CommonCommand.outputPath + "output_tmp.ped";
 
-    final String chip2pcaDir = CommandValue.realOutputPath
+    final String chip2pcaDir = CommonCommand.realOutputPath
             + File.separator + "chip2pca";
     final String crDir = chip2pcaDir + File.separator
-            + CommandValue.outputDirName + "-cr";
+            + CommonCommand.outputDirName + "-cr";
 
     final String outputOpt = chip2pcaDir + File.separator
-            + CommandValue.outputDirName + ".opt";
+            + CommonCommand.outputDirName + ".opt";
 
     HashSet<String> outputIdSet = new HashSet<String>(); // include same pos of variantId and Rs number
     int sampleSize = SampleManager.getListSize();
@@ -77,7 +77,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        if (CommandValue.isEigenstrat) {
+        if (PedMapCommand.isEigenstrat) {
             doEigesntrat();
         }
     }
@@ -89,7 +89,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     @Override
     public void afterProcessDatabaseData() {
         // just to process the last site
-        if (CommandValue.isCombineMultiAlleles && !site.isEmpty() && !site.get(0).isIndel()) {
+        if (PedMapCommand.isCombineMultiAlleles && !site.isEmpty() && !site.get(0).isIndel()) {
             processSite();
         }
 
@@ -113,13 +113,13 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     private void doOutput(CalledVariant calledVar) {
         try {
-            if (calledVar.isIndel() || !CommandValue.isCombineMultiAlleles) {
+            if (calledVar.isIndel() || !PedMapCommand.isCombineMultiAlleles) {
                 String rs = calledVar.getRsNumber();
                 String varIdStr = calledVar.getVariantIdStr();
                 String outputId;
 
                 if (rs.equals("NA") || outputIdSet.contains(rs)
-                        || CommandValue.isVariantIdOnly) {
+                        || PedMapCommand.isVariantIdOnly) {
                     outputId = varIdStr;
                 } else {
                     outputId = rs;
@@ -163,7 +163,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     private String getOutputID() {
         String rs = site.get(0).getRsNumber();
         String outputId = "";
-        if (rs.equals("NA") || CommandValue.isVariantIdOnly) {
+        if (rs.equals("NA") || PedMapCommand.isVariantIdOnly) {
             outputId = site.get(0).getVariantIdStr();
             if (site.size() > 1) {
                 for (int i = 1; i < site.size(); i++) {
@@ -269,7 +269,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
                 String name = sample.getName();
 
-                if (CommandValue.isEigenstrat) {
+                if (PedMapCommand.isEigenstrat) {
                     name = String.valueOf(sample.getPrepId());
                 }
 
@@ -351,18 +351,18 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
         ThirdPartyToolManager.systemCall(new String[]{cmd});
 
-        cmd = PLINK_HOME + " --file " + CommandValue.outputPath + "output --recode12 "
+        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --recode12 "
                 + "--out " + crDir + File.separator + dir.getName();
 
         ThirdPartyToolManager.systemCall((new String[]{cmd}));
 
-        cmd = PLINK_HOME + " --file " + CommandValue.outputPath + "output --make-bed "
+        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --make-bed "
                 + "--out " + crDir + File.separator + dir.getName();
 
         ThirdPartyToolManager.systemCall((new String[]{cmd}));
 
         cmd = "cd " + chip2pcaDir + "; "
-                + CHIP2PCA2_HOME + " " + CommandValue.outputDirName + " snppca";
+                + CHIP2PCA2_HOME + " " + CommonCommand.outputDirName + " snppca";
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }

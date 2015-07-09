@@ -1,9 +1,10 @@
 package function.genotype.trio;
 
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -74,7 +75,7 @@ public class TrioManager {
     public static void initDenovoRules() {
         String trioRulesPath = Data.DENOVO_RULES_PATH;
 
-        if (CommandValue.isDebug) {
+        if (CommonCommand.isDebug) {
             trioRulesPath = Data.RECOURCE_PATH + trioRulesPath;
         }
 
@@ -162,8 +163,8 @@ public class TrioManager {
 
         if (Geno == Data.NA) { //missing
             sKey.append('0');
-        } else if (Cov >= CommandValue.minCoverage
-                || CommandValue.minCoverage == Data.NO_FILTER) {
+        } else if (Cov >= GenotypeLevelFilterCommand.minCoverage
+                || GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
             sKey.append('1');
         } else {
             sKey.append('2');

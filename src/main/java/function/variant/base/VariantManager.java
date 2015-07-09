@@ -3,7 +3,6 @@ package function.variant.base;
 import function.annotation.base.GeneManager;
 import global.Data;
 import global.SqlQuery;
-import utils.CommandValue;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -28,11 +27,11 @@ public class VariantManager {
     private static final int maxIncludeNum = 10000000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
-        init(CommandValue.includeVariantId, includeVariantSet, true);
+        init(VariantLevelFilterCommand.includeVariantId, includeVariantSet, true);
 
-        init(CommandValue.excludeVariantId, excludeVariantSet, false);
+        init(VariantLevelFilterCommand.excludeVariantId, excludeVariantSet, false);
 
-        if (CommandValue.isExcludeArtifacts) {
+        if (VariantLevelFilterCommand.isExcludeArtifacts) {
             init(Data.ARTIFACTS_Variant_PATH, excludeVariantSet, false);
         }
     }
@@ -231,12 +230,12 @@ public class VariantManager {
         try {
             if (type.equals(Data.VARIANT_TYPE[0])) // snv
             {
-                if (CommandValue.isExcludeSnv) {
+                if (VariantLevelFilterCommand.isExcludeSnv) {
                     return false;
                 }
             } else // indel
             {
-                if (CommandValue.isExcludeIndel) {
+                if (VariantLevelFilterCommand.isExcludeIndel) {
                     return false;
                 }
             }

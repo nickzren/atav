@@ -2,7 +2,7 @@ package function.external.flanking;
 
 import function.AnalysisBase;
 import function.variant.base.RegionManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.ThirdPartyToolManager;
@@ -23,8 +23,8 @@ public class ListFlankingSeq extends AnalysisBase {
 
     BufferedWriter bwUpdateFlankingSeq = null;
 
-    final String updateFlankingSeqFilePath = CommandValue.outputPath + "flanking_seq_annodb.csv";
-    final String baseFlankingSeqFilePath = CommandValue.outputPath;
+    final String updateFlankingSeqFilePath = CommonCommand.outputPath + "flanking_seq_annodb.csv";
+    final String baseFlankingSeqFilePath = CommonCommand.outputPath;
 
     @Override
     public void initOutput() {
@@ -110,8 +110,8 @@ public class ListFlankingSeq extends AnalysisBase {
     private String generateSql(String chr, int pos) {
         int regionId = RegionManager.getIdByChr(chr);
 
-        int seqStart = pos - CommandValue.width;
-        int seqEnd = pos + CommandValue.width;
+        int seqStart = pos - FlankingCommand.width;
+        int seqEnd = pos + FlankingCommand.width;
 
         String sql = "SELECT DISTINCT seq_region_pos"
                 + " FROM snv"
@@ -125,7 +125,7 @@ public class ListFlankingSeq extends AnalysisBase {
     private void updateFlankingSeqByOnePos(int pos,
             int varPos, StringBuilder leftSeqSb, StringBuilder rightSeqSb) {
         if (varPos < pos) {
-            int index = varPos - (pos - CommandValue.width);
+            int index = varPos - (pos - FlankingCommand.width);
 
             leftSeqSb.setCharAt(index, 'N');
         } else if (varPos > pos) {

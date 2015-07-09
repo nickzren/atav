@@ -7,8 +7,7 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
-import function.genotype.base.QualityManager;
-import utils.CommandValue;
+import function.variant.base.VariantLevelFilterCommand;
 import utils.FormatManager;
 import utils.LogManager;
 import java.util.ArrayList;
@@ -76,7 +75,7 @@ public class FisherOutput extends StatisticOutput {
 
         if (isValid()
                 && isCaseOnlyValid()
-                && QualityManager.isMinHomCaseRecValid(minorHomCase)) {
+                && StatisticsCommand.isMinHomCaseRecValid(minorHomCase)) {
             return true;
         }
 
@@ -84,7 +83,7 @@ public class FisherOutput extends StatisticOutput {
     }
 
     boolean isCaseOnlyValid() {
-        if (CommandValue.isCaseOnly) {
+        if (StatisticsCommand.isCaseOnly) {
             if (isMinorRef) {
                 if ((sampleCount[Index.HET][Index.CASE]
                         + sampleCount[Index.REF][Index.CASE]
@@ -139,7 +138,7 @@ public class FisherOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(averageCov[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
         
-        if (CommandValue.isOldEvsUsed) {
+        if (VariantLevelFilterCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

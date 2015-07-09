@@ -7,7 +7,7 @@ import function.genotype.base.AnalysisBase4CalledVar;
 import function.coverage.base.Gene;
 import function.annotation.base.GeneManager;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import utils.ThirdPartyToolManager;
@@ -27,12 +27,12 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     BufferedWriter bwGeneSampleMatrix = null;
     BufferedWriter bwSummary = null;
     BufferedWriter bwSampleVariantCount = null;
-    final String geneSampleMatrixFilePath = CommandValue.outputPath + "gene.sample.matrix.txt";
-    final String summaryFilePath = CommandValue.outputPath + "summary.csv";
-    final String sampleVariantCountFilePath = CommandValue.outputPath + "sample.variant.count.csv";
-    final String fetPQQPlotPath = CommandValue.outputPath + "summary.fet.p.qq.plot.pdf";
-    final String linearPQQPlotPath = CommandValue.outputPath + "summary.linear.p.qq.plot.pdf";
-    final String logisticPQQPlotPath = CommandValue.outputPath + "summary.logistic.p.qq.plot.pdf";
+    final String geneSampleMatrixFilePath = CommonCommand.outputPath + "gene.sample.matrix.txt";
+    final String summaryFilePath = CommonCommand.outputPath + "summary.csv";
+    final String sampleVariantCountFilePath = CommonCommand.outputPath + "sample.variant.count.csv";
+    final String fetPQQPlotPath = CommonCommand.outputPath + "summary.fet.p.qq.plot.pdf";
+    final String linearPQQPlotPath = CommonCommand.outputPath + "summary.linear.p.qq.plot.pdf";
+    final String logisticPQQPlotPath = CommonCommand.outputPath + "summary.logistic.p.qq.plot.pdf";
     ArrayList<CollapsingSummary> summaryList = new ArrayList<CollapsingSummary>();
     Hashtable<String, CollapsingSummary> summaryTable = new Hashtable<String, CollapsingSummary>();
 
@@ -175,10 +175,10 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
         ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingSummary.title,
                 "Fet P", summaryFilePath, fetPQQPlotPath);
 
-        if (CommandValue.isCollapsingDoLogistic) {
+        if (CollapsingCommand.isCollapsingDoLogistic) {
             ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingSummary.title,
                     "Logistic P", summaryFilePath, logisticPQQPlotPath);
-        } else if (CommandValue.isCollapsingDoLinear) {
+        } else if (CollapsingCommand.isCollapsingDoLinear) {
             ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingSummary.title,
                     "Linear P", summaryFilePath, linearPQQPlotPath);
         }

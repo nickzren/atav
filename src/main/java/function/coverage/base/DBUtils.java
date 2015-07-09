@@ -1,10 +1,8 @@
 package function.coverage.base;
 
-import function.coverage.base.Exon;
-import function.coverage.base.InputList;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Region;
 import global.Data;
-import utils.CommandValue;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -29,7 +27,7 @@ public class DBUtils {
                         sb.append(",");
                     }
                     sb.append("(").append("'").append(gene).append("',").append(sample_ids.get(i)).append(",");
-                    sb.append(CommandValue.minCoverage).append(",").append(coverage_ratio[i]).append(")");
+                    sb.append(GenotypeLevelFilterCommand.minCoverage).append(",").append(coverage_ratio[i]).append(")");
                     count++;
 
                 }

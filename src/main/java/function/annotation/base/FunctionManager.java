@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import utils.CommandValue;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.LogManager;
@@ -71,7 +70,7 @@ public class FunctionManager {
     }
 
     private static void initUserFunctionList() {
-        String str = CommandValue.functionInput.replaceAll("( )+", "");
+        String str = AnnotationLevelFilterCommand.functionInput.replaceAll("( )+", "");
 
         if (str.isEmpty()
                 || str.endsWith("all")

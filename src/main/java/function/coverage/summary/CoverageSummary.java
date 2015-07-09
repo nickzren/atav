@@ -1,14 +1,17 @@
 package function.coverage.summary;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
+import function.coverage.base.CoverageCommand;
 import function.coverage.base.SampleStatistics;
 import function.coverage.base.CoveredRegion;
 import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
 import function.coverage.base.Transcript;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -33,22 +36,22 @@ public class CoverageSummary extends InputList {
     public BufferedWriter bwCoverageSummaryByExon = null;
     public BufferedWriter bwCoverageSummaryByGene = null;
 
-    public final String sampleSummaryFilePath = CommandValue.outputPath + "sample.summary.csv";
-    public final String coverageDetailsFilePath = CommandValue.outputPath + "coverage.details.csv";
-    public final String coverageDetailsByExonFilePath = CommandValue.outputPath + "coverage.details.by.exon.csv";
-    public final String coverageMatrixFilePath = CommandValue.outputPath + "coverage.details.matrix.csv";
-    public final String coverageExonMatrixFilePath = CommandValue.outputPath + "coverage.details.matrix.by.exon.csv";
+    public final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
+    public final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
+    public final String coverageDetailsByExonFilePath = CommonCommand.outputPath + "coverage.details.by.exon.csv";
+    public final String coverageMatrixFilePath = CommonCommand.outputPath + "coverage.details.matrix.csv";
+    public final String coverageExonMatrixFilePath = CommonCommand.outputPath + "coverage.details.matrix.by.exon.csv";
 
     public CoverageSummary() {
         super();
         
-        if (CommandValue.minCoverage == Data.NO_FILTER) {
+        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
             ErrorManager.print("--min-coverage option has to be used in this function.");
         }
 
         try {
-            isSystemGeneIndexFile = CommandValue.coveredRegionFile.contains("/nfs/goldstein/software/atav_home/data");
-            BufferedReader br = new BufferedReader(new FileReader(CommandValue.coveredRegionFile));
+            isSystemGeneIndexFile = CoverageCommand.coveredRegionFile.contains("/nfs/goldstein/software/atav_home/data");
+            BufferedReader br = new BufferedReader(new FileReader(CoverageCommand.coveredRegionFile));
             String str;
             int LineCount = 0;
             while ((str = br.readLine()) != null && str.length() > 0) {
@@ -88,7 +91,7 @@ public class CoverageSummary extends InputList {
         SampleStatistics ss = new SampleStatistics(size());
         ss.printMatrixHeader(bwSampleMatrixSummary, false);
 
-        if (CommandValue.isByExon) {
+        if (CoverageCommand.isByExon) {
             ss.printMatrixHeader(bwSampleExonMatrixSummary, true);
         }
 
@@ -96,7 +99,7 @@ public class CoverageSummary extends InputList {
             int record = ss.getNextRecord();
 
             Object obj = it.next();
-            if (!CommandValue.isTerse) {
+            if (!CoverageCommand.isTerse) {
                 System.out.print("Processing " + (record + 1) + " of " + size() + ":        " + obj.toString() + "                              \r");
             }
 
@@ -107,7 +110,7 @@ public class CoverageSummary extends InputList {
                 CoveredRegion region = (CoveredRegion) obj;
                 ss.setRecordName(record, region.toString(), region.getChrStr());
                 ss.setLength(record, region.getLength());
-                int[] mincovs = {CommandValue.minCoverage};
+                int[] mincovs = {GenotypeLevelFilterCommand.minCoverage};
                 HashMap<Integer, Integer> result = region.getCoverage(mincovs).get(0);
                 ss.accumulateCoverage(record, result);
             } else if (JobType.equals("Gene")) {
@@ -121,7 +124,7 @@ public class CoverageSummary extends InputList {
                     ss.setLength(record, gene.getLength());
 
                     trans_stable_id = "CONSENOUS_TRANSCRIPT";
-                    if (!CommandValue.isByExon && isSystemGeneIndexFile) { //if by exon, then we can't use gene_coverage_summary as we don't have exon info
+                    if (!CoverageCommand.isByExon && isSystemGeneIndexFile) { //if by exon, then we can't use gene_coverage_summary as we don't have exon info
                         HashMap<Integer, Double> cv = gene.getCoverageFromTable();
                         if (cv.size() == SampleManager.getListSize()) {
                             NeedToUpdateDatabase = false;
@@ -130,14 +133,14 @@ public class CoverageSummary extends InputList {
                     }
 
                 } else {
-                    if (!CommandValue.isCcdsOnly || gene.isCCDS()) {
+                    if (!AnnotationLevelFilterCommand.isCcdsOnly || gene.isCCDS()) {
                         gene.populateExonList();
-                        if (CommandValue.isExcludeUTR) {
+                        if (CoverageCommand.isExcludeUTR) {
                             gene.filterByUTR();
                         }
                     } else { //deal with --ccsds-only but canonical transcript is not ccds
                         int transcriptid = gene.populateExonListFromTranscriptID();
-                        if (CommandValue.isExcludeUTR && transcriptid > 0) {
+                        if (CoverageCommand.isExcludeUTR && transcriptid > 0) {
                             gene.filterByUTRFromTranscriptID(transcriptid);
                         }
                     }
@@ -149,7 +152,7 @@ public class CoverageSummary extends InputList {
                     for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
                         Exon exon = (Exon) r.next();
                         trans_stable_id = exon.getTransStableId();
-                        HashMap<Integer, Integer> result = exon.getCoverage(CommandValue.minCoverage);
+                        HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
                         ss.accumulateCoverage(record, result);
                         ss.printMatrixRowbyExon(record, result, exon, bwSampleExonMatrixSummary);
                         DoExonSummary(ss, record, result, exon);
@@ -161,17 +164,17 @@ public class CoverageSummary extends InputList {
             } else if (JobType.equals("Transcript")) {
                 Transcript transcript = (Transcript) obj;
                 ss.setRecordName(record, transcript.toString(), "");
-                if (!CommandValue.isCcdsOnly || transcript.isCCDS()) {
+                if (!AnnotationLevelFilterCommand.isCcdsOnly || transcript.isCCDS()) {
                     transcript.populateExonList();
-                    if (CommandValue.isExcludeUTR) {
+                    if (CoverageCommand.isExcludeUTR) {
                         transcript.filterByUTR();
                     }
                     ss.setLength(record, transcript.getLength());
                     for (Iterator r = transcript.getExonList().iterator(); r.hasNext();) {
                         Exon exon = (Exon) r.next();
-                        HashMap<Integer, Integer> result = exon.getCoverage(CommandValue.minCoverage);
+                        HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
                         ss.accumulateCoverage(record, result);
-                        if (CommandValue.isCoverageSummary) {
+                        if (CoverageCommand.isCoverageSummary) {
                             ss.print(record, result, exon, bwCoverageDetailsByExon);
                         }
                     }
@@ -203,8 +206,8 @@ public class CoverageSummary extends InputList {
 
         bwSampleMatrixSummary = new BufferedWriter(new FileWriter(coverageMatrixFilePath));
 
-        if (CommandValue.isByExon) {
-            if (CommandValue.isCoverageSummary) {
+        if (CoverageCommand.isByExon) {
+            if (CoverageCommand.isCoverageSummary) {
                 bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
                 bwCoverageDetailsByExon.write("Sample,Gene/Transcript,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
                 bwCoverageDetailsByExon.newLine();
@@ -221,8 +224,8 @@ public class CoverageSummary extends InputList {
         bwSampleMatrixSummary.flush();
         bwSampleMatrixSummary.close();
 
-        if (CommandValue.isByExon) {
-            if (CommandValue.isCoverageSummary) {
+        if (CoverageCommand.isByExon) {
+            if (CoverageCommand.isCoverageSummary) {
                 bwCoverageDetailsByExon.flush();
                 bwCoverageDetailsByExon.close();
             }

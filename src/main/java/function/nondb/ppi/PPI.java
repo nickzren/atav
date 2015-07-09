@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import org.apache.commons.math3.random.RandomDataGenerator;
@@ -33,7 +33,7 @@ public class PPI {
     RandomDataGenerator random = new RandomDataGenerator();
 
     BufferedWriter bwPPI = null;
-    final String outputFilePath = CommandValue.outputPath + "ppi.csv";
+    final String outputFilePath = CommonCommand.outputPath + "ppi.csv";
     final String bioGridFilePath = "data/BioGrid.csv"; // default bio grid file 
 
     public void run() {
@@ -49,14 +49,14 @@ public class PPI {
                 GeneSetStat Stat = new GeneSetStat(sample, SampleGeneMap.get(sample));
                 Stat.init();
                 int TotalExtemes = 0;
-                for (int i = 0; i < CommandValue.ppiPermutaitons; i++) {
+                for (int i = 0; i < PPICommand.ppiPermutaitons; i++) {
                     HashSet<String> PermutatedSet = Stat.nextPermutation();
                     int interactions = Stat.getTotalDirectConnections(PermutatedSet, false);
                     if (interactions > Stat.GeneSetInteractions) {
                         TotalExtemes++;
                     }
                 }
-                Stat.permutatedP = ((double) TotalExtemes) / CommandValue.ppiPermutaitons;
+                Stat.permutatedP = ((double) TotalExtemes) / PPICommand.ppiPermutaitons;
                 StringBuilder str = new StringBuilder();
                 str.append(Stat.SetName).append(",").append(Stat.NodesInSet).append(",");
                 str.append(Stat.NodesInNetwork).append(",");
@@ -86,7 +86,7 @@ public class PPI {
     }
 
     private void readGeno() {
-        File f = new File(CommandValue.ppiGenotypeFile);
+        File f = new File(PPICommand.ppiGenotypeFile);
         String lineStr = "";
         int lineNum = 0;
         try {
@@ -147,12 +147,12 @@ public class PPI {
     }
 
     private void readPPI() {
-        String ppiFile = CommandValue.ppiFile;
+        String ppiFile = PPICommand.ppiFile;
 
         if (ppiFile.isEmpty()) {
             ppiFile = bioGridFilePath;
 
-            if (CommandValue.isDebug) {
+            if (CommonCommand.isDebug) {
                 ppiFile = Data.RECOURCE_PATH + ppiFile;
             }
         }
@@ -176,8 +176,8 @@ public class PPI {
                     if (fields.length == 2) {
                         fields[0] = fields[0].replaceAll("'", "");
                         fields[1] = fields[1].replaceAll("'", "");
-                        if (!fields[0].equalsIgnoreCase(CommandValue.ppiExclude)
-                                && !fields[1].equalsIgnoreCase(CommandValue.ppiExclude)) {
+                        if (!fields[0].equalsIgnoreCase(PPICommand.ppiExclude)
+                                && !fields[1].equalsIgnoreCase(PPICommand.ppiExclude)) {
                             GenesInPPI.add(fields[0]);
                             GenesInPPI.add(fields[1]);
                             if (!fields[0].equalsIgnoreCase(fields[1])) { //remove self-interations
@@ -228,7 +228,7 @@ public class PPI {
     public void initOutput() {
         try {
             bwPPI = new BufferedWriter(new FileWriter(outputFilePath));
-            bwPPI.write(Output.title);
+            bwPPI.write(PPIOutput.title);
             bwPPI.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

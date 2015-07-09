@@ -3,11 +3,10 @@ package function.annotation.base;
 import function.external.exac.Exac;
 import function.variant.base.Variant;
 import function.external.evs.EvsManager;
-import function.genotype.base.QualityManager;
 import function.variant.base.VariantManager;
 import function.external.exac.ExacManager;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
-import utils.CommandValue;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.HashSet;
@@ -96,7 +95,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     private void checkValid() throws Exception {
-        isValid = QualityManager.isCscoreValid(cscorePhred);
+        isValid = VariantLevelFilterCommand.isCscoreValid(cscorePhred);
 
         if (isValid) {
             isValid = VariantManager.isValid(this);
@@ -106,15 +105,15 @@ public class AnnotatedVariant extends Variant {
             exac = ExacManager.getExac(isSnv(), region.chrStr,
                     region.startPosition, refAllele, allele);
 
-            isValid = QualityManager.isExacMafValid(exac.getMaxMaf())
-                    && QualityManager.isExacVqslodValid(exac.getVqslod(), isSnv());
+            isValid = VariantLevelFilterCommand.isExacMafValid(exac.getMaxMaf())
+                    && VariantLevelFilterCommand.isExacVqslodValid(exac.getVqslod(), isSnv());
         }
 
         if (isValid) {
             initEVSInfo();
 
-            isValid = QualityManager.isEvsStatusValid(evsFilterStatus)
-                    && QualityManager.isEvsMafValid(evsMaf);
+            isValid = VariantLevelFilterCommand.isEvsStatusValid(evsFilterStatus)
+                    && VariantLevelFilterCommand.isEvsMafValid(evsMaf);
         }
     }
 
@@ -122,7 +121,7 @@ public class AnnotatedVariant extends Variant {
         evsCoverage = EvsManager.getCoverageInfo(region.chrStr,
                 String.valueOf(region.startPosition));
 
-        if (CommandValue.isOldEvsUsed) {
+        if (VariantLevelFilterCommand.isOldEvsUsed) {
             evsMafStr = EvsManager.getMafInfo(isSnv(), region.chrStr,
                     String.valueOf(region.startPosition), refAllele, allele);
 
@@ -157,17 +156,17 @@ public class AnnotatedVariant extends Variant {
 
         double[] values = {Data.NA, Data.NA, Data.NA};
 
-        if (CommandValue.evsMafPop.contains("ea")
+        if (VariantLevelFilterCommand.evsMafPop.contains("ea")
                 && !mafs[0].equals("NA")) {
             values[0] = Double.valueOf(mafs[0]);
         }
 
-        if (CommandValue.evsMafPop.contains("aa")
+        if (VariantLevelFilterCommand.evsMafPop.contains("aa")
                 && !mafs[2].equals("NA")) {
             values[1] = Double.valueOf(mafs[2]);
         }
 
-        if (CommandValue.evsMafPop.contains("all")
+        if (VariantLevelFilterCommand.evsMafPop.contains("all")
                 && !mafs[4].equals("NA")) {
             values[2] = Double.valueOf(mafs[4]);
         }
@@ -187,15 +186,15 @@ public class AnnotatedVariant extends Variant {
 
         double[] values = {Data.NA, Data.NA, Data.NA};
 
-        if (CommandValue.evsMafPop.contains("ea")) {
+        if (VariantLevelFilterCommand.evsMafPop.contains("ea")) {
             values[0] = mhgfs[0];
         }
 
-        if (CommandValue.evsMafPop.contains("aa")) {
+        if (VariantLevelFilterCommand.evsMafPop.contains("aa")) {
             values[1] = mhgfs[1];
         }
 
-        if (CommandValue.evsMafPop.contains("all")) {
+        if (VariantLevelFilterCommand.evsMafPop.contains("all")) {
             values[2] = mhgfs[2];
         }
 
@@ -210,8 +209,8 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
-                & PolyphenManager.isValid(polyphenHumdiv, function, CommandValue.polyphenHumdiv)
-                & PolyphenManager.isValid(polyphenHumvar, function, CommandValue.polyphenHumvar);
+                & PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
+                & PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar);
     }
 
     public String getGeneName() {
@@ -344,7 +343,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     public boolean isEvsMhgfValid() {
-        return QualityManager.isEvsMhgf4RecessiveValid(evsMhgf);
+        return VariantLevelFilterCommand.isEvsMhgf4RecessiveValid(evsMhgf);
     }
 
     public String getExacStr() {

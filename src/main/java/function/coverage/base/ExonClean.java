@@ -1,13 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package function.coverage.base;
 
-import function.coverage.base.Exon;
-import function.coverage.base.Gene;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -205,7 +198,7 @@ public class ExonClean {
         double abs_diff = Math.abs(CaseAvg - CtrlAvg);
         sb.append(",").append(pformat6.format(abs_diff));
         sb.append(",").append(GeneSize);
-        if (abs_diff > CommandValue.geneCleanCutoff) {
+        if (abs_diff > CoverageCommand.geneCleanCutoff) {
             if (CaseAvg < CtrlAvg) {
                 sb.append(",").append("bias against discovery");
             } else {
