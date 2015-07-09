@@ -3,7 +3,7 @@ package function.annotation.genedx;
 import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.AnalysisBase4AnnotatedVar;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,7 +15,7 @@ import java.io.FileWriter;
 public class ListGeneDx extends AnalysisBase4AnnotatedVar {
 
     BufferedWriter bwGeneDx = null;
-    final String geneDxFilePath = CommandValue.outputPath + "genedx.csv";
+    final String geneDxFilePath = CommonCommand.outputPath + "genedx.csv";
 
     @Override
     public void initOutput() {

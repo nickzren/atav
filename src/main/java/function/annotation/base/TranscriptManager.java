@@ -1,7 +1,7 @@
 package function.annotation.base;
 
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -21,15 +21,15 @@ public class TranscriptManager {
     private static String canonicalTranscriptFile = "";
 
     public static void init() {
-        init(CommandValue.transcriptFile, currentTranscriptSet);
+        init(CommonCommand.transcriptFile, currentTranscriptSet);
 
-        if (CommandValue.isCcdsOnly) {
+        if (CommonCommand.isCcdsOnly) {
             init(ccdsTranscriptFile, ccdsTranscriptSet);
 
             resetTranscriptSet(ccdsTranscriptSet);
         }
 
-        if (CommandValue.isCanonicalOnly) {
+        if (CommonCommand.isCanonicalOnly) {
             init(canonicalTranscriptFile, canonicalTranscriptSet);
 
             resetTranscriptSet(canonicalTranscriptSet);
@@ -90,7 +90,7 @@ public class TranscriptManager {
     public static void initCCDSTranscriptPath() {
         ccdsTranscriptFile = Data.CCDS_TRANSCRIPT_PATH;
 
-        if (CommandValue.isDebug) {
+        if (CommonCommand.isDebug) {
             ccdsTranscriptFile = Data.RECOURCE_PATH + ccdsTranscriptFile;
         }
     }
@@ -98,7 +98,7 @@ public class TranscriptManager {
     public static void initCanonicalTranscriptPath() {
         canonicalTranscriptFile = Data.CANONICAL_TRANSCRIPT_PATH;
 
-        if (CommandValue.isDebug) {
+        if (CommonCommand.isDebug) {
             canonicalTranscriptFile = Data.RECOURCE_PATH + canonicalTranscriptFile;
         }
     }

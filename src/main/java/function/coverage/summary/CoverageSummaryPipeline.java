@@ -1,11 +1,12 @@
 package function.coverage.summary;
 
+import function.coverage.base.CoverageCommand;
 import function.coverage.base.SampleStatistics;
 import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -23,14 +24,14 @@ public class CoverageSummaryPipeline extends InputList {
     public CoverageSummaryPipeline() {
         super();
         try {
-            if (CommandValue.minCoverage == Data.NO_FILTER) {
+            if (CommonCommand.minCoverage == Data.NO_FILTER) {
                 ErrorManager.print("--min-coverage option has to be used in this function.");
             }
 
-            if (!CommandValue.coveredRegionFile.contains("/nfs/goldstein/software/atav_home/data")) {
+            if (!CoverageCommand.coveredRegionFile.contains("/nfs/goldstein/software/atav_home/data")) {
                 ErrorManager.print("System gene index file has to be used to run this command.");
             }
-            BufferedReader br = new BufferedReader(new FileReader(CommandValue.coveredRegionFile));
+            BufferedReader br = new BufferedReader(new FileReader(CoverageCommand.coveredRegionFile));
             String str;
             int LineCount = 0;
             while ((str = br.readLine()) != null && str.length() > 0) {
@@ -61,7 +62,7 @@ public class CoverageSummaryPipeline extends InputList {
             int record = ssList.get(0).getNextRecord();
 
             Object obj = it.next();
-            if (!CommandValue.isTerse) {
+            if (!CoverageCommand.isTerse) {
                 System.out.print("Processing " + (record + 1) + " of " + size() + ":        " + obj.toString() + "                              \r");
             }
             Gene gene = (Gene) obj;

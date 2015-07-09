@@ -10,7 +10,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.FormatManager;
 import utils.LogManager;
 import org.apache.commons.math3.distribution.TDistribution;
@@ -330,7 +330,7 @@ public class LinearOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(beta1)).append(",");
         sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
 
-        if (CommandValue.isOldEvsUsed) {
+        if (CommonCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

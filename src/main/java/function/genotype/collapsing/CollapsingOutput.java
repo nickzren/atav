@@ -10,7 +10,7 @@ import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.FormatManager;
 
 /**
@@ -156,7 +156,7 @@ public class CollapsingOutput extends Output implements Comparable {
     public boolean isLooFreqValid() {
         boolean isRecessive = false;
 
-        if (CommandValue.isRecessive) {
+        if (CollapsingCommand.isRecessive) {
             isRecessive = isRecessive();
 
             if (!isRecessive) {
@@ -185,11 +185,11 @@ public class CollapsingOutput extends Output implements Comparable {
      */
     @Override
     public boolean isQualifiedGeno(int geno) {
-        if (CommandValue.isRecessive && geno == 1) { // just for collapsing function now
+        if (CollapsingCommand.isRecessive && geno == 1) { // just for collapsing function now
             return false;
         }
 
-        if (isMinorRef && !CommandValue.isAllNonRef) {
+        if (isMinorRef && !CommonCommand.isAllNonRef) {
             if (geno == 0 || geno == 1) {
                 return true;
             }
@@ -266,7 +266,7 @@ public class CollapsingOutput extends Output implements Comparable {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
 
-        if (CommandValue.isOldEvsUsed) {
+        if (CommonCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

@@ -8,7 +8,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.QualityManager;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.LogManager;
@@ -30,8 +30,8 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     HashSet<String> uniqueId = new HashSet<String>();
     BufferedWriter bwDetails = null;
     BufferedWriter bwDetails_noflag = null;
-    final String flagFilePath = CommandValue.outputPath + "comphet.csv";
-    final String noFlagFilePath = CommandValue.outputPath + "comphet_noflag.csv";
+    final String flagFilePath = CommonCommand.outputPath + "comphet.csv";
+    final String noFlagFilePath = CommonCommand.outputPath + "comphet_noflag.csv";
 //    BufferedWriter bwFlagSummary = null;
     String[] FLAG = {
         "compound heterozygote", // 0
@@ -47,7 +47,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             bwDetails.write(CompHetOutput.title);
             bwDetails.newLine();
 
-            if (CommandValue.isIncludeNoflag) {
+            if (TrioCommand.isIncludeNoflag) {
                 bwDetails_noflag = new BufferedWriter(new FileWriter(noFlagFilePath));
                 bwDetails_noflag.write(CompHetOutput.title);
                 bwDetails_noflag.newLine();
@@ -77,7 +77,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             bwDetails.flush();
             bwDetails.close();
 
-            if (CommandValue.isIncludeNoflag) {
+            if (TrioCommand.isIncludeNoflag) {
                 bwDetails_noflag.flush();
                 bwDetails_noflag.close();
             }
@@ -260,7 +260,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             int cGeno2, int cCov2, int mGeno2,
             int mCov2, int fGeno2, int fCov2) {
 
-        int minCov = CommandValue.minCoverage;
+        int minCov = CommonCommand.minCoverage;
 
         if ((fGeno1 <= 0 && mGeno1 <= 0)
                 || (fGeno2 <= 0 && mGeno2 <= 0)) {
@@ -360,7 +360,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                     if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {
                                         bwDetails.write(sb.toString());
                                         bwDetails.newLine();
-                                    } else if (CommandValue.isIncludeNoflag) {
+                                    } else if (TrioCommand.isIncludeNoflag) {
                                         bwDetails_noflag.write(sb.toString());
                                         bwDetails_noflag.newLine();
                                     }

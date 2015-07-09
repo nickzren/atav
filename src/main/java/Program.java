@@ -9,9 +9,10 @@ import function.annotation.base.GeneManager;
 import utils.CommandManager;
 import utils.DBManager;
 import utils.ErrorManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.LogManager;
 import function.AnalysisBase;
+import function.annotation.genedx.GeneDxCommand;
 import function.genotype.collapsing.CollapsingCompHet;
 import function.genotype.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
@@ -28,14 +29,29 @@ import function.genotype.trio.ListTrioCompHet;
 import function.genotype.trio.ListTrioDenovo;
 import function.annotation.genedx.ListGeneDx;
 import function.annotation.varanno.ListVarAnno;
+import function.annotation.varanno.VarAnnoCommand;
+import function.coverage.base.CoverageCommand;
+import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.JonEvsTool;
 import function.external.evs.ListEvs;
+import function.external.exac.ExacCommand;
 import function.external.exac.ListExac;
+import function.external.flanking.FlankingCommand;
 import function.external.flanking.ListFlankingSeq;
+import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.ListKnownVar;
 import function.genotype.base.CoverageBlockManager;
+import function.genotype.collapsing.CollapsingCommand;
+import function.genotype.family.FamilyCommand;
+import function.genotype.parental.ParentalCommand;
+import function.genotype.pedmap.PedMapCommand;
+import function.genotype.sibling.SiblingCommand;
+import function.genotype.statistics.StatisticsCommand;
+import function.genotype.trio.TrioCommand;
+import function.genotype.vargeno.VarGenoCommand;
 import function.nondb.ppi.PPI;
+import function.nondb.ppi.PPICommand;
 
 /**
  *
@@ -45,7 +61,7 @@ public class Program {
 
     private static long start, end;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {        
         try {
             start = System.currentTimeMillis();
 
@@ -91,59 +107,59 @@ public class Program {
 
     private static void startAnalysis() {
         try {
-            if (CommandValue.isPedMap) {
+            if (PedMapCommand.isPedMap) {
                 runAnalysis(new PedMapGenerator());
-            } else if (CommandValue.isFisher) {
+            } else if (StatisticsCommand.isFisher) {
                 runAnalysis(new FisherExactTest());
-            } else if (CommandValue.isLinear) {
+            } else if (StatisticsCommand.isLinear) {
                 runAnalysis(new LinearRegression());
-            } else if (CommandValue.isCollapsingSingleVariant) {
+            } else if (CollapsingCommand.isCollapsingSingleVariant) {
                 runAnalysis(new CollapsingSingleVariant());
-            } else if (CommandValue.isCollapsingCompHet) {
+            } else if (CollapsingCommand.isCollapsingCompHet) {
                 runAnalysis(new CollapsingCompHet());
-            } else if (CommandValue.isListVarGeno) {
+            } else if (VarGenoCommand.isListVarGeno) {
                 runAnalysis(new ListVarGeno());
-            } else if (CommandValue.isTrioDenovo) {
+            } else if (TrioCommand.isTrioDenovo) {
                 runAnalysis(new ListTrioDenovo());
-            } else if (CommandValue.isTrioCompHet) {
+            } else if (TrioCommand.isTrioCompHet) {
                 runAnalysis(new ListTrioCompHet());
-            } else if (CommandValue.isFamilyAnalysis) {
+            } else if (FamilyCommand.isFamilyAnalysis) {
                 runAnalysis(new FamilyAnalysis());
-            } else if (CommandValue.isListVarAnno) {
+            } else if (VarAnnoCommand.isListVarAnno) {
                 runAnalysis(new ListVarAnno());
-            } else if (CommandValue.isListGeneDx) {
+            } else if (GeneDxCommand.isListGeneDx) {
                 runAnalysis(new ListGeneDx());
-            } else if (CommandValue.isListFlankingSeq) {
+            } else if (FlankingCommand.isListFlankingSeq) {
                 runAnalysis(new ListFlankingSeq());
-            } else if (CommandValue.isListKnownVar) {
+            } else if (KnownVarCommand.isListKnownVar) {
                 runAnalysis(new ListKnownVar());
-            } else if (CommandValue.isListEvs) {
+            } else if (EvsCommand.isListEvs) {
                 runAnalysis(new ListEvs());
-            } else if (CommandValue.isListExac) {
+            } else if (ExacCommand.isListExac) {
                 runAnalysis(new ListExac());
-            } else if (CommandValue.isJonEvsTool) {
+            } else if (EvsCommand.isJonEvsTool) {
                 runAnalysis(new JonEvsTool());
-            } else if (CommandValue.isCoverageComparison) {
+            } else if (CoverageCommand.isCoverageComparison) {
                 LogManager.writeAndPrint("It is running a coverage comparison function...");
                 CoverageComparison coverageList = new CoverageComparison();
                 coverageList.run();
-            } else if (CommandValue.isCoverageSummary) {
+            } else if (CoverageCommand.isCoverageSummary) {
                 LogManager.writeAndPrint("It is running a coverage summary function...");
                 CoverageSummary coverageList = new CoverageSummary();
                 coverageList.run();
-            } else if (CommandValue.isSiteCoverageSummary) {
+            } else if (CoverageCommand.isSiteCoverageSummary) {
                 LogManager.writeAndPrint("It is running a site coverage summary function...");
                 CoverageSummarySite coverageList = new CoverageSummarySite();
                 coverageList.run();
-            } else if (CommandValue.isCoverageSummaryPipeline) {
+            } else if (CoverageCommand.isCoverageSummaryPipeline) {
                 LogManager.writeAndPrint("It is running a coverage summary for pipeline function...");
                 CoverageSummaryPipeline coverageSummary = new CoverageSummaryPipeline();
                 coverageSummary.run();
-            } else if (CommandValue.isSiblingCompHet) {
+            } else if (SiblingCommand.isSiblingCompHet) {
                 runAnalysis(new ListSiblingComphet());
-            } else if (CommandValue.isParentalMosaic) {
+            } else if (ParentalCommand.isParentalMosaic) {
                 runAnalysis(new ParentalMosaic());
-            } else if (CommandValue.isPPI) {
+            } else if (PPICommand.isPPI) {
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());
                 ppi.run();

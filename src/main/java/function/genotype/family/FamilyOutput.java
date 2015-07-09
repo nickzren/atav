@@ -10,7 +10,7 @@ import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.FormatManager;
 import java.util.HashSet;
 
@@ -315,7 +315,7 @@ public class FamilyOutput extends Output {
         sb.append(FormatManager.getDouble(familyAverageCov[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(familyAverageCov[Index.CTRL])).append(",");
         
-        if (CommandValue.isOldEvsUsed) {
+        if (CommonCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

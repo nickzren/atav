@@ -1,10 +1,11 @@
 package function.genotype.base;
 
+import function.genotype.trio.TrioCommand;
 import function.variant.base.Region;
 import function.variant.base.Variant;
 import function.genotype.trio.TrioManager;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import java.sql.ResultSet;
 
 /**
@@ -98,7 +99,7 @@ public class NonCarrier {
     }
     
     public void setMissing() {
-        if (CommandValue.isTrioDenovo
+        if (TrioCommand.isTrioDenovo
                 && TrioManager.isParent(sampleId)) {
             // do nothing
         } else {

@@ -1,5 +1,6 @@
 package utils;
 
+import function.external.flanking.FlankingCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
 import java.io.BufferedReader;
@@ -70,7 +71,7 @@ public class ThirdPartyToolManager {
                 + "--out " + outputFile + " "
                 + "--method " + method + " "
                 + "--transpose "
-                + "--log " + CommandValue.outputPath + "regress.log";
+                + "--log " + CommonCommand.outputPath + "regress.log";
 
         int exitValue = systemCall(new String[]{cmd});
 
@@ -84,8 +85,8 @@ public class ThirdPartyToolManager {
 
     public static void callFlankingSeq(String baseFlankingSeqFilePath) {
         String cmd = PERL_SYSTEM_PATH + " " + FLANKING_SEQ_PERL
-                + " --variant " + CommandValue.includeVariantId
-                + " --width " + CommandValue.width
+                + " --variant " + CommonCommand.includeVariantId
+                + " --width " + FlankingCommand.width
                 + " --out " + baseFlankingSeqFilePath;
 
         int exitValue = systemCall(new String[]{cmd});

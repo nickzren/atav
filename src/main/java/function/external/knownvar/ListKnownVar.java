@@ -2,7 +2,7 @@ package function.external.knownvar;
 
 import function.AnalysisBase;
 import function.variant.base.VariantManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,10 +15,10 @@ import java.io.IOException;
 public class ListKnownVar extends AnalysisBase {
 
     BufferedWriter bwClinvar = null;
-    final String clinvarFilePath = CommandValue.outputPath + "clinvar.csv";
+    final String clinvarFilePath = CommonCommand.outputPath + "clinvar.csv";
 
     BufferedWriter bwHGMD = null;
-    final String hgmdFilePath = CommandValue.outputPath + "hgmd.csv";
+    final String hgmdFilePath = CommonCommand.outputPath + "hgmd.csv";
 
     int analyzedRecords = 0;
 

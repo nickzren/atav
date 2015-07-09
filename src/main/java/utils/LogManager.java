@@ -28,7 +28,7 @@ public class LogManager {
     public static void initPath() {
         try {
             userLog = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                    CommandValue.outputPath + "atav.log")));
+                    CommonCommand.outputPath + "atav.log")));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(LogManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -50,7 +50,7 @@ public class LogManager {
             // write and reopen
             userLog.close();
             userLog = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                    CommandValue.outputPath + "atav.log", true)));
+                    CommonCommand.outputPath + "atav.log", true)));
 
         } catch (Exception e) {
             ErrorManager.print("Error in writing log file: " + e.toString());

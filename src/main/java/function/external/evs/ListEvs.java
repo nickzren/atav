@@ -2,7 +2,7 @@ package function.external.evs;
 
 import function.AnalysisBase;
 import function.variant.base.VariantManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -14,7 +14,7 @@ import java.io.FileWriter;
 public class ListEvs extends AnalysisBase {
 
     BufferedWriter bwEvs = null;
-    final String evsFilePath = CommandValue.outputPath + "evs.csv";
+    final String evsFilePath = CommonCommand.outputPath + "evs.csv";
 
     int analyzedRecords = 0;
 

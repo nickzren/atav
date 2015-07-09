@@ -2,7 +2,7 @@ package function.genotype.family;
 
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -79,7 +79,7 @@ public class FamilyManager {
     }
 
     public static void initFamilyIdList() {
-        String str = CommandValue.familyId.replaceAll("( )+", "");
+        String str = FamilyCommand.familyId.replaceAll("( )+", "");
 
         String familyIds = "";
 

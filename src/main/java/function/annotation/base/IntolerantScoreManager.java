@@ -1,7 +1,7 @@
 package function.annotation.base;
 
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.FormatManager;
 import java.io.*;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class IntolerantScoreManager {
     public static void init() throws Exception {
         String intolerantScoreFile = Data.INTOLERANT_SCORE_PATH;
 
-        if (CommandValue.isDebug) {
+        if (CommonCommand.isDebug) {
             intolerantScoreFile = Data.RECOURCE_PATH + intolerantScoreFile;
         }
 

@@ -12,7 +12,7 @@ import global.Data;
 import function.genotype.base.CarrierBlockManager;
 import function.variant.base.RegionManager;
 import function.variant.base.VariantManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -83,8 +83,8 @@ public class ListCalledVariant extends AnalysisBase {
             while (rs.next()) {
                 Carrier carrier = new Carrier();
                 carrier.init(rs);
-                carrier.checkCoverageFilter(CommandValue.minCaseCoverageCall,
-                        CommandValue.minCtrlCoverageCall);
+                carrier.checkCoverageFilter(CommonCommand.minCaseCoverageCall,
+                        CommonCommand.minCtrlCoverageCall);
                 carrier.checkQualityFilter();
                 //carrier.checkValidOnXY(var);
                 carrierMap.put(carrier.getSampleId(), carrier);

@@ -3,7 +3,7 @@ package function.external.evs;
 import function.variant.base.Variant;
 import global.Data;
 import global.SqlQuery;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -20,7 +20,7 @@ public class EvsManager {
     private static String filterStatus;
 
     public static String getTitle() {
-        if (CommandValue.isOldEvsUsed) {
+        if (CommonCommand.isOldEvsUsed) {
             return "Evs Eur Covered Samples,"
                     + "Evs Eur Average Coverage,"
                     + "Evs Afr Covered Samples,"

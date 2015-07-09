@@ -3,7 +3,7 @@ package function.genotype.statistics;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.AnalysisBase4CalledVar;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.LogManager;
@@ -20,11 +20,11 @@ import java.util.HashMap;
  */
 public class FisherExactTest extends AnalysisBase4CalledVar {
 
-    String[] originalPOutputPath = new String[CommandValue.models.length];
-    String[] sortedPOutputPath = new String[CommandValue.models.length];
+    String[] originalPOutputPath = new String[StatisticsCommand.models.length];
+    String[] sortedPOutputPath = new String[StatisticsCommand.models.length];
 
-    BufferedWriter[] originalBw = new BufferedWriter[CommandValue.models.length];
-    BufferedWriter[] sortedBw = new BufferedWriter[CommandValue.models.length];
+    BufferedWriter[] originalBw = new BufferedWriter[StatisticsCommand.models.length];
+    BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.models.length];
 
     HashMap<Integer, ArrayList<UnsortedOutputData>> unsortedMap
             = new HashMap<Integer, ArrayList<UnsortedOutputData>>();
@@ -36,17 +36,17 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     @Override
     public void initOutput() {
-        for (int m = 0; m < CommandValue.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.models.length; m++) {
             try {
-                String testModel = CommandValue.models[m];
-                originalPOutputPath[m] = CommandValue.outputPath + testModel + ".csv";
+                String testModel = StatisticsCommand.models[m];
+                originalPOutputPath[m] = CommonCommand.outputPath + testModel + ".csv";
                 originalBw[m] = new BufferedWriter(new FileWriter(originalPOutputPath[m]));
                 originalBw[m].write(FisherOutput.title);
                 originalBw[m].newLine();
 
-                if (CommandValue.threshold4Sort != Data.NO_FILTER) {
-                    sortedPOutputPath[m] = CommandValue.outputPath + testModel
-                            + ".p_" + CommandValue.threshold4Sort + ".sorted" + ".csv";
+                if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+                    sortedPOutputPath[m] = CommonCommand.outputPath + testModel
+                            + ".p_" + StatisticsCommand.threshold4Sort + ".sorted" + ".csv";
                     sortedBw[m] = new BufferedWriter(new FileWriter(sortedPOutputPath[m]));
                     sortedBw[m].write(FisherOutput.title);
                     sortedBw[m].newLine();
@@ -65,12 +65,12 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     @Override
     public void closeOutput() {
-        for (int m = 0; m < CommandValue.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.models.length; m++) {
             try {
                 originalBw[m].flush();
                 originalBw[m].close();
 
-                if (CommandValue.threshold4Sort != Data.NO_FILTER) {
+                if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                     sortedBw[m].flush();
                     sortedBw[m].close();
                 }
@@ -105,12 +105,12 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
             output.countSampleGenoCov();
             output.calculate();
 
-            for (int m = 0; m < CommandValue.models.length; m++) {
-                if (output.isValid(CommandValue.models[m])) {
-                    countVarNum(CommandValue.models[m]);
+            for (int m = 0; m < StatisticsCommand.models.length; m++) {
+                if (output.isValid(StatisticsCommand.models[m])) {
+                    countVarNum(StatisticsCommand.models[m]);
 
                     ArrayList<Integer> countList = new ArrayList<Integer>();
-                    output.initCount(countList, CommandValue.models[m]);
+                    output.initCount(countList, StatisticsCommand.models[m]);
                     output.calculateP(countList);
 
                     addToListByP(output, m);
@@ -138,8 +138,8 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     private void addToListByP(FisherOutput output, int m) {
         try {
-            if (CommandValue.threshold4Sort != Data.NO_FILTER
-                    && output.pValue <= CommandValue.threshold4Sort) {
+            if (StatisticsCommand.threshold4Sort != Data.NO_FILTER
+                    && output.pValue <= StatisticsCommand.threshold4Sort) {
                 UnsortedOutputData data = new UnsortedOutputData(output);
                 unsortedMap.get(m).add(data);
             }
@@ -150,8 +150,8 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     private void outputSortedData() {
         try {
-            if (CommandValue.threshold4Sort != Data.NO_FILTER) {
-                for (int m = 0; m < CommandValue.models.length; m++) {
+            if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+                for (int m = 0; m < StatisticsCommand.models.length; m++) {
                     ArrayList<UnsortedOutputData> list = unsortedMap.get(m);
 
                     Collections.sort(list);
@@ -169,7 +169,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     }
 
     private void outputBonferroni() {
-        for (String model : CommandValue.models) {
+        for (String model : StatisticsCommand.models) {
             printBonferroni(model);
         }
     }
@@ -196,13 +196,13 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-        for (int m = 0; m < CommandValue.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.models.length; m++) {
             ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.title,
                     "P value",
                     originalPOutputPath[m],
                     originalPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));
 
-            if (CommandValue.threshold4Sort != Data.NO_FILTER) {
+            if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                 ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.title,
                         "P value",
                         sortedPOutputPath[m],
@@ -212,8 +212,8 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     }
     
     private void gzipFiles() {
-        if (CommandValue.threshold4Sort != Data.NO_FILTER) {
-            for (int m = 0; m < CommandValue.models.length; m++) {
+        if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+            for (int m = 0; m < StatisticsCommand.models.length; m++) {
                 ThirdPartyToolManager.gzipFile(originalPOutputPath[m]);
             }
         }

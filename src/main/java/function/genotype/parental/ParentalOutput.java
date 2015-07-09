@@ -10,7 +10,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.QualityManager;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -111,7 +111,7 @@ public class ParentalOutput extends Output {
     private boolean isChildQdValid() {
         float value = Data.NA;
 
-        if (CommandValue.childQD != Data.NO_FILTER) {
+        if (ParentalCommand.childQD != Data.NO_FILTER) {
             value = calledVar.getQualByDepthQD(child.getId());
         }
 
@@ -121,7 +121,7 @@ public class ParentalOutput extends Output {
     private boolean isChildHetPercentAltReadValid() {
         double percAltRead = Data.NA;
 
-        if (CommandValue.childHetPercentAltRead != null
+        if (ParentalCommand.childHetPercentAltRead != null
                 && childGeno == 1) {
             int readsAlt = calledVar.getReadsAlt(child.getId());
             int gatkFilteredCoverage = calledVar.getGatkFilteredCoverage(child.getId());
@@ -221,7 +221,7 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(child.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(child.getId()))).append(",");
 
-        if (CommandValue.isOldEvsUsed) {
+        if (CommonCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

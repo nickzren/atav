@@ -1,12 +1,13 @@
 package function.coverage.summary;
 
+import function.coverage.base.CoverageCommand;
 import function.coverage.base.CoveredRegion;
 import function.coverage.base.SampleStatistics;
 import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -22,17 +23,17 @@ import java.util.Iterator;
 public class CoverageSummarySite extends InputList {
 
     BufferedWriter bwSiteSummary = null;
-    final String siteSummaryFilePath = CommandValue.outputPath + "site.summary.csv";
+    final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
 
     public CoverageSummarySite() {
         super();
 
         try {
-            if (CommandValue.minCoverage == Data.NO_FILTER) {
+            if (CommonCommand.minCoverage == Data.NO_FILTER) {
                 ErrorManager.print("--min-coverage option has to be used in this function.");
             }
             
-            BufferedReader br = new BufferedReader(new FileReader(CommandValue.coveredRegionFile));
+            BufferedReader br = new BufferedReader(new FileReader(CoverageCommand.coveredRegionFile));
             String str;
             int LineCount = 0;
             while ((str = br.readLine()) != null && str.length() > 0) {
@@ -76,7 +77,7 @@ public class CoverageSummarySite extends InputList {
                         CoveredRegion cr = ((Exon) r.next()).getCoveredRegion();
                         String chr = cr.getChrStr();
                         int SiteStart = cr.getStartPosition(); 
-                        int[] SiteCoverage = cr.getCoverageForSites(CommandValue.minCoverage);
+                        int[] SiteCoverage = cr.getCoverageForSites(CommonCommand.minCoverage);
                         for (int pos = 0; pos < SiteCoverage.length; pos++) {
                             StringBuilder sb = new StringBuilder();
                             sb.append(gene.getName()).append(",").append(chr).append(",");

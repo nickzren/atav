@@ -4,7 +4,7 @@ import function.genotype.base.Carrier;
 import function.genotype.base.NonCarrier;
 import function.variant.base.Variant;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import java.util.HashMap;
 
 /**
@@ -41,8 +41,8 @@ public class CoverageBlockManager {
                 if (!carrierMap.containsKey(sampleID)) {
                     NonCarrier noncarrier = new NonCarrier();
                     noncarrier.init(sampleID, getCoverage(sampleID, varPosIndex));
-                    noncarrier.checkCoverageFilter(CommandValue.minCaseCoverageNoCall,
-                            CommandValue.minCtrlCoverageNoCall);
+                    noncarrier.checkCoverageFilter(CommonCommand.minCaseCoverageNoCall,
+                            CommonCommand.minCtrlCoverageNoCall);
                     noncarrier.checkValidOnXY(var);
                     noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
                 }

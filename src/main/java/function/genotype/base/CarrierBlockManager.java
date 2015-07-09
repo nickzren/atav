@@ -5,7 +5,7 @@ import function.genotype.base.Carrier;
 import function.variant.base.Region;
 import function.variant.base.Variant;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -79,8 +79,8 @@ public class CarrierBlockManager {
             while (rs.next()) {
                 Carrier carrier = new Carrier();
                 carrier.init(rs);
-                carrier.checkCoverageFilter(CommandValue.minCaseCoverageCall,
-                        CommandValue.minCtrlCoverageCall);
+                carrier.checkCoverageFilter(CommonCommand.minCaseCoverageCall,
+                        CommonCommand.minCtrlCoverageCall);
                 carrier.checkQualityFilter();
                 carrier.checkValidOnXY(new Region(chr, varPos, varPos));
 

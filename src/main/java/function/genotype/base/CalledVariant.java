@@ -4,10 +4,11 @@ import function.annotation.base.AnnotatedVariant;
 import function.genotype.family.FamilyManager;
 import global.Data;
 import function.external.evs.EvsManager;
+import function.genotype.family.FamilyCommand;
 import function.variant.base.RegionManager;
 import global.Index;
 import temp.TempRange;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -314,7 +315,7 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     private void addFamilyIdSet(int sampleId) {
-        if (CommandValue.isFamilyAnalysis) {
+        if (FamilyCommand.isFamilyAnalysis) {
             String familyId = SampleManager.getTable().get(sampleId).getFamilyId();
             if (FamilyManager.isFamilyQualified(familyId)) {
                 familyIdSet.add(familyId);

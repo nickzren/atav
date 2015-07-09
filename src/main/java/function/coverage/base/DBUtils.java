@@ -4,7 +4,7 @@ import function.coverage.base.Exon;
 import function.coverage.base.InputList;
 import function.variant.base.Region;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -29,7 +29,7 @@ public class DBUtils {
                         sb.append(",");
                     }
                     sb.append("(").append("'").append(gene).append("',").append(sample_ids.get(i)).append(",");
-                    sb.append(CommandValue.minCoverage).append(",").append(coverage_ratio[i]).append(")");
+                    sb.append(CommonCommand.minCoverage).append(",").append(coverage_ratio[i]).append(")");
                     count++;
 
                 }

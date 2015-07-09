@@ -7,7 +7,9 @@ import global.Data;
 import global.Index;
 import function.genotype.base.QualityManager;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import function.genotype.collapsing.CollapsingCommand;
+import function.genotype.vargeno.VarGenoCommand;
+import utils.CommonCommand;
 import utils.FormatManager;
 import utils.LogManager;
 
@@ -116,13 +118,7 @@ public class Output implements Cloneable {
 
         calculateSampleFreq();
 
-        if (CommandValue.isCollapsingSingleVariant
-                || CommandValue.isFisher
-                || CommandValue.isLinear
-                || CommandValue.isListVarGeno
-                || CommandValue.isFamilyAnalysis) {
-            calculateHweP();
-        }
+        calculateHweP(); // only collapsing, fisher, linear, var geno, family output
 
         calculateAvgCov();
 
@@ -311,8 +307,8 @@ public class Output implements Cloneable {
                 && QualityManager.isMinCaseCarrierValid(caseCarrier)) {
             boolean isRecessive = isRecessive();
 
-            if (!CommandValue.isCollapsingSingleVariant
-                    && !CommandValue.isCollapsingCompHet) {
+            if (!CollapsingCommand.isCollapsingSingleVariant
+                    && !CollapsingCommand.isCollapsingCompHet) {
                 if (isCtrlMafValid(isRecessive)) {
                     if (isRecessive) {
                         if (isCtrlMhgf4RecessiveValid()
@@ -336,7 +332,7 @@ public class Output implements Cloneable {
      * major then only hom & het are qualified samples.
      */
     public boolean isQualifiedGeno(int geno) {
-        if (isMinorRef && !CommandValue.isAllNonRef) {
+        if (isMinorRef && !CommonCommand.isAllNonRef) {
             if (geno == 0 || geno == 1) {
                 return true;
             }

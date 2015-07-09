@@ -2,7 +2,7 @@ package function.external.evs;
 
 import function.AnalysisBase;
 import function.annotation.base.AnnotatedVariant;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -24,8 +24,8 @@ public class JonEvsTool extends AnalysisBase {
     @Override
     public void initOutput() {
         try {
-            File f = new File(CommandValue.jonEvsInput);
-            String pipelineOutput = CommandValue.outputPath + f.getName();
+            File f = new File(EvsCommand.jonEvsInput);
+            String pipelineOutput = CommonCommand.outputPath + f.getName();
             bwDetails = new BufferedWriter(new FileWriter(pipelineOutput));
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -81,7 +81,7 @@ public class JonEvsTool extends AnalysisBase {
         int lineNum = 0;
 
         try {
-            File f = new File(CommandValue.jonEvsInput);
+            File f = new File(EvsCommand.jonEvsInput);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));

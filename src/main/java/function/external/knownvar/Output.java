@@ -1,7 +1,7 @@
 package function.external.knownvar;
 
 import java.sql.ResultSet;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 
@@ -19,11 +19,11 @@ public class Output {
             String[] tmp = variantId.split("-"); // chr-pos-ref-alt
 
             int pos = Integer.valueOf(tmp[1]);
-            int width = CommandValue.snvWidth;
+            int width = KnownVarCommand.snvWidth;
 
             if (tmp[2].length() > 1
                     || tmp[3].length() > 1) {
-                width = CommandValue.indelWidth;
+                width = KnownVarCommand.indelWidth;
             }
 
             String sql = "SELECT count(*) as count "

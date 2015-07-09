@@ -7,7 +7,7 @@ import function.genotype.base.QualityManager;
 import function.variant.base.VariantManager;
 import function.external.exac.ExacManager;
 import global.Data;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.HashSet;
@@ -122,7 +122,7 @@ public class AnnotatedVariant extends Variant {
         evsCoverage = EvsManager.getCoverageInfo(region.chrStr,
                 String.valueOf(region.startPosition));
 
-        if (CommandValue.isOldEvsUsed) {
+        if (CommonCommand.isOldEvsUsed) {
             evsMafStr = EvsManager.getMafInfo(isSnv(), region.chrStr,
                     String.valueOf(region.startPosition), refAllele, allele);
 
@@ -157,17 +157,17 @@ public class AnnotatedVariant extends Variant {
 
         double[] values = {Data.NA, Data.NA, Data.NA};
 
-        if (CommandValue.evsMafPop.contains("ea")
+        if (CommonCommand.evsMafPop.contains("ea")
                 && !mafs[0].equals("NA")) {
             values[0] = Double.valueOf(mafs[0]);
         }
 
-        if (CommandValue.evsMafPop.contains("aa")
+        if (CommonCommand.evsMafPop.contains("aa")
                 && !mafs[2].equals("NA")) {
             values[1] = Double.valueOf(mafs[2]);
         }
 
-        if (CommandValue.evsMafPop.contains("all")
+        if (CommonCommand.evsMafPop.contains("all")
                 && !mafs[4].equals("NA")) {
             values[2] = Double.valueOf(mafs[4]);
         }
@@ -187,15 +187,15 @@ public class AnnotatedVariant extends Variant {
 
         double[] values = {Data.NA, Data.NA, Data.NA};
 
-        if (CommandValue.evsMafPop.contains("ea")) {
+        if (CommonCommand.evsMafPop.contains("ea")) {
             values[0] = mhgfs[0];
         }
 
-        if (CommandValue.evsMafPop.contains("aa")) {
+        if (CommonCommand.evsMafPop.contains("aa")) {
             values[1] = mhgfs[1];
         }
 
-        if (CommandValue.evsMafPop.contains("all")) {
+        if (CommonCommand.evsMafPop.contains("all")) {
             values[2] = mhgfs[2];
         }
 
@@ -210,8 +210,8 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
-                & PolyphenManager.isValid(polyphenHumdiv, function, CommandValue.polyphenHumdiv)
-                & PolyphenManager.isValid(polyphenHumvar, function, CommandValue.polyphenHumvar);
+                & PolyphenManager.isValid(polyphenHumdiv, function, CommonCommand.polyphenHumdiv)
+                & PolyphenManager.isValid(polyphenHumvar, function, CommonCommand.polyphenHumvar);
     }
 
     public String getGeneName() {

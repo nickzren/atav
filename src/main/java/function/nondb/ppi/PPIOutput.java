@@ -2,9 +2,9 @@ package function.nondb.ppi;
 
 /**
  *
- * @author quanli
+ * @author nick
  */
-public class Output {
+public class PPIOutput {
     public static final String title
             = "Sample,"
             + "#Genes,"

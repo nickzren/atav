@@ -3,7 +3,6 @@ package function.coverage.base;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
 import java.io.BufferedWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -76,7 +75,7 @@ public class SampleStatistics {
     }
 
     public void print(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
-        if (CommandValue.isByExon) {
+        if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
             for (int i = 0; i < SampleNames.length; i++) {
                 StringBuilder sb = new StringBuilder();
@@ -99,7 +98,7 @@ public class SampleStatistics {
                 if (e.getCoveredRegion().getLength() > 0) {
                     double ratio = (double) cov / (double) e.getCoveredRegion().getLength();
                     sb.append(pformat6.format(ratio)).append(",");
-                    pass = ratio >= CommandValue.minPercentRegionCovered ? 1 : 0;
+                    pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
                 } else {
                     sb.append("NA").append(",");
                     pass = 0;
@@ -150,7 +149,7 @@ public class SampleStatistics {
     }
 
     public void printMatrixRowbyExon(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
-        if (CommandValue.isByExon) {
+        if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
             StringBuilder sb = new StringBuilder();
             sb.append(RecordNames[record]).append("_").append(e.getStableId());
@@ -208,7 +207,7 @@ public class SampleStatistics {
         double abs_diff = Math.abs(avgCase - avgCtrl);
         sb.append(",").append(pformat6.format(abs_diff));
         sb.append(",").append(aLength[record]);
-        if (abs_diff > CommandValue.geneCleanCutoff) {
+        if (abs_diff > CoverageCommand.geneCleanCutoff) {
             if (avgCase < avgCtrl) {
                 sb.append(",").append("bias against discovery");
             } else {
@@ -239,7 +238,7 @@ public class SampleStatistics {
         bw.write(sb.toString());
     }
     public void printExonSummaryLinearTrait(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
-        if (CommandValue.isByExon) {
+        if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
             double RegoinLength = e.getCoveredRegion().getLength();
             double avgAll = 0;
@@ -285,7 +284,7 @@ public class SampleStatistics {
         if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
             return;
         }
-        if (CommandValue.isByExon) {
+        if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
 
             double avgCase = 0;
@@ -346,7 +345,7 @@ public class SampleStatistics {
             if (aLength[record] > 0) {
                 double ratio = aCoverage[record][i] / aLength[record];
                 sb.append(pformat6.format(ratio)).append(",");
-                pass = ratio >= CommandValue.minPercentRegionCovered ? 1 : 0;
+                pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
             } else {
                 sb.append("NA").append(",");
                 pass = 0;

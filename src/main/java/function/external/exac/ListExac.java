@@ -2,7 +2,7 @@ package function.external.exac;
 
 import function.AnalysisBase;
 import function.variant.base.VariantManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -14,7 +14,7 @@ import java.io.FileWriter;
 public class ListExac extends AnalysisBase {
 
     BufferedWriter bwExac = null;
-    final String exacFilePath = CommandValue.outputPath + "exac.csv";
+    final String exacFilePath = CommonCommand.outputPath + "exac.csv";
 
     int analyzedRecords = 0;
 

@@ -6,7 +6,7 @@ import function.genotype.base.Sample;
 import function.variant.base.Variant;
 import global.Data;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import java.io.BufferedWriter;
@@ -21,9 +21,9 @@ public class CollapsingSingleVariant extends CollapsingBase {
     BufferedWriter bwQualifiedVariant = null;
     BufferedWriter bwMissingVariant = null;
     BufferedWriter bwGenotypes = null;
-    final String genotypesFilePath = CommandValue.outputPath + "genotypes.csv";
-    final String qualifiedVariantFilePath = CommandValue.outputPath + "qualified.variant.txt";
-    final String missingVariantFilePath = CommandValue.outputPath + "missing.variant.txt";
+    final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
+    final String qualifiedVariantFilePath = CommonCommand.outputPath + "qualified.variant.txt";
+    final String missingVariantFilePath = CommonCommand.outputPath + "missing.variant.txt";
 
     @Override
     public void initOutput() {
@@ -151,7 +151,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
     }
 
     private boolean isMissingRateValid(CalledVariant calledVar) {
-        if (CommandValue.varMissingRate == Double.MAX_VALUE) {
+        if (CollapsingCommand.varMissingRate == Double.MAX_VALUE) {
             return true;
         }
 
@@ -164,7 +164,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
         double missingRate = FormatManager.devide(missing, SampleManager.getListSize());
 
-        if (missingRate <= CommandValue.varMissingRate) {
+        if (missingRate <= CollapsingCommand.varMissingRate) {
             return true;
         }
 

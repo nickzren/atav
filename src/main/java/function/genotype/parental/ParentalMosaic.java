@@ -3,7 +3,7 @@ package function.genotype.parental;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -17,7 +17,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
 
     BufferedWriter bwOutput = null;
 
-    final String outputFilePath = CommandValue.outputPath + "parental.mosaic.csv";
+    final String outputFilePath = CommonCommand.outputPath + "parental.mosaic.csv";
 
     @Override
     public void initOutput() {

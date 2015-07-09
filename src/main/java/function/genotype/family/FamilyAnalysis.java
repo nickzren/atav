@@ -6,7 +6,7 @@ import function.genotype.base.AnalysisBase4CalledVar;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import java.io.BufferedWriter;
@@ -26,11 +26,11 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
     BufferedWriter bwSummaryShared = null;
     BufferedWriter bwSummaryAll = null;
     BufferedWriter bwQualifiedVariants = null;
-    final String sharedFilePath = CommandValue.outputPath + "shared.csv";
-    final String notSharedFilePath = CommandValue.outputPath + "notshared.csv";
-    final String summarySharedFilePath = CommandValue.outputPath + "summary.only.shared.csv";
-    final String summaryAllFilePath = CommandValue.outputPath + "summary.all.shared.csv";
-    final String variantCarrierPath = CommandValue.outputPath + "variant.carrier.csv";
+    final String sharedFilePath = CommonCommand.outputPath + "shared.csv";
+    final String notSharedFilePath = CommonCommand.outputPath + "notshared.csv";
+    final String summarySharedFilePath = CommonCommand.outputPath + "summary.only.shared.csv";
+    final String summaryAllFilePath = CommonCommand.outputPath + "summary.all.shared.csv";
+    final String variantCarrierPath = CommonCommand.outputPath + "variant.carrier.csv";
     private final String[] FLAG = {"Shared", "Different zygosity", "Possibly shared",
         "Not shared", "Nnknown", "Partially shared"};
 

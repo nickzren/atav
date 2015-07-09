@@ -1,5 +1,6 @@
 package function.coverage.comparison;
 
+import function.coverage.base.CoverageCommand;
 import function.coverage.base.ExonCleanLinearTrait;
 import function.coverage.base.ExonClean;
 import function.coverage.base.SampleStatistics;
@@ -7,7 +8,7 @@ import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.summary.CoverageSummary;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import utils.ThirdPartyToolManager;
@@ -27,15 +28,15 @@ import java.util.Iterator;
 
 public class CoverageComparison extends CoverageSummary {
 
-    final String coverageSummaryByExon = CommandValue.outputPath + "coverage.summary.by.exon.csv";
-    final String coverageSummaryByGene = CommandValue.outputPath + "coverage.summary.csv";
-    final String CleanedExonList = CommandValue.outputPath + "exon.clean.txt";
-    final String CleanedGeneSummaryList = CommandValue.outputPath + "coverage.summary.clean.csv";
+    final String coverageSummaryByExon = CommonCommand.outputPath + "coverage.summary.by.exon.csv";
+    final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
+    final String CleanedExonList = CommonCommand.outputPath + "exon.clean.txt";
+    final String CleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
 
     public CoverageComparison() {
         super();
         int sampleSize = SampleManager.getListSize();
-        if (!CommandValue.isCoverageComparisonDoLinear && (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum())) {
+        if (!CoverageCommand.isCoverageComparisonDoLinear && (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum())) {
             ErrorManager.print("Error: this function does not support to run with case only or control only sample file. ");
         }
     }
@@ -50,8 +51,8 @@ public class CoverageComparison extends CoverageSummary {
         ExonCleanLinearTrait ec = new ExonCleanLinearTrait(coverageSummaryByExon);
         double cutoff = ec.GetCutoff();
         LogManager.writeAndPrint("\nThe automated cutoff value for variance for exons is " + Double.toString(cutoff));
-        if (CommandValue.exonCleanCutoff >= 0) {
-            cutoff = CommandValue.exonCleanCutoff;
+        if (CoverageCommand.exonCleanCutoff >= 0) {
+            cutoff = CoverageCommand.exonCleanCutoff;
             LogManager.writeAndPrint("User specified cutoff value " + pformat6.format(cutoff) + " is applied instead.");
         }
         HashSet<String> CleanedList = ec.GetExonCleanList(cutoff);
@@ -107,8 +108,8 @@ public class CoverageComparison extends CoverageSummary {
         ExonClean ec = new ExonClean(coverageSummaryByExon);
         double cutoff = ec.GetCutoff();
         LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for exons is " + Double.toString(cutoff));
-        if (CommandValue.exonCleanCutoff >= 0) {
-            cutoff = CommandValue.exonCleanCutoff;
+        if (CoverageCommand.exonCleanCutoff >= 0) {
+            cutoff = CoverageCommand.exonCleanCutoff;
             LogManager.writeAndPrint("User specified cutoff value " + pformat6.format(cutoff) + " is applied instead.");
         }
         HashSet<String> CleanedList = ec.GetExonCleanList(cutoff);
@@ -163,7 +164,7 @@ public class CoverageComparison extends CoverageSummary {
 
     @Override
     public void DoExonSummary(SampleStatistics ss, int record, HashMap<Integer, Integer> result, Exon e) throws Exception {
-        if (CommandValue.isCoverageComparisonDoLinear) {
+        if (CoverageCommand.isCoverageComparisonDoLinear) {
             ss.printExonSummaryLinearTrait(record, result, e, bwCoverageSummaryByExon);
         } else {
             ss.printExonSummary(record, result, e, bwCoverageSummaryByExon);
@@ -172,7 +173,7 @@ public class CoverageComparison extends CoverageSummary {
     
     @Override
     public void DoGeneSummary(SampleStatistics ss, int record) throws Exception {
-        if (CommandValue.isCoverageComparisonDoLinear) {
+        if (CoverageCommand.isCoverageComparisonDoLinear) {
             ss.printGeneSummaryLinearTrait(record, bwCoverageSummaryByGene);
         } else {
             ss.printGeneSummary(record, bwCoverageSummaryByGene);
@@ -181,8 +182,8 @@ public class CoverageComparison extends CoverageSummary {
     @Override
     public void run() throws Exception {
         super.run();
-        if (CommandValue.isByExon) {
-            if (CommandValue.isCoverageComparisonDoLinear) {
+        if (CoverageCommand.isByExon) {
+            if (CoverageCommand.isCoverageComparisonDoLinear) {
                 outputCleanedExonListLinearTrait();
             } else {
                 outputCleanedExonList();
@@ -194,15 +195,15 @@ public class CoverageComparison extends CoverageSummary {
     public void initOutput() throws Exception {
         super.initOutput();
         bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
-        if (CommandValue.isCoverageComparisonDoLinear) {
+        if (CoverageCommand.isCoverageComparisonDoLinear) {
             bwCoverageSummaryByGene.write("Gene,Chr,AvgAll,Length");
         } else {
             bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
         }
         bwCoverageSummaryByGene.newLine();
-        if (CommandValue.isByExon) {
+        if (CoverageCommand.isByExon) {
             bwCoverageSummaryByExon = new BufferedWriter(new FileWriter(coverageSummaryByExon));
-            if (CommandValue.isCoverageComparisonDoLinear) {
+            if (CoverageCommand.isCoverageComparisonDoLinear) {
                  bwCoverageSummaryByExon.write("EXON,Chr,AvgAll,pvalue,R2,Variance,Length");
             } else {
                  bwCoverageSummaryByExon.write("EXON,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
@@ -216,7 +217,7 @@ public class CoverageComparison extends CoverageSummary {
         super.closeOutput();
         bwCoverageSummaryByGene.flush();
         bwCoverageSummaryByGene.close();
-        if (CommandValue.isByExon) {
+        if (CoverageCommand.isByExon) {
             bwCoverageSummaryByExon.flush();
             bwCoverageSummaryByExon.close();
         }

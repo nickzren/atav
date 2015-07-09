@@ -8,7 +8,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.QualityManager;
 import function.genotype.base.SampleManager;
-import utils.CommandValue;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.LogManager;
@@ -29,7 +29,7 @@ public class CollapsingCompHet extends CollapsingBase {
     HashSet<Integer> variantIdSet = new HashSet<Integer>();
     HashSet<String> currentGeneList = new HashSet<String>();
     BufferedWriter bwCompHet = null;
-    final String comphetFilePath = CommandValue.outputPath + "comphet.csv";
+    final String comphetFilePath = CommonCommand.outputPath + "comphet.csv";
 
     @Override
     public void initOutput() {
