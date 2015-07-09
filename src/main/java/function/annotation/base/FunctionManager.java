@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.LogManager;

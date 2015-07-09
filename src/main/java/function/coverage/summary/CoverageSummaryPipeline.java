@@ -7,7 +7,6 @@ import function.coverage.base.Gene;
 import function.coverage.base.InputList;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;

@@ -6,7 +6,6 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;

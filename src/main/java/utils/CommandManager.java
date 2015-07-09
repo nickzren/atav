@@ -2,7 +2,6 @@ package utils;
 
 import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
-import function.annotation.base.TranscriptManager;
 import function.annotation.genedx.GeneDxCommand;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
@@ -59,7 +58,7 @@ public class CommandManager {
 
             LogManager.initPath();
 
-            initMainFunction();
+            initFunctionOptions();
 
             initCommonOptions();
 
@@ -241,7 +240,7 @@ public class CommandManager {
         }
     }
 
-    private static void initMainFunction() throws Exception {
+    private static void initFunctionOptions() throws Exception {
         Iterator<CommandOption> iterator = optionList.iterator();
         CommandOption option;
         boolean hasMainFunction = false;

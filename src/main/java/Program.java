@@ -9,7 +9,6 @@ import function.annotation.base.GeneManager;
 import utils.CommandManager;
 import utils.DBManager;
 import utils.ErrorManager;
-import utils.CommonCommand;
 import utils.LogManager;
 import function.AnalysisBase;
 import function.annotation.genedx.GeneDxCommand;

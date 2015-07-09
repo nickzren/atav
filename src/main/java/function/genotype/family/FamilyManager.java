@@ -2,7 +2,6 @@ package function.genotype.family;
 
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;

@@ -3,7 +3,6 @@ package function.variant.base;
 import function.annotation.base.GeneManager;
 import global.Data;
 import global.SqlQuery;
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;

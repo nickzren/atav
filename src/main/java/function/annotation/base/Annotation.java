@@ -3,7 +3,6 @@ package function.annotation.base;
 import function.variant.base.Region;
 import global.Data;
 import function.variant.base.RegionManager;
-import utils.CommonCommand;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;

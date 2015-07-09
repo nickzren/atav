@@ -1,7 +1,6 @@
 package function.external.knownvar;
 
 import java.sql.ResultSet;
-import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 

@@ -7,7 +7,6 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.variant.base.VariantLevelFilterCommand;
-import utils.CommonCommand;
 import utils.FormatManager;
 
 /**

@@ -1,10 +1,7 @@
 package function.genotype.base;
 
-import function.genotype.base.Carrier;
-import function.genotype.base.NonCarrier;
 import function.variant.base.Variant;
 import global.Data;
-import utils.CommonCommand;
 import java.util.HashMap;
 
 /**

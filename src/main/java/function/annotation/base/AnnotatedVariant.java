@@ -7,7 +7,6 @@ import function.variant.base.VariantManager;
 import function.external.exac.ExacManager;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
-import utils.CommonCommand;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.HashSet;
