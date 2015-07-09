@@ -71,7 +71,7 @@ public class FunctionManager {
     }
 
     private static void initUserFunctionList() {
-        String str = CommonCommand.functionInput.replaceAll("( )+", "");
+        String str = AnnotationLevelFilterCommand.functionInput.replaceAll("( )+", "");
 
         if (str.isEmpty()
                 || str.endsWith("all")

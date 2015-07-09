@@ -41,8 +41,8 @@ public class CoverageBlockManager {
                 if (!carrierMap.containsKey(sampleID)) {
                     NonCarrier noncarrier = new NonCarrier();
                     noncarrier.init(sampleID, getCoverage(sampleID, varPosIndex));
-                    noncarrier.checkCoverageFilter(CommonCommand.minCaseCoverageNoCall,
-                            CommonCommand.minCtrlCoverageNoCall);
+                    noncarrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
+                            GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
                     noncarrier.checkValidOnXY(var);
                     noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
                 }

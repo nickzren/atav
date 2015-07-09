@@ -114,15 +114,15 @@ public class Carrier extends NonCarrier {
 
     public void checkQualityFilter() {
         if (genotype != Data.NA) {
-            if (!QualityManager.isVarStatusValid(passFailStatus)
-                    || !QualityManager.isGqValid(genotypeQualGQ)
-                    || !QualityManager.isFsValid(strandBiasFS)
-                    || !QualityManager.isHapScoreValid(haplotypeScore)
-                    || !QualityManager.isMqValid(rmsMapQualMQ)
-                    || !QualityManager.isQdValid(qualByDepthQD)
-                    || !QualityManager.isQualValid(qual)
-                    || !QualityManager.isRprsValid(readPosRankSum)
-                    || !QualityManager.isMqrsValid(mapQualRankSum)) {
+            if (!GenotypeLevelFilterCommand.isVarStatusValid(passFailStatus)
+                    || !GenotypeLevelFilterCommand.isGqValid(genotypeQualGQ)
+                    || !GenotypeLevelFilterCommand.isFsValid(strandBiasFS)
+                    || !GenotypeLevelFilterCommand.isHapScoreValid(haplotypeScore)
+                    || !GenotypeLevelFilterCommand.isMqValid(rmsMapQualMQ)
+                    || !GenotypeLevelFilterCommand.isQdValid(qualByDepthQD)
+                    || !GenotypeLevelFilterCommand.isQualValid(qual)
+                    || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum)
+                    || !GenotypeLevelFilterCommand.isMqrsValid(mapQualRankSum)) {
                 genotype = Data.NA;
             }
         }
@@ -130,7 +130,7 @@ public class Carrier extends NonCarrier {
         if (genotype == 2) { // --hom-percent-alt-read 
             double percAltRead = FormatManager.devide(readsAlt, gatkFilteredCoverage);
 
-            if (!QualityManager.isHomPercentAltReadValid(percAltRead)) {
+            if (!GenotypeLevelFilterCommand.isHomPercentAltReadValid(percAltRead)) {
                 genotype = Data.NA;
             }
         }
@@ -138,7 +138,7 @@ public class Carrier extends NonCarrier {
         if (genotype == 1) { // --het-percent-alt-read 
             double percAltRead = FormatManager.devide(readsAlt, gatkFilteredCoverage);
 
-            if (!QualityManager.isHetPercentAltReadValid(percAltRead)) {
+            if (!GenotypeLevelFilterCommand.isHetPercentAltReadValid(percAltRead)) {
                 genotype = Data.NA;
             }
         }

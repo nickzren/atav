@@ -1,7 +1,7 @@
 package function.external.exac;
 
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import java.sql.ResultSet;
@@ -76,7 +76,7 @@ public class Exac {
 
         for (int i = 0; i < Data.EXAC_POP.length; i++) {
             if (maf[i] != Data.NA
-                    && CommonCommand.exacPop.contains(Data.EXAC_POP[i])) {
+                    && VariantLevelFilterCommand.exacPop.contains(Data.EXAC_POP[i])) {
                 value = Math.max(value, maf[i]);
             }
         }

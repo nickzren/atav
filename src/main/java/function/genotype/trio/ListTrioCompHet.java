@@ -6,7 +6,7 @@ import function.genotype.base.AnalysisBase4CalledVar;
 import global.Index;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
-import function.genotype.base.QualityManager;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -260,7 +260,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             int cGeno2, int cCov2, int mGeno2,
             int mCov2, int fGeno2, int fCov2) {
 
-        int minCov = CommonCommand.minCoverage;
+        int minCov = GenotypeLevelFilterCommand.minCoverage;
 
         if ((fGeno1 <= 0 && mGeno1 <= 0)
                 || (fGeno2 <= 0 && mGeno2 <= 0)) {
@@ -340,7 +340,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
                                 coFreq = getCoOccurrenceFreq(output1, output2);
 
-                                if (QualityManager.isCombFreqValid(coFreq[Index.CTRL])) {
+                                if (TrioCommand.isCombFreqValid(coFreq[Index.CTRL])) {
                                     sb.append(output1.familyId).append(",");
                                     sb.append(output1.childName).append(",");
                                     sb.append(output1.childType).append(",");

@@ -1,6 +1,7 @@
 package function.genotype.collapsing;
 
 import function.annotation.base.GeneManager;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.statistics.StatisticsCommand;
 import global.Data;
 import java.util.Iterator;
@@ -9,7 +10,6 @@ import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
-import utils.CommonCommand;
 
 /**
  *
@@ -28,7 +28,7 @@ public class CollapsingCommand {
     public static boolean isCollapsingDoLogistic = false;
     public static String geneBoundariesFile = "";
 
-    public static void initSingleVarOptions(Iterator<CommandOption> iterator) 
+    public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
         CommandOption option;
 
@@ -42,11 +42,11 @@ public class CollapsingCommand {
             } else if (option.getName().equals("--loo-maf-rec")
                     || option.getName().equals("--loo-maf-recessive")) {
                 checkValueValid(0.5, 0, option);
-                CommonCommand.maf4Recessive = getValidDouble(option);
+                GenotypeLevelFilterCommand.maf4Recessive = getValidDouble(option);
             } else if (option.getName().equals("--loo-mhgf-rec")
                     || option.getName().equals("--loo-mhgf-recessive")) {
                 checkValueValid(0.5, 0, option);
-                CommonCommand.mhgf4Recessive = getValidDouble(option);
+                GenotypeLevelFilterCommand.mhgf4Recessive = getValidDouble(option);
             } else if (option.getName().equals("--gene-boundaries")) {
                 geneBoundariesFile = getValidPath(option);
             } else if (option.getName().equals("--read-coverage-summary")) {
@@ -73,7 +73,7 @@ public class CollapsingCommand {
         }
     }
 
-    public static void initCompHetOptions(Iterator<CommandOption> iterator) 
+    public static void initCompHetOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing comp het
         CommandOption option;
 
@@ -85,11 +85,11 @@ public class CollapsingCommand {
             } else if (option.getName().equals("--loo-maf-rec")
                     || option.getName().equals("--loo-maf-recessive")) {
                 checkValueValid(0.5, 0, option);
-                CommonCommand.maf4Recessive = getValidDouble(option);
+                GenotypeLevelFilterCommand.maf4Recessive = getValidDouble(option);
             } else if (option.getName().equals("--loo-mhgf-rec")
                     || option.getName().equals("--loo-mhgf-recessive")) {
                 checkValueValid(0.5, 0, option);
-                CommonCommand.mhgf4Recessive = getValidDouble(option);
+                GenotypeLevelFilterCommand.mhgf4Recessive = getValidDouble(option);
             } else if (option.getName().equals("--loo-comb-freq")) {
                 checkValueValid(1, 0, option);
                 looCombFreq = getValidDouble(option);
@@ -114,5 +114,17 @@ public class CollapsingCommand {
         if (isCollapsingDoLinear) {
             isCollapsingDoLogistic = false;
         }
+    }
+
+    public static boolean isLooCombFreqValid(double value) {
+        if (looCombFreq == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value <= looCombFreq) {
+            return true;
+        }
+
+        return false;
     }
 }

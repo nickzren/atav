@@ -6,7 +6,7 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
-import function.genotype.base.QualityManager;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -215,7 +215,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                     double[] coFreq = getCoOccurrenceFreq(output1, output2, sample);
 
-                    if (QualityManager.isLooCombFreqValid(coFreq[Index.CTRL])) {
+                    if (CollapsingCommand.isLooCombFreqValid(coFreq[Index.CTRL])) {
 
                         summary.updateSampleVariantCount4CompHet(sample.getIndex());
 

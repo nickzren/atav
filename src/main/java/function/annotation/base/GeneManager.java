@@ -41,18 +41,18 @@ public class GeneManager {
     }
 
     private static void initGeneName() throws Exception {
-        if (CommonCommand.geneInput.isEmpty()) {
+        if (AnnotationLevelFilterCommand.geneInput.isEmpty()) {
             return;
         }
 
         isUsed = true;
 
-        File f = new File(CommonCommand.geneInput);
+        File f = new File(AnnotationLevelFilterCommand.geneInput);
 
         if (f.isFile()) {
             initFromFile(f);
         } else {
-            String[] genes = CommonCommand.geneInput.split(",");
+            String[] genes = AnnotationLevelFilterCommand.geneInput.split(",");
             for (String geneName : genes) {
                 HashSet<Gene> set = new HashSet<Gene>();
                 Gene gene = new Gene(geneName);

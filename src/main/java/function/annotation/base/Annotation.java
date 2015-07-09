@@ -54,8 +54,8 @@ public class Annotation {
     }
 
     public boolean isValid() {
-        if (PolyphenManager.isValid(polyphenHumdiv, function, CommonCommand.polyphenHumdiv)
-                && PolyphenManager.isValid(polyphenHumvar, function, CommonCommand.polyphenHumvar)
+        if (PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
+                && PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
                 && GeneManager.isValid(this)
                 && TranscriptManager.isValid(stableId)
                 && !function.isEmpty()) {

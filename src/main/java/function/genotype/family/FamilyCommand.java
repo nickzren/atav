@@ -1,12 +1,12 @@
 package function.genotype.family;
 
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
-import utils.CommonCommand;
 import utils.ErrorManager;
 
 /**
@@ -33,10 +33,10 @@ public class FamilyCommand {
                 popCtrlMaf = getValidDouble(option);
             } else if (option.getName().equals("--pop-ctrl-maf-rec")) {
                 checkValueValid(0.5, 0, option);
-                CommonCommand.maf4Recessive = getValidDouble(option);
+                GenotypeLevelFilterCommand.maf4Recessive = getValidDouble(option);
             } else if (option.getName().equals("--pop-ctrl-mhgf-rec")) {
                 checkValueValid(0.5, 0, option);
-                CommonCommand.mhgf4Recessive = getValidDouble(option);
+                GenotypeLevelFilterCommand.mhgf4Recessive = getValidDouble(option);
             } else {
                 continue;
             }

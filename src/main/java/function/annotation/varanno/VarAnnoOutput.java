@@ -5,7 +5,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
-import utils.CommonCommand;
+import function.variant.base.VariantLevelFilterCommand;
 import utils.FormatManager;
 
 /**
@@ -57,7 +57,7 @@ public class VarAnnoOutput {
 
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
 
-        if (CommonCommand.isOldEvsUsed) {
+        if (VariantLevelFilterCommand.isOldEvsUsed) {
             sb.append(annotatedVar.getEvsCoverageStr()).append(",");
             sb.append(annotatedVar.getEvsMafStr()).append(",");
             sb.append(annotatedVar.getEvsFilterStatus()).append(",");

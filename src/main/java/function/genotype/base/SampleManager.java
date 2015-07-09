@@ -68,14 +68,14 @@ public class SampleManager {
 
         initEvsIndelSampleIdSetFromAnnoDB();
 
-        if (CommonCommand.isAllSample) {
+        if (GenotypeLevelFilterCommand.isAllSample) {
             initAllSampleFromAnnoDB();
         } else {
-            if (!CommonCommand.sampleFile.isEmpty()) {
+            if (!GenotypeLevelFilterCommand.sampleFile.isEmpty()) {
                 initFromSampleFile();
             }
 
-            if (!CommonCommand.evsSample.isEmpty()) {
+            if (!GenotypeLevelFilterCommand.evsSample.isEmpty()) {
                 initEvsSampleFromAnnoDB();
             }
         }
@@ -94,9 +94,9 @@ public class SampleManager {
     }
 
     private static void checkSampleFile() {
-        if (CommonCommand.sampleFile.isEmpty()
-                && !CommonCommand.isAllSample
-                && CommonCommand.evsSample.isEmpty()) {
+        if (GenotypeLevelFilterCommand.sampleFile.isEmpty()
+                && !GenotypeLevelFilterCommand.isAllSample
+                && GenotypeLevelFilterCommand.evsSample.isEmpty()) {
             ErrorManager.print("Please specify your sample file: --sample $PATH");
         }
     }
@@ -149,7 +149,7 @@ public class SampleManager {
         int lineNum = 0;
 
         try {
-            File f = new File(CommonCommand.sampleFile);
+            File f = new File(GenotypeLevelFilterCommand.sampleFile);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -236,8 +236,8 @@ public class SampleManager {
 
         String evsPop = ""; // all
 
-        if (!CommonCommand.evsSample.equals("all")) {
-            evsPop = CommonCommand.evsSample;
+        if (!GenotypeLevelFilterCommand.evsSample.equals("all")) {
+            evsPop = GenotypeLevelFilterCommand.evsSample;
         }
 
         String sqlCode = "SELECT * FROM sample s, sample_pipeline_step p "
@@ -818,8 +818,8 @@ public class SampleManager {
 
                     if (!carrierMap.containsKey(noncarrier.getSampleId())) {
 
-                        noncarrier.checkCoverageFilter(CommonCommand.minCaseCoverageNoCall,
-                                CommonCommand.minCtrlCoverageNoCall);
+                        noncarrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
+                                GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
 
                         noncarrier.checkValidOnXY(var);
 
@@ -854,8 +854,8 @@ public class SampleManager {
                 Carrier carrier = new Carrier();
                 carrier.init(rs);
 
-                carrier.checkCoverageFilter(CommonCommand.minCaseCoverageCall,
-                        CommonCommand.minCtrlCoverageCall);
+                carrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
+                        GenotypeLevelFilterCommand.minCtrlCoverageCall);
 
                 carrier.checkQualityFilter();
 

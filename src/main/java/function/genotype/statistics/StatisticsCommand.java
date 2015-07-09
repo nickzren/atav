@@ -64,4 +64,15 @@ public class StatisticsCommand {
         }
     }
 
+    public static boolean isMinHomCaseRecValid(int value) {
+        if (minHomCaseRec == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value >= minHomCaseRec) {
+            return true;
+        }
+
+        return false;
+    }
 }

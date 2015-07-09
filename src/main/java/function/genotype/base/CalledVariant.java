@@ -8,7 +8,6 @@ import function.genotype.family.FamilyCommand;
 import function.variant.base.RegionManager;
 import global.Index;
 import temp.TempRange;
-import utils.CommonCommand;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ public class CalledVariant extends AnnotatedVariant {
     private void checkValid() {
         int value = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
 
-        isValid = QualityManager.isMaxQcFailSampleValid(value);
+        isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(value);
     }
 
     // temp hack solution - phs000473 coverage restriction

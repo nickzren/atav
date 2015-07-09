@@ -7,9 +7,9 @@ import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
-import utils.CommonCommand;
 import utils.FormatManager;
 
 /**
@@ -224,7 +224,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
         sb.append(FormatManager.getDouble(avgCtrlCov)).append(",");
 
-        if (CommonCommand.isOldEvsUsed) {
+        if (VariantLevelFilterCommand.isOldEvsUsed) {
             sb.append(calledVar.getEvsCoverageStr()).append(",");
             sb.append(calledVar.getEvsMafStr()).append(",");
             sb.append(calledVar.getEvsFilterStatus()).append(",");

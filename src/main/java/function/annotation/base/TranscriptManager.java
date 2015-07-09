@@ -21,15 +21,15 @@ public class TranscriptManager {
     private static String canonicalTranscriptFile = "";
 
     public static void init() {
-        init(CommonCommand.transcriptFile, currentTranscriptSet);
+        init(AnnotationLevelFilterCommand.transcriptFile, currentTranscriptSet);
 
-        if (CommonCommand.isCcdsOnly) {
+        if (AnnotationLevelFilterCommand.isCcdsOnly) {
             init(ccdsTranscriptFile, ccdsTranscriptSet);
 
             resetTranscriptSet(ccdsTranscriptSet);
         }
 
-        if (CommonCommand.isCanonicalOnly) {
+        if (AnnotationLevelFilterCommand.isCanonicalOnly) {
             init(canonicalTranscriptFile, canonicalTranscriptSet);
 
             resetTranscriptSet(canonicalTranscriptSet);

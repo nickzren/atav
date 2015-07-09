@@ -53,4 +53,16 @@ public class TrioCommand {
             iterator.remove();
         }
     }
+
+    public static boolean isCombFreqValid(double value) {
+        if (combFreq == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value <= combFreq) {
+            return true;
+        }
+
+        return false;
+    }
 }

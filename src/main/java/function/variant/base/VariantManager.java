@@ -28,11 +28,11 @@ public class VariantManager {
     private static final int maxIncludeNum = 10000000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
-        init(CommonCommand.includeVariantId, includeVariantSet, true);
+        init(VariantLevelFilterCommand.includeVariantId, includeVariantSet, true);
 
-        init(CommonCommand.excludeVariantId, excludeVariantSet, false);
+        init(VariantLevelFilterCommand.excludeVariantId, excludeVariantSet, false);
 
-        if (CommonCommand.isExcludeArtifacts) {
+        if (VariantLevelFilterCommand.isExcludeArtifacts) {
             init(Data.ARTIFACTS_Variant_PATH, excludeVariantSet, false);
         }
     }
@@ -231,12 +231,12 @@ public class VariantManager {
         try {
             if (type.equals(Data.VARIANT_TYPE[0])) // snv
             {
-                if (CommonCommand.isExcludeSnv) {
+                if (VariantLevelFilterCommand.isExcludeSnv) {
                     return false;
                 }
             } else // indel
             {
-                if (CommonCommand.isExcludeIndel) {
+                if (VariantLevelFilterCommand.isExcludeIndel) {
                     return false;
                 }
             }

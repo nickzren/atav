@@ -1,5 +1,6 @@
 package function.genotype.trio;
 
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
@@ -162,8 +163,8 @@ public class TrioManager {
 
         if (Geno == Data.NA) { //missing
             sKey.append('0');
-        } else if (Cov >= CommonCommand.minCoverage
-                || CommonCommand.minCoverage == Data.NO_FILTER) {
+        } else if (Cov >= GenotypeLevelFilterCommand.minCoverage
+                || GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
             sKey.append('1');
         } else {
             sKey.append('2');

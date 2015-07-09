@@ -1,5 +1,6 @@
 package utils;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
 import function.annotation.base.TranscriptManager;
 import function.annotation.genedx.GeneDxCommand;
@@ -9,6 +10,7 @@ import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.flanking.FlankingCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
 import function.genotype.parental.ParentalCommand;
@@ -18,6 +20,7 @@ import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.nondb.ppi.PPICommand;
+import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -58,13 +61,7 @@ public class CommandManager {
 
             initMainFunction();
 
-            initVariantLevelFilterOptions();
-
-            initAnnotationLevelFilterOptions();
-
-            initGenotypeLevelFilterOptions();
-
-            initMaf();
+            initCommonOptions();
 
             initOptions4Debug();
 
@@ -318,12 +315,12 @@ public class CommandManager {
                 CoverageCommand.initCoverageComparison(optionList.iterator());
             } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
                 CommonCommand.isNonSampleAnalysis = true;
-                CommonCommand.isOldEvsUsed = true;
+                VariantLevelFilterCommand.isOldEvsUsed = true;
                 EvsCommand.isListEvs = true;
             } else if (option.getName().equals("--jon-evs-tool")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isJonEvsTool = true;
-                CommonCommand.isOldEvsUsed = true;
+                VariantLevelFilterCommand.isOldEvsUsed = true;
                 EvsCommand.initJonEvsToolOptions(optionList.iterator());
             } else if (option.getName().equals("--list-known-var")) {
                 CommonCommand.isNonSampleAnalysis = true;
@@ -358,233 +355,16 @@ public class CommandManager {
         }
     }
 
-    private static void initVariantLevelFilterOptions() throws Exception {
-        Iterator<CommandOption> iterator = optionList.iterator();
-        CommandOption option;
+    private static void initCommonOptions() throws Exception {
+        VariantLevelFilterCommand.initOptions(optionList.iterator());
 
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            if (option.getName().equals("--region")) {
-                CommonCommand.regionInput = option.getValue();
-            } else if (option.getName().equals("--variant")) {
-                CommonCommand.includeVariantId = getValidPath(option);
-            } else if (option.getName().equals("--exclude-variant")) {
-                CommonCommand.excludeVariantId = getValidPath(option);
-            } else if (option.getName().equals("--exclude-artifacts")) {
-                CommonCommand.isExcludeArtifacts = true;
-            } else if (option.getName().equals("--exclude-snv")) {
-                CommonCommand.isExcludeSnv = true;
-            } else if (option.getName().equals("--exclude-indel")) {
-                CommonCommand.isExcludeIndel = true;
-            } else if (option.getName().equals("--evs-pop")
-                    || option.getName().equals("--evs-maf-pop")) {
-                checkValuesValid(Data.EVS_POP, option);
-                CommonCommand.evsMafPop = option.getValue();
-            } else if (option.getName().equals("--evs-maf")) {
-                checkValueValid(0.5, 0, option);
-                CommonCommand.evsMaf = getValidDouble(option);
-                CommonCommand.isOldEvsUsed = true;
-            } else if (option.getName().equals("--evs-mhgf-rec")
-                    || option.getName().equals("--evs-mhgf-recessive")) {
-                checkValueValid(0.5, 0, option);
-                CommonCommand.evsMhgf4Recessive = getValidDouble(option);
-                CommonCommand.isOldEvsUsed = true;
-            } else if (option.getName().equals("--exclude-evs-qc-failed")) {
-                CommonCommand.isExcludeEvsQcFailed = true;
-                CommonCommand.isOldEvsUsed = true;
-            } else if (option.getName().equals("--exac-pop")) {
-                checkValuesValid(Data.EXAC_POP, option);
-                CommonCommand.exacPop = option.getValue();
-            } else if (option.getName().equals("--exac-maf")) {
-                checkValueValid(0.5, 0, option);
-                CommonCommand.exacMaf = getValidFloat(option);
-            } else if (option.getName().equals("--min-exac-vqslod-snv")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.exacVqslodSnv = getValidFloat(option);
-            } else if (option.getName().equals("--min-exac-vqslod-indel")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.exacVqslodIndel = getValidFloat(option);
-            } else if (option.getName().equals("--min-c-score")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                CommonCommand.minCscore = getValidDouble(option);
-            } else {
-                continue;
-            }
+        AnnotationLevelFilterCommand.initOptions(optionList.iterator());
 
-            iterator.remove();
-        }
+        GenotypeLevelFilterCommand.initOptions(optionList.iterator());
     }
 
-    private static void initAnnotationLevelFilterOptions() throws Exception {
-        Iterator<CommandOption> iterator = optionList.iterator();
-        CommandOption option;
 
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            if (option.getName().equals("--function")) {
-                CommonCommand.functionInput = getValidPath(option);
-            } else if (option.getName().equals("--gene")) {
-                CommonCommand.geneInput = getValidPath(option);
-            } else if (option.getName().equals("--transcript")) {
-                CommonCommand.transcriptFile = getValidPath(option);
-            } else if (option.getName().equals("--ccds-only")) {
-                CommonCommand.isCcdsOnly = true;
-                TranscriptManager.initCCDSTranscriptPath();
-            } else if (option.getName().equals("--canonical-only")) {
-                CommonCommand.isCanonicalOnly = true;
-                TranscriptManager.initCanonicalTranscriptPath();
-            } else if (option.getName().equals("--polyphen")
-                    || option.getName().equals("--polyphen-humdiv")) {
-                checkValuesValid(Data.POLYPHEN_CAT, option);
-                CommonCommand.polyphenHumdiv = option.getValue();
-            } else if (option.getName().equals("--polyphen-humvar")) {
-                checkValuesValid(Data.POLYPHEN_CAT, option);
-                CommonCommand.polyphenHumvar = option.getValue();
-            } else {
-                continue;
-            }
 
-            iterator.remove();
-        }
-    }
-
-    private static void initGenotypeLevelFilterOptions() throws Exception {
-        Iterator<CommandOption> iterator = optionList.iterator();
-        CommandOption option;
-
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            if (option.getName().equals("--sample")
-                    || option.getName().equals("--pedinfo")) {
-                CommonCommand.sampleFile = getValidPath(option);
-            } else if (option.getName().equals("--all-sample")) {
-                CommonCommand.isAllSample = true;
-            } else if (option.getName().equals("--all-non-ref")) {
-                CommonCommand.isAllNonRef = true;
-            } else if (option.getName().equals("--include-evs-sample")) {
-                checkValueValid(Data.EVS_POP, option);
-                CommonCommand.evsSample = option.getValue();
-            } else if (option.getName().equals("--exclude-artifacts")) {
-                CommonCommand.isExcludeArtifacts = true;
-            } else if (option.getName().equals("--ctrlMAF")
-                    || option.getName().equals("--ctrl-maf")) {
-                checkValueValid(0.5, 0, option);
-                CommonCommand.ctrlMaf = getValidDouble(option);
-            } else if (option.getName().equals("--ctrl-maf-rec")
-                    || option.getName().equals("--ctrl-maf-recessive")) {
-                CommonCommand.maf4Recessive = getValidDouble(option);
-                checkValueValid(0.5, 0, option);
-            } else if (option.getName().equals("--ctrl-mhgf-rec")
-                    || option.getName().equals("--ctrl-mhgf-recessive")) {
-                CommonCommand.mhgf4Recessive = getValidDouble(option);
-                checkValueValid(0.5, 0, option);
-            } else if (option.getName().equals("--min-coverage")) {
-                checkValueValid(new String[]{"0", "3", "10", "20", "201"}, option);
-                CommonCommand.minCoverage = getValidInteger(option);
-            } else if (option.getName().equals("--min-case-coverage-call")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                CommonCommand.minCaseCoverageCall = getValidInteger(option);
-            } else if (option.getName().equals("--min-case-coverage-no-call")) {
-                checkValueValid(new String[]{"3", "10", "20", "201"}, option);
-                CommonCommand.minCaseCoverageNoCall = getValidInteger(option);
-            } else if (option.getName().equals("--min-ctrl-coverage-call")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                CommonCommand.minCtrlCoverageCall = getValidInteger(option);
-            } else if (option.getName().equals("--min-ctrl-coverage-no-call")) {
-                checkValueValid(new String[]{"3", "10", "20", "201"}, option);
-                CommonCommand.minCtrlCoverageNoCall = getValidInteger(option);
-            } else if (option.getName().equals("--min-variant-present")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                CommonCommand.minVarPresent = getValidInteger(option);
-            } else if (option.getName().equals("--min-case-carrier")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                CommonCommand.minCaseCarrier = getValidInteger(option);
-            } else if (option.getName().equals("--var-status")) {
-                checkValueValid(Data.VARIANT_STATUS, option);
-                String varStatus = option.getValue().replace("+", ",");
-                if (varStatus.contains("all")) {
-                    CommonCommand.varStatus = null;
-                } else {
-                    CommonCommand.varStatus = varStatus.split(",");
-                }
-            } else if (option.getName().equals("--het-percent-alt-read")) {
-                checkRangeValid("0-1", option);
-                CommonCommand.hetPercentAltRead = getValidRange(option);
-            } else if (option.getName().equals("--hom-percent-alt-read")) {
-                checkRangeValid("0-1", option);
-                CommonCommand.homPercentAltRead = getValidRange(option);
-            } else if (option.getName().equals("--gq")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.genotypeQualGQ = getValidDouble(option);
-            } else if (option.getName().equals("--fs")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.strandBiasFS = getValidDouble(option);
-            } else if (option.getName().equals("--hap-score")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.haplotypeScore = getValidDouble(option);
-            } else if (option.getName().equals("--mq")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.rmsMapQualMQ = getValidDouble(option);
-            } else if (option.getName().equals("--qd")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.qualByDepthQD = getValidDouble(option);
-            } else if (option.getName().equals("--qual")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.qual = getValidDouble(option);
-            } else if (option.getName().equals("--rprs")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.readPosRankSum = getValidDouble(option);
-            } else if (option.getName().equals("--mqrs")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                CommonCommand.mapQualRankSum = getValidDouble(option);
-            } else if (option.getName().equals("--include-qc-missing")) {
-                CommonCommand.isQcMissingIncluded = true;
-            } else if (option.getName().equals("--max-qc-fail-sample")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                CommonCommand.maxQcFailSample = getValidInteger(option);
-            } else {
-                continue;
-            }
-
-            iterator.remove();
-        }
-
-        initMinCoverage();
-    }
-
-    private static void initMinCoverage() {
-        if (CommonCommand.minCoverage != Data.NO_FILTER) {
-            if (CommonCommand.minCaseCoverageCall == Data.NO_FILTER) {
-                CommonCommand.minCaseCoverageCall = CommonCommand.minCoverage;
-            }
-
-            if (CommonCommand.minCaseCoverageNoCall == Data.NO_FILTER) {
-                CommonCommand.minCaseCoverageNoCall = CommonCommand.minCoverage;
-            }
-
-            if (CommonCommand.minCtrlCoverageCall == Data.NO_FILTER) {
-                CommonCommand.minCtrlCoverageCall = CommonCommand.minCoverage;
-            }
-
-            if (CommonCommand.minCtrlCoverageNoCall == Data.NO_FILTER) {
-                CommonCommand.minCtrlCoverageNoCall = CommonCommand.minCoverage;
-            }
-        }
-    }
-
-    private static void initMaf() {
-        if (CollapsingCommand.looMaf != Data.NO_FILTER) {
-            CommonCommand.maf = CollapsingCommand.looMaf;
-        } else if (FamilyCommand.popCtrlMaf != Data.NO_FILTER) {
-            CommonCommand.maf = FamilyCommand.popCtrlMaf;
-        } else {
-            CommonCommand.maf = CommonCommand.ctrlMaf;
-        }
-
-        if (CommonCommand.maf4Recessive == Data.NO_FILTER) { // need to be changed for pop
-            CommonCommand.maf4Recessive = CommonCommand.maf;
-        }
-    }
 
     public static void outputInvalidOptions() {
         Iterator<CommandOption> iterator = optionList.iterator();

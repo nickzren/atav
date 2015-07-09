@@ -5,6 +5,7 @@ import function.coverage.base.SampleStatistics;
 import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -24,7 +25,7 @@ public class CoverageSummaryPipeline extends InputList {
     public CoverageSummaryPipeline() {
         super();
         try {
-            if (CommonCommand.minCoverage == Data.NO_FILTER) {
+            if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
                 ErrorManager.print("--min-coverage option has to be used in this function.");
             }
 

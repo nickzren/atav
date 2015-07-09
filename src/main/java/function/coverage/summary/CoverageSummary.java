@@ -1,5 +1,6 @@
 package function.coverage.summary;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
 import function.coverage.base.CoverageCommand;
 import function.coverage.base.SampleStatistics;
 import function.coverage.base.CoveredRegion;
@@ -7,6 +8,7 @@ import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
 import function.coverage.base.Transcript;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
@@ -43,7 +45,7 @@ public class CoverageSummary extends InputList {
     public CoverageSummary() {
         super();
         
-        if (CommonCommand.minCoverage == Data.NO_FILTER) {
+        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
             ErrorManager.print("--min-coverage option has to be used in this function.");
         }
 
@@ -108,7 +110,7 @@ public class CoverageSummary extends InputList {
                 CoveredRegion region = (CoveredRegion) obj;
                 ss.setRecordName(record, region.toString(), region.getChrStr());
                 ss.setLength(record, region.getLength());
-                int[] mincovs = {CommonCommand.minCoverage};
+                int[] mincovs = {GenotypeLevelFilterCommand.minCoverage};
                 HashMap<Integer, Integer> result = region.getCoverage(mincovs).get(0);
                 ss.accumulateCoverage(record, result);
             } else if (JobType.equals("Gene")) {
@@ -131,7 +133,7 @@ public class CoverageSummary extends InputList {
                     }
 
                 } else {
-                    if (!CommonCommand.isCcdsOnly || gene.isCCDS()) {
+                    if (!AnnotationLevelFilterCommand.isCcdsOnly || gene.isCCDS()) {
                         gene.populateExonList();
                         if (CoverageCommand.isExcludeUTR) {
                             gene.filterByUTR();
@@ -150,7 +152,7 @@ public class CoverageSummary extends InputList {
                     for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
                         Exon exon = (Exon) r.next();
                         trans_stable_id = exon.getTransStableId();
-                        HashMap<Integer, Integer> result = exon.getCoverage(CommonCommand.minCoverage);
+                        HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
                         ss.accumulateCoverage(record, result);
                         ss.printMatrixRowbyExon(record, result, exon, bwSampleExonMatrixSummary);
                         DoExonSummary(ss, record, result, exon);
@@ -162,7 +164,7 @@ public class CoverageSummary extends InputList {
             } else if (JobType.equals("Transcript")) {
                 Transcript transcript = (Transcript) obj;
                 ss.setRecordName(record, transcript.toString(), "");
-                if (!CommonCommand.isCcdsOnly || transcript.isCCDS()) {
+                if (!AnnotationLevelFilterCommand.isCcdsOnly || transcript.isCCDS()) {
                     transcript.populateExonList();
                     if (CoverageCommand.isExcludeUTR) {
                         transcript.filterByUTR();
@@ -170,7 +172,7 @@ public class CoverageSummary extends InputList {
                     ss.setLength(record, transcript.getLength());
                     for (Iterator r = transcript.getExonList().iterator(); r.hasNext();) {
                         Exon exon = (Exon) r.next();
-                        HashMap<Integer, Integer> result = exon.getCoverage(CommonCommand.minCoverage);
+                        HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
                         ss.accumulateCoverage(record, result);
                         if (CoverageCommand.isCoverageSummary) {
                             ss.print(record, result, exon, bwCoverageDetailsByExon);

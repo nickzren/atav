@@ -6,6 +6,7 @@ import function.coverage.base.SampleStatistics;
 import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -29,7 +30,7 @@ public class CoverageSummarySite extends InputList {
         super();
 
         try {
-            if (CommonCommand.minCoverage == Data.NO_FILTER) {
+            if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
                 ErrorManager.print("--min-coverage option has to be used in this function.");
             }
             
@@ -77,7 +78,7 @@ public class CoverageSummarySite extends InputList {
                         CoveredRegion cr = ((Exon) r.next()).getCoveredRegion();
                         String chr = cr.getChrStr();
                         int SiteStart = cr.getStartPosition(); 
-                        int[] SiteCoverage = cr.getCoverageForSites(CommonCommand.minCoverage);
+                        int[] SiteCoverage = cr.getCoverageForSites(GenotypeLevelFilterCommand.minCoverage);
                         for (int pos = 0; pos < SiteCoverage.length; pos++) {
                             StringBuilder sb = new StringBuilder();
                             sb.append(gene.getName()).append(",").append(chr).append(",");
