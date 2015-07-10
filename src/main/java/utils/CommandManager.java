@@ -288,7 +288,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-trio-comp-het")) {
                 TrioCommand.isTrioCompHet = true;
                 TrioCommand.initCompHetOptions(optionList.iterator());
-            } else if (option.getName().equals("--parental-mosaic")) {
+            } else if (option.getName().equals("--list-parental-mosaic")) {
                 ParentalCommand.isParentalMosaic = true;
                 ParentalCommand.initOptions(optionList.iterator());
             } else if (option.getName().equals("--ped-map")) {
@@ -347,10 +347,8 @@ public class CommandManager {
         }
 
         if (!hasMainFunction) {
-            ErrorManager.print("Missing function command: --ped-map, "
-                    + "--fisher, --linear, --collapsing-dom, --collapsing-rec, "
-                    + "--collapsing-comp-het, --var-list, --list-trio-denovo, "
-                    + "--list-trio-comp-het, --family-analysis, --coverage-summary...");
+            ErrorManager.print("Missing function command: --list-var-geno, --collapsing-dom, --collapsing-rec, "
+                    + "--collapsing-comp-het, --fisher, --linear...");
         }
     }
 

@@ -60,7 +60,7 @@ public class Program {
 
     private static long start, end;
 
-    public static void main(String[] args) {        
+    public static void main(String[] args) {
         try {
             start = System.currentTimeMillis();
 
@@ -106,43 +106,33 @@ public class Program {
 
     private static void startAnalysis() {
         try {
-            if (PedMapCommand.isPedMap) {
-                runAnalysis(new PedMapGenerator());
-            } else if (StatisticsCommand.isFisher) {
-                runAnalysis(new FisherExactTest());
-            } else if (StatisticsCommand.isLinear) {
-                runAnalysis(new LinearRegression());
+            if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
+                runAnalysis(new ListVarGeno());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
                 runAnalysis(new CollapsingSingleVariant());
             } else if (CollapsingCommand.isCollapsingCompHet) {
                 runAnalysis(new CollapsingCompHet());
-            } else if (VarGenoCommand.isListVarGeno) {
-                runAnalysis(new ListVarGeno());
+            } else if (StatisticsCommand.isFisher) {
+                runAnalysis(new FisherExactTest());
+            } else if (StatisticsCommand.isLinear) {
+                runAnalysis(new LinearRegression());
+            } else if (FamilyCommand.isFamilyAnalysis) {
+                runAnalysis(new FamilyAnalysis());
+            } else if (SiblingCommand.isSiblingCompHet) {
+                runAnalysis(new ListSiblingComphet());
             } else if (TrioCommand.isTrioDenovo) {
                 runAnalysis(new ListTrioDenovo());
             } else if (TrioCommand.isTrioCompHet) {
                 runAnalysis(new ListTrioCompHet());
-            } else if (FamilyCommand.isFamilyAnalysis) {
-                runAnalysis(new FamilyAnalysis());
-            } else if (VarAnnoCommand.isListVarAnno) {
+            } else if (ParentalCommand.isParentalMosaic) {
+                runAnalysis(new ParentalMosaic());
+            } else if (PedMapCommand.isPedMap) {
+                runAnalysis(new PedMapGenerator());
+            } else if (VarAnnoCommand.isListVarAnno) { // Variant Annotation Functions
                 runAnalysis(new ListVarAnno());
             } else if (GeneDxCommand.isListGeneDx) {
                 runAnalysis(new ListGeneDx());
-            } else if (FlankingCommand.isListFlankingSeq) {
-                runAnalysis(new ListFlankingSeq());
-            } else if (KnownVarCommand.isListKnownVar) {
-                runAnalysis(new ListKnownVar());
-            } else if (EvsCommand.isListEvs) {
-                runAnalysis(new ListEvs());
-            } else if (ExacCommand.isListExac) {
-                runAnalysis(new ListExac());
-            } else if (EvsCommand.isJonEvsTool) {
-                runAnalysis(new JonEvsTool());
-            } else if (CoverageCommand.isCoverageComparison) {
-                LogManager.writeAndPrint("It is running a coverage comparison function...");
-                CoverageComparison coverageList = new CoverageComparison();
-                coverageList.run();
-            } else if (CoverageCommand.isCoverageSummary) {
+            } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
                 LogManager.writeAndPrint("It is running a coverage summary function...");
                 CoverageSummary coverageList = new CoverageSummary();
                 coverageList.run();
@@ -150,15 +140,25 @@ public class Program {
                 LogManager.writeAndPrint("It is running a site coverage summary function...");
                 CoverageSummarySite coverageList = new CoverageSummarySite();
                 coverageList.run();
+            } else if (CoverageCommand.isCoverageComparison) {
+                LogManager.writeAndPrint("It is running a coverage comparison function...");
+                CoverageComparison coverageList = new CoverageComparison();
+                coverageList.run();
             } else if (CoverageCommand.isCoverageSummaryPipeline) {
                 LogManager.writeAndPrint("It is running a coverage summary for pipeline function...");
                 CoverageSummaryPipeline coverageSummary = new CoverageSummaryPipeline();
                 coverageSummary.run();
-            } else if (SiblingCommand.isSiblingCompHet) {
-                runAnalysis(new ListSiblingComphet());
-            } else if (ParentalCommand.isParentalMosaic) {
-                runAnalysis(new ParentalMosaic());
-            } else if (PPICommand.isPPI) {
+            } else if (EvsCommand.isListEvs) { // External Datasets Functions
+                runAnalysis(new ListEvs());
+            } else if (ExacCommand.isListExac) {
+                runAnalysis(new ListExac());
+            } else if (KnownVarCommand.isListKnownVar) {
+                runAnalysis(new ListKnownVar());
+            } else if (FlankingCommand.isListFlankingSeq) {
+                runAnalysis(new ListFlankingSeq());
+            } else if (EvsCommand.isJonEvsTool) {
+                runAnalysis(new JonEvsTool());
+            } else if (PPICommand.isPPI) { // Non Database Functions
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());
                 ppi.run();
