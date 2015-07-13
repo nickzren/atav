@@ -56,9 +56,6 @@ public class SampleManager {
     private static String tempCovarFile;
     private static String covariateFileTitle = "";
 
-    // temp hack solution - phs000473 coverage restriction
-    public static HashSet<Integer> phs000473SampleIdSet = new HashSet<Integer>();
-
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
@@ -189,11 +186,7 @@ public class SampleManager {
                     checkSampleList(sample);
                     continue;
                 }
-
-                if (sample.getName().startsWith("phs000473_")) {
-                    phs000473SampleIdSet.add(sample.getId());
-                }
-
+                
                 sampleList.add(sample);
                 sampleTable.put(sampleId, sample);
 
@@ -273,10 +266,6 @@ public class SampleManager {
 
                 Sample sample = new Sample(sampleId, familyId, individualId,
                         paternalId, maternalId, sex, pheno, sampleType, captureKit);
-
-                if (sample.getName().startsWith("phs000473_")) {
-                    phs000473SampleIdSet.add(sample.getId());
-                }
 
                 sampleList.add(sample);
                 sampleTable.put(sampleId, sample);

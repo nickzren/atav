@@ -5,12 +5,9 @@ import function.genotype.family.FamilyManager;
 import global.Data;
 import function.external.evs.EvsManager;
 import function.genotype.family.FamilyCommand;
-import function.variant.base.RegionManager;
 import global.Index;
-import temp.TempRange;
 import utils.FormatManager;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -42,8 +39,6 @@ public class CalledVariant extends AnnotatedVariant {
 
             CoverageBlockManager.initNonCarrierMap(this, carrierMap, noncarrierMap);
 
-            resetPhs000473SampleGeno();
-
             initCalledInfo();
 
             checkValid();
@@ -62,36 +57,6 @@ public class CalledVariant extends AnnotatedVariant {
         int value = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
 
         isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(value);
-    }
-
-    // temp hack solution - phs000473 coverage restriction
-    private void resetPhs000473SampleGeno() {
-        if (SampleManager.phs000473SampleIdSet.isEmpty()) {
-            return;
-        }
-
-        ArrayList<TempRange> rangeList = RegionManager.phs000473RegionMap.get(region.chrStr);
-
-        boolean isContained = false;
-
-        for (TempRange range : rangeList) {
-            if (region.startPosition >= range.start
-                    && region.startPosition <= range.end) {
-                isContained = true;
-                break;
-            }
-        }
-
-        if (!isContained) {
-            for (int sampleId : SampleManager.phs000473SampleIdSet) {
-                NonCarrier noncarrier = noncarrierMap.get(sampleId);
-
-                if (noncarrier != null) {
-                    noncarrier.genotype = Data.NA;
-                    noncarrier.coverage = Data.NA;
-                }
-            }
-        }
     }
 
     private void initCalledInfo() {

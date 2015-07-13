@@ -42,7 +42,6 @@ public class Data {
     public static final String ARTIFACTS_GENE_PATH = "data/artifacts_gene.txt";
     public static final String GENE_ENSEMBL_PATH = "data/gene_ensembl.txt";
     public static final String EXAMPLE_OPT_PATH = "lib/example.opt";
-    public static final String phs000473_SAMPLE_REGION_PATH = "data/region/Agilent_SureSelectV2_Covered.50bp_padded.mergedOneBased.txt";
     public static final int MAX_VARIANT = 100000;
     public static final int NO_FILTER = Integer.MAX_VALUE;
     public static final int NA = Integer.MIN_VALUE;
