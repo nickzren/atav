@@ -27,7 +27,6 @@ public class SampleManager {
 
     private static ArrayList<Sample> sampleList = new ArrayList<Sample>();
     private static Hashtable<Integer, Sample> sampleTable = new Hashtable<Integer, Sample>();
-    private static HashSet<Integer> chgvSampleIdSet = new HashSet<Integer>();
 
     private static int listSize; // case + ctrl
     private static int caseNum = 0;
@@ -37,14 +36,6 @@ public class SampleManager {
     private static StringBuilder allSampleIdSb = new StringBuilder();
     private static StringBuilder exomeSampleIdSb = new StringBuilder();
     private static StringBuilder genomeSampleIdSb = new StringBuilder();
-
-    private static HashSet<Integer> evsSampleIdSet = new HashSet<Integer>();
-    private static HashSet<Integer> evsEaSampleIdSet = new HashSet<Integer>();
-    private static HashSet<Integer> evsAaSampleIdSet = new HashSet<Integer>();
-
-    private static HashSet<Integer> evsIndelSampleIdSet = new HashSet<Integer>();
-    private static HashSet<Integer> evsIndelEaSampleIdSet = new HashSet<Integer>();
-    private static HashSet<Integer> evsIndelAaSampleIdSet = new HashSet<Integer>();
 
     private static ArrayList<Sample> failedSampleList = new ArrayList<Sample>();
     private static ArrayList<Sample> diffTypeSampleList = new ArrayList<Sample>();
@@ -63,18 +54,10 @@ public class SampleManager {
 
         checkSampleFile();
 
-        initEvsIndelSampleIdSetFromAnnoDB();
-
-        if (GenotypeLevelFilterCommand.isAllSample) {
+        if (!GenotypeLevelFilterCommand.sampleFile.isEmpty()) {
+            initFromSampleFile();
+        } else if (GenotypeLevelFilterCommand.isAllSample) {
             initAllSampleFromAnnoDB();
-        } else {
-            if (!GenotypeLevelFilterCommand.sampleFile.isEmpty()) {
-                initFromSampleFile();
-            }
-
-            if (!GenotypeLevelFilterCommand.evsSample.isEmpty()) {
-                initEvsSampleFromAnnoDB();
-            }
         }
 
         initCovariate();
@@ -86,14 +69,11 @@ public class SampleManager {
         initTempTables();
 
         outputSampleList();
-
-        evsIndelSampleIdSet = null;
     }
 
     private static void checkSampleFile() {
         if (GenotypeLevelFilterCommand.sampleFile.isEmpty()
-                && !GenotypeLevelFilterCommand.isAllSample
-                && GenotypeLevelFilterCommand.evsSample.isEmpty()) {
+                && !GenotypeLevelFilterCommand.isAllSample) {
             ErrorManager.print("Please specify your sample file: --sample $PATH");
         }
     }
@@ -106,30 +86,6 @@ public class SampleManager {
         }
 
         listSize = sampleList.size();
-    }
-
-    private static void initEvsIndelSampleIdSetFromAnnoDB() {
-        try {
-            String sqlCode = "SELECT distinct s.sample_name, s.sample_id "
-                    + "FROM sample s, sample_attrib sa, sample_pipeline_step p "
-                    + "WHERE s.sample_id = p.sample_id "
-                    + "AND s.sample_id = sa.sample_id "
-                    + "AND sample_attrib_type_id = 2 "
-                    + "AND value_int > 0 "
-                    + "AND pipeline_step_id = 10 "
-                    + "AND step_status = 'completed' "
-                    + "AND sample_name like 'evs_%' ";
-
-            ResultSet rs = DBManager.executeQuery(sqlCode);
-
-            while (rs.next()) {
-                evsIndelSampleIdSet.add(rs.getInt("sample_id"));
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
     }
 
     private static void initAllSampleFromAnnoDB() {
@@ -186,25 +142,9 @@ public class SampleManager {
                     checkSampleList(sample);
                     continue;
                 }
-                
+
                 sampleList.add(sample);
                 sampleTable.put(sampleId, sample);
-
-                if (sample.getName().startsWith("evs_ea")) {
-                    evsEaSampleIdSet.add(sampleId);
-
-                    if (evsIndelSampleIdSet.contains(sampleId)) {
-                        evsIndelEaSampleIdSet.add(sampleId);
-                    }
-                } else if (sample.getName().startsWith("evs_aa")) {
-                    evsAaSampleIdSet.add(sampleId);
-
-                    if (evsIndelSampleIdSet.contains(sampleId)) {
-                        evsIndelAaSampleIdSet.add(sampleId);
-                    }
-                } else {
-                    chgvSampleIdSet.add(sampleId);
-                }
 
                 countSampleNum(sample);
             }
@@ -218,28 +158,6 @@ public class SampleManager {
 
             ErrorManager.send(e);
         }
-    }
-
-    private static void initEvsSampleFromAnnoDB() {
-        if (!evsEaSampleIdSet.isEmpty()
-                || !evsAaSampleIdSet.isEmpty()) {
-            ErrorManager.print("evs samples in the sample file is not compatable with "
-                    + "--include-evs-sample option");
-        }
-
-        String evsPop = ""; // all
-
-        if (!GenotypeLevelFilterCommand.evsSample.equals("all")) {
-            evsPop = GenotypeLevelFilterCommand.evsSample;
-        }
-
-        String sqlCode = "SELECT * FROM sample s, sample_pipeline_step p "
-                + "WHERE s.sample_id = p.sample_id "
-                + "AND p.pipeline_step_id = 10 "
-                + "AND p.step_status = 'completed' "
-                + "AND s.sample_name like 'evs_" + evsPop + "%'";
-
-        initSampleFromAnnoDB(sqlCode);
     }
 
     private static void initSampleFromAnnoDB(String sqlCode) {
@@ -269,22 +187,6 @@ public class SampleManager {
 
                 sampleList.add(sample);
                 sampleTable.put(sampleId, sample);
-
-                if (sample.getName().startsWith("evs_ea")) {
-                    evsEaSampleIdSet.add(sampleId);
-
-                    if (evsIndelSampleIdSet.contains(sampleId)) {
-                        evsIndelEaSampleIdSet.add(sampleId);
-                    }
-                } else if (sample.getName().startsWith("evs_aa")) {
-                    evsAaSampleIdSet.add(sampleId);
-
-                    if (evsIndelSampleIdSet.contains(sampleId)) {
-                        evsIndelAaSampleIdSet.add(sampleId);
-                    }
-                } else {
-                    chgvSampleIdSet.add(sampleId);
-                }
 
                 countSampleNum(sample);
             }
@@ -415,7 +317,6 @@ public class SampleManager {
             if (sample.getCovariateList().isEmpty()) {
                 it.remove();
                 sampleTable.remove(sample.getId());
-                chgvSampleIdSet.remove(sample.getId());
             }
         }
     }
@@ -471,7 +372,6 @@ public class SampleManager {
             if (sample.getQuantitativeTrait() == Data.NA) {
                 it.remove();
                 sampleTable.remove(sample.getId());
-                chgvSampleIdSet.remove(sample.getId());
             }
         }
     }
@@ -632,12 +532,10 @@ public class SampleManager {
         for (Sample sample : sampleList) {
             addToSampleIdSb(allSampleIdSb, sample.getId());
 
-            if (chgvSampleIdSet.contains(sample.getId())) {
-                if (sample.getType().equalsIgnoreCase("genome")) {
-                    addToSampleIdSb(genomeSampleIdSb, sample.getId());
-                } else {
-                    addToSampleIdSb(exomeSampleIdSb, sample.getId());
-                }
+            if (sample.getType().equalsIgnoreCase("genome")) {
+                addToSampleIdSb(genomeSampleIdSb, sample.getId());
+            } else {
+                addToSampleIdSb(exomeSampleIdSb, sample.getId());
             }
         }
 
@@ -826,9 +724,7 @@ public class SampleManager {
     }
 
     public static void initCarrierMap(Variant var,
-            HashMap<Integer, Carrier> carrierMap,
-            HashMap<Integer, Carrier> evsEaCarrierMap,
-            HashMap<Integer, Carrier> evsAaCarrierMap) {
+            HashMap<Integer, Carrier> carrierMap) {
         String sqlCarrier = "SELECT * "
                 + "FROM called_" + var.getType() + " va,"
                 + Data.ALL_SAMPLE_ID_TABLE + " t "
@@ -850,12 +746,6 @@ public class SampleManager {
 
                 carrier.checkValidOnXY(var);
 
-                if (evsEaSampleIdSet.contains(carrier.getSampleId())) {
-                    evsEaCarrierMap.put(carrier.getSampleId(), carrier);
-                } else if (evsAaSampleIdSet.contains(carrier.getSampleId())) {
-                    evsAaCarrierMap.put(carrier.getSampleId(), carrier);
-                }
-
                 carrierMap.put(carrier.getSampleId(), carrier);
             }
             rs.close();
@@ -864,59 +754,8 @@ public class SampleManager {
         }
     }
 
-    public static boolean isEvsEaSampleId(int id, boolean isIndel) {
-        if (isIndel) {
-            return evsIndelEaSampleIdSet.contains(id);
-        }
-
-        return evsEaSampleIdSet.contains(id);
-    }
-
-    public static boolean isEvsAaSampleId(int id, boolean isIndel) {
-        if (isIndel) {
-            return evsIndelAaSampleIdSet.contains(id);
-        }
-
-        return evsAaSampleIdSet.contains(id);
-    }
-
-    public static int getEvsSampleNum(String evsSample, boolean isIndel) {
-        if (evsSample.equals("ea")) {
-            return getEvsEaSampleNum(isIndel);
-        } else if (evsSample.equals("aa")) {
-            return getEvsAaSampleNum(isIndel);
-        }
-
-        return Data.NA;
-    }
-
-    public static int getEvsEaSampleNum(boolean isIndel) {
-        if (isIndel) {
-            return evsIndelEaSampleIdSet.size();
-        }
-
-        return evsEaSampleIdSet.size();
-    }
-
-    public static int getEvsAaSampleNum(boolean isIndel) {
-        if (isIndel) {
-            return evsIndelAaSampleIdSet.size();
-        }
-
-        return evsAaSampleIdSet.size();
-    }
-
     public static boolean isMale(int sampleId) {
         return sampleTable.get(sampleId).isMale();
-    }
-
-    public static HashSet<Integer> getEvsSampleIdSet() {
-        if (evsSampleIdSet.isEmpty()) {
-            evsSampleIdSet.addAll(evsEaSampleIdSet);
-            evsSampleIdSet.addAll(evsAaSampleIdSet);
-        }
-
-        return evsSampleIdSet;
     }
 
     private static void resetSamplePheno4Linear() {
