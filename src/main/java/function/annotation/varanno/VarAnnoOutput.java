@@ -57,11 +57,9 @@ public class VarAnnoOutput {
 
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
 
-        if (VariantLevelFilterCommand.isOldEvsUsed) {
-            sb.append(annotatedVar.getEvsCoverageStr()).append(",");
-            sb.append(annotatedVar.getEvsMafStr()).append(",");
-            sb.append(annotatedVar.getEvsFilterStatus()).append(",");
-        }
+        sb.append(annotatedVar.getEvsCoverageStr()).append(",");
+        sb.append(annotatedVar.getEvsMafStr()).append(",");
+        sb.append(annotatedVar.getEvsFilterStatus()).append(",");
 
         sb.append(annotatedVar.getPolyphenHumdivScore()).append(",");
         sb.append(annotatedVar.getPolyphenHumdivPrediction()).append(",");

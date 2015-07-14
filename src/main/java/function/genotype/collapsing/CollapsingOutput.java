@@ -267,11 +267,9 @@ public class CollapsingOutput extends Output implements Comparable {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
 
-        if (VariantLevelFilterCommand.isOldEvsUsed) {
-            sb.append(calledVar.getEvsCoverageStr()).append(",");
-            sb.append(calledVar.getEvsMafStr()).append(",");
-            sb.append(calledVar.getEvsFilterStatus()).append(",");
-        }
+        sb.append(calledVar.getEvsCoverageStr()).append(",");
+        sb.append(calledVar.getEvsMafStr()).append(",");
+        sb.append(calledVar.getEvsFilterStatus()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

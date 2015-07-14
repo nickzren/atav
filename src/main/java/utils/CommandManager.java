@@ -314,12 +314,10 @@ public class CommandManager {
                 CoverageCommand.initCoverageComparison(optionList.iterator());
             } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
                 CommonCommand.isNonSampleAnalysis = true;
-                VariantLevelFilterCommand.isOldEvsUsed = true;
                 EvsCommand.isListEvs = true;
             } else if (option.getName().equals("--jon-evs-tool")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isJonEvsTool = true;
-                VariantLevelFilterCommand.isOldEvsUsed = true;
                 EvsCommand.initJonEvsToolOptions(optionList.iterator());
             } else if (option.getName().equals("--list-known-var")) {
                 CommonCommand.isNonSampleAnalysis = true;

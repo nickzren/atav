@@ -25,7 +25,6 @@ public class VariantLevelFilterCommand {
     public static String evsMafPop = "all";
     public static double evsMaf = Data.NO_FILTER;
     public static double evsMhgf4Recessive = Data.NO_FILTER;
-    public static boolean isOldEvsUsed = false;
     public static boolean isExcludeEvsQcFailed = false;
     public static String exacPop = "global";
     public static float exacMaf = Data.NO_FILTER;
@@ -58,15 +57,12 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--evs-maf")) {
                 checkValueValid(0.5, 0, option);
                 evsMaf = getValidDouble(option);
-                isOldEvsUsed = true;
             } else if (option.getName().equals("--evs-mhgf-rec")
                     || option.getName().equals("--evs-mhgf-recessive")) {
                 checkValueValid(0.5, 0, option);
                 evsMhgf4Recessive = getValidDouble(option);
-                isOldEvsUsed = true;
             } else if (option.getName().equals("--exclude-evs-qc-failed")) {
                 isExcludeEvsQcFailed = true;
-                isOldEvsUsed = true;
             } else if (option.getName().equals("--exac-pop")) {
                 checkValuesValid(Data.EXAC_POP, option);
                 exacPop = option.getValue();

@@ -220,11 +220,9 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(child.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(child.getId()))).append(",");
 
-        if (VariantLevelFilterCommand.isOldEvsUsed) {
-            sb.append(calledVar.getEvsCoverageStr()).append(",");
-            sb.append(calledVar.getEvsMafStr()).append(",");
-            sb.append(calledVar.getEvsFilterStatus()).append(",");
-        }
+        sb.append(calledVar.getEvsCoverageStr()).append(",");
+        sb.append(calledVar.getEvsMafStr()).append(",");
+        sb.append(calledVar.getEvsFilterStatus()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

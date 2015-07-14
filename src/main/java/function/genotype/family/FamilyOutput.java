@@ -314,12 +314,10 @@ public class FamilyOutput extends Output {
         sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
         sb.append(FormatManager.getDouble(familyAverageCov[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(familyAverageCov[Index.CTRL])).append(",");
-        
-        if (VariantLevelFilterCommand.isOldEvsUsed) {
-            sb.append(calledVar.getEvsCoverageStr()).append(",");
-            sb.append(calledVar.getEvsMafStr()).append(",");
-            sb.append(calledVar.getEvsFilterStatus()).append(",");
-        }
+
+        sb.append(calledVar.getEvsCoverageStr()).append(",");
+        sb.append(calledVar.getEvsMafStr()).append(",");
+        sb.append(calledVar.getEvsFilterStatus()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

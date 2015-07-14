@@ -121,22 +121,20 @@ public class AnnotatedVariant extends Variant {
         evsCoverage = EvsManager.getCoverageInfo(region.chrStr,
                 String.valueOf(region.startPosition));
 
-        if (VariantLevelFilterCommand.isOldEvsUsed) {
-            evsMafStr = EvsManager.getMafInfo(isSnv(), region.chrStr,
-                    String.valueOf(region.startPosition), refAllele, allele);
+        evsMafStr = EvsManager.getMafInfo(isSnv(), region.chrStr,
+                String.valueOf(region.startPosition), refAllele, allele);
 
-            if (evsCoverage.equals("0,0,0,0,0,0")) {
-                evsMafStr = evsMafStr.replaceAll("NAMAF", "NA");
-            } else {
-                evsMafStr = evsMafStr.replaceAll("NAMAF", "0");
-            }
-
-            evsFilterStatus = EvsManager.getFilterStatus();
-
-            initEvsMaf();
-
-            initEvsMhgf();
+        if (evsCoverage.equals("0,0,0,0,0,0")) {
+            evsMafStr = evsMafStr.replaceAll("NAMAF", "NA");
+        } else {
+            evsMafStr = evsMafStr.replaceAll("NAMAF", "0");
         }
+
+        evsFilterStatus = EvsManager.getFilterStatus();
+
+        initEvsMaf();
+
+        initEvsMhgf();
     }
 
     public int getEvsCoverage(String evsSample) {

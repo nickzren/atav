@@ -19,23 +19,19 @@ public class EvsManager {
     private static String filterStatus;
 
     public static String getTitle() {
-        if (VariantLevelFilterCommand.isOldEvsUsed) {
-            return "Evs Eur Covered Samples,"
-                    + "Evs Eur Average Coverage,"
-                    + "Evs Afr Covered Samples,"
-                    + "Evs Afr Average Coverage,"
-                    + "Evs All Covered Samples,"
-                    + "Evs All Average Coverage,"
-                    + "Evs Eur Maf," // Eur America
-                    + "Evs Eur Genotype Count,"
-                    + "Evs Afr Maf," // Afr America
-                    + "Evs Afr Genotype Count,"
-                    + "Evs All Maf,"
-                    + "Evs All Genotype Count,"
-                    + "Evs Filter Status,";
-        }
-
-        return "";
+        return "Evs Eur Covered Samples,"
+                + "Evs Eur Average Coverage,"
+                + "Evs Afr Covered Samples,"
+                + "Evs Afr Average Coverage,"
+                + "Evs All Covered Samples,"
+                + "Evs All Average Coverage,"
+                + "Evs Eur Maf," // Eur America
+                + "Evs Eur Genotype Count,"
+                + "Evs Afr Maf," // Afr America
+                + "Evs Afr Genotype Count,"
+                + "Evs All Maf,"
+                + "Evs All Genotype Count,"
+                + "Evs Filter Status,";
     }
 
     private static final int[] EVS_NUM_PUBLIC = {4300, 2203, 6503}; // ea, aa, all
@@ -43,7 +39,7 @@ public class EvsManager {
     public static String getFilterStatus() {
         return filterStatus;
     }
-    
+
     public static int getTotalEvsNum(String evsSample) {
         if (evsSample.equals("ea")) {
             return EVS_NUM_PUBLIC[0];
@@ -138,7 +134,7 @@ public class EvsManager {
         return str.toString();
     }
 
-    private static String getMafString(ResultSet rs, boolean isSnv, String chr, 
+    private static String getMafString(ResultSet rs, boolean isSnv, String chr,
             int pos, String ref, String alt) throws Exception {
         filterStatus = "NA";
 

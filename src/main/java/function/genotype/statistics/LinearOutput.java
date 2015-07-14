@@ -329,11 +329,9 @@ public class LinearOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(beta1)).append(",");
         sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
 
-        if (VariantLevelFilterCommand.isOldEvsUsed) {
-            sb.append(calledVar.getEvsCoverageStr()).append(",");
-            sb.append(calledVar.getEvsMafStr()).append(",");
-            sb.append(calledVar.getEvsFilterStatus()).append(",");
-        }
+        sb.append(calledVar.getEvsCoverageStr()).append(",");
+        sb.append(calledVar.getEvsMafStr()).append(",");
+        sb.append(calledVar.getEvsFilterStatus()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
