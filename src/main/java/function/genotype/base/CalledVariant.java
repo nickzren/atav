@@ -3,14 +3,9 @@ package function.genotype.base;
 import function.annotation.base.AnnotatedVariant;
 import function.genotype.family.FamilyManager;
 import global.Data;
-import function.external.evs.EvsManager;
 import function.genotype.family.FamilyCommand;
-import function.variant.base.RegionManager;
 import global.Index;
-import temp.TempRange;
-import utils.FormatManager;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -21,8 +16,6 @@ import java.util.HashSet;
 public class CalledVariant extends AnnotatedVariant {
 
     private HashMap<Integer, Carrier> carrierMap = new HashMap<Integer, Carrier>();
-    private HashMap<Integer, Carrier> evsEaCarrierMap = new HashMap<Integer, Carrier>();
-    private HashMap<Integer, Carrier> evsAaCarrierMap = new HashMap<Integer, Carrier>();
     private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<Integer, NonCarrier>();
     private int[] genotype = new int[SampleManager.getListSize()];
     private int[] coverage = new int[SampleManager.getListSize()];
@@ -38,24 +31,16 @@ public class CalledVariant extends AnnotatedVariant {
 
     private void init() throws Exception {
         if (isValid) {
-            SampleManager.initCarrierMap(this, carrierMap, evsEaCarrierMap, evsAaCarrierMap);
+            SampleManager.initCarrierMap(this, carrierMap);
 
             CoverageBlockManager.initNonCarrierMap(this, carrierMap, noncarrierMap);
 
-            resetPhs000473SampleGeno();
-
-            initCalledInfo();
+            initGenoCovArray();
 
             checkValid();
 
-            clear();
+            noncarrierMap = null; // free memory
         }
-    }
-
-    private void clear() { // free memory
-        evsEaCarrierMap = null;
-        evsAaCarrierMap = null;
-        noncarrierMap = null;
     }
 
     private void checkValid() {
@@ -64,133 +49,35 @@ public class CalledVariant extends AnnotatedVariant {
         isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(value);
     }
 
-    // temp hack solution - phs000473 coverage restriction
-    private void resetPhs000473SampleGeno() {
-        if (SampleManager.phs000473SampleIdSet.isEmpty()) {
-            return;
-        }
-
-        ArrayList<TempRange> rangeList = RegionManager.phs000473RegionMap.get(region.chrStr);
-
-        boolean isContained = false;
-
-        for (TempRange range : rangeList) {
-            if (region.startPosition >= range.start
-                    && region.startPosition <= range.end) {
-                isContained = true;
-                break;
-            }
-        }
-
-        if (!isContained) {
-            for (int sampleId : SampleManager.phs000473SampleIdSet) {
-                NonCarrier noncarrier = noncarrierMap.get(sampleId);
-
-                if (noncarrier != null) {
-                    noncarrier.genotype = Data.NA;
-                    noncarrier.coverage = Data.NA;
-                }
-            }
-        }
-    }
-
-    private void initCalledInfo() {
-        int evsEaCoverage = getEvsCoverage("ea");
-        int evsAaCoverage = getEvsCoverage("aa");
-
-        int evsEaHomRefNum = getEvsHomRefNum("ea", evsEaCoverage, evsEaCarrierMap.size());
-        int evsAaHomRefNum = getEvsHomRefNum("aa", evsAaCoverage, evsAaCarrierMap.size());
-
-        int eaNum = 0, aaNum = 0;
-
+    // initialize genotype & coverage array for better compute performance use
+    private void initGenoCovArray() {
         for (int s = 0; s < SampleManager.getListSize(); s++) {
             Sample sample = SampleManager.getList().get(s);
 
-            if (SampleManager.isEvsEaSampleId(sample.getId(), isIndel())) {
-                if (evsEaCoverage <= 0) {
-                    setGenoCov(Data.NA, Data.NA, s);
-                    carrierMap.remove(sample.getId());
-                    continue;
-                }
+            Carrier carrier = carrierMap.get(sample.getId());
+            NonCarrier noncarrier = noncarrierMap.get(sample.getId());
 
-                eaNum = initEvsGenoCov(sample.getId(), s, eaNum, evsEaHomRefNum, evsEaCarrierMap);
-            } else if (SampleManager.isEvsAaSampleId(sample.getId(), isIndel())) {
-                if (evsAaCoverage <= 0) {
-                    setGenoCov(Data.NA, Data.NA, s);
-                    carrierMap.remove(sample.getId());
-                    continue;
-                }
+            if (carrier != null) {
+                setGenoCov(carrier.getGenotype(), carrier.getCoverage(), s);
 
-                aaNum = initEvsGenoCov(sample.getId(), s, aaNum, evsAaHomRefNum, evsAaCarrierMap);
+                if (carrier.getGenotype() == Data.NA) {
+                    // have to remove it for init Non-carrier map
+                    qcFailSample[(int) sample.getPheno()]++;
+                    carrierMap.remove(sample.getId());
+                }
+            } else if (noncarrier != null) {
+                setGenoCov(noncarrier.getGenotype(), noncarrier.getCoverage(), s);
             } else {
-                initChgvGenoCov(sample, s);
-
-                addFamilyIdSet(sample.getId());
+                setGenoCov(Data.NA, Data.NA, s);
             }
+
+            addFamilyIdSet(sample.getId());
         }
-    }
-
-    private int initEvsGenoCov(int sampleId, int s,
-            int num, int evsHomRefNum,
-            HashMap<Integer, Carrier> evsCarrierMap) {
-        Carrier carrier = evsCarrierMap.get(sampleId);
-
-        if (carrier != null) {
-            setGenoCov(carrier.getGenotype(), carrier.getCoverage(), s);
-
-            if (carrier.getGenotype() == Data.NA) {
-                // have to remove it
-                carrierMap.remove(sampleId);
-            }
-        } else if (num < evsHomRefNum) {
-            num++;
-            setGenoCov(0, 8, s);
-        } else {
-            setGenoCov(Data.NA, Data.NA, s);
-        }
-
-        return num;
     }
 
     private void setGenoCov(int geno, int cov, int s) {
         genotype[s] = geno;
         coverage[s] = cov;
-    }
-
-    public int getEvsHomRefNum(String evsSample, int evsCoverage, int evsCarrier) {
-        int evsHomRefNum = 0;
-
-        if (evsCoverage > 0) {
-            evsHomRefNum = (int) (evsCoverage * FormatManager.devide(
-                    SampleManager.getEvsSampleNum(evsSample, isIndel()),
-                    EvsManager.getTotalEvsNum(evsSample))
-                    - evsCarrier);
-
-            if (evsHomRefNum < 0) {
-                evsHomRefNum = 0;
-            }
-        }
-
-        return evsHomRefNum;
-    }
-
-    private void initChgvGenoCov(Sample sample, int s) {
-        Carrier carrier = carrierMap.get(sample.getId());
-        NonCarrier noncarrier = noncarrierMap.get(sample.getId());
-
-        if (carrier != null) {
-            setGenoCov(carrier.getGenotype(), carrier.getCoverage(), s);
-
-            if (carrier.getGenotype() == Data.NA) {
-                // have to remove it for init Non-carrier map
-                qcFailSample[(int) sample.getPheno()]++;
-                carrierMap.remove(sample.getId());
-            }
-        } else if (noncarrier != null) {
-            setGenoCov(noncarrier.getGenotype(), noncarrier.getCoverage(), s);
-        } else {
-            setGenoCov(Data.NA, Data.NA, s);
-        }
     }
 
     public int getCoverage(int index) {

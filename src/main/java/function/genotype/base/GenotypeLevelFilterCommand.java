@@ -22,7 +22,6 @@ public class GenotypeLevelFilterCommand {
     public static String sampleFile = "";
     public static boolean isAllSample = false;
     public static boolean isAllNonRef = false;
-    public static String evsSample = "";
     public static double maf = 0.5;
     public static double ctrlMaf = 0.5;
     public static double maf4Recessive = Data.NO_FILTER;
@@ -61,11 +60,6 @@ public class GenotypeLevelFilterCommand {
                 isAllSample = true;
             } else if (option.getName().equals("--all-non-ref")) {
                 isAllNonRef = true;
-            } else if (option.getName().equals("--include-evs-sample")) {
-                checkValueValid(Data.EVS_POP, option);
-                evsSample = option.getValue();
-            } else if (option.getName().equals("--exclude-artifacts")) {
-                VariantLevelFilterCommand.isExcludeArtifacts = true;
             } else if (option.getName().equals("--ctrlMAF")
                     || option.getName().equals("--ctrl-maf")) {
                 checkValueValid(0.5, 0, option);

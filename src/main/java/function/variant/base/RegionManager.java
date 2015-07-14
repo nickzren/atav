@@ -5,14 +5,12 @@ import utils.DBManager;
 import utils.ErrorManager;
 import utils.CommonCommand;
 import utils.LogManager;
-import temp.TempRange;
 import global.Data;
 import java.io.*;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import function.genotype.base.SampleManager;
 
 /**
  *
@@ -24,10 +22,6 @@ public class RegionManager {
     private static HashMap<Integer, String> idChrMap = new HashMap<Integer, String>();
     private static HashMap<String, Integer> chrIdMap = new HashMap<String, Integer>();
     private static boolean isUsed = false;
-
-    // temp hack solution - phs000473 coverage restriction
-    public static HashMap<String, ArrayList<TempRange>> phs000473RegionMap
-            = new HashMap<String, ArrayList<TempRange>>();
 
     public static void init() {      
         if (CommonCommand.isNonDBAnalysis) {
@@ -54,44 +48,6 @@ public class RegionManager {
         }
 
         sortRegionList();
-
-        initPhs000473RegionMap();
-    }
-
-    private static void initPhs000473RegionMap() {
-        if (SampleManager.phs000473SampleIdSet.isEmpty()) {
-            return;
-        }
-
-        File f = new File(Data.phs000473_SAMPLE_REGION_PATH);
-
-        for (String chr : Data.ALL_CHR) {
-            phs000473RegionMap.put(chr, new ArrayList<TempRange>());
-        }
-
-        String lineStr = "";
-
-        try {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            while ((lineStr = br.readLine()) != null) {
-                String[] values = lineStr.split("\t");
-
-                TempRange range = new TempRange();
-                range.start = Integer.valueOf(values[1]);
-                range.end = Integer.valueOf(values[2]);
-
-                phs000473RegionMap.get(values[0]).add(range);
-            }
-
-            br.close();
-            in.close();
-            fstream.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
     }
 
     public static void sortRegionList() {

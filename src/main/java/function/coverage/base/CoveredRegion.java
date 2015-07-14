@@ -3,16 +3,13 @@ package function.coverage.base;
 import function.variant.base.Region;
 import global.Data;
 import global.SqlQuery;
-import function.external.evs.EvsManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
-import function.genotype.base.SampleManager;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  *
@@ -37,75 +34,8 @@ public class CoveredRegion extends Region {
 
         ArrayList<HashMap<Integer, Integer>> result2 = null;
 
-        if (!SampleManager.getEvsSampleIdSet().isEmpty()) {
-            result2 = CalculateEVSCoverage(strQuery, min_cov);
-        }
-
         for (int i = 0; i < min_cov.length; i++) { //merge genome and exome results
             result.get(i).putAll(result1.get(i));
-
-            if (!SampleManager.getEvsSampleIdSet().isEmpty()) {
-                result.get(i).putAll(result2.get(i));
-            }
-        }
-        return result;
-    }
-
-    public ArrayList<HashMap<Integer, Integer>> CalculateEVSCoverage(String strQuery, int[] min_cov) {
-        ArrayList<HashMap<Integer, Integer>> result = new ArrayList<HashMap<Integer, Integer>>();
-        for (int i = 0; i < min_cov.length; i++) {
-            result.add(new HashMap<Integer, Integer>());
-        }
-        if (!strQuery.isEmpty()) {
-            double totalcount = 0;
-            double totalcountea = 0;
-            double totalcountaa = 0;
-            try {
-                ResultSet rs = DBManager.executeQuery(strQuery);
-                while (rs.next()) {
-                    if (GenotypeLevelFilterCommand.evsSample.equals("ea")) {
-                        totalcount += rs.getInt("EASampleCovered");
-                    } else if (GenotypeLevelFilterCommand.evsSample.equals("aa")) {
-                        totalcount += rs.getInt("AASampleCovered");
-                    } else {
-                        totalcountea += rs.getInt("EASampleCovered");
-                        totalcountaa += rs.getInt("AASampleCovered");
-                    }
-                }
-                rs.close();
-
-                if (GenotypeLevelFilterCommand.evsSample.equals("ea") || 
-                        GenotypeLevelFilterCommand.evsSample.equals("aa")) {
-                    int averagecount = (int) (totalcount / EvsManager.getTotalEvsNum(
-                            GenotypeLevelFilterCommand.evsSample));
-                    if (averagecount > 0) {
-                        for (Iterator<Integer> iter = SampleManager.getEvsSampleIdSet().iterator(); iter.hasNext();) {
-                            int sample_id = iter.next();
-                            for (int i = 0; i < min_cov.length; i++) {
-                                result.get(i).put(sample_id, averagecount);
-                            }
-                        }
-                    }
-                } else {
-                    int averagecountea = (int) (totalcountea / EvsManager.getTotalEvsNum("ea"));
-                    int averagecountaa = (int) (totalcountaa / EvsManager.getTotalEvsNum("aa"));
-                    for (Iterator<Integer> iter = SampleManager.getEvsSampleIdSet().iterator(); iter.hasNext();) {
-                        int sample_id = iter.next();
-                        int averagecount = averagecountea;
-                        if (SampleManager.getTable().get(sample_id).getName().startsWith("evs_aa")) {
-                            averagecount = averagecountaa;
-                        }
-                        if (averagecount > 0) {
-                            for (int i = 0; i < min_cov.length; i++) {
-                                result.get(i).put(sample_id, averagecount);
-                            }
-                        }
-                    }
-                }
-
-            } catch (Exception e) {
-                ErrorManager.send(e);
-            }
         }
         return result;
     }
