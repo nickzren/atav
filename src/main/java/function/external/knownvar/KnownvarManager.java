@@ -1,5 +1,6 @@
 package function.external.knownvar;
 
+import global.Data;
 import java.sql.ResultSet;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -8,12 +9,9 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class Output {
+public class KnownvarManager {
 
-    String variantId;
-    int flankingCount;
-
-    void initFlankingCount(String table) {
+    public static int getFlankingCount(String variantId, String table) {
         try {
             String[] tmp = variantId.split("-"); // chr-pos-ref-alt
 
@@ -33,12 +31,14 @@ public class Output {
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                flankingCount = rs.getInt("count");
+                return rs.getInt("count");
             }
 
             rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+
+        return Data.NA;
     }
 }

@@ -9,15 +9,17 @@ import java.sql.ResultSet;
  *
  * @author nick
  */
-public class ClinvarOutput extends Output {
+public class ClinvarOutput {
 
     public static final String table = "knownvar.clinvar_2015_06_22";
     
+    String variantId;
     private String clinicalSignificance;
     private String otherIds;
     private String diseaseName;
+    int flankingCount;
 
-    public static String title
+    public static final String title
             = "Variant ID,"
             + "Clinical Significance,"
             + "Other Ids,"
@@ -29,7 +31,7 @@ public class ClinvarOutput extends Output {
 
         initClinvar();
 
-        initFlankingCount(table);
+        flankingCount = KnownvarManager.getFlankingCount(variantId, table);
     }
 
     private void initClinvar() {

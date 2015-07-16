@@ -9,13 +9,15 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class HGMDOutput extends Output {
+public class HGMDOutput {
 
     public static final String table = "knownvar.hgmd";
 
+    String variantId;
     private String variantClass;
     private String pmid;
     private String diseaseName;
+    int flankingCount;
 
     public static final String title
             = "Variant ID,"
@@ -29,7 +31,7 @@ public class HGMDOutput extends Output {
 
         initHGMD();
 
-        initFlankingCount(table);
+        flankingCount = KnownvarManager.getFlankingCount(variantId, table);
     }
 
     private void initHGMD() {
