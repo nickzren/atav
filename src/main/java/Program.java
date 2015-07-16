@@ -150,14 +150,14 @@ public class Program {
                 coverageSummary.run();
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
+            } else if (EvsCommand.isJonEvsTool) {
+                runAnalysis(new JonEvsTool());
             } else if (ExacCommand.isListExac) {
                 runAnalysis(new ListExac());
             } else if (KnownVarCommand.isListKnownVar) {
                 runAnalysis(new ListKnownVar());
             } else if (FlankingCommand.isListFlankingSeq) {
                 runAnalysis(new ListFlankingSeq());
-            } else if (EvsCommand.isJonEvsTool) {
-                runAnalysis(new JonEvsTool());
             } else if (PPICommand.isPPI) { // Non Database Functions
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());

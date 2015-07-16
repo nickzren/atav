@@ -60,6 +60,8 @@ public class CommandManager {
 
             initFunctionOptions();
 
+            initSubOptions();
+
             initCommonOptions();
 
             initOptions4Debug();
@@ -250,17 +252,13 @@ public class CommandManager {
 
             if (option.getName().equals("--list-var-geno")) { // Genotype Analysis Functions
                 VarGenoCommand.isListVarGeno = true;
-                VarGenoCommand.initOptions(optionList.iterator());
             } else if (option.getName().equals("--collapsing-dom")) {
                 CollapsingCommand.isCollapsingSingleVariant = true;
-                CollapsingCommand.initSingleVarOptions(optionList.iterator());
             } else if (option.getName().equals("--collapsing-rec")) {
                 CollapsingCommand.isCollapsingSingleVariant = true;
                 CollapsingCommand.isRecessive = true;
-                CollapsingCommand.initSingleVarOptions(optionList.iterator());
             } else if (option.getName().equals("--collapsing-comp-het")) {
                 CollapsingCommand.isCollapsingCompHet = true;
-                CollapsingCommand.initCompHetOptions(optionList.iterator());
             } else if (option.getName().equals("--fisher")) {
                 StatisticsCommand.isFisher = true;
                 StatisticsCommand.models = new String[4];
@@ -268,7 +266,6 @@ public class CommandManager {
                 StatisticsCommand.models[1] = "dominant";
                 StatisticsCommand.models[2] = "recessive";
                 StatisticsCommand.models[3] = "genotypic";
-                StatisticsCommand.initFisherOptions(optionList.iterator());
             } else if (option.getName().equals("--linear")) {
                 StatisticsCommand.isLinear = true;
                 StatisticsCommand.models = new String[4];
@@ -276,24 +273,18 @@ public class CommandManager {
                 StatisticsCommand.models[1] = "dominant";
                 StatisticsCommand.models[2] = "recessive";
                 StatisticsCommand.models[3] = "additive";
-                StatisticsCommand.initLinearOptions(optionList.iterator());
             } else if (option.getName().equals("--family-analysis")) {
                 FamilyCommand.isFamilyAnalysis = true;
-                FamilyCommand.initOptions(optionList.iterator());
             } else if (option.getName().equals("--list-sibling-comp-het")) {
                 SiblingCommand.isSiblingCompHet = true;
             } else if (option.getName().equals("--list-trio-denovo")) {
                 TrioCommand.isTrioDenovo = true;
-                TrioCommand.initDenovoOptions(optionList.iterator());
             } else if (option.getName().equals("--list-trio-comp-het")) {
                 TrioCommand.isTrioCompHet = true;
-                TrioCommand.initCompHetOptions(optionList.iterator());
             } else if (option.getName().equals("--list-parental-mosaic")) {
                 ParentalCommand.isParentalMosaic = true;
-                ParentalCommand.initOptions(optionList.iterator());
             } else if (option.getName().equals("--ped-map")) {
                 PedMapCommand.isPedMap = true;
-                PedMapCommand.initOptions(optionList.iterator());
             } else if (option.getName().equals("--list-var-anno")) { // Variant Annotation Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 VarAnnoCommand.isListVarAnno = true;
@@ -302,39 +293,31 @@ public class CommandManager {
                 GeneDxCommand.isListGeneDx = true;
             } else if (option.getName().equals("--coverage-summary")) { // Coverage Analysis Functions
                 CoverageCommand.isCoverageSummary = true;
-                CoverageCommand.initCoverageSummary(optionList.iterator());
             } else if (option.getName().equals("--site-coverage-summary")) {
                 CoverageCommand.isSiteCoverageSummary = true;
-                CoverageCommand.initSiteCoverageSummary(optionList.iterator());
             } else if (option.getName().equals("--coverage-comparison")) {
                 CoverageCommand.isCoverageComparison = true;
-                CoverageCommand.initCoverageComparison(optionList.iterator());
             } else if (option.getName().equals("--coverage-summary-pipeline")) {
                 CoverageCommand.isCoverageSummaryPipeline = true;
-                CoverageCommand.initCoverageComparison(optionList.iterator());
             } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isListEvs = true;
             } else if (option.getName().equals("--jon-evs-tool")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isJonEvsTool = true;
-                EvsCommand.initJonEvsToolOptions(optionList.iterator());
-            } else if (option.getName().equals("--list-known-var")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                KnownVarCommand.isListKnownVar = true;
-                KnownVarCommand.initOptions(optionList.iterator());
             } else if (option.getName().equals("--list-exac")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 ExacCommand.isListExac = true;
+            } else if (option.getName().equals("--list-known-var")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                KnownVarCommand.isListKnownVar = true;
             } else if (option.getName().equals("--list-flanking-seq")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 FlankingCommand.isListFlankingSeq = true;
-                FlankingCommand.initOptions(optionList.iterator());
             } else if (option.getName().equals("--ppi")) { // Non Database Functions
                 PPICommand.isPPI = true;
                 CommonCommand.isNonDBAnalysis = true;
                 CommonCommand.isNonSampleAnalysis = true;
-                PPICommand.initOptions(optionList.iterator());
             } else {
                 continue;
             }
@@ -350,6 +333,56 @@ public class CommandManager {
         }
     }
 
+    private static void initSubOptions() throws Exception {
+        if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
+            VarGenoCommand.initOptions(optionList.iterator());
+        } else if (CollapsingCommand.isCollapsingSingleVariant) {
+            CollapsingCommand.initSingleVarOptions(optionList.iterator());
+        } else if (CollapsingCommand.isCollapsingCompHet) {
+            CollapsingCommand.initCompHetOptions(optionList.iterator());
+        } else if (StatisticsCommand.isFisher) {
+            StatisticsCommand.initFisherOptions(optionList.iterator());
+        } else if (StatisticsCommand.isLinear) {
+            StatisticsCommand.initLinearOptions(optionList.iterator());
+        } else if (FamilyCommand.isFamilyAnalysis) {
+            FamilyCommand.initOptions(optionList.iterator());
+        } else if (SiblingCommand.isSiblingCompHet) {
+
+        } else if (TrioCommand.isTrioDenovo) {
+            TrioCommand.initDenovoOptions(optionList.iterator());
+        } else if (TrioCommand.isTrioCompHet) {
+            TrioCommand.initCompHetOptions(optionList.iterator());
+        } else if (ParentalCommand.isParentalMosaic) {
+            ParentalCommand.initOptions(optionList.iterator());
+        } else if (PedMapCommand.isPedMap) {
+            PedMapCommand.initOptions(optionList.iterator());
+        } else if (VarAnnoCommand.isListVarAnno) { // Variant Annotation Functions
+
+        } else if (GeneDxCommand.isListGeneDx) {
+
+        } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
+            CoverageCommand.initCoverageSummary(optionList.iterator());
+        } else if (CoverageCommand.isSiteCoverageSummary) {
+            CoverageCommand.initSiteCoverageSummary(optionList.iterator());
+        } else if (CoverageCommand.isCoverageComparison) {
+            CoverageCommand.initCoverageComparison(optionList.iterator());
+        } else if (CoverageCommand.isCoverageSummaryPipeline) {
+            CoverageCommand.initCoverageComparison(optionList.iterator());
+        } else if (EvsCommand.isListEvs) { // External Datasets Functions
+
+        } else if (EvsCommand.isJonEvsTool) {
+            EvsCommand.initJonEvsToolOptions(optionList.iterator());
+        } else if (ExacCommand.isListExac) {
+
+        } else if (KnownVarCommand.isListKnownVar) {
+            KnownVarCommand.initOptions(optionList.iterator());
+        } else if (FlankingCommand.isListFlankingSeq) {
+            FlankingCommand.initOptions(optionList.iterator());
+        } else if (PPICommand.isPPI) { // Non Database Functions
+            PPICommand.initOptions(optionList.iterator());
+        }
+    }
+
     private static void initCommonOptions() throws Exception {
         VariantLevelFilterCommand.initOptions(optionList.iterator());
 
@@ -357,9 +390,6 @@ public class CommandManager {
 
         GenotypeLevelFilterCommand.initOptions(optionList.iterator());
     }
-
-
-
 
     public static void outputInvalidOptions() {
         Iterator<CommandOption> iterator = optionList.iterator();
