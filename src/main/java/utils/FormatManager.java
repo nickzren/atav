@@ -36,7 +36,7 @@ public class FormatManager {
     }
 
     public static String getString(String str) {
-        if (str == null || str.equals("-")) {
+        if (str == null || str.equals("-") || str.equals("")) {
             str = "NA";
         }
 
