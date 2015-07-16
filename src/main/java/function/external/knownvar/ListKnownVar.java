@@ -13,29 +13,15 @@ import java.io.FileWriter;
  */
 public class ListKnownVar extends AnalysisBase4AnnotatedVar {
 
-    BufferedWriter bwClinvar = null;
-    final String clinvarFilePath = CommonCommand.outputPath + "clinvar.csv";
-
-    BufferedWriter bwHGMD = null;
-    final String hgmdFilePath = CommonCommand.outputPath + "hgmd.csv";
-
-    BufferedWriter bwOMIM = null;
-    final String omimFilePath = CommonCommand.outputPath + "omim.csv";
+    BufferedWriter bwKnownVar = null;
+    final String knownVarFilePath = CommonCommand.outputPath + "knownvar.csv";
 
     @Override
     public void initOutput() {
         try {
-            bwClinvar = new BufferedWriter(new FileWriter(clinvarFilePath));
-            bwClinvar.write(ClinvarOutput.title);
-            bwClinvar.newLine();
-
-            bwHGMD = new BufferedWriter(new FileWriter(hgmdFilePath));
-            bwHGMD.write(HGMDOutput.title);
-            bwHGMD.newLine();
-
-            bwOMIM = new BufferedWriter(new FileWriter(omimFilePath));
-            bwOMIM.write(OMIMOutput.title);
-            bwOMIM.newLine();
+            bwKnownVar = new BufferedWriter(new FileWriter(knownVarFilePath));
+            bwKnownVar.write(KnownVarOutput.title);
+            bwKnownVar.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -48,12 +34,8 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     @Override
     public void closeOutput() {
         try {
-            bwClinvar.flush();
-            bwClinvar.close();
-            bwHGMD.flush();
-            bwHGMD.close();
-            bwOMIM.flush();
-            bwOMIM.close();
+            bwKnownVar.flush();
+            bwKnownVar.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -74,17 +56,9 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     @Override
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
-            ClinvarOutput clinvarOutput = new ClinvarOutput(annotatedVar.variantIdStr);
-            bwClinvar.write(clinvarOutput.toString());
-            bwClinvar.newLine();
-
-            HGMDOutput hgmdOutput = new HGMDOutput(annotatedVar.variantIdStr);
-            bwHGMD.write(hgmdOutput.toString());
-            bwHGMD.newLine();
-
-            OMIMOutput omimOutput = new OMIMOutput(annotatedVar);
-            bwOMIM.write(omimOutput.toString());
-            bwOMIM.newLine();
+            KnownVarOutput knownVarOutput = new KnownVarOutput(annotatedVar);
+            bwKnownVar.write(knownVarOutput.toString());
+            bwKnownVar.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -93,8 +67,8 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     @Override
     public String toString() {
         return "It is running a list KnownVar function... \n\n"
-                + "clinvar table: " + ClinvarOutput.table + "\n\n"
-                + "hgmd table: " + HGMDOutput.table + "\n\n"
-                + "omim table: " + OMIMOutput.table;
+                + "clinvar table: " + KnownVarOutput.clinvarTable + "\n\n"
+                + "hgmd table: " + KnownVarOutput.hgmdTable + "\n\n"
+                + "omim table: " + KnownVarOutput.omimTable;
     }
 }
