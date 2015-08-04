@@ -1,7 +1,3 @@
-# Deploy ATAV
+# ATAV
 
-cd to ATAV work dir
-
-mvn clean compile assembly:single
-
-scp [local jar] to [server jar]
+ATAV (Analysis Tool for Annotated Variants) is a command line tool that is designed to detect complex disease-associated rare genetic variants by performing association analysis on annotated variants derived from whole-genome or whole-exome sequencing data which are all stored in IGM centralized database - AnnoDB.
