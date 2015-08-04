@@ -72,7 +72,7 @@ public class Transcript {
                 + "AND external_db_id = 3800 "
                 + "AND t.stable_id ='_TRANSCRIPT_' ";
         str = str.replaceAll("_TRANSCRIPT_", Name);
-        str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+        str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
         return DBUtils.isEmpty(str);
     }
 
@@ -101,7 +101,7 @@ public class Transcript {
                 str = SqlQuery.TRANSCRIPT_UTR_CCDSID;
             }
             str = str.replaceAll("_TRANSCRIPT_", Name);
-            str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
             return str;
         } else {
             return "";
@@ -117,7 +117,7 @@ public class Transcript {
                 str = SqlQuery.TRANSCRIPT_EXON_CCDSID;
             }
             str = str.replaceAll("_TRANSCRIPT_", Name);
-            str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
             return str;
         } else {
             return "";

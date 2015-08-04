@@ -4,53 +4,48 @@ import global.Data;
 import java.io.*;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  *
  * @author nick
  */
 public class DBManager {
+    
+    private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DB_PORT = "3306";
 
-    public static final String DRIVER = "com.mysql.jdbc.Driver";
-    public static final String DB_USER_NAME = "atav";
-    public static final String DB_PASSWORD = "13qeadzc";
-    public static final String DB_PORT = "3306";
-    public static final String DB_NAME = "CHGV_Annotation_DB_slave";
-    public static final String DB_HOMO_SAPIENS_CORE_NAME = "homo_sapiens_core_73_37";
-    public static String[] dbHostNameList;
+    // init from config
+    private static String annodbName;
+    public static String homoSapiensCoreName;
+    private static String dbUser;
+    private static String dbPassword;
     private static HashMap<String, String> dbHostMap = new HashMap<String, String>();
 
-    static {
-        dbHostMap.put("sva0", "192.168.1.50");
-        dbHostMap.put("annodb01", "10.73.50.31");
-        dbHostMap.put("annodb02", "10.73.50.32");
-        dbHostMap.put("annodb03", "10.73.50.33");
-        dbHostMap.put("annodb04", "10.73.50.34");
-        dbHostMap.put("annodb05", "10.73.50.35");
-    }
-
+    // init from user command
+    private static String dbHostIp = "";
+    private static String dbHostName = "";
+    
     private static Connection conn;
     private static Statement stmt;
     private static Connection readOnlyConn;
     private static Statement readOnlyStmt; // this is just for collecting annotation data
-    public static String dbHostIp = "";
-    public static String dbHostName = "";
 
     public static void init() {
         try {
             if (CommonCommand.isNonDBAnalysis) {
                 return;
             }
-
+            
+            initDataFromSystemConfig();
+            
             Class.forName(DRIVER);
-
-            initHostList();
-
+            
             chooseDBHost();
-
+            
             conn = getConnection();
             stmt = conn.createStatement();
-
+            
             readOnlyConn = getConnection();
             readOnlyStmt = readOnlyConn.createStatement(
                     java.sql.ResultSet.TYPE_FORWARD_ONLY,
@@ -60,61 +55,59 @@ public class DBManager {
             ErrorManager.send(e);
         }
     }
-
-    private static void initHostList() {
-        String configPath = Data.DB_HOST_CONFIG_PATH;
-
-        if (CommonCommand.isDebug) {
-            configPath = Data.RECOURCE_PATH + configPath;
-        }
-
-        File f = new File(configPath);
-
+    
+    private static void initDataFromSystemConfig() {
         try {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(new FileInputStream(f));
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            String str;
-            if ((str = br.readLine()) != null) {
-                str = str.toLowerCase();
-                dbHostNameList = str.split(",");
-            }
-
-            br.close();
-            in.close();
-            fstream.close();
-        } catch (Exception e) {
+            InputStream input = new FileInputStream(Data.SYSTEM_CONFIG);
+            Properties prop = new Properties();
+            prop.load(input);
+            
+            initServers(prop.getProperty("servers"));
+            
+            annodbName = prop.getProperty("annodb");
+            homoSapiensCoreName = prop.getProperty("homo_sapiens_core");
+            dbUser = prop.getProperty("dbuser");
+            dbPassword = prop.getProperty("dbpassword");
+        } catch (IOException e) {
             ErrorManager.send(e);
         }
     }
-
+    
+    private static void initServers(String servers) {
+        servers = servers.replaceAll("( )+", "");
+        
+        for (String server : servers.split(",")) {
+            String[] tmp = server.split("-"); // format: server_name-server_ip
+            dbHostMap.put(tmp[0], tmp[1]);
+        }
+    }
+    
     private static Connection getConnection() {
         try {
-            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + DB_NAME;
-
-            return DriverManager.getConnection(url, DB_USER_NAME, DB_PASSWORD);
+            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + annodbName;
+            
+            return DriverManager.getConnection(url, dbUser, dbPassword);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-
+        
         return null;
     }
-
+    
     public static Statement createStatement() {
         try {
             return conn.createStatement();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-
+        
         return null;
     }
-
-    public static ResultSet executeReadOnlyQuery(String sqlQuery) throws SQLException {        
+    
+    public static ResultSet executeReadOnlyQuery(String sqlQuery) throws SQLException {
         return readOnlyStmt.executeQuery(sqlQuery);
     }
-
+    
     public static ResultSet executeQuery(String sqlQuery) throws SQLException {
         return stmt.executeQuery(sqlQuery);
     }
@@ -123,80 +116,85 @@ public class DBManager {
     public static void executeUpdate(String sqlQuery) throws SQLException {
         stmt.executeUpdate(sqlQuery);
     }
-
+    
     public static void setDBHost(String hostName) {
-        dbHostIp = dbHostMap.get(hostName);
         dbHostName = hostName;
     }
-
+    
     private static void chooseDBHost() throws Exception {
         int minNum = Integer.MAX_VALUE;
-
-        if (!dbHostIp.isEmpty()) { // --db-host
+        
+        if (!dbHostName.isEmpty()) { // --db-host
+            dbHostIp = dbHostMap.get(dbHostName);
+            
+            if (dbHostIp == null) {
+                ErrorManager.print("Non existing server: " + dbHostName);
+            }
+            
             minNum = getNumOfATAV(dbHostIp);
         } else {
             while (true) {
                 minNum = getMinNumFromServers();
-
+                
                 if (minNum <= 10) {
                     break;
                 } else {
                     LogManager.writeAndPrint("All available AnnoDB servers are "
                             + "reached to max concurrent jobs(10), your job "
                             + "will wait for 30 minutes then auto restart.");
-
+                    
                     Thread.sleep(1800000);
                 }
             }
         }
-
+        
         LogManager.writeAndPrint("Your ATAV Job is quering data from server " + dbHostName + ". "
                 + "(" + minNum + " concurrent ATAV Jobs)");
     }
-
+    
     private static int getMinNumFromServers() {
         int minNum = Integer.MAX_VALUE;
         int currentNum;
-
-        for (String hostName : dbHostNameList) {
+        
+        for (String hostName : dbHostMap.keySet()) {
             String hostIp = dbHostMap.get(hostName);
-
+            
             currentNum = getNumOfATAV(hostIp);
-
+            
             if (currentNum < minNum) {
                 minNum = currentNum;
                 dbHostIp = hostIp;
                 dbHostName = hostName;
             }
         }
-
+        
         return minNum;
     }
-
+    
     private static int getNumOfATAV(String hostIp) {
         String sqlCarrier = "select count(USER) from "
                 + "information_schema.processlist where USER='atav'";
-
+        
         try {
             String url = "jdbc:mysql://" + hostIp + ":" + DB_PORT;
-
+            
             Connection conn = DriverManager.getConnection(url,
-                    DB_USER_NAME,
-                    DB_PASSWORD);
+                    dbUser,
+                    dbPassword);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sqlCarrier);
-
+            
             if (rs.next()) {
                 return rs.getInt(1) / 2;
             }
-
+            
             rs.close();
             stmt.close();
             conn.close();
         } catch (Exception e) {
             return Integer.MAX_VALUE;
         }
-
+        
         return 0;
     }
 }
