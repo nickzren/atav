@@ -162,7 +162,7 @@ public class Gene {
                 + "AND t.stable_id like 'ENST%' ";
 
         str = str.replaceAll("_GENE_", name);
-        str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+        str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
 
         ArrayList<Integer> candidates = DBUtils.getIntList(str, "transcript_id");
         for (int i = 0; i < candidates.size(); i++) {
@@ -199,7 +199,7 @@ public class Gene {
                     + "AND t.stable_id like 'ENST%' ";
         }
         str = str.replaceAll("_GENE_", name);
-        str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+        str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
 
         return DBUtils.getUniqueInt(str, "transcript_id");
     }
@@ -214,7 +214,7 @@ public class Gene {
                 + "AND t.transcript_id ='_TRANSCRIPT_' ";
 
         str = str.replaceAll("_TRANSCRIPT_", new Integer(transcriptid).toString());
-        str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+        str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
 
         return DBUtils.isEmpty(str);
     }
@@ -346,7 +346,7 @@ public class Gene {
         if (isValid() && transcriptid > 0) {
             String str = SqlQuery.GENE_EXON_TRANSCRIPTID;
             str = str.replaceAll("_TRANSCRIPTID_", new Integer(transcriptid).toString());
-            str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
             return str;
         } else {
             return "";
@@ -364,7 +364,7 @@ public class Gene {
                 str = SqlQuery.GENE_EXON_STABLEID;
             }
             str = str.replaceAll("_GENE_", name);
-            str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
             return str;
         } else {
             return "";
@@ -381,7 +381,7 @@ public class Gene {
                 str = SqlQuery.GENE_UTR_STABLEID;
             }
             str = str.replaceAll("_GENE_", name);
-            str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
             return str;
         } else {
             return "";
@@ -393,7 +393,7 @@ public class Gene {
             String str = SqlQuery.GENE_UTR_TRANSCRIPTID;
             str = str.replaceAll("_GENE_", name);
             str = str.replaceAll("_TRANSCRIPTID_", new Integer(transcriptid).toString());
-            str = str.replaceAll("_DB_HSC_", DBManager.DB_HOMO_SAPIENS_CORE_NAME);
+            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
             return str;
         } else {
             return "";

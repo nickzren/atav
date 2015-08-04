@@ -30,8 +30,11 @@ public class Data {
     public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 
+    // system config file path
+    public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.system.config.properties";
+
     // system file path for debug
-    public static final String RECOURCE_PATH = new File(".").getAbsolutePath()+ "/src/main/resources/";
+    public static final String RECOURCE_PATH = new File(".").getAbsolutePath() + "/src/main/resources/";
 
     public static final String DB_HOST_CONFIG_PATH = "config/host";
     public static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
@@ -47,5 +50,4 @@ public class Data {
     public static final int NA = Integer.MIN_VALUE;
 
     public static final int COVERAGE_BLOCK_SIZE = 1024;
-
 }
