@@ -18,6 +18,7 @@ public class CoverageCommand {
     public static boolean isSiteCoverageSummary = false;
     public static boolean isCoverageSummaryPipeline = false;
     public static String coveredRegionFile = "";
+    public static boolean isCaseControlSeparate = false;
     public static double minPercentRegionCovered = 0; //so all is output by default 
     public static boolean isExcludeUTR = false;
     public static boolean isByExon = false;
@@ -109,6 +110,8 @@ public class CoverageCommand {
                 coveredRegionFile = getValidPath(option);
             } else if (option.getName().equals("--gene-boundaries")) {
                 coveredRegionFile = getValidPath(option);
+            } else if (option.getName().equals("--case-control")) {
+                isCaseControlSeparate = true;
             } else {
                 continue;
             }
