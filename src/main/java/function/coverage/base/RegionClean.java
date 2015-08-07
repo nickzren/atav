@@ -17,15 +17,15 @@ import java.util.Iterator;
  *
  * @author qwang
  */
-public class ExonClean {
+public class RegionClean {
 
-    private ArrayList<SortedExon> SortedExonList = new ArrayList<SortedExon>();
+    private ArrayList<SortedRegion> SortedRegionList = new ArrayList<SortedRegion>();
     private int TotalBases = 0;
     private int TotalCleanedBases = 0;
     private double CaseCoverage = 0;
     private double ControlCoverage = 0;
 
-    public ExonClean(String inputfile) {
+    public RegionClean(String inputfile) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(inputfile));
             String str;
@@ -34,7 +34,7 @@ public class ExonClean {
                 if (LineCount > 0) { //skip the headline
                     try {
                         String[] fields = str.split(",");
-                        SortedExonList.add(new SortedExon(fields[0], Double.parseDouble(fields[2]),
+                        SortedRegionList.add(new SortedRegion(fields[0], Double.parseDouble(fields[2]),
                                 Double.parseDouble(fields[3]), Double.parseDouble(fields[4]),
                                 Integer.parseInt(fields[5])));
                         TotalBases += Integer.parseInt(fields[5]);
@@ -48,7 +48,7 @@ public class ExonClean {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-        Collections.sort(SortedExonList);
+        Collections.sort(SortedRegionList);
 
     }
 
@@ -72,18 +72,18 @@ public class ExonClean {
         return (CaseCoverage * SampleManager.getCaseNum() + ControlCoverage * SampleManager.getCtrlNum()) / SampleManager.getListSize();
     }
 
-    public int GetNumberOfExons() {
-        return SortedExonList.size();
+    public int GetNumberOfRegions() {
+        return SortedRegionList.size();
     }
 
     public double GetCutoff() {
         int i;
         double cutoff;
-        double[] data = new double[SortedExonList.size()];
+        double[] data = new double[SortedRegionList.size()];
         double meandata = 0.0;
         //calculate mean data
         for (i = 0; i < data.length; i++) {
-            data[i] = SortedExonList.get(i).Coverage_Difference;
+            data[i] = SortedRegionList.get(i).Coverage_Difference;
             meandata += data[i];
         }
         meandata /= data.length;
@@ -111,23 +111,23 @@ public class ExonClean {
                 index = i;
             }
         }
-        cutoff = SortedExonList.get(index).Coverage_Difference;
+        cutoff = SortedRegionList.get(index).Coverage_Difference;
         return cutoff;
 
     }
 
-    public HashSet<String> GetExonCleanList(double cutoff) {
+    public HashSet<String> GetRegionCleanList(double cutoff) {
         TotalCleanedBases = 0;
         CaseCoverage = 0;
         ControlCoverage = 0;
         HashSet<String> result = new HashSet<String>();
-        for (int i = 0; i < SortedExonList.size(); i++) {
-            if (SortedExonList.get(i).Coverage_Difference < cutoff
-                    && SortedExonList.get(i).Case_Average + SortedExonList.get(i).Control_Avarage > 0) {
-                TotalCleanedBases += SortedExonList.get(i).Size;
-                ControlCoverage += SortedExonList.get(i).Control_Avarage * SortedExonList.get(i).Size;
-                CaseCoverage += SortedExonList.get(i).Case_Average * SortedExonList.get(i).Size;
-                result.add(SortedExonList.get(i).Name);
+        for (int i = 0; i < SortedRegionList.size(); i++) {
+            if (SortedRegionList.get(i).Coverage_Difference < cutoff
+                    && SortedRegionList.get(i).Case_Average + SortedRegionList.get(i).Control_Avarage > 0) {
+                TotalCleanedBases += SortedRegionList.get(i).Size;
+                ControlCoverage += SortedRegionList.get(i).Control_Avarage * SortedRegionList.get(i).Size;
+                CaseCoverage += SortedRegionList.get(i).Case_Average * SortedRegionList.get(i).Size;
+                result.add(SortedRegionList.get(i).Name);
             }
         }
         if (TotalBases > 0) {
@@ -137,16 +137,18 @@ public class ExonClean {
         return result;
     }
 
-    public String GetCleanedGeneString(Gene gene, HashSet<String> cleanedExons) {
+    public String GetCleanedGeneString(Gene gene, HashSet<String> cleanedRegions) {
         StringBuilder sb = new StringBuilder();
         int size = 0;
         sb.append(gene.getName());
         sb.append(" ").append(gene.chr).append(" (");
         boolean isFirst = true;
-        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
+        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) { 
+        //reuse exon here, might need to change to a more approriate name later
+        // Should be region in general
             Exon exon = (Exon) r.next();
             String exonid = gene.getName() + "_" + exon.getStableId();
-            if (cleanedExons.contains(exonid)) {
+            if (cleanedRegions.contains(exonid)) {
                 size += exon.getCoveredRegion().getLength();
                 if (isFirst) {
                     isFirst = false;
@@ -165,10 +167,10 @@ public class ExonClean {
         }
     }
 
-    public String GetCleanedGeneSummaryString(Gene gene, HashSet<String> cleanedExons) {
-        HashMap<String, SortedExon> ExonMap = new HashMap<String, SortedExon>();
-        for (int i = 0; i < SortedExonList.size(); i++) {
-            ExonMap.put(SortedExonList.get(i).Name, SortedExonList.get(i));
+    public String GetCleanedGeneSummaryString(Gene gene, HashSet<String> cleanedRegions) {
+        HashMap<String, SortedRegion> RegionMap = new HashMap<String, SortedRegion>();
+        for (int i = 0; i < SortedRegionList.size(); i++) {
+            RegionMap.put(SortedRegionList.get(i).Name, SortedRegionList.get(i));
         }
         int GeneSize = 0;
         double CaseAvg = 0;
@@ -176,8 +178,8 @@ public class ExonClean {
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
             Exon exon = (Exon) r.next();
             String exonid = gene.getName() + "_" + exon.getStableId();
-            if (cleanedExons.contains(exonid)) {
-                SortedExon se = ExonMap.get(exonid);
+            if (cleanedRegions.contains(exonid)) {
+                SortedRegion se = RegionMap.get(exonid);
                 GeneSize += se.Size;
                 CaseAvg += (double) se.Size * se.Case_Average;
                 CtrlAvg += (double) se.Size * se.Control_Avarage;
@@ -212,7 +214,7 @@ public class ExonClean {
         return sb.toString();
     }
 
-    class SortedExon implements Comparable {
+    class SortedRegion implements Comparable {
 
         String Name;
         public double Coverage_Difference;
@@ -220,16 +222,16 @@ public class ExonClean {
         public double Control_Avarage;
         public int Size;
 
-        public SortedExon(String name, double caseavg, double controlavg, double diff, int exonsize) {
+        public SortedRegion(String name, double caseavg, double controlavg, double diff, int regionsize) {
             Name = name;
             Coverage_Difference = diff;
             Case_Average = caseavg;
             Control_Avarage = controlavg;
-            Size = exonsize;
+            Size = regionsize;
         }
 
         public int compareTo(Object other) {
-            SortedExon that = (SortedExon) other;
+            SortedRegion that = (SortedRegion) other;
             return Double.compare(that.Coverage_Difference, this.Coverage_Difference); // large -> small
         }
     }
