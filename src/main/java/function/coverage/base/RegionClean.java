@@ -25,10 +25,6 @@ public class RegionClean {
     private double CaseCoverage = 0;
     private double ControlCoverage = 0;
     
-    public RegionClean() {
-        //do nothing for now
-    }
-    
     public RegionClean(String inputfile) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(inputfile));
@@ -55,6 +51,21 @@ public class RegionClean {
         Collections.sort(SortedRegionList);
     }
 
+    public RegionClean() {
+        // for site coverage comparison, instead of reading from output file
+        // we allow the SortedRegionList to be accumalted when they are generated 
+        SortedRegionList.clear(); 
+    }
+    
+    public void AddRegionToList(String name, double caseavg, double controlavg, double diff) {
+        //site has a fixed length of 1
+        SortedRegionList.add(new SortedRegion(name, caseavg,controlavg,diff, 1));              
+        TotalBases += 1;
+    }
+    
+    public void FinalizeRegionList() {
+        Collections.sort(SortedRegionList);
+    }
     public int GetTotalBases() {
         return TotalBases;
     }

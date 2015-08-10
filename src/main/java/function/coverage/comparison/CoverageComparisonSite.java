@@ -25,6 +25,7 @@ public class CoverageComparisonSite extends CoverageSummarySite {
     final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
     final String CleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
     public BufferedWriter bwCoverageSummaryByGene = null;
+    private RegionClean ec = new RegionClean();
 
     public CoverageComparisonSite() {
         super();
@@ -34,13 +35,25 @@ public class CoverageComparisonSite extends CoverageSummarySite {
         }
     }
 
+    @Override
+    public void emitSiteInfo(String gene, String chr, int position, int caseCoverage, int ctrlCoverage) {
+        StringBuilder str = new StringBuilder();
+        str.append(gene).append("_").append(chr).append("_").append(position);
+        double caseAverage = ((double)caseCoverage) / SampleManager.getCaseNum();
+        double ctrlAverage = ((double)ctrlCoverage) / SampleManager.getCtrlNum();
+        double abs_diff = Math.abs(caseAverage - ctrlAverage);
+        ec.AddRegionToList(str.toString(), caseAverage, ctrlAverage, abs_diff);
+    }
+    
     public void outputCleanedExonList() throws Exception {
         NumberFormat pformat6 = new DecimalFormat("0.######");
         BufferedWriter bwGeneSummaryClean = new BufferedWriter(new FileWriter(CleanedGeneSummaryList));
         bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
         bwGeneSummaryClean.newLine();
 
-        RegionClean ec = new RegionClean();
+        //make sure the list has included all data and sortd.
+        ec.FinalizeRegionList();
+        
         double cutoff = ec.GetCutoff();
         LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for sites is " + Double.toString(cutoff));
         if (CoverageCommand.siteCleanCutoff >= 0) {

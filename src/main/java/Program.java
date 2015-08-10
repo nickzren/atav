@@ -144,6 +144,10 @@ public class Program {
                 LogManager.writeAndPrint("It is running a coverage comparison function...");
                 CoverageComparison coverageList = new CoverageComparison();
                 coverageList.run();
+            } else if (CoverageCommand.isCoverageComparisonSite) {
+                LogManager.writeAndPrint("It is running a site coverage comparison function...");
+                CoverageComparison coverageList = new CoverageComparison();
+                coverageList.run();
             } else if (CoverageCommand.isCoverageSummaryPipeline) {
                 LogManager.writeAndPrint("It is running a coverage summary for pipeline function...");
                 CoverageSummaryPipeline coverageSummary = new CoverageSummaryPipeline();

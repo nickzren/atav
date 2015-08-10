@@ -86,6 +86,9 @@ public class CoverageSummarySite extends InputList {
                             if (CoverageCommand.isCaseControlSeparate) {
                                 sb.append(",").append(SiteCoverage.get(0)[pos]);
                                 sb.append(",").append(SiteCoverage.get(1)[pos]);
+                                //emit site info for potential processing
+                                emitSiteInfo(gene.getName(), chr, SiteStart + pos, 
+                                    SiteCoverage.get(0)[pos], SiteCoverage.get(1)[pos]);
                             }
                             sb.append("\n");
                             bwSiteSummary.write(sb.toString());
@@ -98,7 +101,11 @@ public class CoverageSummarySite extends InputList {
         }
         closeOutput();
     }
-
+    
+    //give a chance for derived class to process a site
+    public void emitSiteInfo(String gene, String chr, int position, int caseCoverage, int ctrlCoverage) {
+       
+    }
     private void initOutput() throws Exception {
         bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
         bwSiteSummary.write("Gene,Chr,Pos,Site Coverage");

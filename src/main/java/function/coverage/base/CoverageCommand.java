@@ -26,8 +26,10 @@ public class CoverageCommand {
     public static double exonCleanCutoff = -1.0; //not used by default
     public static double geneCleanCutoff = 1.0;
     public static double siteCleanCutoff = -1.0; // not used by default
+
     // coverage comparison 
     public static boolean isCoverageComparison = false;
+    public static boolean isCoverageComparisonSite = false;
     public static boolean isCoverageComparisonDoLinear = false;
     public static double ExonMaxCovDiffPValue = 0.0;
     public static double ExonMaxPercentVarExplained = 100.0;
@@ -100,7 +102,7 @@ public class CoverageCommand {
             iterator.remove();
         }
     }
-
+    
     public static void initSiteCoverageSummary(Iterator<CommandOption> iterator) {
         CommandOption option;
 
@@ -118,5 +120,22 @@ public class CoverageCommand {
             iterator.remove();
         }
     }
-
+    
+    public static void initCoverageComparisonSite(Iterator<CommandOption> iterator) {
+        // hornor all sub functions from SiteCoverageSummary as well
+        // not the best way to do it, but there no option inheitance yet in ATAV so far.
+        initSiteCoverageSummary(iterator); 
+        
+        CommandOption option;
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            if (option.getName().equals("--site-max-percent-cov-difference")) {
+                checkValueValid(1, 0, option);
+                siteCleanCutoff = getValidDouble(option);
+            } else {
+                continue;
+            }
+            iterator.remove();
+        }
+    }
 }
