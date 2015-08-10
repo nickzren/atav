@@ -23,9 +23,9 @@ public class CoverageCommand {
     public static boolean isExcludeUTR = false;
     public static boolean isByExon = false;
     public static boolean isTerse = false;
-    public static double exonCleanCutoff = -1; //not used by default
+    public static double exonCleanCutoff = -1.0; //not used by default
     public static double geneCleanCutoff = 1.0;
-
+    public static double siteCleanCutoff = -1.0; // not used by default
     // coverage comparison 
     public static boolean isCoverageComparison = false;
     public static boolean isCoverageComparisonDoLinear = false;

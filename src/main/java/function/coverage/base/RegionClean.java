@@ -24,7 +24,11 @@ public class RegionClean {
     private int TotalCleanedBases = 0;
     private double CaseCoverage = 0;
     private double ControlCoverage = 0;
-
+    
+    public RegionClean() {
+        //do nothing for now
+    }
+    
     public RegionClean(String inputfile) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(inputfile));
@@ -49,7 +53,6 @@ public class RegionClean {
             ErrorManager.send(e);
         }
         Collections.sort(SortedRegionList);
-
     }
 
     public int GetTotalBases() {
