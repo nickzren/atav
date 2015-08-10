@@ -24,6 +24,7 @@ public class RegionClean {
     private int TotalCleanedBases = 0;
     private double CaseCoverage = 0;
     private double ControlCoverage = 0;
+    private HashMap<String, SortedRegion> RegionMap = new HashMap<String, SortedRegion>();
     
     public RegionClean(String inputfile) {
         try {
@@ -151,6 +152,63 @@ public class RegionClean {
         return result;
     }
 
+    public String GetCleanedGeneStringSite(Gene gene, HashSet<String> cleanedRegions) {
+        StringBuilder sb = new StringBuilder();
+        int size = 0;
+        sb.append(gene.getName());
+        sb.append(" ").append(gene.chr).append(" (");
+        boolean isFirst = true;
+        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) { 
+            Exon exon = (Exon) r.next();
+            int startPosition = exon.getCoveredRegion().getStartPosition();
+            int endPosition = exon.getCoveredRegion().getEndPosition();
+
+            int previouStartPosition = -1;
+            int previousEndPosition = -1;
+            for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
+                StringBuilder regionid = new StringBuilder();
+                regionid.append(gene).append("_").append(gene.chr).append("_").append(currentPosition);
+                if (cleanedRegions.contains(regionid.toString())) {
+                    if (previouStartPosition < 0) {
+                        previouStartPosition = currentPosition;
+                    }
+                    size += 1;
+                    previousEndPosition = currentPosition;
+                } else { //there are gaps within the exon, so record the previos discovered region if any
+                    //need to record the new discovered region
+                    if (previouStartPosition > 0) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            sb.append(",");
+                        }
+                        sb.append(previouStartPosition);
+                        sb.append("..").append(previousEndPosition);
+                        //reset to no region
+                        previouStartPosition = -1;
+                        previousEndPosition = -1;
+                    }
+                }
+            }
+            //repeat the recoring for last potential region
+            //make sure this code is consistent with the code in previous section
+            if (previouStartPosition > 0) {
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    sb.append(",");
+                }
+                sb.append(previouStartPosition);
+                sb.append("..").append(previousEndPosition);
+            }
+        }
+        sb.append(") ").append(size);
+        if (size > 0 && !gene.chr.isEmpty()) {
+            return sb.toString();
+        } else {
+            return "";
+        }
+    }
     public String GetCleanedGeneString(Gene gene, HashSet<String> cleanedRegions) {
         StringBuilder sb = new StringBuilder();
         int size = 0;
@@ -181,22 +239,38 @@ public class RegionClean {
         }
     }
 
-    public String GetCleanedGeneSummaryString(Gene gene, HashSet<String> cleanedRegions) {
-        HashMap<String, SortedRegion> RegionMap = new HashMap<String, SortedRegion>();
-        for (int i = 0; i < SortedRegionList.size(); i++) {
-            RegionMap.put(SortedRegionList.get(i).Name, SortedRegionList.get(i));
+    public String GetCleanedGeneSummaryString(Gene gene, HashSet<String> cleanedRegions, boolean isSite) {
+        if (RegionMap.isEmpty()) {
+            for (int i = 0; i < SortedRegionList.size(); i++) {
+                RegionMap.put(SortedRegionList.get(i).Name, SortedRegionList.get(i));
+            }
         }
         int GeneSize = 0;
         double CaseAvg = 0;
         double CtrlAvg = 0;
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
             Exon exon = (Exon) r.next();
-            String exonid = gene.getName() + "_" + exon.getStableId();
-            if (cleanedRegions.contains(exonid)) {
-                SortedRegion se = RegionMap.get(exonid);
-                GeneSize += se.Size;
-                CaseAvg += (double) se.Size * se.Case_Average;
-                CtrlAvg += (double) se.Size * se.Control_Avarage;
+            if (isSite) {
+                int startPosition = exon.getCoveredRegion().getStartPosition();
+                int endPosition = exon.getCoveredRegion().getEndPosition();
+                for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
+                    StringBuilder regionid = new StringBuilder();
+                    regionid.append(gene).append("_").append(gene.chr).append("_").append(currentPosition);
+                    if (cleanedRegions.contains(regionid.toString())) {
+                        GeneSize++;
+                        SortedRegion se = RegionMap.get(regionid.toString());
+                        CaseAvg += se.Case_Average;
+                        CtrlAvg += se.Control_Avarage;
+                    }
+                }
+            } else {
+                String exonid = gene.getName() + "_" + exon.getStableId();
+                if (cleanedRegions.contains(exonid)) {
+                    SortedRegion se = RegionMap.get(exonid);
+                    GeneSize += se.Size;
+                    CaseAvg += (double) se.Size * se.Case_Average;
+                    CtrlAvg += (double) se.Size * se.Control_Avarage;
+                }
             }
         }
         StringBuilder sb = new StringBuilder();

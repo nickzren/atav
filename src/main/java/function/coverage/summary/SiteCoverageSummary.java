@@ -22,12 +22,12 @@ import java.util.Iterator;
  *
  * @author qwang
  */
-public class CoverageSummarySite extends InputList {
+public class SiteCoverageSummary extends InputList {
 
     BufferedWriter bwSiteSummary = null;
     final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
 
-    public CoverageSummarySite() {
+    public SiteCoverageSummary() {
         super();
 
         try {

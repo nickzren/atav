@@ -29,10 +29,10 @@ public class CoverageCommand {
 
     // coverage comparison 
     public static boolean isCoverageComparison = false;
-    public static boolean isCoverageComparisonSite = false;
+    public static boolean isSiteCoverageComparison = false;
     public static boolean isCoverageComparisonDoLinear = false;
-    public static double ExonMaxCovDiffPValue = 0.0;
-    public static double ExonMaxPercentVarExplained = 100.0;
+    //public static double ExonMaxCovDiffPValue = 0.0;
+    //public static double ExonMaxPercentVarExplained = 100.0;
 
     public static void initCoverageSummaryPipeline(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -67,13 +67,13 @@ public class CoverageCommand {
             } else if (option.getName().equals("--quantitative")) {
                 isCoverageComparisonDoLinear = true;
                 StatisticsCommand.quantitativeFile = getValidPath(option);
-            } else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
+            } /*else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
                 checkValueValid(1, 0, option);
                 ExonMaxCovDiffPValue = getValidDouble(option);
             } else if (option.getName().equals("--exon-max-percent-var-explained")) {
                 checkValueValid(100, 0, option);
                 ExonMaxPercentVarExplained = getValidDouble(option);
-            } else {
+            } */ else {
                 continue;
             }
             iterator.remove();
@@ -122,7 +122,7 @@ public class CoverageCommand {
     }
     
     public static void initCoverageComparisonSite(Iterator<CommandOption> iterator) {
-        // hornor all sub functions from SiteCoverageSummary as well
+        // hornor all sub options from SiteCoverageSummary as well
         // not the best way to do it, but there no option inheitance yet in ATAV so far.
         initSiteCoverageSummary(iterator); 
         
@@ -132,6 +132,9 @@ public class CoverageCommand {
             if (option.getName().equals("--site-max-percent-cov-difference")) {
                 checkValueValid(1, 0, option);
                 siteCleanCutoff = getValidDouble(option);
+            }  else if (option.getName().equals("--gene-max-percent-cov-difference")) {
+                checkValueValid(1, 0, option);
+                geneCleanCutoff = getValidDouble(option);
             } else {
                 continue;
             }

@@ -149,7 +149,7 @@ public class CoverageComparison extends CoverageSummary {
                     bwExonClean.newLine();
                 }
 
-                str = ec.GetCleanedGeneSummaryString(gene, CleanedList);
+                str = ec.GetCleanedGeneSummaryString(gene, CleanedList,false);
                 if (!str.isEmpty()) {
                     bwGeneSummaryClean.write(str);
                     bwGeneSummaryClean.newLine();

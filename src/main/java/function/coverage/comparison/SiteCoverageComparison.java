@@ -3,7 +3,7 @@ package function.coverage.comparison;
 import function.coverage.base.CoverageCommand;
 import function.coverage.base.RegionClean;
 import function.coverage.base.Gene;
-import function.coverage.summary.CoverageSummarySite;
+import function.coverage.summary.SiteCoverageSummary;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -20,14 +20,14 @@ import java.util.Iterator;
  * @author qwang
  */
 
-public class CoverageComparisonSite extends CoverageSummarySite {
+public class SiteCoverageComparison extends SiteCoverageSummary {
 
     final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
     final String CleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
     public BufferedWriter bwCoverageSummaryByGene = null;
     private RegionClean ec = new RegionClean();
 
-    public CoverageComparisonSite() {
+    public SiteCoverageComparison() {
         super();
         int sampleSize = SampleManager.getListSize();
         if (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum()) {
@@ -47,6 +47,8 @@ public class CoverageComparisonSite extends CoverageSummarySite {
     
     public void outputCleanedExonList() throws Exception {
         NumberFormat pformat6 = new DecimalFormat("0.######");
+        final String CleanedSiteList = CommonCommand.outputPath + "site.clean.txt";
+        BufferedWriter bwSiteClean = new BufferedWriter(new FileWriter(CleanedSiteList)); 
         BufferedWriter bwGeneSummaryClean = new BufferedWriter(new FileWriter(CleanedGeneSummaryList));
         bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
         bwGeneSummaryClean.newLine();
@@ -61,16 +63,7 @@ public class CoverageComparisonSite extends CoverageSummarySite {
             LogManager.writeAndPrint("User specified cutoff value " + pformat6.format(cutoff) + " is applied instead.");
         }
         HashSet<String> CleanedList = ec.GetRegionCleanList(cutoff);
-        int NumExonsTotal = ec.GetNumberOfRegions();
-
-        int NumExonsPruned = NumExonsTotal - CleanedList.size();
-
-        LogManager.writeAndPrint("The number of exons before pruning is " + Integer.toString(NumExonsTotal));
-        LogManager.writeAndPrint("The number of exons after pruning is " + Integer.toString(CleanedList.size()));
-        LogManager.writeAndPrint("The number of exons pruned is " + Integer.toString(NumExonsPruned));
-        double percentExonsPruned = (double) NumExonsPruned / (double) NumExonsTotal * 100;
-        LogManager.writeAndPrint("The % of exons pruned is " + pformat6.format(percentExonsPruned) + "%");
-
+               
         LogManager.writeAndPrint("The total number of bases before pruning is " + pformat6.format((double) ec.GetTotalBases() / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases after pruning is " + pformat6.format((double) ec.GetTotalCleanedBases() / 1000000.0) + " MB");
         LogManager.writeAndPrint("The % of bases pruned is " + pformat6.format(100.0 - (double) ec.GetTotalCleanedBases() / (double) ec.GetTotalBases() * 100) + "%");
@@ -84,20 +77,26 @@ public class CoverageComparisonSite extends CoverageSummarySite {
         LogManager.writeAndPrint("The average coverage rate for controls after pruning is  " + pformat6.format(ec.GetControlCoverage() * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is  " + pformat6.format(ec.GetControlCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
-
         for (Iterator it = this.iterator(); it.hasNext();) {
             Object obj = it.next();
             String JobType = obj.getClass().getSimpleName();
             if (JobType.equals("Gene")) {
                 Gene gene = (Gene) obj;
-        
-                String str = ec.GetCleanedGeneSummaryString(gene, CleanedList);
+                String str =ec.GetCleanedGeneStringSite(gene, CleanedList);
+                if (!str.isEmpty()) {
+                    bwSiteClean.write(str);
+                    bwSiteClean.newLine();
+                }
+                
+                str = ec.GetCleanedGeneSummaryString(gene, CleanedList,true);
                 if (!str.isEmpty()) {
                     bwGeneSummaryClean.write(str);
                     bwGeneSummaryClean.newLine();
                 }
             }
         }
+        bwSiteClean.flush();
+        bwSiteClean.close();
         bwGeneSummaryClean.flush();
         bwGeneSummaryClean.close();
     }
