@@ -2,7 +2,7 @@ package function.coverage.comparison;
 
 import function.coverage.base.CoverageCommand;
 import function.coverage.base.ExonCleanLinearTrait;
-import function.coverage.base.ExonClean;
+import function.coverage.base.RegionClean;
 import function.coverage.base.SampleStatistics;
 import function.coverage.base.Exon;
 import function.coverage.base.Gene;
@@ -105,15 +105,15 @@ public class CoverageComparison extends CoverageSummary {
         bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
         bwGeneSummaryClean.newLine();
 
-        ExonClean ec = new ExonClean(coverageSummaryByExon);
+        RegionClean ec = new RegionClean(coverageSummaryByExon);
         double cutoff = ec.GetCutoff();
         LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for exons is " + Double.toString(cutoff));
         if (CoverageCommand.exonCleanCutoff >= 0) {
             cutoff = CoverageCommand.exonCleanCutoff;
             LogManager.writeAndPrint("User specified cutoff value " + pformat6.format(cutoff) + " is applied instead.");
         }
-        HashSet<String> CleanedList = ec.GetExonCleanList(cutoff);
-        int NumExonsTotal = ec.GetNumberOfExons();
+        HashSet<String> CleanedList = ec.GetRegionCleanList(cutoff);
+        int NumExonsTotal = ec.GetNumberOfRegions();
 
         int NumExonsPruned = NumExonsTotal - CleanedList.size();
 
@@ -149,7 +149,7 @@ public class CoverageComparison extends CoverageSummary {
                     bwExonClean.newLine();
                 }
 
-                str = ec.GetCleanedGeneSummaryString(gene, CleanedList);
+                str = ec.GetCleanedGeneSummaryString(gene, CleanedList,false);
                 if (!str.isEmpty()) {
                     bwGeneSummaryClean.write(str);
                     bwGeneSummaryClean.newLine();

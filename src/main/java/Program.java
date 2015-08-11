@@ -17,7 +17,7 @@ import function.genotype.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
 import function.coverage.summary.CoverageSummary;
 import function.coverage.summary.CoverageSummaryPipeline;
-import function.coverage.summary.CoverageSummarySite;
+import function.coverage.summary.SiteCoverageSummary;
 import function.genotype.family.FamilyAnalysis;
 import function.genotype.parental.ParentalMosaic;
 import function.genotype.pedmap.PedMapGenerator;
@@ -30,6 +30,7 @@ import function.annotation.genedx.ListGeneDx;
 import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
+import function.coverage.comparison.SiteCoverageComparison;
 import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.JonEvsTool;
@@ -138,11 +139,15 @@ public class Program {
                 coverageList.run();
             } else if (CoverageCommand.isSiteCoverageSummary) {
                 LogManager.writeAndPrint("It is running a site coverage summary function...");
-                CoverageSummarySite coverageList = new CoverageSummarySite();
+                SiteCoverageSummary coverageList = new SiteCoverageSummary();
                 coverageList.run();
             } else if (CoverageCommand.isCoverageComparison) {
                 LogManager.writeAndPrint("It is running a coverage comparison function...");
                 CoverageComparison coverageList = new CoverageComparison();
+                coverageList.run();
+            } else if (CoverageCommand.isSiteCoverageComparison) {
+                LogManager.writeAndPrint("It is running a site coverage comparison function...");
+                SiteCoverageComparison coverageList = new SiteCoverageComparison();
                 coverageList.run();
             } else if (CoverageCommand.isCoverageSummaryPipeline) {
                 LogManager.writeAndPrint("It is running a coverage summary for pipeline function...");

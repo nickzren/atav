@@ -18,18 +18,21 @@ public class CoverageCommand {
     public static boolean isSiteCoverageSummary = false;
     public static boolean isCoverageSummaryPipeline = false;
     public static String coveredRegionFile = "";
+    public static boolean isCaseControlSeparate = false;
     public static double minPercentRegionCovered = 0; //so all is output by default 
     public static boolean isExcludeUTR = false;
     public static boolean isByExon = false;
     public static boolean isTerse = false;
-    public static double exonCleanCutoff = -1; //not used by default
+    public static double exonCleanCutoff = -1.0; //not used by default
     public static double geneCleanCutoff = 1.0;
+    public static double siteCleanCutoff = -1.0; // not used by default
 
     // coverage comparison 
     public static boolean isCoverageComparison = false;
+    public static boolean isSiteCoverageComparison = false;
     public static boolean isCoverageComparisonDoLinear = false;
-    public static double ExonMaxCovDiffPValue = 0.0;
-    public static double ExonMaxPercentVarExplained = 100.0;
+    //public static double ExonMaxCovDiffPValue = 0.0;
+    //public static double ExonMaxPercentVarExplained = 100.0;
 
     public static void initCoverageSummaryPipeline(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -64,13 +67,13 @@ public class CoverageCommand {
             } else if (option.getName().equals("--quantitative")) {
                 isCoverageComparisonDoLinear = true;
                 StatisticsCommand.quantitativeFile = getValidPath(option);
-            } else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
+            } /*else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
                 checkValueValid(1, 0, option);
                 ExonMaxCovDiffPValue = getValidDouble(option);
             } else if (option.getName().equals("--exon-max-percent-var-explained")) {
                 checkValueValid(100, 0, option);
                 ExonMaxPercentVarExplained = getValidDouble(option);
-            } else {
+            } */ else {
                 continue;
             }
             iterator.remove();
@@ -99,7 +102,7 @@ public class CoverageCommand {
             iterator.remove();
         }
     }
-
+    
     public static void initSiteCoverageSummary(Iterator<CommandOption> iterator) {
         CommandOption option;
 
@@ -109,11 +112,33 @@ public class CoverageCommand {
                 coveredRegionFile = getValidPath(option);
             } else if (option.getName().equals("--gene-boundaries")) {
                 coveredRegionFile = getValidPath(option);
+            } else if (option.getName().equals("--case-control")) {
+                isCaseControlSeparate = true;
             } else {
                 continue;
             }
             iterator.remove();
         }
     }
-
+    
+    public static void initCoverageComparisonSite(Iterator<CommandOption> iterator) {
+        // hornor all sub options from SiteCoverageSummary as well
+        // not the best way to do it, but there no option inheitance yet in ATAV so far.
+        initSiteCoverageSummary(iterator); 
+        isCaseControlSeparate = true; // always true for comparison
+        CommandOption option;
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            if (option.getName().equals("--site-max-percent-cov-difference")) {
+                checkValueValid(1, 0, option);
+                siteCleanCutoff = getValidDouble(option);
+            }  else if (option.getName().equals("--gene-max-percent-cov-difference")) {
+                checkValueValid(1, 0, option);
+                geneCleanCutoff = getValidDouble(option);
+            } else {
+                continue;
+            }
+            iterator.remove();
+        }
+    }
 }
