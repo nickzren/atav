@@ -125,7 +125,7 @@ public class CoverageCommand {
         // hornor all sub options from SiteCoverageSummary as well
         // not the best way to do it, but there no option inheitance yet in ATAV so far.
         initSiteCoverageSummary(iterator); 
-        
+        isCaseControlSeparate = true; // always true for comparison
         CommandOption option;
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();

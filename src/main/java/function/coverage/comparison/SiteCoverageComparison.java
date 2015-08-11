@@ -22,7 +22,6 @@ import java.util.Iterator;
 
 public class SiteCoverageComparison extends SiteCoverageSummary {
 
-    final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
     final String CleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
     public BufferedWriter bwCoverageSummaryByGene = null;
     private RegionClean ec = new RegionClean();
@@ -104,19 +103,6 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     @Override
     public void run() throws Exception {
         super.run();
-        initOutput();
         outputCleanedExonList();
-        closeOutput();
-    }
-
-    private void initOutput() throws Exception {
-        bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
-        bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
-        bwCoverageSummaryByGene.newLine();
-    }
-
-    private void closeOutput() throws Exception {
-        bwCoverageSummaryByGene.flush();
-        bwCoverageSummaryByGene.close();
-    }
+    } 
 }
