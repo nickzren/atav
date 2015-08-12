@@ -2,7 +2,6 @@ package function.genotype.base;
 
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
-import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkRangeValid;
@@ -23,7 +22,8 @@ public class GenotypeLevelFilterCommand {
     public static boolean isAllSample = false;
     public static boolean isAllNonRef = false;
     public static double maf = 0.5;
-    public static double ctrlMaf = 0.5;
+    public static double ctrlMaf = 0.5; // max ctrl maf
+    public static double minCtrlMaf = Data.NO_FILTER;
     public static double maf4Recessive = Data.NO_FILTER;
     public static double mhgf4Recessive = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
@@ -64,6 +64,9 @@ public class GenotypeLevelFilterCommand {
                     || option.getName().equals("--ctrl-maf")) {
                 checkValueValid(0.5, 0, option);
                 ctrlMaf = getValidDouble(option);
+            } else if (option.getName().equals("--min-ctrl-maf")) {
+                checkValueValid(0.5, 0, option);
+                minCtrlMaf = getValidDouble(option);
             } else if (option.getName().equals("--ctrl-maf-rec")) {
                 maf4Recessive = getValidDouble(option);
                 checkValueValid(0.5, 0, option);
@@ -182,6 +185,18 @@ public class GenotypeLevelFilterCommand {
 
     public static boolean isMafValid(double value) {
         if (value <= maf) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isMinCtrlMafValid(double value) {
+        if (minCtrlMaf == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value >= minCtrlMaf) {
             return true;
         }
 

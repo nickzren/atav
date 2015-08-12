@@ -307,7 +307,8 @@ public class Output implements Cloneable {
 
             if (!CollapsingCommand.isCollapsingSingleVariant
                     && !CollapsingCommand.isCollapsingCompHet) {
-                if (isCtrlMafValid(isRecessive)) {
+                if (isCtrlMafValid(isRecessive) &&
+                        GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf)) {
                     if (isRecessive) {
                         if (isCtrlMhgf4RecessiveValid()
                                 && calledVar.isEvsMhgfValid()) {
