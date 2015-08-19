@@ -228,8 +228,8 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     }
 
     /*
-     Shared: if both cases are het and have at least 2 variants in the gene
-     Possibly shared: if one case is het and the other is missing
+     Shared: if both cases are het and both cases have at least 2 variants in the gene
+     Possibly shared: if one case is het and the other is missing and both cases have at least 2 variants in the gene
      Not shared: if only one case is het, and the other is not het and not missing
      */
     private String getFlag(CompHetOutput output1, CompHetOutput output2,
@@ -242,9 +242,12 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                     && (child1.getVariantCount() >= 2
                     && child2.getVariantCount() >= 2)) {
                 return FLAG[0]; // "shared"
-            } else if (geno2 == Data.NA) {
+            } else if (geno2 == Data.NA
+                    && (child1.getVariantCount() >= 2
+                    && child2.getVariantCount() >= 2)) {
                 return FLAG[1]; // "possibly shared"
-            } else if (output2.isQualifiedGeno(geno2)) {
+            } else if (output2.isQualifiedGeno(geno2)
+                    && geno2 != Index.HET) {
                 return FLAG[2]; // "not shared"
 
             }
