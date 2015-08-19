@@ -15,27 +15,27 @@ public class Family {
     private Sample mother;
     private Sample father;
 
-    private ArrayList<Sample> childList = new ArrayList<Sample>();
+    private ArrayList<Child> childList = new ArrayList<Child>();
 
-    public Family(Sample child) {
-        familyId = child.getFamilyId();
+    public Family(Sample sample) {
+        familyId = sample.getFamilyId();
 
-        String fatherName = child.getPaternalId();
+        String fatherName = sample.getPaternalId();
         int fatherId = SampleManager.getIdByName(fatherName);
         father = SampleManager.getTable().get(fatherId);
 
-        String motherName = child.getMaternalId();
+        String motherName = sample.getMaternalId();
         int motherId = SampleManager.getIdByName(motherName);
         mother = SampleManager.getTable().get(motherId);
 
-        childList.add(child);
+        childList.add(new Child(sample));
     }
 
     public void addChild(Sample sample) {
         if (sample.getFamilyId().equals(familyId)
                 && sample.getPaternalId().equals(father.getName())
                 && sample.getMaternalId().equals(mother.getName())) {
-            childList.add(sample);
+            childList.add(new Child(sample));
         }
     }
 
@@ -51,7 +51,7 @@ public class Family {
         return father;
     }
 
-    public ArrayList<Sample> getChildList() {
+    public ArrayList<Child> getChildList() {
         return childList;
     }
 }

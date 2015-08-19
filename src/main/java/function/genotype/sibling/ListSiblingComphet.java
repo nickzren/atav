@@ -141,11 +141,15 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     private void doOutput(ArrayList<CompHetOutput> geneOutputList) {
         StringBuilder sb = new StringBuilder();
 
+        // count qualified vairants for each child per gene
+        initChildVariantCount(geneOutputList);
+
         int outputSize = geneOutputList.size();
         int childSize;
 
         CompHetOutput output1, output2;
-        Sample child1, child2, father, mother;
+        Sample father, mother;
+        Child child1, child2;
 
         for (int i = 0; i < outputSize - 1; i++) {
             output1 = geneOutputList.get(i);
@@ -155,7 +159,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
                 for (Family family : FamilyManager.getList()) {
                     childSize = family.getChildList().size();
-                    
+
                     if (childSize > 1) {
                         mother = family.getMother();
                         father = family.getFather();
@@ -183,6 +187,31 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 }
             }
         }
+
+        resetChildVariantCount();
+    }
+
+    private void initChildVariantCount(ArrayList<CompHetOutput> geneOutputList) {
+        for (Family family : FamilyManager.getList()) {
+            for (Child child : family.getChildList()) {
+                for (CompHetOutput output : geneOutputList) {
+                    int geno = output.getCalledVariant().getGenotype(
+                            child.getSample().getIndex());
+
+                    if (output.isQualifiedGeno(geno)) {
+                        child.countVariant();
+                    }
+                }
+            }
+        }
+    }
+
+    private void resetChildVariantCount() {
+        for (Family family : FamilyManager.getList()) {
+            for (Child child : family.getChildList()) {
+                child.resetVariantCount();
+            }
+        }
     }
 
     private boolean checkParents(CompHetOutput output1, CompHetOutput output2,
@@ -199,22 +228,24 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     }
 
     /*
-     Shared: if both cases are het.
+     Shared: if both cases are het and have at least 2 variants in the gene
      Possibly shared: if one case is het and the other is missing
      Not shared: if only one case is het, and the other is not het and not missing
      */
     private String getFlag(CompHetOutput output1, CompHetOutput output2,
-            Sample child1, Sample child2) {
-        int geno1 = output1.getCalledVariant().getGenotype(child1.getIndex());
-        int geno2 = output2.getCalledVariant().getGenotype(child2.getIndex());
+            Child child1, Child child2) {
+        int geno1 = output1.getCalledVariant().getGenotype(child1.getSample().getIndex());
+        int geno2 = output2.getCalledVariant().getGenotype(child2.getSample().getIndex());
 
         if (geno1 == Index.HET) {
-            if (geno2 == Index.HET) {
-                return FLAG[0];
+            if (geno2 == Index.HET
+                    && (child1.getVariantCount() >= 2
+                    && child2.getVariantCount() >= 2)) {
+                return FLAG[0]; // "shared"
             } else if (geno2 == Data.NA) {
-                return FLAG[1];
+                return FLAG[1]; // "possibly shared"
             } else if (output2.isQualifiedGeno(geno2)) {
-                return FLAG[2];
+                return FLAG[2]; // "not shared"
 
             }
         }
@@ -223,22 +254,22 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     }
 
     private void doOutput(StringBuilder sb, CompHetOutput output1,
-            CompHetOutput output2, Sample child1, Sample child2, String flag) {
+            CompHetOutput output2, Child child1, Child child2, String flag) {
         try {
             if (!flag.equals(FLAG[3])) {
-                sb.append(child1.getFamilyId()).append(",");
-                sb.append(child1.getMaternalId()).append(",");
-                sb.append(child1.getPaternalId()).append(",");
+                sb.append(child1.getSample().getFamilyId()).append(",");
+                sb.append(child1.getSample().getMaternalId()).append(",");
+                sb.append(child1.getSample().getPaternalId()).append(",");
                 sb.append("'").append(output1.geneName).append("'").append(",");
                 sb.append(IntolerantScoreManager.getValues(output1.geneName)).append(",");
                 sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
                 sb.append(flag).append(",");
 
-                sb.append(child1.getName()).append(",");
-                sb.append(output1.getString(child1)).append(",");
+                sb.append(child1.getSample().getName()).append(",");
+                sb.append(output1.getString(child1.getSample())).append(",");
 
-                sb.append(child2.getName()).append(",");
-                sb.append(output2.getString(child2)).append("\n");
+                sb.append(child2.getSample().getName()).append(",");
+                sb.append(output2.getString(child2.getSample())).append("\n");
 
                 bwCompHet.write(sb.toString());
 
