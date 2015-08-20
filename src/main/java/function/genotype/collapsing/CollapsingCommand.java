@@ -26,7 +26,6 @@ public class CollapsingCommand {
     public static double looCombFreq = Data.NO_FILTER;
     public static boolean isCollapsingDoLinear = false;
     public static boolean isCollapsingDoLogistic = false;
-    public static String geneBoundariesFile = "";
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -47,8 +46,6 @@ public class CollapsingCommand {
                     || option.getName().equals("--loo-mhgf-recessive")) {
                 checkValueValid(0.5, 0, option);
                 GenotypeLevelFilterCommand.mhgf4Recessive = getValidDouble(option);
-            } else if (option.getName().equals("--gene-boundaries")) {
-                geneBoundariesFile = getValidPath(option);
             } else if (option.getName().equals("--read-coverage-summary")) {
                 coverageSummaryFile = getValidPath(option);
                 GeneManager.initCoverageSummary();
@@ -93,8 +90,6 @@ public class CollapsingCommand {
             } else if (option.getName().equals("--loo-comb-freq")) {
                 checkValueValid(1, 0, option);
                 looCombFreq = getValidDouble(option);
-            } else if (option.getName().equals("--gene-boundaries")) {
-                geneBoundariesFile = getValidPath(option);
             } else if (option.getName().equals("--read-coverage-summary")) {
                 coverageSummaryFile = getValidPath(option);
                 GeneManager.initCoverageSummary();
