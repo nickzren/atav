@@ -27,6 +27,7 @@ public class AnnotatedVariant extends Variant {
     HashSet<String> geneSet = new HashSet<String>();
     HashSet<String> transcriptSet = new HashSet<String>();
     String evsCoverage;
+    int evsAllCoverage;
     String evsMafStr;
     String evsFilterStatus;
     double evsMaf;
@@ -106,13 +107,15 @@ public class AnnotatedVariant extends Variant {
                     region.startPosition, refAllele, allele);
 
             isValid = VariantLevelFilterCommand.isExacMafValid(exac.getMaxMaf())
-                    && VariantLevelFilterCommand.isExacVqslodValid(exac.getVqslod(), isSnv());
+                    && VariantLevelFilterCommand.isExacVqslodValid(exac.getVqslod(), isSnv())
+                    && VariantLevelFilterCommand.isExacMeanCoverageValid(exac.getMeanCoverage());
         }
 
         if (isValid) {
             initEVSInfo();
 
             isValid = VariantLevelFilterCommand.isEvsStatusValid(evsFilterStatus)
+                    && VariantLevelFilterCommand.isEvsAllCoverageValid(evsAllCoverage)
                     && VariantLevelFilterCommand.isEvsMafValid(evsMaf);
         }
     }
@@ -120,6 +123,8 @@ public class AnnotatedVariant extends Variant {
     public void initEVSInfo() throws Exception {
         evsCoverage = EvsManager.getCoverageInfo(region.chrStr,
                 String.valueOf(region.startPosition));
+
+        evsAllCoverage = Integer.valueOf(evsCoverage.split(",")[5]);
 
         evsMafStr = EvsManager.getMafInfo(isSnv(), region.chrStr,
                 String.valueOf(region.startPosition), refAllele, allele);

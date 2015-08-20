@@ -6,6 +6,7 @@ import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidFloat;
+import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 import utils.CommonCommand;
@@ -25,11 +26,13 @@ public class VariantLevelFilterCommand {
     public static String evsMafPop = "all";
     public static double evsMaf = Data.NO_FILTER;
     public static double evsMhgf4Recessive = Data.NO_FILTER;
+    public static int evsAllCoverage = Data.NO_FILTER;
     public static boolean isExcludeEvsQcFailed = false;
     public static String exacPop = "global";
     public static float exacMaf = Data.NO_FILTER;
     public static float exacVqslodSnv = Data.NO_FILTER;
     public static float exacVqslodIndel = Data.NO_FILTER;
+    public static float exacMeanCoverage = Data.NO_FILTER;
     public static double minCscore = Data.NO_FILTER;
 
     public static void initOptions(Iterator<CommandOption> iterator)
@@ -61,6 +64,9 @@ public class VariantLevelFilterCommand {
                     || option.getName().equals("--evs-mhgf-recessive")) {
                 checkValueValid(0.5, 0, option);
                 evsMhgf4Recessive = getValidDouble(option);
+            } else if (option.getName().equals("--min-evs-all-coverage")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                evsAllCoverage = getValidInteger(option);
             } else if (option.getName().equals("--exclude-evs-qc-failed")) {
                 isExcludeEvsQcFailed = true;
             } else if (option.getName().equals("--exac-pop")) {
@@ -75,6 +81,9 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--min-exac-vqslod-indel")) {
                 checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                 exacVqslodIndel = getValidFloat(option);
+            } else if (option.getName().equals("--min-exac-mean-coverage")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                exacMeanCoverage = getValidFloat(option);
             } else if (option.getName().equals("--min-c-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCscore = getValidDouble(option);
@@ -91,7 +100,8 @@ public class VariantLevelFilterCommand {
             return true;
         }
 
-        if (value <= evsMaf) {
+        if (value <= evsMaf ||
+                value == Data.NA) {
             return true;
         }
 
@@ -110,6 +120,19 @@ public class VariantLevelFilterCommand {
         return false;
     }
 
+    public static boolean isEvsAllCoverageValid(float value) {
+        if (evsAllCoverage == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value >= evsAllCoverage
+                || value == Data.NA) {
+            return true;
+        }
+
+        return false;
+    }
+    
     public static boolean isEvsStatusValid(String status) {
         if (isExcludeEvsQcFailed) {
             if (status.equalsIgnoreCase("NA")
@@ -162,6 +185,19 @@ public class VariantLevelFilterCommand {
         }
 
         if (value >= exacVqslodIndel
+                || value == Data.NA) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isExacMeanCoverageValid(float value) {
+        if (exacMeanCoverage == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value >= exacMeanCoverage
                 || value == Data.NA) {
             return true;
         }
