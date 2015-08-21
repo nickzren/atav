@@ -125,8 +125,7 @@ public class VariantLevelFilterCommand {
             return true;
         }
 
-        if (value >= evsAllCoverage
-                || value == Data.NA) {
+        if (value >= evsAllCoverage) {
             return true;
         }
 
@@ -197,8 +196,7 @@ public class VariantLevelFilterCommand {
             return true;
         }
 
-        if (value >= exacMeanCoverage
-                || value == Data.NA) {
+        if (value >= exacMeanCoverage) {
             return true;
         }
 
