@@ -302,7 +302,8 @@ public class Output implements Cloneable {
 
     public boolean isValid() {
         if (GenotypeLevelFilterCommand.isMinVarPresentValid(varPresent)
-                && GenotypeLevelFilterCommand.isMinCaseCarrierValid(caseCarrier)) {
+                && GenotypeLevelFilterCommand.isMinCaseCarrierValid(caseCarrier)
+                && GenotypeLevelFilterCommand.isMinCtrlAverageCoverageValid(averageCov[Index.CTRL])) {
             boolean isRecessive = isRecessive();
 
             if (!CollapsingCommand.isCollapsingSingleVariant

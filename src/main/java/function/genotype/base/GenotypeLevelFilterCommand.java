@@ -31,6 +31,7 @@ public class GenotypeLevelFilterCommand {
     public static int minCaseCoverageNoCall = Data.NO_FILTER;
     public static int minCtrlCoverageCall = Data.NO_FILTER;
     public static int minCtrlCoverageNoCall = Data.NO_FILTER;
+    public static double minCtrlAverageCoverage = Data.NO_FILTER;
     public static int minVarPresent = 1; // special case
     public static int minCaseCarrier = Data.NO_FILTER;
     public static String[] varStatus; // null: no filer or all    
@@ -88,6 +89,9 @@ public class GenotypeLevelFilterCommand {
             } else if (option.getName().equals("--min-ctrl-coverage-no-call")) {
                 checkValueValid(new String[]{"3", "10", "20", "201"}, option);
                 minCtrlCoverageNoCall = getValidInteger(option);
+            } else if (option.getName().equals("--min-ctrl-average-coverage")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                minCtrlAverageCoverage = getValidInteger(option);
             } else if (option.getName().equals("--min-variant-present")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minVarPresent = getValidInteger(option);
@@ -233,6 +237,18 @@ public class GenotypeLevelFilterCommand {
         }
 
         if (value >= minCov) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    public static boolean isMinCtrlAverageCoverageValid(double value) {
+        if (minCtrlAverageCoverage == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value >= minCtrlAverageCoverage) {
             return true;
         }
 
