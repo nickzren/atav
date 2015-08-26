@@ -3,10 +3,9 @@ package function.genotype.sibling;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
-import global.Data;
-import global.Index;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
+import function.genotype.trio.ListTrioCompHet;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -23,8 +22,10 @@ import java.util.HashSet;
  */
 public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
-    final String comphetFilePath = CommonCommand.outputPath + "comphet.csv";
-    BufferedWriter bwCompHet = null;
+    final String comphetSharedFilePath = CommonCommand.outputPath + "comphet.shared.csv";
+    final String comphetNotSharedFilePath = CommonCommand.outputPath + "comphet.notshared.csv";
+    BufferedWriter compHetSharedBw = null;
+    BufferedWriter compHetNotSharedBw = null;
     ArrayList<CompHetOutput> outputList = new ArrayList<CompHetOutput>();
     ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<ArrayList<CompHetOutput>>();
     HashSet<String> currentGeneList = new HashSet<String>();
@@ -39,8 +40,12 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     @Override
     public void initOutput() {
         try {
-            bwCompHet = new BufferedWriter(new FileWriter(comphetFilePath));
-            bwCompHet.write(CompHetOutput.title);
+            compHetSharedBw = new BufferedWriter(new FileWriter(comphetSharedFilePath));
+            compHetSharedBw.write(CompHetOutput.title);
+            compHetSharedBw.newLine();
+            compHetNotSharedBw = new BufferedWriter(new FileWriter(comphetNotSharedFilePath));
+            compHetNotSharedBw.write(CompHetOutput.title);
+            compHetNotSharedBw.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -56,8 +61,10 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     @Override
     public void closeOutput() {
         try {
-            bwCompHet.flush();
-            bwCompHet.close();
+            compHetSharedBw.flush();
+            compHetSharedBw.close();
+            compHetNotSharedBw.flush();
+            compHetNotSharedBw.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -141,15 +148,9 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     private void doOutput(ArrayList<CompHetOutput> geneOutputList) {
         StringBuilder sb = new StringBuilder();
 
-        // count qualified vairants for each child per gene
-        initChildVariantCount(geneOutputList);
-
         int outputSize = geneOutputList.size();
-        int childSize;
 
         CompHetOutput output1, output2;
-        Sample father, mother;
-        Child child1, child2;
 
         for (int i = 0; i < outputSize - 1; i++) {
             output1 = geneOutputList.get(i);
@@ -158,125 +159,101 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 output2 = geneOutputList.get(j);
 
                 for (Family family : FamilyManager.getList()) {
-                    childSize = family.getChildList().size();
 
-                    if (childSize > 1) {
-                        mother = family.getMother();
-                        father = family.getFather();
+                    for (int c1 = 0; c1 < family.getChildList().size() - 1; c1++) {
 
-                        if (!checkParents(output1, output2, mother, father)) {
-                            continue;
-                        }
+                        for (int c2 = c1 + 1; c2 < family.getChildList().size(); c2++) {
+                            Sample child1 = family.getChildList().get(c1);
+                            Sample child2 = family.getChildList().get(c2);
 
-                        for (int x = 0; x < childSize - 1; x++) {
-                            child1 = family.getChildList().get(x);
+                            // child1 trio comp het flag
+                            String child1Flag = getTrioCompHetFlag(output1, output2, child1,
+                                    family.getMother(), family.getFather());
 
-                            for (int y = x + 1; y < childSize; y++) {
-                                child2 = family.getChildList().get(y);
+                            // child2 trio comp het flag
+                            String child2Flag = getTrioCompHetFlag(output1, output2, child2,
+                                    family.getMother(), family.getFather());
 
-                                if (child1.equals(child2)) {
-                                    continue;
-                                }
+                            // sibling comp het flag
+                            String flag = getFlag(child1Flag, child2Flag);
 
-                                String flag = getFlag(output1, output2, child1, child2);
-
-                                doOutput(sb, output1, output2, child1, child2, flag);
-                            }
+                            doOutput(sb, output1, output2, child1, child1Flag, child2, child2Flag, flag);
                         }
                     }
                 }
             }
         }
-
-        resetChildVariantCount();
     }
 
-    private void initChildVariantCount(ArrayList<CompHetOutput> geneOutputList) {
-        for (Family family : FamilyManager.getList()) {
-            for (Child child : family.getChildList()) {
-                for (CompHetOutput output : geneOutputList) {
-                    int geno = output.getCalledVariant().getGenotype(
-                            child.getSample().getIndex());
-
-                    if (output.isQualifiedGeno(geno)) {
-                        child.countVariant();
-                    }
-                }
-            }
-        }
-    }
-
-    private void resetChildVariantCount() {
-        for (Family family : FamilyManager.getList()) {
-            for (Child child : family.getChildList()) {
-                child.resetVariantCount();
-            }
-        }
-    }
-
-    private boolean checkParents(CompHetOutput output1, CompHetOutput output2,
-            Sample mother, Sample father) {
-        if (output1.getCalledVariant().getGenotype(mother.getIndex()) != Data.NA
-                && output2.getCalledVariant().getGenotype(father.getIndex()) != Data.NA) {
-            return true;
-        } else if (output1.getCalledVariant().getGenotype(father.getIndex()) != Data.NA
-                && output2.getCalledVariant().getGenotype(mother.getIndex()) != Data.NA) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
-     Shared: if both cases are het and both cases have at least 2 variants in the gene
-     Possibly shared: if one case is het and the other is missing and both cases have at least 2 variants in the gene
-     Not shared: if only one case is het, and the other is not het and not missing
-     */
-    private String getFlag(CompHetOutput output1, CompHetOutput output2,
-            Child child1, Child child2) {
-        int geno1 = output1.getCalledVariant().getGenotype(child1.getSample().getIndex());
-        int geno2 = output2.getCalledVariant().getGenotype(child2.getSample().getIndex());
-
-        if (geno1 == Index.HET) {
-            if (geno2 == Index.HET
-                    && (child1.getVariantCount() >= 2
-                    && child2.getVariantCount() >= 2)) {
-                return FLAG[0]; // "shared"
-            } else if (geno2 == Data.NA
-                    && (child1.getVariantCount() >= 2
-                    && child2.getVariantCount() >= 2)) {
-                return FLAG[1]; // "possibly shared"
-            } else if (output2.isQualifiedGeno(geno2)
-                    && geno2 != Index.HET) {
-                return FLAG[2]; // "not shared"
-
-            }
+    private String getFlag(String child1Flag, String child2Flag) {
+        if (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[0])) {
+            return FLAG[0]; // Shared
+        } else if ((child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[0]))
+                || (child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))
+                || (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))) {
+            return FLAG[1]; // Possibly shared
+        } else if ((child1Flag.equals(ListTrioCompHet.FLAG[2]) && child2Flag.equals(ListTrioCompHet.FLAG[0]))
+                || (child1Flag.equals(ListTrioCompHet.FLAG[2]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))
+                || (child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[2]))
+                || (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[2]))) {
+            return FLAG[2]; // Not shared
         }
 
         return FLAG[3];
     }
 
-    private void doOutput(StringBuilder sb, CompHetOutput output1,
-            CompHetOutput output2, Child child1, Child child2, String flag) {
+    private String getTrioCompHetFlag(CompHetOutput output1, CompHetOutput output2,
+            Sample child, Sample mother, Sample father) {
+        int cGeno1 = output1.getCalledVariant().getGenotype(child.getIndex());
+        int cCov1 = output1.getCalledVariant().getCoverage(child.getIndex());
+        int mGeno1 = output1.getCalledVariant().getGenotype(mother.getIndex());
+        int mCov1 = output1.getCalledVariant().getCoverage(mother.getIndex());
+        int fGeno1 = output1.getCalledVariant().getGenotype(father.getIndex());
+        int fCov1 = output1.getCalledVariant().getCoverage(father.getIndex());
+
+        int cGeno2 = output2.getCalledVariant().getGenotype(child.getIndex());
+        int cCov2 = output2.getCalledVariant().getCoverage(child.getIndex());
+        int mGeno2 = output2.getCalledVariant().getGenotype(mother.getIndex());
+        int mCov2 = output2.getCalledVariant().getCoverage(mother.getIndex());
+        int fGeno2 = output2.getCalledVariant().getGenotype(father.getIndex());
+        int fCov2 = output2.getCalledVariant().getCoverage(father.getIndex());
+
+        return ListTrioCompHet.getCompHetStatus(cGeno1, cCov1, mGeno1, mCov1, fGeno1, fCov1,
+                cGeno2, cCov2, mGeno2, mCov2, fGeno2, fCov2);
+    }
+
+    private void doOutput(StringBuilder sb,
+            CompHetOutput output1, CompHetOutput output2,
+            Sample child1, String child1Flag,
+            Sample child2, String child2Flag,
+            String flag) {
         try {
             if (!flag.equals(FLAG[3])) {
-                sb.append(child1.getSample().getFamilyId()).append(",");
-                sb.append(child1.getSample().getMaternalId()).append(",");
-                sb.append(child1.getSample().getPaternalId()).append(",");
+                sb.append(child1.getFamilyId()).append(",");
+                sb.append(child1.getPaternalId()).append(",");
+                sb.append(child1.getMaternalId()).append(",");
+                sb.append(flag).append(",");
+                sb.append(child1.getName()).append(",");
+                sb.append(child1Flag).append(",");
+                sb.append(child2.getName()).append(",");
+                sb.append(child2Flag).append(",");
+
                 sb.append("'").append(output1.geneName).append("'").append(",");
                 sb.append(IntolerantScoreManager.getValues(output1.geneName)).append(",");
                 sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
-                sb.append(flag).append(",");
 
-                sb.append(child1.getSample().getName()).append(",");
-                sb.append(output1.getString(child1.getSample())).append(",");
+                sb.append(output1.getString(child1, child2)).append(",");
+                sb.append(output2.getString(child2, child2));
 
-                sb.append(child2.getSample().getName()).append(",");
-                sb.append(output2.getString(child2.getSample())).append("\n");
+                if (flag.equals(FLAG[2])) {
+                    compHetNotSharedBw.write(sb.toString());
+                    compHetNotSharedBw.newLine();
+                } else {
+                    compHetSharedBw.write(sb.toString());
+                    compHetSharedBw.newLine();
+                }
 
-                bwCompHet.write(sb.toString());
-
-                sb.setLength(0);
+                sb.setLength(0); // clear data
             }
         } catch (Exception e) {
             ErrorManager.send(e);

@@ -7,7 +7,6 @@ import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.IntolerantScoreManager;
-import function.variant.base.VariantLevelFilterCommand;
 import utils.FormatManager;
 
 /**
@@ -22,15 +21,16 @@ public class CompHetOutput extends Output implements Comparable {
             = "Family ID,"
             + "Mother,"
             + "Father,"
+            + "Flag,"
+            + "Child1,"
+            + "Child1 Trio Comp Het Flag,"
+            + "Child2,"
+            + "Child2 Trio Comp Het Flag,"
             + "Gene Name,"
             + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
-            + "Flag,"
-            + "Child1 Name,"
             + initVarTitleStr("1")
-            + "Child2 Name,"
-            + initVarTitleStr("2")
-            + "\n";
+            + initVarTitleStr("2");
 
     private static String initVarTitleStr(String var) {
         String varTitle = "Variant ID,"
@@ -40,12 +40,10 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Alt Allele,"
                 + "C Score Phred,"
                 + "Is Minor Ref,"
-                + "Genotype,"
-                + "Samtools Raw Coverage,"
-                + "Gatk Filtered Coverage,"
-                + "Reads Alt,"
-                + "Reads Ref,"
-                + "Percent Alt Read,"
+                + "Child1 Genotype,"
+                + "Child1 Samtools Raw Coverage,"
+                + "Child2 Genotype,"
+                + "Child2 Samtools Raw Coverage,"
                 + "Major Hom Case,"
                 + "Het Case,"
                 + "Minor Hom Case,"
@@ -82,12 +80,12 @@ public class CompHetOutput extends Output implements Comparable {
 
         return varTitle;
     }
-
+    
     public CompHetOutput(CalledVariant c) {
         super(c);
     }
 
-    public String getString(Sample sample) {
+    public String getString(Sample child1, Sample child2) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(calledVar.getVariantIdStr()).append(",");
@@ -98,13 +96,11 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
 
         sb.append(isMinorRef).append(",");
-        sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadsAlt(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadsRef(sample.getId()))).append(",");
-        sb.append(FormatManager.getPercAltRead(calledVar.getReadsAlt(sample.getId()),
-                calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
+        
+        sb.append(getGenoStr(calledVar.getGenotype(child1.getIndex()))).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getCoverage(child1.getIndex()))).append(",");
+        sb.append(getGenoStr(calledVar.getGenotype(child2.getIndex()))).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getCoverage(child2.getIndex()))).append(",");
 
         sb.append(majorHomCase).append(",");
         sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
