@@ -33,7 +33,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     final String flagFilePath = CommonCommand.outputPath + "comphet.csv";
     final String noFlagFilePath = CommonCommand.outputPath + "comphet_noflag.csv";
 //    BufferedWriter bwFlagSummary = null;
-    String[] FLAG = {
+    public static final String[] FLAG = {
         "compound heterozygote", // 0
         "possibly compound heterozygote", // 1
         "no flag" //2
@@ -254,7 +254,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         }
     }
 
-    private String getCompHetStatus(
+    public static String getCompHetStatus(
             int cGeno1, int cCov1, int mGeno1,
             int mCov1, int fGeno1, int fCov1,
             int cGeno2, int cCov2, int mGeno2,
@@ -265,8 +265,8 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         if ((fGeno1 <= 0 && mGeno1 <= 0)
                 || (fGeno2 <= 0 && mGeno2 <= 0)) {
             return FLAG[2];
-        } else if ((cGeno1 == fGeno1 && cGeno2 == fGeno2)
-                || (cGeno1 == mGeno1 && cGeno2 == mGeno2)) {
+        } else if (((fGeno1 == 1 || fGeno1 == 2) && (fGeno2 == 1 || fGeno2 == 2))
+                || ((mGeno1 == 1 || mGeno1 == 2) && (mGeno2 == 1 || mGeno2 == 2))) {
             return FLAG[2];
         } else if ((fGeno1 == 2 && fCov1 >= minCov)
                 || (mGeno1 == 2 && mCov1 >= minCov)
@@ -316,11 +316,12 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                 for (int j = i + 1; j < outputSize; j++) {
                     output2 = geneOutputList.get(j);
 
-                    if (!output1.getCalledVariant().getVariantIdStr().equals(
-                            output2.getCalledVariant().getVariantIdStr())
+                    if (output1.getCalledVariant().getVariantId() != output2.getCalledVariant().getVariantId()
                             && output1.childName.equals(output2.childName)) {
-                        id = output1.familyId + output1.getCalledVariant().getVariantIdStr()
-                                + output2.getCalledVariant().getVariantIdStr();
+                        id = output1.familyId
+                                + output1.getCalledVariant().getVariantId()
+                                + output1.childName
+                                + output2.getCalledVariant().getVariantId();
 
                         if (!uniqueId.contains(id)) {
                             uniqueId.add(id);
