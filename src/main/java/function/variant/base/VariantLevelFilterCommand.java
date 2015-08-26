@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.external.kaviar.KaviarCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -87,7 +88,13 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--min-c-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCscore = getValidDouble(option);
-            } else {
+            } else if (option.getName().equals("--max-kaviar-allele-freq")) {
+                checkValueValid(1, 0, option);
+                KaviarCommand.maxKaviarAlleleFreq = getValidFloat(option);
+            } else if (option.getName().equals("--min-kaviar-allele-count")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                KaviarCommand.minKaviarAlleleCount = getValidInteger(option);
+            }else {
                 continue;
             }
 
