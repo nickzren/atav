@@ -80,7 +80,7 @@ public class Kaviar {
 
     public boolean isValid() {
         if (KaviarCommand.isMaxAlleleFreqValid(alleleFreq)
-                && KaviarCommand.isMinAlleleCountValid(alleleCount)) {
+                && KaviarCommand.isMaxAlleleCountValid(alleleCount)) {
             return true;
         }
 
