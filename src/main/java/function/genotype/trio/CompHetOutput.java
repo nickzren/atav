@@ -6,7 +6,6 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.kaviar.KaviarManager;
-import function.variant.base.VariantLevelFilterCommand;
 import utils.FormatManager;
 
 /**
@@ -157,9 +156,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(FormatManager.getDouble(caseMaf)).append(",");
         sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
 
-        sb.append(calledVar.getEvsCoverageStr()).append(",");
-        sb.append(calledVar.getEvsMafStr()).append(",");
-        sb.append(calledVar.getEvsFilterStatus()).append(",");
+        sb.append(calledVar.getEvsStr()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

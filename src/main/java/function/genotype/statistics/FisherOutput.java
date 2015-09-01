@@ -8,7 +8,6 @@ import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.kaviar.KaviarManager;
-import function.variant.base.VariantLevelFilterCommand;
 import utils.FormatManager;
 import utils.LogManager;
 import java.util.ArrayList;
@@ -140,9 +139,7 @@ public class FisherOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(averageCov[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
 
-        sb.append(calledVar.getEvsCoverageStr()).append(",");
-        sb.append(calledVar.getEvsMafStr()).append(",");
-        sb.append(calledVar.getEvsFilterStatus()).append(",");
+        sb.append(calledVar.getEvsStr()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

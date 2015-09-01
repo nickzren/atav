@@ -305,9 +305,6 @@ public class CommandManager {
             } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isListEvs = true;
-            } else if (option.getName().equals("--jon-evs-tool")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                EvsCommand.isJonEvsTool = true;
             } else if (option.getName().equals("--list-exac")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 ExacCommand.isListExac = true;
@@ -378,8 +375,6 @@ public class CommandManager {
             CoverageCommand.initCoverageComparison(optionList.iterator());
         } else if (EvsCommand.isListEvs) { // External Datasets Functions
 
-        } else if (EvsCommand.isJonEvsTool) {
-            EvsCommand.initJonEvsToolOptions(optionList.iterator());
         } else if (ExacCommand.isListExac) {
 
         } else if (KnownVarCommand.isListKnownVar) {

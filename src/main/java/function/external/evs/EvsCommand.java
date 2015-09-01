@@ -1,8 +1,6 @@
 package function.external.evs;
 
-import java.util.Iterator;
-import static utils.CommandManager.getValidPath;
-import utils.CommandOption;
+import global.Data;
 
 /**
  *
@@ -13,21 +11,60 @@ public class EvsCommand {
     // list evs
     public static boolean isListEvs = false;
 
-    // jon evs tool
-    public static boolean isJonEvsTool = false;
-    public static String jonEvsInput = "";
+    // filter option
+    public static String evsMafPop = "all";
+    public static double evsMaf = Data.NO_FILTER;
+    public static double evsMhgf4Recessive = Data.NO_FILTER;
+    public static int evsAllAverageCoverage = Data.NO_FILTER;
+    public static boolean isExcludeEvsQcFailed = false;
 
-    public static void initJonEvsToolOptions(Iterator<CommandOption> iterator) {
-        CommandOption option;
+    public static boolean isEvsMafValid(double value) {
+        if (evsMaf == Data.NO_FILTER) {
+            return true;
+        }
 
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            if (option.getName().equals("--jon-evs-input")) {
-                jonEvsInput = getValidPath(option);
+        if (value <= evsMaf
+                || value == Data.NA) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isEvsMhgf4RecessiveValid(double value) {
+        if (evsMhgf4Recessive == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value <= evsMhgf4Recessive) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isEvsAllCoverageValid(float value) {
+        if (evsAllAverageCoverage == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value >= evsAllAverageCoverage) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isEvsStatusValid(String status) {
+        if (isExcludeEvsQcFailed) {
+            if (status.equalsIgnoreCase("NA")
+                    || status.equalsIgnoreCase("pass")) {
+                return true;
             } else {
-                continue;
+                return false;
             }
-            iterator.remove();
+        } else {
+            return true;
         }
     }
 }

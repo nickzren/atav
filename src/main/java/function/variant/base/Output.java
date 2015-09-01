@@ -311,8 +311,7 @@ public class Output implements Cloneable {
                 if (isCtrlMafValid(isRecessive) &&
                         GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf)) {
                     if (isRecessive) {
-                        if (isCtrlMhgf4RecessiveValid()
-                                && calledVar.isEvsMhgfValid()) {
+                        if (isCtrlMhgf4RecessiveValid()) {
                             return true;
                         }
                     } else {

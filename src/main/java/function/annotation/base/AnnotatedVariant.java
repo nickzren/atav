@@ -1,8 +1,8 @@
 package function.annotation.base;
 
+import function.external.evs.Evs;
 import function.external.exac.Exac;
 import function.variant.base.Variant;
-import function.external.evs.EvsManager;
 import function.variant.base.VariantManager;
 import function.external.exac.ExacManager;
 import function.external.kaviar.Kaviar;
@@ -27,18 +27,14 @@ public class AnnotatedVariant extends Variant {
     String stableId;
     HashSet<String> geneSet = new HashSet<String>();
     HashSet<String> transcriptSet = new HashSet<String>();
-    String evsCoverage;
-    int evsAllCoverage;
-    String evsMafStr;
-    String evsFilterStatus;
-    double evsMaf;
-    double evsMhgf;
     double polyphenHumdiv;
     double polyphenHumvar;
 
     Exac exac;
-    
+
     Kaviar kaviar;
+
+    Evs evs;
 
     public boolean isValid = true;
 
@@ -113,109 +109,17 @@ public class AnnotatedVariant extends Variant {
                     && VariantLevelFilterCommand.isExacVqslodValid(exac.getVqslod(), isSnv())
                     && VariantLevelFilterCommand.isExacMeanCoverageValid(exac.getMeanCoverage());
         }
-        
-        if(isValid){
+
+        if (isValid) {
             kaviar = new Kaviar(variantIdStr);
-            
+
             isValid = kaviar.isValid();
         }
 
         if (isValid) {
-            initEVSInfo();
+            evs = new Evs(variantIdStr);
 
-            isValid = VariantLevelFilterCommand.isEvsStatusValid(evsFilterStatus)
-                    && VariantLevelFilterCommand.isEvsAllCoverageValid(evsAllCoverage)
-                    && VariantLevelFilterCommand.isEvsMafValid(evsMaf);
-        }
-    }
-
-    public void initEVSInfo() throws Exception {
-        evsCoverage = EvsManager.getCoverageInfo(region.chrStr,
-                String.valueOf(region.startPosition));
-
-        evsAllCoverage = Integer.valueOf(evsCoverage.split(",")[5]);
-
-        evsMafStr = EvsManager.getMafInfo(isSnv(), region.chrStr,
-                String.valueOf(region.startPosition), refAllele, allele);
-
-        if (evsCoverage.equals("0,0,0,0,0,0")) {
-            evsMafStr = evsMafStr.replaceAll("NAMAF", "NA");
-        } else {
-            evsMafStr = evsMafStr.replaceAll("NAMAF", "0");
-        }
-
-        evsFilterStatus = EvsManager.getFilterStatus();
-
-        initEvsMaf();
-
-        initEvsMhgf();
-    }
-
-    public int getEvsCoverage(String evsSample) {
-        String[] temp = evsCoverage.split(",");
-
-        if (evsSample.equals("ea")) {
-            return Integer.valueOf(temp[0]);
-        } else if (evsSample.equals("aa")) {
-            return Integer.valueOf(temp[2]);
-        }
-
-        return Data.NA;
-    }
-
-    private void initEvsMaf() {
-        String[] mafs = evsMafStr.split(",");
-
-        double[] values = {Data.NA, Data.NA, Data.NA};
-
-        if (VariantLevelFilterCommand.evsMafPop.contains("ea")
-                && !mafs[0].equals("NA")) {
-            values[0] = Double.valueOf(mafs[0]);
-        }
-
-        if (VariantLevelFilterCommand.evsMafPop.contains("aa")
-                && !mafs[2].equals("NA")) {
-            values[1] = Double.valueOf(mafs[2]);
-        }
-
-        if (VariantLevelFilterCommand.evsMafPop.contains("all")
-                && !mafs[4].equals("NA")) {
-            values[2] = Double.valueOf(mafs[4]);
-        }
-
-        evsMaf = Data.NA;
-
-        for (double value : values) {
-            if (value >= 0 && evsMaf < value) {
-                evsMaf = value;
-            }
-        }
-    }
-
-    private void initEvsMhgf() throws Exception {
-        double[] mhgfs = EvsManager.getMhgf(isSnv(), region.chrStr,
-                String.valueOf(region.startPosition), refAllele, allele);
-
-        double[] values = {Data.NA, Data.NA, Data.NA};
-
-        if (VariantLevelFilterCommand.evsMafPop.contains("ea")) {
-            values[0] = mhgfs[0];
-        }
-
-        if (VariantLevelFilterCommand.evsMafPop.contains("aa")) {
-            values[1] = mhgfs[1];
-        }
-
-        if (VariantLevelFilterCommand.evsMafPop.contains("all")) {
-            values[2] = mhgfs[2];
-        }
-
-        evsMhgf = Data.NA;
-
-        for (double value : values) {
-            if (value >= 0 && evsMhgf < value) {
-                evsMhgf = value;
-            }
+            isValid = evs.isValid();
         }
     }
 
@@ -307,18 +211,6 @@ public class AnnotatedVariant extends Variant {
         return geneSet;
     }
 
-    public String getEvsCoverageStr() {
-        return evsCoverage;
-    }
-
-    public String getEvsMafStr() {
-        return evsMafStr;
-    }
-
-    public String getEvsFilterStatus() {
-        return evsFilterStatus;
-    }
-
     public String getPolyphenHumdivScore() {
         if (!function.startsWith("NON_SYNONYMOUS")
                 || polyphenHumdiv < 0) {
@@ -353,16 +245,16 @@ public class AnnotatedVariant extends Variant {
 
         return prediction;
     }
-
-    public boolean isEvsMhgfValid() {
-        return VariantLevelFilterCommand.isEvsMhgf4RecessiveValid(evsMhgf);
-    }
-
+    
     public String getExacStr() {
         return exac.toString();
     }
-    
+
     public String getKaviarStr() {
         return kaviar.toString();
+    }
+    
+    public String getEvsStr() {
+        return evs.toString();
     }
 }
