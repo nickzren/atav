@@ -1,6 +1,5 @@
 package function.external.exac;
 
-import function.external.exac.Exac;
 import global.Data;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -23,7 +22,7 @@ public class ExacManager {
 
         title += "ExAC vqslod,"
                 + "ExAC Mean Coverage,"
-                + "ExAC Sample Covered 10x";
+                + "ExAC Sample Covered 10x,";
 
         return title;
     }

@@ -7,6 +7,7 @@ import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.IntolerantScoreManager;
+import function.external.kaviar.KaviarManager;
 import function.variant.base.VariantLevelFilterCommand;
 import utils.FormatManager;
 
@@ -70,7 +71,8 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Function,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
-                + ExacManager.getTitle();
+                + ExacManager.getTitle()
+                + KaviarManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -136,7 +138,9 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr());
+        sb.append(calledVar.getExacStr()).append(",");
+
+        sb.append(calledVar.getKaviarStr());
 
         return sb.toString();
     }

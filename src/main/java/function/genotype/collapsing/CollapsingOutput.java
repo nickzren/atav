@@ -4,12 +4,12 @@ import function.external.evs.EvsManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
+import function.external.kaviar.KaviarManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
 import function.genotype.statistics.StatisticsCommand;
-import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
@@ -82,7 +82,8 @@ public class CollapsingOutput extends Output implements Comparable {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle();
+            + ExacManager.getTitle() 
+            + KaviarManager.getTitle();
 
     public CollapsingOutput(CalledVariant c) {
         super(c);
@@ -283,7 +284,9 @@ public class CollapsingOutput extends Output implements Comparable {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr());
+        sb.append(calledVar.getExacStr()).append(",");
+        
+        sb.append(calledVar.getKaviarStr());
 
         return sb.toString();
     }

@@ -5,6 +5,7 @@ import function.variant.base.Variant;
 import function.external.evs.EvsManager;
 import function.variant.base.VariantManager;
 import function.external.exac.ExacManager;
+import function.external.kaviar.Kaviar;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -36,6 +37,8 @@ public class AnnotatedVariant extends Variant {
     double polyphenHumvar;
 
     Exac exac;
+    
+    Kaviar kaviar;
 
     public boolean isValid = true;
 
@@ -109,6 +112,12 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantLevelFilterCommand.isExacMafValid(exac.getMaxMaf())
                     && VariantLevelFilterCommand.isExacVqslodValid(exac.getVqslod(), isSnv())
                     && VariantLevelFilterCommand.isExacMeanCoverageValid(exac.getMeanCoverage());
+        }
+        
+        if(isValid){
+            kaviar = new Kaviar(variantIdStr);
+            
+            isValid = kaviar.isValid();
         }
 
         if (isValid) {
@@ -351,5 +360,9 @@ public class AnnotatedVariant extends Variant {
 
     public String getExacStr() {
         return exac.toString();
+    }
+    
+    public String getKaviarStr() {
+        return kaviar.toString();
     }
 }
