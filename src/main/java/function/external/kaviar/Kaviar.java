@@ -12,7 +12,6 @@ import utils.FormatManager;
  */
 public class Kaviar {
 
-    private String variantId;
     private String chr;
     private int pos;
     private String ref;
@@ -30,8 +29,6 @@ public class Kaviar {
     }
 
     private void initBasic(String id) {
-        variantId = id;
-
         String[] tmp = id.split("-");
         chr = tmp[0];
         pos = Integer.valueOf(tmp[1]);
@@ -91,7 +88,6 @@ public class Kaviar {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(variantId).append(",");
         sb.append(FormatManager.getDouble(alleleFreq)).append(",");
         sb.append(FormatManager.getInteger(alleleCount)).append(",");
         sb.append(FormatManager.getInteger(alleleNumber));

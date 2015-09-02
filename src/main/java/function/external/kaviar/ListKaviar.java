@@ -62,6 +62,7 @@ public class ListKaviar extends AnalysisBase {
                 KaviarOutput output = new KaviarOutput(variantId);
 
                 if (output.isValid()) {
+                    bwKaviar.write(variantId + ",");
                     bwKaviar.write(output.toString());
                     bwKaviar.newLine();
                 }
