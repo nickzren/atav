@@ -30,7 +30,7 @@ public class EvsCommand {
         return false;
     }
 
-    public static boolean isEvsAllCoverageValid(float value) {
+    public static boolean isEvsAllCoverageValid(int value) {
         if (evsAllAverageCoverage == Data.NO_FILTER) {
             return true;
         }
