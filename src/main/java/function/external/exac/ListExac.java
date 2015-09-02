@@ -61,9 +61,11 @@ public class ListExac extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantList()) {
                 ExacOutput output = new ExacOutput(variantId);
 
-                bwExac.write(variantId + ",");
-                bwExac.write(output.toString());
-                bwExac.newLine();
+                if (output.isValid()) {
+                    bwExac.write(variantId + ",");
+                    bwExac.write(output.toString());
+                    bwExac.newLine();
+                }
 
                 countVariant();
             }

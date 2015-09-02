@@ -102,12 +102,9 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (isValid) {
-            exac = ExacManager.getExac(isSnv(), region.chrStr,
-                    region.startPosition, refAllele, allele);
+            exac = new Exac(variantIdStr);
 
-            isValid = VariantLevelFilterCommand.isExacMafValid(exac.getMaxMaf())
-                    && VariantLevelFilterCommand.isExacVqslodValid(exac.getVqslod(), isSnv())
-                    && VariantLevelFilterCommand.isExacMeanCoverageValid(exac.getMeanCoverage());
+            isValid = exac.isValid();
         }
 
         if (isValid) {
