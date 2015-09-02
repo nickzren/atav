@@ -1,6 +1,7 @@
 package function.variant.base;
 
 import function.external.evs.EvsCommand;
+import function.external.exac.ExacCommand;
 import function.external.kaviar.KaviarCommand;
 import global.Data;
 import java.util.Iterator;
@@ -26,11 +27,6 @@ public class VariantLevelFilterCommand {
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
 
-    public static String exacPop = "global";
-    public static float exacMaf = Data.NO_FILTER;
-    public static float exacVqslodSnv = Data.NO_FILTER;
-    public static float exacVqslodIndel = Data.NO_FILTER;
-    public static float exacMeanCoverage = Data.NO_FILTER;
     public static double minCscore = Data.NO_FILTER;
 
     public static void initOptions(Iterator<CommandOption> iterator)
@@ -65,19 +61,19 @@ public class VariantLevelFilterCommand {
                 EvsCommand.isExcludeEvsQcFailed = true;
             } else if (option.getName().equals("--exac-pop")) {
                 checkValuesValid(Data.EXAC_POP, option);
-                exacPop = option.getValue();
+                ExacCommand.exacPop = option.getValue();
             } else if (option.getName().equals("--exac-maf")) {
                 checkValueValid(0.5, 0, option);
-                exacMaf = getValidFloat(option);
+                ExacCommand.exacMaf = getValidFloat(option);
             } else if (option.getName().equals("--min-exac-vqslod-snv")) {
                 checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                exacVqslodSnv = getValidFloat(option);
+                ExacCommand.exacVqslodSnv = getValidFloat(option);
             } else if (option.getName().equals("--min-exac-vqslod-indel")) {
                 checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                exacVqslodIndel = getValidFloat(option);
+                ExacCommand.exacVqslodIndel = getValidFloat(option);
             } else if (option.getName().equals("--min-exac-mean-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
-                exacMeanCoverage = getValidFloat(option);
+                ExacCommand.exacMeanCoverage = getValidFloat(option);
             } else if (option.getName().equals("--min-c-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCscore = getValidDouble(option);
@@ -93,64 +89,6 @@ public class VariantLevelFilterCommand {
 
             iterator.remove();
         }
-    }
-
-    public static boolean isExacMafValid(float value) {
-        if (exacMaf == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value <= exacMaf) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isExacVqslodValid(float value, boolean isSnv) {
-        if (isSnv) {
-            return isExacVqslodSnvValid(value);
-        } else {
-            return isExacVqslodIndelValid(value);
-        }
-    }
-
-    private static boolean isExacVqslodSnvValid(float value) {
-        if (exacVqslodSnv == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value >= exacVqslodSnv
-                || value == Data.NA) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static boolean isExacVqslodIndelValid(float value) {
-        if (exacVqslodIndel == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value >= exacVqslodIndel
-                || value == Data.NA) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isExacMeanCoverageValid(float value) {
-        if (exacMeanCoverage == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value >= exacMeanCoverage) {
-            return true;
-        }
-
-        return false;
     }
 
     public static boolean isCscoreValid(float value) {
