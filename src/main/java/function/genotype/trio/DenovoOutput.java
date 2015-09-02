@@ -8,7 +8,6 @@ import function.annotation.base.GeneManager;
 import function.external.kaviar.KaviarManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
-import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
@@ -226,9 +225,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
         sb.append(FormatManager.getDouble(avgCtrlCov)).append(",");
 
-        sb.append(calledVar.getEvsCoverageStr()).append(",");
-        sb.append(calledVar.getEvsMafStr()).append(",");
-        sb.append(calledVar.getEvsFilterStatus()).append(",");
+        sb.append(calledVar.getEvsStr()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

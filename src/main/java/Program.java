@@ -33,7 +33,6 @@ import function.coverage.base.CoverageCommand;
 import function.coverage.comparison.SiteCoverageComparison;
 import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
-import function.external.evs.JonEvsTool;
 import function.external.evs.ListEvs;
 import function.external.exac.ExacCommand;
 import function.external.exac.ListExac;
@@ -157,8 +156,6 @@ public class Program {
                 coverageSummary.run();
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
-            } else if (EvsCommand.isJonEvsTool) {
-                runAnalysis(new JonEvsTool());
             } else if (ExacCommand.isListExac) {
                 runAnalysis(new ListExac());
             } else if (KnownVarCommand.isListKnownVar) {

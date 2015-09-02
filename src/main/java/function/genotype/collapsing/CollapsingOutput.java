@@ -169,7 +169,6 @@ public class CollapsingOutput extends Output implements Comparable {
         if (isLooMafValid(isRecessive)) {
             if (isRecessive) {
                 if (isLooMhgf4RecessiveValid()
-                        && calledVar.isEvsMhgfValid()
                         && StatisticsCommand.isMinHomCaseRecValid(minorHomCase)) {
                     return true;
                 }
@@ -268,9 +267,7 @@ public class CollapsingOutput extends Output implements Comparable {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
 
-        sb.append(calledVar.getEvsCoverageStr()).append(",");
-        sb.append(calledVar.getEvsMafStr()).append(",");
-        sb.append(calledVar.getEvsFilterStatus()).append(",");
+        sb.append(calledVar.getEvsStr()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

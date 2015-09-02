@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.external.evs.EvsCommand;
 import function.external.kaviar.KaviarCommand;
 import global.Data;
 import java.util.Iterator;
@@ -24,11 +25,7 @@ public class VariantLevelFilterCommand {
     public static boolean isExcludeArtifacts = false;
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
-    public static String evsMafPop = "all";
-    public static double evsMaf = Data.NO_FILTER;
-    public static double evsMhgf4Recessive = Data.NO_FILTER;
-    public static int evsAllAverageCoverage = Data.NO_FILTER;
-    public static boolean isExcludeEvsQcFailed = false;
+
     public static String exacPop = "global";
     public static float exacMaf = Data.NO_FILTER;
     public static float exacVqslodSnv = Data.NO_FILTER;
@@ -57,19 +54,19 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--evs-pop")
                     || option.getName().equals("--evs-maf-pop")) {
                 checkValuesValid(Data.EVS_POP, option);
-                evsMafPop = option.getValue();
+                EvsCommand.evsMafPop = option.getValue();
             } else if (option.getName().equals("--evs-maf")) {
                 checkValueValid(0.5, 0, option);
-                evsMaf = getValidDouble(option);
+                EvsCommand.evsMaf = getValidDouble(option);
             } else if (option.getName().equals("--evs-mhgf-rec")
                     || option.getName().equals("--evs-mhgf-recessive")) {
                 checkValueValid(0.5, 0, option);
-                evsMhgf4Recessive = getValidDouble(option);
+                EvsCommand.evsMhgf4Recessive = getValidDouble(option);
             } else if (option.getName().equals("--min-evs-all-average-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
-                evsAllAverageCoverage = getValidInteger(option);
+                EvsCommand.evsAllAverageCoverage = getValidInteger(option);
             } else if (option.getName().equals("--exclude-evs-qc-failed")) {
-                isExcludeEvsQcFailed = true;
+                EvsCommand.isExcludeEvsQcFailed = true;
             } else if (option.getName().equals("--exac-pop")) {
                 checkValuesValid(Data.EXAC_POP, option);
                 exacPop = option.getValue();
@@ -99,56 +96,6 @@ public class VariantLevelFilterCommand {
             }
 
             iterator.remove();
-        }
-    }
-
-    public static boolean isEvsMafValid(double value) {
-        if (evsMaf == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value <= evsMaf ||
-                value == Data.NA) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isEvsMhgf4RecessiveValid(double value) {
-        if (evsMhgf4Recessive == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value <= evsMhgf4Recessive) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isEvsAllCoverageValid(float value) {
-        if (evsAllAverageCoverage == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value >= evsAllAverageCoverage) {
-            return true;
-        }
-
-        return false;
-    }
-    
-    public static boolean isEvsStatusValid(String status) {
-        if (isExcludeEvsQcFailed) {
-            if (status.equalsIgnoreCase("NA")
-                    || status.equalsIgnoreCase("pass")) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return true;
         }
     }
 

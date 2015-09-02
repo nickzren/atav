@@ -9,7 +9,6 @@ import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.kaviar.KaviarManager;
-import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
 import utils.MathManager;
@@ -222,9 +221,7 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(child.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(child.getId()))).append(",");
 
-        sb.append(calledVar.getEvsCoverageStr()).append(",");
-        sb.append(calledVar.getEvsMafStr()).append(",");
-        sb.append(calledVar.getEvsFilterStatus()).append(",");
+        sb.append(calledVar.getEvsStr()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

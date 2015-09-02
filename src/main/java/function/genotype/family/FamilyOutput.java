@@ -9,7 +9,6 @@ import function.external.kaviar.KaviarManager;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
-import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
@@ -317,9 +316,7 @@ public class FamilyOutput extends Output {
         sb.append(FormatManager.getDouble(familyAverageCov[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(familyAverageCov[Index.CTRL])).append(",");
 
-        sb.append(calledVar.getEvsCoverageStr()).append(",");
-        sb.append(calledVar.getEvsMafStr()).append(",");
-        sb.append(calledVar.getEvsFilterStatus()).append(",");
+        sb.append(calledVar.getEvsStr()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

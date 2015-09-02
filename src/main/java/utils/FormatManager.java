@@ -14,6 +14,7 @@ public class FormatManager {
 
     private static NumberFormat pformat1 = new DecimalFormat("0.####");
     private static NumberFormat pformat2 = new DecimalFormat("0.###E000");
+    private static NumberFormat pformat3 = new DecimalFormat("0.######");
 
     public static String getDouble(double value) {
         if (value == Data.NA) {
@@ -41,6 +42,18 @@ public class FormatManager {
         }
 
         return str;
+    }
+
+    public static String getFloat(float value) {
+        if (value == Data.NA) {
+            return "NA";
+        }
+
+        if (value == 0.0f) {
+            return "0";
+        }
+
+        return pformat3.format(value);
     }
 
     public static float getFloat(String str) {
