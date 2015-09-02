@@ -74,7 +74,7 @@ public class Evs {
                 aaAverageCoverage = rs.getInt("AAAvgCoverage");
                 allCoveredSamples = rs.getInt("ALLSampleCovered");
                 allAverageCoverage = rs.getInt("AllAvgCoverage");
-            } 
+            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -99,17 +99,17 @@ public class Evs {
                 if (eaCoveredSamples > 0) {
                     eaMaf = 0;
                 }
-                
+
                 aaMaf = Data.NA;
                 if (aaCoveredSamples > 0) {
                     aaMaf = 0;
                 }
-                
+
                 allMaf = Data.NA;
                 if (allCoveredSamples > 0) {
                     allMaf = 0;
                 }
-                
+
                 eaGenotypeCount = "NA";
                 aaGenotypeCount = "NA";
                 allGenotypeCount = "NA";
@@ -141,7 +141,7 @@ public class Evs {
         maf = Data.NA;
 
         for (float value : values) {
-            if (value >= 0 && maf < value) {
+            if (value != Data.NA && maf < value) {
                 maf = value;
             }
         }
