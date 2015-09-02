@@ -30,7 +30,6 @@ public class Evs {
     private float eaMaf;
     private float aaMaf;
     private float allMaf;
-    private float maf; // use to filter
     private String eaGenotypeCount;
     private String aaGenotypeCount;
     private String allGenotypeCount;
@@ -42,8 +41,6 @@ public class Evs {
         initCoverage();
 
         initMaf();
-
-        initMaf4Filter();
     }
 
     private void initBasic(String id) {
@@ -120,37 +117,31 @@ public class Evs {
         }
     }
 
-    private void initMaf4Filter() {
-        float[] values = {Data.NA, Data.NA, Data.NA};
+    private float getMaxMaf() {
+        float maf = Data.NA;
 
-        if (EvsCommand.evsMafPop.contains("ea")
+        if (EvsCommand.evsPop.contains("ea")
                 && eaMaf != Data.NA) {
-            values[0] = eaMaf;
+            maf = Math.max(eaMaf, maf);
         }
 
-        if (EvsCommand.evsMafPop.contains("aa")
+        if (EvsCommand.evsPop.contains("aa")
                 && aaMaf != Data.NA) {
-            values[1] = aaMaf;
+            maf = Math.max(aaMaf, maf);
         }
 
-        if (EvsCommand.evsMafPop.contains("all")
+        if (EvsCommand.evsPop.contains("all")
                 && allMaf != Data.NA) {
-            values[2] = allMaf;
+            maf = Math.max(allMaf, maf);   
         }
-
-        maf = Data.NA;
-
-        for (float value : values) {
-            if (value != Data.NA && maf < value) {
-                maf = value;
-            }
-        }
+        
+        return maf;
     }
 
     public boolean isValid() {
         if (EvsCommand.isEvsStatusValid(filterStatus)
                 && EvsCommand.isEvsAllCoverageValid(allAverageCoverage)
-                && EvsCommand.isEvsMafValid(maf)) {
+                && EvsCommand.isEvsMafValid(getMaxMaf())) {
             return true;
         }
 

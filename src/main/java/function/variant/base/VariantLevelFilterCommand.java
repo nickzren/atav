@@ -50,7 +50,7 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--evs-pop")
                     || option.getName().equals("--evs-maf-pop")) {
                 checkValuesValid(Data.EVS_POP, option);
-                EvsCommand.evsMafPop = option.getValue();
+                EvsCommand.evsPop = option.getValue();
             } else if (option.getName().equals("--evs-maf")) {
                 checkValueValid(0.5, 0, option);
                 EvsCommand.evsMaf = getValidDouble(option);

@@ -4,7 +4,6 @@ import function.external.evs.Evs;
 import function.external.exac.Exac;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
-import function.external.exac.ExacManager;
 import function.external.kaviar.Kaviar;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;

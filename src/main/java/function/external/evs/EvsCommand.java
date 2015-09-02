@@ -12,7 +12,7 @@ public class EvsCommand {
     public static boolean isListEvs = false;
 
     // filter option
-    public static String evsMafPop = "all";
+    public static String evsPop = "all";
     public static double evsMaf = Data.NO_FILTER;
     public static int evsAllAverageCoverage = Data.NO_FILTER;
     public static boolean isExcludeEvsQcFailed = false;
