@@ -14,7 +14,6 @@ public class EvsCommand {
     // filter option
     public static String evsMafPop = "all";
     public static double evsMaf = Data.NO_FILTER;
-    public static double evsMhgf4Recessive = Data.NO_FILTER;
     public static int evsAllAverageCoverage = Data.NO_FILTER;
     public static boolean isExcludeEvsQcFailed = false;
 
@@ -25,18 +24,6 @@ public class EvsCommand {
 
         if (value <= evsMaf
                 || value == Data.NA) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isEvsMhgf4RecessiveValid(double value) {
-        if (evsMhgf4Recessive == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value <= evsMhgf4Recessive) {
             return true;
         }
 

@@ -58,10 +58,6 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--evs-maf")) {
                 checkValueValid(0.5, 0, option);
                 EvsCommand.evsMaf = getValidDouble(option);
-            } else if (option.getName().equals("--evs-mhgf-rec")
-                    || option.getName().equals("--evs-mhgf-recessive")) {
-                checkValueValid(0.5, 0, option);
-                EvsCommand.evsMhgf4Recessive = getValidDouble(option);
             } else if (option.getName().equals("--min-evs-all-average-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 EvsCommand.evsAllAverageCoverage = getValidInteger(option);
