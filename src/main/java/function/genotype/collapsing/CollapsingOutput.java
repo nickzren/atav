@@ -9,7 +9,6 @@ import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
 import function.genotype.statistics.StatisticsCommand;
-import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
@@ -190,7 +189,13 @@ public class CollapsingOutput extends Output implements Comparable {
             return false;
         }
 
-        if (isMinorRef && !GenotypeLevelFilterCommand.isAllNonRef) {
+        if (GenotypeLevelFilterCommand.isAllNonRef) {
+            if (geno == 2 || geno == 1) {
+                return true;
+            }
+        }
+        
+        if (isMinorRef) {
             if (geno == 0 || geno == 1) {
                 return true;
             }

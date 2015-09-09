@@ -2,6 +2,7 @@ package function.genotype.vargeno;
 
 import global.Index;
 import function.genotype.base.SampleManager;
+import global.Data;
 
 /**
  *
@@ -26,27 +27,20 @@ public class SampleVariantCount {
             + "Total Ref INDEL,"
             + "Total Het INDEL,"
             + "Total Hom INDEL";
-    
-    public static void main(String[] args)
-    {
-        String[] tmp = title.split(",");
-        
-        for(String str : tmp )
-        {
-            System.out.println(str);
-        }
-                
-    }
 
     public static void init() {
         genoSnvCount = new int[5][SampleManager.getListSize()];
         genoIndelCount = new int[5][SampleManager.getListSize()];
-        
+
         sampleSnvCount = new int[SampleManager.getListSize()];
         sampleIndelCount = new int[SampleManager.getListSize()];
     }
 
     public static void update(boolean isSnv, int geno, int sampleIndex) {
+        if (geno == Data.NA) {
+            return;
+        }
+
         if (isSnv) {
             genoSnvCount[geno][sampleIndex]++;
             sampleSnvCount[sampleIndex]++;

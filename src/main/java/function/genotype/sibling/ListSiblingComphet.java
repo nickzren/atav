@@ -170,17 +170,9 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                             String child1Flag = getTrioCompHetFlag(output1, output2, child1,
                                     family.getMother(), family.getFather());
 
-                            if (child1Flag.equals("NA")) {
-                                continue;
-                            }
-
                             // child2 trio comp het flag
                             String child2Flag = getTrioCompHetFlag(output1, output2, child2,
                                     family.getMother(), family.getFather());
-
-                            if (child2Flag.equals("NA")) {
-                                continue;
-                            }
 
                             // sibling comp het flag
                             String flag = getFlag(child1Flag, child2Flag);
@@ -214,10 +206,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
             Sample child, Sample mother, Sample father) {
         int cGeno1 = output1.getCalledVariant().getGenotype(child.getIndex());
 
-        if (!output1.isQualifiedGeno(cGeno1)) {
-            return "NA";
-        }
-
         int cCov1 = output1.getCalledVariant().getCoverage(child.getIndex());
         int mGeno1 = output1.getCalledVariant().getGenotype(mother.getIndex());
         int mCov1 = output1.getCalledVariant().getCoverage(mother.getIndex());
@@ -226,18 +214,21 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
         int cGeno2 = output2.getCalledVariant().getGenotype(child.getIndex());
 
-        if (!output2.isQualifiedGeno(cGeno2)) {
-            return "NA";
-        }
-
         int cCov2 = output2.getCalledVariant().getCoverage(child.getIndex());
         int mGeno2 = output2.getCalledVariant().getGenotype(mother.getIndex());
         int mCov2 = output2.getCalledVariant().getCoverage(mother.getIndex());
         int fGeno2 = output2.getCalledVariant().getGenotype(father.getIndex());
         int fCov2 = output2.getCalledVariant().getCoverage(father.getIndex());
 
-        return ListTrioCompHet.getCompHetStatus(cGeno1, cCov1, mGeno1, mCov1, fGeno1, fCov1,
-                cGeno2, cCov2, mGeno2, mCov2, fGeno2, fCov2);
+        return ListTrioCompHet.getCompHetStatus(
+                cGeno1, cCov1,
+                mGeno1, mCov1,
+                fGeno1, fCov1,
+                output1.isMinorRef,
+                cGeno2, cCov2,
+                mGeno2, mCov2,
+                fGeno2, fCov2,
+                output2.isMinorRef);
     }
 
     private void doOutput(StringBuilder sb,
