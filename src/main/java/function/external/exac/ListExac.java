@@ -82,6 +82,9 @@ public class ListExac extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running list exac function...";
+        return "It is running list exac function...\n\n"
+                + "coverage table: " + ExacManager.coverageTable + "\n\n"
+                + "snv table: " + ExacManager.snvTable + "\n\n"
+                + "indel table: " + ExacManager.indelTable;
     }
 }
