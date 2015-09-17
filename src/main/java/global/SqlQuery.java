@@ -6,23 +6,6 @@ package global;
  */
 public class SqlQuery {
 
-    public static String EVS_MAF_SNV
-            = "SELECT MAF_perc, ea_allele_count, aa_allele_count,all_allele_count, "
-            + "ea_genotype_count, aa_genotype_count, all_genotype_count,ref_allele, alt_alleles, FilterStatus "
-            + "FROM evs.snv_maf_new "
-            + "WHERE chr = '_CHR_' AND position = _POS_ AND ref_allele = '_ALLELE_' ";
-    public static String EVS_MAF_INDEL
-            = "SELECT MAF_perc, ea_allele_count, aa_allele_count,all_allele_count, "
-            + "ea_genotype_count, aa_genotype_count, all_genotype_count,ref_allele, alt_alleles, FilterStatus  "
-            + "FROM evs.indel_maf_new "
-            + "WHERE chr = '_CHR_' AND position = _POS_ ";
-    public static String EVS_COVERAGE
-            = "SELECT ALLSampleCovered, AllAvgCoverage, "
-            + "EASampleCovered, EAAvgCoverage, "
-            + "AASampleCovered, AAAvgCoverage "
-            + "FROM evs.coverage "
-            + "WHERE chr = '_CHR_' AND position = _POS_ ";
-
     public static String EVS_COVERAGE_RANGE
             = "SELECT position, ALLSampleCovered, EASampleCovered, AASampleCovered "
             + "FROM evs.coverage "
