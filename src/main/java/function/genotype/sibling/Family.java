@@ -17,18 +17,18 @@ public class Family {
 
     private ArrayList<Sample> childList = new ArrayList<Sample>();
 
-    public Family(Sample child) {
-        familyId = child.getFamilyId();
+    public Family(Sample sample) {
+        familyId = sample.getFamilyId();
 
-        String fatherName = child.getPaternalId();
+        String fatherName = sample.getPaternalId();
         int fatherId = SampleManager.getIdByName(fatherName);
         father = SampleManager.getTable().get(fatherId);
 
-        String motherName = child.getMaternalId();
+        String motherName = sample.getMaternalId();
         int motherId = SampleManager.getIdByName(motherName);
         mother = SampleManager.getTable().get(motherId);
 
-        childList.add(child);
+        childList.add(sample);
     }
 
     public void addChild(Sample sample) {
@@ -53,5 +53,24 @@ public class Family {
 
     public ArrayList<Sample> getChildList() {
         return childList;
+    }
+
+    public boolean isValid() {
+        if (childList.size() > 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+        int[] array = new int[]{1, 2, 3, 4, 5};
+
+        for (int i = 0; i < array.length - 1; i++) {
+
+            for (int j = i + 1; j < array.length; j++) {
+                System.out.println(i + " " + j);
+            }
+        }
     }
 }

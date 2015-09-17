@@ -308,8 +308,8 @@ public class Output implements Cloneable {
 
             if (!CollapsingCommand.isCollapsingSingleVariant
                     && !CollapsingCommand.isCollapsingCompHet) {
-                if (isCtrlMafValid(isRecessive) &&
-                        GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf)) {
+                if (isCtrlMafValid(isRecessive)
+                        && GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf)) {
                     if (isRecessive) {
                         if (isCtrlMhgf4RecessiveValid()) {
                             return true;
@@ -331,7 +331,17 @@ public class Output implements Cloneable {
      * major then only hom & het are qualified samples.
      */
     public boolean isQualifiedGeno(int geno) {
-        if (isMinorRef && !GenotypeLevelFilterCommand.isAllNonRef) {
+        if (GenotypeLevelFilterCommand.isAllGeno) {
+            return true;
+        }
+
+        if (GenotypeLevelFilterCommand.isAllNonRef) {
+            if (geno == 2 || geno == 1) {
+                return true;
+            }
+        }
+
+        if (isMinorRef) {
             if (geno == 0 || geno == 1) {
                 return true;
             }

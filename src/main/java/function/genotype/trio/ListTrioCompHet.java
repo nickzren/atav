@@ -8,6 +8,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -33,7 +34,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     final String flagFilePath = CommonCommand.outputPath + "comphet.csv";
     final String noFlagFilePath = CommonCommand.outputPath + "comphet_noflag.csv";
 //    BufferedWriter bwFlagSummary = null;
-    String[] FLAG = {
+    public static final String[] FLAG = {
         "compound heterozygote", // 0
         "possibly compound heterozygote", // 1
         "no flag" //2
@@ -254,47 +255,97 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         }
     }
 
-    private String getCompHetStatus(
-            int cGeno1, int cCov1, int mGeno1,
-            int mCov1, int fGeno1, int fCov1,
-            int cGeno2, int cCov2, int mGeno2,
-            int mCov2, int fGeno2, int fCov2) {
-
+    public static String getCompHetStatus(
+            int cGeno1, int cCov1,
+            int mGeno1, int mCov1,
+            int fGeno1, int fCov1,
+            boolean isMinorRef1,
+            int cGeno2, int cCov2,
+            int mGeno2, int mCov2,
+            int fGeno2, int fCov2,
+            boolean isMinorRef2) {
         int minCov = GenotypeLevelFilterCommand.minCoverage;
 
-        if ((fGeno1 <= 0 && mGeno1 <= 0)
-                || (fGeno2 <= 0 && mGeno2 <= 0)) {
-            return FLAG[2];
-        } else if ((cGeno1 == fGeno1 && cGeno2 == fGeno2)
-                || (cGeno1 == mGeno1 && cGeno2 == mGeno2)) {
-            return FLAG[2];
-        } else if ((fGeno1 == 2 && fCov1 >= minCov)
-                || (mGeno1 == 2 && mCov1 >= minCov)
-                || (fGeno2 == 2 && fCov2 >= minCov)
-                || ((mGeno2 == 2 && mCov2 >= minCov))) {
-            return FLAG[2];
-        } else if ((cGeno1 == 2 && cCov1 >= minCov)
-                || (cGeno2 == 2 && cCov2 >= minCov)) {
-            return FLAG[2];
-        } else if ((cGeno1 == 2 && cCov1 < minCov)
-                || (cGeno2 == 2 && cCov2 < minCov)) {
-            return FLAG[1];
-        } else if ((fGeno1 == 0 && fCov1 < minCov)
-                || (mGeno1 == 0 && mCov1 < minCov)
-                || (fGeno2 == 0 && fCov2 < minCov)
-                || (mGeno2 == 0 && mCov2 < minCov)) {
-            return FLAG[1];
-        } else if ((fGeno1 == 2 && fCov1 < minCov)
-                || (mGeno1 == 2 && mCov1 < minCov)
-                || (fGeno2 == 2 && fCov2 < minCov)
-                || (mGeno2 == 2 && mCov2 < minCov)) {
-            return FLAG[1];
-        } else if ((cGeno1 == fGeno1 && cGeno2 == mGeno2)
-                || (cGeno1 == mGeno1 && cGeno2 == fGeno2)) {
-            return FLAG[0];
+        // to limit confusion, we swap genotypes 0<->2 if isMinorRef
+        // i.e. hom ref<->hom variant
+        // that enables us to ignore the isMinorRef aspect thereafter
+        if (isMinorRef1) {
+            cGeno1 = swapGenotypes(cGeno1);
+            fGeno1 = swapGenotypes(fGeno1);
+            mGeno1 = swapGenotypes(mGeno1);
         }
+        if (isMinorRef2) {
+            cGeno2 = swapGenotypes(cGeno2);
+            fGeno2 = swapGenotypes(fGeno2);
+            mGeno2 = swapGenotypes(mGeno2);
+        }
+        // exclude if the child is missing any call
+        if (cGeno1 == Data.NA || cGeno2 == Data.NA) {
+            return FLAG[2];
+        }
+        // exclude if the child is homozygous, wild type or variant, for either variant
+        if (((cGeno1 == 0 || cGeno1 == 2) && cCov1 >= minCov)
+                || ((cGeno2 == 0 || cGeno2 == 2) && cCov2 >= minCov)) {
+            return FLAG[2];
+        }
+        if ((fGeno1 == Data.NA && mGeno1 == Data.NA) || (fGeno2 == Data.NA && mGeno2 == Data.NA)) {
+            // if both parents are missing the same call, exclude this candidate
+            return FLAG[2];
+        }
+        if ((fGeno1 == Data.NA && fGeno2 == Data.NA) || (mGeno1 == Data.NA && mGeno2 == Data.NA)) {
+            // if one parent is missing both calls, exclude this candidate
+            return FLAG[2];
+        }
+        // if any parental call is hom at at least minCov depth, exclude
+        if ((fGeno1 == 2 && fCov1 >= minCov) || (fGeno2 == 2 && fCov2 >= minCov)
+                || (mGeno1 == 2 && mCov1 >= minCov) || (mGeno2 == 2 && mCov2 >= minCov)) {
+            return FLAG[2];
+        }
+        // if either parent has both variants, exclude
+        if (((fGeno1 == 1 || fGeno1 == 2) && (fGeno2 == 1 || fGeno2 == 2))
+                || ((mGeno1 == 1 || mGeno1 == 2) && (mGeno2 == 1 || mGeno2 == 2))) {
+            return FLAG[2];
+        }
+        // if either parent has neither variant, exclude
+        if ((fGeno1 == 0 && fCov1 >= minCov && fGeno2 == 0 && fCov2 >= minCov)
+                || (mGeno1 == 0 && mCov1 >= minCov && mGeno2 == 0 && mCov2 >= minCov)) {
+            return FLAG[2];
+        }
+        // if both parents are wild type for the same variant, exclude
+        if ((fGeno1 == 0 && fCov1 >= minCov && mGeno1 == 0 && mCov1 >= minCov)
+                || (fGeno2 == 0 && fCov2 >= minCov && mGeno2 == 0 && mCov2 >= minCov)) {
+            return FLAG[2];
+        }
+        // if both parents have the same variant, exclude
+        if (((fGeno1 == 1 || fGeno1 == 2) && (mGeno1 == 1 || mGeno1 == 2))
+                || ((fGeno2 == 1 || fGeno2 == 2) && (mGeno2 == 1 || mGeno2 == 2))) {
+            return FLAG[2];
+        }
+        // we've excluded all that should be excluded - the possibilities are now that
+        // the compound het is "Shared" or that it's "Possibly Shared", i.e. there's a
+        // possibility the variants don't segregate properly but there wasn't sufficient
+        // cause to exclude entirely
+        if ((fGeno1 == 1 && fGeno2 == 0 && mGeno1 == 0 && mGeno2 == 1)
+                || (fGeno1 == 0 && fGeno2 == 1 && mGeno1 == 1 && mGeno2 == 0)) {
+            if (cGeno1 == 1 && cGeno2 == 1) {
+                return FLAG[0];
+            } else {
+                return FLAG[1];
+            }
+        } else {
+            return FLAG[1];
+        }
+    }
 
-        return "";
+    private static int swapGenotypes(
+            int genotype) {
+        if (genotype == 0) {
+            return 2;
+        } else if (genotype == 2) {
+            return 0;
+        } else {
+            return genotype;
+        }
     }
 
     private void doOutput(ArrayList<CompHetOutput> geneOutputList) {
@@ -316,11 +367,12 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                 for (int j = i + 1; j < outputSize; j++) {
                     output2 = geneOutputList.get(j);
 
-                    if (!output1.getCalledVariant().getVariantIdStr().equals(
-                            output2.getCalledVariant().getVariantIdStr())
+                    if (output1.getCalledVariant().getVariantId() != output2.getCalledVariant().getVariantId()
                             && output1.childName.equals(output2.childName)) {
-                        id = output1.familyId + output1.getCalledVariant().getVariantIdStr()
-                                + output2.getCalledVariant().getVariantIdStr();
+                        id = output1.familyId
+                                + output1.getCalledVariant().getVariantId()
+                                + output1.childName
+                                + output2.getCalledVariant().getVariantId();
 
                         if (!uniqueId.contains(id)) {
                             uniqueId.add(id);
@@ -329,9 +381,11 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                     output1.cGeno, output1.cSamtoolsRawCoverage,
                                     output1.mGeno, output1.mSamtoolsRawCoverage,
                                     output1.fGeno, output1.fSamtoolsRawCoverage,
+                                    output1.isMinorRef,
                                     output2.cGeno, output2.cSamtoolsRawCoverage,
                                     output2.mGeno, output2.mSamtoolsRawCoverage,
-                                    output2.fGeno, output2.fSamtoolsRawCoverage);
+                                    output2.fGeno, output2.fSamtoolsRawCoverage,
+                                    output2.isMinorRef);
 
                             if (!flag.isEmpty()) {
                                 if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {

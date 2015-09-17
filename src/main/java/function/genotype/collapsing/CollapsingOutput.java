@@ -190,7 +190,13 @@ public class CollapsingOutput extends Output implements Comparable {
             return false;
         }
 
-        if (isMinorRef && !GenotypeLevelFilterCommand.isAllNonRef) {
+        if (GenotypeLevelFilterCommand.isAllNonRef) {
+            if (geno == 2 || geno == 1) {
+                return true;
+            }
+        }
+        
+        if (isMinorRef) {
             if (geno == 0 || geno == 1) {
                 return true;
             }
