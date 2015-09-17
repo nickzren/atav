@@ -33,12 +33,13 @@ import function.coverage.base.CoverageCommand;
 import function.coverage.comparison.SiteCoverageComparison;
 import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
-import function.external.evs.JonEvsTool;
 import function.external.evs.ListEvs;
 import function.external.exac.ExacCommand;
 import function.external.exac.ListExac;
 import function.external.flanking.FlankingCommand;
 import function.external.flanking.ListFlankingSeq;
+import function.external.kaviar.KaviarCommand;
+import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.ListKnownVar;
 import function.genotype.base.CoverageBlockManager;
@@ -155,14 +156,14 @@ public class Program {
                 coverageSummary.run();
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
-            } else if (EvsCommand.isJonEvsTool) {
-                runAnalysis(new JonEvsTool());
             } else if (ExacCommand.isListExac) {
                 runAnalysis(new ListExac());
             } else if (KnownVarCommand.isListKnownVar) {
                 runAnalysis(new ListKnownVar());
             } else if (FlankingCommand.isListFlankingSeq) {
                 runAnalysis(new ListFlankingSeq());
+            } else if (KaviarCommand.isListKaviar) {
+                runAnalysis(new ListKaviar());
             } else if (PPICommand.isPPI) { // Non Database Functions
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());

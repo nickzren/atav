@@ -8,7 +8,7 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
-import function.variant.base.VariantLevelFilterCommand;
+import function.external.kaviar.KaviarManager;
 import global.Data;
 import utils.FormatManager;
 import utils.MathManager;
@@ -86,7 +86,8 @@ public class ParentalOutput extends Output {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle();
+            + ExacManager.getTitle() 
+            + KaviarManager.getTitle();
 
     public ParentalOutput(CalledVariant c) {
         super(c);
@@ -220,9 +221,7 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(child.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(child.getId()))).append(",");
 
-        sb.append(calledVar.getEvsCoverageStr()).append(",");
-        sb.append(calledVar.getEvsMafStr()).append(",");
-        sb.append(calledVar.getEvsFilterStatus()).append(",");
+        sb.append(calledVar.getEvsStr()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
@@ -236,7 +235,9 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr());
+        sb.append(calledVar.getExacStr()).append(",");
+        
+        sb.append(calledVar.getKaviarStr());
 
         return sb.toString();
     }

@@ -5,7 +5,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
-import function.variant.base.VariantLevelFilterCommand;
+import function.external.kaviar.KaviarManager;
 import utils.FormatManager;
 
 /**
@@ -39,7 +39,8 @@ public class VarAnnoOutput {
             + "Amino Acid Change,"
             + "Coding Sequence Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle();
+            + ExacManager.getTitle() 
+            + KaviarManager.getTitle();
 
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
@@ -57,9 +58,7 @@ public class VarAnnoOutput {
 
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
 
-        sb.append(annotatedVar.getEvsCoverageStr()).append(",");
-        sb.append(annotatedVar.getEvsMafStr()).append(",");
-        sb.append(annotatedVar.getEvsFilterStatus()).append(",");
+        sb.append(annotatedVar.getEvsStr()).append(",");
 
         sb.append(annotatedVar.getPolyphenHumdivScore()).append(",");
         sb.append(annotatedVar.getPolyphenHumdivPrediction()).append(",");
@@ -78,7 +77,9 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getCodingSequenceChange()).append(",");
         sb.append(annotatedVar.getTranscriptSet()).append(",");
 
-        sb.append(annotatedVar.getExacStr());
+        sb.append(annotatedVar.getExacStr()).append(",");
+        
+        sb.append(annotatedVar.getKaviarStr());
 
         return sb.toString();
     }

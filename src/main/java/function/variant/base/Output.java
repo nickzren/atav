@@ -302,7 +302,8 @@ public class Output implements Cloneable {
 
     public boolean isValid() {
         if (GenotypeLevelFilterCommand.isMinVarPresentValid(varPresent)
-                && GenotypeLevelFilterCommand.isMinCaseCarrierValid(caseCarrier)) {
+                && GenotypeLevelFilterCommand.isMinCaseCarrierValid(caseCarrier)
+                && GenotypeLevelFilterCommand.isMinCtrlAverageCoverageValid(averageCov[Index.CTRL])) {
             boolean isRecessive = isRecessive();
 
             if (!CollapsingCommand.isCollapsingSingleVariant
@@ -310,8 +311,7 @@ public class Output implements Cloneable {
                 if (isCtrlMafValid(isRecessive)
                         && GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf)) {
                     if (isRecessive) {
-                        if (isCtrlMhgf4RecessiveValid()
-                                && calledVar.isEvsMhgfValid()) {
+                        if (isCtrlMhgf4RecessiveValid()) {
                             return true;
                         }
                     } else {

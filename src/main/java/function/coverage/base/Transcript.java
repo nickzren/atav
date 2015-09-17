@@ -1,7 +1,6 @@
 package function.coverage.base;
 
 import function.variant.base.Region;
-import global.SqlQuery;
 import utils.DBManager;
 import java.util.Iterator;
 

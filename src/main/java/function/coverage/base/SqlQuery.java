@@ -1,27 +1,12 @@
-package global;
+package function.coverage.base;
+
+import global.Data;
 
 /**
  *
  * @author qwang
  */
 public class SqlQuery {
-
-    public static String EVS_MAF_SNV
-            = "SELECT MAF_perc, ea_allele_count, aa_allele_count,all_allele_count, "
-            + "ea_genotype_count, aa_genotype_count, all_genotype_count,ref_allele, alt_alleles, FilterStatus "
-            + "FROM evs.snv_maf_new "
-            + "WHERE chr = '_CHR_' AND position = _POS_ AND ref_allele = '_ALLELE_' ";
-    public static String EVS_MAF_INDEL
-            = "SELECT MAF_perc, ea_allele_count, aa_allele_count,all_allele_count, "
-            + "ea_genotype_count, aa_genotype_count, all_genotype_count,ref_allele, alt_alleles, FilterStatus  "
-            + "FROM evs.indel_maf_new "
-            + "WHERE chr = '_CHR_' AND position = _POS_ ";
-    public static String EVS_COVERAGE
-            = "SELECT ALLSampleCovered, AllAvgCoverage, "
-            + "EASampleCovered, EAAvgCoverage, "
-            + "AASampleCovered, AAAvgCoverage "
-            + "FROM evs.coverage "
-            + "WHERE chr = '_CHR_' AND position = _POS_ ";
 
     public static String EVS_COVERAGE_RANGE
             = "SELECT position, ALLSampleCovered, EASampleCovered, AASampleCovered "
@@ -229,12 +214,4 @@ public class SqlQuery {
             + "AND v.seq_region_id = r.seq_region_id "
             + "AND coord_system_id = 2 "
             + "LIMIT 1";
-    public static String SNV_ID = "select name, seq_region_pos from snv v, seq_region s "
-            + "where rs_number = '_RS_' and "
-            + "coord_system_id = 2 and "
-            + "v.seq_region_id = s.seq_region_id";
-    public static String INDEL_ID = "select name, seq_region_pos, v.length from indel v, seq_region s "
-            + "where rs_number = '_RS_' and "
-            + "coord_system_id = 2 and "
-            + "v.seq_region_id = s.seq_region_id";
 }

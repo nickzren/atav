@@ -2,7 +2,6 @@ package function.coverage.base;
 
 import function.variant.base.Region;
 import global.Data;
-import global.SqlQuery;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.DBManager;

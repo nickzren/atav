@@ -5,9 +5,9 @@ import function.genotype.base.SampleManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
+import function.external.kaviar.KaviarManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
-import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
@@ -54,7 +54,8 @@ public class LinearOutput extends StatisticOutput {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle();
+            + ExacManager.getTitle() 
+            + KaviarManager.getTitle();
 
     public LinearOutput(CalledVariant c) {
         super(c);
@@ -329,9 +330,7 @@ public class LinearOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(beta1)).append(",");
         sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
 
-        sb.append(calledVar.getEvsCoverageStr()).append(",");
-        sb.append(calledVar.getEvsMafStr()).append(",");
-        sb.append(calledVar.getEvsFilterStatus()).append(",");
+        sb.append(calledVar.getEvsStr()).append(",");
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
@@ -345,7 +344,9 @@ public class LinearOutput extends StatisticOutput {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr());
+        sb.append(calledVar.getExacStr()).append(",");
+        
+        sb.append(calledVar.getKaviarStr());
 
         return sb.toString();
     }

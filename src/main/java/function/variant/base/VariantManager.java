@@ -2,7 +2,7 @@ package function.variant.base;
 
 import function.annotation.base.GeneManager;
 import global.Data;
-import global.SqlQuery;
+import function.coverage.base.SqlQuery;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -118,17 +118,20 @@ public class VariantManager {
     }
 
     private static String getVariantPosition(String rs) throws SQLException {
-        String varPos = getVariantPosition(rs, SqlQuery.SNV_ID, "snv");
+        String varPos = getVariantPosition(rs, "snv");
 
         if (varPos.isEmpty()) {
-            varPos = getVariantPosition(rs, SqlQuery.INDEL_ID, "indel");
+            varPos = getVariantPosition(rs, "indel");
         }
 
         return varPos;
     }
 
-    private static String getVariantPosition(String rs, String sql, String type) throws SQLException {
-        sql = sql.replace("_RS_", rs);
+    private static String getVariantPosition(String rs, String type) throws SQLException {
+        String sql = "select name, seq_region_pos from " + type + " v, seq_region s "
+                + "where rs_number = '" + rs + "' and "
+                + "coord_system_id = 2 and "
+                + "v.seq_region_id = s.seq_region_id";
 
         ResultSet rset = DBManager.executeQuery(sql);
 

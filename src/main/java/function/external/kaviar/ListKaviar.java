@@ -1,29 +1,29 @@
-package function.external.exac;
+package function.external.kaviar;
 
 import function.AnalysisBase;
 import function.variant.base.VariantManager;
-import utils.CommonCommand;
-import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import utils.CommonCommand;
+import utils.ErrorManager;
 
 /**
  *
  * @author nick
  */
-public class ListExac extends AnalysisBase {
+public class ListKaviar extends AnalysisBase {
 
-    BufferedWriter bwExac = null;
-    final String exacFilePath = CommonCommand.outputPath + "exac.csv";
+    BufferedWriter bwKaviar = null;
+    final String kaviarFilePath = CommonCommand.outputPath + "kaviar.csv";
 
     int analyzedRecords = 0;
 
     @Override
     public void initOutput() {
         try {
-            bwExac = new BufferedWriter(new FileWriter(exacFilePath));
-            bwExac.write(ExacOutput.title);
-            bwExac.newLine();
+            bwKaviar = new BufferedWriter(new FileWriter(kaviarFilePath));
+            bwKaviar.write(KaviarOutput.title);
+            bwKaviar.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -36,8 +36,8 @@ public class ListExac extends AnalysisBase {
     @Override
     public void closeOutput() {
         try {
-            bwExac.flush();
-            bwExac.close();
+            bwKaviar.flush();
+            bwKaviar.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -59,12 +59,12 @@ public class ListExac extends AnalysisBase {
     public void processDatabaseData() {
         try {
             for (String variantId : VariantManager.getIncludeVariantList()) {
-                ExacOutput output = new ExacOutput(variantId);
+                KaviarOutput output = new KaviarOutput(variantId);
 
                 if (output.isValid()) {
-                    bwExac.write(variantId + ",");
-                    bwExac.write(output.toString());
-                    bwExac.newLine();
+                    bwKaviar.write(variantId + ",");
+                    bwKaviar.write(output.toString());
+                    bwKaviar.newLine();
                 }
 
                 countVariant();
@@ -82,6 +82,6 @@ public class ListExac extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running list exac function...";
+        return "It is running list kaviar function...";
     }
 }

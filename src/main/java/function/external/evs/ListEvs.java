@@ -61,9 +61,11 @@ public class ListEvs extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantList()) {
                 EvsOutput output = new EvsOutput(variantId);
 
-                bwEvs.write(variantId + ",");
-                bwEvs.write(output.toString());
-                bwEvs.newLine();
+                if (output.isValid()) {
+                    bwEvs.write(variantId + ",");
+                    bwEvs.write(output.toString());
+                    bwEvs.newLine();
+                }
 
                 countVariant();
             }
