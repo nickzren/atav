@@ -8,6 +8,10 @@ import global.Data;
  */
 public class ExacManager {
 
+    static final String coverageTable = "exac.coverage_03";
+    static final String snvTable = "exac.snv_maf_r03_2015_09_16";
+    static final String indelTable = "exac.indel_maf_r03_2015_09_16";
+
     public static String getTitle() {
         String title = "";
 
@@ -25,14 +29,14 @@ public class ExacManager {
 
     public static String getSql4Cvg(String chr, int pos) {
         String sql = "SELECT mean_cvg, covered_10x "
-                + "FROM exac.coverage_03 "
+                + "FROM " + coverageTable + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos;
 
         return sql;
     }
 
-    public static String getSql4Maf(boolean isSnv, String chr, 
+    public static String getSql4Maf(boolean isSnv, String chr,
             int pos, String ref, String alt) {
         String result = "";
 
@@ -46,12 +50,12 @@ public class ExacManager {
         String sql = "SELECT " + result;
 
         if (isSnv) {
-            sql += "FROM exac.snv_maf_r03 "
+            sql += "FROM " + snvTable + " "
                     + "WHERE chr = '" + chr + "' "
                     + "AND pos = " + pos + " "
                     + "AND alt_allele = '" + alt + "'";
         } else {
-            sql += "FROM exac.indel_maf_r03 "
+            sql += "FROM " + indelTable + " "
                     + "WHERE chr = '" + chr + "' "
                     + "AND pos = " + pos + " "
                     + "AND ref_allele = '" + ref + "' "

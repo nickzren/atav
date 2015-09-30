@@ -82,6 +82,9 @@ public class ListEvs extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running list evs function...";
+        return "It is running list evs function...\n\n"
+                + "coverage table: " + EvsManager.coverageTable + "\n\n"
+                + "snv table: " + EvsManager.snvTable + "\n\n"
+                + "indel table: " + EvsManager.indelTable;
     }
 }

@@ -6,6 +6,10 @@ package function.external.evs;
  */
 public class EvsManager {
 
+    static final String coverageTable = "evs.coverage";
+    static final String snvTable = "evs.snv_maf_2015_09_16";
+    static final String indelTable = "evs.indel_maf_2015_09_16";
+
     public static String getTitle() {
         return "Evs Eur Covered Samples,"
                 + "Evs Eur Average Coverage,"
@@ -24,10 +28,10 @@ public class EvsManager {
 
     public static String getSql4Maf(boolean isSnv, String chr,
             int pos, String ref, String alt) {
-        String table = "evs.snv_maf";
+        String table = snvTable;
 
         if (!isSnv) {
-            table = "evs.indel_maf";
+            table = indelTable;
         }
 
         return "SELECT all_maf, ea_maf, aa_maf,"
@@ -44,7 +48,7 @@ public class EvsManager {
         return "SELECT ALLSampleCovered, AllAvgCoverage,"
                 + "EASampleCovered, EAAvgCoverage,"
                 + "AASampleCovered, AAAvgCoverage "
-                + "FROM evs.coverage "
+                + "FROM " + coverageTable + " "
                 + "WHERE chr = '" + chr + "' AND position = " + pos;
     }
 }

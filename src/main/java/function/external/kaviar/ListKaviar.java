@@ -82,6 +82,8 @@ public class ListKaviar extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running list kaviar function...";
+        return "It is running list kaviar function...\n\n"
+                + "snv table: " + KaviarManager.snvTable + "\n\n"
+                + "indel table: " + KaviarManager.indelTable;
     }
 }
