@@ -67,8 +67,8 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     @Override
     public String toString() {
         return "It is running a list KnownVar function... \n\n"
-                + "clinvar table: " + KnownVarOutput.clinvarTable + "\n\n"
-                + "hgmd table: " + KnownVarOutput.hgmdTable + "\n\n"
-                + "omim table: " + KnownVarOutput.omimTable;
+                + "clinvar table: " + KnownVarManager.clinvarTable + "\n\n"
+                + "hgmd table: " + KnownVarManager.hgmdTable + "\n\n"
+                + "omim table: " + KnownVarManager.omimTable;
     }
 }
