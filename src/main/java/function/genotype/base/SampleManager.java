@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import utils.FormatManager;
 
 /**
  *
@@ -256,7 +257,7 @@ public class SampleManager {
 
             for (Sample sample : sampleList) {
                 LogManager.writeLog(
-                        sample.getPrepId()
+                        FormatManager.getInteger(sample.getPrepId())
                         + "\t" + sample.getName()
                         + "\t" + sample.getType()
                         + "\t" + sample.getCaptureKit());

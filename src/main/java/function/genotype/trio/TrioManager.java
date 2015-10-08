@@ -53,10 +53,10 @@ public class TrioManager {
         }
 
         if (trioList.isEmpty()) {
-            ErrorManager.print("There is no trio in your sample file.");
+            ErrorManager.print("There is no trio from your sample file.");
         } else {
             LogManager.writeAndPrint("There are " + trioList.size()
-                    + " trios available now.");
+                    + " trios available from your sample file.");
         }
     }
 
