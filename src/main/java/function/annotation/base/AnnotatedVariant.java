@@ -5,6 +5,8 @@ import function.external.exac.Exac;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import function.external.kaviar.Kaviar;
+import function.external.knownvar.KnownVarCommand;
+import function.external.knownvar.KnownVarOutput;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -34,6 +36,8 @@ public class AnnotatedVariant extends Variant {
     Kaviar kaviar;
 
     Evs evs;
+
+    KnownVarOutput knownVarOutput;
 
     public boolean isValid = true;
 
@@ -116,6 +120,12 @@ public class AnnotatedVariant extends Variant {
             evs = new Evs(variantIdStr);
 
             isValid = evs.isValid();
+        }
+
+        if (isValid) {
+            if (KnownVarCommand.isIncludeKnownVar) {
+                knownVarOutput = new KnownVarOutput(this);
+            }
         }
     }
 
@@ -241,7 +251,7 @@ public class AnnotatedVariant extends Variant {
 
         return prediction;
     }
-    
+
     public String getExacStr() {
         return exac.toString();
     }
@@ -249,8 +259,16 @@ public class AnnotatedVariant extends Variant {
     public String getKaviarStr() {
         return kaviar.toString();
     }
-    
+
     public String getEvsStr() {
         return evs.toString();
+    }
+
+    public String getKnownVarStr() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            return knownVarOutput.toString();
+        } else {
+            return "";
+        }
     }
 }

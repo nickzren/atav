@@ -16,6 +16,8 @@ public class KnownVarCommand {
     public static int snvWidth = 2;
     public static int indelWidth = 9;
     
+    public static boolean isIncludeKnownVar = false;
+
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
 

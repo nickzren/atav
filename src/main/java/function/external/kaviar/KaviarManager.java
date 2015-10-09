@@ -12,7 +12,7 @@ public class KaviarManager {
     public static String getTitle() {
         String title = "Kaviar Allele Freq,"
                 + "Kaviar Allele Count,"
-                + "Kaviar Allele Number";
+                + "Kaviar Allele Number,";
 
         return title;
     }

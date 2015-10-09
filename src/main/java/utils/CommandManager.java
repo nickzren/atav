@@ -311,6 +311,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-known-var")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KnownVarCommand.isListKnownVar = true;
+                KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--list-flanking-seq")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 FlankingCommand.isListFlankingSeq = true;

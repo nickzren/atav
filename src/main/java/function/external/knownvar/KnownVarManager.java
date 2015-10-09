@@ -15,6 +15,23 @@ public class KnownVarManager {
     public static final String hgmdTable = "knownvar.hgmd";
     public static final String omimTable = "knownvar.omim_2015_07_15";
 
+    public static String getTitle() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            return "Clinvar Clinical Significance,"
+                    + "Clinvar Other Ids,"
+                    + "Clinvar Disease Name,"
+                    + "Clinvar Flanking Count,"
+                    + "HGMD Variant Class,"
+                    + "HGMD Pmid,"
+                    + "HGMD Disease Name,"
+                    + "HGMD Flanking Count,"
+                    + "OMIM Gene Name,"
+                    + "OMIM Disease Name";
+        } else {
+            return "";
+        }
+    }
+
     public static String getSql4Clinvar(String chr, int pos, String ref, String alt) {
         return "SELECT ClinicalSignificance,"
                 + "OtherIds,"
@@ -39,10 +56,10 @@ public class KnownVarManager {
 
     public static String getSql4OMIM(String geneName) {
         return "SELECT diseaseName "
-                    + "From " + omimTable + " "
-                    + "WHERE geneName='" + geneName + "' ";
+                + "From " + omimTable + " "
+                + "WHERE geneName='" + geneName + "' ";
     }
-    
+
     public static int getFlankingCount(boolean isSnv, String chr, int pos, String table) {
         try {
             int width = KnownVarCommand.snvWidth;

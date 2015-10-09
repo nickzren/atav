@@ -6,6 +6,7 @@ import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
@@ -55,7 +56,8 @@ public class LinearOutput extends StatisticOutput {
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle() 
-            + KaviarManager.getTitle();
+            + KaviarManager.getTitle()
+            + KnownVarManager.getTitle();
 
     public LinearOutput(CalledVariant c) {
         super(c);
@@ -346,7 +348,9 @@ public class LinearOutput extends StatisticOutput {
 
         sb.append(calledVar.getExacStr()).append(",");
         
-        sb.append(calledVar.getKaviarStr());
+        sb.append(calledVar.getKaviarStr()).append(",");
+
+        sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
     }

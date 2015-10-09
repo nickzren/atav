@@ -6,6 +6,7 @@ import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarManager;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
@@ -71,8 +72,9 @@ public class FamilyOutput extends Output {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle() 
-            + KaviarManager.getTitle();
+            + ExacManager.getTitle()
+            + KaviarManager.getTitle()
+            + KnownVarManager.getTitle();
 
     public FamilyOutput(CalledVariant c) {
         super(c);
@@ -331,8 +333,10 @@ public class FamilyOutput extends Output {
         sb.append(calledVar.getTranscriptSet()).append(",");
 
         sb.append(calledVar.getExacStr()).append(",");
-        
-        sb.append(calledVar.getKaviarStr());
+
+        sb.append(calledVar.getKaviarStr()).append(",");
+
+        sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
     }
