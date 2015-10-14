@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -148,5 +149,6 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
         bwCoverageSummaryByGene.flush();
         bwCoverageSummaryByGene.close();
         outputCleanedExonList();
+        ThirdPartyToolManager.gzipFile(siteSummaryFilePath);
     } 
 }

@@ -25,7 +25,7 @@ import java.util.Iterator;
 public class SiteCoverageSummary extends InputList {
 
     BufferedWriter bwSiteSummary = null;
-    final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
+    public final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
     
     public SiteCoverageSummary() {
         super();
