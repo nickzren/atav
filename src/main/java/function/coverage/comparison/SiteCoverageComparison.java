@@ -1,9 +1,12 @@
 package function.coverage.comparison;
 
 import function.coverage.base.CoverageCommand;
+import function.coverage.base.Exon;
 import function.coverage.base.RegionClean;
 import function.coverage.base.Gene;
+import function.coverage.base.SampleStatistics;
 import function.coverage.summary.SiteCoverageSummary;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -12,6 +15,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -23,9 +27,12 @@ import java.util.Iterator;
 public class SiteCoverageComparison extends SiteCoverageSummary {
 
     final String CleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
-    public BufferedWriter bwCoverageSummaryByGene = null;
-    private RegionClean ec = new RegionClean();
-
+    final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
+    final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
+    BufferedWriter bwCoverageSummaryByGene = null;
+    BufferedWriter bwSampleSummary = null;
+    RegionClean ec = new RegionClean();
+    
     public SiteCoverageComparison() {
         super();
         int sampleSize = SampleManager.getListSize();
@@ -101,8 +108,45 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
     
     @Override
+    public void emitSS(SampleStatistics ss) {
+        try {
+            ss.print(bwSampleSummary);
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        } 
+    }
+    
+    @Override
+    public void DoGeneSummary(SampleStatistics ss, int record) throws Exception {
+        ss.printGeneSummary(record, bwCoverageSummaryByGene);
+    }
+    
+    @Override
+    public void emitExoninfo(SampleStatistics ss, Exon exon, int record) {
+        //Quanli: Here we are querying the database twice to generate 
+        //summary views from sites and from (gene, sample) pair 
+        //Can be a lot more efficient if we combine two pass, but code could be messy. 
+        //revisit this if the performnce is of concern
+        HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
+        ss.accumulateCoverage(record, result);
+    }
+    
+    @Override
     public void run() throws Exception {
+        bwSampleSummary = new BufferedWriter(new FileWriter(sampleSummaryFilePath));
+        bwSampleSummary.write("Sample,Total_Bases,Total_Covered_Base,%Overall_Bases_Covered,"
+                + "Total_Regions,Total_Covered_Regions,%Regions_Covered");
+        bwSampleSummary.newLine();
+        
+        bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
+        bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
+        bwCoverageSummaryByGene.newLine();
         super.run();
+        
+        bwSampleSummary.flush();
+        bwSampleSummary.close();
+        bwCoverageSummaryByGene.flush();
+        bwCoverageSummaryByGene.close();
         outputCleanedExonList();
     } 
 }

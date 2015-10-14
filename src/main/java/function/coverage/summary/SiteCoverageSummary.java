@@ -26,7 +26,7 @@ public class SiteCoverageSummary extends InputList {
 
     BufferedWriter bwSiteSummary = null;
     final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
-
+    
     public SiteCoverageSummary() {
         super();
 
@@ -74,7 +74,10 @@ public class SiteCoverageSummary extends InputList {
                     ss.setLength(record, gene.getLength());
 
                     for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
-                        CoveredRegion cr = ((Exon) r.next()).getCoveredRegion();
+                        Exon exon = (Exon) r.next();
+                        emitExoninfo(ss,exon,record);
+                      
+                        CoveredRegion cr = exon.getCoveredRegion();
                         String chr = cr.getChrStr();
                         int SiteStart = cr.getStartPosition(); 
                         ArrayList<int[]> SiteCoverage = cr.getCoverageForSites(GenotypeLevelFilterCommand.minCoverage);
@@ -93,15 +96,29 @@ public class SiteCoverageSummary extends InputList {
                             sb.append("\n");
                             bwSiteSummary.write(sb.toString());
                         }
-                    }
+                    }                   
                 }
+                DoGeneSummary(ss, record);
 
                 LogManager.writeLog("Gene: " + gene.getName() + "\t(" + (record + 1) + " of " + size() + ")");
             }
         }
+        emitSS(ss);
         closeOutput();
     }
     
+    public void emitSS(SampleStatistics ss) {
+        //allow derived class to peek into SampleStatistics
+    }
+    
+    public void emitExoninfo(SampleStatistics ss, Exon exon, int record) {
+        //allow derived class to do extra on an exon
+    }
+    
+    public void DoGeneSummary(SampleStatistics ss, int record) throws Exception {
+        //do nothing for coverage summary
+    }
+
     //give a chance for derived class to process a site
     public void emitSiteInfo(String gene, String chr, int position, int caseCoverage, int ctrlCoverage) {
        
