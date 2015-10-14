@@ -332,6 +332,22 @@ public class SampleStatistics {
         DBUtils.updateGeneCoverageSummary(RecordNames[record], Index2Id, scaledCoverageRatio);
     }
 
+    //a hack here, Nick, please refactor to merge with one of the print function 
+    //only used by siteCoverageComparison for some extra output
+    public void updateSampleRegionCoverage(int record) {
+        for (int i = 0; i < SampleNames.length; i++) {
+            int pass;
+            if (aLength[record] > 0) {
+                double ratio = aCoverage[record][i] / aLength[record];
+                pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
+            } else {
+                pass = 0;
+            }
+            //also accumalate region information here
+            aSampleRegionCoverage[i] = aSampleRegionCoverage[i] + pass;
+        }
+    }
+    
     public void print(int record, BufferedWriter bw) throws Exception {
         for (int i = 0; i < SampleNames.length; i++) {
             StringBuilder sb = new StringBuilder();

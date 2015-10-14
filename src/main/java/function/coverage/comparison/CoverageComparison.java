@@ -27,7 +27,6 @@ import java.util.Iterator;
 //this class can be potentially splitted into two classes of deriving one from another once the functionality is finallized.
 
 public class CoverageComparison extends CoverageSummary {
-
     final String coverageSummaryByExon = CommonCommand.outputPath + "coverage.summary.by.exon.csv";
     final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
     final String CleanedExonList = CommonCommand.outputPath + "exon.clean.txt";
