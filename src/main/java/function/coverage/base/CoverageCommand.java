@@ -132,7 +132,9 @@ public class CoverageCommand {
             if (option.getName().equals("--site-max-percent-cov-difference")) {
                 checkValueValid(1, 0, option);
                 siteCleanCutoff = getValidDouble(option);
-            }  else if (option.getName().equals("--gene-max-percent-cov-difference")) {
+            }  else if (option.getName().equals("--percent-region-covered")) {
+                minPercentRegionCovered = getValidDouble(option);
+            } else if (option.getName().equals("--gene-max-percent-cov-difference")) {
                 checkValueValid(1, 0, option);
                 geneCleanCutoff = getValidDouble(option);
             } else {
