@@ -152,7 +152,7 @@ public class Exac {
 
         sb.append(FormatManager.getDouble(vqslod)).append(",");
         sb.append(FormatManager.getDouble(meanCoverage)).append(",");
-        sb.append(FormatManager.getInteger(sampleCovered10x));
+        sb.append(FormatManager.getInteger(sampleCovered10x)).append(",");
 
         return sb.toString();
     }

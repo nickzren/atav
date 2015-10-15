@@ -6,6 +6,7 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarManager;
 import utils.FormatManager;
 
 /**
@@ -81,7 +82,8 @@ public class CompHetOutput extends TrioOutput implements Comparable {
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
-                + KaviarManager.getTitle();
+                + KaviarManager.getTitle()
+                + KnownVarManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -156,7 +158,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(FormatManager.getDouble(caseMaf)).append(",");
         sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
 
-        sb.append(calledVar.getEvsStr()).append(",");
+        sb.append(calledVar.getEvsStr());
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
@@ -167,9 +169,11 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr()).append(",");
+        sb.append(calledVar.getExacStr());
 
         sb.append(calledVar.getKaviarStr());
+
+        sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
     }

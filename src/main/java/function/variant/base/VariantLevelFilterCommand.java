@@ -3,6 +3,7 @@ package function.variant.base;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.kaviar.KaviarCommand;
+import function.external.knownvar.KnownVarCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -83,7 +84,9 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--max-kaviar-allele-count")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
-            }else {
+            } else if (option.getName().equals("--include-known-var")) {
+                KnownVarCommand.isIncludeKnownVar = true;
+            } else {
                 continue;
             }
 

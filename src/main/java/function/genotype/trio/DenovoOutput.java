@@ -6,6 +6,7 @@ import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
@@ -85,8 +86,9 @@ public class DenovoOutput extends TrioOutput {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle() 
-            + KaviarManager.getTitle();
+            + ExacManager.getTitle()
+            + KaviarManager.getTitle()
+            + KnownVarManager.getTitle();
 
     public DenovoOutput(CalledVariant c) {
         super(c);
@@ -225,7 +227,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
         sb.append(FormatManager.getDouble(avgCtrlCov)).append(",");
 
-        sb.append(calledVar.getEvsStr()).append(",");
+        sb.append(calledVar.getEvsStr());
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
@@ -239,9 +241,11 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr()).append(",");
-        
+        sb.append(calledVar.getExacStr());
+
         sb.append(calledVar.getKaviarStr());
+
+        sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
     }

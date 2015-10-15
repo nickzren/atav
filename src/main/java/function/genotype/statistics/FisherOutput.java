@@ -8,6 +8,7 @@ import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarManager;
 import utils.FormatManager;
 import utils.LogManager;
 import java.util.ArrayList;
@@ -60,8 +61,9 @@ public class FisherOutput extends StatisticOutput {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle() 
-            + KaviarManager.getTitle();
+            + ExacManager.getTitle()
+            + KaviarManager.getTitle()
+            + KnownVarManager.getTitle();
 
     public FisherOutput(CalledVariant c) {
         super(c);
@@ -139,7 +141,7 @@ public class FisherOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(averageCov[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
 
-        sb.append(calledVar.getEvsStr()).append(",");
+        sb.append(calledVar.getEvsStr());
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
@@ -153,9 +155,11 @@ public class FisherOutput extends StatisticOutput {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr()).append(",");
-        
+        sb.append(calledVar.getExacStr());
+
         sb.append(calledVar.getKaviarStr());
+
+        sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
     }

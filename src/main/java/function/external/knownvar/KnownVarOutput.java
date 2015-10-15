@@ -7,7 +7,7 @@ import function.annotation.base.AnnotatedVariant;
  * @author nick
  */
 public class KnownVarOutput {
-    
+
     String variantIdStr;
     Clinvar clinvar;
     HGMD hgmd;
@@ -15,16 +15,7 @@ public class KnownVarOutput {
 
     public static final String title
             = "Variant ID,"
-            + "Clinvar Clinical Significance,"
-            + "Clinvar Other Ids,"
-            + "Clinvar Disease Name,"
-            + "Clinvar Flanking Count,"
-            + "HGMD Variant Class,"
-            + "HGMD Pmid,"
-            + "HGMD Disease Name,"
-            + "HGMD Flanking Count,"
-            + "OMIM Gene Name,"
-            + "OMIM Disease Name";
+            + KnownVarManager.getTitle();
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
         variantIdStr = annotatedVar.variantIdStr;
@@ -32,16 +23,15 @@ public class KnownVarOutput {
         hgmd = new HGMD(variantIdStr);
         omim = new OMIM(annotatedVar.getGeneName());
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(variantIdStr).append(",");
         sb.append(clinvar.toString()).append(",");
         sb.append(hgmd.toString()).append(",");
-        sb.append(omim.toString());
-        
+        sb.append(omim.toString()).append(",");
+
         return sb.toString();
     }
 }

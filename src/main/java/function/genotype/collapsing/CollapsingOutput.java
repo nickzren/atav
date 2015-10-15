@@ -5,6 +5,7 @@ import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
@@ -82,8 +83,9 @@ public class CollapsingOutput extends Output implements Comparable {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle() 
-            + KaviarManager.getTitle();
+            + ExacManager.getTitle()
+            + KaviarManager.getTitle()
+            + KnownVarManager.getTitle();
 
     public CollapsingOutput(CalledVariant c) {
         super(c);
@@ -195,7 +197,7 @@ public class CollapsingOutput extends Output implements Comparable {
                 return true;
             }
         }
-        
+
         if (isMinorRef) {
             if (geno == 0 || geno == 1) {
                 return true;
@@ -273,7 +275,7 @@ public class CollapsingOutput extends Output implements Comparable {
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
 
-        sb.append(calledVar.getEvsStr()).append(",");
+        sb.append(calledVar.getEvsStr());
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
@@ -287,9 +289,11 @@ public class CollapsingOutput extends Output implements Comparable {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr()).append(",");
-        
+        sb.append(calledVar.getExacStr());
+
         sb.append(calledVar.getKaviarStr());
+        
+        sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
     }

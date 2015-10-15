@@ -90,7 +90,7 @@ public class Kaviar {
 
         sb.append(FormatManager.getDouble(alleleFreq)).append(",");
         sb.append(FormatManager.getInteger(alleleCount)).append(",");
-        sb.append(FormatManager.getInteger(alleleNumber));
+        sb.append(FormatManager.getInteger(alleleNumber)).append(",");
 
         return sb.toString();
     }

@@ -251,7 +251,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 sb.append(IntolerantScoreManager.getValues(output1.geneName)).append(",");
                 sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
 
-                sb.append(output1.getString(child1, child2)).append(",");
+                sb.append(output1.getString(child1, child2));
                 sb.append(output2.getString(child2, child2));
 
                 if (flag.equals(FLAG[2])) {
