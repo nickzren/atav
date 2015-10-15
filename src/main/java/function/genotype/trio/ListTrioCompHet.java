@@ -408,7 +408,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                     sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
                                     sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
 
-                                    sb.append(output1.toString()).append(",");
+                                    sb.append(output1.toString());
                                     sb.append(output2.toString());
 
                                     if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {

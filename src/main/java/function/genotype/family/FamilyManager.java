@@ -73,7 +73,7 @@ public class FamilyManager {
             ErrorManager.print("There is no family in your sample file.");
         } else {
             LogManager.writeAndPrint("Analyzing " + userFamilyIdSet.size() + " families "
-                    + "and there are " + allFamilyMap.size() + " families available now.");
+                    + "and " + allFamilyMap.size() + " families are available now from your sample file.");
         }
     }
 

@@ -164,7 +164,7 @@ public class Evs {
         sb.append(aaGenotypeCount).append(",");
         sb.append(FormatManager.getFloat(allMaf)).append(",");
         sb.append(allGenotypeCount).append(",");
-        sb.append(filterStatus);
+        sb.append(filterStatus).append(",");
 
         return sb.toString();
     }

@@ -141,7 +141,7 @@ public class FisherOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(averageCov[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
 
-        sb.append(calledVar.getEvsStr()).append(",");
+        sb.append(calledVar.getEvsStr());
 
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
@@ -155,9 +155,9 @@ public class FisherOutput extends StatisticOutput {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
 
-        sb.append(calledVar.getExacStr()).append(",");
+        sb.append(calledVar.getExacStr());
 
-        sb.append(calledVar.getKaviarStr()).append(",");
+        sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
 

@@ -30,7 +30,7 @@ public class KnownVarOutput {
 
         sb.append(clinvar.toString()).append(",");
         sb.append(hgmd.toString()).append(",");
-        sb.append(omim.toString());
+        sb.append(omim.toString()).append(",");
 
         return sb.toString();
     }

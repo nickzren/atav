@@ -60,7 +60,7 @@ public class VarAnnoOutput {
 
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
 
-        sb.append(annotatedVar.getEvsStr()).append(",");
+        sb.append(annotatedVar.getEvsStr());
 
         sb.append(annotatedVar.getPolyphenHumdivScore()).append(",");
         sb.append(annotatedVar.getPolyphenHumdivPrediction()).append(",");
@@ -79,9 +79,9 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getCodingSequenceChange()).append(",");
         sb.append(annotatedVar.getTranscriptSet()).append(",");
 
-        sb.append(annotatedVar.getExacStr()).append(",");
+        sb.append(annotatedVar.getExacStr());
         
-        sb.append(annotatedVar.getKaviarStr()).append(",");
+        sb.append(annotatedVar.getKaviarStr());
         
         sb.append(annotatedVar.getKnownVarStr());
 

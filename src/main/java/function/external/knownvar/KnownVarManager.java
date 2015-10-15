@@ -26,7 +26,7 @@ public class KnownVarManager {
                     + "HGMD Disease Name,"
                     + "HGMD Flanking Count,"
                     + "OMIM Gene Name,"
-                    + "OMIM Disease Name";
+                    + "OMIM Disease Name,";
         } else {
             return "";
         }

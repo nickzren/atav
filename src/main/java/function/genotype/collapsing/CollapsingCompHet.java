@@ -230,7 +230,7 @@ public class CollapsingCompHet extends CollapsingBase {
                         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
                         sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
                         sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
-                        sb.append(output1.getString(sample)).append(",");
+                        sb.append(output1.getString(sample));
                         sb.append(output2.getString(sample));
 
                         SampleVariantCount.update(output1.getCalledVariant().isSnv(),
