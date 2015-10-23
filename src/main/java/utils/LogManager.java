@@ -3,6 +3,7 @@ package utils;
 import global.Data;
 import java.io.*;
 import java.util.Date;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,15 +16,20 @@ public class LogManager {
     private static BufferedWriter userLog = null;
     private static StringBuilder basicInfo = new StringBuilder();
 
+    public static String totalRunTime;
+
+    // users command log file path
+    public static final String USERS_COMMAND_LOG = "/nfs/goldstein/software/atav_home/log/users.command.log";
+
     public static void initBasicInfo() {
         basicInfo.append("\n+---------------------------------------------------------------+\n");
         basicInfo.append("| [Software]:\t" + Data.AppTitle + "\t|\n");
         basicInfo.append("  [Version]:\t" + Data.version + "\t\t\t\t\t\t\n");
         basicInfo.append("| [Developers]:\t" + Data.developer + "\t\t\t\t|\n");
         basicInfo.append("  [Year]:\t" + Data.year + "\t\t\t\t\t\t\n");
-        basicInfo.append("| [Institute]:\t"+ Data.insititue + "\t\t|\n");
+        basicInfo.append("| [Institute]:\t" + Data.insititue + "\t\t|\n");
         basicInfo.append("+---------------------------------------------------------------+");
-    }    
+    }
 
     public static void initPath() {
         try {
@@ -86,5 +92,44 @@ public class LogManager {
         }
 
         System.exit(0);
+    }
+
+    public static void recordUserCommand() throws Exception {
+        if (isBioinfoTeam()) {
+            return;
+        }
+
+        File file = new File(USERS_COMMAND_LOG);
+
+        FileWriter fileWritter = new FileWriter(file, true);
+
+        BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+
+        Date date = new Date();
+
+        bufferWritter.write(Data.userName + "\t"
+                + date.toString() + "\t"
+                + DBManager.getHost() + "\t"
+                + System.getenv("HOSTNAME") + "\t"
+                + CommandManager.command + "\t"
+                + totalRunTime);
+
+        bufferWritter.newLine();
+
+        bufferWritter.close();
+    }
+
+    private static boolean isBioinfoTeam() throws Exception {
+        InputStream input = new FileInputStream(Data.SYSTEM_CONFIG);
+        Properties prop = new Properties();
+        prop.load(input);
+        
+        String members = prop.getProperty("bioinfo-team");
+
+        if (members.contains(Data.userName)) {
+            return true;
+        }
+
+        return false;
     }
 }
