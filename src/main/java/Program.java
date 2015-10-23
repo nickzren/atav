@@ -53,6 +53,7 @@ import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.nondb.ppi.PPI;
 import function.nondb.ppi.PPICommand;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -60,11 +61,9 @@ import function.nondb.ppi.PPICommand;
  */
 public class Program {
 
-    private static long start, end;
-
     public static void main(String[] args) {
         try {
-            start = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
 
             init(args);
 
@@ -72,9 +71,11 @@ public class Program {
 
             SampleManager.recheckSampleList();
 
-            end = System.currentTimeMillis();
+            outputRuntime(start);
 
-            outputRuntime();
+            LogManager.recordUserCommand();
+
+            LogManager.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -180,16 +181,17 @@ public class Program {
         analysis.run();
     }
 
-    private static void outputRuntime() {
-        int seconds = (int) (Math.rint(end - start) / 1000);
-        int minutes = seconds / 60;
-        int hours = seconds / 3600;
+    private static void outputRuntime(long start) {
+        long total = System.currentTimeMillis() - start;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(total);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(total);
+        long hours = TimeUnit.MILLISECONDS.toHours(total);
 
-        LogManager.writeAndPrint("\nRunning Time: "
-                + seconds + " seconds "
+        LogManager.totalRunTime = seconds + " seconds "
                 + "(aka " + minutes + " minutes or "
-                + hours + " hours).\n");
+                + hours + " hours)";
 
-        LogManager.close();
+        LogManager.writeAndPrint("\nTotal runtime: "
+                + LogManager.totalRunTime + "\n");
     }
 }
