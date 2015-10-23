@@ -90,8 +90,6 @@ public class LogManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.exit(0);
     }
 
     public static void recordUserCommand() throws Exception {
@@ -107,12 +105,15 @@ public class LogManager {
 
         Date date = new Date();
 
+        long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
+
         bufferWritter.write(Data.userName + "\t"
                 + date.toString() + "\t"
                 + DBManager.getHost() + "\t"
                 + System.getenv("HOSTNAME") + "\t"
                 + CommandManager.command + "\t"
-                + totalRunTime);
+                + totalRunTime + "\t"
+                + outputFolderSize + " bytes");
 
         bufferWritter.newLine();
 
@@ -123,7 +124,7 @@ public class LogManager {
         InputStream input = new FileInputStream(Data.SYSTEM_CONFIG);
         Properties prop = new Properties();
         prop.load(input);
-        
+
         String members = prop.getProperty("bioinfo-team");
 
         if (members.contains(Data.userName)) {
@@ -131,5 +132,17 @@ public class LogManager {
         }
 
         return false;
+    }
+
+    private static long folderSize(File directory) {
+        long length = 0;
+        for (File file : directory.listFiles()) {            
+            if (file.isFile()) {
+                length += file.length();
+            } else {
+                length += folderSize(file);
+            }
+        }
+        return length;
     }
 }

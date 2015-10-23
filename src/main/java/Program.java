@@ -74,8 +74,6 @@ public class Program {
             outputRuntime(start);
 
             LogManager.recordUserCommand();
-
-            LogManager.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -193,5 +191,7 @@ public class Program {
 
         LogManager.writeAndPrint("\nTotal runtime: "
                 + LogManager.totalRunTime + "\n");
+
+        LogManager.close();
     }
 }
