@@ -37,6 +37,8 @@ public class Data {
     public static final String RECOURCE_PATH = new File(".").getAbsolutePath() + "/src/main/resources/";
 
     public static final String DB_HOST_CONFIG_PATH = "config/host";
+    public static final String SAMPLE_GROUP_RESTRICTION_PATH = "config/sample.group.restriction.txt";
+    public static final String USER_GROUP_RESTRICTION_PATH = "config/user.group.restriction.txt";
     public static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
     public static final String CCDS_TRANSCRIPT_PATH = "data/ccds_transcript.txt";
     public static final String CANONICAL_TRANSCRIPT_PATH = "data/canonical_transcript.txt";
