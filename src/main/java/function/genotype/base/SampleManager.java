@@ -77,7 +77,7 @@ public class SampleManager {
 
         initTempTables();
 
-        outputSampleList();
+        outputSampleListSummary();
     }
 
     private static void initSamplePermission() {
@@ -332,43 +332,37 @@ public class SampleManager {
         }
     }
 
-    private static void outputSampleList() {
-        printSampleList("The following samples are included in the analysis:",
-                sampleList,
-                "\nThe number of samples included in the analysis is "
-                + sampleList.size() + " (" + caseNum + " cases and " + ctrlNum + " controls).\n");
+    private static void outputSampleListSummary() {
+        LogManager.writeAndPrint("The total number of samples included in the analysis is "
+                + sampleList.size() + " (" + caseNum + " cases and " + ctrlNum + " controls).");
 
         printSampleList("The following samples are not allowed to use:",
-                restrictedSampleList,
-                "");
+                restrictedSampleList);
 
-        printSampleList("The following samples are labeled as failed in annodb:",
-                failedSampleList,
-                "");
+        printSampleList("The following samples are labeled as failed in AnnoDB:",
+                failedSampleList);
 
         printSampleList("The following samples are in annodb but with a different seqtype or capture kit:",
-                diffTypeSampleList,
-                "");
+                diffTypeSampleList);
 
-        printSampleList("The following samples are not exist in annodb:",
-                notExistSampleList,
-                "");
+        printSampleList("The following samples are not exist in AnnoDB:",
+                notExistSampleList);
+        
+        LogManager.writeAndPrintWithoutNewLine(""); // hack to add new line
     }
 
     private static void printSampleList(String startMessage,
-            ArrayList<Sample> sampleList, String endMessage) {
-        if (!sampleList.isEmpty()) {            
-            LogManager.writeLog(startMessage);
+            ArrayList<Sample> sampleList) {
+        if (!sampleList.isEmpty()) {
+            LogManager.writeAndPrintWithoutNewLine(startMessage);
 
             for (Sample sample : sampleList) {
-                LogManager.writeLog(
+                LogManager.writeAndPrintWithoutNewLine(
                         FormatManager.getInteger(sample.getPrepId())
                         + "\t" + sample.getName()
                         + "\t" + sample.getType()
                         + "\t" + sample.getCaptureKit());
             }
-
-            LogManager.writeLog(endMessage);
         }
     }
 
