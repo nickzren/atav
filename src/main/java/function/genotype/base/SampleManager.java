@@ -24,7 +24,11 @@ import utils.FormatManager;
  */
 public class SampleManager {
 
-    public static final int[] Region_Length = {511, 255};
+    // sample permission
+    private static Hashtable<String, String> sampleGroupTable // sample_name, group_name
+            = new Hashtable<String, String>();
+    private static Hashtable<String, HashSet<String>> userGroupTable // group_name, user set
+            = new Hashtable<String, HashSet<String>>();
 
     private static ArrayList<Sample> sampleList = new ArrayList<Sample>();
     private static Hashtable<Integer, Sample> sampleTable = new Hashtable<Integer, Sample>();
@@ -45,6 +49,8 @@ public class SampleManager {
     private static ArrayList<Sample> deletedSampleList = new ArrayList<Sample>();
     private static ArrayList<Sample> replacedSampleList = new ArrayList<Sample>();
 
+    private static ArrayList<Sample> restrictedSampleList = new ArrayList<Sample>();
+
     private static String tempCovarFile;
     private static String covariateFileTitle = "";
 
@@ -52,6 +58,8 @@ public class SampleManager {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
         }
+
+        initSamplePermission();
 
         checkSampleFile();
 
@@ -70,6 +78,72 @@ public class SampleManager {
         initTempTables();
 
         outputSampleList();
+    }
+
+    private static void initSamplePermission() {
+        initSampleGroup();
+
+        initUserGroup();
+    }
+
+    private static void initSampleGroup() {
+        try {
+            File f = new File(Data.SAMPLE_GROUP_RESTRICTION_PATH);
+            FileInputStream fstream = new FileInputStream(f);
+            DataInputStream in = new DataInputStream(fstream);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            String lineStr = "";
+            while ((lineStr = br.readLine()) != null) {
+                if (!lineStr.isEmpty()) {
+                    String[] tmp = lineStr.trim().split("\t");
+
+                    sampleGroupTable.put(tmp[0], tmp[1]);
+                }
+            }
+
+            br.close();
+            in.close();
+            fstream.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private static void initUserGroup() {
+        try {
+            File f = new File(Data.USER_GROUP_RESTRICTION_PATH);
+            FileInputStream fstream = new FileInputStream(f);
+            DataInputStream in = new DataInputStream(fstream);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            String lineStr = "";
+            while ((lineStr = br.readLine()) != null) {
+                if (!lineStr.isEmpty()) {
+                    String[] tmp = lineStr.trim().split("\t");
+
+                    String groupName = tmp[0];
+                    String[] users = tmp[1].split(",");
+
+                    HashSet<String> userSet = userGroupTable.get(groupName);
+
+                    if (userSet == null) {
+                        userSet = new HashSet<String>();
+                        userGroupTable.put(groupName, userSet);
+                    }
+
+                    for (String user : users) {
+                        userSet.add(user);
+                    }
+                }
+            }
+
+            br.close();
+            in.close();
+            fstream.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
     }
 
     private static void checkSampleFile() {
@@ -139,6 +213,11 @@ public class SampleManager {
                 Sample sample = new Sample(sampleId, familyId, individualId,
                         paternalId, maternalId, sex, pheno, sampleType, captureKit);
 
+                if (!checkSamplePermission(sample)) {
+                    restrictedSampleList.add(sample);
+                    continue;
+                }
+
                 if (sampleId == Data.NA) {
                     checkSampleList(sample);
                     continue;
@@ -186,6 +265,11 @@ public class SampleManager {
                 Sample sample = new Sample(sampleId, familyId, individualId,
                         paternalId, maternalId, sex, pheno, sampleType, captureKit);
 
+                if (!checkSamplePermission(sample)) {
+                    restrictedSampleList.add(sample);
+                    continue;
+                }
+
                 sampleList.add(sample);
                 sampleTable.put(sampleId, sample);
 
@@ -196,6 +280,23 @@ public class SampleManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+
+    private static boolean checkSamplePermission(Sample sample) {
+        if (sampleGroupTable.containsKey(sample.getName())) {
+            String groupName = sampleGroupTable.get(sample.getName());
+
+            HashSet<String> userSet = userGroupTable.get(groupName);
+
+            if (userSet.contains(Data.userName)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true; // not in sample restricted list
+        }
+
     }
 
     private static void checkSampleList(Sample sample) {
@@ -235,24 +336,28 @@ public class SampleManager {
         printSampleList("The following samples are included in the analysis:",
                 sampleList,
                 "\nThe number of samples included in the analysis is "
-                + sampleList.size() + " (" + caseNum + " cases and " + ctrlNum + " controls).\n\n");
+                + sampleList.size() + " (" + caseNum + " cases and " + ctrlNum + " controls).\n");
+
+        printSampleList("The following samples are not allowed to use:",
+                restrictedSampleList,
+                "");
 
         printSampleList("The following samples are labeled as failed in annodb:",
                 failedSampleList,
-                "\n");
+                "");
 
         printSampleList("The following samples are in annodb but with a different seqtype or capture kit:",
                 diffTypeSampleList,
-                "\n");
+                "");
 
         printSampleList("The following samples are not exist in annodb:",
                 notExistSampleList,
-                "\n");
+                "");
     }
 
     private static void printSampleList(String startMessage,
             ArrayList<Sample> sampleList, String endMessage) {
-        if (!sampleList.isEmpty()) {
+        if (!sampleList.isEmpty()) {            
             LogManager.writeLog(startMessage);
 
             for (Sample sample : sampleList) {
