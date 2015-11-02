@@ -347,8 +347,6 @@ public class SampleManager {
 
         printSampleList("The following samples are not exist in AnnoDB:",
                 notExistSampleList);
-        
-        LogManager.writeAndPrintWithoutNewLine(""); // hack to add new line
     }
 
     private static void printSampleList(String startMessage,
@@ -363,6 +361,8 @@ public class SampleManager {
                         + "\t" + sample.getType()
                         + "\t" + sample.getCaptureKit());
             }
+
+            LogManager.writeAndPrintWithoutNewLine(""); // hack to add new line
         }
     }
 
@@ -827,7 +827,7 @@ public class SampleManager {
     public static void initCarrierMap(Variant var,
             HashMap<Integer, Carrier> carrierMap) {
         String sqlCarrier = "SELECT * "
-                + "FROM called_" + var.getType() + " va,"
+                + "FROM called_" + var.getType() + "_chr" + var.region.chrStr + " va,"
                 + Data.ALL_SAMPLE_ID_TABLE + " t "
                 + "WHERE va." + var.getType() + "_id = " + var.getVariantId()
                 + " AND va.sample_id = t.id";
