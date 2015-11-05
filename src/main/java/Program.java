@@ -53,6 +53,8 @@ import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.nondb.ppi.PPI;
 import function.nondb.ppi.PPICommand;
+import function.test.Test;
+import function.test.TestCommand;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -167,6 +169,8 @@ public class Program {
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());
                 ppi.run();
+            } else if (TestCommand.isTest) { // Test Functions
+                runAnalysis(new Test());
             }
         } catch (Exception e) {
             ErrorManager.send(e);

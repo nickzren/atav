@@ -20,6 +20,7 @@ import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.nondb.ppi.PPICommand;
+import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -318,10 +319,13 @@ public class CommandManager {
             } else if (option.getName().equals("--list-kaviar")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KaviarCommand.isListKaviar = true;
-            }else if (option.getName().equals("--ppi")) { // Non Database Functions
+            } else if (option.getName().equals("--ppi")) { // Non Database Functions
                 PPICommand.isPPI = true;
                 CommonCommand.isNonDBAnalysis = true;
                 CommonCommand.isNonSampleAnalysis = true;
+            } else if (option.getName().equals("--test")) { // Test Functions
+                CommonCommand.isNonSampleAnalysis = true;
+                TestCommand.isTest = true;
             } else {
                 continue;
             }
@@ -384,6 +388,8 @@ public class CommandManager {
             FlankingCommand.initOptions(optionList.iterator());
         } else if (PPICommand.isPPI) { // Non Database Functions
             PPICommand.initOptions(optionList.iterator());
+        } else if (TestCommand.isTest) { // Test Functions
+
         }
     }
 
