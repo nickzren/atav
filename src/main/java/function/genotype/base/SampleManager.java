@@ -827,7 +827,7 @@ public class SampleManager {
     public static void initCarrierMap(Variant var,
             HashMap<Integer, Carrier> carrierMap) {
         String sqlCarrier = "SELECT * "
-                + "FROM called_" + var.getType() + "_chr" + var.region.chrStr + " va,"
+                + "FROM called_" + var.getType() + " va,"
                 + Data.ALL_SAMPLE_ID_TABLE + " t "
                 + "WHERE va." + var.getType() + "_id = " + var.getVariantId()
                 + " AND va.sample_id = t.id";
