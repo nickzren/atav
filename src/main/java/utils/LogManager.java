@@ -67,7 +67,7 @@ public class LogManager {
         System.out.println(str + "\n");
         writeLog(str + "\n");
     }
-    
+
     public static void writeAndPrintWithoutNewLine(String str) {
         System.out.println(str);
         writeLog(str);
@@ -126,7 +126,13 @@ public class LogManager {
     }
 
     private static boolean isBioinfoTeam() throws Exception {
-        InputStream input = new FileInputStream(Data.SYSTEM_CONFIG);
+        String configPath = Data.SYSTEM_CONFIG;
+
+        if (CommonCommand.isDebug) {
+            configPath = Data.SYSTEM_CONFIG_FOR_DEBUG;
+        }
+
+        InputStream input = new FileInputStream(configPath);
         Properties prop = new Properties();
         prop.load(input);
 
@@ -141,7 +147,7 @@ public class LogManager {
 
     private static long folderSize(File directory) {
         long length = 0;
-        for (File file : directory.listFiles()) {            
+        for (File file : directory.listFiles()) {
             if (file.isFile()) {
                 length += file.length();
             } else {
