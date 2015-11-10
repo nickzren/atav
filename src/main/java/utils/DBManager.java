@@ -58,7 +58,13 @@ public class DBManager {
 
     private static void initDataFromSystemConfig() {
         try {
-            InputStream input = new FileInputStream(Data.SYSTEM_CONFIG);
+            String configPath = Data.SYSTEM_CONFIG;
+
+            if (CommonCommand.isDebug) {
+                configPath = Data.SYSTEM_CONFIG_FOR_DEBUG;
+            }
+
+            InputStream input = new FileInputStream(configPath);
             Properties prop = new Properties();
             prop.load(input);
 

@@ -1,7 +1,5 @@
 package global;
 
-import java.io.File;
-
 /**
  *
  * @author nick
@@ -32,10 +30,14 @@ public class Data {
 
     // system config file path
     public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.system.config.properties";
+    public static final String SYSTEM_CONFIG_FOR_DEBUG = "/nfs/goldstein/software/config/atav.debug.system.config.properties";
     
-    // system file path for debug
-    public static final String RECOURCE_PATH = new File(".").getAbsolutePath() + "/src/main/resources/";
-
+    // recource path for server-side debug
+    public static final String RECOURCE_PATH = "";
+    
+    // recource path for client-side debug
+    // public static final String RECOURCE_PATH = new File(".").getAbsolutePath() + "/src/main/resources/";
+    
     public static final String DB_HOST_CONFIG_PATH = "config/host";
     public static final String SAMPLE_GROUP_RESTRICTION_PATH = "config/sample.group.restriction.txt";
     public static final String USER_GROUP_RESTRICTION_PATH = "config/user.group.restriction.txt";
