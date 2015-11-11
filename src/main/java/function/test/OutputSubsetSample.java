@@ -10,6 +10,10 @@ import utils.LogManager;
  * @author nick
  */
 public class OutputSubsetSample {
+    
+    // minor config tweak for this task
+    // CommonCommand.isNonSampleAnalysis = true;
+    // server annodb04
 
     public static final String OUTPUT_PATH = "/nfs/seqscratch10/ANNOTATION/tmp/annodb_pgm/";
 

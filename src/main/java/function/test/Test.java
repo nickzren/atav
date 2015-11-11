@@ -2,7 +2,6 @@ package function.test;
 
 import function.AnalysisBase;
 import utils.ErrorManager;
-import utils.LogManager;
 
 /**
  * code here for any testing or small ETL task purpose
@@ -38,7 +37,9 @@ public class Test extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-            LogManager.writeAndPrint("testing!!!");
+//            OutputSubsetSample.run();
+//            
+//            LoadSubsetSample.run();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
