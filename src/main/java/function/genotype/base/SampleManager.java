@@ -686,8 +686,7 @@ public class SampleManager {
                     + "AND sample_type = '" + sampleType + "' "
                     + "AND capture_kit = '" + captureKit + "' "
                     + "AND sample_id IN (SELECT sample_id FROM sample_pipeline_step AS b "
-                    + "WHERE pipeline_step_id = 10 AND step_status = 'completed') "
-                    + "ORDER BY CASE WHEN prep_id IS NULL THEN 1 ELSE 0 END,prep_id DESC";
+                    + "WHERE pipeline_step_id = 10 AND step_status = 'completed')";
 
             ResultSet rs = DBManager.executeQuery(sqlCode);
             if (rs.next()) {
