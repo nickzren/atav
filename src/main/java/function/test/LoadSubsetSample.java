@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.SQLException;
 import utils.DBManager;
 import utils.LogManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -21,13 +22,22 @@ public class LoadSubsetSample {
         for (File file : dir.listFiles()) {
             String fileName = file.getName();
 
+            if (fileName.equals("called_snv.txt")) { // leave it to the last step
+                continue;
+            }
+
             if (fileName.endsWith(".txt")) {
                 String sql = "LOAD DATA INFILE "
                         + "'" + file.getAbsolutePath() + "' "
-                        + "INTO TABLE " + fileName.substring(0, fileName.indexOf(".txt"));
+                        + "IGNORE INTO TABLE " + fileName.substring(0, fileName.indexOf(".txt"));
 
                 LogManager.writeAndPrint(sql);
                 DBManager.executeQuery(sql);
+
+                String[] cmd = {"mv "
+                    + file.getAbsolutePath() + " "
+                    + file.getAbsolutePath() + ".loaded"};
+                ThirdPartyToolManager.systemCall(cmd);
             }
         }
     }
