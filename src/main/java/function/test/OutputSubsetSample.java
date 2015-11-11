@@ -10,17 +10,18 @@ import utils.LogManager;
  * @author nick
  */
 public class OutputSubsetSample {
-    
+
     // minor config tweak for this task
     // CommonCommand.isNonSampleAnalysis = true;
     // server annodb04
-
     public static final String OUTPUT_PATH = "/nfs/seqscratch10/ANNOTATION/tmp/annodb_pgm/";
 
     public static void run() throws SQLException {
-        outputCarrierData();
+//        outputCarrierData();
+//
+//        outputNonCarrierData();
 
-        outputNonCarrierData();
+        outputGeneCoverageSummary();
     }
 
     public static void outputCarrierData() throws SQLException {
@@ -58,5 +59,16 @@ public class OutputSubsetSample {
                 DBManager.executeQuery(nonCarrierSql);
             }
         }
+    }
+
+    public static void outputGeneCoverageSummary() throws SQLException {
+        String geneCoverageSummarySql = "SELECT * "
+                + "FROM gene_coverage_summary g,"
+                + Data.ALL_SAMPLE_ID_TABLE + " t "
+                + "WHERE g.sample_id = t.id "
+                + "INTO OUTFILE '" + OUTPUT_PATH + "gene_coverage_summary_subset.txt'";
+
+        LogManager.writeAndPrint(geneCoverageSummarySql);
+        DBManager.executeQuery(geneCoverageSummarySql);
     }
 }
