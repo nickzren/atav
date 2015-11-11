@@ -28,7 +28,6 @@ public class LoadSubsetSample {
 
                 LogManager.writeAndPrint(sql);
                 DBManager.executeQuery(sql);
-
             }
         }
     }
