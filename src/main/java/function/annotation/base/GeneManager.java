@@ -307,19 +307,6 @@ public class GeneManager {
         return false;
     }
 
-    public static boolean isValid(String name, Region region) {
-        if (geneMap.isEmpty()) {
-            return true;
-        }
-
-        if (geneMap.containsKey(name)
-                && geneMap.get(name).contains(region)) {
-            return true;
-        }
-
-        return false;
-    }
-
     public static boolean isValid(String name) {
         if (geneMap.isEmpty()) {
             return true;
