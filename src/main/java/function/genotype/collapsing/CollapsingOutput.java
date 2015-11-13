@@ -93,16 +93,14 @@ public class CollapsingOutput extends Output {
 
     public CollapsingOutput(CalledVariant c) {
         super(c);
-        
+
         geneName = c.getGeneName();
     }
 
     public void initRegionBoundaryNameSet() {
-        if (!CollapsingCommand.regionBoundaryFile.isEmpty()) {
-            regionBoundaryNameSet = RegionBoundaryManager.getNameSet(
-                    calledVar.getRegion().chrStr,
-                    calledVar.getRegion().startPosition);
-        }
+        regionBoundaryNameSet = RegionBoundaryManager.getNameSet(
+                calledVar.getRegion().chrStr,
+                calledVar.getRegion().startPosition);
     }
 
     public void initGenoType(int geno) {
