@@ -13,10 +13,10 @@ public class RegionBoundary {
     private List<Region> regionList = new ArrayList<Region>();
 
     public RegionBoundary(String regionBoundaryStr) {
-        String[] tmp = regionBoundaryStr.split("\t");
+        String[] tmp = regionBoundaryStr.split("\\s+");
 
         name = tmp[0];
-
+        
         initRegionList(tmp[1]);
     }
 
@@ -66,6 +66,10 @@ public class RegionBoundary {
             }
 
             return false;
+        }
+
+        public String toString() {
+            return chr + ":" + start + "-" + end;
         }
     }
 }

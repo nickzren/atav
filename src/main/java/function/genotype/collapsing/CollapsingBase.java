@@ -90,6 +90,8 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
+        RegionBoundaryManager.init();
+        
         initSummaryTable();
 
         SampleManager.generateCovariateFile();

@@ -1,6 +1,7 @@
 package function.genotype.collapsing;
 
 import function.genotype.collapsing.RegionBoundary.Region;
+import function.variant.base.RegionManager;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -9,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import utils.ErrorManager;
 
 /**
  *
@@ -18,26 +20,32 @@ public class RegionBoundaryManager {
 
     private static List<RegionBoundary> regionBoundaryList = new ArrayList<RegionBoundary>();
 
-    public static void init() throws Exception {
+    public static void init() {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
             return;
         }
 
-        File f = new File(CollapsingCommand.regionBoundaryFile);
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        try {
+            File f = new File(CollapsingCommand.regionBoundaryFile);
+            FileInputStream fstream = new FileInputStream(f);
+            DataInputStream in = new DataInputStream(fstream);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-        String lineStr = "";
-        while ((lineStr = br.readLine()) != null) {
-            if (!lineStr.isEmpty()) {
-                regionBoundaryList.add(new RegionBoundary(lineStr));
+            String lineStr = "";
+            while ((lineStr = br.readLine()) != null) {
+                if (!lineStr.isEmpty()) {
+                    regionBoundaryList.add(new RegionBoundary(lineStr));
+                }
             }
-        }
 
-        br.close();
-        in.close();
-        fstream.close();
+            br.close();
+            in.close();
+            fstream.close();
+
+            resetRegionList();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
     }
 
     public static List<RegionBoundary> getList() {
@@ -57,5 +65,22 @@ public class RegionBoundaryManager {
         }
 
         return nameSet;
+    }
+
+    private static void resetRegionList() throws Exception {
+        if (!RegionManager.isUsed()) {
+            RegionManager.clear();
+
+            HashSet<String> regionSet = new HashSet<String>();
+
+            for (RegionBoundary regionBoundary : regionBoundaryList) {
+                for (Region region : regionBoundary.getList()) {
+                    regionSet.add(region.toString());
+                }
+            }
+
+            RegionManager.initRegionList(regionSet.toArray(new String[regionSet.size()]));
+            RegionManager.sortRegionList();
+        }
     }
 }

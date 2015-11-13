@@ -120,7 +120,7 @@ public class CollapsingSummary implements Comparable {
 
     @Override
     public int compareTo(Object another) throws ClassCastException {
-        CollapsingGeneSummary that = (CollapsingGeneSummary) another;
+        CollapsingSummary that = (CollapsingSummary) another;
         return Double.compare(this.fetP, that.fetP); //small -> large
     }
 }
