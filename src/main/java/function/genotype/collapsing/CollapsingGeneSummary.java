@@ -41,24 +41,14 @@ public class CollapsingGeneSummary extends CollapsingSummary {
             + GeneManager.getCoverageSummary("title")
             + "\n";
 
-    double logisticP = Data.NA;
-    double linearP = Data.NA;
     String coverageSummaryLine;
 
     public CollapsingGeneSummary(String name) {
         super(name);
     }
 
-    public void setLogisticP(double value) {
-        logisticP = value;
-    }
-
-    public void setLinearP(double value) {
-        linearP = value;
-    }
-
     public static void calculateLinearAndLogisticP(String geneSampleMatrixFilePath,
-            Hashtable<String, CollapsingGeneSummary> summaryTable) throws Exception {
+            Hashtable<String, CollapsingSummary> summaryTable) throws Exception {
         String geneLogisticPPath = CommonCommand.outputPath + "gene.logistic.p.csv";
         String geneLinearPPath = CommonCommand.outputPath + "gene.linear.p.csv";
 
@@ -72,7 +62,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
     }
 
     private static void calculateRegression(String geneSampleMatrixFilePath,
-            Hashtable<String, CollapsingGeneSummary> summaryTable,
+            Hashtable<String, CollapsingSummary> summaryTable,
             String outputFile, String method) throws Exception {
         ThirdPartyToolManager.callCollapsedRegression(outputFile,
                 geneSampleMatrixFilePath, method);

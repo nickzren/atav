@@ -101,7 +101,7 @@ public class CollapsingCompHet extends CollapsingBase {
                 LogManager.writeAndPrint("Analyzing qualified variants in gene ("
                         + geneName + ")");
 
-                CollapsingSummary summary = geneSummaryTable.get(geneName);
+                CollapsingSummary summary = summaryTable.get(geneName);
 
                 doOutput(list, summary);
             }

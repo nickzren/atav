@@ -28,6 +28,8 @@ public class CollapsingSummary implements Comparable {
     double qualifiedCtrlFreq = Data.NA;
     String enrichedDirection = "NA";
     double fetP = Data.NA;
+    double logisticP = Data.NA;
+    double linearP = Data.NA;
 
     // no output
     static final int totalCase = SampleManager.getCaseNum();
@@ -35,6 +37,14 @@ public class CollapsingSummary implements Comparable {
 
     public CollapsingSummary(String name) {
         this.name = name;
+    }
+
+    public void setLogisticP(double value) {
+        logisticP = value;
+    }
+
+    public void setLinearP(double value) {
+        linearP = value;
     }
 
     public void updateSampleVariantCount4SingleVar(int index) {
