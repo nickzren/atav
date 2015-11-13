@@ -20,12 +20,12 @@ public class CollapsingCommand {
     public static boolean isCollapsingSingleVariant = false;
     public static boolean isCollapsingCompHet = false;
     public static boolean isRecessive = false;
-    public static double varMissingRate = Double.MAX_VALUE;
     public static String coverageSummaryFile = "";
     public static double looMaf = Data.NO_FILTER;
     public static double looCombFreq = Data.NO_FILTER;
     public static boolean isCollapsingDoLinear = false;
     public static boolean isCollapsingDoLogistic = false;
+    public static String regionBoundaryFile = "";
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -33,9 +33,7 @@ public class CollapsingCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--var-missing-rate")) {
-                varMissingRate = getValidDouble(option);
-            } else if (option.getName().equals("--loo-maf")) {
+            if (option.getName().equals("--loo-maf")) {
                 checkValueValid(0.5, 0, option);
                 looMaf = getValidDouble(option);
             } else if (option.getName().equals("--loo-maf-rec")
@@ -58,6 +56,8 @@ public class CollapsingCommand {
             } else if (option.getName().equals("--min-hom-case-rec")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 StatisticsCommand.minHomCaseRec = getValidInteger(option);
+            } else if (option.getName().equals("--region-boundary")) {
+                regionBoundaryFile = getValidPath(option);
             } else {
                 continue;
             }

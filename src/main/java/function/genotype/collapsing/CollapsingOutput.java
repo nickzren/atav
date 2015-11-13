@@ -13,21 +13,15 @@ import function.genotype.base.Sample;
 import function.genotype.statistics.StatisticsCommand;
 import global.Data;
 import global.Index;
+import java.util.HashSet;
 import utils.FormatManager;
 
 /**
  *
  * @author nick
  */
-public class CollapsingOutput extends Output implements Comparable {
+public class CollapsingOutput extends Output {
 
-    String geneName = "";
-    String sampleName;
-    String sampleType;
-    String genoType;
-    double varAllFreq = 0;
-    double looMaf = 0;
-    double looMhgf = 0;
     public static String title
             = "Variant ID,"
             + "Variant Type,"
@@ -87,8 +81,28 @@ public class CollapsingOutput extends Output implements Comparable {
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle();
 
+    String geneName = "";
+    String sampleName;
+    String sampleType;
+    String genoType;
+    double varAllFreq = 0;
+    double looMaf = 0;
+    double looMhgf = 0;
+
+    HashSet<String> regionBoundaryNameSet; // for --region-boundary only
+
     public CollapsingOutput(CalledVariant c) {
         super(c);
+        
+        geneName = c.getGeneName();
+    }
+
+    public void initRegionBoundaryNameSet() {
+        if (!CollapsingCommand.regionBoundaryFile.isEmpty()) {
+            regionBoundaryNameSet = RegionBoundaryManager.getNameSet(
+                    calledVar.getRegion().chrStr,
+                    calledVar.getRegion().startPosition);
+        }
     }
 
     public void initGenoType(int geno) {
@@ -292,14 +306,9 @@ public class CollapsingOutput extends Output implements Comparable {
         sb.append(calledVar.getExacStr());
 
         sb.append(calledVar.getKaviarStr());
-        
+
         sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
-    }
-
-    public int compareTo(Object another) throws ClassCastException {
-        CollapsingOutput that = (CollapsingOutput) another;
-        return this.geneName.compareTo(that.geneName); //small -> large
     }
 }

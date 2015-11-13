@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import function.variant.base.Region;
 import function.coverage.base.Gene;
 import function.genotype.collapsing.CollapsingCommand;
 import global.Data;
@@ -28,14 +27,14 @@ public class GeneManager {
     private static HashMap<String, String> genenStableIdNmNpMap = new HashMap<String, String>();
     private static boolean isUsed = false;
 
-    public static void init() throws Exception {   
+    public static void init() throws Exception {
         initGeneName();
 
         initGeneBoundaries();
 
         initGeneMap();
 
-        initRegionList();
+        resetRegionList();
 
         initArtifactsGeneMap();
     }
@@ -154,12 +153,12 @@ public class GeneManager {
         }
     }
 
-    private static void initRegionList() throws Exception {
+    private static void resetRegionList() throws Exception {
         if (isUsed) {
-            ArrayList<String> chrList = new ArrayList<String>();
-
             if (!RegionManager.isUsed()) {
                 RegionManager.clear();
+
+                ArrayList<String> chrList = new ArrayList<String>();
 
                 for (HashSet<Gene> geneSet : geneMap.values()) {
                     String chr = geneSet.iterator().next().getChrStr();

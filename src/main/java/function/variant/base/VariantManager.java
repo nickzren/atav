@@ -2,7 +2,6 @@ package function.variant.base;
 
 import function.annotation.base.GeneManager;
 import global.Data;
-import function.coverage.base.SqlQuery;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -55,7 +54,7 @@ public class VariantManager {
         }
 
         if (isInclude) {
-            initRegionList();
+            resetRegionList();
         }
     }
 
@@ -180,7 +179,7 @@ public class VariantManager {
         includeIdList.add(str);
     }
 
-    private static void initRegionList() throws SQLException {
+    private static void resetRegionList() throws SQLException {
         if (!RegionManager.isUsed()
                 && !GeneManager.isUsed()) {
             RegionManager.clear();

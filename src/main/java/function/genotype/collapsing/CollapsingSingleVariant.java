@@ -3,14 +3,12 @@ package function.genotype.collapsing;
 import function.genotype.vargeno.SampleVariantCount;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
-import function.variant.base.Variant;
-import global.Data;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
-import utils.FormatManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
 /**
  *
@@ -18,21 +16,13 @@ import java.io.FileWriter;
  */
 public class CollapsingSingleVariant extends CollapsingBase {
 
-    BufferedWriter bwQualifiedVariant = null;
-    BufferedWriter bwMissingVariant = null;
     BufferedWriter bwGenotypes = null;
     final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
-    final String qualifiedVariantFilePath = CommonCommand.outputPath + "qualified.variant.txt";
-    final String missingVariantFilePath = CommonCommand.outputPath + "missing.variant.txt";
 
     @Override
     public void initOutput() {
         try {
             super.initOutput();
-
-            bwQualifiedVariant = new BufferedWriter(new FileWriter(qualifiedVariantFilePath));
-
-            bwMissingVariant = new BufferedWriter(new FileWriter(missingVariantFilePath));
 
             bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
             bwGenotypes.write(CollapsingOutput.title);
@@ -51,10 +41,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
         try {
             super.closeOutput();
 
-            bwQualifiedVariant.flush();
-            bwQualifiedVariant.close();
-            bwMissingVariant.flush();
-            bwMissingVariant.close();
             bwGenotypes.flush();
             bwGenotypes.close();
         } catch (Exception ex) {
@@ -65,36 +51,50 @@ public class CollapsingSingleVariant extends CollapsingBase {
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
-            if (isMissingRateValid(calledVar)) {
-                CollapsingOutput output = new CollapsingOutput(calledVar);
+            CollapsingOutput output = new CollapsingOutput(calledVar);
 
+            ArrayList<CollapsingSummary> summaryList = new ArrayList<CollapsingSummary>();
+
+            initSummaryList(output, summaryList);
+
+            if (!summaryList.isEmpty()) {
                 output.countSampleGenoCov();
 
                 output.calculate();
 
                 if (output.isValid()) {
-                    for (String geneName : calledVar.getGeneSet()) {
-                        if (!geneName.equals("NA")) {
-                            updateSummaryTable(geneName);
-
-                            output.geneName = geneName;
-
-                            processOutput(output);
-                        }
-                    }
+                    processOutput4Summary(output, summaryList);
                 }
-            } else {
-                outputMissingVariant(calledVar);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    private void processOutput(CollapsingOutput output) {
+    private void initSummaryList(CollapsingOutput output, ArrayList<CollapsingSummary> summaryList) {
+        if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
+            // gene summary
+            for (String geneName : output.getCalledVariant().getGeneSet()) {
+                if (!geneName.equals("NA")) {
+                    updateGeneSummaryTable(geneName);
+                    summaryList.add(geneSummaryTable.get(geneName));
+                }
+            }
+        } else {
+            // region summary
+            output.initRegionBoundaryNameSet();
+
+            for (String regionName : output.regionBoundaryNameSet) {
+                updateRegionSummaryTable(regionName);
+                summaryList.add(regionSummaryTable.get(regionName));
+            }
+        }
+    }
+
+    private void processOutput4Summary(CollapsingOutput output,
+            ArrayList<CollapsingSummary> summaryList) {
         try {
-            CollapsingSummary summary = summaryTable.get(output.geneName);
-            boolean countOnce = false;
+            boolean isVariantQualified = false;
 
             for (Sample sample : SampleManager.getList()) {
                 output.calculateLooFreq(sample);
@@ -103,15 +103,21 @@ public class CollapsingSingleVariant extends CollapsingBase {
                     int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                     if (output.isQualifiedGeno(geno)) {
-                        summary.updateSampleVariantCount4SingleVar(sample.getIndex());
-
-                        if (!countOnce) {
-                            summary.updateVariantCount(output);
-                            countOnce = true;
+                        for (CollapsingSummary summary : summaryList) {
+                            summary.updateSampleVariantCount4SingleVar(sample.getIndex());
                         }
 
                         outputQualifiedVariant(output, sample);
+
+                        isVariantQualified = true;
                     }
+                }
+            }
+
+            // only count qualified variant once per gene or region
+            if (isVariantQualified) {
+                for (CollapsingSummary summary : summaryList) {
+                    summary.updateVariantCount(output);
                 }
             }
         } catch (Exception e) {
@@ -121,54 +127,17 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
     private void outputQualifiedVariant(CollapsingOutput output,
             Sample sample) throws Exception {
-        bwQualifiedVariant.write(output.geneName + "\t");
-        bwQualifiedVariant.write(output.getCalledVariant().getVariantIdStr());
-
         int geno = output.getCalledVariant().getGenotype(sample.getIndex());
-        bwQualifiedVariant.write("\t" + sample.getName()
-                + " (" + FormatManager.getDouble(output.looMaf) + ")");
 
         output.initGenoType(geno);
         output.initPhenoType((int) sample.getPheno());
         output.sampleName = sample.getName();
-        outputGenotypes(output, sample);
-
-        bwQualifiedVariant.newLine();
+        bwGenotypes.write(output.getString(sample));
+        bwGenotypes.newLine();
 
         SampleVariantCount.update(output.getCalledVariant().isSnv(),
                 output.getCalledVariant().getGenotype(sample.getIndex()),
                 sample.getIndex());
-    }
-
-    private void outputGenotypes(CollapsingOutput output, Sample sample) throws Exception {
-        bwGenotypes.write(output.getString(sample));
-        bwGenotypes.newLine();
-    }
-
-    private void outputMissingVariant(Variant var) throws Exception {
-        bwMissingVariant.write(var.getVariantIdStr());
-        bwMissingVariant.newLine();
-    }
-
-    private boolean isMissingRateValid(CalledVariant calledVar) {
-        if (CollapsingCommand.varMissingRate == Double.MAX_VALUE) {
-            return true;
-        }
-
-        int missing = 0;
-        for (Sample sample : SampleManager.getList()) {
-            if (calledVar.getGenotype(sample.getIndex()) == Data.NA) {
-                missing++;
-            }
-        }
-
-        double missingRate = FormatManager.devide(missing, SampleManager.getListSize());
-
-        if (missingRate <= CollapsingCommand.varMissingRate) {
-            return true;
-        }
-
-        return false;
     }
 
     @Override

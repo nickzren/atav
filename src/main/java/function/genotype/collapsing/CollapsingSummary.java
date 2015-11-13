@@ -1,20 +1,10 @@
 package function.genotype.collapsing;
 
 import function.genotype.base.Sample;
+import function.genotype.base.SampleManager;
 import function.genotype.statistics.FisherExact;
 import global.Data;
-import function.annotation.base.GeneManager;
-import function.annotation.base.IntolerantScoreManager;
-import function.genotype.base.SampleManager;
-import utils.CommonCommand;
 import utils.FormatManager;
-import utils.ThirdPartyToolManager;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.Hashtable;
 
 /**
  *
@@ -22,8 +12,10 @@ import java.util.Hashtable;
  */
 public class CollapsingSummary implements Comparable {
 
+    String name; // unique id
+
     int[] variantNumBySample = new int[SampleManager.getListSize()];
-    String geneName;
+
     int totalVariant = 0;
     int totalSnv = 0;
     int totalIndel = 0;
@@ -36,63 +28,13 @@ public class CollapsingSummary implements Comparable {
     double qualifiedCtrlFreq = Data.NA;
     String enrichedDirection = "NA";
     double fetP = Data.NA;
-    double logisticP = Data.NA;
-    double linearP = Data.NA;
-    String coverageSummaryLine;
 
     // no output
     static final int totalCase = SampleManager.getCaseNum();
     static final int totalCtrl = SampleManager.getCtrlNum();
 
-    // output columns 
-    public static final String title
-            = "Rank,"
-            + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
-            + "Artifacts in Gene,"
-            + "Total Variant,"
-            + "Total SNV,"
-            + "Total Indel,"
-            + "Qualified Case,"
-            + "Unqualified Case,"
-            + "Qualified Case Freq,"
-            + "Qualified Ctrl,"
-            + "Unqualified Ctrl,"
-            + "Qualified Ctrl Freq,"
-            + "Enriched Direction,"
-            + "Fet P,"
-            + "Linear P,"
-            + "Logistic P,"
-            + GeneManager.getCoverageSummary("title")
-            + "\n";
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("'").append(geneName).append("'").append(",");
-        sb.append(IntolerantScoreManager.getValues(geneName)).append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(geneName))).append(",");
-        sb.append(totalVariant).append(",");
-        sb.append(totalSnv).append(",");
-        sb.append(totalIndel).append(",");
-        sb.append(qualifiedCase).append(",");
-        sb.append(unqualifiedCase).append(",");
-        sb.append(FormatManager.getDouble(qualifiedCaseFreq)).append(",");
-        sb.append(qualifiedCtrl).append(",");
-        sb.append(unqualifiedCtrl).append(",");
-        sb.append(FormatManager.getDouble(qualifiedCtrlFreq)).append(",");
-        sb.append(enrichedDirection).append(",");
-        sb.append(FormatManager.getDouble(fetP)).append(",");
-        sb.append(FormatManager.getDouble(linearP)).append(",");
-        sb.append(FormatManager.getDouble(logisticP)).append(",");
-        sb.append(GeneManager.getCoverageSummary(geneName));
-
-        return sb.toString();
-    }
-
     public CollapsingSummary(String name) {
-        geneName = name;
+        this.name = name;
     }
 
     public void updateSampleVariantCount4SingleVar(int index) {
@@ -166,60 +108,9 @@ public class CollapsingSummary implements Comparable {
         return fetP;
     }
 
-    public void setLogisticP(double value) {
-        logisticP = value;
-    }
-
-    public void setLinearP(double value) {
-        linearP = value;
-    }
-
-    public static void calculateLinearAndLogisticP(String geneSampleMatrixFilePath,
-            Hashtable<String, CollapsingSummary> summaryTable) throws Exception {
-        String geneLogisticPPath = CommonCommand.outputPath + "gene.logistic.p.csv";
-        String geneLinearPPath = CommonCommand.outputPath + "gene.linear.p.csv";
-
-        if (CollapsingCommand.isCollapsingDoLogistic) {
-            calculateRegression(geneSampleMatrixFilePath,
-                    summaryTable, geneLogisticPPath, "logistf");
-        } else if (CollapsingCommand.isCollapsingDoLinear) {
-            calculateRegression(geneSampleMatrixFilePath,
-                    summaryTable, geneLinearPPath, "linear");
-        }
-    }
-
-    private static void calculateRegression(String geneSampleMatrixFilePath,
-            Hashtable<String, CollapsingSummary> summaryTable,
-            String outputFile, String method) throws Exception {
-        ThirdPartyToolManager.callCollapsedRegression(outputFile,
-                geneSampleMatrixFilePath, method);
-
-        File f = new File(outputFile);
-
-        if (f.exists()) {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String line;
-
-            br.readLine(); // ingore title
-
-            while ((line = br.readLine()) != null) {
-                String[] temp = line.split(",");
-
-                String geneName = temp[0].replaceAll("'", "");
-
-                if (method.equals("logistf")) {
-                    summaryTable.get(geneName).setLogisticP(Double.valueOf(temp[1]));
-                } else { // linear
-                    summaryTable.get(geneName).setLinearP(Double.valueOf(temp[1]));
-                }
-            }
-        }
-    }
-
+    @Override
     public int compareTo(Object another) throws ClassCastException {
-        CollapsingSummary that = (CollapsingSummary) another;
+        CollapsingGeneSummary that = (CollapsingGeneSummary) another;
         return Double.compare(this.fetP, that.fetP); //small -> large
     }
 }
