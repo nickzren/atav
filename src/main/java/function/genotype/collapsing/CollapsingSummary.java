@@ -12,7 +12,7 @@ import utils.FormatManager;
  */
 public class CollapsingSummary implements Comparable {
 
-    String name; // unique id
+    String name; // gene name or region name
 
     int[] variantNumBySample = new int[SampleManager.getListSize()];
 

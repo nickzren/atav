@@ -210,7 +210,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     public void outputGeneMatrix() throws Exception {
         for (CollapsingGeneSummary summary : geneSummaryList) {
-            bwGeneSampleMatrix.write(summary.geneName + "\t");
+            bwGeneSampleMatrix.write(summary.name + "\t");
 
             for (int s = 0; s < SampleManager.getListSize(); s++) {
                 bwGeneSampleMatrix.write(summary.variantNumBySample[s] + "\t");
@@ -229,7 +229,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     
     public void outputRegionMatrix() throws Exception {
         for (CollapsingRegionSummary summary : regionSummaryList) {
-            bwRegionSampleMatrix.write(summary.regionName + "\t");
+            bwRegionSampleMatrix.write(summary.name + "\t");
 
             for (int s = 0; s < SampleManager.getListSize(); s++) {
                 bwRegionSampleMatrix.write(summary.variantNumBySample[s] + "\t");

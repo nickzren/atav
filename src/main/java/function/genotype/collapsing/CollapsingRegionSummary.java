@@ -7,8 +7,6 @@ import utils.FormatManager;
  * @author nick
  */
 public class CollapsingRegionSummary extends CollapsingSummary {
-
-    String regionName;
     
     public static final String title
             = "Rank,"
@@ -28,15 +26,13 @@ public class CollapsingRegionSummary extends CollapsingSummary {
 
     public CollapsingRegionSummary(String name) {
         super(name);
-        
-        regionName = name;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("'").append(regionName).append("'").append(",");
+        sb.append("'").append(name).append("'").append(",");
         sb.append(totalVariant).append(",");
         sb.append(totalSnv).append(",");
         sb.append(totalIndel).append(",");

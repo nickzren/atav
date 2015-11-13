@@ -18,8 +18,6 @@ import java.util.Hashtable;
  * @author nick
  */
 public class CollapsingGeneSummary extends CollapsingSummary {
-
-    String geneName;
     
     // output columns 
     public static final String title
@@ -49,8 +47,6 @@ public class CollapsingGeneSummary extends CollapsingSummary {
 
     public CollapsingGeneSummary(String name) {
         super(name);
-        
-        geneName = name;
     }
 
     public void setLogisticP(double value) {
@@ -109,9 +105,9 @@ public class CollapsingGeneSummary extends CollapsingSummary {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("'").append(geneName).append("'").append(",");
-        sb.append(IntolerantScoreManager.getValues(geneName)).append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(geneName))).append(",");
+        sb.append("'").append(name).append("'").append(",");
+        sb.append(IntolerantScoreManager.getValues(name)).append(",");
+        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(name))).append(",");
         sb.append(totalVariant).append(",");
         sb.append(totalSnv).append(",");
         sb.append(totalIndel).append(",");
@@ -125,7 +121,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         sb.append(FormatManager.getDouble(fetP)).append(",");
         sb.append(FormatManager.getDouble(linearP)).append(",");
         sb.append(FormatManager.getDouble(logisticP)).append(",");
-        sb.append(GeneManager.getCoverageSummary(geneName));
+        sb.append(GeneManager.getCoverageSummary(name));
 
         return sb.toString();
     }
