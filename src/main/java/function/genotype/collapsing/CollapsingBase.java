@@ -28,7 +28,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     BufferedWriter bwSummary = null;
     BufferedWriter bwSampleVariantCount = null;
 
-    final String sampleMatrixFilePath = CommonCommand.outputPath + "sample.matrix.txt";
+    final String matrixFilePath = CommonCommand.outputPath + "matrix.txt";
     final String summaryFilePath = CommonCommand.outputPath + "summary.csv";
     final String sampleVariantCountFilePath = CommonCommand.outputPath + "sample.variant.count.csv";
     final String geneFetPQQPlotPath = CommonCommand.outputPath + "summary.fet.p.qq.plot.pdf";
@@ -41,7 +41,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     @Override
     public void initOutput() {
         try {
-            bwSampleMatrix = new BufferedWriter(new FileWriter(sampleMatrixFilePath));
+            bwSampleMatrix = new BufferedWriter(new FileWriter(matrixFilePath));
             bwSummary = new BufferedWriter(new FileWriter(summaryFilePath));
 
             if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
@@ -154,7 +154,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
             outputMatrix();
 
             if (CollapsingCommand.regionBoundaryFile.isEmpty()) { // gene summary
-                CollapsingGeneSummary.calculateLinearAndLogisticP(sampleMatrixFilePath, summaryTable);
+                CollapsingGeneSummary.calculateLinearAndLogisticP(matrixFilePath, summaryTable);
             }
 
             Collections.sort(summaryList);
@@ -217,6 +217,6 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     private void gzipFiles() {
-        ThirdPartyToolManager.gzipFile(sampleMatrixFilePath);
+        ThirdPartyToolManager.gzipFile(matrixFilePath);
     }
 }
