@@ -1,5 +1,6 @@
 package function.genotype.collapsing;
 
+import function.annotation.base.GeneManager;
 import function.genotype.collapsing.RegionBoundary.Region;
 import function.variant.base.RegionManager;
 import java.io.BufferedReader;
@@ -68,7 +69,8 @@ public class RegionBoundaryManager {
     }
 
     private static void resetRegionList() throws Exception {
-        if (!RegionManager.isUsed()) {
+        if (!RegionManager.isUsed()
+                && !GeneManager.isUsed()) {
             RegionManager.clear();
 
             HashSet<String> regionSet = new HashSet<String>();
