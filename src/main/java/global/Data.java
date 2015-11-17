@@ -31,7 +31,7 @@ public class Data {
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 
     // system config file path
-    public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.system.config.properties";
+    public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.pgm.system.config.properties";
     
     // system file path for debug
     public static final String RECOURCE_PATH = new File(".").getAbsolutePath() + "/src/main/resources/";
