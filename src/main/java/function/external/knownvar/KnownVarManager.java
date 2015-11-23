@@ -13,7 +13,7 @@ public class KnownVarManager {
 
     public static final String clinvarTable = "knownvar.clinvar_2015_10_12";
     public static final String hgmdTable = "knownvar.hgmd";
-    public static final String omimTable = "knownvar.omim_2015_10_12";
+    public static final String omimTable = "knownvar.omim_pgm_2015_11_18";
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
