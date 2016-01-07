@@ -14,7 +14,7 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class CompHetOutput extends CollapsingOutput {
+public class CompHetOutput extends CollapsingOutput implements Comparable {
 
     public static final String title
             = "Family ID,"
@@ -142,7 +142,7 @@ public class CompHetOutput extends CollapsingOutput {
         sb.append(calledVar.getExacStr());
 
         sb.append(calledVar.getKaviarStr());
-        
+
         sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
@@ -177,5 +177,10 @@ public class CompHetOutput extends CollapsingOutput {
         }
 
         return false;
+    }
+
+    public int compareTo(Object another) throws ClassCastException {
+        CollapsingOutput that = (CollapsingOutput) another;
+        return this.geneName.compareTo(that.geneName); //small -> large
     }
 }

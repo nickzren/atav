@@ -116,7 +116,7 @@ public class CollapsingCompHet extends CollapsingBase {
         for (CompHetOutput output : outputList) {
             if (!currentGeneList.contains(output.geneName)) {
                 currentGeneList.add(output.geneName);
-                updateSummaryTable(output.geneName);
+                updateGeneSummaryTable(output.geneName);
 
                 geneOutputList = new ArrayList<CompHetOutput>();
                 geneOutputList.add(output);

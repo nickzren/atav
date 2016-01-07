@@ -24,32 +24,38 @@ import java.util.Hashtable;
  */
 public class CollapsingBase extends AnalysisBase4CalledVar {
 
-    BufferedWriter bwGeneSampleMatrix = null;
+    BufferedWriter bwSampleMatrix = null;
     BufferedWriter bwSummary = null;
     BufferedWriter bwSampleVariantCount = null;
-    final String geneSampleMatrixFilePath = CommonCommand.outputPath + "gene.sample.matrix.txt";
+
+    final String matrixFilePath = CommonCommand.outputPath + "matrix.txt";
     final String summaryFilePath = CommonCommand.outputPath + "summary.csv";
     final String sampleVariantCountFilePath = CommonCommand.outputPath + "sample.variant.count.csv";
-    final String fetPQQPlotPath = CommonCommand.outputPath + "summary.fet.p.qq.plot.pdf";
-    final String linearPQQPlotPath = CommonCommand.outputPath + "summary.linear.p.qq.plot.pdf";
-    final String logisticPQQPlotPath = CommonCommand.outputPath + "summary.logistic.p.qq.plot.pdf";
+    final String geneFetPQQPlotPath = CommonCommand.outputPath + "summary.fet.p.qq.plot.pdf";
+    final String geneLinearPQQPlotPath = CommonCommand.outputPath + "summary.linear.p.qq.plot.pdf";
+    final String geneLogisticPQQPlotPath = CommonCommand.outputPath + "summary.logistic.p.qq.plot.pdf";
+
     ArrayList<CollapsingSummary> summaryList = new ArrayList<CollapsingSummary>();
     Hashtable<String, CollapsingSummary> summaryTable = new Hashtable<String, CollapsingSummary>();
 
     @Override
     public void initOutput() {
         try {
-            bwGeneSampleMatrix = new BufferedWriter(new FileWriter(geneSampleMatrixFilePath));
-            bwGeneSampleMatrix.write("sample/gene" + "\t");
+            bwSampleMatrix = new BufferedWriter(new FileWriter(matrixFilePath));
+            bwSummary = new BufferedWriter(new FileWriter(summaryFilePath));
 
-            for (Sample sample : SampleManager.getList()) {
-                bwGeneSampleMatrix.write(sample.getName() + "\t");
+            if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
+                bwSampleMatrix.write("sample/gene" + "\t");
+                bwSummary.write(CollapsingGeneSummary.title);
+            } else {
+                bwSampleMatrix.write("sample/region boundary" + "\t");
+                bwSummary.write(CollapsingRegionSummary.title);
             }
 
-            bwGeneSampleMatrix.newLine();
-
-            bwSummary = new BufferedWriter(new FileWriter(summaryFilePath));
-            bwSummary.write(CollapsingSummary.title);
+            for (Sample sample : SampleManager.getList()) {
+                bwSampleMatrix.write(sample.getName() + "\t");
+            }
+            bwSampleMatrix.newLine();
 
             bwSampleVariantCount = new BufferedWriter(new FileWriter(sampleVariantCountFilePath));
             bwSampleVariantCount.write(SampleVariantCount.title);
@@ -84,6 +90,8 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
+        RegionBoundaryManager.init();
+        
         initSummaryTable();
 
         SampleManager.generateCovariateFile();
@@ -104,28 +112,50 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     private void initSummaryTable() {
+        if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
+            initGeneSummaryTable();
+        } else {
+            initRegionSummaryTable();
+        }
+    }
+
+    private void initGeneSummaryTable() {
         for (HashSet<Gene> geneSet : GeneManager.getMap().values()) {
             for (Gene gene : geneSet) {
-                updateSummaryTable(gene.getName());
+                updateGeneSummaryTable(gene.getName());
             }
         }
     }
 
-    public void updateSummaryTable(String geneName) {
+    private void initRegionSummaryTable() {
+        for (RegionBoundary regionBoundary : RegionBoundaryManager.getList()) {
+            updateRegionSummaryTable(regionBoundary.getName());
+        }
+    }
+
+    public void updateGeneSummaryTable(String geneName) {
         if (!summaryTable.containsKey(geneName)) {
-            summaryTable.put(geneName, new CollapsingSummary(geneName));
+            summaryTable.put(geneName, new CollapsingGeneSummary(geneName));
+        }
+    }
+
+    public void updateRegionSummaryTable(String regionName) {
+        if (!summaryTable.containsKey(regionName)) {
+            summaryTable.put(regionName, new CollapsingRegionSummary(regionName));
         }
     }
 
     public void outputSummary() {
-        try {
-            LogManager.writeAndPrint("Output the data to matrix & summary file...");
+        LogManager.writeAndPrint("Output the data to matrix & summary file...");
 
+        try {
             summaryList.addAll(summaryTable.values());
 
             outputMatrix();
 
-            CollapsingSummary.calculateLinearAndLogisticP(geneSampleMatrixFilePath, summaryTable);
+            if (CollapsingCommand.regionBoundaryFile.isEmpty()) { // gene summary
+                CollapsingGeneSummary.calculateLinearAndLogisticP(matrixFilePath, summaryTable);
+            }
 
             Collections.sort(summaryList);
 
@@ -140,6 +170,25 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
         }
     }
 
+    public void outputMatrix() throws Exception {
+        for (CollapsingSummary summary : summaryList) {
+            bwSampleMatrix.write(summary.name + "\t");
+
+            for (int s = 0; s < SampleManager.getListSize(); s++) {
+                bwSampleMatrix.write(summary.variantNumBySample[s] + "\t");
+            }
+
+            bwSampleMatrix.newLine();
+
+            summary.countSample();
+
+            summary.calculateFetP();
+        }
+
+        bwSampleMatrix.flush();
+        bwSampleMatrix.close();
+    }
+
     public void outputSampleVariantCount() {
         try {
             for (Sample sample : SampleManager.getList()) {
@@ -152,39 +201,22 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
         }
     }
 
-    public void outputMatrix() throws Exception {
-        for (CollapsingSummary summary : summaryList) {
-            bwGeneSampleMatrix.write(summary.geneName + "\t");
-
-            for (int s = 0; s < SampleManager.getListSize(); s++) {
-                bwGeneSampleMatrix.write(summary.variantNumBySample[s] + "\t");
-            }
-
-            bwGeneSampleMatrix.newLine();
-
-            summary.countSample();
-
-            summary.calculateFetP();
-        }
-
-        bwGeneSampleMatrix.flush();
-        bwGeneSampleMatrix.close();
-    }
-
     private void generatePvaluesQQPlot() {
-        ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingSummary.title,
-                "Fet P", summaryFilePath, fetPQQPlotPath);
+        if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
+            ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.title,
+                    "Fet P", summaryFilePath, geneFetPQQPlotPath);
 
-        if (CollapsingCommand.isCollapsingDoLogistic) {
-            ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingSummary.title,
-                    "Logistic P", summaryFilePath, logisticPQQPlotPath);
-        } else if (CollapsingCommand.isCollapsingDoLinear) {
-            ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingSummary.title,
-                    "Linear P", summaryFilePath, linearPQQPlotPath);
+            if (CollapsingCommand.isCollapsingDoLogistic) {
+                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.title,
+                        "Logistic P", summaryFilePath, geneLogisticPQQPlotPath);
+            } else if (CollapsingCommand.isCollapsingDoLinear) {
+                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.title,
+                        "Linear P", summaryFilePath, geneLinearPQQPlotPath);
+            }
         }
     }
 
     private void gzipFiles() {
-        ThirdPartyToolManager.gzipFile(geneSampleMatrixFilePath);
+        ThirdPartyToolManager.gzipFile(matrixFilePath);
     }
 }

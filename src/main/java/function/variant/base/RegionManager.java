@@ -23,11 +23,11 @@ public class RegionManager {
     private static HashMap<String, Integer> chrIdMap = new HashMap<String, Integer>();
     private static boolean isUsed = false;
 
-    public static void init() {      
+    public static void init() {
         if (CommonCommand.isNonDBAnalysis) {
             return;
         }
-        
+
         initIdChrMap();
 
         if (CommonCommand.regionInput.isEmpty()) {
@@ -64,6 +64,16 @@ public class RegionManager {
 
     public static int getRegionSize() {
         return regionList.size();
+    }
+
+    public static void initRegionList(String[] list) {
+        for (String regionStr : list) {
+            Region region = getRegion(regionStr);
+
+            if (!isRegionListContained(region)) {
+                regionList.add(region);
+            }
+        }
     }
 
     public static void initChrRegionList(String[] list) {
