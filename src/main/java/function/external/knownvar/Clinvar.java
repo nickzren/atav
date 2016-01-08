@@ -50,9 +50,9 @@ public class Clinvar {
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                clinicalSignificance = FormatManager.getString(rs.getString("ClinicalSignificance").replaceAll(";", " | "));
-                otherIds = FormatManager.getString(rs.getString("OtherIds")).replaceAll(",", " | ");
-                diseaseName = FormatManager.getString(rs.getString("DiseaseName")).replaceAll(",", "");
+                clinicalSignificance = rs.getString("ClinicalSignificance".replaceAll(";", " | "));
+                otherIds = rs.getString("OtherIds").replaceAll(",", " | ");
+                diseaseName = rs.getString("DiseaseName").replaceAll(",", "");
             }
 
             rs.close();

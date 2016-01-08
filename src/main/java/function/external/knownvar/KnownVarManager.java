@@ -14,7 +14,12 @@ public class KnownVarManager {
     public static final String clinvarTable = "knownvar.clinvar_2015_10_12";
     public static final String hgmdTable = "knownvar.hgmd";
     public static final String omimTable = "knownvar.omim_2015_10_12";
-
+    public static final String acmgTable = "knownvar.ACMG_2015_12_09";
+    public static final String adultOnsetTable = "knownvar.AdultOnset_2015_12_09";
+    public static final String clinGenTable = "knownvar.ClinGen_2015_12_09";
+    public static final String pgxTable = "knownvar.PGx_2015_12_09";
+    public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
+    
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
             return "Clinvar Clinical Significance,"
@@ -25,8 +30,13 @@ public class KnownVarManager {
                     + "HGMD Pmid,"
                     + "HGMD Disease Name,"
                     + "HGMD Flanking Count,"
-                    + "OMIM Gene Name,"
-                    + "OMIM Disease Name,";
+                    + "OMIM Disease Name,"
+                    + "ACMG,"
+                    + "AdultOnset,"
+                    + "ClinGen HaploinsufficiencyDesc,"
+                    + "ClinGen TriplosensitivityDesc,"
+                    + "PGx,"
+                    + "RecessiveCarrier,";
         } else {
             return "";
         }
@@ -57,6 +67,36 @@ public class KnownVarManager {
     public static String getSql4OMIM(String geneName) {
         return "SELECT diseaseName "
                 + "From " + omimTable + " "
+                + "WHERE geneName='" + geneName + "' ";
+    }
+    
+    public static String getSql4ACMG(String geneName) {
+        return "SELECT ACMG "
+                + "From " + acmgTable + " "
+                + "WHERE geneName='" + geneName + "' ";
+    }
+    
+    public static String getSql4AdultOnset(String geneName) {
+        return "SELECT AdultOnset "
+                + "From " + adultOnsetTable + " "
+                + "WHERE geneName='" + geneName + "' ";
+    }
+    
+    public static String getSql4ClinGen(String geneName) {
+        return "SELECT HaploinsufficiencyDesc,TriplosensitivityDesc "
+                + "From " + clinGenTable + " "
+                + "WHERE geneName='" + geneName + "' ";
+    }
+    
+    public static String getSql4PGx(String geneName) {
+        return "SELECT PGx "
+                + "From " + pgxTable + " "
+                + "WHERE geneName='" + geneName + "' ";
+    }
+    
+    public static String getSql4RecessiveCarrier(String geneName) {
+        return "SELECT * "
+                + "From " + recessiveCarrierTable + " "
                 + "WHERE geneName='" + geneName + "' ";
     }
 

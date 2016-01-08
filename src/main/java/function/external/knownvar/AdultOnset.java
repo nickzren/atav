@@ -9,25 +9,24 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class OMIM {
+public class AdultOnset {
     String geneName;
-    String omimDiseaseName;
-    
-    public OMIM(String geneName) {
+    String adultOnset;
+
+    public AdultOnset(String geneName) {
         this.geneName = geneName;
 
-        initOMIM();
+        initAdultOnset();
     }
-    
-    
-    private void initOMIM() {
+
+    private void initAdultOnset() {
         try {
-            String sql = KnownVarManager.getSql4OMIM(geneName);
+            String sql = KnownVarManager.getSql4AdultOnset(geneName);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                omimDiseaseName = rs.getString("diseaseName");
+                adultOnset = rs.getString("AdultOnset");
             }
 
             rs.close();
@@ -35,9 +34,9 @@ public class OMIM {
             ErrorManager.send(e);
         }
     }
-    
+
     @Override
     public String toString() {
-        return FormatManager.getString(omimDiseaseName);
+        return FormatManager.getString(adultOnset);
     }
 }
