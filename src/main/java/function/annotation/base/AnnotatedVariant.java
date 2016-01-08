@@ -121,12 +121,6 @@ public class AnnotatedVariant extends Variant {
 
             isValid = evs.isValid();
         }
-
-        if (isValid) {
-            if (KnownVarCommand.isIncludeKnownVar) {
-                knownVarOutput = new KnownVarOutput(this);
-            }
-        }
     }
 
     public boolean isValid() {
@@ -262,6 +256,12 @@ public class AnnotatedVariant extends Variant {
 
     public String getEvsStr() {
         return evs.toString();
+    }
+
+    public void initKnownVar() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
     }
 
     public String getKnownVarStr() {
