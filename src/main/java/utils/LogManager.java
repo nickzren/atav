@@ -25,7 +25,7 @@ public class LogManager {
         basicInfo.append("\n+---------------------------------------------------------------+\n");
         basicInfo.append("| [Software]:\t" + Data.AppTitle + "\t|\n");
         basicInfo.append("  [Version]:\t" + Data.version + "\t\t\t\t\t\t\n");
-        basicInfo.append("| [Developers]:\t" + Data.developer + "\t\t\t\t|\n");
+        basicInfo.append("| [Developer]:\t" + Data.developer + "\t\t\t\t|\n");
         basicInfo.append("  [Year]:\t" + Data.year + "\t\t\t\t\t\t\n");
         basicInfo.append("| [Institute]:\t" + Data.insititue + "\t\t|\n");
         basicInfo.append("+---------------------------------------------------------------+");
