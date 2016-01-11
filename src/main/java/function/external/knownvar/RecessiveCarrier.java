@@ -3,31 +3,29 @@ package function.external.knownvar;
 import java.sql.ResultSet;
 import utils.DBManager;
 import utils.ErrorManager;
-import utils.FormatManager;
 
 /**
  *
  * @author nick
  */
-public class OMIM {
+public class RecessiveCarrier {
     String geneName;
-    String omimDiseaseName;
-    
-    public OMIM(String geneName) {
+    int recessiveCarrier;
+
+    public RecessiveCarrier(String geneName) {
         this.geneName = geneName;
 
-        initOMIM();
+        initRecessiveCarrier();
     }
-    
-    
-    private void initOMIM() {
+
+    private void initRecessiveCarrier() {
         try {
-            String sql = KnownVarManager.getSql4OMIM(geneName);
+            String sql = KnownVarManager.getSql4RecessiveCarrier(geneName);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                omimDiseaseName = rs.getString("diseaseName");
+                recessiveCarrier = 1;
             }
 
             rs.close();
@@ -35,9 +33,9 @@ public class OMIM {
             ErrorManager.send(e);
         }
     }
-    
+
     @Override
     public String toString() {
-        return FormatManager.getString(omimDiseaseName);
+        return String.valueOf(recessiveCarrier);
     }
 }

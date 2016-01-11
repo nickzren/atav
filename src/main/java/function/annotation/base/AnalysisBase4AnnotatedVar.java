@@ -68,6 +68,8 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
     private void processVariant() {
         if (annotatedVar != null
                 && annotatedVar.isValid()) {
+            annotatedVar.initKnownVar();
+            
             processVariant(annotatedVar);
 
             countVariant();
