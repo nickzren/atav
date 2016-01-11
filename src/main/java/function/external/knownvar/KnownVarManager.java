@@ -12,7 +12,7 @@ import utils.ErrorManager;
 public class KnownVarManager {
 
     public static final String clinvarTable = "knownvar.clinvar_2015_10_12";
-    public static final String hgmdTable = "knownvar.hgmd";
+    public static final String hgmdTable = "knownvar.hgmd_2015_4";
     public static final String omimTable = "knownvar.omim_2015_10_12";
     public static final String acmgTable = "knownvar.ACMG_2015_12_09";
     public static final String adultOnsetTable = "knownvar.AdultOnset_2015_12_09";
