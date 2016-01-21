@@ -9,8 +9,18 @@ import global.Data;
 public class ExacManager {
 
     static final String coverageTable = "exac.coverage_03";
-    static final String snvTable = "exac.snv_maf_r03_2015_09_16";
-    static final String indelTable = "exac.indel_maf_r03_2015_09_16";
+    static String snvTable = "exac.snv_maf_r03_2015_09_16";
+    static String indelTable = "exac.indel_maf_r03_2015_09_16";
+
+    public static void resetTables() {
+        if (ExacCommand.exacSubset.equalsIgnoreCase("nonpsyc")) {
+            snvTable = "exac.snv_maf_r03_nonpsych";
+            indelTable = "exac.indel_maf_r03_nonpsych";
+        } else if (ExacCommand.exacSubset.equalsIgnoreCase("nonTCGA")) {
+            snvTable = "exac.snv_maf_r03_nonTCGA";
+            indelTable = "exac.indel_maf_r03_nonTCGA";
+        }
+    }
 
     public static String getTitle() {
         String title = "";
