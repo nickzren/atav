@@ -195,8 +195,19 @@ public class SampleManager {
                 String individualId = values[1].trim();
                 String paternalId = values[2].trim();
                 String maternalId = values[3].trim();
+                
                 int sex = Integer.valueOf(values[4].trim());
+                if (sex != 1 && sex != 2) {
+                    ErrorManager.print("\nWrong Sex value: " + sex 
+                            + " (line " + lineNum+ " in sample file)");
+                }
+
                 double pheno = Double.valueOf(values[5].trim());
+                if (pheno != 1 && pheno != 2) {
+                    ErrorManager.print("\nWrong Phenotype value: " + pheno 
+                            + " (line " + lineNum+ " in sample file)");
+                }
+                
                 String sampleType = values[6].trim();
                 String captureKit = values[7].trim();
 
