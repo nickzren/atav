@@ -25,6 +25,7 @@ public class Data {
     //"ea,aa,all"
     public static final String[] EVS_POP = {"ea", "aa", "all"};
     public static final String[] EXAC_POP = {"global", "afr", "amr", "eas", "sas", "fin", "nfe", "oth"};
+    public static final String[] EXAC_SUBSET = {"nonpsych", "nonTCGA"};
     public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 

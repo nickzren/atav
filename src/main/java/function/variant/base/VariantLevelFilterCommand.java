@@ -2,6 +2,7 @@ package function.variant.base;
 
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import global.Data;
@@ -75,6 +76,10 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--min-exac-mean-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 ExacCommand.exacMeanCoverage = getValidFloat(option);
+            } else if (option.getName().equals("--exac-subset")) {
+                checkValuesValid(Data.EXAC_SUBSET, option);
+                ExacCommand.exacSubset = option.getValue();
+                ExacManager.resetTables();
             } else if (option.getName().equals("--min-c-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCscore = getValidDouble(option);
