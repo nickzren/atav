@@ -122,14 +122,15 @@ public class CoverageCommand {
     }
     
     public static void initCoverageComparisonSite(Iterator<CommandOption> iterator) {
-        // hornor all sub options from SiteCoverageSummary as well
-        // not the best way to do it, but there no option inheitance yet in ATAV so far.
-        initSiteCoverageSummary(iterator); 
         isCaseControlSeparate = true; // always true for comparison
         CommandOption option;
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--site-max-percent-cov-difference")) {
+            if (option.getName().equals("--covered-region")) {
+                coveredRegionFile = getValidPath(option);
+            } else if (option.getName().equals("--gene-boundaries")) {
+                coveredRegionFile = getValidPath(option);
+            } else if (option.getName().equals("--site-max-percent-cov-difference")) {
                 checkValueValid(1, 0, option);
                 siteCleanCutoff = getValidDouble(option);
             }  else if (option.getName().equals("--percent-region-covered")) {
