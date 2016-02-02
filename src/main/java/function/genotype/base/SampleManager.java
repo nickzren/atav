@@ -189,27 +189,29 @@ public class SampleManager {
                     continue;
                 }
 
+                lineStr = lineStr.replaceAll("( )+", "");
+                
                 String[] values = lineStr.split("\t");
 
-                String familyId = values[0].trim();
-                String individualId = values[1].trim();
-                String paternalId = values[2].trim();
-                String maternalId = values[3].trim();
+                String familyId = values[0];
+                String individualId = values[1];
+                String paternalId = values[2];
+                String maternalId = values[3];
                 
-                int sex = Integer.valueOf(values[4].trim());
+                int sex = Integer.valueOf(values[4]);
                 if (sex != 1 && sex != 2) {
                     ErrorManager.print("\nWrong Sex value: " + sex 
                             + " (line " + lineNum+ " in sample file)");
                 }
 
-                double pheno = Double.valueOf(values[5].trim());
+                double pheno = Double.valueOf(values[5]);
                 if (pheno != 1 && pheno != 2) {
                     ErrorManager.print("\nWrong Phenotype value: " + pheno 
                             + " (line " + lineNum+ " in sample file)");
                 }
                 
-                String sampleType = values[6].trim();
-                String captureKit = values[7].trim();
+                String sampleType = values[6];
+                String captureKit = values[7];
 
                 if (sampleType.equalsIgnoreCase("genome")) {
                     captureKit = "N/A";
