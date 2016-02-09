@@ -1,8 +1,5 @@
 package function.external.knownvar;
 
-import java.sql.ResultSet;
-import utils.DBManager;
-import utils.ErrorManager;
 import utils.FormatManager;
 
 /**
@@ -22,46 +19,31 @@ public class Clinvar {
     private String diseaseName;
     int flankingCount;
 
-    public Clinvar(String id) {
-        initBasic(id);
-
-        initClinvar();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public Clinvar(String chr, int pos, String ref, String alt, String clinicalSignificance,
+            String otherIds, String diseaseName) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
-
         if (ref.length() > 1
                 || alt.length() > 1) {
             isSnv = false;
         }
+
+        this.clinicalSignificance = clinicalSignificance;
+        this.otherIds = otherIds;
+        this.diseaseName = diseaseName;
     }
 
-    private void initClinvar() {
-        try {
-            String sql = KnownVarManager.getSql4Clinvar(chr, pos, ref, alt);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            if (rs.next()) {
-                clinicalSignificance = rs.getString("ClinicalSignificance".replaceAll(";", " | "));
-                otherIds = rs.getString("OtherIds").replaceAll(",", " | ");
-                diseaseName = rs.getString("DiseaseName").replaceAll(",", "");
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
+    public void initFlankingCount() {
         flankingCount = KnownVarManager.getFlankingCount(isSnv, chr, pos,
                 KnownVarManager.clinvarTable);
+    }
+
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
     
     @Override
