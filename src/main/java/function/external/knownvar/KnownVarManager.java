@@ -3,10 +3,10 @@ package function.external.knownvar;
 import function.variant.base.Variant;
 import global.Data;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.HashMap;
 import utils.DBManager;
 import utils.ErrorManager;
+import utils.FormatManager;
 
 /**
  *
@@ -24,6 +24,7 @@ public class KnownVarManager {
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
 
     private static final HashMap<String, Clinvar> clinvarMap = new HashMap<String, Clinvar>();
+    private static final HashMap<String, HGMD> hgmdMap = new HashMap<String, HGMD>();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -50,6 +51,8 @@ public class KnownVarManager {
     public static void init() {
         if (KnownVarCommand.isIncludeKnownVar) {
             initClinvarList();
+
+            initHGMDList();
         }
     }
 
@@ -93,15 +96,50 @@ public class KnownVarManager {
         return clinvar;
     }
 
-    public static String getSql4HGMD(String chr, int pos, String ref, String alt) {
-        return "SELECT variantClass,"
-                + "pmid,"
-                + "DiseaseName "
-                + "From " + hgmdTable + " "
-                + "WHERE chr='" + chr + "' "
-                + "AND pos=" + pos + " "
-                + "AND ref='" + ref + "' "
-                + "AND alt='" + alt + "'";
+    private static void initHGMDList() {
+        try {
+            String sql = "SELECT * From " + hgmdTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String chr = rs.getString("chr");
+                int pos = rs.getInt("pos");
+                String ref = rs.getString("ref");
+                String alt = rs.getString("alt");
+                String variantClass = FormatManager.getString(rs.getString("variantClass"));
+                String pmid = FormatManager.getString(rs.getString("pmid"));
+                String diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
+
+                String id = chr + "-" + pos + "-" + ref + "-" + alt;
+
+                if (hgmdMap.containsKey(id)) {
+                    hgmdMap.get(id).append(variantClass, pmid, diseaseName);
+                } else {
+                    HGMD hgmd = new HGMD(chr, pos, ref, alt,
+                            variantClass, pmid, diseaseName);
+
+                    hgmdMap.put(id, hgmd);
+                }
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    public static HGMD getHGMD(Variant var) {
+        HGMD hgmd = hgmdMap.get(var.variantIdStr);
+
+        if (hgmd == null) {
+            hgmd = new HGMD(var.region.chrStr, var.region.startPosition,
+                    var.refAllele, var.allele, "NA", "NA", "NA");
+        }
+
+        hgmd.initFlankingCount();
+
+        return hgmd;
     }
 
     public static String getSql4OMIM(String geneName) {
@@ -152,6 +190,8 @@ public class KnownVarManager {
                     + "From " + table + " "
                     + "WHERE chr='" + chr + "' "
                     + "AND pos BETWEEN " + (pos - width) + " AND " + (pos + width);
+            
+            System.out.println(sql);
 
             ResultSet rs = DBManager.executeQuery(sql);
 

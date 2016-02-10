@@ -28,7 +28,7 @@ public class KnownVarOutput {
         variantIdStr = annotatedVar.variantIdStr;
         geneName = annotatedVar.getGeneName();
         clinvar = KnownVarManager.getClinvar(annotatedVar);
-        hgmd = new HGMD(variantIdStr);
+        hgmd = KnownVarManager.getHGMD(annotatedVar);
         omim = new OMIM(geneName);
         acmg = new ACMG(geneName);
         adultOnset = new AdultOnset(geneName);
