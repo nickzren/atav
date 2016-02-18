@@ -57,25 +57,25 @@ public class KnownVarManager {
 
     public static void init() {
         if (KnownVarCommand.isIncludeKnownVar) {
-            initClinvarList();
+            initClinvarMap();
 
-            initHGMDList();
+            initHGMDMap();
 
-            initOMIMList();
+            initOMIMMap();
 
-            initACMGList();
+            initACMGMap();
 
-            initAdultOnsetList();
+            initAdultOnsetMap();
 
-            initClinGenList();
+            initClinGenMap();
 
-            initPGxList();
+            initPGxMap();
 
-            initRecessiveCarrierList();
+            initRecessiveCarrierMap();
         }
     }
 
-    private static void initClinvarList() {
+    private static void initClinvarMap() {
         try {
             String sql = "SELECT * From " + clinvarTable;
 
@@ -102,7 +102,7 @@ public class KnownVarManager {
         }
     }
 
-    private static void initHGMDList() {
+    private static void initHGMDMap() {
         try {
             String sql = "SELECT * From " + hgmdTable;
 
@@ -135,7 +135,7 @@ public class KnownVarManager {
         }
     }
 
-    private static void initOMIMList() {
+    private static void initOMIMMap() {
         try {
             String sql = "SELECT * From " + omimTable;
 
@@ -153,7 +153,7 @@ public class KnownVarManager {
         }
     }
 
-    private static void initACMGList() {
+    private static void initACMGMap() {
         try {
             String sql = "SELECT * From " + acmgTable;
 
@@ -171,7 +171,7 @@ public class KnownVarManager {
         }
     }
 
-    private static void initAdultOnsetList() {
+    private static void initAdultOnsetMap() {
         try {
             String sql = "SELECT * From " + adultOnsetTable;
 
@@ -189,7 +189,7 @@ public class KnownVarManager {
         }
     }
 
-    private static void initClinGenList() {
+    private static void initClinGenMap() {
         try {
             String sql = "SELECT * From " + clinGenTable;
 
@@ -211,7 +211,7 @@ public class KnownVarManager {
         }
     }
 
-    private static void initPGxList() {
+    private static void initPGxMap() {
         try {
             String sql = "SELECT * From " + pgxTable;
 
@@ -230,7 +230,7 @@ public class KnownVarManager {
         }
     }
 
-    private static void initRecessiveCarrierList() {
+    private static void initRecessiveCarrierMap() {
         try {
             String sql = "SELECT * From " + recessiveCarrierTable;
 
