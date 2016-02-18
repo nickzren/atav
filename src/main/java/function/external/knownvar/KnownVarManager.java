@@ -27,6 +27,7 @@ public class KnownVarManager {
     private static final HashMap<String, HGMD> hgmdMap = new HashMap<String, HGMD>();
     private static final HashMap<String, String> omimMap = new HashMap<String, String>();
     private static final HashMap<String, String> acmgMap = new HashMap<String, String>();
+    private static final HashMap<String, String> adultOnsetMap = new HashMap<String, String>();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -57,8 +58,10 @@ public class KnownVarManager {
             initHGMDList();
 
             initOMIMList();
-            
+
             initACMGList();
+
+            initAdultOnsetList();
         }
     }
 
@@ -87,19 +90,6 @@ public class KnownVarManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-    }
-
-    public static Clinvar getClinvar(Variant var) {
-        Clinvar clinvar = clinvarMap.get(var.variantIdStr);
-
-        if (clinvar == null) {
-            clinvar = new Clinvar(var.region.chrStr, var.region.startPosition,
-                    var.refAllele, var.allele, "NA", "NA", "NA");
-        }
-
-        clinvar.initFlankingCount();
-
-        return clinvar;
     }
 
     private static void initHGMDList() {
@@ -135,19 +125,6 @@ public class KnownVarManager {
         }
     }
 
-    public static HGMD getHGMD(Variant var) {
-        HGMD hgmd = hgmdMap.get(var.variantIdStr);
-
-        if (hgmd == null) {
-            hgmd = new HGMD(var.region.chrStr, var.region.startPosition,
-                    var.refAllele, var.allele, "NA", "NA", "NA");
-        }
-
-        hgmd.initFlankingCount();
-
-        return hgmd;
-    }
-
     private static void initOMIMList() {
         try {
             String sql = "SELECT * From " + omimTable;
@@ -165,11 +142,7 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
     }
-    
-    public static String getOMIM(String geneName) {
-        return FormatManager.getString(omimMap.get(geneName));
-    }
-    
+
     private static void initACMGList() {
         try {
             String sql = "SELECT * From " + acmgTable;
@@ -178,8 +151,8 @@ public class KnownVarManager {
 
             while (rs.next()) {
                 String geneName = rs.getString("geneName");
-                String ACMG = rs.getString("ACMG");
-                acmgMap.put(geneName, ACMG);
+                String acmg = rs.getString("ACMG");
+                acmgMap.put(geneName, acmg);
             }
 
             rs.close();
@@ -187,15 +160,61 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
     }
-    
+
+    private static void initAdultOnsetList() {
+        try {
+            String sql = "SELECT * From " + adultOnsetTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String geneName = rs.getString("geneName");
+                String adultOnset = rs.getString("AdultOnset");
+                adultOnsetMap.put(geneName, adultOnset);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    public static Clinvar getClinvar(Variant var) {
+        Clinvar clinvar = clinvarMap.get(var.variantIdStr);
+
+        if (clinvar == null) {
+            clinvar = new Clinvar(var.region.chrStr, var.region.startPosition,
+                    var.refAllele, var.allele, "NA", "NA", "NA");
+        }
+
+        clinvar.initFlankingCount();
+
+        return clinvar;
+    }
+
+    public static HGMD getHGMD(Variant var) {
+        HGMD hgmd = hgmdMap.get(var.variantIdStr);
+
+        if (hgmd == null) {
+            hgmd = new HGMD(var.region.chrStr, var.region.startPosition,
+                    var.refAllele, var.allele, "NA", "NA", "NA");
+        }
+
+        hgmd.initFlankingCount();
+
+        return hgmd;
+    }
+
+    public static String getOMIM(String geneName) {
+        return FormatManager.getString(omimMap.get(geneName));
+    }
+
     public static String getACMG(String geneName) {
         return FormatManager.getString(acmgMap.get(geneName));
     }
 
-    public static String getSql4AdultOnset(String geneName) {
-        return "SELECT AdultOnset "
-                + "From " + adultOnsetTable + " "
-                + "WHERE geneName='" + geneName + "' ";
+    public static String getAdultOnset(String geneName) {
+        return FormatManager.getString(adultOnsetMap.get(geneName));
     }
 
     public static String getSql4ClinGen(String geneName) {

@@ -14,7 +14,7 @@ public class KnownVarOutput {
     HGMD hgmd;
     String omimDiseaseName; 
     String acmg;
-    AdultOnset adultOnset;
+    String adultOnset;
     ClinGen clinGen;
     PGx pgx;
     RecessiveCarrier recessiveCarrier;
@@ -31,7 +31,7 @@ public class KnownVarOutput {
         hgmd = KnownVarManager.getHGMD(annotatedVar);
         omimDiseaseName = KnownVarManager.getOMIM(geneName);
         acmg = KnownVarManager.getACMG(geneName);
-        adultOnset = new AdultOnset(geneName);
+        adultOnset = KnownVarManager.getAdultOnset(geneName);
         clinGen = new ClinGen(geneName);
         pgx = new PGx(geneName);
         recessiveCarrier = new RecessiveCarrier(geneName);
@@ -44,8 +44,8 @@ public class KnownVarOutput {
         sb.append(clinvar.toString()).append(",");
         sb.append(hgmd.toString()).append(",");
         sb.append(omimDiseaseName).append(",");
-        sb.append(acmg.toString()).append(",");
-        sb.append(adultOnset.toString()).append(",");
+        sb.append(acmg).append(",");
+        sb.append(adultOnset).append(",");
         sb.append(clinGen.toString()).append(",");
         sb.append(pgx.toString()).append(",");
         sb.append(recessiveCarrier.toString()).append(",");
