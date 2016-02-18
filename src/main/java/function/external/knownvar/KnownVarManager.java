@@ -57,6 +57,8 @@ public class KnownVarManager {
             initHGMDList();
 
             initOMIMList();
+            
+            initACMGList();
         }
     }
 
