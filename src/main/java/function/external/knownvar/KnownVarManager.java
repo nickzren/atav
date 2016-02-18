@@ -25,6 +25,7 @@ public class KnownVarManager {
 
     private static final HashMap<String, Clinvar> clinvarMap = new HashMap<String, Clinvar>();
     private static final HashMap<String, HGMD> hgmdMap = new HashMap<String, HGMD>();
+    private static final HashMap<String, String> omimMap = new HashMap<String, String>();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -53,6 +54,8 @@ public class KnownVarManager {
             initClinvarList();
 
             initHGMDList();
+
+            initOMIMList();
         }
     }
 
@@ -67,7 +70,7 @@ public class KnownVarManager {
                 int pos = rs.getInt("pos");
                 String ref = rs.getString("ref");
                 String alt = rs.getString("alt");
-                String clinicalSignificance = rs.getString("ClinicalSignificance".replaceAll(";", " | "));
+                String clinicalSignificance = rs.getString("ClinicalSignificance");
                 String otherIds = rs.getString("OtherIds").replaceAll(",", " | ");
                 String diseaseName = rs.getString("DiseaseName").replaceAll(",", "");
 
@@ -142,6 +145,29 @@ public class KnownVarManager {
         return hgmd;
     }
 
+    private static void initOMIMList() {
+        try {
+            String sql = "SELECT * From " + omimTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String geneName = rs.getString("geneName");
+                String diseaseName = rs.getString("diseaseName");
+                omimMap.put(geneName, diseaseName);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+    
+    public static String getOMIM(String geneName) {
+        return FormatManager.getString(omimMap.get(geneName));
+    }
+
+
     public static String getSql4OMIM(String geneName) {
         return "SELECT diseaseName "
                 + "From " + omimTable + " "
@@ -190,8 +216,6 @@ public class KnownVarManager {
                     + "From " + table + " "
                     + "WHERE chr='" + chr + "' "
                     + "AND pos BETWEEN " + (pos - width) + " AND " + (pos + width);
-            
-            System.out.println(sql);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
