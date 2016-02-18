@@ -29,6 +29,7 @@ public class KnownVarManager {
     private static final HashMap<String, String> acmgMap = new HashMap<String, String>();
     private static final HashMap<String, String> adultOnsetMap = new HashMap<String, String>();
     private static final HashMap<String, ClinGen> clinGenMap = new HashMap<String, ClinGen>();
+    private static final HashMap<String, String> pgxMap = new HashMap<String, String>();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -65,6 +66,8 @@ public class KnownVarManager {
             initAdultOnsetList();
             
             initClinGenList();
+            
+            initPGxList();
         }
     }
 
@@ -203,6 +206,25 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
     }
+    
+    private static void initPGxList() {
+        try {
+            String sql = "SELECT * From " + pgxTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String geneName = rs.getString("geneName");
+                String pgx = rs.getString("PGx");
+
+                pgxMap.put(geneName, pgx);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
 
     public static Clinvar getClinvar(Variant var) {
         Clinvar clinvar = clinvarMap.get(var.variantIdStr);
@@ -252,10 +274,8 @@ public class KnownVarManager {
         return clinGen;
     }
 
-    public static String getSql4PGx(String geneName) {
-        return "SELECT PGx "
-                + "From " + pgxTable + " "
-                + "WHERE geneName='" + geneName + "' ";
+    public static String getPGx(String geneName) {
+        return FormatManager.getString(pgxMap.get(geneName));
     }
 
     public static String getSql4RecessiveCarrier(String geneName) {

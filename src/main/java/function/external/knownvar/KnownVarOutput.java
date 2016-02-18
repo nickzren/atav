@@ -16,7 +16,7 @@ public class KnownVarOutput {
     String acmg;
     String adultOnset;
     ClinGen clinGen;
-    PGx pgx;
+    String pgx;
     RecessiveCarrier recessiveCarrier;
 
     public static final String title
@@ -33,7 +33,7 @@ public class KnownVarOutput {
         acmg = KnownVarManager.getACMG(geneName);
         adultOnset = KnownVarManager.getAdultOnset(geneName);
         clinGen = KnownVarManager.getClinGen(geneName);
-        pgx = new PGx(geneName);
+        pgx = KnownVarManager.getPGx(geneName);
         recessiveCarrier = new RecessiveCarrier(geneName);
     }
 
@@ -47,7 +47,7 @@ public class KnownVarOutput {
         sb.append(acmg).append(",");
         sb.append(adultOnset).append(",");
         sb.append(clinGen.toString()).append(",");
-        sb.append(pgx.toString()).append(",");
+        sb.append(pgx).append(",");
         sb.append(recessiveCarrier.toString()).append(",");
 
         return sb.toString();
