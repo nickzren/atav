@@ -13,7 +13,7 @@ public class KnownVarOutput {
     Clinvar clinvar;
     HGMD hgmd;
     String omimDiseaseName; 
-    ACMG acmg;
+    String acmg;
     AdultOnset adultOnset;
     ClinGen clinGen;
     PGx pgx;
@@ -30,7 +30,7 @@ public class KnownVarOutput {
         clinvar = KnownVarManager.getClinvar(annotatedVar);
         hgmd = KnownVarManager.getHGMD(annotatedVar);
         omimDiseaseName = KnownVarManager.getOMIM(geneName);
-        acmg = new ACMG(geneName);
+        acmg = KnownVarManager.getACMG(geneName);
         adultOnset = new AdultOnset(geneName);
         clinGen = new ClinGen(geneName);
         pgx = new PGx(geneName);

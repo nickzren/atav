@@ -26,6 +26,7 @@ public class KnownVarManager {
     private static final HashMap<String, Clinvar> clinvarMap = new HashMap<String, Clinvar>();
     private static final HashMap<String, HGMD> hgmdMap = new HashMap<String, HGMD>();
     private static final HashMap<String, String> omimMap = new HashMap<String, String>();
+    private static final HashMap<String, String> acmgMap = new HashMap<String, String>();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -166,18 +167,27 @@ public class KnownVarManager {
     public static String getOMIM(String geneName) {
         return FormatManager.getString(omimMap.get(geneName));
     }
+    
+    private static void initACMGList() {
+        try {
+            String sql = "SELECT * From " + acmgTable;
 
+            ResultSet rs = DBManager.executeQuery(sql);
 
-    public static String getSql4OMIM(String geneName) {
-        return "SELECT diseaseName "
-                + "From " + omimTable + " "
-                + "WHERE geneName='" + geneName + "' ";
+            while (rs.next()) {
+                String geneName = rs.getString("geneName");
+                String ACMG = rs.getString("ACMG");
+                acmgMap.put(geneName, ACMG);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
     }
-
-    public static String getSql4ACMG(String geneName) {
-        return "SELECT ACMG "
-                + "From " + acmgTable + " "
-                + "WHERE geneName='" + geneName + "' ";
+    
+    public static String getACMG(String geneName) {
+        return FormatManager.getString(acmgMap.get(geneName));
     }
 
     public static String getSql4AdultOnset(String geneName) {
