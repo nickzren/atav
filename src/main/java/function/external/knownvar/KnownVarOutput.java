@@ -32,7 +32,7 @@ public class KnownVarOutput {
         omimDiseaseName = KnownVarManager.getOMIM(geneName);
         acmg = KnownVarManager.getACMG(geneName);
         adultOnset = KnownVarManager.getAdultOnset(geneName);
-        clinGen = new ClinGen(geneName);
+        clinGen = KnownVarManager.getClinGen(geneName);
         pgx = new PGx(geneName);
         recessiveCarrier = new RecessiveCarrier(geneName);
     }

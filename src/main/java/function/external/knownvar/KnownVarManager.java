@@ -28,6 +28,7 @@ public class KnownVarManager {
     private static final HashMap<String, String> omimMap = new HashMap<String, String>();
     private static final HashMap<String, String> acmgMap = new HashMap<String, String>();
     private static final HashMap<String, String> adultOnsetMap = new HashMap<String, String>();
+    private static final HashMap<String, ClinGen> clinGenMap = new HashMap<String, ClinGen>();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -62,6 +63,8 @@ public class KnownVarManager {
             initACMGList();
 
             initAdultOnsetList();
+            
+            initClinGenList();
         }
     }
 
@@ -178,6 +181,28 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
     }
+    
+    private static void initClinGenList() {
+        try {
+            String sql = "SELECT * From " + clinGenTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String geneName = rs.getString("geneName");
+                String haploinsufficiencyDesc = rs.getString("HaploinsufficiencyDesc");
+                String triplosensitivityDesc = rs.getString("TriplosensitivityDesc");
+
+                ClinGen clinGen = new ClinGen(haploinsufficiencyDesc, triplosensitivityDesc);
+
+                clinGenMap.put(geneName, clinGen);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
 
     public static Clinvar getClinvar(Variant var) {
         Clinvar clinvar = clinvarMap.get(var.variantIdStr);
@@ -217,10 +242,14 @@ public class KnownVarManager {
         return FormatManager.getString(adultOnsetMap.get(geneName));
     }
 
-    public static String getSql4ClinGen(String geneName) {
-        return "SELECT HaploinsufficiencyDesc,TriplosensitivityDesc "
-                + "From " + clinGenTable + " "
-                + "WHERE geneName='" + geneName + "' ";
+    public static ClinGen getClinGen(String geneName) {
+        ClinGen clinGen = clinGenMap.get(geneName);
+
+        if (clinGen == null) {
+            clinGen = new ClinGen("NA", "NA");
+        }
+
+        return clinGen;
     }
 
     public static String getSql4PGx(String geneName) {
