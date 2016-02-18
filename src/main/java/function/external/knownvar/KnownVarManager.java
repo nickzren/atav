@@ -4,6 +4,7 @@ import function.variant.base.Variant;
 import global.Data;
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -30,6 +31,7 @@ public class KnownVarManager {
     private static final HashMap<String, String> adultOnsetMap = new HashMap<String, String>();
     private static final HashMap<String, ClinGen> clinGenMap = new HashMap<String, ClinGen>();
     private static final HashMap<String, String> pgxMap = new HashMap<String, String>();
+    private static final HashSet<String> recessiveCarrierSet = new HashSet<String>();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -64,10 +66,12 @@ public class KnownVarManager {
             initACMGList();
 
             initAdultOnsetList();
-            
+
             initClinGenList();
-            
+
             initPGxList();
+
+            initRecessiveCarrierList();
         }
     }
 
@@ -184,7 +188,7 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
     }
-    
+
     private static void initClinGenList() {
         try {
             String sql = "SELECT * From " + clinGenTable;
@@ -206,7 +210,7 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
     }
-    
+
     private static void initPGxList() {
         try {
             String sql = "SELECT * From " + pgxTable;
@@ -218,6 +222,24 @@ public class KnownVarManager {
                 String pgx = rs.getString("PGx");
 
                 pgxMap.put(geneName, pgx);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private static void initRecessiveCarrierList() {
+        try {
+            String sql = "SELECT * From " + recessiveCarrierTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String geneName = rs.getString("geneName");
+
+                recessiveCarrierSet.add(geneName);
             }
 
             rs.close();
@@ -278,10 +300,12 @@ public class KnownVarManager {
         return FormatManager.getString(pgxMap.get(geneName));
     }
 
-    public static String getSql4RecessiveCarrier(String geneName) {
-        return "SELECT * "
-                + "From " + recessiveCarrierTable + " "
-                + "WHERE geneName='" + geneName + "' ";
+    public static int getRecessiveCarrier(String geneName) {
+        if (recessiveCarrierSet.contains(geneName)) {
+            return 1;
+        }
+
+        return 0;
     }
 
     public static int getFlankingCount(boolean isSnv, String chr, int pos, String table) {
