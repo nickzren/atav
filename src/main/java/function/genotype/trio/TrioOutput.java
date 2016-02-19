@@ -80,7 +80,7 @@ public class TrioOutput extends Output {
 
     public void deleteSampleGeno(int id) {
         if (id != Data.NA) {
-            Sample sample = SampleManager.getTable().get(id);
+            Sample sample = SampleManager.getMap().get(id);
 
             int geno = calledVar.getGenotype(sample.getIndex());
             int pheno = (int) sample.getPheno();
@@ -100,7 +100,7 @@ public class TrioOutput extends Output {
 
     public void addSampleGeno(int id) {
         if (id != Data.NA) {
-            Sample sample = SampleManager.getTable().get(id);
+            Sample sample = SampleManager.getMap().get(id);
 
             int geno = calledVar.getGenotype(sample.getIndex());
             int pheno = (int) sample.getPheno();

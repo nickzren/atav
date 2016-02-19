@@ -15,8 +15,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 
 /**
  *
@@ -36,7 +36,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     final String geneLogisticPQQPlotPath = CommonCommand.outputPath + "summary.logistic.p.qq.plot.pdf";
 
     ArrayList<CollapsingSummary> summaryList = new ArrayList<CollapsingSummary>();
-    Hashtable<String, CollapsingSummary> summaryTable = new Hashtable<String, CollapsingSummary>();
+    HashMap<String, CollapsingSummary> summaryMap = new HashMap<String, CollapsingSummary>();
 
     @Override
     public void initOutput() {
@@ -92,7 +92,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     public void beforeProcessDatabaseData() {
         RegionBoundaryManager.init();
         
-        initSummaryTable();
+        initSummaryMap();
 
         SampleManager.generateCovariateFile();
 
@@ -111,37 +111,37 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     }
 
-    private void initSummaryTable() {
+    private void initSummaryMap() {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
-            initGeneSummaryTable();
+            initGeneSummaryMap();
         } else {
-            initRegionSummaryTable();
+            initRegionSummaryMap();
         }
     }
 
-    private void initGeneSummaryTable() {
+    private void initGeneSummaryMap() {
         for (HashSet<Gene> geneSet : GeneManager.getMap().values()) {
             for (Gene gene : geneSet) {
-                updateGeneSummaryTable(gene.getName());
+                updateGeneSummaryMap(gene.getName());
             }
         }
     }
 
-    private void initRegionSummaryTable() {
+    private void initRegionSummaryMap() {
         for (RegionBoundary regionBoundary : RegionBoundaryManager.getList()) {
-            updateRegionSummaryTable(regionBoundary.getName());
+            updateRegionSummaryMap(regionBoundary.getName());
         }
     }
 
-    public void updateGeneSummaryTable(String geneName) {
-        if (!summaryTable.containsKey(geneName)) {
-            summaryTable.put(geneName, new CollapsingGeneSummary(geneName));
+    public void updateGeneSummaryMap(String geneName) {
+        if (!summaryMap.containsKey(geneName)) {
+            summaryMap.put(geneName, new CollapsingGeneSummary(geneName));
         }
     }
 
-    public void updateRegionSummaryTable(String regionName) {
-        if (!summaryTable.containsKey(regionName)) {
-            summaryTable.put(regionName, new CollapsingRegionSummary(regionName));
+    public void updateRegionSummaryMap(String regionName) {
+        if (!summaryMap.containsKey(regionName)) {
+            summaryMap.put(regionName, new CollapsingRegionSummary(regionName));
         }
     }
 
@@ -149,12 +149,12 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
         LogManager.writeAndPrint("Output the data to matrix & summary file...");
 
         try {
-            summaryList.addAll(summaryTable.values());
+            summaryList.addAll(summaryMap.values());
 
             outputMatrix();
 
             if (CollapsingCommand.regionBoundaryFile.isEmpty()) { // gene summary
-                CollapsingGeneSummary.calculateLinearAndLogisticP(matrixFilePath, summaryTable);
+                CollapsingGeneSummary.calculateLinearAndLogisticP(matrixFilePath, summaryMap);
             }
 
             Collections.sort(summaryList);

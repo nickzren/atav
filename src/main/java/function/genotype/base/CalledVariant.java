@@ -202,7 +202,7 @@ public class CalledVariant extends AnnotatedVariant {
 
     private void addFamilyIdSet(int sampleId) {
         if (FamilyCommand.isFamilyAnalysis) {
-            String familyId = SampleManager.getTable().get(sampleId).getFamilyId();
+            String familyId = SampleManager.getMap().get(sampleId).getFamilyId();
             if (FamilyManager.isFamilyQualified(familyId)) {
                 familyIdSet.add(familyId);
             }

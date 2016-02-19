@@ -1,6 +1,5 @@
 package function.genotype.collapsing;
 
-import global.Data;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
 import utils.CommonCommand;
@@ -11,7 +10,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  *
@@ -48,21 +47,21 @@ public class CollapsingGeneSummary extends CollapsingSummary {
     }
 
     public static void calculateLinearAndLogisticP(String geneSampleMatrixFilePath,
-            Hashtable<String, CollapsingSummary> summaryTable) throws Exception {
+            HashMap<String, CollapsingSummary> summaryMap) throws Exception {
         String geneLogisticPPath = CommonCommand.outputPath + "gene.logistic.p.csv";
         String geneLinearPPath = CommonCommand.outputPath + "gene.linear.p.csv";
 
         if (CollapsingCommand.isCollapsingDoLogistic) {
             calculateRegression(geneSampleMatrixFilePath,
-                    summaryTable, geneLogisticPPath, "logistf");
+                    summaryMap, geneLogisticPPath, "logistf");
         } else if (CollapsingCommand.isCollapsingDoLinear) {
             calculateRegression(geneSampleMatrixFilePath,
-                    summaryTable, geneLinearPPath, "linear");
+                    summaryMap, geneLinearPPath, "linear");
         }
     }
 
     private static void calculateRegression(String geneSampleMatrixFilePath,
-            Hashtable<String, CollapsingSummary> summaryTable,
+            HashMap<String, CollapsingSummary> summaryMap,
             String outputFile, String method) throws Exception {
         ThirdPartyToolManager.callCollapsedRegression(outputFile,
                 geneSampleMatrixFilePath, method);
@@ -83,9 +82,9 @@ public class CollapsingGeneSummary extends CollapsingSummary {
                 String geneName = temp[0].replaceAll("'", "");
 
                 if (method.equals("logistf")) {
-                    summaryTable.get(geneName).setLogisticP(Double.valueOf(temp[1]));
+                    summaryMap.get(geneName).setLogisticP(Double.valueOf(temp[1]));
                 } else { // linear
-                    summaryTable.get(geneName).setLinearP(Double.valueOf(temp[1]));
+                    summaryMap.get(geneName).setLinearP(Double.valueOf(temp[1]));
                 }
             }
         }

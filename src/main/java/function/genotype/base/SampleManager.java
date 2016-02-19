@@ -14,7 +14,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import utils.FormatManager;
 
@@ -25,13 +24,13 @@ import utils.FormatManager;
 public class SampleManager {
 
     // sample permission
-    private static Hashtable<String, String> sampleGroupTable // sample_name, group_name
-            = new Hashtable<String, String>();
-    private static Hashtable<String, HashSet<String>> userGroupTable // group_name, user set
-            = new Hashtable<String, HashSet<String>>();
+    private static HashMap<String, String> sampleGroupMap // sample_name, group_name
+            = new HashMap<String, String>();
+    private static HashMap<String, HashSet<String>> userGroupMap // group_name, user set
+            = new HashMap<String, HashSet<String>>();
 
     private static ArrayList<Sample> sampleList = new ArrayList<Sample>();
-    private static Hashtable<Integer, Sample> sampleTable = new Hashtable<Integer, Sample>();
+    private static HashMap<Integer, Sample> sampleMap = new HashMap<Integer, Sample>();
 
     private static int listSize; // case + ctrl
     private static int caseNum = 0;
@@ -98,7 +97,7 @@ public class SampleManager {
                 if (!lineStr.isEmpty()) {
                     String[] tmp = lineStr.trim().split("\t");
 
-                    sampleGroupTable.put(tmp[0], tmp[1]);
+                    sampleGroupMap.put(tmp[0], tmp[1]);
                 }
             }
 
@@ -125,11 +124,11 @@ public class SampleManager {
                     String groupName = tmp[0];
                     String[] users = tmp[1].split(",");
 
-                    HashSet<String> userSet = userGroupTable.get(groupName);
+                    HashSet<String> userSet = userGroupMap.get(groupName);
 
                     if (userSet == null) {
                         userSet = new HashSet<String>();
-                        userGroupTable.put(groupName, userSet);
+                        userGroupMap.put(groupName, userSet);
                     }
 
                     for (String user : users) {
@@ -219,7 +218,7 @@ public class SampleManager {
 
                 int sampleId = getSampleId(individualId, sampleType, captureKit);
 
-                if (sampleTable.containsKey(sampleId)) {
+                if (sampleMap.containsKey(sampleId)) {
                     continue;
                 }
 
@@ -237,7 +236,7 @@ public class SampleManager {
                 }
 
                 sampleList.add(sample);
-                sampleTable.put(sampleId, sample);
+                sampleMap.put(sampleId, sample);
 
                 countSampleNum(sample);
             }
@@ -284,7 +283,7 @@ public class SampleManager {
                 }
 
                 sampleList.add(sample);
-                sampleTable.put(sampleId, sample);
+                sampleMap.put(sampleId, sample);
 
                 countSampleNum(sample);
             }
@@ -296,10 +295,10 @@ public class SampleManager {
     }
 
     private static boolean checkSamplePermission(Sample sample) {
-        if (sampleGroupTable.containsKey(sample.getName())) {
-            String groupName = sampleGroupTable.get(sample.getName());
+        if (sampleGroupMap.containsKey(sample.getName())) {
+            String groupName = sampleGroupMap.get(sample.getName());
 
-            HashSet<String> userSet = userGroupTable.get(groupName);
+            HashSet<String> userSet = userGroupMap.get(groupName);
 
             if (userSet.contains(Data.userName)) {
                 return true;
@@ -429,7 +428,7 @@ public class SampleManager {
             Sample sample = it.next();
             if (sample.getCovariateList().isEmpty()) {
                 it.remove();
-                sampleTable.remove(sample.getId());
+                sampleMap.remove(sample.getId());
             }
         }
     }
@@ -484,7 +483,7 @@ public class SampleManager {
             Sample sample = it.next();
             if (sample.getQuantitativeTrait() == Data.NA) {
                 it.remove();
-                sampleTable.remove(sample.getId());
+                sampleMap.remove(sample.getId());
             }
         }
     }
@@ -765,7 +764,7 @@ public class SampleManager {
     }
 
     public static int getIndexById(int sampleId) {
-        Sample sample = sampleTable.get(sampleId);
+        Sample sample = sampleMap.get(sampleId);
 
         if (sample != null) {
             return sample.getIndex();
@@ -778,8 +777,8 @@ public class SampleManager {
         return sampleList;
     }
 
-    public static Hashtable<Integer, Sample> getTable() {
-        return sampleTable;
+    public static HashMap<Integer, Sample> getMap() {
+        return sampleMap;
     }
 
     public static int getListSize() {
@@ -868,7 +867,7 @@ public class SampleManager {
     }
 
     public static boolean isMale(int sampleId) {
-        return sampleTable.get(sampleId).isMale();
+        return sampleMap.get(sampleId).isMale();
     }
 
     private static void resetSamplePheno4Linear() {

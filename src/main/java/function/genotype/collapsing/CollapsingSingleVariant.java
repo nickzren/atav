@@ -76,8 +76,8 @@ public class CollapsingSingleVariant extends CollapsingBase {
             // gene summary
             for (String geneName : output.getCalledVariant().getGeneSet()) {
                 if (!geneName.equals("NA")) {
-                    updateGeneSummaryTable(geneName);
-                    summaryList.add(summaryTable.get(geneName));
+                    updateGeneSummaryMap(geneName);
+                    summaryList.add(summaryMap.get(geneName));
                 }
             }
         } else {
@@ -85,8 +85,8 @@ public class CollapsingSingleVariant extends CollapsingBase {
             output.initRegionBoundaryNameSet();
 
             for (String regionName : output.regionBoundaryNameSet) {
-                updateRegionSummaryTable(regionName);
-                summaryList.add(summaryTable.get(regionName));
+                updateRegionSummaryMap(regionName);
+                summaryList.add(summaryMap.get(regionName));
             }
         }
     }
