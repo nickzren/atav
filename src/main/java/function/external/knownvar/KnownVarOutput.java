@@ -12,12 +12,12 @@ public class KnownVarOutput {
     String geneName;
     Clinvar clinvar;
     HGMD hgmd;
-    OMIM omim;
-    ACMG acmg;
-    AdultOnset adultOnset;
+    String omimDiseaseName; 
+    String acmg;
+    String adultOnset;
     ClinGen clinGen;
-    PGx pgx;
-    RecessiveCarrier recessiveCarrier;
+    String pgx;
+    int recessiveCarrier;
 
     public static final String title
             = "Variant ID,"
@@ -27,14 +27,16 @@ public class KnownVarOutput {
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
         variantIdStr = annotatedVar.variantIdStr;
         geneName = annotatedVar.getGeneName();
-        clinvar = new Clinvar(variantIdStr);
-        hgmd = new HGMD(variantIdStr);
-        omim = new OMIM(geneName);
-        acmg = new ACMG(geneName);
-        adultOnset = new AdultOnset(geneName);
-        clinGen = new ClinGen(geneName);
-        pgx = new PGx(geneName);
-        recessiveCarrier = new RecessiveCarrier(geneName);
+        clinvar = KnownVarManager.getClinvar(annotatedVar);
+        hgmd = KnownVarManager.getHGMD(annotatedVar);
+        
+        String name = geneName.toUpperCase();
+        omimDiseaseName = KnownVarManager.getOMIM(name);
+        acmg = KnownVarManager.getACMG(name);
+        adultOnset = KnownVarManager.getAdultOnset(name);
+        clinGen = KnownVarManager.getClinGen(name);
+        pgx = KnownVarManager.getPGx(name);
+        recessiveCarrier = KnownVarManager.getRecessiveCarrier(name);
     }
 
     @Override
@@ -43,12 +45,12 @@ public class KnownVarOutput {
 
         sb.append(clinvar.toString()).append(",");
         sb.append(hgmd.toString()).append(",");
-        sb.append(omim.toString()).append(",");
-        sb.append(acmg.toString()).append(",");
-        sb.append(adultOnset.toString()).append(",");
+        sb.append(omimDiseaseName).append(",");
+        sb.append(acmg).append(",");
+        sb.append(adultOnset).append(",");
         sb.append(clinGen.toString()).append(",");
-        sb.append(pgx.toString()).append(",");
-        sb.append(recessiveCarrier.toString()).append(",");
+        sb.append(pgx).append(",");
+        sb.append(recessiveCarrier).append(",");
 
         return sb.toString();
     }

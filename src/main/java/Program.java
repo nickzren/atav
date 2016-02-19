@@ -41,6 +41,7 @@ import function.external.flanking.ListFlankingSeq;
 import function.external.kaviar.KaviarCommand;
 import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
+import function.external.knownvar.KnownVarManager;
 import function.external.knownvar.ListKnownVar;
 import function.genotype.base.CoverageBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
@@ -102,6 +103,8 @@ public class Program {
             VariantManager.init();
 
             CoverageBlockManager.init();
+
+            KnownVarManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
