@@ -29,12 +29,14 @@ public class KnownVarOutput {
         geneName = annotatedVar.getGeneName();
         clinvar = KnownVarManager.getClinvar(annotatedVar);
         hgmd = KnownVarManager.getHGMD(annotatedVar);
-        omimDiseaseName = KnownVarManager.getOMIM(geneName);
-        acmg = KnownVarManager.getACMG(geneName);
-        adultOnset = KnownVarManager.getAdultOnset(geneName);
-        clinGen = KnownVarManager.getClinGen(geneName);
-        pgx = KnownVarManager.getPGx(geneName);
-        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
+        
+        String name = geneName.toUpperCase();
+        omimDiseaseName = KnownVarManager.getOMIM(name);
+        acmg = KnownVarManager.getACMG(name);
+        adultOnset = KnownVarManager.getAdultOnset(name);
+        clinGen = KnownVarManager.getClinGen(name);
+        pgx = KnownVarManager.getPGx(name);
+        recessiveCarrier = KnownVarManager.getRecessiveCarrier(name);
     }
 
     @Override

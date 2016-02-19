@@ -142,7 +142,7 @@ public class KnownVarManager {
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
-                String geneName = rs.getString("geneName");
+                String geneName = rs.getString("geneName").toUpperCase();
                 String diseaseName = rs.getString("diseaseName");
                 omimMap.put(geneName, diseaseName);
             }
@@ -160,7 +160,7 @@ public class KnownVarManager {
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
-                String geneName = rs.getString("geneName");
+                String geneName = rs.getString("geneName").toUpperCase();
                 String acmg = rs.getString("ACMG");
                 acmgMap.put(geneName, acmg);
             }
@@ -178,7 +178,7 @@ public class KnownVarManager {
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
-                String geneName = rs.getString("geneName");
+                String geneName = rs.getString("geneName").toUpperCase();
                 String adultOnset = rs.getString("AdultOnset");
                 adultOnsetMap.put(geneName, adultOnset);
             }
@@ -196,7 +196,7 @@ public class KnownVarManager {
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
-                String geneName = rs.getString("geneName");
+                String geneName = rs.getString("geneName").toUpperCase();
                 String haploinsufficiencyDesc = rs.getString("HaploinsufficiencyDesc");
                 String triplosensitivityDesc = rs.getString("TriplosensitivityDesc");
 
@@ -218,7 +218,7 @@ public class KnownVarManager {
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
-                String geneName = rs.getString("geneName");
+                String geneName = rs.getString("geneName").toUpperCase();
                 String pgx = rs.getString("PGx");
 
                 pgxMap.put(geneName, pgx);
@@ -237,7 +237,7 @@ public class KnownVarManager {
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
-                String geneName = rs.getString("geneName");
+                String geneName = rs.getString("geneName").toUpperCase();
 
                 recessiveCarrierSet.add(geneName);
             }
