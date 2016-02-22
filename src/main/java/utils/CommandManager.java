@@ -8,6 +8,7 @@ import function.coverage.base.CoverageCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.flanking.FlankingCommand;
+import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
@@ -319,6 +320,9 @@ public class CommandManager {
             } else if (option.getName().equals("--list-kaviar")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KaviarCommand.isListKaviar = true;
+            } else if (option.getName().equals("--list-gerp")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                GerpCommand.isListGerp = true;
             } else if (option.getName().equals("--ppi")) { // Non Database Functions
                 PPICommand.isPPI = true;
                 CommonCommand.isNonDBAnalysis = true;

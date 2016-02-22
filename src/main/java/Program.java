@@ -38,6 +38,8 @@ import function.external.exac.ExacCommand;
 import function.external.exac.ListExac;
 import function.external.flanking.FlankingCommand;
 import function.external.flanking.ListFlankingSeq;
+import function.external.gerp.GerpCommand;
+import function.external.gerp.ListGerp;
 import function.external.kaviar.KaviarCommand;
 import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
@@ -168,7 +170,9 @@ public class Program {
                 runAnalysis(new ListFlankingSeq());
             } else if (KaviarCommand.isListKaviar) {
                 runAnalysis(new ListKaviar());
-            } else if (PPICommand.isPPI) { // Non Database Functions
+            } else if (GerpCommand.isListGerp) {
+                runAnalysis(new ListGerp());
+            }else if (PPICommand.isPPI) { // Non Database Functions
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());
                 ppi.run();
