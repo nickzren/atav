@@ -97,104 +97,130 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     public int getGatkFilteredCoverage(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getGatkFilteredCoverage();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getGatkFilteredCoverage();
         } else {
             return Data.NA;
         }
     }
 
     public int getReadsRef(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getReadsRef();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getReadsRef();
         } else {
             return Data.NA;
         }
     }
 
     public int getReadsAlt(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getReadsAlt();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getReadsAlt();
         } else {
             return Data.NA;
         }
     }
 
     public float getVqslod(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getVqslod();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getVqslod();
         } else {
             return Data.NA;
         }
     }
 
     public float getGenotypeQualGQ(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getGenotypeQualGQ();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getGenotypeQualGQ();
         } else {
             return Data.NA;
         }
     }
 
     public float getStrandBiasFS(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getStrandBiasFS();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getStrandBiasFS();
         } else {
             return Data.NA;
         }
     }
 
     public float getHaplotypeScore(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getHaplotypeScore();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getHaplotypeScore();
         } else {
             return Data.NA;
         }
     }
 
     public float getRmsMapQualMQ(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getRmsMapQualMQ();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getRmsMapQualMQ();
         } else {
             return Data.NA;
         }
     }
 
     public float getQualByDepthQD(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getQualByDepthQD();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getQualByDepthQD();
         } else {
             return Data.NA;
         }
     }
 
     public float getQual(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getQual();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getQual();
         } else {
             return Data.NA;
         }
     }
 
     public float getReadPosRankSum(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getReadPosRankSum();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getReadPosRankSum();
         } else {
             return Data.NA;
         }
     }
 
     public float getMapQualRankSum(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getMapQualRankSum();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getMapQualRankSum();
         } else {
             return Data.NA;
         }
     }
 
     public String getPassFailStatus(int sampleId) {
-        if (carrierMap.containsKey(sampleId)) {
-            return carrierMap.get(sampleId).getPassFailStatus();
+        Carrier carrier = carrierMap.get(sampleId);
+        
+        if (carrier != null) {
+            return carrier.getPassFailStatus();
         } else {
             return "NA";
         }
