@@ -3,6 +3,7 @@ package function.variant.base;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.exac.ExacManager;
+import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import global.Data;
@@ -91,6 +92,9 @@ public class VariantLevelFilterCommand {
                 KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
             } else if (option.getName().equals("--include-known-var")) {
                 KnownVarCommand.isIncludeKnownVar = true;
+            } else if (option.getName().equals("--min-gerp-score")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                GerpCommand.minGerpScore = getValidFloat(option);
             } else {
                 continue;
             }

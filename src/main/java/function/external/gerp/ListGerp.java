@@ -61,9 +61,11 @@ public class ListGerp extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantList()) {
                 GerpOutput output = new GerpOutput(variantId);
 
-                bwGerp.write(variantId + ",");
-                bwGerp.write(output.toString());
-                bwGerp.newLine();
+                if (output.isValid()) {
+                    bwGerp.write(variantId + ",");
+                    bwGerp.write(output.toString());
+                    bwGerp.newLine();
+                }
 
                 countVariant();
             }

@@ -2,6 +2,7 @@ package function.annotation.base;
 
 import function.external.evs.Evs;
 import function.external.exac.Exac;
+import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
@@ -121,6 +122,8 @@ public class AnnotatedVariant extends Variant {
 
         if (isValid) {
             gerpScore = GerpManager.getScore(variantIdStr);
+            
+            isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
         if (isValid) {

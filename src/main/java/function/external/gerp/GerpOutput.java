@@ -16,6 +16,10 @@ public class GerpOutput {
     public GerpOutput(String id) throws Exception{        
         gerpScore = GerpManager.getScore(id);
     }
+    
+    public boolean isValid(){
+        return GerpCommand.isGerpScoreValid(gerpScore);
+    }
 
     @Override
     public String toString() {
