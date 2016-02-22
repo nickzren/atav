@@ -36,7 +36,7 @@ public class FamilyOutput extends Output {
             + "Rs Number,"
             + "Ref Allele,"
             + "Alt Allele,"
-            + "C Score Phred,"
+            + "CADD Score Phred,"
             + "Is Minor Ref,"
             + "Flag,"
             + "Hom Family Case,"

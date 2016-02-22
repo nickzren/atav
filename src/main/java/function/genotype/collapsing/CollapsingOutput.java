@@ -29,7 +29,7 @@ public class CollapsingOutput extends Output {
             + "Is Minor Ref,"
             + "Ref Allele,"
             + "Alt Allele,"
-            + "C Score Phred,"
+            + "CADD Score Phred,"
             + "Genotype,"
             + "Sample Name,"
             + "Sample Type,"

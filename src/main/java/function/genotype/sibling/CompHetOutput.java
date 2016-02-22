@@ -40,7 +40,7 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
-                + "C Score Phred,"
+                + "CADD Score Phred,"
                 + "Is Minor Ref,"
                 + "Child1 Genotype,"
                 + "Child1 Samtools Raw Coverage,"

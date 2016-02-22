@@ -30,7 +30,7 @@ public class LinearOutput extends StatisticOutput {
             + "Rs Number,"
             + "Ref Allele,"
             + "Alt Allele,"
-            + "C Score Phred,"
+            + "CADD Score Phred,"
             + "Is Minor Ref,"
             + "Major Hom Ctrl,"
             + "Het Ctrl,"

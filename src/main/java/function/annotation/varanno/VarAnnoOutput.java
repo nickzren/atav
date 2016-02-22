@@ -23,7 +23,7 @@ public class VarAnnoOutput {
             + "Rs Number,"
             + "Ref Allele,"
             + "Alt Allele,"
-            + "C Score Phred,"
+            + "CADD Score Phred,"
             + EvsManager.getTitle()
             + "Polyphen Humdiv Score,"
             + "Polyphen Humdiv Prediction,"
