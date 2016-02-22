@@ -5,6 +5,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
+import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import utils.FormatManager;
@@ -24,6 +25,7 @@ public class VarAnnoOutput {
             + "Ref Allele,"
             + "Alt Allele,"
             + "CADD Score Phred,"
+            + GerpManager.getTitle()
             + EvsManager.getTitle()
             + "Polyphen Humdiv Score,"
             + "Polyphen Humdiv Prediction,"
@@ -57,8 +59,8 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getRsNumber()).append(",");
         sb.append(annotatedVar.getRefAllele()).append(",");
         sb.append(annotatedVar.getAllele()).append(",");
-
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
+        sb.append(FormatManager.getFloat(annotatedVar.getGerpScore())).append(",");
 
         sb.append(annotatedVar.getEvsStr());
 

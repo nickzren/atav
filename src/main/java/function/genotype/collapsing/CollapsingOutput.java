@@ -4,6 +4,7 @@ import function.external.evs.EvsManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
+import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.genotype.base.CalledVariant;
@@ -30,6 +31,7 @@ public class CollapsingOutput extends Output {
             + "Ref Allele,"
             + "Alt Allele,"
             + "CADD Score Phred,"
+            + GerpManager.getTitle()
             + "Genotype,"
             + "Sample Name,"
             + "Sample Type,"
@@ -249,6 +251,7 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
+        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
         sb.append(genoType).append(",");
         sb.append(sampleName).append(",");
         sb.append(sampleType).append(",");

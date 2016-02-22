@@ -6,6 +6,7 @@ import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.IntolerantScoreManager;
+import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import utils.FormatManager;
@@ -35,6 +36,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + "Ref Allele,"
                 + "Alt Allele,"
                 + "CADD Score Phred,"
+                + GerpManager.getTitle()
                 + "Is Minor Ref,"
                 + "Genotype,"
                 + "Samtools Raw Coverage,"
@@ -101,6 +103,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
+        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
 
         sb.append(isMinorRef).append(",");
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");

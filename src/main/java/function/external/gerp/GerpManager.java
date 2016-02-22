@@ -2,7 +2,9 @@ package function.external.gerp;
 
 import global.Data;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import utils.DBManager;
+import utils.ErrorManager;
 
 /**
  *
@@ -19,7 +21,7 @@ public class GerpManager {
         return title;
     }
 
-    public static float getScore(String id) throws Exception {
+    public static float getScore(String id) {
         String[] tmp = id.split("-");
         String chr = tmp[0];
 
@@ -39,20 +41,24 @@ public class GerpManager {
         }
 
         if (!gerp.isSameSite(chr, pos)) {
-            String sql = "SELECT gerp_rs "
-                    + "FROM " + table + chr + " "
-                    + "WHERE pos = " + pos;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            float score = Data.NA;
-
-            if (rs.next()) {
-                score = rs.getFloat("gerp_rs");
-
+            try {
+                String sql = "SELECT gerp_rs "
+                        + "FROM " + table + chr + " "
+                        + "WHERE pos = " + pos;
+                
+                ResultSet rs = DBManager.executeQuery(sql);
+                
+                float score = Data.NA;
+                
+                if (rs.next()) {
+                    score = rs.getFloat("gerp_rs");
+                    
+                }
+                
+                gerp.setValues(chr, pos, score);
+            } catch (SQLException ex) {
+                ErrorManager.send(ex);
             }
-
-            gerp.setValues(chr, pos, score);
         }
 
         return gerp.getScore();

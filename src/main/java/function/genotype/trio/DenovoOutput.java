@@ -5,6 +5,7 @@ import function.genotype.base.SampleManager;
 import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
+import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.genotype.base.CalledVariant;
@@ -33,6 +34,7 @@ public class DenovoOutput extends TrioOutput {
             + "Ref Allele,"
             + "Alt Allele,"
             + "CADD Score Phred,"
+            + GerpManager.getTitle()
             + "Is Minor Ref,"
             + "Genotype (child),"
             + "Samtools Raw Coverage (child),"
@@ -179,6 +181,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
+        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
         sb.append(isMinorRef).append(",");
 
         sb.append(cGenotype).append(",");
