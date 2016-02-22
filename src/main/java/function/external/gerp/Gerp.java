@@ -26,7 +26,7 @@ public class Gerp {
 
     public boolean isSameSite(String chr, int pos) {
         if (this.chr.equalsIgnoreCase(chr)
-                && this.pos != pos) {
+                && this.pos == pos) {
             return true;
         }
 
