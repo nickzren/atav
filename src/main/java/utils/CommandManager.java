@@ -291,6 +291,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-var-anno")) { // Variant Annotation Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 VarAnnoCommand.isListVarAnno = true;
+                KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--list-gene-dx")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GeneDxCommand.isListGeneDx = true;
