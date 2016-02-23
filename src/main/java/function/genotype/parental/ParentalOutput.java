@@ -8,6 +8,7 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
+import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import global.Data;
@@ -41,7 +42,8 @@ public class ParentalOutput extends Output {
             + "Rs Number,"
             + "Ref Allele,"
             + "Alt Allele,"
-            + "C Score Phred,"
+            + "CADD Score Phred,"
+            + GerpManager.getTitle()
             + "Is Minor Ref,"
             + "Major Hom Case,"
             + "Het Case,"
@@ -186,6 +188,7 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
+        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCase).append(",");
         sb.append(sampleCount[Index.HET][Index.CASE]).append(",");

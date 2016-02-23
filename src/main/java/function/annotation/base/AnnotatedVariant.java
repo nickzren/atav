@@ -2,6 +2,8 @@ package function.annotation.base;
 
 import function.external.evs.Evs;
 import function.external.exac.Exac;
+import function.external.gerp.GerpCommand;
+import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import function.external.kaviar.Kaviar;
@@ -36,6 +38,8 @@ public class AnnotatedVariant extends Variant {
     Kaviar kaviar;
 
     Evs evs;
+
+    float gerpScore;
 
     KnownVarOutput knownVarOutput;
 
@@ -81,7 +85,6 @@ public class AnnotatedVariant extends Variant {
 //
 //        System.out.println(result);
 //    }
-
     public void update(Annotation annotation) {
         if (isValid) {
             geneSet.add(annotation.geneName);
@@ -115,6 +118,12 @@ public class AnnotatedVariant extends Variant {
 
         if (isValid) {
             isValid = VariantManager.isValid(this);
+        }
+
+        if (isValid) {
+            gerpScore = GerpManager.getScore(variantIdStr);
+            
+            isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
         if (isValid) {
@@ -284,5 +293,9 @@ public class AnnotatedVariant extends Variant {
         } else {
             return "";
         }
+    }
+
+    public float getGerpScore() {
+        return gerpScore;
     }
 }
