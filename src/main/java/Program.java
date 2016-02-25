@@ -45,6 +45,8 @@ import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.knownvar.ListKnownVar;
+import function.external.subrvis.ListSubRvis;
+import function.external.subrvis.SubRvisCommand;
 import function.genotype.base.CoverageBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
@@ -172,7 +174,9 @@ public class Program {
                 runAnalysis(new ListKaviar());
             } else if (GerpCommand.isListGerp) {
                 runAnalysis(new ListGerp());
-            }else if (PPICommand.isPPI) { // Non Database Functions
+            } else if (SubRvisCommand.isListSubRvis) {
+                runAnalysis(new ListSubRvis());
+            } else if (PPICommand.isPPI) { // Non Database Functions
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());
                 ppi.run();

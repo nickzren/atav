@@ -49,6 +49,8 @@ public class Data {
     public static final String ARTIFACTS_Variant_PATH = "data/artifacts_variant.txt";
     public static final String ARTIFACTS_GENE_PATH = "data/artifacts_gene.txt";
     public static final String GENE_ENSEMBL_PATH = "data/gene_ensembl.txt";
+    public static final String SUBRVIS_DOMAIN = "data/subrvis_domain.txt";
+    public static final String SUBRVIS_EXON = "data/subrvis_exon.txt";
     public static final String EXAMPLE_OPT_PATH = "lib/example.opt";
     
     public static final int MAX_VARIANT = 100000;

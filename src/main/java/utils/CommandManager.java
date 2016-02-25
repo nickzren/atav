@@ -11,6 +11,7 @@ import function.external.flanking.FlankingCommand;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.subrvis.SubRvisCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
@@ -324,6 +325,9 @@ public class CommandManager {
             } else if (option.getName().equals("--list-gerp")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GerpCommand.isListGerp = true;
+            } else if (option.getName().equals("--list-sub-rvis")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                SubRvisCommand.isListSubRvis = true;
             } else if (option.getName().equals("--ppi")) { // Non Database Functions
                 PPICommand.isPPI = true;
                 CommonCommand.isNonDBAnalysis = true;
