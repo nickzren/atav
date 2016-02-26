@@ -6,8 +6,8 @@ package function.external.kaviar;
  */
 public class KaviarManager {
 
-    static final String snvTable = "kaviar.snv_maf_141127_2015_09_16";
-    static final String indelTable = "kaviar.indel_maf_141127_2015_09_16";
+    static final String snvTable = "kaviar.snv_maf_160113";
+    static final String indelTable = "kaviar.indel_maf_160113";
 
     public static String getTitle() {
         String title = "Kaviar Allele Freq,"
