@@ -60,7 +60,7 @@ public class HGMD {
         sb.append(FormatManager.getString(variantClass)).append(",");
         sb.append(FormatManager.getString(pmid)).append(",");
         sb.append(FormatManager.getString(diseaseName)).append(",");
-        sb.append(flankingCount);
+        sb.append(flankingCount).append(",");
 
         return sb.toString();
     }

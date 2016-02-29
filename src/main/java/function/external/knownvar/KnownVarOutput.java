@@ -8,11 +8,10 @@ import function.annotation.base.AnnotatedVariant;
  */
 public class KnownVarOutput {
 
-    String variantIdStr;
-    String geneName;
     ClinVar clinVar;
+    ClinVarPathoratio clinVarPathoratio;
     HGMD hgmd;
-    String omimDiseaseName; 
+    String omimDiseaseName;
     String acmg;
     String adultOnset;
     ClinGen clinGen;
@@ -25,30 +24,29 @@ public class KnownVarOutput {
             + KnownVarManager.getTitle();
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
-        variantIdStr = annotatedVar.variantIdStr;
-        geneName = annotatedVar.getGeneName();
-        clinVar = KnownVarManager.getClinvar(annotatedVar);
+        String geneName = annotatedVar.getGeneName().toUpperCase();
+        clinVar = KnownVarManager.getClinVar(annotatedVar);
+        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
         hgmd = KnownVarManager.getHGMD(annotatedVar);
-        
-        String name = geneName.toUpperCase();
-        omimDiseaseName = KnownVarManager.getOMIM(name);
-        acmg = KnownVarManager.getACMG(name);
-        adultOnset = KnownVarManager.getAdultOnset(name);
-        clinGen = KnownVarManager.getClinGen(name);
-        pgx = KnownVarManager.getPGx(name);
-        recessiveCarrier = KnownVarManager.getRecessiveCarrier(name);
+        omimDiseaseName = KnownVarManager.getOMIM(geneName);
+        acmg = KnownVarManager.getACMG(geneName);
+        adultOnset = KnownVarManager.getAdultOnset(geneName);
+        clinGen = KnownVarManager.getClinGen(geneName);
+        pgx = KnownVarManager.getPGx(geneName);
+        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(clinVar.toString()).append(",");
-        sb.append(hgmd.toString()).append(",");
+        sb.append(clinVar.toString());
+        sb.append(clinVarPathoratio.toString());
+        sb.append(hgmd.toString());
         sb.append(omimDiseaseName).append(",");
         sb.append(acmg).append(",");
         sb.append(adultOnset).append(",");
-        sb.append(clinGen.toString()).append(",");
+        sb.append(clinGen.toString());
         sb.append(pgx).append(",");
         sb.append(recessiveCarrier).append(",");
 

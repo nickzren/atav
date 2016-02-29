@@ -8,8 +8,8 @@ import utils.FormatManager;
  */
 public class ClinGen {
 
-    String haploinsufficiencyDesc;
-    String triplosensitivityDesc;
+    private String haploinsufficiencyDesc;
+    private String triplosensitivityDesc;
 
     public ClinGen(String haploinsufficiencyDesc, String triplosensitivityDesc) {
         this.haploinsufficiencyDesc = haploinsufficiencyDesc;
@@ -21,7 +21,7 @@ public class ClinGen {
         StringBuilder sb = new StringBuilder();
 
         sb.append(FormatManager.getString(haploinsufficiencyDesc)).append(",");
-        sb.append(FormatManager.getString(triplosensitivityDesc));
+        sb.append(FormatManager.getString(triplosensitivityDesc)).append(",");
 
         return sb.toString();
     }

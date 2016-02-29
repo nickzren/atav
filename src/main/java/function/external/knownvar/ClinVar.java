@@ -53,7 +53,7 @@ public class ClinVar {
         sb.append(FormatManager.getString(clinicalSignificance)).append(",");
         sb.append(FormatManager.getString(otherIds)).append(",");
         sb.append(FormatManager.getString(diseaseName)).append(",");
-        sb.append(flankingCount);
+        sb.append(flankingCount).append(",");
 
         return sb.toString();
     }

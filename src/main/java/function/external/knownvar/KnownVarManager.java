@@ -16,6 +16,7 @@ import utils.FormatManager;
 public class KnownVarManager {
 
     public static final String clinVarTable = "knownvar.clinvar_2015_10_12";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2015_10_12";
     public static final String hgmdTable = "knownvar.hgmd_2015_4";
     public static final String omimTable = "knownvar.omim_2016_02_12";
     public static final String acmgTable = "knownvar.ACMG_2015_12_09";
@@ -25,6 +26,7 @@ public class KnownVarManager {
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
 
     private static final HashMap<String, ClinVar> clinVarMap = new HashMap<String, ClinVar>();
+    private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<String, ClinVarPathoratio>();
     private static final HashMap<String, HGMD> hgmdMap = new HashMap<String, HGMD>();
     private static final HashMap<String, String> omimMap = new HashMap<String, String>();
     private static final HashMap<String, String> acmgMap = new HashMap<String, String>();
@@ -35,10 +37,15 @@ public class KnownVarManager {
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
-            return "Clinvar Clinical Significance,"
-                    + "Clinvar Other Ids,"
-                    + "Clinvar Disease Name,"
-                    + "Clinvar Flanking Count,"
+            return "ClinVar Clinical Significance,"
+                    + "ClinVar Other Ids,"
+                    + "ClinVar Disease Name,"
+                    + "ClinVar Flanking Count,"
+                    + "ClinVar Pathogenic Indel Count,"
+                    + "ClinVar Pathogenic Copy Count,"
+                    + "ClinVar Pathogenic SNV Splice Count,"
+                    + "ClinVar Pathogenic SNV Nonsense Count,"
+                    + "ClinVar Pathogenic SNV Missense Count,"
                     + "HGMD Variant Class,"
                     + "HGMD Pmid,"
                     + "HGMD Disease Name,"
@@ -58,6 +65,8 @@ public class KnownVarManager {
     public static void init() {
         if (KnownVarCommand.isIncludeKnownVar) {
             initClinvarMap();
+
+            initClinVarPathoratioMap();
 
             initHGMDMap();
 
@@ -94,6 +103,36 @@ public class KnownVarManager {
                         clinicalSignificance, otherIds, diseaseName);
 
                 clinVarMap.put(clinVar.getVariantId(), clinVar);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private static void initClinVarPathoratioMap() {
+        try {
+            String sql = "SELECT * From " + clinVarPathoratioTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String geneName = rs.getString("geneName").toUpperCase();
+                int indelCount = rs.getInt("indelCount");
+                int copyCount = rs.getInt("copyCount");
+                int snvSpliceCount = rs.getInt("snvSpliceCount");
+                int snvNonsenseCount = rs.getInt("snvNonsenseCount");
+                int snvMissenseCount = rs.getInt("snvMissenseCount");
+
+                ClinVarPathoratio clinVarPathoratio = new ClinVarPathoratio(
+                        indelCount,
+                        copyCount,
+                        snvSpliceCount,
+                        snvNonsenseCount,
+                        snvMissenseCount);
+
+                clinVarPathoratioMap.put(geneName, clinVarPathoratio);
             }
 
             rs.close();
@@ -248,7 +287,7 @@ public class KnownVarManager {
         }
     }
 
-    public static ClinVar getClinvar(Variant var) {
+    public static ClinVar getClinVar(Variant var) {
         ClinVar clinVar = clinVarMap.get(var.variantIdStr);
 
         if (clinVar == null) {
@@ -259,6 +298,16 @@ public class KnownVarManager {
         clinVar.initFlankingCount();
 
         return clinVar;
+    }
+
+    public static ClinGen getClinGen(String geneName) {
+        ClinGen clinGen = clinGenMap.get(geneName);
+
+        if (clinGen == null) {
+            clinGen = new ClinGen("NA", "NA");
+        }
+
+        return clinGen;
     }
 
     public static HGMD getHGMD(Variant var) {
@@ -286,14 +335,14 @@ public class KnownVarManager {
         return FormatManager.getString(adultOnsetMap.get(geneName));
     }
 
-    public static ClinGen getClinGen(String geneName) {
-        ClinGen clinGen = clinGenMap.get(geneName);
+    public static ClinVarPathoratio getClinPathoratio(String geneName) {
+        ClinVarPathoratio clinVarPathoratio = clinVarPathoratioMap.get(geneName);
 
-        if (clinGen == null) {
-            clinGen = new ClinGen("NA", "NA");
+        if (clinVarPathoratio == null) {
+            clinVarPathoratio = new ClinVarPathoratio(Data.NA, Data.NA, Data.NA, Data.NA, Data.NA);
         }
 
-        return clinGen;
+        return clinVarPathoratio;
     }
 
     public static String getPGx(String geneName) {
