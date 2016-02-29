@@ -56,7 +56,8 @@ public class CoverageCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--gene-boundaries")) {
+            if (option.getName().equals("--gene-boundaries")
+                    || option.getName().equals("--gene-boundary")) {
                 coveredRegionFile = getValidPath(option);
             } else if (option.getName().equals("--exon-max-percent-cov-difference")) {
                 checkValueValid(1, 0, option);
@@ -68,12 +69,12 @@ public class CoverageCommand {
                 isCoverageComparisonDoLinear = true;
                 StatisticsCommand.quantitativeFile = getValidPath(option);
             } /*else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
-                checkValueValid(1, 0, option);
-                ExonMaxCovDiffPValue = getValidDouble(option);
-            } else if (option.getName().equals("--exon-max-percent-var-explained")) {
-                checkValueValid(100, 0, option);
-                ExonMaxPercentVarExplained = getValidDouble(option);
-            } */ else {
+             checkValueValid(1, 0, option);
+             ExonMaxCovDiffPValue = getValidDouble(option);
+             } else if (option.getName().equals("--exon-max-percent-var-explained")) {
+             checkValueValid(100, 0, option);
+             ExonMaxPercentVarExplained = getValidDouble(option);
+             } */ else {
                 continue;
             }
             iterator.remove();
@@ -102,7 +103,7 @@ public class CoverageCommand {
             iterator.remove();
         }
     }
-    
+
     public static void initSiteCoverageSummary(Iterator<CommandOption> iterator) {
         CommandOption option;
 
@@ -110,7 +111,8 @@ public class CoverageCommand {
             option = (CommandOption) iterator.next();
             if (option.getName().equals("--covered-region")) {
                 coveredRegionFile = getValidPath(option);
-            } else if (option.getName().equals("--gene-boundaries")) {
+            } else if (option.getName().equals("--gene-boundaries")
+                    || option.getName().equals("--gene-boundary")) {
                 coveredRegionFile = getValidPath(option);
             } else if (option.getName().equals("--case-control")) {
                 isCaseControlSeparate = true;
@@ -120,7 +122,7 @@ public class CoverageCommand {
             iterator.remove();
         }
     }
-    
+
     public static void initCoverageComparisonSite(Iterator<CommandOption> iterator) {
         isCaseControlSeparate = true; // always true for comparison
         CommandOption option;
@@ -128,12 +130,13 @@ public class CoverageCommand {
             option = (CommandOption) iterator.next();
             if (option.getName().equals("--covered-region")) {
                 coveredRegionFile = getValidPath(option);
-            } else if (option.getName().equals("--gene-boundaries")) {
+            } else if (option.getName().equals("--gene-boundaries")
+                    || option.getName().equals("--gene-boundary")) {
                 coveredRegionFile = getValidPath(option);
             } else if (option.getName().equals("--site-max-percent-cov-difference")) {
                 checkValueValid(1, 0, option);
                 siteCleanCutoff = getValidDouble(option);
-            }  else if (option.getName().equals("--percent-region-covered")) {
+            } else if (option.getName().equals("--percent-region-covered")) {
                 minPercentRegionCovered = getValidDouble(option);
             } else if (option.getName().equals("--gene-max-percent-cov-difference")) {
                 checkValueValid(1, 0, option);
