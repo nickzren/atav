@@ -92,13 +92,13 @@ public class GeneManager {
     }
 
     private static void initGeneBoundaries() throws Exception {
-        if (AnnotationLevelFilterCommand.geneBoundariesFile.isEmpty()) {
+        if (AnnotationLevelFilterCommand.geneBoundaryFile.isEmpty()) {
             return;
         }
 
         isUsed = true;
 
-        File f = new File(AnnotationLevelFilterCommand.geneBoundariesFile);
+        File f = new File(AnnotationLevelFilterCommand.geneBoundaryFile);
         FileInputStream fstream = new FileInputStream(f);
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
