@@ -10,7 +10,7 @@ public class KnownVarOutput {
 
     String variantIdStr;
     String geneName;
-    Clinvar clinvar;
+    ClinVar clinVar;
     HGMD hgmd;
     String omimDiseaseName; 
     String acmg;
@@ -27,7 +27,7 @@ public class KnownVarOutput {
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
         variantIdStr = annotatedVar.variantIdStr;
         geneName = annotatedVar.getGeneName();
-        clinvar = KnownVarManager.getClinvar(annotatedVar);
+        clinVar = KnownVarManager.getClinvar(annotatedVar);
         hgmd = KnownVarManager.getHGMD(annotatedVar);
         
         String name = geneName.toUpperCase();
@@ -43,7 +43,7 @@ public class KnownVarOutput {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(clinvar.toString()).append(",");
+        sb.append(clinVar.toString()).append(",");
         sb.append(hgmd.toString()).append(",");
         sb.append(omimDiseaseName).append(",");
         sb.append(acmg).append(",");

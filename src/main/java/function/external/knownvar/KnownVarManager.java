@@ -15,7 +15,7 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String clinvarTable = "knownvar.clinvar_2015_10_12";
+    public static final String clinVarTable = "knownvar.clinvar_2015_10_12";
     public static final String hgmdTable = "knownvar.hgmd_2015_4";
     public static final String omimTable = "knownvar.omim_2016_02_12";
     public static final String acmgTable = "knownvar.ACMG_2015_12_09";
@@ -24,7 +24,7 @@ public class KnownVarManager {
     public static final String pgxTable = "knownvar.PGx_2015_12_09";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
 
-    private static final HashMap<String, Clinvar> clinvarMap = new HashMap<String, Clinvar>();
+    private static final HashMap<String, ClinVar> clinVarMap = new HashMap<String, ClinVar>();
     private static final HashMap<String, HGMD> hgmdMap = new HashMap<String, HGMD>();
     private static final HashMap<String, String> omimMap = new HashMap<String, String>();
     private static final HashMap<String, String> acmgMap = new HashMap<String, String>();
@@ -77,7 +77,7 @@ public class KnownVarManager {
 
     private static void initClinvarMap() {
         try {
-            String sql = "SELECT * From " + clinvarTable;
+            String sql = "SELECT * From " + clinVarTable;
 
             ResultSet rs = DBManager.executeQuery(sql);
 
@@ -90,10 +90,10 @@ public class KnownVarManager {
                 String otherIds = rs.getString("OtherIds").replaceAll(",", " | ");
                 String diseaseName = rs.getString("DiseaseName").replaceAll(",", "");
 
-                Clinvar clinvar = new Clinvar(chr, pos, ref, alt,
+                ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
                         clinicalSignificance, otherIds, diseaseName);
 
-                clinvarMap.put(clinvar.getVariantId(), clinvar);
+                clinVarMap.put(clinVar.getVariantId(), clinVar);
             }
 
             rs.close();
@@ -248,17 +248,17 @@ public class KnownVarManager {
         }
     }
 
-    public static Clinvar getClinvar(Variant var) {
-        Clinvar clinvar = clinvarMap.get(var.variantIdStr);
+    public static ClinVar getClinvar(Variant var) {
+        ClinVar clinVar = clinVarMap.get(var.variantIdStr);
 
-        if (clinvar == null) {
-            clinvar = new Clinvar(var.region.chrStr, var.region.startPosition,
+        if (clinVar == null) {
+            clinVar = new ClinVar(var.region.chrStr, var.region.startPosition,
                     var.refAllele, var.allele, "NA", "NA", "NA");
         }
 
-        clinvar.initFlankingCount();
+        clinVar.initFlankingCount();
 
-        return clinvar;
+        return clinVar;
     }
 
     public static HGMD getHGMD(Variant var) {

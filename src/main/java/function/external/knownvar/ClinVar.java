@@ -6,7 +6,7 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class Clinvar {
+public class ClinVar {
 
     private String chr;
     private int pos;
@@ -19,7 +19,7 @@ public class Clinvar {
     private String diseaseName;
     int flankingCount;
 
-    public Clinvar(String chr, int pos, String ref, String alt, String clinicalSignificance,
+    public ClinVar(String chr, int pos, String ref, String alt, String clinicalSignificance,
             String otherIds, String diseaseName) {
         this.chr = chr;
         this.pos = pos;
@@ -39,7 +39,7 @@ public class Clinvar {
 
     public void initFlankingCount() {
         flankingCount = KnownVarManager.getFlankingCount(isSnv, chr, pos,
-                KnownVarManager.clinvarTable);
+                KnownVarManager.clinVarTable);
     }
 
     public String getVariantId() {
