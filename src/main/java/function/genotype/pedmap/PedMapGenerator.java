@@ -9,7 +9,6 @@ import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
-import utils.ThirdPartyToolManager;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -25,20 +24,9 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     BufferedWriter bwMap = null;
     BufferedWriter bwTmpPed = null;
 
-    private static final String PLINK_HOME = "/nfs/goldstein/goldsteinlab/software/sh/plink";
-    private static final String CHIP2PCA2_HOME = "/nfs/goldstein/goldsteinlab/software/sh/chip2pca2";
-
     final String pedFile = CommonCommand.outputPath + "output.ped";
     final String mapFile = CommonCommand.outputPath + "output.map";
     final String tmpPedFile = CommonCommand.outputPath + "output_tmp.ped";
-
-    final String chip2pcaDir = CommonCommand.realOutputPath
-            + File.separator + "chip2pca";
-    final String crDir = chip2pcaDir + File.separator
-            + CommonCommand.outputDirName + "-cr";
-
-    final String outputOpt = chip2pcaDir + File.separator
-            + CommonCommand.outputDirName + ".opt";
 
     int qualifiedVariants = 0;
 
@@ -71,9 +59,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        if (PedMapCommand.isEigenstrat) {
-            doEigesntrat();
-        }
     }
 
     @Override
@@ -130,16 +115,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             for (int s = 0; s < SampleManager.getListSize(); s++) {
                 Sample sample = SampleManager.getList().get(s);
 
-                String name = sample.getName();
-
-                if (PedMapCommand.isEigenstrat) {
-                    name = String.valueOf(sample.getPrepId());
-                }
-
                 int pheno = (int) sample.getPheno() + 1;
 
                 bwPed.write(sample.getFamilyId() + " "
-                        + name + " "
+                        + sample.getName() + " "
                         + sample.getPaternalId() + " "
                         + sample.getMaternalId() + " "
                         + sample.getSex() + " "
@@ -203,53 +182,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         }
 
         bwTmpPed.newLine();
-    }
-
-    public void doEigesntrat() {
-        initDir(chip2pcaDir);
-
-        File dir = initDir(crDir);
-
-        String cmd = "cp " + Data.EXAMPLE_OPT_PATH + " " + outputOpt;
-
-        ThirdPartyToolManager.systemCall(new String[]{cmd});
-
-        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --recode12 "
-                + "--out " + crDir + File.separator + dir.getName();
-
-        ThirdPartyToolManager.systemCall((new String[]{cmd}));
-
-        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --make-bed "
-                + "--out " + crDir + File.separator + dir.getName();
-
-        ThirdPartyToolManager.systemCall((new String[]{cmd}));
-
-        cmd = "cd " + chip2pcaDir + "; "
-                + CHIP2PCA2_HOME + " " + CommonCommand.outputDirName + " snppca";
-
-        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
-    }
-
-    private File initDir(String path) {
-        File dir = new File(path);
-
-        if (dir.exists()) {
-            purgeDirectory(dir);
-        } else {
-            dir.mkdir();
-        }
-
-        return dir;
-    }
-
-    private void purgeDirectory(File dir) {
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                purgeDirectory(file);
-            }
-
-            file.delete();
-        }
     }
 
     @Override

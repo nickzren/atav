@@ -372,7 +372,7 @@ public class CommandManager {
         } else if (ParentalCommand.isParentalMosaic) {
             ParentalCommand.initOptions(optionList.iterator());
         } else if (PedMapCommand.isPedMap) {
-            PedMapCommand.initOptions(optionList.iterator());
+
         } else if (VarAnnoCommand.isListVarAnno) { // Variant Annotation Functions
 
         } else if (GeneDxCommand.isListGeneDx) {
