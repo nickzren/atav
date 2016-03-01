@@ -84,9 +84,9 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--min-c-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCscore = getValidDouble(option);
-            } else if (option.getName().equals("--max-kaviar-allele-freq")) {
+            } else if (option.getName().equals("--max-kaviar-maf")) {
                 checkValueValid(1, 0, option);
-                KaviarCommand.maxKaviarAlleleFreq = getValidFloat(option);
+                KaviarCommand.maxKaviarMaf = getValidFloat(option);
             } else if (option.getName().equals("--max-kaviar-allele-count")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);

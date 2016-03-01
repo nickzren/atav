@@ -10,7 +10,7 @@ public class KaviarManager {
     static final String indelTable = "kaviar.indel_maf_160113";
 
     public static String getTitle() {
-        String title = "Kaviar Allele Freq,"
+        String title = "Kaviar Maf,"
                 + "Kaviar Allele Count,"
                 + "Kaviar Allele Number,";
 

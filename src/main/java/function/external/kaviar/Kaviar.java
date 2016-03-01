@@ -18,7 +18,7 @@ public class Kaviar {
     private String alt;
     private boolean isSnv;
 
-    private float alleleFreq;
+    private float maf;
     private int alleleCount;
     private int alleleNumber;
 
@@ -50,11 +50,16 @@ public class Kaviar {
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                alleleFreq = rs.getFloat("allele_frequency");
+                maf = rs.getFloat("allele_frequency");
+
+                if (maf > 0.5) {
+                    maf = 1 - maf;
+                }
+
                 alleleCount = rs.getInt("allele_count");
                 alleleNumber = rs.getInt("allele_number");
             } else {
-                alleleFreq = Data.NA;
+                maf = Data.NA;
                 alleleCount = Data.NA;
                 alleleNumber = Data.NA;
             }
@@ -63,8 +68,8 @@ public class Kaviar {
         }
     }
 
-    public float getAlleleFreq() {
-        return alleleFreq;
+    public float getMaf() {
+        return maf;
     }
 
     public int getAlleleCount() {
@@ -76,7 +81,7 @@ public class Kaviar {
     }
 
     public boolean isValid() {
-        if (KaviarCommand.isMaxAlleleFreqValid(alleleFreq)
+        if (KaviarCommand.isMaxMafValid(maf)
                 && KaviarCommand.isMaxAlleleCountValid(alleleCount)) {
             return true;
         }
@@ -88,7 +93,7 @@ public class Kaviar {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(FormatManager.getDouble(alleleFreq)).append(",");
+        sb.append(FormatManager.getDouble(maf)).append(",");
         sb.append(FormatManager.getInteger(alleleCount)).append(",");
         sb.append(FormatManager.getInteger(alleleNumber)).append(",");
 
