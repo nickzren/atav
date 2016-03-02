@@ -9,7 +9,7 @@ import function.annotation.base.AnnotatedVariant;
 public class KnownVarOutput {
 
     ClinVar clinVar;
-    ClinVarPathoratio clinVarPathoratio;
+//    ClinVarPathoratio clinVarPathoratio;
     HGMD hgmd;
     String omimDiseaseName;
     String acmg;
@@ -26,7 +26,7 @@ public class KnownVarOutput {
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
         String geneName = annotatedVar.getGeneName().toUpperCase();
         clinVar = KnownVarManager.getClinVar(annotatedVar);
-        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
+//        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
         hgmd = KnownVarManager.getHGMD(annotatedVar);
         omimDiseaseName = KnownVarManager.getOMIM(geneName);
         acmg = KnownVarManager.getACMG(geneName);
@@ -41,7 +41,7 @@ public class KnownVarOutput {
         StringBuilder sb = new StringBuilder();
 
         sb.append(clinVar.toString());
-        sb.append(clinVarPathoratio.toString());
+//        sb.append(clinVarPathoratio.toString());
         sb.append(hgmd.toString());
         sb.append(omimDiseaseName).append(",");
         sb.append(acmg).append(",");

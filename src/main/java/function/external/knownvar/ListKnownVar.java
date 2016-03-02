@@ -71,7 +71,7 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
         return "It is running a list KnownVar function... \n\n"
                 + "KnownVar database tables: \n\n"
                 + KnownVarManager.clinVarTable + "\n\n"
-                + KnownVarManager.clinVarPathoratioTable + "\n\n"
+//                + KnownVarManager.clinVarPathoratioTable + "\n\n"
                 + KnownVarManager.hgmdTable + "\n\n"
                 + KnownVarManager.omimTable + "\n\n"
                 + KnownVarManager.acmgTable + "\n\n"
