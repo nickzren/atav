@@ -3,9 +3,10 @@ package function.genotype.base;
 import function.variant.base.Variant;
 import global.Data;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
- * @author qwang
+ * @author qwang, nick
  */
 public class CoverageBlockManager {
 
@@ -34,10 +35,10 @@ public class CoverageBlockManager {
 
         if (blockEndPos == currentBlockEndPos
                 && currentBlockEndPos != Data.NA) {
-            for (Integer sampleID : currentBlockMap.keySet()) {
-                if (!carrierMap.containsKey(sampleID)) {
+            for (Entry<Integer, int[][]> entry : currentBlockMap.entrySet()) { // sampleId, allCovBin                
+                if (!carrierMap.containsKey(entry.getKey())) {
                     NonCarrier noncarrier = new NonCarrier();
-                    noncarrier.init(sampleID, getCoverage(sampleID, varPosIndex));
+                    noncarrier.init(entry.getKey(), getCoverage(varPosIndex, entry.getValue()));
                     noncarrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
                             GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
                     noncarrier.checkValidOnXY(var);
@@ -52,16 +53,14 @@ public class CoverageBlockManager {
         }
     }
 
-    private static int getCoverage(int sampleID, int posIndex) {
-        int[][] allCovBin = currentBlockMap.get(sampleID);
-
+    private static int getCoverage(int posIndex, int[][] allCovBin) {
         for (int i = 0; i < allCovBin.length; i++) {
             if (posIndex <= allCovBin[i][0]) {
                 return allCovBin[i][1];
             }
         }
 
-        return Data.NA; //should never happen, just to fool compiler
+        return Data.NA;
     }
 
     private static int[][] parseCoverage(String allCov) {

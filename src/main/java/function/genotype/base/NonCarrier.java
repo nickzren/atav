@@ -39,25 +39,18 @@ public class NonCarrier {
         }
     }
 
-    private int parseCoverage(String allCov, int posIndex) {
+    private int parseCoverage(String allCov, int pos) {
         int cov = Data.NA;
 
-        String[] allCovArray = allCov.split(",");
+        String[] allCovBin = allCov.split(",");
 
-        int endIndex = 0;
+        int covBinPos = 0;
 
-        String oneCovBinStr, oneCovBinLength;
-        char covBin;
+        for (int i = 0; i < allCovBin.length; i++) {
+            covBinPos += Integer.valueOf(allCovBin[i].substring(0, allCovBin[i].length() - 1));
 
-        for (int i = 0; i < allCovArray.length; i++) {
-            oneCovBinStr = allCovArray[i];
-            oneCovBinLength = oneCovBinStr.substring(0, oneCovBinStr.length() - 1);
-
-            endIndex += Integer.valueOf(oneCovBinLength);
-
-            if (posIndex <= endIndex) {
-                covBin = oneCovBinStr.charAt(oneCovBinStr.length() - 1);
-                cov = CoverageBlockManager.getCoverageByBin(covBin);
+            if (pos <= covBinPos) {
+                cov = CoverageBlockManager.getCoverageByBin(allCovBin[i].charAt(allCovBin[i].length() - 1));
                 break;
             }
         }
