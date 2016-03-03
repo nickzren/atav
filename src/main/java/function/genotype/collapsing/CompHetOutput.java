@@ -5,7 +5,6 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
@@ -22,7 +21,6 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
             + "Sample Name,"
             + "Sample Type,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Var Case Freq #1 & #2 (co-occurance),"
             + "Var Ctrl Freq #1 & #2 (co-occurance),"

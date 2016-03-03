@@ -3,7 +3,6 @@ import function.genotype.base.SampleManager;
 import function.variant.base.RegionManager;
 import function.annotation.base.FunctionManager;
 import function.variant.base.VariantManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.annotation.base.TranscriptManager;
 import function.annotation.base.GeneManager;
 import utils.CommandManager;
@@ -104,8 +103,6 @@ public class Program {
             GeneManager.init();
 
             TranscriptManager.init();
-
-            IntolerantScoreManager.init();
 
             VariantManager.init();
 

@@ -1,6 +1,5 @@
 package function.annotation.varanno;
 
-import function.annotation.base.IntolerantScoreManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.external.evs.EvsManager;
@@ -33,7 +32,6 @@ public class VarAnnoOutput {
             + "Polyphen Humvar Prediction,"
             + "Function,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Transcript Stable Id,"
             + "NM #,"
@@ -71,7 +69,6 @@ public class VarAnnoOutput {
 
         sb.append(annotatedVar.getFunction()).append(",");
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
-        sb.append(IntolerantScoreManager.getValues(annotatedVar.getGeneName())).append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(annotatedVar.getGeneName()))).append(",");
 
         sb.append(annotatedVar.getStableId()).append(",");

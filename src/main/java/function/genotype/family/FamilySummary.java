@@ -1,6 +1,5 @@
 package function.genotype.family;
 
-import function.annotation.base.IntolerantScoreManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +20,6 @@ public class FamilySummary implements Comparable {
 
     public static final String title
             = "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Total Shared Variant Family,"
             + "Total Shared Het Family,"

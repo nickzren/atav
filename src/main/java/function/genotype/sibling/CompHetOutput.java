@@ -6,7 +6,6 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
@@ -30,7 +29,6 @@ public class CompHetOutput extends Output implements Comparable {
             + "Child2,"
             + "Child2 Trio Comp Het Flag,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + initVarTitleStr("1")
             + initVarTitleStr("2");

@@ -1,7 +1,6 @@
 package function.genotype.collapsing;
 
 import function.annotation.base.GeneManager;
-import function.annotation.base.IntolerantScoreManager;
 import utils.CommonCommand;
 import utils.FormatManager;
 import utils.ThirdPartyToolManager;
@@ -22,7 +21,6 @@ public class CollapsingGeneSummary extends CollapsingSummary {
     public static final String title
             = "Rank,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Total Variant,"
             + "Total SNV,"
@@ -95,7 +93,6 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         StringBuilder sb = new StringBuilder();
 
         sb.append("'").append(name).append("'").append(",");
-        sb.append(IntolerantScoreManager.getValues(name)).append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(name))).append(",");
         sb.append(totalVariant).append(",");
         sb.append(totalSnv).append(",");

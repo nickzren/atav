@@ -5,7 +5,6 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Index;
 import function.annotation.base.GeneManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -180,7 +179,6 @@ public class CollapsingCompHet extends CollapsingBase {
             sb.append(sample.getName()).append(",");
             sb.append(sample.getPhenoType()).append(",");
             sb.append("'").append(output1.geneName).append("'").append(",");
-            sb.append(IntolerantScoreManager.getValues(output1.geneName)).append(",");
             sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
             sb.append("NA,"); // Var Case Freq #1 & #2 (co-occurance)
             sb.append("NA,"); // Var Ctrl Freq #1 & #2 (co-occurance)
@@ -226,7 +224,6 @@ public class CollapsingCompHet extends CollapsingBase {
                         sb.append(sample.getName()).append(",");
                         sb.append(sample.getPhenoType()).append(",");
                         sb.append("'").append(output1.geneName).append("'").append(",");
-                        sb.append(IntolerantScoreManager.getValues(output1.geneName)).append(",");
                         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
                         sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
                         sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");

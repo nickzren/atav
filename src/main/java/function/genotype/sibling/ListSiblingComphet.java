@@ -4,7 +4,6 @@ import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.annotation.base.GeneManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.genotype.trio.ListTrioCompHet;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -248,7 +247,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 sb.append(child2Flag).append(",");
 
                 sb.append("'").append(output1.geneName).append("'").append(",");
-                sb.append(IntolerantScoreManager.getValues(output1.geneName)).append(",");
                 sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
 
                 sb.append(output1.getString(child1, child2));

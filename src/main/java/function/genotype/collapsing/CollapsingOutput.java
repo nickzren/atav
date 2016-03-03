@@ -1,7 +1,6 @@
 package function.genotype.collapsing;
 
 import function.external.evs.EvsManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.external.gerp.GerpManager;
@@ -75,7 +74,6 @@ public class CollapsingOutput extends Output {
             + "Polyphen Humvar Prediction,"
             + "Function,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
@@ -299,7 +297,6 @@ public class CollapsingOutput extends Output {
 
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(geneName).append("'").append(",");
-        sb.append(IntolerantScoreManager.getValues(geneName)).append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(geneName))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
