@@ -131,7 +131,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
         output.initGenoType(geno);
         output.initPhenoType((int) sample.getPheno());
-        output.sampleName = sample.getName();
         bwGenotypes.write(output.getString(sample));
         bwGenotypes.newLine();
 

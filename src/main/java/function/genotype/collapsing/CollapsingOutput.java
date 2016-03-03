@@ -82,7 +82,6 @@ public class CollapsingOutput extends Output {
             + KnownVarManager.getTitle();
 
     String geneName = "";
-    String sampleName;
     String sampleType;
     String genoType;
     double varAllFreq = 0;
@@ -251,7 +250,7 @@ public class CollapsingOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
         sb.append(genoType).append(",");
-        sb.append(sampleName).append(",");
+        sb.append(sample.getName()).append(",");
         sb.append(sampleType).append(",");
         sb.append(majorHomCase).append(",");
         sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
