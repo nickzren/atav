@@ -45,6 +45,9 @@ import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.knownvar.ListKnownVar;
+import function.external.rvis.ListRvis;
+import function.external.rvis.RvisCommand;
+import function.external.rvis.RvisManager;
 import function.external.subrvis.ListSubRvis;
 import function.external.subrvis.SubRvisCommand;
 import function.genotype.base.CoverageBlockManager;
@@ -109,6 +112,8 @@ public class Program {
             CoverageBlockManager.init();
 
             KnownVarManager.init();
+            
+            RvisManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -176,6 +181,8 @@ public class Program {
                 runAnalysis(new ListGerp());
             } else if (SubRvisCommand.isListSubRvis) {
                 runAnalysis(new ListSubRvis());
+            } else if (RvisCommand.isListRvis) {
+                runAnalysis(new ListRvis());
             } else if (PPICommand.isPPI) { // Non Database Functions
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());
