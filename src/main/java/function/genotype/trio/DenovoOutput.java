@@ -8,6 +8,8 @@ import function.annotation.base.GeneManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisCommand;
+import function.external.rvis.RvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
@@ -90,7 +92,10 @@ public class DenovoOutput extends TrioOutput {
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle();
+
+    private String rvisStr = "";
 
     public DenovoOutput(CalledVariant c) {
         super(c);
@@ -165,6 +170,12 @@ public class DenovoOutput extends TrioOutput {
         }
 
         return false;
+    }
+
+    public void initRvisStr() {
+        if (RvisCommand.isIncludeRvis && rvisStr.isEmpty()) {
+            rvisStr = RvisManager.getLine(calledVar.getGeneName());
+        }
     }
 
     public String getString(Trio trio) {
@@ -249,6 +260,8 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+
+        sb.append(rvisStr);
 
         return sb.toString();
     }

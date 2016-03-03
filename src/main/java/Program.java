@@ -47,6 +47,7 @@ import function.external.knownvar.KnownVarManager;
 import function.external.knownvar.ListKnownVar;
 import function.external.rvis.ListRvis;
 import function.external.rvis.RvisCommand;
+import function.external.rvis.RvisManager;
 import function.external.subrvis.ListSubRvis;
 import function.external.subrvis.SubRvisCommand;
 import function.genotype.base.CoverageBlockManager;
@@ -111,6 +112,8 @@ public class Program {
             CoverageBlockManager.init();
 
             KnownVarManager.init();
+            
+            RvisManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

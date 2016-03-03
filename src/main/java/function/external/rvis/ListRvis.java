@@ -30,8 +30,6 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public void initOutput() {
-        RvisManager.init();
-
         try {
             bwRvis = new BufferedWriter(new FileWriter(rvisFilePath));
             bwRvis.write("Variant ID,Gene," + RvisManager.getTitle());
