@@ -164,9 +164,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     }
 
     private void outputTempGeno(CalledVariant calledVar) throws Exception {
-        int geno;
         for (int s = 0; s < SampleManager.getListSize(); s++) {
-            geno = calledVar.getGenotype(SampleManager.getList().get(s).getIndex());
+            int geno = calledVar.getGenotype(SampleManager.getList().get(s).getIndex());
             if (geno == 2) {
                 if (calledVar.isSnv()) {
                     bwTmpPed.write(calledVar.getAllele() + calledVar.getAllele());

@@ -203,7 +203,7 @@ public class SampleManager {
                             + " (line " + lineNum+ " in sample file)");
                 }
 
-                double pheno = Double.valueOf(values[5]);
+                int pheno = Integer.valueOf(values[5]);
                 if (pheno != 1 && pheno != 2) {
                     ErrorManager.print("\nWrong Phenotype value: " + pheno 
                             + " (line " + lineNum+ " in sample file)");
@@ -270,7 +270,7 @@ public class SampleManager {
                     sex = 2;
                 }
 
-                double pheno = 1;
+                int pheno = 1;
                 String sampleType = rs.getString("sample_type").trim();
                 String captureKit = rs.getString("capture_kit").trim();
 

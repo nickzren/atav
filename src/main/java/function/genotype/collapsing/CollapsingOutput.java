@@ -82,8 +82,6 @@ public class CollapsingOutput extends Output {
             + KnownVarManager.getTitle();
 
     String geneName = "";
-    String sampleType;
-    String genoType;
     double varAllFreq = 0;
     double looMaf = 0;
     double looMhgf = 0;
@@ -100,20 +98,6 @@ public class CollapsingOutput extends Output {
         regionBoundaryNameSet = RegionBoundaryManager.getNameSet(
                 calledVar.getRegion().chrStr,
                 calledVar.getRegion().startPosition);
-    }
-
-    public void initGenoType(int geno) {
-        genoType = getGenoStr(geno);
-    }
-
-    public void initPhenoType(int pheno) {
-        switch (pheno) {
-            case 0:
-                sampleType = "ctrl";
-                break;
-            case 1:
-                sampleType = "case";
-        }
     }
 
     public void calculateLooFreq(Sample sample) {
@@ -249,9 +233,9 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
-        sb.append(genoType).append(",");
+        sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
         sb.append(sample.getName()).append(",");
-        sb.append(sampleType).append(",");
+        sb.append(sample.getPhenotype()).append(",");
         sb.append(majorHomCase).append(",");
         sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCase).append(",");

@@ -18,8 +18,6 @@ import utils.FormatManager;
  */
 public class VarGenoOutput extends Output {
 
-    String sampleType;
-    String genoType;
     public static final String title
             = "Variant ID,"
             + "Variant Type,"
@@ -82,21 +80,7 @@ public class VarGenoOutput extends Output {
     public VarGenoOutput(CalledVariant c) {
         super(c);
     }
-
-    public void initGenoType(int geno) {
-        genoType = getGenoStr(geno);
-    }
-
-    public void initPhenoType(int pheno) {
-        switch (pheno) {
-            case 0:
-                sampleType = "ctrl";
-                break;
-            case 1:
-                sampleType = "case";
-        }
-    }
-
+    
     @Override
     public boolean isRecessive() {
         if (isMinorRef) {
@@ -125,9 +109,9 @@ public class VarGenoOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
         sb.append(isMinorRef).append(",");
-        sb.append(genoType).append(",");
+        sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
         sb.append(sample.getName()).append(",");
-        sb.append(sampleType).append(",");
+        sb.append(sample.getPhenotype()).append(",");
         sb.append(majorHomCase).append(",");
         sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCase).append(",");

@@ -110,13 +110,13 @@ public class NonCarrier {
     /*
      * Outside of pseudoautosomal regions:
      *
-     * Chrx: females are treated normally
+     * ChrX: females are treated normally
      *
-     * Chrx: males have het removed
+     * ChrX: males have het removed
      *
-     * Chry: females are set to missing
+     * ChrY: females are set to missing
      *
-     * Chry: males have het removed
+     * ChrY: males have het removed
      *
      * Inside of pseudoautosomal region which are treated like autosomes.
      */

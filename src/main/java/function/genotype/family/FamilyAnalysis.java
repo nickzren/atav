@@ -134,9 +134,8 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
         if (output.isAllShared()) {
             bwQualifiedVariants.write(output.getCalledVariant().getVariantIdStr() + ",");
 
-            int geno;
             for (Sample sample : SampleManager.getList()) {
-                geno = output.getCalledVariant().getGenotype(sample.getIndex());
+                int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                 if (output.isQualifiedGeno(geno)) {
                     bwQualifiedVariants.write(sample.getName() + ",");

@@ -53,18 +53,13 @@ public class Output implements Cloneable {
         int cov, geno, pheno;
 
         for (Sample sample : SampleManager.getList()) {
-            try {
-                cov = calledVar.getCoverage(sample.getIndex());
-                geno = calledVar.getGenotype(sample.getIndex());
-                geno = getGenoType(geno, sample);
-                pheno = (int) sample.getPheno();
+            cov = calledVar.getCoverage(sample.getIndex());
+            geno = calledVar.getGenotype(sample.getIndex());
+            geno = getGenoType(geno, sample);
+            pheno = (int) sample.getPheno();
 
-                addSampleGeno(geno, pheno);
-                addSampleCov(cov, pheno);
-            } catch (Exception e) {
-                LogManager.writeAndPrint("vid:" + this.calledVar.getVariantId());
-                LogManager.writeAndPrint("sid:" + sample.getId());
-            }
+            addSampleGeno(geno, pheno);
+            addSampleCov(cov, pheno);
         }
     }
 

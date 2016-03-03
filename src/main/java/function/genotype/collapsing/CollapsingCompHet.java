@@ -177,7 +177,7 @@ public class CollapsingCompHet extends CollapsingBase {
             StringBuilder sb = new StringBuilder();
             sb.append(sample.getFamilyId()).append(",");
             sb.append(sample.getName()).append(",");
-            sb.append(sample.getPhenoType()).append(",");
+            sb.append(sample.getPhenotype()).append(",");
             sb.append("'").append(output1.geneName).append("'").append(",");
             sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
             sb.append("NA,"); // Var Case Freq #1 & #2 (co-occurance)
@@ -222,7 +222,7 @@ public class CollapsingCompHet extends CollapsingBase {
                         StringBuilder sb = new StringBuilder();
                         sb.append(sample.getFamilyId()).append(",");
                         sb.append(sample.getName()).append(",");
-                        sb.append(sample.getPhenoType()).append(",");
+                        sb.append(sample.getPhenotype()).append(",");
                         sb.append("'").append(output1.geneName).append("'").append(",");
                         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
                         sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");

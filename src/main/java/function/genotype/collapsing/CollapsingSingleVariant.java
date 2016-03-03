@@ -127,10 +127,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
     private void outputQualifiedVariant(CollapsingOutput output,
             Sample sample) throws Exception {
-        int geno = output.getCalledVariant().getGenotype(sample.getIndex());
-
-        output.initGenoType(geno);
-        output.initPhenoType((int) sample.getPheno());
         bwGenotypes.write(output.getString(sample));
         bwGenotypes.newLine();
 
