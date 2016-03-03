@@ -122,7 +122,7 @@ public class AnnotatedVariant extends Variant {
 
         if (isValid) {
             gerpScore = GerpManager.getScore(variantIdStr);
-            
+
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
@@ -193,15 +193,18 @@ public class AnnotatedVariant extends Variant {
                 || isIndel()) {
             return "NA";
         }
-
-        int aminoAcidPos = Data.NA;
-
-        if (aminoAcidChange.length() == 2) {
-            aminoAcidPos = Integer.valueOf(aminoAcidChange.substring(1));
-        } else {
-            aminoAcidPos = Integer.valueOf(aminoAcidChange.substring(1,
-                    aminoAcidChange.length() - 1));
+        
+        String posStr = "";
+        
+        for (int i = 0; i < aminoAcidChange.length(); i++) {
+            char c = aminoAcidChange.charAt(i);
+            
+            if(Character.isDigit(c)){
+                posStr += c;
+            }
         }
+        
+        int aminoAcidPos = Integer.valueOf(posStr);
 
         String leftStr = codonChange.split("/")[0];
         String rightStr = codonChange.split("/")[1];
