@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import utils.CommonCommand;
 import utils.ErrorManager;
 
 /**
@@ -17,8 +16,10 @@ import utils.ErrorManager;
  */
 public class SubRvisManager {
 
-    private static HashMap<String, SubRvisGene> geneDomainMap = new HashMap<String, SubRvisGene>();
-    private static HashMap<String, SubRvisGene> geneExonMap = new HashMap<String, SubRvisGene>();
+    private static HashMap<String, ArrayList<SubRvisGene>> geneDomainMap
+            = new HashMap<String, ArrayList<SubRvisGene>>();
+    private static HashMap<String, ArrayList<SubRvisGene>> geneExonMap
+            = new HashMap<String, ArrayList<SubRvisGene>>();
 
     public static String getTitle() {
         String title = "subRVIS Domain Name,"
@@ -35,7 +36,7 @@ public class SubRvisManager {
         initGeneMap(geneExonMap, Data.SUBRVIS_EXON);
     }
 
-    private static void initGeneMap(HashMap<String, SubRvisGene> geneMap, String filePath) {
+    private static void initGeneMap(HashMap<String, ArrayList<SubRvisGene>> geneMap, String filePath) {
         try {
             File f = new File(filePath);
             FileInputStream fstream = new FileInputStream(f);
@@ -53,9 +54,15 @@ public class SubRvisManager {
                 ArrayList<Region> regionList = getRegionList(regionStr[1]);
                 float score = Float.valueOf(tmp[3]);
 
-                SubRvisGene subRvisGene = new SubRvisGene(geneName, id, chr, regionList, score);
+                SubRvisGene subRvisGene = new SubRvisGene(id, chr, regionList, score);
 
-                geneMap.put(geneName, subRvisGene);
+                if (geneMap.containsKey(geneName)) {
+                    geneMap.get(geneName).add(subRvisGene);
+                } else {
+                    ArrayList<SubRvisGene> idArray = new ArrayList<SubRvisGene>();
+                    idArray.add(subRvisGene);
+                    geneMap.put(geneName, idArray);
+                }
             }
 
             br.close();
@@ -84,11 +91,27 @@ public class SubRvisManager {
         return regionList;
     }
 
-    public static SubRvisGene getGeneDomain(String geneName) {
-        return geneDomainMap.get(geneName);
+    public static SubRvisGene getGeneDomain(String geneName, String chr, int pos) {
+        ArrayList<SubRvisGene> domainMap = geneDomainMap.get(geneName);
+
+        for (SubRvisGene domain : domainMap) {
+            if (domain.isPositionIncluded(chr, pos)) {
+                return domain;
+            }
+        }
+
+        return null;
     }
 
-    public static SubRvisGene getExonDomain(String geneName) {
-        return geneExonMap.get(geneName);
+    public static SubRvisGene getExonDomain(String geneName, String chr, int pos) {
+        ArrayList<SubRvisGene> exonMap = geneExonMap.get(geneName);
+
+        for (SubRvisGene exon : exonMap) {
+            if (exon.isPositionIncluded(chr, pos)) {
+                return exon;
+            }
+        }
+
+        return null;
     }
 }

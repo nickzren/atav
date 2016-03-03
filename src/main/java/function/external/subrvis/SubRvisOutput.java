@@ -20,16 +20,14 @@ public class SubRvisOutput {
     private float exonScore = Data.NA;
 
     public SubRvisOutput(String geneName, String chr, int pos) {
-        SubRvisGene geneDomain = SubRvisManager.getGeneDomain(geneName);
-        if (geneDomain != null
-                && geneDomain.isPositionIncluded(chr, pos)) {
+        SubRvisGene geneDomain = SubRvisManager.getGeneDomain(geneName, chr, pos);
+        if (geneDomain != null) {
             domainName = geneDomain.getId();
             domainScore = geneDomain.getScore();
         }
 
-        SubRvisGene geneExon = SubRvisManager.getExonDomain(geneName);
-        if (geneExon != null
-                && geneExon.isPositionIncluded(chr, pos)) {
+        SubRvisGene geneExon = SubRvisManager.getExonDomain(geneName, chr, pos);
+        if (geneExon != null) {
             exonName = geneExon.getId();
             exonScore = geneExon.getScore();
         }
