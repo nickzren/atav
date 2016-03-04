@@ -22,6 +22,9 @@ public class RegionManager {
     private static HashMap<Integer, String> idChrMap = new HashMap<Integer, String>();
     private static HashMap<String, Integer> chrIdMap = new HashMap<String, Integer>();
     private static boolean isUsed = false;
+    
+    public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+        "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT"};
 
     public static void init() {
         if (CommonCommand.isNonDBAnalysis) {
@@ -31,14 +34,14 @@ public class RegionManager {
         initIdChrMap();
 
         if (CommonCommand.regionInput.isEmpty()) {
-            initChrRegionList(Data.ALL_CHR);
+            initChrRegionList(ALL_CHR);
         } else {
             isUsed = true;
 
             File f = new File(CommonCommand.regionInput);
 
             if (CommonCommand.regionInput.equals("all")) {
-                initChrRegionList(Data.ALL_CHR);
+                initChrRegionList(ALL_CHR);
             } else if (f.isFile()) {
                 initMultiChrRegionList(f);
             } else {
@@ -185,7 +188,7 @@ public class RegionManager {
 
     private static void checkChrValid(String chr) {
         boolean isValid = false;
-        for (String str : Data.ALL_CHR) {
+        for (String str : ALL_CHR) {
             if (chr.equalsIgnoreCase("chr" + str)) {
                 isValid = true;
             }
@@ -239,7 +242,7 @@ public class RegionManager {
 
     private static void initIdChrMap() {
         try {
-            for (String chr : Data.ALL_CHR) {
+            for (String chr : ALL_CHR) {
                 String sql = "SELECT seq_region_id FROM seq_region where coord_system_id = 2 "
                         + "AND name = '" + chr + "'";
                 ResultSet rs = DBManager.executeQuery(sql);

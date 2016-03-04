@@ -1,5 +1,6 @@
 package function.coverage.base;
 
+import function.genotype.base.CoverageBlockManager;
 import function.variant.base.Region;
 import global.Data;
 import function.genotype.base.GenotypeLevelFilterCommand;
@@ -70,7 +71,7 @@ public class CoveredRegion extends Region {
             return "";
         } else {
             String str = SqlQuery.Region_Coverage_1024;
-            str = str.replaceAll("_SAMPLE_TYPE_", Data.SAMPLE_TYPE[DataTypeIndex]);
+            str = str.replaceAll("_SAMPLE_TYPE_", SampleManager.SAMPLE_TYPE[DataTypeIndex]);
             str = str.replaceAll("_CHROM_", chrStr);
             str = str.replaceAll("_POSITIONS_", getPositionString());
             return str;
@@ -196,11 +197,11 @@ public class CoveredRegion extends Region {
     }
 
     private int getPosition(int pos) { //optimize it later
-        int posIndex = pos % Data.COVERAGE_BLOCK_SIZE; // coverage data block size is 1024
+        int posIndex = pos % CoverageBlockManager.COVERAGE_BLOCK_SIZE; // coverage data block size is 1024
         if (posIndex == 0) {
-            posIndex = Data.COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
+            posIndex = CoverageBlockManager.COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
         }
-        return pos - posIndex + Data.COVERAGE_BLOCK_SIZE;
+        return pos - posIndex + CoverageBlockManager.COVERAGE_BLOCK_SIZE;
     }
 
     private String getPositionString() {
@@ -210,7 +211,7 @@ public class CoveredRegion extends Region {
             return Integer.toString(firstIndex);
         } else {
             StringBuilder sb = new StringBuilder();
-            for (int index = firstIndex; index < lastIndex; index += Data.COVERAGE_BLOCK_SIZE) {
+            for (int index = firstIndex; index < lastIndex; index += CoverageBlockManager.COVERAGE_BLOCK_SIZE) {
                 sb.append(Integer.toString(index)).append(",");
             }
             sb.append(Integer.toString(lastIndex));

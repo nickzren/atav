@@ -17,6 +17,9 @@ import utils.DBManager;
  */
 public class VariantManager {
 
+    private static final String ARTIFACTS_Variant_PATH = "data/artifacts_variant.txt";
+    public static final String[] VARIANT_TYPE = {"snv", "indel"};
+
     private static HashSet<String> includeVariantSet = new HashSet<String>();
     private static HashSet<String> excludeVariantSet = new HashSet<String>();
     private static ArrayList<String> includeIdList = new ArrayList<String>();
@@ -34,7 +37,7 @@ public class VariantManager {
         init(VariantLevelFilterCommand.excludeVariantId, excludeVariantSet, false);
 
         if (VariantLevelFilterCommand.isExcludeArtifacts) {
-            init(Data.ARTIFACTS_Variant_PATH, excludeVariantSet, false);
+            init(ARTIFACTS_Variant_PATH, excludeVariantSet, false);
         }
     }
 
@@ -233,7 +236,7 @@ public class VariantManager {
         boolean check = false;
 
         try {
-            if (type.equals(Data.VARIANT_TYPE[0])) // snv
+            if (type.equals(VARIANT_TYPE[0])) // snv
             {
                 if (VariantLevelFilterCommand.isExcludeSnv) {
                     return false;

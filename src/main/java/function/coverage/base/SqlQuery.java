@@ -1,5 +1,6 @@
 package function.coverage.base;
 
+import function.genotype.base.SampleManager;
 import global.Data;
 
 /**
@@ -195,12 +196,12 @@ public class SqlQuery {
     public static String Region_Coverage_1024 = "SELECT sample_id, position, min_coverage FROM "
             //+ "_SAMPLE_TYPE__read_coverage_1024_test_chr_CHROM_ c ,"
             + "_SAMPLE_TYPE__read_coverage_1024_chr_CHROM_ c ,"
-            + Data.ALL_SAMPLE_ID_TABLE + " t "
+            + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
             + "WHERE position in (_POSITIONS_) "
             + "AND c.sample_id = t.id ";
 
     public static String Region_Coverage = " SELECT * FROM _SAMPLE_TYPE__read_coverage_chr_CHROM_ "
-            + ", " + Data.ALL_SAMPLE_ID_TABLE + " t "
+            + ", " + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
             + "WHERE "
             + "seq_region_pos >= IF(_START_ - _REGIONLENGTH_ - 1 > 0,_START_ - _REGIONLENGTH_ - 1,0) "
             + "AND seq_region_pos <= _END_ + _REGIONLENGTH_ + 1 "

@@ -14,6 +14,9 @@ import java.util.Iterator;
  */
 public class TranscriptManager {
 
+    private static final String CCDS_TRANSCRIPT_PATH = "data/ccds_transcript.txt";
+    private static final String CANONICAL_TRANSCRIPT_PATH = "data/canonical_transcript.txt";
+
     private static HashSet<String> currentTranscriptSet = new HashSet<String>();
     private static HashSet<String> ccdsTranscriptSet = new HashSet<String>();
     private static HashSet<String> canonicalTranscriptSet = new HashSet<String>();
@@ -88,7 +91,7 @@ public class TranscriptManager {
     }
 
     public static void initCCDSTranscriptPath() {
-        ccdsTranscriptFile = Data.CCDS_TRANSCRIPT_PATH;
+        ccdsTranscriptFile = CCDS_TRANSCRIPT_PATH;
 
         if (CommonCommand.isDebug) {
             ccdsTranscriptFile = Data.RECOURCE_PATH + ccdsTranscriptFile;
@@ -96,7 +99,7 @@ public class TranscriptManager {
     }
 
     public static void initCanonicalTranscriptPath() {
-        canonicalTranscriptFile = Data.CANONICAL_TRANSCRIPT_PATH;
+        canonicalTranscriptFile = CANONICAL_TRANSCRIPT_PATH;
 
         if (CommonCommand.isDebug) {
             canonicalTranscriptFile = Data.RECOURCE_PATH + canonicalTranscriptFile;

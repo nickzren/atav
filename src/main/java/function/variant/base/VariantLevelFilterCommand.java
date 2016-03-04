@@ -1,6 +1,7 @@
 package function.variant.base;
 
 import function.external.evs.EvsCommand;
+import function.external.evs.EvsManager;
 import function.external.exac.ExacCommand;
 import function.external.exac.ExacManager;
 import function.external.gerp.GerpCommand;
@@ -52,7 +53,7 @@ public class VariantLevelFilterCommand {
                 isExcludeIndel = true;
             } else if (option.getName().equals("--evs-pop")
                     || option.getName().equals("--evs-maf-pop")) {
-                checkValuesValid(Data.EVS_POP, option);
+                checkValuesValid(EvsManager.EVS_POP, option);
                 EvsCommand.evsPop = option.getValue();
             } else if (option.getName().equals("--evs-maf")) {
                 checkValueValid(0.5, 0, option);
@@ -63,7 +64,7 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--exclude-evs-qc-failed")) {
                 EvsCommand.isExcludeEvsQcFailed = true;
             } else if (option.getName().equals("--exac-pop")) {
-                checkValuesValid(Data.EXAC_POP, option);
+                checkValuesValid(ExacManager.EXAC_POP, option);
                 ExacCommand.exacPop = option.getValue();
             } else if (option.getName().equals("--exac-maf")) {
                 checkValueValid(0.5, 0, option);
@@ -78,7 +79,7 @@ public class VariantLevelFilterCommand {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 ExacCommand.exacMeanCoverage = getValidFloat(option);
             } else if (option.getName().equals("--exac-subset")) {
-                checkValuesValid(Data.EXAC_SUBSET, option);
+                checkValuesValid(ExacManager.EXAC_SUBSET, option);
                 ExacCommand.exacSubset = option.getValue();
                 ExacManager.resetTables();
             } else if (option.getName().equals("--min-c-score")

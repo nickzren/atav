@@ -48,6 +48,8 @@ public class GenotypeLevelFilterCommand {
     public static double mapQualRankSum = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
+    
+     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -102,7 +104,7 @@ public class GenotypeLevelFilterCommand {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCaseCarrier = getValidInteger(option);
             } else if (option.getName().equals("--var-status")) {
-                checkValueValid(Data.VARIANT_STATUS, option);
+                checkValueValid(VARIANT_STATUS, option);
                 String str = option.getValue().replace("+", ",");
                 if (str.contains("all")) {
                     varStatus = null;

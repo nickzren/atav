@@ -10,6 +10,8 @@ import java.util.Map.Entry;
  */
 public class CoverageBlockManager {
 
+    public static final int COVERAGE_BLOCK_SIZE = 1024;
+
     private static HashMap<Integer, int[][]> currentBlockMap = new HashMap<Integer, int[][]>();
     private static int currentBlockEndPos = Data.NA;
 
@@ -83,16 +85,16 @@ public class CoverageBlockManager {
     }
 
     protected static int getVarPosIndex(Variant var) {
-        int posIndex = var.getRegion().getStartPosition() % Data.COVERAGE_BLOCK_SIZE;
+        int posIndex = var.getRegion().getStartPosition() % COVERAGE_BLOCK_SIZE;
 
         if (posIndex == 0) {
-            posIndex = Data.COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
+            posIndex = COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
         }
 
         return posIndex;
     }
 
     protected static int getBlockEndPos(Variant var, int varPosIndex) {
-        return var.getRegion().getStartPosition() - varPosIndex + Data.COVERAGE_BLOCK_SIZE;
+        return var.getRegion().getStartPosition() - varPosIndex + COVERAGE_BLOCK_SIZE;
     }
 }

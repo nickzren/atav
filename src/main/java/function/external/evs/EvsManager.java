@@ -6,6 +6,8 @@ package function.external.evs;
  */
 public class EvsManager {
 
+    public static final String[] EVS_POP = {"ea", "aa", "all"};
+    
     static final String coverageTable = "evs.coverage";
     static final String snvTable = "evs.snv_maf_2015_09_16";
     static final String indelTable = "evs.indel_maf_2015_09_16";

@@ -67,8 +67,8 @@ public class Exac {
     }
 
     public void initMaf() {
-        maf = new float[Data.EXAC_POP.length];
-        gts = new String[Data.EXAC_POP.length];
+        maf = new float[ExacManager.EXAC_POP.length];
+        gts = new String[ExacManager.EXAC_POP.length];
 
         try {
             String sql = ExacManager.getSql4Maf(isSnv, chr, pos, ref, alt);
@@ -90,22 +90,22 @@ public class Exac {
     }
 
     private void setMaf(ResultSet rs) throws SQLException {
-        for (int i = 0; i < Data.EXAC_POP.length; i++) {
-            float af = rs.getFloat(Data.EXAC_POP[i] + "_af");
+        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
+            float af = rs.getFloat(ExacManager.EXAC_POP[i] + "_af");
 
             if (af > 0.5) {
                 af = 1 - af;
             }
 
             maf[i] = af;
-            gts[i] = rs.getString(Data.EXAC_POP[i] + "_gts");
+            gts[i] = rs.getString(ExacManager.EXAC_POP[i] + "_gts");
         }
 
         vqslod = rs.getFloat("vqslod");
     }
 
     private void resetMaf(int value) {
-        for (int i = 0; i < Data.EXAC_POP.length; i++) {
+        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
             maf[i] = value;
             gts[i] = "NA";
         }
@@ -116,9 +116,9 @@ public class Exac {
     private float getMaxMaf() {
         float value = Data.NA;
 
-        for (int i = 0; i < Data.EXAC_POP.length; i++) {
+        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
             if (maf[i] != Data.NA
-                    && ExacCommand.exacPop.contains(Data.EXAC_POP[i])) {
+                    && ExacCommand.exacPop.contains(ExacManager.EXAC_POP[i])) {
                 value = Math.max(value, maf[i]);
             }
         }
@@ -140,7 +140,7 @@ public class Exac {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < Data.EXAC_POP.length; i++) {
+        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
             sb.append(FormatManager.getDouble(maf[i])).append(",");
 
             if (gts[i].equals("NA")) {

@@ -22,6 +22,14 @@ import utils.FormatManager;
  * @author nick
  */
 public class SampleManager {
+    
+    private static final String SAMPLE_GROUP_RESTRICTION_PATH = "config/sample.group.restriction.txt";
+    private static final String USER_GROUP_RESTRICTION_PATH = "config/user.group.restriction.txt";
+    
+    public static final String[] SAMPLE_TYPE = {"genome", "exome"};
+    public static final String ALL_SAMPLE_ID_TABLE = "all_sample_id";
+    public static final String GENOME_SAMPLE_ID_TABLE = "genome_sample_id";
+    public static final String EXOME_SAMPLE_ID_TABLE = "exome_sample_id";
 
     // sample permission
     private static HashMap<String, String> sampleGroupMap // sample_name, group_name
@@ -87,7 +95,7 @@ public class SampleManager {
 
     private static void initSampleGroup() {
         try {
-            File f = new File(Data.SAMPLE_GROUP_RESTRICTION_PATH);
+            File f = new File(SAMPLE_GROUP_RESTRICTION_PATH);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -111,7 +119,7 @@ public class SampleManager {
 
     private static void initUserGroup() {
         try {
-            File f = new File(Data.USER_GROUP_RESTRICTION_PATH);
+            File f = new File(USER_GROUP_RESTRICTION_PATH);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -189,26 +197,26 @@ public class SampleManager {
                 }
 
                 lineStr = lineStr.replaceAll("( )+", "");
-                
+
                 String[] values = lineStr.split("\t");
 
                 String familyId = values[0];
                 String individualId = values[1];
                 String paternalId = values[2];
                 String maternalId = values[3];
-                
+
                 int sex = Integer.valueOf(values[4]);
                 if (sex != 1 && sex != 2) {
-                    ErrorManager.print("\nWrong Sex value: " + sex 
-                            + " (line " + lineNum+ " in sample file)");
+                    ErrorManager.print("\nWrong Sex value: " + sex
+                            + " (line " + lineNum + " in sample file)");
                 }
 
                 int pheno = Integer.valueOf(values[5]);
                 if (pheno != 1 && pheno != 2) {
-                    ErrorManager.print("\nWrong Phenotype value: " + pheno 
-                            + " (line " + lineNum+ " in sample file)");
+                    ErrorManager.print("\nWrong Phenotype value: " + pheno
+                            + " (line " + lineNum + " in sample file)");
                 }
-                
+
                 String sampleType = values[6];
                 String captureKit = values[7];
 
@@ -619,11 +627,11 @@ public class SampleManager {
     }
 
     private static void createTempTables() {
-        createTempTable(Data.ALL_SAMPLE_ID_TABLE);
+        createTempTable(ALL_SAMPLE_ID_TABLE);
 
-        createTempTable(Data.GENOME_SAMPLE_ID_TABLE);
+        createTempTable(GENOME_SAMPLE_ID_TABLE);
 
-        createTempTable(Data.EXOME_SAMPLE_ID_TABLE);
+        createTempTable(EXOME_SAMPLE_ID_TABLE);
     }
 
     private static void createTempTable(String sqlTable) {
@@ -667,9 +675,9 @@ public class SampleManager {
     }
 
     private static void insertSampleId2Tables() {
-        insertId2Table(allSampleIdSb.toString(), Data.ALL_SAMPLE_ID_TABLE);
-        insertId2Table(genomeSampleIdSb.toString(), Data.GENOME_SAMPLE_ID_TABLE);
-        insertId2Table(exomeSampleIdSb.toString(), Data.EXOME_SAMPLE_ID_TABLE);
+        insertId2Table(allSampleIdSb.toString(), ALL_SAMPLE_ID_TABLE);
+        insertId2Table(genomeSampleIdSb.toString(), GENOME_SAMPLE_ID_TABLE);
+        insertId2Table(exomeSampleIdSb.toString(), EXOME_SAMPLE_ID_TABLE);
     }
 
     private static void insertId2Table(String ids, String table) {
@@ -791,21 +799,21 @@ public class SampleManager {
         ResultSet rs = null;
         String sql = "";
 
-        int posIndex = var.getRegion().getStartPosition() % Data.COVERAGE_BLOCK_SIZE; // coverage data block size is 1024
+        int posIndex = var.getRegion().getStartPosition() % CoverageBlockManager.COVERAGE_BLOCK_SIZE; // coverage data block size is 1024
 
         if (posIndex == 0) {
-            posIndex = Data.COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
+            posIndex = CoverageBlockManager.COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
         }
 
-        int endPos = var.getRegion().getStartPosition() - posIndex + Data.COVERAGE_BLOCK_SIZE;
+        int endPos = var.getRegion().getStartPosition() - posIndex + CoverageBlockManager.COVERAGE_BLOCK_SIZE;
 
         try {
-            for (int i = 0; i < Data.SAMPLE_TYPE.length; i++) {
+            for (int i = 0; i < SAMPLE_TYPE.length; i++) {
                 sql = "SELECT sample_id, min_coverage "
-                        + "FROM " + Data.SAMPLE_TYPE[i]
-                        + "_read_coverage_" + Data.COVERAGE_BLOCK_SIZE + "_chr"
+                        + "FROM " + SAMPLE_TYPE[i]
+                        + "_read_coverage_" + CoverageBlockManager.COVERAGE_BLOCK_SIZE + "_chr"
                         + var.getRegion().getChrStr() + " c,"
-                        + Data.SAMPLE_TYPE[i] + "_sample_id t "
+                        + SAMPLE_TYPE[i] + "_sample_id t "
                         + "WHERE c.position = " + endPos
                         + " AND c.sample_id = t.id";
 
@@ -839,7 +847,7 @@ public class SampleManager {
             HashMap<Integer, Carrier> carrierMap) {
         String sqlCarrier = "SELECT * "
                 + "FROM called_" + var.getType() + " va,"
-                + Data.ALL_SAMPLE_ID_TABLE + " t "
+                + ALL_SAMPLE_ID_TABLE + " t "
                 + "WHERE va." + var.getType() + "_id = " + var.getVariantId()
                 + " AND va.sample_id = t.id";
 

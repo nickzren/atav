@@ -4,6 +4,7 @@ import function.variant.base.Region;
 import global.Data;
 import function.annotation.base.GeneManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.SampleManager;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -229,7 +230,7 @@ public class Gene {
     public HashMap<Integer, Double> getCoverageFromTable() {
         HashMap<Integer, Double> result = new HashMap<Integer, Double>();
         String strQuery = "SELECT sample_id, coverage_ratio FROM gene_coverage_summary c,"
-                + Data.ALL_SAMPLE_ID_TABLE + " t "
+                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
                 + "WHERE gene = '" + name + "' AND c.sample_id = t.id "
                 + "AND min_coverage = " + GenotypeLevelFilterCommand.minCoverage;
 

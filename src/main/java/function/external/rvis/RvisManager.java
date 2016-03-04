@@ -15,6 +15,8 @@ import utils.ErrorManager;
  */
 public class RvisManager {
 
+    private static final String RVIS_PATH = "data/rvis_030216.csv";
+
     public static String title;
     private static final HashMap<String, String> rvisMap = new HashMap<String, String>();
     public static String na = "";
@@ -35,7 +37,7 @@ public class RvisManager {
 
     private static void initRvisMap() {
         try {
-            File f = new File(Data.RVIS_PATH);
+            File f = new File(RVIS_PATH);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));

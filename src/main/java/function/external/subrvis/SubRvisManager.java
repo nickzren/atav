@@ -1,6 +1,5 @@
 package function.external.subrvis;
 
-import global.Data;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -15,6 +14,9 @@ import utils.ErrorManager;
  * @author nick
  */
 public class SubRvisManager {
+
+    private static final String SUBRVIS_DOMAIN_PATH = "data/subrvis_domain.txt";
+    private static final String SUBRVIS_EXON_PATH = "data/subrvis_exon.txt";
 
     private static HashMap<String, ArrayList<SubRvisGene>> geneDomainMap
             = new HashMap<String, ArrayList<SubRvisGene>>();
@@ -31,9 +33,9 @@ public class SubRvisManager {
     }
 
     public static void init() {
-        initGeneMap(geneDomainMap, Data.SUBRVIS_DOMAIN);
+        initGeneMap(geneDomainMap, SUBRVIS_DOMAIN_PATH);
 
-        initGeneMap(geneExonMap, Data.SUBRVIS_EXON);
+        initGeneMap(geneExonMap, SUBRVIS_EXON_PATH);
     }
 
     private static void initGeneMap(HashMap<String, ArrayList<SubRvisGene>> geneMap, String filePath) {

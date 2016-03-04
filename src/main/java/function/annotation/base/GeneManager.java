@@ -17,6 +17,9 @@ import function.variant.base.RegionManager;
  * @author nick
  */
 public class GeneManager {
+    
+    private static final String ARTIFACTS_GENE_PATH = "data/artifacts_gene.txt";
+    private static final String GENE_ENSEMBL_PATH = "data/gene_ensembl.txt";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<String, HashSet<Gene>>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<String, HashSet<Gene>>();
@@ -176,7 +179,7 @@ public class GeneManager {
     }
 
     private static void initArtifactsGeneMap() throws Exception {
-        String artifactsGeneFile = Data.ARTIFACTS_GENE_PATH;
+        String artifactsGeneFile = ARTIFACTS_GENE_PATH;
 
         if (CommonCommand.isDebug) {
             artifactsGeneFile = Data.RECOURCE_PATH + artifactsGeneFile;
@@ -249,7 +252,7 @@ public class GeneManager {
 
     public static void initGeneStableIdNmNpMap() {
         try {
-            String geneEnsemblFile = Data.GENE_ENSEMBL_PATH;
+            String geneEnsemblFile = GENE_ENSEMBL_PATH;
 
             if (CommonCommand.isDebug) {
                 geneEnsemblFile = Data.RECOURCE_PATH + geneEnsemblFile;
