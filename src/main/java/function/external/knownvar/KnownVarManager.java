@@ -16,7 +16,7 @@ import utils.FormatManager;
 public class KnownVarManager {
 
     public static final String clinVarTable = "knownvar.clinvar_2015_10_12";
-//    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2015_10_12";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2015_10_12";
     public static final String hgmdTable = "knownvar.hgmd_2015_4";
     public static final String omimTable = "knownvar.omim_2016_02_12";
     public static final String acmgTable = "knownvar.ACMG_2015_12_09";
@@ -41,11 +41,11 @@ public class KnownVarManager {
                     + "ClinVar Other Ids,"
                     + "ClinVar Disease Name,"
                     + "ClinVar Flanking Count,"
-//                    + "ClinVar Pathogenic Indel Count,"
-//                    + "ClinVar Pathogenic Copy Count,"
-//                    + "ClinVar Pathogenic SNV Splice Count,"
-//                    + "ClinVar Pathogenic SNV Nonsense Count,"
-//                    + "ClinVar Pathogenic SNV Missense Count,"
+                    + "ClinVar Pathogenic Indel Count,"
+                    + "Clinvar Pathogenic CNV Count,"
+                    + "ClinVar Pathogenic SNV Splice Count,"
+                    + "ClinVar Pathogenic SNV Nonsense Count,"
+                    + "ClinVar Pathogenic SNV Missense Count,"
                     + "HGMD Variant Class,"
                     + "HGMD Pmid,"
                     + "HGMD Disease Name,"
@@ -66,7 +66,7 @@ public class KnownVarManager {
         if (KnownVarCommand.isIncludeKnownVar) {
             initClinvarMap();
 
-//            initClinVarPathoratioMap();
+            initClinVarPathoratioMap();
 
             initHGMDMap();
 
@@ -111,35 +111,35 @@ public class KnownVarManager {
         }
     }
 
-//    private static void initClinVarPathoratioMap() {
-//        try {
-//            String sql = "SELECT * From " + clinVarPathoratioTable;
-//
-//            ResultSet rs = DBManager.executeQuery(sql);
-//
-//            while (rs.next()) {
-//                String geneName = rs.getString("geneName").toUpperCase();
-//                int indelCount = rs.getInt("indelCount");
-//                int copyCount = rs.getInt("copyCount");
-//                int snvSpliceCount = rs.getInt("snvSpliceCount");
-//                int snvNonsenseCount = rs.getInt("snvNonsenseCount");
-//                int snvMissenseCount = rs.getInt("snvMissenseCount");
-//
-//                ClinVarPathoratio clinVarPathoratio = new ClinVarPathoratio(
-//                        indelCount,
-//                        copyCount,
-//                        snvSpliceCount,
-//                        snvNonsenseCount,
-//                        snvMissenseCount);
-//
-//                clinVarPathoratioMap.put(geneName, clinVarPathoratio);
-//            }
-//
-//            rs.close();
-//        } catch (Exception e) {
-//            ErrorManager.send(e);
-//        }
-//    }
+    private static void initClinVarPathoratioMap() {
+        try {
+            String sql = "SELECT * From " + clinVarPathoratioTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String geneName = rs.getString("geneName").toUpperCase();
+                int indelCount = rs.getInt("indelCount");
+                int copyCount = rs.getInt("copyCount");
+                int snvSpliceCount = rs.getInt("snvSpliceCount");
+                int snvNonsenseCount = rs.getInt("snvNonsenseCount");
+                int snvMissenseCount = rs.getInt("snvMissenseCount");
+
+                ClinVarPathoratio clinVarPathoratio = new ClinVarPathoratio(
+                        indelCount,
+                        copyCount,
+                        snvSpliceCount,
+                        snvNonsenseCount,
+                        snvMissenseCount);
+
+                clinVarPathoratioMap.put(geneName, clinVarPathoratio);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
 
     private static void initHGMDMap() {
         try {
