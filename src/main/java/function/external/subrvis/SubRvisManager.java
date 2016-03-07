@@ -96,9 +96,11 @@ public class SubRvisManager {
     public static SubRvisGene getGeneDomain(String geneName, String chr, int pos) {
         ArrayList<SubRvisGene> domainMap = geneDomainMap.get(geneName);
 
-        for (SubRvisGene domain : domainMap) {
-            if (domain.isPositionIncluded(chr, pos)) {
-                return domain;
+        if (domainMap != null) {
+            for (SubRvisGene domain : domainMap) {
+                if (domain.isPositionIncluded(chr, pos)) {
+                    return domain;
+                }
             }
         }
 
@@ -108,9 +110,11 @@ public class SubRvisManager {
     public static SubRvisGene getExonDomain(String geneName, String chr, int pos) {
         ArrayList<SubRvisGene> exonMap = geneExonMap.get(geneName);
 
-        for (SubRvisGene exon : exonMap) {
-            if (exon.isPositionIncluded(chr, pos)) {
-                return exon;
+        if (exonMap != null) {
+            for (SubRvisGene exon : exonMap) {
+                if (exon.isPositionIncluded(chr, pos)) {
+                    return exon;
+                }
             }
         }
 
