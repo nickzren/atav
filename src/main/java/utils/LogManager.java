@@ -97,32 +97,36 @@ public class LogManager {
         }
     }
 
-    public static void recordUserCommand() throws Exception {
-        if (isBioinfoTeam()) {
-            return;
+    public static void recordUserCommand() {
+        try {
+            if (isBioinfoTeam()) {
+                return;
+            }
+
+            File file = new File(USERS_COMMAND_LOG);
+
+            FileWriter fileWritter = new FileWriter(file, true);
+
+            BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+
+            Date date = new Date();
+
+            long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
+
+            bufferWritter.write(Data.userName + "\t"
+                    + date.toString() + "\t"
+                    + DBManager.getHost() + "\t"
+                    + System.getenv("HOSTNAME") + "\t"
+                    + CommandManager.command + "\t"
+                    + totalRunTime + "\t"
+                    + outputFolderSize + " bytes");
+
+            bufferWritter.newLine();
+
+            bufferWritter.close();
+        } catch (Exception e) { // not output error when writing to log file denied
+
         }
-
-        File file = new File(USERS_COMMAND_LOG);
-
-        FileWriter fileWritter = new FileWriter(file, true);
-
-        BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-
-        Date date = new Date();
-
-        long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
-
-        bufferWritter.write(Data.userName + "\t"
-                + date.toString() + "\t"
-                + DBManager.getHost() + "\t"
-                + System.getenv("HOSTNAME") + "\t"
-                + CommandManager.command + "\t"
-                + totalRunTime + "\t"
-                + outputFolderSize + " bytes");
-
-        bufferWritter.newLine();
-
-        bufferWritter.close();
     }
 
     private static boolean isBioinfoTeam() throws Exception {
