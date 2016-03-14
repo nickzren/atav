@@ -295,6 +295,7 @@ public class CommandManager {
                 VarAnnoCommand.isListVarAnno = true;
                 KnownVarCommand.isIncludeKnownVar = true;
                 RvisCommand.isIncludeRvis = true;
+                SubRvisCommand.isIncludeSubRvis = true;
             } else if (option.getName().equals("--list-gene-dx")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GeneDxCommand.isListGeneDx = true;
@@ -330,6 +331,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-sub-rvis")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 SubRvisCommand.isListSubRvis = true;
+                SubRvisCommand.isIncludeSubRvis = true;
             } else if (option.getName().equals("--list-rvis")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 RvisCommand.isListRvis = true;

@@ -49,6 +49,7 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.ListSubRvis;
 import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CoverageBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
@@ -111,6 +112,8 @@ public class Program {
             KnownVarManager.init();
             
             RvisManager.init();
+            
+            SubRvisManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

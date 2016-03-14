@@ -63,7 +63,6 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public void beforeProcessDatabaseData() {
-        SubRvisManager.init();
     }
 
     @Override

@@ -24,18 +24,22 @@ public class SubRvisManager {
             = new HashMap<String, ArrayList<SubRvisGene>>();
 
     public static String getTitle() {
-        String title = "subRVIS Domain Name,"
-                + "subRVIS Domain Score,"
-                + "subRVIS Exon Name,"
-                + "subRVIS Exon Score";
-
-        return title;
+        if (SubRvisCommand.isIncludeSubRvis) {
+            return "subRVIS Domain Name,"
+                    + "subRVIS Domain Score,"
+                    + "subRVIS Exon Name,"
+                    + "subRVIS Exon Score,";
+        } else {
+            return "";
+        }
     }
 
     public static void init() {
-        initGeneMap(geneDomainMap, SUBRVIS_DOMAIN_PATH);
+        if (SubRvisCommand.isIncludeSubRvis) {
+            initGeneMap(geneDomainMap, SUBRVIS_DOMAIN_PATH);
 
-        initGeneMap(geneExonMap, SUBRVIS_EXON_PATH);
+            initGeneMap(geneExonMap, SUBRVIS_EXON_PATH);
+        }
     }
 
     private static void initGeneMap(HashMap<String, ArrayList<SubRvisGene>> geneMap, String filePath) {

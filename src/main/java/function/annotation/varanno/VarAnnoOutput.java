@@ -7,6 +7,11 @@ import function.external.exac.ExacManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisCommand;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisManager;
+import function.external.subrvis.SubRvisOutput;
 import utils.FormatManager;
 
 /**
@@ -40,12 +45,36 @@ public class VarAnnoOutput {
             + "Amino Acid Change,"
             + "Coding Sequence Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle() 
+            + ExacManager.getTitle()
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
+
+    private String rvisStr = "";
+
+    private SubRvisOutput subRvisOutput;
 
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
+
+        initRvis();
+
+        initSubRvis();
+    }
+
+    private void initRvis() {
+        if (RvisCommand.isIncludeRvis && rvisStr.isEmpty()) {
+            rvisStr = RvisManager.getLine(annotatedVar.getGeneName());
+        }
+    }
+
+    private void initSubRvis() {
+        if (SubRvisCommand.isIncludeSubRvis) {
+            subRvisOutput = new SubRvisOutput(annotatedVar.getGeneName(),
+                    annotatedVar.getRegion().getChrStr(),
+                    annotatedVar.getRegion().getStartPosition());
+        }
     }
 
     @Override
@@ -79,10 +108,14 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getTranscriptSet()).append(",");
 
         sb.append(annotatedVar.getExacStr());
-        
+
         sb.append(annotatedVar.getKaviarStr());
-        
+
         sb.append(annotatedVar.getKnownVarStr());
+
+        sb.append(rvisStr);
+
+        sb.append(subRvisOutput.toString());
 
         return sb.toString();
     }

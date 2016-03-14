@@ -59,7 +59,6 @@ public class ListVarAnno extends AnalysisBase4AnnotatedVar {
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
             VarAnnoOutput output = new VarAnnoOutput(annotatedVar);
-
             bwAnnotations.write(output.toString());
             bwAnnotations.newLine();
         } catch (Exception e) {
