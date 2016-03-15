@@ -2,6 +2,8 @@ package function.annotation.base;
 
 import function.external.evs.Evs;
 import function.external.exac.Exac;
+import function.external.gerp.GerpCommand;
+import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import function.external.kaviar.Kaviar;
@@ -37,6 +39,8 @@ public class AnnotatedVariant extends Variant {
 
     Evs evs;
 
+    float gerpScore;
+
     KnownVarOutput knownVarOutput;
 
     public boolean isValid = true;
@@ -61,14 +65,26 @@ public class AnnotatedVariant extends Variant {
         checkValid();
     }
 
-    public AnnotatedVariant(int v_id, boolean isIndel,
-            String alt, String ref, String rs,
-            int pos, String chr) throws Exception {
-        super(v_id, isIndel, alt, ref, rs, pos, chr);
-
-        checkValid();
-    }
-
+    // update code below for unit testing
+//    
+//    public AnnotatedVariant(int v_id, boolean isIndel,
+//            String alt, String ref, String rs,
+//            int pos, String chr) throws Exception {
+//        super(v_id, isIndel, alt, ref, rs, pos, chr);
+//    }
+//    
+//    public static void main(String[] args) throws Exception {
+//        System.out.println("test");
+//
+//        AnnotatedVariant variant = new AnnotatedVariant(0, false, "C", "T", "", 78082311, "17");
+//
+//        variant.aminoAcidChange = "N570K";
+//        variant.codonChange = "aaC/aaG";
+//
+//        String result = variant.getCodingSequenceChange();
+//
+//        System.out.println(result);
+//    }
     public void update(Annotation annotation) {
         if (isValid) {
             geneSet.add(annotation.geneName);
@@ -105,6 +121,12 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (isValid) {
+            gerpScore = GerpManager.getScore(variantIdStr);
+            
+            isValid = GerpCommand.isGerpScoreValid(gerpScore);
+        }
+
+        if (isValid) {
             exac = new Exac(variantIdStr);
 
             isValid = exac.isValid();
@@ -120,12 +142,6 @@ public class AnnotatedVariant extends Variant {
             evs = new Evs(variantIdStr);
 
             isValid = evs.isValid();
-        }
-
-        if (isValid) {
-            if (KnownVarCommand.isIncludeKnownVar) {
-                knownVarOutput = new KnownVarOutput(this);
-            }
         }
     }
 
@@ -192,10 +208,11 @@ public class AnnotatedVariant extends Variant {
 
         int codingPos = Data.NA;
         int changeIndex = Data.NA;
+        int[] codonOffBase = {2, 1, 0}; // aminoAcidPos * 3 is the last position of codon
 
         for (int i = 0; i < leftStr.length(); i++) {
             if (leftStr.charAt(i) != rightStr.charAt(i)) {
-                codingPos = aminoAcidPos * 3 - i;
+                codingPos = aminoAcidPos * 3 - codonOffBase[i];
                 changeIndex = i;
             }
         }
@@ -264,11 +281,21 @@ public class AnnotatedVariant extends Variant {
         return evs.toString();
     }
 
+    public void initKnownVar() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
+    }
+
     public String getKnownVarStr() {
         if (KnownVarCommand.isIncludeKnownVar) {
             return knownVarOutput.toString();
         } else {
             return "";
         }
+    }
+
+    public float getGerpScore() {
+        return gerpScore;
     }
 }

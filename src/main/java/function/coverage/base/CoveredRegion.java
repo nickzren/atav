@@ -170,7 +170,7 @@ public class CoveredRegion extends Region {
                     String strCoverage = rs.getString("min_coverage");
                     int position = rs.getInt("position");
                     int sampleid = rs.getInt("sample_id");
-                    boolean isCase = SampleManager.getTable().get(sampleid).isCase();
+                    boolean isCase = SampleManager.getMap().get(sampleid).isCase();
                     ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(position,
                             strCoverage, min_coverage, false);
                     for (CoverageInterval ci : cilist) {

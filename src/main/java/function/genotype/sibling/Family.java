@@ -22,11 +22,11 @@ public class Family {
 
         String fatherName = sample.getPaternalId();
         int fatherId = SampleManager.getIdByName(fatherName);
-        father = SampleManager.getTable().get(fatherId);
+        father = SampleManager.getMap().get(fatherId);
 
         String motherName = sample.getMaternalId();
         int motherId = SampleManager.getIdByName(motherName);
-        mother = SampleManager.getTable().get(motherId);
+        mother = SampleManager.getMap().get(motherId);
 
         childList.add(sample);
     }

@@ -39,9 +39,9 @@ public class Trio {
 
     public boolean isValid() {
         if (fatherId != Data.NA
-                && !SampleManager.getTable().get(fatherId).isCase()
+                && !SampleManager.getMap().get(fatherId).isCase()
                 && motherId != Data.NA
-                && !SampleManager.getTable().get(motherId).isCase()) {
+                && !SampleManager.getMap().get(motherId).isCase()) {
             return true;
         }
 

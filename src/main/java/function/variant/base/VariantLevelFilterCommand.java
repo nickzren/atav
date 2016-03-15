@@ -2,6 +2,8 @@ package function.variant.base;
 
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
+import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import global.Data;
@@ -75,17 +77,25 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--min-exac-mean-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 ExacCommand.exacMeanCoverage = getValidFloat(option);
-            } else if (option.getName().equals("--min-c-score")) {
+            } else if (option.getName().equals("--exac-subset")) {
+                checkValuesValid(Data.EXAC_SUBSET, option);
+                ExacCommand.exacSubset = option.getValue();
+                ExacManager.resetTables();
+            } else if (option.getName().equals("--min-c-score")
+                    || option.getName().equals("--min-cadd-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCscore = getValidDouble(option);
-            } else if (option.getName().equals("--max-kaviar-allele-freq")) {
+            } else if (option.getName().equals("--max-kaviar-maf")) {
                 checkValueValid(1, 0, option);
-                KaviarCommand.maxKaviarAlleleFreq = getValidFloat(option);
+                KaviarCommand.maxKaviarMaf = getValidFloat(option);
             } else if (option.getName().equals("--max-kaviar-allele-count")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
             } else if (option.getName().equals("--include-known-var")) {
                 KnownVarCommand.isIncludeKnownVar = true;
+            } else if (option.getName().equals("--min-gerp-score")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                GerpCommand.minGerpScore = getValidFloat(option);
             } else {
                 continue;
             }

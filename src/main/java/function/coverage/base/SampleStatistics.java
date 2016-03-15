@@ -191,7 +191,7 @@ public class SampleStatistics {
         double avgCtrl = 0;
         for (int i = 0; i < SampleNames.length; i++) {
             int sampleid = Index2Id.get(i);
-            if (SampleManager.getTable().get(sampleid).isCase()) {
+            if (SampleManager.getMap().get(sampleid).isCase()) {
                 avgCase = avgCase + aCoverage[record][i];
             } else {
                 avgCtrl = avgCtrl + aCoverage[record][i];
@@ -251,7 +251,7 @@ public class SampleStatistics {
                     cov = result.get(sampleid);
                 }
                 avgAll = avgAll + cov;
-                double x = SampleManager.getTable().get(sampleid).getQuantitativeTrait();
+                double x = SampleManager.getMap().get(sampleid).getQuantitativeTrait();
                 double y = cov / RegoinLength;
                 sr.addData(x, y);
                 lss.addValue(y);
@@ -296,7 +296,7 @@ public class SampleStatistics {
                     cov = result.get(sampleid);
 
                 }
-                if (SampleManager.getTable().get(sampleid).isCase()) {
+                if (SampleManager.getMap().get(sampleid).isCase()) {
                     avgCase = avgCase + cov;
                 } else {
                     avgCtrl = avgCtrl + cov;

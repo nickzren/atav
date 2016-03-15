@@ -8,6 +8,7 @@ import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.IntolerantScoreManager;
+import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import utils.FormatManager;
@@ -26,7 +27,8 @@ public class VarGenoOutput extends Output {
             + "Rs Number,"
             + "Ref Allele,"
             + "Alt Allele,"
-            + "C Score Phred,"
+            + "CADD Score Phred,"
+            + GerpManager.getTitle()
             + "Is Minor Ref,"
             + "Genotype,"
             + "Sample Name,"
@@ -123,6 +125,7 @@ public class VarGenoOutput extends Output {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
+        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
         sb.append(isMinorRef).append(",");
         sb.append(genoType).append(",");
         sb.append(sample.getName()).append(",");

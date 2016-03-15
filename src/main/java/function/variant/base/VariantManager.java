@@ -2,7 +2,6 @@ package function.variant.base;
 
 import function.annotation.base.GeneManager;
 import global.Data;
-import function.coverage.base.SqlQuery;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -23,6 +22,9 @@ public class VariantManager {
     private static ArrayList<String> includeIdList = new ArrayList<String>();
     private static ArrayList<String> includeVariantTypeList = new ArrayList<String>();
     private static ArrayList<String> includeChrList = new ArrayList<String>();
+
+    // used this id set to avoid output duplicate variants
+    private static HashSet<Integer> outputVariantIdSet = new HashSet<Integer>();
 
     private static final int maxIncludeNum = 10000000;
 
@@ -55,7 +57,7 @@ public class VariantManager {
         }
 
         if (isInclude) {
-            initRegionList();
+            resetRegionList();
         }
     }
 
@@ -180,7 +182,7 @@ public class VariantManager {
         includeIdList.add(str);
     }
 
-    private static void initRegionList() throws SQLException {
+    private static void resetRegionList() throws SQLException {
         if (!RegionManager.isUsed()
                 && !GeneManager.isUsed()) {
             RegionManager.clear();
@@ -261,5 +263,18 @@ public class VariantManager {
 
     public static ArrayList<String> getIncludeVariantList() {
         return includeIdList;
+    }
+
+    public static boolean isVariantOutput(int id) {
+        if (includeIdList.isEmpty()) { // only apply when used --variant option
+            return false;
+        }
+
+        if (outputVariantIdSet.contains(id)) {
+            return true;
+        } else {
+            outputVariantIdSet.add(id);
+            return false;
+        }
     }
 }

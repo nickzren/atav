@@ -29,7 +29,7 @@ public class Family {
         int id = SampleManager.getIdByName(name);
 
         if (id != Data.NA) {
-            Sample parent = SampleManager.getTable().get(id);
+            Sample parent = SampleManager.getMap().get(id);
 
             parentList.add(parent);
         }

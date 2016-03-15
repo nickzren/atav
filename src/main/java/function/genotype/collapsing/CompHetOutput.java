@@ -6,6 +6,7 @@ import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.IntolerantScoreManager;
+import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import utils.FormatManager;
@@ -14,7 +15,7 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class CompHetOutput extends CollapsingOutput {
+public class CompHetOutput extends CollapsingOutput implements Comparable {
 
     public static final String title
             = "Family ID,"
@@ -34,7 +35,8 @@ public class CompHetOutput extends CollapsingOutput {
                 + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
-                + "C Score Phred,"
+                + "CADD Score Phred,"
+                + GerpManager.getTitle()
                 + "Is Minor Ref,"
                 + "Genotype,"
                 + "Samtools Raw Coverage,"
@@ -101,6 +103,7 @@ public class CompHetOutput extends CollapsingOutput {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
+        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
 
         sb.append(isMinorRef).append(",");
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
@@ -142,7 +145,7 @@ public class CompHetOutput extends CollapsingOutput {
         sb.append(calledVar.getExacStr());
 
         sb.append(calledVar.getKaviarStr());
-        
+
         sb.append(calledVar.getKnownVarStr());
 
         return sb.toString();
@@ -177,5 +180,10 @@ public class CompHetOutput extends CollapsingOutput {
         }
 
         return false;
+    }
+
+    public int compareTo(Object another) throws ClassCastException {
+        CollapsingOutput that = (CollapsingOutput) another;
+        return this.geneName.compareTo(that.geneName); //small -> large
     }
 }

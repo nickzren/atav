@@ -11,8 +11,8 @@ public class Data {
     // software info
     public static final String AppTitle = "ATAV (Analysis Tool for Annotated Variants)";
     public static String version = "pgm";
-    public static final String year = "2012-2015";
-    public static final String developer = "Nick Ren, Quanli Wang";
+    public static final String year = "2012-2016";
+    public static final String developer = "Nick Ren";
     public static final String insititue = "IGM (Institute for Genomic Medicine)";
     public static String userName = "UnspecifiedUser";
 
@@ -27,15 +27,14 @@ public class Data {
     //"ea,aa,all"
     public static final String[] EVS_POP = {"ea", "aa", "all"};
     public static final String[] EXAC_POP = {"global", "afr", "amr", "eas", "sas", "fin", "nfe", "oth"};
+    public static final String[] EXAC_SUBSET = {"nonpsych", "nonTCGA"};
     public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 
     // system config file path
     public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.pgm.system.config.properties";
-    
-    // system file path for debug
     public static final String RECOURCE_PATH = new File(".").getAbsolutePath() + "/src/main/resources/";
-
+    
     public static final String DB_HOST_CONFIG_PATH = "config/host";
     public static final String SAMPLE_GROUP_RESTRICTION_PATH = "config/sample.group.restriction.txt";
     public static final String USER_GROUP_RESTRICTION_PATH = "config/user.group.restriction.txt";
@@ -46,6 +45,8 @@ public class Data {
     public static final String ARTIFACTS_Variant_PATH = "data/artifacts_variant.txt";
     public static final String ARTIFACTS_GENE_PATH = "data/artifacts_gene.txt";
     public static final String GENE_ENSEMBL_PATH = "data/gene_ensembl.txt";
+    public static final String SUBRVIS_DOMAIN = "data/subrvis_domain.txt";
+    public static final String SUBRVIS_EXON = "data/subrvis_exon.txt";
     public static final String EXAMPLE_OPT_PATH = "lib/example.opt";
     
     public static final int MAX_VARIANT = 100000;

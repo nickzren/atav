@@ -14,7 +14,7 @@ public class AnnotationLevelFilterCommand {
 
     public static String functionInput = "";
     public static String geneInput = "";
-    public static String geneBoundariesFile = "";
+    public static String geneBoundaryFile = "";
     public static String transcriptFile = "";
     public static boolean isCcdsOnly = false;
     public static boolean isCanonicalOnly = false;
@@ -31,8 +31,9 @@ public class AnnotationLevelFilterCommand {
                 functionInput = getValidPath(option);
             } else if (option.getName().equals("--gene")) {
                 geneInput = getValidPath(option);
-            } else if (option.getName().equals("--gene-boundaries")) {
-                geneBoundariesFile = getValidPath(option);
+            } else if (option.getName().equals("--gene-boundaries") ||
+                    option.getName().equals("--gene-boundary")) {
+                geneBoundaryFile = getValidPath(option);
             } else if (option.getName().equals("--transcript")) {
                 transcriptFile = getValidPath(option);
             } else if (option.getName().equals("--ccds-only")) {

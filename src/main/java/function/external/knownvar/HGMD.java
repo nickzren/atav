@@ -1,8 +1,5 @@
 package function.external.knownvar;
 
-import java.sql.ResultSet;
-import utils.DBManager;
-import utils.ErrorManager;
 import utils.FormatManager;
 
 /**
@@ -23,53 +20,37 @@ public class HGMD {
     private String diseaseName;
     int flankingCount;
 
-    public HGMD(String id) {
-        initBasic(id);
-
-        initHGMD();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public HGMD(String chr, int pos, String ref, String alt, String variantClass,
+            String pmid, String diseaseName) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
-
         if (ref.length() > 1
                 || alt.length() > 1) {
             isSnv = false;
         }
+
+        this.variantClass = variantClass;
+        this.pmid = pmid;
+        this.diseaseName = diseaseName;
     }
 
-    private void initHGMD() {
-        try {
-            String sql = KnownVarManager.getSql4HGMD(chr, pos, ref, alt);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            if (rs.next()) {
-                variantClass = FormatManager.getString(rs.getString("variantClass"));
-                pmid = FormatManager.getString(rs.getString("pmid"));
-                diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
-            }
-
-            while (rs.next()) // for variant that having multi annotations
-            {
-                variantClass += " | " + FormatManager.getString(rs.getString("variantClass"));
-                pmid += " | " + FormatManager.getString(rs.getString("pmid"));
-                diseaseName += " | " + FormatManager.getString(rs.getString("DiseaseName"));
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
+    public void initFlankingCount() {
         flankingCount = KnownVarManager.getFlankingCount(isSnv, chr, pos,
                 KnownVarManager.hgmdTable);
+    }
+
+    public void append(String variantClass, String pmid, String diseaseName) {
+        this.variantClass += " | " + variantClass;
+        this.pmid += " | " + pmid;
+        this.diseaseName += " | " + diseaseName;
+    }
+    
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
     @Override
@@ -79,7 +60,7 @@ public class HGMD {
         sb.append(FormatManager.getString(variantClass)).append(",");
         sb.append(FormatManager.getString(pmid)).append(",");
         sb.append(FormatManager.getString(diseaseName)).append(",");
-        sb.append(flankingCount);
+        sb.append(flankingCount).append(",");
 
         return sb.toString();
     }

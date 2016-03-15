@@ -12,7 +12,7 @@ ReadPvals <- function(path, column) {
   # Returns:
   #   Pvals in vector.
   
-  pvals.table <- read.table(path, header=T, sep=",")
+  pvals.table <- read.csv(path, header=T, sep=",")
   return(pvals.table[, column])
 }
 

@@ -78,11 +78,11 @@ public class NonCarrier {
     }
 
     public boolean isMale() {
-        return SampleManager.getTable().get(sampleId).isMale();
+        return SampleManager.getMap().get(sampleId).isMale();
     }
 
     public void checkCoverageFilter(int minCaseCov, int minCtrlCov) {
-        Sample sample = SampleManager.getTable().get(sampleId);
+        Sample sample = SampleManager.getMap().get(sampleId);
 
         if (sample.isCase()) // --min-case-coverage-call or --min-case-coverage-no-call
         {
@@ -128,7 +128,7 @@ public class NonCarrier {
         if (genotype != Data.NA) {
             boolean isValid = true;
             
-            Sample sample = SampleManager.getTable().get(sampleId);
+            Sample sample = SampleManager.getMap().get(sampleId);
             
             if (sample.isMale()) {
                 if (genotype == 1 // male het chr x or y & outside 

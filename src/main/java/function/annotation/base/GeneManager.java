@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import function.variant.base.Region;
 import function.coverage.base.Gene;
 import function.genotype.collapsing.CollapsingCommand;
 import global.Data;
@@ -28,14 +27,14 @@ public class GeneManager {
     private static HashMap<String, String> genenStableIdNmNpMap = new HashMap<String, String>();
     private static boolean isUsed = false;
 
-    public static void init() throws Exception {   
+    public static void init() throws Exception {
         initGeneName();
 
         initGeneBoundaries();
 
         initGeneMap();
 
-        initRegionList();
+        resetRegionList();
 
         initArtifactsGeneMap();
     }
@@ -93,13 +92,13 @@ public class GeneManager {
     }
 
     private static void initGeneBoundaries() throws Exception {
-        if (AnnotationLevelFilterCommand.geneBoundariesFile.isEmpty()) {
+        if (AnnotationLevelFilterCommand.geneBoundaryFile.isEmpty()) {
             return;
         }
 
         isUsed = true;
 
-        File f = new File(AnnotationLevelFilterCommand.geneBoundariesFile);
+        File f = new File(AnnotationLevelFilterCommand.geneBoundaryFile);
         FileInputStream fstream = new FileInputStream(f);
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -154,12 +153,12 @@ public class GeneManager {
         }
     }
 
-    private static void initRegionList() throws Exception {
+    private static void resetRegionList() throws Exception {
         if (isUsed) {
-            ArrayList<String> chrList = new ArrayList<String>();
-
             if (!RegionManager.isUsed()) {
                 RegionManager.clear();
+
+                ArrayList<String> chrList = new ArrayList<String>();
 
                 for (HashSet<Gene> geneSet : geneMap.values()) {
                     String chr = geneSet.iterator().next().getChrStr();
@@ -302,19 +301,6 @@ public class GeneManager {
                     return true;
                 }
             }
-        }
-
-        return false;
-    }
-
-    public static boolean isValid(String name, Region region) {
-        if (geneMap.isEmpty()) {
-            return true;
-        }
-
-        if (geneMap.containsKey(name)
-                && geneMap.get(name).contains(region)) {
-            return true;
         }
 
         return false;

@@ -8,8 +8,10 @@ import function.coverage.base.CoverageCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.flanking.FlankingCommand;
+import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.subrvis.SubRvisCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
@@ -20,6 +22,7 @@ import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.nondb.ppi.PPICommand;
+import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -289,6 +292,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-var-anno")) { // Variant Annotation Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 VarAnnoCommand.isListVarAnno = true;
+                KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--list-gene-dx")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GeneDxCommand.isListGeneDx = true;
@@ -318,10 +322,19 @@ public class CommandManager {
             } else if (option.getName().equals("--list-kaviar")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KaviarCommand.isListKaviar = true;
-            }else if (option.getName().equals("--ppi")) { // Non Database Functions
+            } else if (option.getName().equals("--list-gerp")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                GerpCommand.isListGerp = true;
+            } else if (option.getName().equals("--list-sub-rvis")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                SubRvisCommand.isListSubRvis = true;
+            } else if (option.getName().equals("--ppi")) { // Non Database Functions
                 PPICommand.isPPI = true;
                 CommonCommand.isNonDBAnalysis = true;
                 CommonCommand.isNonSampleAnalysis = true;
+            } else if (option.getName().equals("--test")) { // Test Functions
+                CommonCommand.isNonSampleAnalysis = true;
+                TestCommand.isTest = true;
             } else {
                 continue;
             }
@@ -384,6 +397,8 @@ public class CommandManager {
             FlankingCommand.initOptions(optionList.iterator());
         } else if (PPICommand.isPPI) { // Non Database Functions
             PPICommand.initOptions(optionList.iterator());
+        } else if (TestCommand.isTest) { // Test Functions
+
         }
     }
 

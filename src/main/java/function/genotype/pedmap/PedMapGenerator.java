@@ -14,8 +14,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.RandomAccessFile;
-import java.util.HashSet;
-import java.util.Vector;
 
 /**
  *
@@ -42,10 +40,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     final String outputOpt = chip2pcaDir + File.separator
             + CommonCommand.outputDirName + ".opt";
 
-    HashSet<String> outputIdSet = new HashSet<String>(); // include same pos of variantId and Rs number
-    int sampleSize = SampleManager.getListSize();
     int qualifiedVariants = 0;
-    Vector<CalledVariant> site;
 
     @Override
     public void initOutput() {
@@ -56,7 +51,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-        site = new Vector<CalledVariant>();
     }
 
     @Override
@@ -88,12 +82,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     @Override
     public void afterProcessDatabaseData() {
-        // just to process the last site
-        if (PedMapCommand.isCombineMultiAlleles && !site.isEmpty() && !site.get(0).isIndel()) {
-            processSite();
-        }
-
-        output();
+        generatePedFile();
     }
 
     @Override
@@ -113,147 +102,21 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     private void doOutput(CalledVariant calledVar) {
         try {
-            if (calledVar.isIndel() || !PedMapCommand.isCombineMultiAlleles) {
-                String rs = calledVar.getRsNumber();
-                String varIdStr = calledVar.getVariantIdStr();
-                String outputId;
+            qualifiedVariants++;
 
-                if (rs.equals("NA") || outputIdSet.contains(rs)
-                        || PedMapCommand.isVariantIdOnly) {
-                    outputId = varIdStr;
-                } else {
-                    outputId = rs;
-                }
+            bwMap.write(calledVar.getRegion().getChrStr() + "\t"
+                    + calledVar.getVariantIdStr() + "\t"
+                    + "0\t"
+                    + calledVar.getRegion().getStartPosition());
+            bwMap.newLine();
 
-                if (!outputIdSet.contains(outputId)) {
-                    outputIdSet.add(outputId);
-                    qualifiedVariants++;
-
-                    if (!outputIdSet.contains(varIdStr)) {
-                        outputIdSet.add(varIdStr);
-                    }
-
-                    String chrStr = calledVar.getRegion().getChrStr();
-
-                    if (calledVar.getRegion().isInsideXPseudoautosomalRegions()) {
-                        chrStr = "XY";
-                    }
-
-                    bwMap.write(chrStr + "\t"
-                            + outputId + "\t"
-                            + "0\t"
-                            + calledVar.getRegion().getStartPosition() + "\n");
-
-                    outputTempGeno(calledVar);
-                }
-            } else {
-                if (!(site.isEmpty()
-                        || (site.firstElement().getRegion().getChrNum() == calledVar.getRegion().getChrNum()
-                        && site.firstElement().getRegion().getStartPosition() == calledVar.getRegion().getStartPosition()))) {
-                    processSite();
-                }
-                site.add(calledVar);
-            }
-
+            outputTempGeno(calledVar);
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
     }
 
-    private String getOutputID() {
-        String rs = site.get(0).getRsNumber();
-        String outputId = "";
-        if (rs.equals("NA") || PedMapCommand.isVariantIdOnly) {
-            outputId = site.get(0).getVariantIdStr();
-            if (site.size() > 1) {
-                for (int i = 1; i < site.size(); i++) {
-                    if (!outputId.contains(site.get(i).getAllele())) {
-                        outputId = outputId + "_" + site.get(i).getAllele();
-                    }
-                }
-            }
-        } else {
-            outputId = rs;
-        }
-        return outputId;
-    }
-
-    void processSite() {
-        try {
-            if (site.isEmpty()) {
-                return;
-            }
-
-            qualifiedVariants++;
-            CalledVariant calledVar = site.get(0);
-
-            String chrStr = site.get(0).getRegion().getChrStr();
-
-            if (site.get(0).getRegion().isInsideXPseudoautosomalRegions()) {
-                chrStr = "XY";
-            }
-
-            bwMap.write(chrStr + "\t"
-                    + getOutputID() + "\t"
-                    + "0\t"
-                    + calledVar.getRegion().getStartPosition() + "\n");
-
-            StringBuilder sb = new StringBuilder();
-            for (int s = 0; s < sampleSize; s++) {
-                switch (calledVar.getGenotype(SampleManager.getList().get(s).getIndex())) {
-                    case 2:
-                        sb.append(calledVar.getAllele()).append(calledVar.getAllele());
-                        break;
-                    case 1:
-                        sb.append(calledVar.getRefAllele()).append(calledVar.getAllele());
-                        break;
-                    case 0:
-                        sb.append(calledVar.getRefAllele()).append(calledVar.getRefAllele());
-                        break;
-                    default:
-                        sb.append("00");
-                }
-            }
-
-            if (site.size() > 1) {
-                int geno;
-                for (int s = 0; s < sampleSize; s++) {
-                    for (int i = 1; i < site.size(); i++) {
-                        geno = site.get(i).getGenotype(SampleManager.getList().get(s).getIndex());
-                        switch (geno) {
-                            case 2:
-                                //just replace the previous record
-                                sb.replace(s * 2, (s + 1) * 2, site.get(i).getAllele() + site.get(i).getAllele());
-                                break;
-                            case 1:
-                                //a bit more complex here, have to deal with case where one sample has two different non-ref alleles 
-                                String allele = sb.substring(s * 2 + 1, (s + 1) * 2);
-                                if (!allele.equalsIgnoreCase(site.get(i).getAllele())) {
-                                    int pos = allele.equalsIgnoreCase(site.get(0).getRefAllele()) ? 1 : 0;
-                                    sb.replace(s * 2 + pos, s * 2 + 1 + pos, site.get(i).getAllele());
-                                }
-                                break;
-                            case 0:
-                                if (sb.substring(s * 2, (s + 1) * 2).equals("00")) {
-                                    sb.replace(s * 2, (s + 1) * 2, site.get(i).getRefAllele() + site.get(i).getRefAllele());
-                                }
-                                break;
-                            default:
-                            //do nothing   
-                        }
-                    }
-                }
-            }
-            bwTmpPed.write(sb.toString());
-            bwTmpPed.newLine();
-
-            site.clear();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    private void output() {
+    private void generatePedFile() {
         try {
             LogManager.writeAndPrint("Output the data to ped file now...");
 
@@ -262,9 +125,9 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             File tmpFile = new File(tmpPedFile);
             RandomAccessFile raf = new RandomAccessFile(tmpFile, "r");
 
-            long rowLen = 2 * sampleSize + 1L;
+            long rowLen = 2 * SampleManager.getListSize() + 1L;
 
-            for (int s = 0; s < sampleSize; s++) {
+            for (int s = 0; s < SampleManager.getListSize(); s++) {
                 Sample sample = SampleManager.getList().get(s);
 
                 String name = sample.getName();
@@ -302,7 +165,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     private void outputTempGeno(CalledVariant calledVar) throws Exception {
         int geno;
-        for (int s = 0; s < sampleSize; s++) {
+        for (int s = 0; s < SampleManager.getListSize(); s++) {
             geno = calledVar.getGenotype(SampleManager.getList().get(s).getIndex());
             if (geno == 2) {
                 if (calledVar.isSnv()) {
