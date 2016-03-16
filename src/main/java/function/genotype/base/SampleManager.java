@@ -22,10 +22,10 @@ import utils.FormatManager;
  * @author nick
  */
 public class SampleManager {
-    
+
     private static final String SAMPLE_GROUP_RESTRICTION_PATH = "config/sample.group.restriction.txt";
     private static final String USER_GROUP_RESTRICTION_PATH = "config/user.group.restriction.txt";
-    
+
     public static final String[] SAMPLE_TYPE = {"genome", "exome"};
     public static final String ALL_SAMPLE_ID_TABLE = "all_sample_id";
     public static final String GENOME_SAMPLE_ID_TABLE = "genome_sample_id";
@@ -819,18 +819,13 @@ public class SampleManager {
 
                 rs = DBManager.executeQuery(sql);
                 while (rs.next()) {
-                    NonCarrier noncarrier = new NonCarrier();
-
-                    noncarrier.init(rs, posIndex);
+                    NonCarrier noncarrier = new NonCarrier(rs, posIndex);
 
                     if (!carrierMap.containsKey(noncarrier.getSampleId())) {
 
-                        noncarrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
-                                GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
+                        noncarrier.applyFilters(var.getRegion());
 
-                        noncarrier.checkValidOnXY(var);
-
-                        if (noncarrier.getGenotype() != Data.NA) {
+                        if (noncarrier.isValid()) {
                             noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
                         }
                     }
@@ -856,16 +851,11 @@ public class SampleManager {
             rs = DBManager.executeQuery(sqlCarrier);
 
             while (rs.next()) {
-                Carrier carrier = new Carrier();
-                carrier.init(rs);
+                Carrier carrier = new Carrier(rs);
 
-                carrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
-                        GenotypeLevelFilterCommand.minCtrlCoverageCall);
+                carrier.applyFilters(var.getRegion());
 
-                carrier.checkQualityFilter();
-
-                carrier.checkValidOnXY(var);
-
+                // intend to keep NA carrier , NA here is unqualified not missing
                 carrierMap.put(carrier.getSampleId(), carrier);
             }
             rs.close();

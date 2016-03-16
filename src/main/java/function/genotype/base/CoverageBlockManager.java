@@ -39,12 +39,13 @@ public class CoverageBlockManager {
                 && currentBlockEndPos != Data.NA) {
             for (Entry<Integer, int[][]> entry : currentBlockMap.entrySet()) { // sampleId, allCovBin                
                 if (!carrierMap.containsKey(entry.getKey())) {
-                    NonCarrier noncarrier = new NonCarrier();
-                    noncarrier.init(entry.getKey(), getCoverage(varPosIndex, entry.getValue()));
-                    noncarrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
-                            GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
-                    noncarrier.checkValidOnXY(var);
-                    noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
+                    NonCarrier noncarrier = new NonCarrier(entry.getKey(), getCoverage(varPosIndex, entry.getValue()));
+                    
+                    noncarrier.applyFilters(var.getRegion());
+                    
+                    if (noncarrier.isValid()) {
+                        noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
+                    }
                 }
             }
         } else {
