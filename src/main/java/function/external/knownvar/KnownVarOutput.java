@@ -1,6 +1,7 @@
 package function.external.knownvar;
 
 import function.annotation.base.AnnotatedVariant;
+import function.external.rvis.RvisManager;
 
 /**
  *
@@ -21,7 +22,8 @@ public class KnownVarOutput {
     public static final String title
             = "Variant ID,"
             + "Gene Name,"
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle();
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
         String geneName = annotatedVar.getGeneName().toUpperCase();

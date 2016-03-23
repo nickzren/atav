@@ -93,8 +93,6 @@ public class DenovoOutput extends TrioOutput {
             + KnownVarManager.getTitle()
             + RvisManager.getTitle();
 
-    private String rvisStr = "";
-
     public DenovoOutput(CalledVariant c) {
         super(c);
     }
@@ -170,12 +168,6 @@ public class DenovoOutput extends TrioOutput {
         return false;
     }
 
-    public void initRvisStr() {
-        if (RvisCommand.isIncludeRvis && rvisStr.isEmpty()) {
-            rvisStr = RvisManager.getLine(calledVar.getGeneName());
-        }
-    }
-
     public String getString(Trio trio) {
         StringBuilder sb = new StringBuilder();
 
@@ -190,7 +182,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(calledVar.getGerpScore()).append(",");
+        sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
 
         sb.append(cGenotype).append(",");
@@ -258,7 +250,7 @@ public class DenovoOutput extends TrioOutput {
 
         sb.append(calledVar.getKnownVarStr());
 
-        sb.append(rvisStr);
+        sb.append(calledVar.getRvis());
 
         return sb.toString();
     }

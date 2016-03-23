@@ -10,6 +10,7 @@ import function.annotation.base.GeneManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisManager;
 import global.Data;
 import utils.FormatManager;
 import utils.MathManager;
@@ -89,7 +90,8 @@ public class ParentalOutput extends Output {
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle() 
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle();
 
     public ParentalOutput(CalledVariant c) {
         super(c);
@@ -186,7 +188,7 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(calledVar.getGerpScore()).append(",");
+        sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCase).append(",");
         sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
@@ -242,6 +244,8 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+        
+        sb.append(calledVar.getRvis());
 
         return sb.toString();
     }

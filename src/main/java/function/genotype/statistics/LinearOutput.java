@@ -7,6 +7,7 @@ import function.annotation.base.GeneManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
@@ -57,7 +58,8 @@ public class LinearOutput extends StatisticOutput {
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle() 
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle();
 
     public LinearOutput(CalledVariant c) {
         super(c);
@@ -318,7 +320,7 @@ public class LinearOutput extends StatisticOutput {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(calledVar.getGerpScore()).append(",");
+        sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCtrl).append(",");
         sb.append(sampleCount[Index.HET][Index.CTRL]).append(",");
@@ -351,6 +353,8 @@ public class LinearOutput extends StatisticOutput {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+        
+        sb.append(calledVar.getRvis());
 
         return sb.toString();
     }

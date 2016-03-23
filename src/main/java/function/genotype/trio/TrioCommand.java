@@ -1,6 +1,5 @@
 package function.genotype.trio;
 
-import function.external.rvis.RvisCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -28,8 +27,6 @@ public class TrioCommand {
             option = (CommandOption) iterator.next();
             if (option.getName().equals("--include-noflag")) {
                 isIncludeNoflag = true;
-            } else if (option.getName().equals("--include-rvis")) {
-                RvisCommand.isIncludeRvis = true;
             } else {
                 continue;
             }

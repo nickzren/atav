@@ -6,6 +6,7 @@ import function.annotation.base.GeneManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
@@ -79,7 +80,8 @@ public class CollapsingOutput extends Output {
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle();
 
     String geneName = "";
     double varAllFreq = 0;
@@ -232,7 +234,7 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(calledVar.getGerpScore()).append(",");
+        sb.append(calledVar.getGerpScore());
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
         sb.append(sample.getName()).append(",");
         sb.append(sample.getPhenotype()).append(",");
@@ -289,6 +291,8 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+        
+        sb.append(calledVar.getRvis());
 
         return sb.toString();
     }

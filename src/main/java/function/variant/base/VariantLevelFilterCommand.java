@@ -7,6 +7,7 @@ import function.external.exac.ExacManager;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.rvis.RvisCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -114,6 +115,8 @@ public class VariantLevelFilterCommand {
                 KaviarCommand.isIncludeKaviar = true;
             } else if (option.getName().equals("--include-known-var")) {
                 KnownVarCommand.isIncludeKnownVar = true;
+            } else if (option.getName().equals("--include-rvis")) {
+                RvisCommand.isIncludeRvis = true;
             } else if (option.getName().equals("--min-gerp-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 GerpCommand.minGerpScore = getValidFloat(option);
