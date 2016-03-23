@@ -9,6 +9,7 @@ import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import function.external.kaviar.Kaviar;
+import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
 import function.variant.base.VariantLevelFilterCommand;
@@ -134,7 +135,7 @@ public class AnnotatedVariant extends Variant {
             isValid = exac.isValid();
         }
 
-        if (isValid) {
+        if (isValid & KaviarCommand.isIncludeKaviar) {
             kaviar = new Kaviar(variantIdStr);
 
             isValid = kaviar.isValid();
@@ -283,7 +284,11 @@ public class AnnotatedVariant extends Variant {
     }
 
     public String getKaviarStr() {
-        return kaviar.toString();
+        if (KaviarCommand.isIncludeKaviar) {
+            return kaviar.toString();
+        } else {
+            return "";
+        }
     }
 
     public String getEvsStr() {

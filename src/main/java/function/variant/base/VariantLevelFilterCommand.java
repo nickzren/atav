@@ -99,15 +99,19 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--max-kaviar-maf")) {
                 checkValueValid(1, 0, option);
                 KaviarCommand.maxKaviarMaf = getValidFloat(option);
+                KaviarCommand.isIncludeKaviar = true;
             } else if (option.getName().equals("--max-kaviar-allele-count")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
+                KaviarCommand.isIncludeKaviar = true;
             } else if (option.getName().equals("--include-evs")) {
                 EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--include-exac")) {
                 ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--include-gerp")) {
                 GerpCommand.isIncludeGerp = true;
+            } else if (option.getName().equals("--include-kaviar")) {
+                KaviarCommand.isIncludeKaviar = true;
             } else if (option.getName().equals("--include-known-var")) {
                 KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--min-gerp-score")) {

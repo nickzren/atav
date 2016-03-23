@@ -296,6 +296,7 @@ public class CommandManager {
                 EvsCommand.isIncludeEvs = true;
                 ExacCommand.isIncludeExac = true;
                 GerpCommand.isIncludeGerp = true;
+                KaviarCommand.isIncludeKaviar = true;
                 KnownVarCommand.isIncludeKnownVar = true;
                 RvisCommand.isIncludeRvis = true;
                 SubRvisCommand.isIncludeSubRvis = true;
@@ -330,6 +331,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-kaviar")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KaviarCommand.isListKaviar = true;
+                KaviarCommand.isIncludeKaviar = true;
             } else if (option.getName().equals("--list-gerp")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GerpCommand.isListGerp = true;

@@ -10,9 +10,13 @@ public class KaviarManager {
     static final String indelTable = "kaviar.indel_maf_160113";
 
     public static String getTitle() {
-        String title = "Kaviar Maf,"
-                + "Kaviar Allele Count,"
-                + "Kaviar Allele Number,";
+        String title = "";
+
+        if (KaviarCommand.isIncludeKaviar) {
+            title = "Kaviar Maf,"
+                    + "Kaviar Allele Count,"
+                    + "Kaviar Allele Number,";
+        }
 
         return title;
     }
