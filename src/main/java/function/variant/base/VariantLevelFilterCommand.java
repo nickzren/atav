@@ -70,22 +70,28 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--exac-pop")) {
                 checkValuesValid(ExacManager.EXAC_POP, option);
                 ExacCommand.exacPop = option.getValue();
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--exac-maf")) {
                 checkValueValid(0.5, 0, option);
                 ExacCommand.exacMaf = getValidFloat(option);
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--min-exac-vqslod-snv")) {
                 checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                 ExacCommand.exacVqslodSnv = getValidFloat(option);
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--min-exac-vqslod-indel")) {
                 checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                 ExacCommand.exacVqslodIndel = getValidFloat(option);
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--min-exac-mean-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 ExacCommand.exacMeanCoverage = getValidFloat(option);
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--exac-subset")) {
                 checkValuesValid(ExacManager.EXAC_SUBSET, option);
                 ExacCommand.exacSubset = option.getValue();
                 ExacManager.resetTables();
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--min-c-score")
                     || option.getName().equals("--min-cadd-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
@@ -98,6 +104,8 @@ public class VariantLevelFilterCommand {
                 KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
             } else if (option.getName().equals("--include-evs")) {
                 EvsCommand.isIncludeEvs = true;
+            } else if (option.getName().equals("--include-exac")) {
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--include-known-var")) {
                 KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--min-gerp-score")) {

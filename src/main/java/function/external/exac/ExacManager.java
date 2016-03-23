@@ -8,7 +8,7 @@ public class ExacManager {
 
     public static final String[] EXAC_POP = {"global", "afr", "amr", "eas", "sas", "fin", "nfe", "oth"};
     public static final String[] EXAC_SUBSET = {"nonpsych", "nonTCGA"};
-    
+
     static final String coverageTable = "exac.coverage_03";
     static String snvTable = "exac.snv_maf_r03_2015_09_16";
     static String indelTable = "exac.indel_maf_r03_2015_09_16";
@@ -26,14 +26,16 @@ public class ExacManager {
     public static String getTitle() {
         String title = "";
 
-        for (String str : EXAC_POP) {
-            title += "ExAC " + str + " maf,"
-                    + "ExAC " + str + " gts,";
-        }
+        if (ExacCommand.isIncludeExac) {
+            for (String str : EXAC_POP) {
+                title += "ExAC " + str + " maf,"
+                        + "ExAC " + str + " gts,";
+            }
 
-        title += "ExAC vqslod,"
-                + "ExAC Mean Coverage,"
-                + "ExAC Sample Covered 10x,";
+            title += "ExAC vqslod,"
+                    + "ExAC Mean Coverage,"
+                    + "ExAC Sample Covered 10x,";
+        }
 
         return title;
     }

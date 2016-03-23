@@ -3,6 +3,7 @@ package function.annotation.base;
 import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
+import function.external.exac.ExacCommand;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
@@ -127,7 +128,7 @@ public class AnnotatedVariant extends Variant {
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
-        if (isValid) {
+        if (isValid & ExacCommand.isIncludeExac) {
             exac = new Exac(variantIdStr);
 
             isValid = exac.isValid();
@@ -274,7 +275,11 @@ public class AnnotatedVariant extends Variant {
     }
 
     public String getExacStr() {
-        return exac.toString();
+        if (ExacCommand.isIncludeExac) {
+            return exac.toString();
+        } else {
+            return "";
+        }
     }
 
     public String getKaviarStr() {
