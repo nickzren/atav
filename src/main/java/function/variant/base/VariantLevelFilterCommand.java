@@ -55,14 +55,18 @@ public class VariantLevelFilterCommand {
                     || option.getName().equals("--evs-maf-pop")) {
                 checkValuesValid(EvsManager.EVS_POP, option);
                 EvsCommand.evsPop = option.getValue();
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--evs-maf")) {
                 checkValueValid(0.5, 0, option);
                 EvsCommand.evsMaf = getValidDouble(option);
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--min-evs-all-average-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 EvsCommand.evsAllAverageCoverage = getValidInteger(option);
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--exclude-evs-qc-failed")) {
                 EvsCommand.isExcludeEvsQcFailed = true;
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--exac-pop")) {
                 checkValuesValid(ExacManager.EXAC_POP, option);
                 ExacCommand.exacPop = option.getValue();
@@ -92,6 +96,8 @@ public class VariantLevelFilterCommand {
             } else if (option.getName().equals("--max-kaviar-allele-count")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
+            } else if (option.getName().equals("--include-evs")) {
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--include-known-var")) {
                 KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--min-gerp-score")) {

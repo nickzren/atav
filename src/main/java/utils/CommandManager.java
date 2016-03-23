@@ -293,6 +293,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-var-anno")) { // Variant Annotation Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 VarAnnoCommand.isListVarAnno = true;
+                EvsCommand.isIncludeEvs = true;
                 KnownVarCommand.isIncludeKnownVar = true;
                 RvisCommand.isIncludeRvis = true;
                 SubRvisCommand.isIncludeSubRvis = true;
@@ -312,6 +313,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isListEvs = true;
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--list-exac")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 ExacCommand.isListExac = true;

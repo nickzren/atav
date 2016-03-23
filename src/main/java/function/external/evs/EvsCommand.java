@@ -10,6 +10,7 @@ public class EvsCommand {
 
     // list evs
     public static boolean isListEvs = false;
+    public static boolean isIncludeEvs = false;
 
     // filter option
     public static String evsPop = "all";

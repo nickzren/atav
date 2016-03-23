@@ -1,6 +1,7 @@
 package function.annotation.base;
 
 import function.external.evs.Evs;
+import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
@@ -138,7 +139,7 @@ public class AnnotatedVariant extends Variant {
             isValid = kaviar.isValid();
         }
 
-        if (isValid) {
+        if (isValid & EvsCommand.isIncludeEvs) {
             evs = new Evs(variantIdStr);
 
             isValid = evs.isValid();
@@ -193,17 +194,17 @@ public class AnnotatedVariant extends Variant {
                 || isIndel()) {
             return "NA";
         }
-        
+
         String posStr = "";
-        
+
         for (int i = 0; i < aminoAcidChange.length(); i++) {
             char c = aminoAcidChange.charAt(i);
-            
-            if(Character.isDigit(c)){
+
+            if (Character.isDigit(c)) {
                 posStr += c;
             }
         }
-        
+
         int aminoAcidPos = Integer.valueOf(posStr);
 
         String leftStr = codonChange.split("/")[0];
@@ -281,7 +282,11 @@ public class AnnotatedVariant extends Variant {
     }
 
     public String getEvsStr() {
-        return evs.toString();
+        if (EvsCommand.isIncludeEvs) {
+            return evs.toString();
+        } else {
+            return "";
+        }
     }
 
     public void initKnownVar() {
