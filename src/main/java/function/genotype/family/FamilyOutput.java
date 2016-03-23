@@ -8,6 +8,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
@@ -76,7 +77,8 @@ public class FamilyOutput extends Output {
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
-            + RvisManager.getTitle();
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
 
     public FamilyOutput(CalledVariant c) {
         super(c);
@@ -341,6 +343,8 @@ public class FamilyOutput extends Output {
         sb.append(calledVar.getKnownVarStr());
         
         sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

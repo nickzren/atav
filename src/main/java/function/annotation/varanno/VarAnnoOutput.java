@@ -51,20 +51,8 @@ public class VarAnnoOutput {
             + RvisManager.getTitle()
             + SubRvisManager.getTitle();
 
-    private SubRvisOutput subRvisOutput;
-
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
-
-        initSubRvis();
-    }
-
-    private void initSubRvis() {
-        if (SubRvisCommand.isIncludeSubRvis) {
-            subRvisOutput = new SubRvisOutput(annotatedVar.getGeneName(),
-                    annotatedVar.getRegion().getChrStr(),
-                    annotatedVar.getRegion().getStartPosition());
-        }
     }
 
     @Override
@@ -105,7 +93,7 @@ public class VarAnnoOutput {
 
         sb.append(annotatedVar.getRvis());
 
-        sb.append(subRvisOutput.toString());
+        sb.append(annotatedVar.getSubRvis());
 
         return sb.toString();
     }

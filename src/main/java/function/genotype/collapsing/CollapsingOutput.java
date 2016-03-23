@@ -7,6 +7,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
@@ -81,7 +82,8 @@ public class CollapsingOutput extends Output {
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
-            + RvisManager.getTitle();
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
 
     String geneName = "";
     double varAllFreq = 0;
@@ -293,6 +295,8 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getKnownVarStr());
         
         sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

@@ -8,6 +8,7 @@ import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.rvis.RvisCommand;
+import function.external.subrvis.SubRvisCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -97,6 +98,10 @@ public class VariantLevelFilterCommand {
                     || option.getName().equals("--min-cadd-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCscore = getValidDouble(option);
+            } else if (option.getName().equals("--min-gerp-score")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                GerpCommand.minGerpScore = getValidFloat(option);
+                GerpCommand.isIncludeGerp = true;
             } else if (option.getName().equals("--max-kaviar-maf")) {
                 checkValueValid(1, 0, option);
                 KaviarCommand.maxKaviarMaf = getValidFloat(option);
@@ -117,10 +122,8 @@ public class VariantLevelFilterCommand {
                 KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--include-rvis")) {
                 RvisCommand.isIncludeRvis = true;
-            } else if (option.getName().equals("--min-gerp-score")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                GerpCommand.minGerpScore = getValidFloat(option);
-                GerpCommand.isIncludeGerp = true;
+            } else if (option.getName().equals("--include-sub-rvis")) {
+                SubRvisCommand.isIncludeSubRvis = true;
             } else {
                 continue;
             }

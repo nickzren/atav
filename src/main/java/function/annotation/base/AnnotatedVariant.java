@@ -14,6 +14,8 @@ import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisOutput;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -50,6 +52,8 @@ public class AnnotatedVariant extends Variant {
 
     private String rvisStr;
 
+    private SubRvisOutput subRvisOutput;
+
     public boolean isValid = true;
 
     public AnnotatedVariant(int variantId, boolean isIndel, ResultSet rset) throws Exception {
@@ -77,6 +81,12 @@ public class AnnotatedVariant extends Variant {
 
         if (isValid & RvisCommand.isIncludeRvis) {
             rvisStr = RvisManager.getLine(getGeneName());
+        }
+        
+        if (isValid & SubRvisCommand.isIncludeSubRvis) {
+            subRvisOutput = new SubRvisOutput(getGeneName(),
+                    getRegion().getChrStr(),
+                    getRegion().getStartPosition());
         }
     }
 
@@ -321,7 +331,7 @@ public class AnnotatedVariant extends Variant {
 
     public String getGerpScore() {
         if (GerpCommand.isIncludeGerp) {
-            return FormatManager.getFloat(gerpScore);
+            return FormatManager.getFloat(gerpScore) + ",";
         } else {
             return "";
         }
@@ -330,6 +340,14 @@ public class AnnotatedVariant extends Variant {
     public String getRvis() {
         if (RvisCommand.isIncludeRvis) {
             return rvisStr;
+        } else {
+            return "";
+        }
+    }
+    
+    public String getSubRvis() {
+        if (SubRvisCommand.isIncludeSubRvis) {
+            return subRvisOutput.toString();
         } else {
             return "";
         }

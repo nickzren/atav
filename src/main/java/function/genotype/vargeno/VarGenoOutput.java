@@ -11,6 +11,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import utils.FormatManager;
 
 /**
@@ -77,7 +78,8 @@ public class VarGenoOutput extends Output {
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
-            + RvisManager.getTitle();
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
 
     public VarGenoOutput(CalledVariant c) {
         super(c);
@@ -169,6 +171,8 @@ public class VarGenoOutput extends Output {
         sb.append(calledVar.getKnownVarStr());
         
         sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

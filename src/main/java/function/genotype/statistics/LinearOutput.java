@@ -8,6 +8,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
@@ -59,7 +60,8 @@ public class LinearOutput extends StatisticOutput {
             + ExacManager.getTitle() 
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
-            + RvisManager.getTitle();
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
 
     public LinearOutput(CalledVariant c) {
         super(c);
@@ -355,6 +357,8 @@ public class LinearOutput extends StatisticOutput {
         sb.append(calledVar.getKnownVarStr());
         
         sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

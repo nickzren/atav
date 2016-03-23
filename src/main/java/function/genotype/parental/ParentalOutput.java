@@ -11,6 +11,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import global.Data;
 import utils.FormatManager;
 import utils.MathManager;
@@ -88,10 +89,11 @@ public class ParentalOutput extends Output {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle() 
+            + ExacManager.getTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
-            + RvisManager.getTitle();
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
 
     public ParentalOutput(CalledVariant c) {
         super(c);
@@ -240,12 +242,14 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.getTranscriptSet()).append(",");
 
         sb.append(calledVar.getExacStr());
-        
+
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
-        
+
         sb.append(calledVar.getRvis());
+
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

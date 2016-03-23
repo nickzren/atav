@@ -7,8 +7,8 @@ import function.annotation.base.GeneManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
-import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
@@ -91,7 +91,8 @@ public class DenovoOutput extends TrioOutput {
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
-            + RvisManager.getTitle();
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
 
     public DenovoOutput(CalledVariant c) {
         super(c);
@@ -251,6 +252,8 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getKnownVarStr());
 
         sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

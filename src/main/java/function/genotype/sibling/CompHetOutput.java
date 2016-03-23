@@ -10,6 +10,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import utils.FormatManager;
 
 /**
@@ -74,7 +75,8 @@ public class CompHetOutput extends Output implements Comparable {
                 + ExacManager.getTitle()
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()
-                + RvisManager.getTitle();
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -144,6 +146,8 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getKnownVarStr());
         
         sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }
