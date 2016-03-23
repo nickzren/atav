@@ -87,7 +87,7 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getRefAllele()).append(",");
         sb.append(annotatedVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(annotatedVar.getGerpScore())).append(",");
+        sb.append(annotatedVar.getGerpScore()).append(",");
 
         sb.append(annotatedVar.getEvsStr());
 

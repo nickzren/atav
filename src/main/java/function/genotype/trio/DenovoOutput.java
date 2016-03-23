@@ -190,7 +190,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
+        sb.append(calledVar.getGerpScore()).append(",");
         sb.append(isMinorRef).append(",");
 
         sb.append(cGenotype).append(",");

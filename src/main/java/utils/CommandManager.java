@@ -295,6 +295,7 @@ public class CommandManager {
                 VarAnnoCommand.isListVarAnno = true;
                 EvsCommand.isIncludeEvs = true;
                 ExacCommand.isIncludeExac = true;
+                GerpCommand.isIncludeGerp = true;
                 KnownVarCommand.isIncludeKnownVar = true;
                 RvisCommand.isIncludeRvis = true;
                 SubRvisCommand.isIncludeSubRvis = true;
@@ -332,6 +333,7 @@ public class CommandManager {
             } else if (option.getName().equals("--list-gerp")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GerpCommand.isListGerp = true;
+                GerpCommand.isIncludeGerp = true;
             } else if (option.getName().equals("--list-sub-rvis")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 SubRvisCommand.isListSubRvis = true;

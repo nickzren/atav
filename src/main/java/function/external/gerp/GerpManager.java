@@ -16,7 +16,11 @@ public class GerpManager {
     private static Gerp gerp = new Gerp();
 
     public static String getTitle() {
-        String title = "Gerp RS Score,";
+        String title = "";
+
+        if (GerpCommand.isIncludeGerp) {
+            title = "Gerp RS Score,";
+        }
 
         return title;
     }
@@ -34,8 +38,8 @@ public class GerpManager {
         if (tmp[2].length() > 1
                 || tmp[3].length() > 1) { // indels
             return Data.NA;
-        } 
-        
+        }
+
         if (chr.equalsIgnoreCase("MT")) { // not support MT regions
             return Data.NA;
         }
@@ -45,16 +49,16 @@ public class GerpManager {
                 String sql = "SELECT gerp_rs "
                         + "FROM " + table + chr + " "
                         + "WHERE pos = " + pos;
-                
+
                 ResultSet rs = DBManager.executeQuery(sql);
-                
+
                 float score = Data.NA;
-                
+
                 if (rs.next()) {
                     score = rs.getFloat("gerp_rs");
-                    
+
                 }
-                
+
                 gerp.setValues(chr, pos, score);
             } catch (SQLException ex) {
                 ErrorManager.send(ex);

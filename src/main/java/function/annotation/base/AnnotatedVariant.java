@@ -122,7 +122,7 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid) {
+        if (isValid & GerpCommand.isIncludeGerp) {
             gerpScore = GerpManager.getScore(variantIdStr);
 
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
@@ -308,7 +308,11 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
-    public float getGerpScore() {
-        return gerpScore;
+    public String getGerpScore() {
+        if (GerpCommand.isIncludeGerp) {
+            return FormatManager.getFloat(gerpScore);
+        } else {
+            return "";
+        }
     }
 }

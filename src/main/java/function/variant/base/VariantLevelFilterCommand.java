@@ -106,11 +106,14 @@ public class VariantLevelFilterCommand {
                 EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--include-exac")) {
                 ExacCommand.isIncludeExac = true;
+            } else if (option.getName().equals("--include-gerp")) {
+                GerpCommand.isIncludeGerp = true;
             } else if (option.getName().equals("--include-known-var")) {
                 KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--min-gerp-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 GerpCommand.minGerpScore = getValidFloat(option);
+                GerpCommand.isIncludeGerp = true;
             } else {
                 continue;
             }
