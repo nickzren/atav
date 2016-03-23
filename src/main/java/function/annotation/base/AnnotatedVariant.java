@@ -74,16 +74,18 @@ public class AnnotatedVariant extends Variant {
         stableId = "";
 
         checkValid();
+    }
 
-        if (isValid & KnownVarCommand.isIncludeKnownVar) {
+    public void initExternalData() {
+        if (KnownVarCommand.isIncludeKnownVar) {
             knownVarOutput = new KnownVarOutput(this);
         }
 
-        if (isValid & RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isIncludeRvis) {
             rvisStr = RvisManager.getLine(getGeneName());
         }
-        
-        if (isValid & SubRvisCommand.isIncludeSubRvis) {
+
+        if (SubRvisCommand.isIncludeSubRvis) {
             subRvisOutput = new SubRvisOutput(getGeneName(),
                     getRegion().getChrStr(),
                     getRegion().getStartPosition());
@@ -344,7 +346,7 @@ public class AnnotatedVariant extends Variant {
             return "";
         }
     }
-    
+
     public String getSubRvis() {
         if (SubRvisCommand.isIncludeSubRvis) {
             return subRvisOutput.toString();

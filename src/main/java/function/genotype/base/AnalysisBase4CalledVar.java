@@ -67,7 +67,9 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
     private void processVariant() {
         if (calledVar != null
                 && calledVar.isValid()
-                && !VariantManager.isVariantOutput(calledVar.variantId)) {   
+                && !VariantManager.isVariantOutput(calledVar.variantId)) {
+            calledVar.initExternalData();
+            
             processVariant(calledVar);
 
             countVariant();
