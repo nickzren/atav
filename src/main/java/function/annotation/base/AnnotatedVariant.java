@@ -66,6 +66,10 @@ public class AnnotatedVariant extends Variant {
         stableId = "";
 
         checkValid();
+        
+        if (isValid & KnownVarCommand.isIncludeKnownVar) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
     }
 
     // update code below for unit testing
@@ -296,12 +300,6 @@ public class AnnotatedVariant extends Variant {
             return evs.toString();
         } else {
             return "";
-        }
-    }
-
-    public void initKnownVar() {
-        if (KnownVarCommand.isIncludeKnownVar) {
-            knownVarOutput = new KnownVarOutput(this);
         }
     }
 
