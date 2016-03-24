@@ -51,30 +51,8 @@ public class VarAnnoOutput {
             + RvisManager.getTitle()
             + SubRvisManager.getTitle();
 
-    private String rvisStr = "";
-
-    private SubRvisOutput subRvisOutput;
-
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
-
-        initRvis();
-
-        initSubRvis();
-    }
-
-    private void initRvis() {
-        if (RvisCommand.isIncludeRvis && rvisStr.isEmpty()) {
-            rvisStr = RvisManager.getLine(annotatedVar.getGeneName());
-        }
-    }
-
-    private void initSubRvis() {
-        if (SubRvisCommand.isIncludeSubRvis) {
-            subRvisOutput = new SubRvisOutput(annotatedVar.getGeneName(),
-                    annotatedVar.getRegion().getChrStr(),
-                    annotatedVar.getRegion().getStartPosition());
-        }
     }
 
     @Override
@@ -87,7 +65,7 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getRefAllele()).append(",");
         sb.append(annotatedVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(annotatedVar.getGerpScore())).append(",");
+        sb.append(annotatedVar.getGerpScore());
 
         sb.append(annotatedVar.getEvsStr());
 
@@ -113,9 +91,9 @@ public class VarAnnoOutput {
 
         sb.append(annotatedVar.getKnownVarStr());
 
-        sb.append(rvisStr);
+        sb.append(annotatedVar.getRvis());
 
-        sb.append(subRvisOutput.toString());
+        sb.append(annotatedVar.getSubRvis());
 
         return sb.toString();
     }

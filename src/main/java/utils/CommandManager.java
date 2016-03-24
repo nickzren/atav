@@ -293,6 +293,10 @@ public class CommandManager {
             } else if (option.getName().equals("--list-var-anno")) { // Variant Annotation Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 VarAnnoCommand.isListVarAnno = true;
+                EvsCommand.isIncludeEvs = true;
+                ExacCommand.isIncludeExac = true;
+                GerpCommand.isIncludeGerp = true;
+                KaviarCommand.isIncludeKaviar = true;
                 KnownVarCommand.isIncludeKnownVar = true;
                 RvisCommand.isIncludeRvis = true;
                 SubRvisCommand.isIncludeSubRvis = true;
@@ -312,9 +316,11 @@ public class CommandManager {
             } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isListEvs = true;
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--list-exac")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 ExacCommand.isListExac = true;
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--list-known-var")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KnownVarCommand.isListKnownVar = true;
@@ -325,9 +331,11 @@ public class CommandManager {
             } else if (option.getName().equals("--list-kaviar")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KaviarCommand.isListKaviar = true;
+                KaviarCommand.isIncludeKaviar = true;
             } else if (option.getName().equals("--list-gerp")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GerpCommand.isListGerp = true;
+                GerpCommand.isIncludeGerp = true;
             } else if (option.getName().equals("--list-sub-rvis")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 SubRvisCommand.isListSubRvis = true;

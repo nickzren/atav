@@ -7,8 +7,8 @@ import function.annotation.base.GeneManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
-import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
@@ -91,9 +91,8 @@ public class DenovoOutput extends TrioOutput {
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
-            + RvisManager.getTitle();
-
-    private String rvisStr = "";
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
 
     public DenovoOutput(CalledVariant c) {
         super(c);
@@ -170,12 +169,6 @@ public class DenovoOutput extends TrioOutput {
         return false;
     }
 
-    public void initRvisStr() {
-        if (RvisCommand.isIncludeRvis && rvisStr.isEmpty()) {
-            rvisStr = RvisManager.getLine(calledVar.getGeneName());
-        }
-    }
-
     public String getString(Trio trio) {
         StringBuilder sb = new StringBuilder();
 
@@ -190,7 +183,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
+        sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
 
         sb.append(cGenotype).append(",");
@@ -258,7 +251,9 @@ public class DenovoOutput extends TrioOutput {
 
         sb.append(calledVar.getKnownVarStr());
 
-        sb.append(rvisStr);
+        sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

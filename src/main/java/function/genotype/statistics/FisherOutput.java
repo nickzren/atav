@@ -9,6 +9,8 @@ import function.annotation.base.GeneManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import utils.FormatManager;
 import utils.LogManager;
 import java.util.ArrayList;
@@ -63,7 +65,9 @@ public class FisherOutput extends StatisticOutput {
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle();
 
     public FisherOutput(CalledVariant c) {
         super(c);
@@ -117,7 +121,7 @@ public class FisherOutput extends StatisticOutput {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
+        sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCase).append(",");
         sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
@@ -160,6 +164,10 @@ public class FisherOutput extends StatisticOutput {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+        
+        sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

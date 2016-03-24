@@ -68,7 +68,7 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
         if (annotatedVar != null
                 && annotatedVar.isValid()
                 && !VariantManager.isVariantOutput(annotatedVar.variantId)) {
-            annotatedVar.initKnownVar();
+            annotatedVar.initExternalData();
             
             processVariant(annotatedVar);
 

@@ -103,8 +103,6 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
 
                         output.initGenoZygo(trio.getChildIndex());
 
-                        output.initRvisStr();
-
                         doOutput(output, trio);
 
                         TrioManager.updateDenovoSummary(output);

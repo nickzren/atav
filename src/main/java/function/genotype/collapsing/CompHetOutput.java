@@ -8,6 +8,8 @@ import function.external.exac.ExacManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import utils.FormatManager;
 
 /**
@@ -68,7 +70,9 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
                 + KaviarManager.getTitle()
-                + KnownVarManager.getTitle();
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -101,7 +105,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
+        sb.append(calledVar.getGerpScore());
 
         sb.append(isMinorRef).append(",");
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
@@ -145,6 +149,10 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+        
+        sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
 
         return sb.toString();
     }

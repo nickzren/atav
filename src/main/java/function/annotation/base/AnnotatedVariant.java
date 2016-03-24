@@ -1,14 +1,21 @@
 package function.annotation.base;
 
 import function.external.evs.Evs;
+import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
+import function.external.exac.ExacCommand;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import function.external.kaviar.Kaviar;
+import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
+import function.external.rvis.RvisCommand;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisOutput;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -43,6 +50,10 @@ public class AnnotatedVariant extends Variant {
 
     KnownVarOutput knownVarOutput;
 
+    private String rvisStr;
+
+    private SubRvisOutput subRvisOutput;
+
     public boolean isValid = true;
 
     public AnnotatedVariant(int variantId, boolean isIndel, ResultSet rset) throws Exception {
@@ -63,6 +74,22 @@ public class AnnotatedVariant extends Variant {
         stableId = "";
 
         checkValid();
+    }
+
+    public void initExternalData() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
+
+        if (RvisCommand.isIncludeRvis) {
+            rvisStr = RvisManager.getLine(getGeneName());
+        }
+
+        if (SubRvisCommand.isIncludeSubRvis) {
+            subRvisOutput = new SubRvisOutput(getGeneName(),
+                    getRegion().getChrStr(),
+                    getRegion().getStartPosition());
+        }
     }
 
     // update code below for unit testing
@@ -120,25 +147,25 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid) {
+        if (isValid & GerpCommand.isIncludeGerp) {
             gerpScore = GerpManager.getScore(variantIdStr);
 
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
-        if (isValid) {
+        if (isValid & ExacCommand.isIncludeExac) {
             exac = new Exac(variantIdStr);
 
             isValid = exac.isValid();
         }
 
-        if (isValid) {
+        if (isValid & KaviarCommand.isIncludeKaviar) {
             kaviar = new Kaviar(variantIdStr);
 
             isValid = kaviar.isValid();
         }
 
-        if (isValid) {
+        if (isValid & EvsCommand.isIncludeEvs) {
             evs = new Evs(variantIdStr);
 
             isValid = evs.isValid();
@@ -193,17 +220,17 @@ public class AnnotatedVariant extends Variant {
                 || isIndel()) {
             return "NA";
         }
-        
+
         String posStr = "";
-        
+
         for (int i = 0; i < aminoAcidChange.length(); i++) {
             char c = aminoAcidChange.charAt(i);
-            
-            if(Character.isDigit(c)){
+
+            if (Character.isDigit(c)) {
                 posStr += c;
             }
         }
-        
+
         int aminoAcidPos = Integer.valueOf(posStr);
 
         String leftStr = codonChange.split("/")[0];
@@ -273,20 +300,26 @@ public class AnnotatedVariant extends Variant {
     }
 
     public String getExacStr() {
-        return exac.toString();
+        if (ExacCommand.isIncludeExac) {
+            return exac.toString();
+        } else {
+            return "";
+        }
     }
 
     public String getKaviarStr() {
-        return kaviar.toString();
+        if (KaviarCommand.isIncludeKaviar) {
+            return kaviar.toString();
+        } else {
+            return "";
+        }
     }
 
     public String getEvsStr() {
-        return evs.toString();
-    }
-
-    public void initKnownVar() {
-        if (KnownVarCommand.isIncludeKnownVar) {
-            knownVarOutput = new KnownVarOutput(this);
+        if (EvsCommand.isIncludeEvs) {
+            return evs.toString();
+        } else {
+            return "";
         }
     }
 
@@ -298,7 +331,27 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
-    public float getGerpScore() {
-        return gerpScore;
+    public String getGerpScore() {
+        if (GerpCommand.isIncludeGerp) {
+            return FormatManager.getFloat(gerpScore) + ",";
+        } else {
+            return "";
+        }
+    }
+
+    public String getRvis() {
+        if (RvisCommand.isIncludeRvis) {
+            return rvisStr;
+        } else {
+            return "";
+        }
+    }
+
+    public String getSubRvis() {
+        if (SubRvisCommand.isIncludeSubRvis) {
+            return subRvisOutput.toString();
+        } else {
+            return "";
+        }
     }
 }

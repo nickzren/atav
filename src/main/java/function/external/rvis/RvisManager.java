@@ -18,7 +18,7 @@ public class RvisManager {
 
     public static String title;
     private static final HashMap<String, String> rvisMap = new HashMap<String, String>();
-    public static String na = "";
+    public static String NA = "";
 
     public static String getTitle() {
         if (RvisCommand.isIncludeRvis) {
@@ -51,7 +51,7 @@ public class RvisManager {
                     title = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
-                        na += "NA,";
+                        NA += "NA,";
                     }
                 } else {
                     rvisMap.put(geneName, values + ",");
@@ -74,7 +74,7 @@ public class RvisManager {
         String line = rvisMap.get(geneName);
 
         if (line == null) {
-            line = na;
+            line = NA;
         }
 
         return line;
