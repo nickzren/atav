@@ -301,6 +301,7 @@ public class CommandManager {
                 KnownVarCommand.isIncludeKnownVar = true;
                 RvisCommand.isIncludeRvis = true;
                 SubRvisCommand.isIncludeSubRvis = true;
+                GenomesCommand.isInclude1000Genomes = true;
             } else if (option.getName().equals("--list-gene-dx")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GeneDxCommand.isListGeneDx = true;

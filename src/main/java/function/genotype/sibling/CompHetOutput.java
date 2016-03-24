@@ -6,6 +6,7 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
@@ -76,7 +77,8 @@ public class CompHetOutput extends Output implements Comparable {
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
-                + SubRvisManager.getTitle();
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -148,6 +150,8 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getRvis());
         
         sb.append(calledVar.getSubRvis());
+        
+        sb.append(calledVar.get1000Genomes());
 
         return sb.toString();
     }

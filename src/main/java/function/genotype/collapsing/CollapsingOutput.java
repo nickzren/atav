@@ -3,6 +3,7 @@ package function.genotype.collapsing;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
@@ -83,7 +84,8 @@ public class CollapsingOutput extends Output {
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
-            + SubRvisManager.getTitle();
+            + SubRvisManager.getTitle()
+            + GenomesManager.getTitle();
 
     String geneName = "";
     double varAllFreq = 0;
@@ -297,6 +299,8 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getRvis());
         
         sb.append(calledVar.getSubRvis());
+        
+        sb.append(calledVar.get1000Genomes());
 
         return sb.toString();
     }

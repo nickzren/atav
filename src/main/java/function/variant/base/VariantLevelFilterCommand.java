@@ -112,6 +112,14 @@ public class VariantLevelFilterCommand {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
                 KaviarCommand.isIncludeKaviar = true;
+            } else if (option.getName().equals("--1000-genomes-pop")) {
+                checkValuesValid(GenomesManager.GENOMES_POP, option);
+                GenomesCommand.genomesPop = option.getValue();
+                GenomesCommand.isInclude1000Genomes = true;
+            } else if (option.getName().equals("--max-1000-genomes-maf")) {
+                checkValueValid(0.5, 0, option);
+                GenomesCommand.maxGenomesMaf = getValidFloat(option);
+                GenomesCommand.isInclude1000Genomes = true;
             } else if (option.getName().equals("--include-evs")) {
                 EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--include-exac")) {
@@ -126,13 +134,7 @@ public class VariantLevelFilterCommand {
                 RvisCommand.isIncludeRvis = true;
             } else if (option.getName().equals("--include-sub-rvis")) {
                 SubRvisCommand.isIncludeSubRvis = true;
-            } else if (option.getName().equals("--1000-genomes-pop")) {
-                checkValuesValid(GenomesManager.GENOMES_POP, option);
-                GenomesCommand.genomesPop = option.getValue();
-                GenomesCommand.isInclude1000Genomes = true;
-            } else if (option.getName().equals("--max-1000-genomes-maf")) {
-                checkValueValid(0.5, 0, option);
-                GenomesCommand.maxGenomesMaf = getValidFloat(option);
+            } else if (option.getName().equals("--include-1000-genomes")) {
                 GenomesCommand.isInclude1000Genomes = true;
             } else {
                 continue;
