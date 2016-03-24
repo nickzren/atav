@@ -4,6 +4,8 @@ import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacCommand;
 import function.external.exac.ExacManager;
+import function.external.genomes.GenomesCommand;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
@@ -124,6 +126,14 @@ public class VariantLevelFilterCommand {
                 RvisCommand.isIncludeRvis = true;
             } else if (option.getName().equals("--include-sub-rvis")) {
                 SubRvisCommand.isIncludeSubRvis = true;
+            } else if (option.getName().equals("--1000-genomes-pop")) {
+                checkValuesValid(GenomesManager.GENOMES_POP, option);
+                GenomesCommand.genomesPop = option.getValue();
+                GenomesCommand.isInclude1000Genomes = true;
+            } else if (option.getName().equals("--max-1000-genomes-maf")) {
+                checkValueValid(0.5, 0, option);
+                GenomesCommand.maxGenomesMaf = getValidFloat(option);
+                GenomesCommand.isInclude1000Genomes = true;
             } else {
                 continue;
             }

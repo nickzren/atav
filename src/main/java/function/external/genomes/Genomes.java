@@ -78,7 +78,7 @@ public class Genomes {
     }
     
     public boolean isValid() {
-        return GenomesCommand.isGenomesMafValid(getMaxMaf());
+        return GenomesCommand.isMaxGenomesMafValid(getMaxMaf());
     }
 
     
