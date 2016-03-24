@@ -8,6 +8,7 @@ import function.coverage.base.CoverageCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.flanking.FlankingCommand;
+import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
@@ -344,6 +345,10 @@ public class CommandManager {
                 CommonCommand.isNonSampleAnalysis = true;
                 RvisCommand.isListRvis = true;
                 RvisCommand.isIncludeRvis = true;
+            } else if (option.getName().equals("--list-1000-genomes")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                GenomesCommand.isList1000Genomes = true;
+                GenomesCommand.isInclude1000Genomes = true;
             } else if (option.getName().equals("--ppi")) { // Non Database Functions
                 PPICommand.isPPI = true;
                 CommonCommand.isNonDBAnalysis = true;

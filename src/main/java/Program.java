@@ -37,6 +37,8 @@ import function.external.exac.ExacCommand;
 import function.external.exac.ListExac;
 import function.external.flanking.FlankingCommand;
 import function.external.flanking.ListFlankingSeq;
+import function.external.genomes.GenomesCommand;
+import function.external.genomes.List1000Genomes;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.ListGerp;
 import function.external.kaviar.KaviarCommand;
@@ -183,6 +185,8 @@ public class Program {
                 runAnalysis(new ListSubRvis());
             } else if (RvisCommand.isListRvis) {
                 runAnalysis(new ListRvis());
+            } else if (GenomesCommand.isList1000Genomes) {
+                runAnalysis(new List1000Genomes());
             } else if (PPICommand.isPPI) { // Non Database Functions
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());
