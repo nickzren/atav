@@ -11,6 +11,7 @@ public class Data {
     public static String version = "trunk";
     public static final String year = "2016";
     public static final String developer = "Nick Ren";
+    public static final String pastDevelopers = "Quanli Wang(2012.10-2016.1)";
     public static final String insititue = "IGM (Institute for Genomic Medicine)";
     public static String userName = "UnspecifiedUser";
 
