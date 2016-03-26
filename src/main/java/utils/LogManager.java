@@ -23,11 +23,12 @@ public class LogManager {
 
     public static void initBasicInfo() {
         basicInfo.append("\n+---------------------------------------------------------------+\n");
-        basicInfo.append("| [Software]:\t" + Data.AppTitle + "\t|\n");
-        basicInfo.append("  [Version]:\t" + Data.version + "\t\t\t\t\t\t\n");
-        basicInfo.append("| [Developer]:\t" + Data.developer + "\t\t\t\t\t|\n");
-        basicInfo.append("  [Year]:\t" + Data.year + "\t\t\t\t\t\t\n");
-        basicInfo.append("| [Institute]:\t" + Data.insititue + "\t\t|\n");
+        basicInfo.append("| [Software]:\t\t" + Data.AppTitle + "\t|\n");
+        basicInfo.append("  [Version]:\t\t" + Data.version + "\t\t\t\t\t\t\n");
+        basicInfo.append("| [Developer]:\t\t" + Data.developer + "\t\t\t\t\t|\n");
+        basicInfo.append("| [Past Developer:\t" + Data.pastDevelopers + "\t\t\t|\n");
+        basicInfo.append("  [Year]:\t\t" + Data.year + "\t\t\t\t\t\t\n");
+        basicInfo.append("| [Institute]:\t\t" + Data.insititue + "\t\t|\n");
         basicInfo.append("+---------------------------------------------------------------+");
     }
 
