@@ -66,7 +66,7 @@ public class Exac {
         }
     }
 
-    public void initMaf() {
+    private void initMaf() {
         maf = new float[ExacManager.EXAC_POP.length];
         gts = new String[ExacManager.EXAC_POP.length];
 

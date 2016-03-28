@@ -4,6 +4,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
@@ -49,7 +50,8 @@ public class VarAnnoOutput {
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
-            + SubRvisManager.getTitle();
+            + SubRvisManager.getTitle()
+            + GenomesManager.getTitle();
 
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
@@ -95,6 +97,8 @@ public class VarAnnoOutput {
 
         sb.append(annotatedVar.getSubRvis());
 
+        sb.append(annotatedVar.get1000Genomes());
+        
         return sb.toString();
     }
 }

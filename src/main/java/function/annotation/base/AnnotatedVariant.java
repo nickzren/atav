@@ -4,6 +4,8 @@ import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
 import function.external.exac.ExacCommand;
+import function.external.genomes.GenomesCommand;
+import function.external.genomes.GenomesOutput;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
@@ -30,6 +32,7 @@ import java.util.TreeSet;
  */
 public class AnnotatedVariant extends Variant {
 
+    // AnnoDB annotations
     String function;
     String geneName;
     String codonChange;
@@ -40,19 +43,15 @@ public class AnnotatedVariant extends Variant {
     double polyphenHumdiv;
     double polyphenHumvar;
 
+    // external db annotations
     Exac exac;
-
     Kaviar kaviar;
-
     Evs evs;
-
     float gerpScore;
-
     KnownVarOutput knownVarOutput;
-
     private String rvisStr;
-
     private SubRvisOutput subRvisOutput;
+    GenomesOutput genomesOutput;
 
     public boolean isValid = true;
 
@@ -89,6 +88,10 @@ public class AnnotatedVariant extends Variant {
             subRvisOutput = new SubRvisOutput(getGeneName(),
                     getRegion().getChrStr(),
                     getRegion().getStartPosition());
+        }
+
+        if (GenomesCommand.isInclude1000Genomes) {
+            genomesOutput = new GenomesOutput(variantIdStr);
         }
     }
 
@@ -350,6 +353,14 @@ public class AnnotatedVariant extends Variant {
     public String getSubRvis() {
         if (SubRvisCommand.isIncludeSubRvis) {
             return subRvisOutput.toString();
+        } else {
+            return "";
+        }
+    }
+
+    public String get1000Genomes() {
+        if (GenomesCommand.isInclude1000Genomes) {
+            return genomesOutput.toString();
         } else {
             return "";
         }

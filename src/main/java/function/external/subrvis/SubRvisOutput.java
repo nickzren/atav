@@ -1,5 +1,6 @@
 package function.external.subrvis;
 
+import function.external.genomes.GenomesManager;
 import global.Data;
 import utils.FormatManager;
 
@@ -12,7 +13,8 @@ public class SubRvisOutput {
     public static final String title
             = "Variant ID,"
             + "Gene Name,"
-            + SubRvisManager.getTitle();
+            + SubRvisManager.getTitle()
+            + GenomesManager.getTitle();
 
     private String domainName = "NA";
     private float domainScore = Data.NA;
