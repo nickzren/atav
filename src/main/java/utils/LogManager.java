@@ -22,14 +22,15 @@ public class LogManager {
     public static final String USERS_COMMAND_LOG = "/nfs/goldstein/software/atav_home/log/users.command.log";
 
     public static void initBasicInfo() {
-        basicInfo.append("\n+---------------------------------------------------------------+\n");
-        basicInfo.append("| [Software]:\t\t" + Data.AppTitle + "\t|\n");
-        basicInfo.append("  [Version]:\t\t" + Data.version + "\t\t\t\t\t\t\n");
-        basicInfo.append("| [Developer]:\t\t" + Data.developer + "\t\t\t\t\t|\n");
-        basicInfo.append("| [Past Developer:\t" + Data.pastDevelopers + "\t\t\t|\n");
-        basicInfo.append("  [Year]:\t\t" + Data.year + "\t\t\t\t\t\t\n");
-        basicInfo.append("| [Institute]:\t\t" + Data.insititue + "\t\t|\n");
-        basicInfo.append("+---------------------------------------------------------------+");
+        basicInfo.append("\n\n");
+        basicInfo.append("Software:\t\t" + Data.AppTitle + "\n");
+        basicInfo.append("Version:\t\t" + Data.version + "\n");
+        basicInfo.append("Lead Developer:\t\t" + Data.leadDeveloper + "\n");
+        basicInfo.append("Pipeline Developer:\t" + Data.pipelineDeveloper + "\n");
+        basicInfo.append("Project Manager:\t" + Data.projectManager + "\n");
+        basicInfo.append("Past Developer:\t\t" + Data.pastDeveloper + "\n");
+        basicInfo.append("Year:\t\t\t" + Data.year + "\n");
+        basicInfo.append("Institute:\t\t" + Data.insititue + "\n");
     }
 
     public static void initPath() {
