@@ -17,10 +17,11 @@ public class ClinVar {
     private String clinicalSignificance;
     private String otherIds;
     private String diseaseName;
+    private String pubmedID;
     int flankingCount;
 
     public ClinVar(String chr, int pos, String ref, String alt, String clinicalSignificance,
-            String otherIds, String diseaseName) {
+            String otherIds, String diseaseName, String pubmedID) {
         this.chr = chr;
         this.pos = pos;
         this.ref = ref;
@@ -35,6 +36,7 @@ public class ClinVar {
         this.clinicalSignificance = clinicalSignificance;
         this.otherIds = otherIds;
         this.diseaseName = diseaseName;
+        this.pubmedID = pubmedID;
     }
 
     public void initFlankingCount() {
@@ -53,6 +55,7 @@ public class ClinVar {
         sb.append(FormatManager.getString(clinicalSignificance)).append(",");
         sb.append(FormatManager.getString(otherIds)).append(",");
         sb.append(FormatManager.getString(diseaseName)).append(",");
+        sb.append(FormatManager.getString(pubmedID)).append(",");
         sb.append(flankingCount).append(",");
 
         return sb.toString();

@@ -15,7 +15,7 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String clinVarTable = "knownvar.clinvar_2015_10_12";
+    public static final String clinVarTable = "knownvar.clinvar_2016_03_10";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_03_10";
     public static final String hgmdTable = "knownvar.hgmd_2015_4";
     public static final String omimTable = "knownvar.omim_2016_02_12";
@@ -40,6 +40,7 @@ public class KnownVarManager {
             return "ClinVar Clinical Significance,"
                     + "ClinVar Other Ids,"
                     + "ClinVar Disease Name,"
+                    + "ClinVar PubmedID,"
                     + "ClinVar Flanking Count,"
                     + "ClinVar Pathogenic Indel Count,"
                     + "Clinvar Pathogenic CNV Count,"
@@ -98,9 +99,10 @@ public class KnownVarManager {
                 String clinicalSignificance = rs.getString("ClinicalSignificance");
                 String otherIds = rs.getString("OtherIds").replaceAll(",", " | ");
                 String diseaseName = rs.getString("DiseaseName").replaceAll(",", "");
+                String pubmedID = rs.getString("PubmedID");
 
                 ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
-                        clinicalSignificance, otherIds, diseaseName);
+                        clinicalSignificance, otherIds, diseaseName, pubmedID);
 
                 clinVarMap.put(clinVar.getVariantId(), clinVar);
             }
@@ -296,7 +298,7 @@ public class KnownVarManager {
 
         if (clinVar == null) {
             clinVar = new ClinVar(var.region.chrStr, var.region.startPosition,
-                    var.refAllele, var.allele, "NA", "NA", "NA");
+                    var.refAllele, var.allele, "NA", "NA", "NA", "NA");
         }
 
         clinVar.initFlankingCount();
