@@ -149,7 +149,8 @@ public class Carrier extends NonCarrier {
         }
     }
     
-    public void applyFilers(Region region){
+    @Override
+    public void applyFilters(Region region){
         super.applyFilters(region);
         
         applyQualityFilter();
