@@ -287,6 +287,10 @@ public class KnownVarManager {
         }
     }
 
+    public static boolean isClinVar(Variant var) {
+        return clinVarMap.containsKey(var.variantIdStr);
+    }
+
     public static ClinVar getClinVar(Variant var) {
         ClinVar clinVar = clinVarMap.get(var.variantIdStr);
 
@@ -308,6 +312,10 @@ public class KnownVarManager {
         }
 
         return clinGen;
+    }
+    
+    public static boolean isHGMD(Variant var) {
+        return hgmdMap.containsKey(var.variantIdStr);
     }
 
     public static HGMD getHGMD(Variant var) {

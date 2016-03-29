@@ -13,6 +13,7 @@ import utils.CommandOption;
 public class KnownVarCommand {
 
     public static boolean isListKnownVar = false;
+    public static boolean isKnownVarOnly = false;
     public static int snvWidth = 2;
     public static int indelWidth = 9;
     

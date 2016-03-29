@@ -76,10 +76,6 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void initExternalData() {
-        if (KnownVarCommand.isIncludeKnownVar) {
-            knownVarOutput = new KnownVarOutput(this);
-        }
-
         if (RvisCommand.isIncludeRvis) {
             rvisStr = RvisManager.getLine(getGeneName());
         }
@@ -148,6 +144,12 @@ public class AnnotatedVariant extends Variant {
 
         if (isValid) {
             isValid = VariantManager.isValid(this);
+        }
+
+        if (isValid & KnownVarCommand.isIncludeKnownVar) {
+            knownVarOutput = new KnownVarOutput(this);
+            
+            isValid = knownVarOutput.isValid();
         }
 
         if (isValid & GerpCommand.isIncludeGerp) {
