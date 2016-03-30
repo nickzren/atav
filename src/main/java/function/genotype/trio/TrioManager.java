@@ -20,7 +20,9 @@ import java.util.HashSet;
  * @author nick
  */
 public class TrioManager {
-
+    
+    private static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
+    
     static ArrayList<Trio> trioList = new ArrayList<Trio>();
     static HashMap<String, DenovoSummary> denovoSummaryMap = new HashMap<String, DenovoSummary>();
     static HashSet<Integer> parentIdSet = new HashSet();
@@ -73,7 +75,7 @@ public class TrioManager {
     }
 
     public static void initDenovoRules() {
-        String trioRulesPath = Data.DENOVO_RULES_PATH;
+        String trioRulesPath = DENOVO_RULES_PATH;
 
         if (CommonCommand.isDebug) {
             trioRulesPath = Data.RECOURCE_PATH + trioRulesPath;

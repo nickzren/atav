@@ -73,17 +73,12 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             output.countSampleGenoCov();
             output.calculate();
 
-            int geno;
-
             if (output.isValid()) {
                 for (Sample sample : SampleManager.getList()) {
                     if (isCaseOnlyValid(sample)) {
-                        geno = output.getCalledVariant().getGenotype(sample.getIndex());
+                        int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                         if (output.isQualifiedGeno(geno)) {
-                            output.initGenoType(geno);
-                            output.initPhenoType((int) sample.getPheno());
-
                             bwDetails.write(output.getString(sample));
                             bwDetails.newLine();
 

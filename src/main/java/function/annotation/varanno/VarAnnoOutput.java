@@ -1,13 +1,18 @@
 package function.annotation.varanno;
 
-import function.annotation.base.IntolerantScoreManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisCommand;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisManager;
+import function.external.subrvis.SubRvisOutput;
 import utils.FormatManager;
 
 /**
@@ -33,7 +38,6 @@ public class VarAnnoOutput {
             + "Polyphen Humvar Prediction,"
             + "Function,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Transcript Stable Id,"
             + "NM #,"
@@ -42,9 +46,12 @@ public class VarAnnoOutput {
             + "Amino Acid Change,"
             + "Coding Sequence Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle() 
+            + ExacManager.getTitle()
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle()
+            + GenomesManager.getTitle();
 
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
@@ -60,7 +67,7 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getRefAllele()).append(",");
         sb.append(annotatedVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(annotatedVar.getGerpScore())).append(",");
+        sb.append(annotatedVar.getGerpScore());
 
         sb.append(annotatedVar.getEvsStr());
 
@@ -71,7 +78,6 @@ public class VarAnnoOutput {
 
         sb.append(annotatedVar.getFunction()).append(",");
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
-        sb.append(IntolerantScoreManager.getValues(annotatedVar.getGeneName())).append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(annotatedVar.getGeneName()))).append(",");
 
         sb.append(annotatedVar.getStableId()).append(",");
@@ -82,11 +88,17 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getTranscriptSet()).append(",");
 
         sb.append(annotatedVar.getExacStr());
-        
+
         sb.append(annotatedVar.getKaviarStr());
-        
+
         sb.append(annotatedVar.getKnownVarStr());
 
+        sb.append(annotatedVar.getRvis());
+
+        sb.append(annotatedVar.getSubRvis());
+
+        sb.append(annotatedVar.get1000Genomes());
+        
         return sb.toString();
     }
 }

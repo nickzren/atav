@@ -5,7 +5,6 @@ import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
 import global.Index;
 import function.annotation.base.GeneManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import global.Data;
@@ -401,7 +400,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                     sb.append(output1.motherName).append(",");
                                     sb.append(output1.fatherName).append(",");
                                     sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
-                                    sb.append(IntolerantScoreManager.getValues(output1.getCalledVariant().getGeneName())).append(",");
                                     sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.getCalledVariant().getGeneName()))).append(",");
                                     sb.append(flag).append(",");
                                     sb.append(hasMultiVariants).append(",");

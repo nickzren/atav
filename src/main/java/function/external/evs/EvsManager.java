@@ -6,24 +6,30 @@ package function.external.evs;
  */
 public class EvsManager {
 
+    public static final String[] EVS_POP = {"ea", "aa", "all"};
+
     static final String coverageTable = "evs.coverage";
     static final String snvTable = "evs.snv_maf_2015_09_16";
     static final String indelTable = "evs.indel_maf_2015_09_16";
 
     public static String getTitle() {
-        return "Evs Eur Covered Samples,"
-                + "Evs Eur Average Coverage,"
-                + "Evs Afr Covered Samples,"
-                + "Evs Afr Average Coverage,"
-                + "Evs All Covered Samples,"
-                + "Evs All Average Coverage,"
-                + "Evs Eur Maf," // Eur America
-                + "Evs Eur Genotype Count,"
-                + "Evs Afr Maf," // Afr America
-                + "Evs Afr Genotype Count,"
-                + "Evs All Maf,"
-                + "Evs All Genotype Count,"
-                + "Evs Filter Status,";
+        if (EvsCommand.isIncludeEvs) {
+            return "Evs Eur Covered Samples,"
+                    + "Evs Eur Average Coverage,"
+                    + "Evs Afr Covered Samples,"
+                    + "Evs Afr Average Coverage,"
+                    + "Evs All Covered Samples,"
+                    + "Evs All Average Coverage,"
+                    + "Evs Eur Maf," // Eur America
+                    + "Evs Eur Genotype Count,"
+                    + "Evs Afr Maf," // Afr America
+                    + "Evs Afr Genotype Count,"
+                    + "Evs All Maf,"
+                    + "Evs All Genotype Count,"
+                    + "Evs Filter Status,";
+        } else {
+            return "";
+        }
     }
 
     public static String getSql4Maf(boolean isSnv, String chr,

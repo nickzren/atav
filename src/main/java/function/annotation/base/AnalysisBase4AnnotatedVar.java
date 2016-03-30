@@ -1,7 +1,6 @@
 package function.annotation.base;
 
 import function.variant.base.AnalysisBase4Variant;
-import global.Data;
 import function.variant.base.RegionManager;
 import function.variant.base.VariantManager;
 
@@ -21,7 +20,7 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
 
         for (int r = 0; r < totalNumOfRegionList; r++) {
 
-            for (String varType : Data.VARIANT_TYPE) {
+            for (String varType : VariantManager.VARIANT_TYPE) {
 
                 if (VariantManager.isVariantTypeValid(r, varType)) {
 
@@ -69,7 +68,7 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
         if (annotatedVar != null
                 && annotatedVar.isValid()
                 && !VariantManager.isVariantOutput(annotatedVar.variantId)) {
-            annotatedVar.initKnownVar();
+            annotatedVar.initExternalData();
             
             processVariant(annotatedVar);
 

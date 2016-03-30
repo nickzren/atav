@@ -4,7 +4,6 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.annotation.base.GeneManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -135,9 +134,8 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
         if (output.isAllShared()) {
             bwQualifiedVariants.write(output.getCalledVariant().getVariantIdStr() + ",");
 
-            int geno;
             for (Sample sample : SampleManager.getList()) {
-                geno = output.getCalledVariant().getGenotype(sample.getIndex());
+                int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                 if (output.isQualifiedGeno(geno)) {
                     bwQualifiedVariants.write(sample.getName() + ",");
@@ -161,7 +159,6 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
             for (FamilySummary summary : list) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("'").append(summary.getGeneName()).append("'").append(",");
-                sb.append(IntolerantScoreManager.getValues(summary.getGeneName())).append(",");
                 sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(summary.getGeneName()))).append(",");
                 sb.append(summary.getTotalSharedFamilyNum()).append(",");
                 sb.append(summary.getTotalSharedHetFamilyNum()).append(",");

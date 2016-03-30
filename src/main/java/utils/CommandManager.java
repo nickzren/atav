@@ -8,9 +8,11 @@ import function.coverage.base.CoverageCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.flanking.FlankingCommand;
+import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
@@ -292,7 +294,14 @@ public class CommandManager {
             } else if (option.getName().equals("--list-var-anno")) { // Variant Annotation Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 VarAnnoCommand.isListVarAnno = true;
+                EvsCommand.isIncludeEvs = true;
+                ExacCommand.isIncludeExac = true;
+                GerpCommand.isIncludeGerp = true;
+                KaviarCommand.isIncludeKaviar = true;
                 KnownVarCommand.isIncludeKnownVar = true;
+                RvisCommand.isIncludeRvis = true;
+                SubRvisCommand.isIncludeSubRvis = true;
+                GenomesCommand.isInclude1000Genomes = true;
             } else if (option.getName().equals("--list-gene-dx")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GeneDxCommand.isListGeneDx = true;
@@ -309,9 +318,11 @@ public class CommandManager {
             } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isListEvs = true;
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--list-exac")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 ExacCommand.isListExac = true;
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--list-known-var")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KnownVarCommand.isListKnownVar = true;
@@ -322,12 +333,23 @@ public class CommandManager {
             } else if (option.getName().equals("--list-kaviar")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 KaviarCommand.isListKaviar = true;
+                KaviarCommand.isIncludeKaviar = true;
             } else if (option.getName().equals("--list-gerp")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GerpCommand.isListGerp = true;
+                GerpCommand.isIncludeGerp = true;
             } else if (option.getName().equals("--list-sub-rvis")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 SubRvisCommand.isListSubRvis = true;
+                SubRvisCommand.isIncludeSubRvis = true;
+            } else if (option.getName().equals("--list-rvis")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                RvisCommand.isListRvis = true;
+                RvisCommand.isIncludeRvis = true;
+            } else if (option.getName().equals("--list-1000-genomes")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                GenomesCommand.isList1000Genomes = true;
+                GenomesCommand.isInclude1000Genomes = true;
             } else if (option.getName().equals("--ppi")) { // Non Database Functions
                 PPICommand.isPPI = true;
                 CommonCommand.isNonDBAnalysis = true;

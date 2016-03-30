@@ -4,10 +4,12 @@ import function.genotype.base.CalledVariant;
 import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
-import function.annotation.base.IntolerantScoreManager;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import utils.FormatManager;
 
 /**
@@ -23,7 +25,6 @@ public class CompHetOutput extends TrioOutput implements Comparable {
             + "Mother,"
             + "Father,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Flag,"
             + "Multi qualified var combinations,"
@@ -85,7 +86,10 @@ public class CompHetOutput extends TrioOutput implements Comparable {
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
                 + KaviarManager.getTitle()
-                + KnownVarManager.getTitle();
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -119,7 +123,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
+        sb.append(calledVar.getGerpScore());
 
         sb.append(isMinorRef).append(",");
 
@@ -177,6 +181,12 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+        
+        sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
+        
+        sb.append(calledVar.get1000Genomes());
 
         return sb.toString();
     }

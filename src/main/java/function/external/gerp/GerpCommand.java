@@ -9,6 +9,7 @@ import global.Data;
 public class GerpCommand {
 
     public static boolean isListGerp = false;
+    public static boolean isIncludeGerp = false;
 
     public static float minGerpScore = Data.NO_FILTER;
 

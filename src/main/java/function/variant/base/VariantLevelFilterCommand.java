@@ -1,11 +1,16 @@
 package function.variant.base;
 
 import function.external.evs.EvsCommand;
+import function.external.evs.EvsManager;
 import function.external.exac.ExacCommand;
 import function.external.exac.ExacManager;
+import function.external.genomes.GenomesCommand;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.rvis.RvisCommand;
+import function.external.subrvis.SubRvisCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -52,50 +57,88 @@ public class VariantLevelFilterCommand {
                 isExcludeIndel = true;
             } else if (option.getName().equals("--evs-pop")
                     || option.getName().equals("--evs-maf-pop")) {
-                checkValuesValid(Data.EVS_POP, option);
+                checkValuesValid(EvsManager.EVS_POP, option);
                 EvsCommand.evsPop = option.getValue();
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--evs-maf")) {
                 checkValueValid(0.5, 0, option);
                 EvsCommand.evsMaf = getValidDouble(option);
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--min-evs-all-average-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 EvsCommand.evsAllAverageCoverage = getValidInteger(option);
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--exclude-evs-qc-failed")) {
                 EvsCommand.isExcludeEvsQcFailed = true;
+                EvsCommand.isIncludeEvs = true;
             } else if (option.getName().equals("--exac-pop")) {
-                checkValuesValid(Data.EXAC_POP, option);
+                checkValuesValid(ExacManager.EXAC_POP, option);
                 ExacCommand.exacPop = option.getValue();
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--exac-maf")) {
                 checkValueValid(0.5, 0, option);
                 ExacCommand.exacMaf = getValidFloat(option);
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--min-exac-vqslod-snv")) {
                 checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                 ExacCommand.exacVqslodSnv = getValidFloat(option);
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--min-exac-vqslod-indel")) {
                 checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                 ExacCommand.exacVqslodIndel = getValidFloat(option);
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--min-exac-mean-coverage")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 ExacCommand.exacMeanCoverage = getValidFloat(option);
+                ExacCommand.isIncludeExac = true;
             } else if (option.getName().equals("--exac-subset")) {
-                checkValuesValid(Data.EXAC_SUBSET, option);
+                checkValuesValid(ExacManager.EXAC_SUBSET, option);
                 ExacCommand.exacSubset = option.getValue();
                 ExacManager.resetTables();
+                ExacCommand.isIncludeExac = true;
+            } else if (option.getName().equals("--known-var-only")) {
+                KnownVarCommand.isKnownVarOnly = true;
+                KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--min-c-score")
                     || option.getName().equals("--min-cadd-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 minCscore = getValidDouble(option);
-            } else if (option.getName().equals("--max-kaviar-maf")) {
-                checkValueValid(1, 0, option);
-                KaviarCommand.maxKaviarMaf = getValidFloat(option);
-            } else if (option.getName().equals("--max-kaviar-allele-count")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
-            } else if (option.getName().equals("--include-known-var")) {
-                KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--min-gerp-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
                 GerpCommand.minGerpScore = getValidFloat(option);
+                GerpCommand.isIncludeGerp = true;
+            } else if (option.getName().equals("--max-kaviar-maf")) {
+                checkValueValid(1, 0, option);
+                KaviarCommand.maxKaviarMaf = getValidFloat(option);
+                KaviarCommand.isIncludeKaviar = true;
+            } else if (option.getName().equals("--max-kaviar-allele-count")) {
+                checkValueValid(Data.NO_FILTER, 0, option);
+                KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
+                KaviarCommand.isIncludeKaviar = true;
+            } else if (option.getName().equals("--1000-genomes-pop")) {
+                checkValuesValid(GenomesManager.GENOMES_POP, option);
+                GenomesCommand.genomesPop = option.getValue();
+                GenomesCommand.isInclude1000Genomes = true;
+            } else if (option.getName().equals("--max-1000-genomes-maf")) {
+                checkValueValid(0.5, 0, option);
+                GenomesCommand.maxGenomesMaf = getValidFloat(option);
+                GenomesCommand.isInclude1000Genomes = true;
+            } else if (option.getName().equals("--include-evs")) {
+                EvsCommand.isIncludeEvs = true;
+            } else if (option.getName().equals("--include-exac")) {
+                ExacCommand.isIncludeExac = true;
+            } else if (option.getName().equals("--include-gerp")) {
+                GerpCommand.isIncludeGerp = true;
+            } else if (option.getName().equals("--include-kaviar")) {
+                KaviarCommand.isIncludeKaviar = true;
+            } else if (option.getName().equals("--include-known-var")) {
+                KnownVarCommand.isIncludeKnownVar = true;
+            } else if (option.getName().equals("--include-rvis")) {
+                RvisCommand.isIncludeRvis = true;
+            } else if (option.getName().equals("--include-sub-rvis")) {
+                SubRvisCommand.isIncludeSubRvis = true;
+            } else if (option.getName().equals("--include-1000-genomes")) {
+                GenomesCommand.isInclude1000Genomes = true;
             } else {
                 continue;
             }

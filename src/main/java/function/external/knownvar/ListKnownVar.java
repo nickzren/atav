@@ -57,6 +57,7 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
             KnownVarOutput knownVarOutput = new KnownVarOutput(annotatedVar);
+
             bwKnownVar.write(annotatedVar.variantIdStr + ",");
             bwKnownVar.write(annotatedVar.getGeneName() + ",");
             bwKnownVar.write(knownVarOutput.toString());
@@ -71,7 +72,7 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
         return "It is running a list KnownVar function... \n\n"
                 + "KnownVar database tables: \n\n"
                 + KnownVarManager.clinVarTable + "\n\n"
-//                + KnownVarManager.clinVarPathoratioTable + "\n\n"
+                + KnownVarManager.clinVarPathoratioTable + "\n\n"
                 + KnownVarManager.hgmdTable + "\n\n"
                 + KnownVarManager.omimTable + "\n\n"
                 + KnownVarManager.acmgTable + "\n\n"

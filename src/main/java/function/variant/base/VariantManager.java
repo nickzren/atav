@@ -1,6 +1,7 @@
 package function.variant.base;
 
 import function.annotation.base.GeneManager;
+import function.external.knownvar.KnownVarManager;
 import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -16,6 +17,9 @@ import utils.DBManager;
  * @author nick
  */
 public class VariantManager {
+
+    private static final String ARTIFACTS_Variant_PATH = "data/artifacts_variant.txt";
+    public static final String[] VARIANT_TYPE = {"snv", "indel"};
 
     private static HashSet<String> includeVariantSet = new HashSet<String>();
     private static HashSet<String> excludeVariantSet = new HashSet<String>();
@@ -34,7 +38,7 @@ public class VariantManager {
         init(VariantLevelFilterCommand.excludeVariantId, excludeVariantSet, false);
 
         if (VariantLevelFilterCommand.isExcludeArtifacts) {
-            init(Data.ARTIFACTS_Variant_PATH, excludeVariantSet, false);
+            init(ARTIFACTS_Variant_PATH, excludeVariantSet, false);
         }
     }
 
@@ -86,6 +90,22 @@ public class VariantManager {
 
             ErrorManager.send(e);
         }
+    }
+
+    public static void reset2KnownVarSet() throws SQLException {
+        clearIncludeVarSet();
+
+        // init ClinVar variants set
+        for (String var : KnownVarManager.getClinVarMap().keySet()) {
+            addVariantToList(var, includeVariantSet, true);
+        }
+
+        // init HGMD variants set
+        for (String var : KnownVarManager.getHGMDMap().keySet()) {
+            addVariantToList(var, includeVariantSet, true);
+        }
+
+        resetRegionList();
     }
 
     private static void addVariantToList(String str, HashSet<String> variantSet,
@@ -233,7 +253,7 @@ public class VariantManager {
         boolean check = false;
 
         try {
-            if (type.equals(Data.VARIANT_TYPE[0])) // snv
+            if (type.equals(VARIANT_TYPE[0])) // snv
             {
                 if (VariantLevelFilterCommand.isExcludeSnv) {
                     return false;
@@ -274,6 +294,40 @@ public class VariantManager {
             return true;
         } else {
             outputVariantIdSet.add(id);
+            return false;
+        }
+    }
+
+    private static void clearIncludeVarSet() {
+        includeVariantSet.clear();
+        includeIdList.clear();
+        includeVariantTypeList.clear();
+        includeChrList.clear();
+    }
+
+    public static boolean isAnnoDBVar(boolean isSnv, String chr,
+            int pos, String ref, String alt) throws SQLException {
+        String sql;
+        int regionId = RegionManager.getIdByChr(chr);
+
+        if (isSnv) {
+            sql = "SELECT snv_id From snv "
+                    + "WHERE seq_region_id=" + regionId + " "
+                    + "AND seq_region_pos=" + pos + " "
+                    + "AND allele='" + alt + "'";
+        } else {
+            sql = "SELECT indel_id From indel "
+                    + "WHERE seq_region_id=" + regionId + " "
+                    + "AND seq_region_pos=" + pos + " "
+                    + "AND ref_allele='" + ref + "'"
+                    + "AND allele='" + alt + "'";
+        }
+
+        ResultSet rs = DBManager.executeQuery(sql);
+
+        if (rs.next()) {
+            return true;
+        } else {
             return false;
         }
     }

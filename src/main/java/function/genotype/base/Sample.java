@@ -18,7 +18,8 @@ public class Sample {
     private String paternalId;
     private String maternalId;
     private int sex;
-    private double pheno;
+    private int pheno; // ctrl 0 , case 1
+    private String phenotype; // case or ctrl
     private double quantitativeTrait;
     private String type;
     private String captureKit;
@@ -29,7 +30,7 @@ public class Sample {
     private int index;
 
     public Sample(int sampled_id, String family_id, String child_id,
-            String paternal_id, String maternal_id, int _sex, double _pheno,
+            String paternal_id, String maternal_id, int _sex, int _pheno,
             String sample_type, String _captureKit) {
         id = sampled_id;
         type = sample_type;
@@ -41,6 +42,12 @@ public class Sample {
         maternalId = maternal_id;
         sex = _sex;
         pheno = _pheno - 1;
+
+        if (pheno == 0) {
+            phenotype = "ctrl";
+        } else {
+            phenotype = "case";
+        }
 
         prepId = SampleManager.getSamplePrepId(id);
         finishTime = SampleManager.getSampleFinishTime(id);
@@ -96,19 +103,12 @@ public class Sample {
         pheno = value;
     }
 
-    public double getPheno() {
+    public int getPheno() {
         return pheno;
     }
-
-    public String getPhenoType() {
-        switch ((int) pheno) {
-            case 0:
-                return "ctrl";
-            case 1:
-                return "case";
-        }
-
-        return "NA";
+    
+    public String getPhenotype() {
+        return phenotype;
     }
 
     public void setQuantitativeTrait(double value) {

@@ -3,11 +3,14 @@ package function.genotype.base;
 import function.variant.base.Variant;
 import global.Data;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
- * @author qwang
+ * @author qwang, nick
  */
 public class CoverageBlockManager {
+
+    public static final int COVERAGE_BLOCK_SIZE = 1024;
 
     private static HashMap<Integer, int[][]> currentBlockMap = new HashMap<Integer, int[][]>();
     private static int currentBlockEndPos = Data.NA;
@@ -34,14 +37,15 @@ public class CoverageBlockManager {
 
         if (blockEndPos == currentBlockEndPos
                 && currentBlockEndPos != Data.NA) {
-            for (Integer sampleID : currentBlockMap.keySet()) {
-                if (!carrierMap.containsKey(sampleID)) {
-                    NonCarrier noncarrier = new NonCarrier();
-                    noncarrier.init(sampleID, getCoverage(sampleID, varPosIndex));
-                    noncarrier.checkCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
-                            GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
-                    noncarrier.checkValidOnXY(var);
-                    noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
+            for (Entry<Integer, int[][]> entry : currentBlockMap.entrySet()) { // sampleId, allCovBin                
+                if (!carrierMap.containsKey(entry.getKey())) {
+                    NonCarrier noncarrier = new NonCarrier(entry.getKey(), getCoverage(varPosIndex, entry.getValue()));
+                    
+                    noncarrier.applyFilters(var.getRegion());
+                    
+                    if (noncarrier.isValid()) {
+                        noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
+                    }
                 }
             }
         } else {
@@ -52,16 +56,14 @@ public class CoverageBlockManager {
         }
     }
 
-    private static int getCoverage(int sampleID, int posIndex) {
-        int[][] allCovBin = currentBlockMap.get(sampleID);
-
+    private static int getCoverage(int posIndex, int[][] allCovBin) {
         for (int i = 0; i < allCovBin.length; i++) {
             if (posIndex <= allCovBin[i][0]) {
                 return allCovBin[i][1];
             }
         }
 
-        return Data.NA; //should never happen, just to fool compiler
+        return Data.NA;
     }
 
     private static int[][] parseCoverage(String allCov) {
@@ -84,16 +86,16 @@ public class CoverageBlockManager {
     }
 
     protected static int getVarPosIndex(Variant var) {
-        int posIndex = var.getRegion().getStartPosition() % Data.COVERAGE_BLOCK_SIZE;
+        int posIndex = var.getRegion().getStartPosition() % COVERAGE_BLOCK_SIZE;
 
         if (posIndex == 0) {
-            posIndex = Data.COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
+            posIndex = COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
         }
 
         return posIndex;
     }
 
     protected static int getBlockEndPos(Variant var, int varPosIndex) {
-        return var.getRegion().getStartPosition() - varPosIndex + Data.COVERAGE_BLOCK_SIZE;
+        return var.getRegion().getStartPosition() - varPosIndex + COVERAGE_BLOCK_SIZE;
     }
 }

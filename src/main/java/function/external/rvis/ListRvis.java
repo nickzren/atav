@@ -1,4 +1,4 @@
-package function.external.subrvis;
+package function.external.rvis;
 
 import function.annotation.base.AnalysisBase4AnnotatedVar;
 import function.annotation.base.AnnotatedVariant;
@@ -11,22 +11,18 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class ListSubRvis extends AnalysisBase4AnnotatedVar {
+public class ListRvis extends AnalysisBase4AnnotatedVar {
 
-    private BufferedWriter bwSubRvis = null;
-    private final String subRvisFilePath = CommonCommand.outputPath + "subrvis.csv";
+    private BufferedWriter bwRvis = null;
+    private final String rvisFilePath = CommonCommand.outputPath + "rvis.csv";
 
     @Override
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
-            SubRvisOutput subRvisOutput = new SubRvisOutput(annotatedVar.getGeneName(),
-                    annotatedVar.getRegion().getChrStr(),
-                    annotatedVar.getRegion().getStartPosition());
-
-            bwSubRvis.write(annotatedVar.variantIdStr + ",");
-            bwSubRvis.write(annotatedVar.getGeneName() + ",");
-            bwSubRvis.write(subRvisOutput.toString());
-            bwSubRvis.newLine();
+            bwRvis.write(annotatedVar.variantIdStr + ",");
+            bwRvis.write(annotatedVar.getGeneName() + ",");
+            bwRvis.write(RvisManager.getLine(annotatedVar.getGeneName()));
+            bwRvis.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -35,9 +31,9 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
     @Override
     public void initOutput() {
         try {
-            bwSubRvis = new BufferedWriter(new FileWriter(subRvisFilePath));
-            bwSubRvis.write(SubRvisOutput.title);
-            bwSubRvis.newLine();
+            bwRvis = new BufferedWriter(new FileWriter(rvisFilePath));
+            bwRvis.write("Variant ID,Gene," + RvisManager.getTitle());
+            bwRvis.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -50,8 +46,8 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
     @Override
     public void closeOutput() {
         try {
-            bwSubRvis.flush();
-            bwSubRvis.close();
+            bwRvis.flush();
+            bwRvis.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -71,6 +67,6 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "It is running a list sub rvis function...";
+        return "It is running a list rvis function...";
     }
 }

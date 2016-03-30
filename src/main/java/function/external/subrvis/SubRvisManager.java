@@ -1,6 +1,5 @@
 package function.external.subrvis;
 
-import global.Data;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -8,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import utils.CommonCommand;
 import utils.ErrorManager;
 
 /**
@@ -17,25 +15,34 @@ import utils.ErrorManager;
  */
 public class SubRvisManager {
 
-    private static HashMap<String, SubRvisGene> geneDomainMap = new HashMap<String, SubRvisGene>();
-    private static HashMap<String, SubRvisGene> geneExonMap = new HashMap<String, SubRvisGene>();
+    private static final String SUBRVIS_DOMAIN_PATH = "data/subrvis/domain_score_021116.txt";
+    private static final String SUBRVIS_EXON_PATH = "data/subrvis/exon_021116.txt";
+
+    private static HashMap<String, ArrayList<SubRvisGene>> geneDomainMap
+            = new HashMap<String, ArrayList<SubRvisGene>>();
+    private static HashMap<String, ArrayList<SubRvisGene>> geneExonMap
+            = new HashMap<String, ArrayList<SubRvisGene>>();
 
     public static String getTitle() {
-        String title = "subRVIS Domain Name,"
-                + "subRVIS Domain Score,"
-                + "subRVIS Exon Name,"
-                + "subRVIS Exon Score";
-
-        return title;
+        if (SubRvisCommand.isIncludeSubRvis) {
+            return "subRVIS Domain Name,"
+                    + "subRVIS Domain Score,"
+                    + "subRVIS Exon Name,"
+                    + "subRVIS Exon Score,";
+        } else {
+            return "";
+        }
     }
 
     public static void init() {
-        initGeneMap(geneDomainMap, Data.SUBRVIS_DOMAIN);
+        if (SubRvisCommand.isIncludeSubRvis) {
+            initGeneMap(geneDomainMap, SUBRVIS_DOMAIN_PATH);
 
-        initGeneMap(geneExonMap, Data.SUBRVIS_EXON);
+            initGeneMap(geneExonMap, SUBRVIS_EXON_PATH);
+        }
     }
 
-    private static void initGeneMap(HashMap<String, SubRvisGene> geneMap, String filePath) {
+    private static void initGeneMap(HashMap<String, ArrayList<SubRvisGene>> geneMap, String filePath) {
         try {
             File f = new File(filePath);
             FileInputStream fstream = new FileInputStream(f);
@@ -53,9 +60,15 @@ public class SubRvisManager {
                 ArrayList<Region> regionList = getRegionList(regionStr[1]);
                 float score = Float.valueOf(tmp[3]);
 
-                SubRvisGene subRvisGene = new SubRvisGene(geneName, id, chr, regionList, score);
+                SubRvisGene subRvisGene = new SubRvisGene(id, chr, regionList, score);
 
-                geneMap.put(geneName, subRvisGene);
+                if (geneMap.containsKey(geneName)) {
+                    geneMap.get(geneName).add(subRvisGene);
+                } else {
+                    ArrayList<SubRvisGene> idArray = new ArrayList<SubRvisGene>();
+                    idArray.add(subRvisGene);
+                    geneMap.put(geneName, idArray);
+                }
             }
 
             br.close();
@@ -84,11 +97,31 @@ public class SubRvisManager {
         return regionList;
     }
 
-    public static SubRvisGene getGeneDomain(String geneName) {
-        return geneDomainMap.get(geneName);
+    public static SubRvisGene getGeneDomain(String geneName, String chr, int pos) {
+        ArrayList<SubRvisGene> domainMap = geneDomainMap.get(geneName);
+
+        if (domainMap != null) {
+            for (SubRvisGene domain : domainMap) {
+                if (domain.isPositionIncluded(chr, pos)) {
+                    return domain;
+                }
+            }
+        }
+
+        return null;
     }
 
-    public static SubRvisGene getExonDomain(String geneName) {
-        return geneExonMap.get(geneName);
+    public static SubRvisGene getExonDomain(String geneName, String chr, int pos) {
+        ArrayList<SubRvisGene> exonMap = geneExonMap.get(geneName);
+
+        if (exonMap != null) {
+            for (SubRvisGene exon : exonMap) {
+                if (exon.isPositionIncluded(chr, pos)) {
+                    return exon;
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 package function.coverage.base;
 
-import global.Data;
+import function.genotype.base.CoverageBlockManager;
 
 /**
  *
@@ -13,7 +13,7 @@ public class CoverageInterval implements Comparable {
     private int coverage;
 
     public CoverageInterval(int sampleBlockPos, int startIndex, int endIndex, int cov) {
-        int sampleStartPos = sampleBlockPos - Data.COVERAGE_BLOCK_SIZE;
+        int sampleStartPos = sampleBlockPos - CoverageBlockManager.COVERAGE_BLOCK_SIZE;
 
         startPos = sampleStartPos + startIndex;
         endPos = sampleStartPos + endIndex;

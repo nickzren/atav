@@ -20,6 +20,8 @@ public class AnnotationLevelFilterCommand {
     public static boolean isCanonicalOnly = false;
     public static String polyphenHumdiv = "probably,possibly,unknown,benign";
     public static String polyphenHumvar = "probably,possibly,unknown,benign";
+    
+    public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -44,10 +46,10 @@ public class AnnotationLevelFilterCommand {
                 TranscriptManager.initCanonicalTranscriptPath();
             } else if (option.getName().equals("--polyphen")
                     || option.getName().equals("--polyphen-humdiv")) {
-                checkValuesValid(Data.POLYPHEN_CAT, option);
+                checkValuesValid(POLYPHEN_CAT, option);
                 polyphenHumdiv = option.getValue();
             } else if (option.getName().equals("--polyphen-humvar")) {
-                checkValuesValid(Data.POLYPHEN_CAT, option);
+                checkValuesValid(POLYPHEN_CAT, option);
                 polyphenHumvar = option.getValue();
             } else {
                 continue;

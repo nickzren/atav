@@ -1,12 +1,14 @@
 package function.genotype.collapsing;
 
 import function.external.evs.EvsManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
@@ -75,18 +77,17 @@ public class CollapsingOutput extends Output {
             + "Polyphen Humvar Prediction,"
             + "Function,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle()
+            + GenomesManager.getTitle();
 
     String geneName = "";
-    String sampleName;
-    String sampleType;
-    String genoType;
     double varAllFreq = 0;
     double looMaf = 0;
     double looMhgf = 0;
@@ -103,20 +104,6 @@ public class CollapsingOutput extends Output {
         regionBoundaryNameSet = RegionBoundaryManager.getNameSet(
                 calledVar.getRegion().chrStr,
                 calledVar.getRegion().startPosition);
-    }
-
-    public void initGenoType(int geno) {
-        genoType = getGenoStr(geno);
-    }
-
-    public void initPhenoType(int pheno) {
-        switch (pheno) {
-            case 0:
-                sampleType = "ctrl";
-                break;
-            case 1:
-                sampleType = "case";
-        }
     }
 
     public void calculateLooFreq(Sample sample) {
@@ -251,10 +238,10 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
-        sb.append(genoType).append(",");
-        sb.append(sampleName).append(",");
-        sb.append(sampleType).append(",");
+        sb.append(calledVar.getGerpScore());
+        sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
+        sb.append(sample.getName()).append(",");
+        sb.append(sample.getPhenotype()).append(",");
         sb.append(majorHomCase).append(",");
         sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCase).append(",");
@@ -299,7 +286,6 @@ public class CollapsingOutput extends Output {
 
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(geneName).append("'").append(",");
-        sb.append(IntolerantScoreManager.getValues(geneName)).append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(geneName))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
@@ -309,6 +295,12 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+        
+        sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
+        
+        sb.append(calledVar.get1000Genomes());
 
         return sb.toString();
     }

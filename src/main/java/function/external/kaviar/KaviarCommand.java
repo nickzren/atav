@@ -9,6 +9,7 @@ import global.Data;
 public class KaviarCommand {
 
     public static boolean isListKaviar = false;
+    public static boolean isIncludeKaviar = false;
     public static float maxKaviarMaf = Data.NO_FILTER;
     public static int maxKaviarAlleleCount = Data.NO_FILTER;
 

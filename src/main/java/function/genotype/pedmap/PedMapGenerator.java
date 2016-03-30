@@ -27,6 +27,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     private static final String PLINK_HOME = "/nfs/goldstein/goldsteinlab/software/sh/plink";
     private static final String CHIP2PCA2_HOME = "/nfs/goldstein/goldsteinlab/software/sh/chip2pca2";
+    private static final String EXAMPLE_OPT_PATH = "lib/example.opt";
 
     final String pedFile = CommonCommand.outputPath + "output.ped";
     final String mapFile = CommonCommand.outputPath + "output.map";
@@ -164,9 +165,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     }
 
     private void outputTempGeno(CalledVariant calledVar) throws Exception {
-        int geno;
         for (int s = 0; s < SampleManager.getListSize(); s++) {
-            geno = calledVar.getGenotype(SampleManager.getList().get(s).getIndex());
+            int geno = calledVar.getGenotype(SampleManager.getList().get(s).getIndex());
             if (geno == 2) {
                 if (calledVar.isSnv()) {
                     bwTmpPed.write(calledVar.getAllele() + calledVar.getAllele());
@@ -210,7 +210,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
         File dir = initDir(crDir);
 
-        String cmd = "cp " + Data.EXAMPLE_OPT_PATH + " " + outputOpt;
+        String cmd = "cp " + EXAMPLE_OPT_PATH + " " + outputOpt;
 
         ThirdPartyToolManager.systemCall(new String[]{cmd});
 

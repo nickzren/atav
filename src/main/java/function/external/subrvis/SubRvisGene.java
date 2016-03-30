@@ -13,8 +13,7 @@ public class SubRvisGene {
     private ArrayList<Region> regionList;
     private float score;
 
-    public SubRvisGene(String geneName,
-            String id,
+    public SubRvisGene(String id,
             String chr,
             ArrayList<Region> regionList,
             float score) {

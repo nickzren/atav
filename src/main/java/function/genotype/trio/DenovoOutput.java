@@ -2,12 +2,14 @@ package function.genotype.trio;
 
 import function.external.evs.EvsManager;
 import function.genotype.base.SampleManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
+import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
@@ -84,13 +86,15 @@ public class DenovoOutput extends TrioOutput {
             + "Polyphen Humvar Prediction,"
             + "Function,"
             + "Gene Name,"
-            + IntolerantScoreManager.getTitle()
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle()
             + KaviarManager.getTitle()
-            + KnownVarManager.getTitle();
+            + KnownVarManager.getTitle()
+            + RvisManager.getTitle()
+            + SubRvisManager.getTitle()
+            + GenomesManager.getTitle();
 
     public DenovoOutput(CalledVariant c) {
         super(c);
@@ -181,7 +185,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getGerpScore())).append(",");
+        sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
 
         sb.append(cGenotype).append(",");
@@ -239,7 +243,6 @@ public class DenovoOutput extends TrioOutput {
 
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
-        sb.append(IntolerantScoreManager.getValues(calledVar.getGeneName())).append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
@@ -249,6 +252,12 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
+
+        sb.append(calledVar.getRvis());
+        
+        sb.append(calledVar.getSubRvis());
+        
+        sb.append(calledVar.get1000Genomes());
 
         return sb.toString();
     }

@@ -3,7 +3,6 @@ import function.genotype.base.SampleManager;
 import function.variant.base.RegionManager;
 import function.annotation.base.FunctionManager;
 import function.variant.base.VariantManager;
-import function.annotation.base.IntolerantScoreManager;
 import function.annotation.base.TranscriptManager;
 import function.annotation.base.GeneManager;
 import utils.CommandManager;
@@ -38,6 +37,8 @@ import function.external.exac.ExacCommand;
 import function.external.exac.ListExac;
 import function.external.flanking.FlankingCommand;
 import function.external.flanking.ListFlankingSeq;
+import function.external.genomes.GenomesCommand;
+import function.external.genomes.List1000Genomes;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.ListGerp;
 import function.external.kaviar.KaviarCommand;
@@ -45,8 +46,12 @@ import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.knownvar.ListKnownVar;
+import function.external.rvis.ListRvis;
+import function.external.rvis.RvisCommand;
+import function.external.rvis.RvisManager;
 import function.external.subrvis.ListSubRvis;
 import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CoverageBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
@@ -102,13 +107,15 @@ public class Program {
 
             TranscriptManager.init();
 
-            IntolerantScoreManager.init();
-
             VariantManager.init();
 
             CoverageBlockManager.init();
 
             KnownVarManager.init();
+            
+            RvisManager.init();
+            
+            SubRvisManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -176,6 +183,10 @@ public class Program {
                 runAnalysis(new ListGerp());
             } else if (SubRvisCommand.isListSubRvis) {
                 runAnalysis(new ListSubRvis());
+            } else if (RvisCommand.isListRvis) {
+                runAnalysis(new ListRvis());
+            } else if (GenomesCommand.isList1000Genomes) {
+                runAnalysis(new List1000Genomes());
             } else if (PPICommand.isPPI) { // Non Database Functions
                 PPI ppi = new PPI();
                 LogManager.writeAndPrint(ppi.toString());

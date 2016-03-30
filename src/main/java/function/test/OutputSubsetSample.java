@@ -1,5 +1,8 @@
 package function.test;
 
+import function.genotype.base.CoverageBlockManager;
+import function.genotype.base.SampleManager;
+import function.variant.base.RegionManager;
 import global.Data;
 import java.sql.SQLException;
 import utils.DBManager;
@@ -27,7 +30,7 @@ public class OutputSubsetSample {
     public static void outputCarrierData() throws SQLException {
         String snvCarrierSql = "SELECT * "
                 + "FROM called_snv va,"
-                + Data.ALL_SAMPLE_ID_TABLE + " t "
+                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
                 + "WHERE va.sample_id = t.id "
                 + "INTO OUTFILE '" + OUTPUT_PATH + "called_snv.txt'";
 
@@ -36,7 +39,7 @@ public class OutputSubsetSample {
 
         String indelCarrierSql = "SELECT * "
                 + "FROM called_indel va,"
-                + Data.ALL_SAMPLE_ID_TABLE + " t "
+                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
                 + "WHERE va.sample_id = t.id "
                 + "INTO OUTFILE '" + OUTPUT_PATH + "called_indel.txt'";
 
@@ -45,15 +48,15 @@ public class OutputSubsetSample {
     }
 
     public static void outputNonCarrierData() throws SQLException {
-        for (int i = 0; i < Data.SAMPLE_TYPE.length; i++) {
-            for (String chr : Data.ALL_CHR) {
+        for (int i = 0; i < SampleManager.SAMPLE_TYPE.length; i++) {
+            for (String chr : RegionManager.ALL_CHR) {
                 String nonCarrierSql = "SELECT * "
-                        + "FROM " + Data.SAMPLE_TYPE[i]
-                        + "_read_coverage_" + Data.COVERAGE_BLOCK_SIZE + "_chr" + chr + " c,"
-                        + Data.SAMPLE_TYPE[i] + "_sample_id t "
+                        + "FROM " + SampleManager.SAMPLE_TYPE[i]
+                        + "_read_coverage_" + CoverageBlockManager.COVERAGE_BLOCK_SIZE + "_chr" + chr + " c,"
+                        + SampleManager.SAMPLE_TYPE[i] + "_sample_id t "
                         + "WHERE c.sample_id = t.id "
-                        + "INTO OUTFILE '" + OUTPUT_PATH + Data.SAMPLE_TYPE[i]
-                        + "_read_coverage_" + Data.COVERAGE_BLOCK_SIZE + "_chr" + chr + ".txt'";
+                        + "INTO OUTFILE '" + OUTPUT_PATH + SampleManager.SAMPLE_TYPE[i]
+                        + "_read_coverage_" + CoverageBlockManager.COVERAGE_BLOCK_SIZE + "_chr" + chr + ".txt'";
 
                 LogManager.writeAndPrint(nonCarrierSql);
                 DBManager.executeQuery(nonCarrierSql);
@@ -64,7 +67,7 @@ public class OutputSubsetSample {
     public static void outputGeneCoverageSummary() throws SQLException {
         String geneCoverageSummarySql = "SELECT * "
                 + "FROM gene_coverage_summary g,"
-                + Data.ALL_SAMPLE_ID_TABLE + " t "
+                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
                 + "WHERE g.sample_id = t.id "
                 + "INTO OUTFILE '" + OUTPUT_PATH + "gene_coverage_summary_subset.txt'";
 

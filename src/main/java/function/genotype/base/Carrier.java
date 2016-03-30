@@ -1,5 +1,6 @@
 package function.genotype.base;
 
+import function.variant.base.Region;
 import global.Data;
 import utils.FormatManager;
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ public class Carrier extends NonCarrier {
     private float mapQualRankSum;
     private String passFailStatus;
 
-    public void init(ResultSet rs) throws Exception {
+    public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");        
         coverage = rs.getInt("samtools_raw_coverage");
         genotype = rs.getInt("genotype");
@@ -112,7 +113,7 @@ public class Carrier extends NonCarrier {
         return passFailStatus;
     }
 
-    public void checkQualityFilter() {
+    private void applyQualityFilter() {
         if (genotype != Data.NA) {
             if (!GenotypeLevelFilterCommand.isVarStatusValid(passFailStatus)
                     || !GenotypeLevelFilterCommand.isGqValid(genotypeQualGQ)
@@ -146,5 +147,12 @@ public class Carrier extends NonCarrier {
         if (genotype == Data.NA) {
             coverage = Data.NA;
         }
+    }
+    
+    @Override
+    public void applyFilters(Region region){
+        super.applyFilters(region);
+        
+        applyQualityFilter();
     }
 }
