@@ -1,6 +1,7 @@
 package function.variant.base;
 
 import function.annotation.base.GeneManager;
+import function.external.knownvar.KnownVarManager;
 import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -89,6 +90,22 @@ public class VariantManager {
 
             ErrorManager.send(e);
         }
+    }
+
+    public static void reset2KnownVarSet() throws SQLException {
+        clearIncludeVarSet();
+
+        // init ClinVar variants set
+        for (String var : KnownVarManager.getClinVarMap().keySet()) {
+            addVariantToList(var, includeVariantSet, true);
+        }
+
+        // init HGMD variants set
+        for (String var : KnownVarManager.getHGMDMap().keySet()) {
+            addVariantToList(var, includeVariantSet, true);
+        }
+
+        resetRegionList();
     }
 
     private static void addVariantToList(String str, HashSet<String> variantSet,
@@ -277,6 +294,40 @@ public class VariantManager {
             return true;
         } else {
             outputVariantIdSet.add(id);
+            return false;
+        }
+    }
+
+    private static void clearIncludeVarSet() {
+        includeVariantSet.clear();
+        includeIdList.clear();
+        includeVariantTypeList.clear();
+        includeChrList.clear();
+    }
+
+    public static boolean isAnnoDBVar(boolean isSnv, String chr,
+            int pos, String ref, String alt) throws SQLException {
+        String sql;
+        int regionId = RegionManager.getIdByChr(chr);
+
+        if (isSnv) {
+            sql = "SELECT snv_id From snv "
+                    + "WHERE seq_region_id=" + regionId + " "
+                    + "AND seq_region_pos=" + pos + " "
+                    + "AND allele='" + alt + "'";
+        } else {
+            sql = "SELECT indel_id From indel "
+                    + "WHERE seq_region_id=" + regionId + " "
+                    + "AND seq_region_pos=" + pos + " "
+                    + "AND ref_allele='" + ref + "'"
+                    + "AND allele='" + alt + "'";
+        }
+
+        ResultSet rs = DBManager.executeQuery(sql);
+
+        if (rs.next()) {
+            return true;
+        } else {
             return false;
         }
     }

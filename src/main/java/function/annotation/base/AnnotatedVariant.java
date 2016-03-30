@@ -89,10 +89,6 @@ public class AnnotatedVariant extends Variant {
                     getRegion().getChrStr(),
                     getRegion().getStartPosition());
         }
-
-        if (GenomesCommand.isInclude1000Genomes) {
-            genomesOutput = new GenomesOutput(variantIdStr);
-        }
     }
 
     // update code below for unit testing
@@ -166,6 +162,12 @@ public class AnnotatedVariant extends Variant {
             kaviar = new Kaviar(variantIdStr);
 
             isValid = kaviar.isValid();
+        }
+
+        if (isValid & GenomesCommand.isInclude1000Genomes) {
+            genomesOutput = new GenomesOutput(variantIdStr);
+            
+            isValid = genomesOutput.isValid();
         }
 
         if (isValid & EvsCommand.isIncludeEvs) {

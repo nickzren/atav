@@ -96,6 +96,9 @@ public class VariantLevelFilterCommand {
                 ExacCommand.exacSubset = option.getValue();
                 ExacManager.resetTables();
                 ExacCommand.isIncludeExac = true;
+            } else if (option.getName().equals("--known-var-only")) {
+                KnownVarCommand.isKnownVarOnly = true;
+                KnownVarCommand.isIncludeKnownVar = true;
             } else if (option.getName().equals("--min-c-score")
                     || option.getName().equals("--min-cadd-score")) {
                 checkValueValid(Data.NO_FILTER, 0, option);
