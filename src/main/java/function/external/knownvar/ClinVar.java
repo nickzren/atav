@@ -48,6 +48,26 @@ public class ClinVar {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
     
+    public String getChr(){
+        return chr;
+    }
+    
+    public int getPos(){
+        return pos;
+    }
+    
+    public String getRef(){
+        return ref;
+    }
+    
+    public String getAlt(){
+        return alt;
+    }
+    
+    public boolean isSnv(){
+        return isSnv;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -1,10 +1,15 @@
 package function.external.knownvar;
 
+import function.variant.base.RegionManager;
 import function.variant.base.Variant;
+import function.variant.base.VariantManager;
 import global.Data;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -63,9 +68,9 @@ public class KnownVarManager {
         }
     }
 
-    public static void init() {
+    public static void init() throws SQLException {
         if (KnownVarCommand.isIncludeKnownVar) {
-            initClinvarMap();
+            initClinVarMap();
 
             initClinVarPathoratioMap();
 
@@ -82,10 +87,14 @@ public class KnownVarManager {
             initPGxMap();
 
             initRecessiveCarrierMap();
+
+            if (KnownVarCommand.isKnownVarOnly) {
+                VariantManager.reset2KnownVarSet();
+            }
         }
     }
 
-    private static void initClinvarMap() {
+    private static void initClinVarMap() {
         try {
             String sql = "SELECT * From " + clinVarTable;
 
@@ -289,10 +298,6 @@ public class KnownVarManager {
         }
     }
 
-    public static boolean isClinVar(Variant var) {
-        return clinVarMap.containsKey(var.variantIdStr);
-    }
-
     public static ClinVar getClinVar(Variant var) {
         ClinVar clinVar = clinVarMap.get(var.variantIdStr);
 
@@ -306,6 +311,10 @@ public class KnownVarManager {
         return clinVar;
     }
 
+    public static HashMap<String, ClinVar> getClinVarMap() {
+        return clinVarMap;
+    }
+
     public static ClinGen getClinGen(String geneName) {
         ClinGen clinGen = clinGenMap.get(geneName);
 
@@ -315,9 +324,9 @@ public class KnownVarManager {
 
         return clinGen;
     }
-    
-    public static boolean isHGMD(Variant var) {
-        return hgmdMap.containsKey(var.variantIdStr);
+
+    public static HashMap<String, HGMD> getHGMDMap() {
+        return hgmdMap;
     }
 
     public static HGMD getHGMD(Variant var) {

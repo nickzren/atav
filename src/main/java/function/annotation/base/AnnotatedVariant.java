@@ -76,6 +76,10 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void initExternalData() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
+
         if (RvisCommand.isIncludeRvis) {
             rvisStr = RvisManager.getLine(getGeneName());
         }
@@ -84,10 +88,6 @@ public class AnnotatedVariant extends Variant {
             subRvisOutput = new SubRvisOutput(getGeneName(),
                     getRegion().getChrStr(),
                     getRegion().getStartPosition());
-        }
-
-        if (GenomesCommand.isInclude1000Genomes) {
-            genomesOutput = new GenomesOutput(variantIdStr);
         }
     }
 
@@ -146,12 +146,6 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid & KnownVarCommand.isIncludeKnownVar) {
-            knownVarOutput = new KnownVarOutput(this);
-            
-            isValid = knownVarOutput.isValid();
-        }
-
         if (isValid & GerpCommand.isIncludeGerp) {
             gerpScore = GerpManager.getScore(variantIdStr);
 
@@ -168,6 +162,12 @@ public class AnnotatedVariant extends Variant {
             kaviar = new Kaviar(variantIdStr);
 
             isValid = kaviar.isValid();
+        }
+
+        if (isValid & GenomesCommand.isInclude1000Genomes) {
+            genomesOutput = new GenomesOutput(variantIdStr);
+            
+            isValid = genomesOutput.isValid();
         }
 
         if (isValid & EvsCommand.isIncludeEvs) {

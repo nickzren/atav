@@ -21,8 +21,6 @@ public class KnownVarOutput {
     private String pgx;
     private int recessiveCarrier;
 
-    private boolean isValid = true;
-
     public static final String title
             = "Variant ID,"
             + "Gene Name,"
@@ -32,9 +30,6 @@ public class KnownVarOutput {
             + GenomesManager.getTitle();
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
-        checkValid(annotatedVar);
-
-        if (isValid) {
             String geneName = annotatedVar.getGeneName().toUpperCase();
             clinVar = KnownVarManager.getClinVar(annotatedVar);
             clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
@@ -45,18 +40,6 @@ public class KnownVarOutput {
             clinGen = KnownVarManager.getClinGen(geneName);
             pgx = KnownVarManager.getPGx(geneName);
             recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
-        }
-    }
-
-    private void checkValid(AnnotatedVariant annotatedVar) {
-        if (KnownVarCommand.isKnownVarOnly) {
-            isValid = KnownVarManager.isClinVar(annotatedVar)
-                    || KnownVarManager.isHGMD(annotatedVar);
-        }
-    }
-
-    public boolean isValid() {
-        return isValid;
     }
 
     @Override
