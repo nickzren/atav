@@ -139,6 +139,15 @@ public class VariantLevelFilterCommand {
                 SubRvisCommand.isIncludeSubRvis = true;
             } else if (option.getName().equals("--include-1000-genomes")) {
                 GenomesCommand.isInclude1000Genomes = true;
+            } else if (option.getName().equals("--include-all-external-data")) {
+                EvsCommand.isIncludeEvs = true;
+                ExacCommand.isIncludeExac = true;
+                GerpCommand.isIncludeGerp = true;
+                KaviarCommand.isIncludeKaviar = true;
+                KnownVarCommand.isIncludeKnownVar = true;
+                RvisCommand.isIncludeRvis = true;
+                SubRvisCommand.isIncludeSubRvis = true;
+                GenomesCommand.isInclude1000Genomes = true;
             } else {
                 continue;
             }
