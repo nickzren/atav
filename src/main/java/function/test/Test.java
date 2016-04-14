@@ -37,6 +37,8 @@ public class Test extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
+//            CreateVDSDB.run();
+            
 //            OutputSubsetSample.run();
 //            
 //            LoadSubsetSample.run();
