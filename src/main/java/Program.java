@@ -61,8 +61,6 @@ import function.genotype.sibling.SiblingCommand;
 import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
-import function.nondb.ppi.PPI;
-import function.nondb.ppi.PPICommand;
 import function.test.Test;
 import function.test.TestCommand;
 import java.util.concurrent.TimeUnit;
@@ -187,10 +185,6 @@ public class Program {
                 runAnalysis(new ListRvis());
             } else if (GenomesCommand.isList1000Genomes) {
                 runAnalysis(new List1000Genomes());
-            } else if (PPICommand.isPPI) { // Non Database Functions
-                PPI ppi = new PPI();
-                LogManager.writeAndPrint(ppi.toString());
-                ppi.run();
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }

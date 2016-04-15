@@ -23,7 +23,6 @@ import function.genotype.sibling.SiblingCommand;
 import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
-import function.nondb.ppi.PPICommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
@@ -350,11 +349,8 @@ public class CommandManager {
                 CommonCommand.isNonSampleAnalysis = true;
                 GenomesCommand.isList1000Genomes = true;
                 GenomesCommand.isInclude1000Genomes = true;
-            } else if (option.getName().equals("--ppi")) { // Non Database Functions
-                PPICommand.isPPI = true;
-                CommonCommand.isNonDBAnalysis = true;
-                CommonCommand.isNonSampleAnalysis = true;
             } else if (option.getName().equals("--test")) { // Test Functions
+//                CommonCommand.isNonDBAnalysis = true;
                 CommonCommand.isNonSampleAnalysis = true;
                 TestCommand.isTest = true;
             } else {
@@ -417,8 +413,6 @@ public class CommandManager {
             KnownVarCommand.initOptions(optionList.iterator());
         } else if (FlankingCommand.isListFlankingSeq) {
             FlankingCommand.initOptions(optionList.iterator());
-        } else if (PPICommand.isPPI) { // Non Database Functions
-            PPICommand.initOptions(optionList.iterator());
         } else if (TestCommand.isTest) { // Test Functions
 
         }
