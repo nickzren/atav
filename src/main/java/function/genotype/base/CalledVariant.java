@@ -1,13 +1,10 @@
 package function.genotype.base;
 
 import function.annotation.base.AnnotatedVariant;
-import function.genotype.family.FamilyManager;
 import global.Data;
-import function.genotype.family.FamilyCommand;
 import global.Index;
 import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  *
@@ -19,8 +16,6 @@ public class CalledVariant extends AnnotatedVariant {
     private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<Integer, NonCarrier>();
     private int[] genotype = new int[SampleManager.getListSize()];
     private int[] coverage = new int[SampleManager.getListSize()];
-    private HashSet<String> familyIdSet = new HashSet<String>();
-
     private int[] qcFailSample = new int[2];
 
     public CalledVariant(int variantId, boolean isIndel, ResultSet rset) throws Exception {
@@ -70,8 +65,6 @@ public class CalledVariant extends AnnotatedVariant {
             } else {
                 setGenoCov(Data.NA, Data.NA, s);
             }
-
-            addFamilyIdSet(sample.getId());
         }
     }
 
@@ -224,22 +217,6 @@ public class CalledVariant extends AnnotatedVariant {
         } else {
             return "NA";
         }
-    }
-
-    private void addFamilyIdSet(int sampleId) {
-        if (FamilyCommand.isFamilyAnalysis) {
-            String familyId = SampleManager.getMap().get(sampleId).getFamilyId();
-            if (FamilyManager.isFamilyQualified(familyId)) {
-                familyIdSet.add(familyId);
-            }
-        }
-    }
-
-    /*
-     * return qualified family id set, just for family analysis function
-     */
-    public HashSet<String> getFamilyIdSet() {
-        return familyIdSet;
     }
 
     public int getQcFailSample(int pheno) {

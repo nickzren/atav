@@ -9,7 +9,6 @@ import global.Index;
 import function.genotype.base.SampleManager;
 import function.genotype.collapsing.CollapsingCommand;
 import utils.FormatManager;
-import utils.LogManager;
 
 /**
  *
