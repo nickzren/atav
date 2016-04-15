@@ -1,7 +1,6 @@
 package function.genotype.base;
 
 import function.genotype.collapsing.CollapsingCommand;
-import function.genotype.family.FamilyCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkRangeValid;
@@ -181,8 +180,6 @@ public class GenotypeLevelFilterCommand {
     private static void initMaf() {
         if (CollapsingCommand.looMaf != Data.NO_FILTER) {
             maf = CollapsingCommand.looMaf;
-        } else if (FamilyCommand.popCtrlMaf != Data.NO_FILTER) {
-            maf = FamilyCommand.popCtrlMaf;
         } else {
             maf = ctrlMaf;
         }

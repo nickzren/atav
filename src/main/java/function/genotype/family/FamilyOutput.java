@@ -16,7 +16,6 @@ import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
-import java.util.HashSet;
 
 /**
  *
@@ -55,14 +54,14 @@ public class FamilyOutput extends Output {
             + "Missing Family Ctrl,"
             + "Hom Family Ctrl Freq,"
             + "Het Family Ctrl Freq,"
-            + "Major Hom Pop Ctrl,"
-            + "Het Pop Ctrl,"
-            + "Minor Hom Pop Ctrl,"
-            + "Missing Pop Ctrl,"
-            + "Minor Hom Pop Ctrl Freq,"
-            + "Het Pop Ctrl Freq,"
-            + "Pop Ctrl Maf,"
-            + "Pop Ctrl HWEp,"
+            + "Major Hom Ctrl,"
+            + "Het Ctrl,"
+            + "Minor Hom Ctrl,"
+            + "Missing Ctrl,"
+            + "Minor Hom Ctrl Freq,"
+            + "Het Ctrl Freq,"
+            + "Ctrl Maf,"
+            + "Ctrl HWEp,"
             + "Avg Min Case Cov,"
             + "Avg Min Ctrl Cov,"
             + EvsManager.getTitle()
@@ -184,65 +183,6 @@ public class FamilyOutput extends Output {
 
         familyAverageCov[Index.CASE] = FormatManager.devide(familyTotalCov[Index.CASE], totalFamilyCase);
         familyAverageCov[Index.CTRL] = FormatManager.devide(familyTotalCov[Index.CTRL], totalFamilyCtrl);
-    }
-
-    @Override
-    public void countSampleGenoCov() {
-        HashSet<String> familyIdSet = new HashSet<String>();
-
-        for (Sample sample : SampleManager.getList()) {
-            if (sample.isCase()) {
-                addSampleGenoCov(sample);
-            } else { // control                  
-                boolean isFamilyValid = FamilyManager.isFamilyValid(sample.getFamilyId());
-
-                boolean isFamilyContainedCase = false;
-                if (isFamilyValid) {
-                    isFamilyContainedCase = FamilyManager.isFamilyContainedCase(sample.getFamilyId());
-                }
-
-                if (!isFamilyValid || !isFamilyContainedCase) {
-                    if (!familyIdSet.contains(sample.getFamilyId())) {
-                        addSampleGenoCov(sample);
-
-                        familyIdSet.add(sample.getFamilyId());
-                    }
-                }
-            }
-        }
-    }
-
-    private void addSampleGenoCov(Sample sample) {
-        int cov = calledVar.getCoverage(sample.getIndex());
-        int geno = calledVar.getGenotype(sample.getIndex());
-        int pheno = (int) sample.getPheno();
-        int type = getGenoType(geno, sample);
-
-        addSampleGeno(type, pheno);
-        addSampleCov(cov, pheno);
-    }
-
-    @Override
-    public boolean isRecessive() {
-        if (isMinorRef) {
-            if (familySampleCount[Index.REF][Index.CASE]
-                    + familySampleCount[Index.REF_MALE][Index.CASE] > 0
-                    && familySampleCount[Index.HET][Index.CASE] == 0
-                    && familySampleCount[Index.HOM][Index.CASE]
-                    + familySampleCount[Index.HOM_MALE][Index.CASE] == 0) {
-                return true;
-            }
-        } else {
-            if (familySampleCount[Index.HOM][Index.CASE]
-                    + familySampleCount[Index.HOM_MALE][Index.CASE] > 0
-                    && familySampleCount[Index.HET][Index.CASE] == 0
-                    && familySampleCount[Index.REF][Index.CASE]
-                    + familySampleCount[Index.REF_MALE][Index.CASE] == 0) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /*
