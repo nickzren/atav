@@ -15,7 +15,6 @@ import utils.ErrorManager;
  */
 public class SubRvisManager {
 
-    private static final String SUBRVIS_DOMAIN_PATH = "data/subrvis/domain_score_021116.txt";
     private static final String SUBRVIS_EXON_PATH = "data/subrvis/exon_021116.txt";
 
     private static HashMap<String, ArrayList<SubRvisGene>> geneDomainMap
