@@ -77,7 +77,7 @@ public class FamilyManager {
         }
     }
 
-    public static void initFamilyIdList() {
+    public static void initFamilyIdSet() {
         String str = FamilyCommand.familyId.replaceAll("( )+", "");
 
         String familyIds = "";
@@ -114,24 +114,12 @@ public class FamilyManager {
         }
     }
 
-    public static boolean isFamilyValid(String familyId) {
+    private static boolean isFamilyValid(String familyId) {
         return allFamilyMap.containsKey(familyId);
     }
 
-    public static boolean isFamilyContainedCase(String familyId) {
-        Family family = allFamilyMap.get(familyId);
-
-        for (Sample member : family.getMemberList()) {
-            if (member.isCase()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean isFamilyQualified(String id) {
-        return userFamilyIdSet.contains(id);
+    public static HashSet<String> getUserFamilyIdSet() {
+        return userFamilyIdSet;
     }
 
     public static void updateFamilySummary(FamilyOutput output) {

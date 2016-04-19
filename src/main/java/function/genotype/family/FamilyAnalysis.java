@@ -1,17 +1,14 @@
 package function.genotype.family;
 
 import function.genotype.base.CalledVariant;
-import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.annotation.base.GeneManager;
-import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  *
@@ -24,12 +21,10 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
     BufferedWriter bwNotShared = null;
     BufferedWriter bwSummaryShared = null;
     BufferedWriter bwSummaryAll = null;
-    BufferedWriter bwQualifiedVariants = null;
     final String sharedFilePath = CommonCommand.outputPath + "shared.csv";
     final String notSharedFilePath = CommonCommand.outputPath + "notshared.csv";
     final String summarySharedFilePath = CommonCommand.outputPath + "summary.only.shared.csv";
     final String summaryAllFilePath = CommonCommand.outputPath + "summary.all.shared.csv";
-    final String variantCarrierPath = CommonCommand.outputPath + "variant.carrier.csv";
     private final String[] FLAG = {"Shared", "Different zygosity", "Possibly shared",
         "Not shared", "Nnknown", "Partially shared"};
 
@@ -51,8 +46,6 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
             bwSummaryAll = new BufferedWriter(new FileWriter(summaryAllFilePath));
             bwSummaryAll.write(FamilySummary.title);
             bwSummaryAll.newLine();
-
-            bwQualifiedVariants = new BufferedWriter(new FileWriter(variantCarrierPath));
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -73,8 +66,6 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
             bwSummaryShared.close();
             bwSummaryAll.flush();
             bwSummaryAll.close();
-            bwQualifiedVariants.flush();
-            bwQualifiedVariants.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -105,9 +96,7 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
 
             if (output.isValid()) {
 
-                HashSet<String> familyIdSet = calledVar.getFamilyIdSet();
-
-                for (String familyId : familyIdSet) {
+                for (String familyId : FamilyManager.getUserFamilyIdSet()) {
                     output.familyId = familyId;
 
                     output.resetFamilyData();
@@ -120,29 +109,11 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
 
                     doOutput(output);
 
-                    outputVariantCarrier(output);
-
                     FamilyManager.updateFamilySummary(output);
                 }
             }
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    private void outputVariantCarrier(FamilyOutput output) throws Exception {
-        if (output.isAllShared()) {
-            bwQualifiedVariants.write(output.getCalledVariant().getVariantIdStr() + ",");
-
-            for (Sample sample : SampleManager.getList()) {
-                int geno = output.getCalledVariant().getGenotype(sample.getIndex());
-
-                if (output.isQualifiedGeno(geno)) {
-                    bwQualifiedVariants.write(sample.getName() + ",");
-                }
-            }
-
-            bwQualifiedVariants.newLine();
         }
     }
 
