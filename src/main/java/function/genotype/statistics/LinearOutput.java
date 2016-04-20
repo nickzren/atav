@@ -76,8 +76,7 @@ public class LinearOutput extends StatisticOutput {
             }
         }
 
-        if (isValid()
-                && StatisticsCommand.isMinHomCaseRecValid(minorHomCase)) {
+        if (isValid()) {
             return true;
         }
 

@@ -83,8 +83,7 @@ public class FisherOutput extends StatisticOutput {
         }
 
         if (isValid()
-                && isCaseOnlyValid()
-                && StatisticsCommand.isMinHomCaseRecValid(minorHomCase)) {
+                && isCaseOnlyValid()) {
             return true;
         }
 
@@ -166,11 +165,11 @@ public class FisherOutput extends StatisticOutput {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
-        
+
         sb.append(calledVar.getRvis());
-        
+
         sb.append(calledVar.getSubRvis());
-        
+
         sb.append(calledVar.get1000Genomes());
 
         return sb.toString();

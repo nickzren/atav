@@ -151,11 +151,11 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
-        
+
         sb.append(calledVar.getRvis());
-        
+
         sb.append(calledVar.getSubRvis());
-        
+
         sb.append(calledVar.get1000Genomes());
 
         return sb.toString();
@@ -179,14 +179,9 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
     public boolean isLooFreqValid() {
         boolean isRecessive = isRecessive();
 
-        if (isLooMafValid(isRecessive)) {
-            if (isRecessive) {
-                if (isLooMhgf4RecessiveValid()) {
-                    return true;
-                }
-            } else {
-                return true;
-            }
+        if (isMaxLooMafValid(isRecessive)
+                && isMaxLooMhgfRecValid(isRecessive)) {
+            return true;
         }
 
         return false;
