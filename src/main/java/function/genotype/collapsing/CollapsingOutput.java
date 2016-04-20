@@ -13,7 +13,6 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
-import function.genotype.statistics.StatisticsCommand;
 import global.Data;
 import global.Index;
 import java.util.HashSet;
@@ -53,6 +52,8 @@ public class CollapsingOutput extends Output {
             + "QC Fail Ctrl,"
             + "Case Maf,"
             + "Ctrl Maf,"
+            + "Loo Maf,"
+            + "Loo Minor Hom Freq,"
             + "Case HWE_P,"
             + "Ctrl HWE_P,"
             + "Samtools Raw Coverage,"
@@ -88,7 +89,6 @@ public class CollapsingOutput extends Output {
             + GenomesManager.getTitle();
 
     String geneName = "";
-    double varAllFreq = 0;
     double looMaf = 0;
     double looMhgf = 0;
 
@@ -130,7 +130,7 @@ public class CollapsingOutput extends Output {
                 + 2 * sampleCount[Index.REF][Index.ALL]
                 + sampleCount[Index.REF_MALE][Index.ALL];
 
-        varAllFreq = FormatManager.devide(totalVar, totalNum);
+        double varAllFreq = FormatManager.devide(totalVar, totalNum);
         looMaf = varAllFreq;
 
         if (varAllFreq > 0.5) {
@@ -169,15 +169,9 @@ public class CollapsingOutput extends Output {
             }
         }
 
-        if (isLooMafValid(isRecessive)) {
-            if (isRecessive) {
-                if (isLooMhgf4RecessiveValid()
-                        && StatisticsCommand.isMinHomCaseRecValid(minorHomCase)) {
-                    return true;
-                }
-            } else {
-                return true;
-            }
+        if (isMaxLooMafValid(isRecessive)
+                && isMaxLooMhgfRecValid(isRecessive)) {
+            return true;
         }
 
         return false;
@@ -212,20 +206,20 @@ public class CollapsingOutput extends Output {
         return false;
     }
 
-    public boolean isLooMafValid(boolean isRecessive) {
+    public boolean isMaxLooMafValid(boolean isRecessive) {
         if (isRecessive) {
-            return GenotypeLevelFilterCommand.isMaf4RecessiveValid(looMaf);
+            return CollapsingCommand.isMaxLooMafRecValid(looMaf);
         } else {
-            return GenotypeLevelFilterCommand.isMafValid(looMaf);
+            return CollapsingCommand.isMaxLooMafValid(looMaf);
         }
     }
 
-    public boolean isLooMhgf4RecessiveValid() {
-        if (GenotypeLevelFilterCommand.isMhgf4RecessiveValid(looMhgf)) {
+    public boolean isMaxLooMhgfRecValid(boolean isRecessive) {
+        if (isRecessive) {
+            return CollapsingCommand.isMaxLooMhgfRecValid(looMhgf);
+        } else {
             return true;
         }
-
-        return false;
     }
 
     public String getString(Sample sample) {
@@ -258,6 +252,8 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(caseMaf)).append(",");
         sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
+        sb.append(FormatManager.getDouble(looMaf)).append(",");
+        sb.append(FormatManager.getDouble(looMhgf)).append(",");
         sb.append(FormatManager.getDouble(caseHweP)).append(",");
         sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
@@ -295,11 +291,11 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
-        
+
         sb.append(calledVar.getRvis());
-        
+
         sb.append(calledVar.getSubRvis());
-        
+
         sb.append(calledVar.get1000Genomes());
 
         return sb.toString();

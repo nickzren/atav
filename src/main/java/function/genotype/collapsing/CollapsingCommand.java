@@ -1,13 +1,11 @@
 package function.genotype.collapsing;
 
 import function.annotation.base.GeneManager;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.statistics.StatisticsCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidDouble;
-import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 
@@ -21,8 +19,10 @@ public class CollapsingCommand {
     public static boolean isCollapsingCompHet = false;
     public static boolean isRecessive = false;
     public static String coverageSummaryFile = "";
-    public static double looMaf = Data.NO_FILTER;
-    public static double looCombFreq = Data.NO_FILTER;
+    public static double maxLooMaf = Data.NO_FILTER;
+    public static double maxLooMafRec = Data.NO_FILTER;
+    public static double maxLooMhgfRec = Data.NO_FILTER;
+    public static double maxLooCombFreq = Data.NO_FILTER;
     public static boolean isCollapsingDoLinear = false;
     public static boolean isCollapsingDoLogistic = false;
     public static String regionBoundaryFile = "";
@@ -33,17 +33,20 @@ public class CollapsingCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--loo-maf")) {
+            if (option.getName().equals("--loo-maf")
+                    || option.getName().equals("--max-loo-maf")) {
                 checkValueValid(0.5, 0, option);
-                looMaf = getValidDouble(option);
+                maxLooMaf = getValidDouble(option);
             } else if (option.getName().equals("--loo-maf-rec")
-                    || option.getName().equals("--loo-maf-recessive")) {
+                    || option.getName().equals("--loo-maf-recessive")
+                    || option.getName().equals("--max-loo-maf-rec")) {
                 checkValueValid(0.5, 0, option);
-                GenotypeLevelFilterCommand.maf4Recessive = getValidDouble(option);
+                maxLooMafRec = getValidDouble(option);
             } else if (option.getName().equals("--loo-mhgf-rec")
-                    || option.getName().equals("--loo-mhgf-recessive")) {
+                    || option.getName().equals("--loo-mhgf-recessive")
+                    || option.getName().equals("--max-loo-mhgf-rec")) {
                 checkValueValid(0.5, 0, option);
-                GenotypeLevelFilterCommand.mhgf4Recessive = getValidDouble(option);
+                maxLooMhgfRec = getValidDouble(option);
             } else if (option.getName().equals("--read-coverage-summary")) {
                 coverageSummaryFile = getValidPath(option);
                 GeneManager.initCoverageSummary();
@@ -53,9 +56,6 @@ public class CollapsingCommand {
             } else if (option.getName().equals("--quantitative")) {
                 StatisticsCommand.quantitativeFile = getValidPath(option);
                 isCollapsingDoLinear = true;
-            } else if (option.getName().equals("--min-hom-case-rec")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                StatisticsCommand.minHomCaseRec = getValidInteger(option);
             } else if (option.getName().equals("--region-boundary")) {
                 regionBoundaryFile = getValidPath(option);
             } else {
@@ -76,20 +76,24 @@ public class CollapsingCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--loo-maf")) {
+            if (option.getName().equals("--loo-maf")
+                    || option.getName().equals("--max-loo-maf")) {
                 checkValueValid(0.5, 0, option);
-                looMaf = getValidDouble(option);
+                maxLooMaf = getValidDouble(option);
             } else if (option.getName().equals("--loo-maf-rec")
-                    || option.getName().equals("--loo-maf-recessive")) {
+                    || option.getName().equals("--loo-maf-recessive")
+                    || option.getName().equals("--max-loo-maf-rec")) {
                 checkValueValid(0.5, 0, option);
-                GenotypeLevelFilterCommand.maf4Recessive = getValidDouble(option);
+                maxLooMafRec = getValidDouble(option);
             } else if (option.getName().equals("--loo-mhgf-rec")
-                    || option.getName().equals("--loo-mhgf-recessive")) {
+                    || option.getName().equals("--loo-mhgf-recessive")
+                    || option.getName().equals("--max-loo-mhgf-rec")) {
                 checkValueValid(0.5, 0, option);
-                GenotypeLevelFilterCommand.mhgf4Recessive = getValidDouble(option);
-            } else if (option.getName().equals("--loo-comb-freq")) {
+                maxLooMhgfRec = getValidDouble(option);
+            } else if (option.getName().equals("--loo-comb-freq")
+                    || option.getName().equals("--max-loo-comb-freq")) {
                 checkValueValid(1, 0, option);
-                looCombFreq = getValidDouble(option);
+                maxLooCombFreq = getValidDouble(option);
             } else if (option.getName().equals("--read-coverage-summary")) {
                 coverageSummaryFile = getValidPath(option);
                 GeneManager.initCoverageSummary();
@@ -111,12 +115,48 @@ public class CollapsingCommand {
         }
     }
 
-    public static boolean isLooCombFreqValid(double value) {
-        if (looCombFreq == Data.NO_FILTER) {
+    public static boolean isMaxLooMafValid(double value) {
+        if (maxLooMaf == Data.NO_FILTER) {
             return true;
         }
 
-        if (value <= looCombFreq) {
+        if (value <= maxLooMaf) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isMaxLooMafRecValid(double value) {
+        if (maxLooMafRec == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value <= maxLooMafRec) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isMaxLooMhgfRecValid(double value) {
+        if (maxLooMhgfRec == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value <= maxLooMhgfRec) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isMaxLooCombFreqValid(double value) {
+        if (maxLooCombFreq == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value <= maxLooCombFreq) {
             return true;
         }
 

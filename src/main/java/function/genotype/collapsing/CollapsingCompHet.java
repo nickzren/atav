@@ -212,7 +212,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                     double[] coFreq = getCoOccurrenceFreq(output1, output2, sample);
 
-                    if (CollapsingCommand.isLooCombFreqValid(coFreq[Index.CTRL])) {
+                    if (CollapsingCommand.isMaxLooCombFreqValid(coFreq[Index.CTRL])) {
 
                         summary.updateSampleVariantCount4CompHet(sample.getIndex());
 

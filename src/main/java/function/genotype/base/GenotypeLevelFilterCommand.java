@@ -1,6 +1,5 @@
 package function.genotype.base;
 
-import function.genotype.collapsing.CollapsingCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkRangeValid;
@@ -22,10 +21,10 @@ public class GenotypeLevelFilterCommand {
     public static boolean isAllNonRef = false;
     public static boolean isAllGeno = false;
     public static double maf = 0.5;
-    public static double ctrlMaf = 0.5; // max ctrl maf
+    public static double maxCtrlMaf = 0.5; // max ctrl maf
     public static double minCtrlMaf = Data.NO_FILTER;
-    public static double maf4Recessive = Data.NO_FILTER;
-    public static double mhgf4Recessive = Data.NO_FILTER;
+    public static double maxCtrlMafRec = Data.NO_FILTER;
+    public static double maxCtrlMhgfRec = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
     public static int minCaseCoverageCall = Data.NO_FILTER;
     public static int minCaseCoverageNoCall = Data.NO_FILTER;
@@ -66,17 +65,20 @@ public class GenotypeLevelFilterCommand {
             } else if (option.getName().equals("--all-geno")) {
                 isAllGeno = true;
             } else if (option.getName().equals("--ctrlMAF")
-                    || option.getName().equals("--ctrl-maf")) {
+                    || option.getName().equals("--ctrl-maf")
+                    || option.getName().equals("--max-ctrl-maf")) {
                 checkValueValid(0.5, 0, option);
-                ctrlMaf = getValidDouble(option);
+                maxCtrlMaf = getValidDouble(option);
             } else if (option.getName().equals("--min-ctrl-maf")) {
                 checkValueValid(0.5, 0, option);
                 minCtrlMaf = getValidDouble(option);
-            } else if (option.getName().equals("--ctrl-maf-rec")) {
-                maf4Recessive = getValidDouble(option);
+            } else if (option.getName().equals("--ctrl-maf-rec")
+                    || option.getName().equals("--max-ctrl-maf-rec")) {
+                maxCtrlMafRec = getValidDouble(option);
                 checkValueValid(0.5, 0, option);
-            } else if (option.getName().equals("--ctrl-mhgf-rec")) {
-                mhgf4Recessive = getValidDouble(option);
+            } else if (option.getName().equals("--ctrl-mhgf-rec")
+                    || option.getName().equals("--max-ctrl-mhgf-rec")) {
+                maxCtrlMhgfRec = getValidDouble(option);
                 checkValueValid(0.5, 0, option);
             } else if (option.getName().equals("--min-coverage")) {
                 checkValueValid(new String[]{"0", "3", "10", "20", "201"}, option);
@@ -153,8 +155,6 @@ public class GenotypeLevelFilterCommand {
         }
 
         initMinCoverage();
-
-        initMaf();
     }
 
     private static void initMinCoverage() {
@@ -176,21 +176,9 @@ public class GenotypeLevelFilterCommand {
             }
         }
     }
-
-    private static void initMaf() {
-        if (CollapsingCommand.looMaf != Data.NO_FILTER) {
-            maf = CollapsingCommand.looMaf;
-        } else {
-            maf = ctrlMaf;
-        }
-
-        if (maf4Recessive == Data.NO_FILTER) { // need to be changed for pop
-            maf4Recessive = maf;
-        }
-    }
-
-    public static boolean isMafValid(double value) {
-        if (value <= maf) {
+    
+    public static boolean isMaxCtrlMafValid(double value) {
+        if (value <= maxCtrlMaf) {
             return true;
         }
 
@@ -208,25 +196,25 @@ public class GenotypeLevelFilterCommand {
 
         return false;
     }
-
-    public static boolean isMaf4RecessiveValid(double value) {
-        if (maf4Recessive == Data.NO_FILTER) {
+    
+     public static boolean isMaxCtrlMafRecValid(double value) {
+        if (maxCtrlMafRec == Data.NO_FILTER) {
             return true;
         }
 
-        if (value <= maf4Recessive) {
+        if (value <= maxCtrlMafRec) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isMhgf4RecessiveValid(double value) {
-        if (mhgf4Recessive == Data.NO_FILTER) {
+    public static boolean isMaxCtrlMhgfRecValid(double value) {
+        if (maxCtrlMhgfRec == Data.NO_FILTER) {
             return true;
         }
 
-        if (value <= mhgf4Recessive) {
+        if (value <= maxCtrlMhgfRec) {
             return true;
         }
 
