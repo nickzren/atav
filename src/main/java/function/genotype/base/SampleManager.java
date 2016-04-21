@@ -406,12 +406,14 @@ public class SampleManager {
                 if (lineStr.isEmpty()) {
                     continue;
                 }
+                
+                lineStr = lineStr.replaceAll("( )+", "");
 
                 if (covariateFileTitle.isEmpty()) {
                     covariateFileTitle = lineStr;
+                    continue;
                 }
-
-                lineStr = lineStr.toLowerCase();
+                
                 String[] values = lineStr.split("\t");
 
                 Sample sample = getSampleByName(values[1]);
