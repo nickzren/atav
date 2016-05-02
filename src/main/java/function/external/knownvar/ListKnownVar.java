@@ -70,15 +70,15 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     @Override
     public String toString() {
         return "It is running a list KnownVar function... \n\n"
-                + "KnownVar database tables: \n\n"
-                + KnownVarManager.clinVarTable + "\n\n"
-                + KnownVarManager.clinVarPathoratioTable + "\n\n"
-                + KnownVarManager.hgmdTable + "\n\n"
-                + KnownVarManager.omimTable + "\n\n"
-                + KnownVarManager.acmgTable + "\n\n"
-                + KnownVarManager.adultOnsetTable + "\n\n"
-                + KnownVarManager.clinGenTable + "\n\n"
-                + KnownVarManager.pgxTable + "\n\n"
+                + "KnownVar database tables: \n"
+                + KnownVarManager.clinVarTable + "\n"
+                + KnownVarManager.clinVarPathoratioTable + "\n"
+                + KnownVarManager.hgmdTable + "\n"
+                + KnownVarManager.omimTable + "\n"
+                + KnownVarManager.acmgTable + "\n"
+                + KnownVarManager.adultOnsetTable + "\n"
+                + KnownVarManager.clinGenTable + "\n"
+                + KnownVarManager.pgxTable + "\n"
                 + KnownVarManager.recessiveCarrierTable;
     }
 }

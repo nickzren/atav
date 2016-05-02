@@ -1,6 +1,5 @@
 package function.external.knownvar;
 
-import function.variant.base.RegionManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -8,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -20,14 +17,14 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String clinVarTable = "knownvar.clinvar_2016_03_10";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_03_10";
-    public static final String hgmdTable = "knownvar.hgmd_2015_4";
-    public static final String omimTable = "knownvar.omim_2016_02_12";
-    public static final String acmgTable = "knownvar.ACMG_2015_12_09";
-    public static final String adultOnsetTable = "knownvar.AdultOnset_2015_12_09";
-    public static final String clinGenTable = "knownvar.ClinGen_2015_12_09";
-    public static final String pgxTable = "knownvar.PGx_2015_12_09";
+    public static final String clinVarTable = "knownvar.clinvar_2016_04_26";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_04_26";
+    public static final String hgmdTable = "knownvar.hgmd_2016_1";
+    public static final String omimTable = "knownvar.omim_2016_04_26";
+    public static final String acmgTable = "knownvar.ACMG_2016_04_26";
+    public static final String adultOnsetTable = "knownvar.AdultOnset_2016_04_26";
+    public static final String clinGenTable = "knownvar.ClinGen_2016_04_26";
+    public static final String pgxTable = "knownvar.PGx_2016_04_26";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
 
     private static final HashMap<String, ClinVar> clinVarMap = new HashMap<String, ClinVar>();
