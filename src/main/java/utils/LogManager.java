@@ -4,6 +4,7 @@ import global.Data;
 import java.io.*;
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +17,7 @@ public class LogManager {
     private static BufferedWriter userLog = null;
     private static StringBuilder basicInfo = new StringBuilder();
 
-    public static String totalRunTime;
+    public static String runTime;
 
     // users command log file path
     public static final String USERS_COMMAND_LOG = "/nfs/goldstein/software/atav_home/log/users.command.log";
@@ -99,7 +100,22 @@ public class LogManager {
         }
     }
 
-    public static void recordUserCommand() {
+    public static void logRunTime() {
+        long elapsedTime = RunTimeManager.getElapsedTime();
+        
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
+        long hours = TimeUnit.MILLISECONDS.toHours(elapsedTime);
+
+        runTime = seconds + " seconds "
+                + "(aka " + minutes + " minutes or "
+                + hours + " hours)";
+
+        writeAndPrint("\nTotal runtime: "
+                + runTime + "\n");
+    }
+
+    public static void logUserCommand() {
         try {
             if (isBioinfoTeam()) {
                 return;
@@ -120,7 +136,7 @@ public class LogManager {
                     + DBManager.getHost() + "\t"
                     + System.getenv("HOSTNAME") + "\t"
                     + CommandManager.command + "\t"
-                    + totalRunTime + "\t"
+                    + runTime + "\t"
                     + outputFolderSize + " bytes");
 
             bufferWritter.newLine();
