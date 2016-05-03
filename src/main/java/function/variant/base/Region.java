@@ -29,12 +29,7 @@ public class Region implements Comparable {
     }
 
     public void init(String chr, int start, int end) {
-        String name = chr.toUpperCase();
-        if (name.startsWith("CHR")) {
-            chrStr = name.substring(3);
-        } else {
-            chrStr = name;
-        }
+        chrStr = chr;
 
         chrNum = intChr();
 
@@ -148,7 +143,7 @@ public class Region implements Comparable {
     @Override
     public String toString() {
         String chr = "chr" + chrStr;
-        if (startPosition == 0 && endPosition == 0) {
+        if (startPosition == Data.NA && endPosition == Data.NA) {
             return chr;
         }
 
