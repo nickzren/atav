@@ -69,45 +69,6 @@ public class Gene {
     public String getChr() {
         return chr;
     }
-    
-    public int getStartPosition() {
-        int start = 0;
-        if (exonList == null) { // gene name only file
-            return start;
-        }
-
-        if (exonList.isEmpty()) { // gene name & valid regions file
-            return start;
-        }
-        start = Integer.MAX_VALUE;
-        for (Iterator it = exonList.iterator(); it.hasNext();) {
-            Exon exon = (Exon) it.next();
-            int current = exon.covRegion.getStartPosition();
-            if (current < start) {
-                start = current;
-            }
-        }
-        return start;
-    }
-
-    public int getEndPosition() {
-        int end = 0;
-        if (exonList == null) { // gene name only file
-            return end;
-        }
-
-        if (exonList.isEmpty()) { // gene name & valid regions file
-            return end;
-        }
-        for (Iterator it = exonList.iterator(); it.hasNext();) {
-            Exon exon = (Exon) it.next();
-            int current = exon.covRegion.getEndPosition();
-            if (current > end) {
-                end = current;
-            }
-        }
-        return end;
-    }
 
     public String getName() {
         return name;
@@ -287,8 +248,6 @@ public class Gene {
     }
 
     public void populateSlaveList() {
-        //ExonList = dbUtil.getExonList(getExonString());
-
         exonList = new InputList();
 
         String[] fields = name.trim().replace("(", "").replace(")", "").split(" ");
@@ -433,15 +392,5 @@ public class Gene {
         } else {
             return name;
         }
-    }
-
-    private String parse(String r) {
-        return r.trim();
-//        String[] items = r.trim().toUpperCase().replaceAll("\\W+", ".").split("\\W");
-//        if (items.length > 0) {
-//            return items[0];
-//        } else {
-//            return "";
-//        }
     }
 }
