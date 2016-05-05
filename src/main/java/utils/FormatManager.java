@@ -118,10 +118,6 @@ public class FormatManager {
         return temp.doubleValue();
     }
 
-    public static boolean isDigit(String str) {
-        return !str.isEmpty() && Character.isDigit(str.charAt(0));
-    }
-
     public static double devide(double a, double b) {
         if (b <= 0) {
             return Data.NA;

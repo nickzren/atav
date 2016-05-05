@@ -154,23 +154,6 @@ public class DenovoOutput extends TrioOutput {
         fGenotype = getGenoStr(fGeno);
     }
 
-    @Override
-    public boolean isRecessive() {
-        if (isMinorRef) {
-            if (sampleCount[Index.REF][Index.CASE]
-                    + sampleCount[Index.REF_MALE][Index.CASE] > 0) {
-                return true;
-            }
-        } else {
-            if (sampleCount[Index.HOM][Index.CASE]
-                    + sampleCount[Index.HOM_MALE][Index.CASE] > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public String getString(Trio trio) {
         StringBuilder sb = new StringBuilder();
 

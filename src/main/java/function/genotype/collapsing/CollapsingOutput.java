@@ -169,9 +169,24 @@ public class CollapsingOutput extends Output {
             }
         }
 
-        if (isMaxLooMafValid(isRecessive)
-                && isMaxLooMhgfRecValid(isRecessive)) {
+        if (isMaxLooMafValid(isRecessive)) {
             return true;
+        }
+
+        return false;
+    }
+
+    public boolean isRecessive() {
+        if (isMinorRef) {
+            if (sampleCount[Index.REF][Index.ALL]
+                    + sampleCount[Index.REF_MALE][Index.ALL] > 0) {
+                return true;
+            }
+        } else {
+            if (sampleCount[Index.HOM][Index.ALL]
+                    + sampleCount[Index.HOM_MALE][Index.ALL] > 0) {
+                return true;
+            }
         }
 
         return false;
@@ -211,14 +226,6 @@ public class CollapsingOutput extends Output {
             return CollapsingCommand.isMaxLooMafRecValid(looMaf);
         } else {
             return CollapsingCommand.isMaxLooMafValid(looMaf);
-        }
-    }
-
-    public boolean isMaxLooMhgfRecValid(boolean isRecessive) {
-        if (isRecessive) {
-            return CollapsingCommand.isMaxLooMhgfRecValid(looMhgf);
-        } else {
-            return true;
         }
     }
 

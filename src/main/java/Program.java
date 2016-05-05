@@ -63,7 +63,7 @@ import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.test.Test;
 import function.test.TestCommand;
-import java.util.concurrent.TimeUnit;
+import utils.RunTimeManager;
 
 /**
  *
@@ -73,17 +73,24 @@ public class Program {
 
     public static void main(String[] args) {
         try {
-            long start = System.currentTimeMillis();
+            RunTimeManager.start();
 
+            // initialized user input options and system default input values
             init(args);
 
+            // start one analysis function
             startAnalysis();
 
+            // re-check user samples to make sure no changes happened during the analysis
             SampleManager.recheckSampleList();
 
-            outputRuntime(start);
+            RunTimeManager.stop();
+            
+            LogManager.logRunTime();
 
-            LogManager.recordUserCommand();
+            LogManager.logUserCommand();
+            
+            LogManager.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -197,21 +204,5 @@ public class Program {
         LogManager.writeAndPrint(analysis.toString());
 
         analysis.run();
-    }
-
-    private static void outputRuntime(long start) {
-        long total = System.currentTimeMillis() - start;
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(total);
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(total);
-        long hours = TimeUnit.MILLISECONDS.toHours(total);
-
-        LogManager.totalRunTime = seconds + " seconds "
-                + "(aka " + minutes + " minutes or "
-                + hours + " hours)";
-
-        LogManager.writeAndPrint("\nTotal runtime: "
-                + LogManager.totalRunTime + "\n");
-
-        LogManager.close();
     }
 }
