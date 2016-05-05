@@ -8,7 +8,7 @@ public class Data {
 
     // software info
     public static final String AppTitle = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String version = "beta";
+    public static String version = "6.3.7";
     public static final String year = "2016";
     public static final String leadDeveloper = "Nick Ren";
     public static final String pipelineDeveloper = "Joshua Bridgers, Brett Copeland, Raghavendra Padmanabhan";
