@@ -179,8 +179,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
     public boolean isLooFreqValid() {
         boolean isRecessive = isRecessive();
 
-        if (isMaxLooMafValid(isRecessive)
-                && isMaxLooMhgfRecValid(isRecessive)) {
+        if (isMaxLooMafValid(isRecessive)) {
             return true;
         }
 

@@ -297,13 +297,9 @@ public class Output implements Cloneable {
         if (GenotypeLevelFilterCommand.isMinVarPresentValid(varPresent)
                 && GenotypeLevelFilterCommand.isMinCaseCarrierValid(caseCarrier)
                 && GenotypeLevelFilterCommand.isMinCtrlAverageCoverageValid(averageCov[Index.CTRL])
+                && GenotypeLevelFilterCommand.isMaxCtrlMafValid(ctrlMaf)
                 && GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf)) {
-            boolean isRecessive = isRecessive();
-
-            if (isMaxCtrlMafValid(isRecessive)
-                    && isMaxCtrlMhgfValid(isRecessive)) {
-                return true;
-            }
+            return true;
         }
 
         return false;
@@ -335,38 +331,6 @@ public class Output implements Cloneable {
         }
 
         return false;
-    }
-
-    public boolean isRecessive() {
-        if (isMinorRef) {
-            if (sampleCount[Index.REF][Index.ALL]
-                    + sampleCount[Index.REF_MALE][Index.ALL] > 0) {
-                return true;
-            }
-        } else {
-            if (sampleCount[Index.HOM][Index.ALL]
-                    + sampleCount[Index.HOM_MALE][Index.ALL] > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean isMaxCtrlMafValid(boolean isRecessive) {
-        if (isRecessive) {
-            return GenotypeLevelFilterCommand.isMaxCtrlMafRecValid(ctrlMaf);
-        } else {
-            return GenotypeLevelFilterCommand.isMaxCtrlMafValid(ctrlMaf);
-        }
-    }
-
-    public boolean isMaxCtrlMhgfValid(boolean isRecessive) {
-        if (isRecessive) {
-            return GenotypeLevelFilterCommand.isMaxCtrlMhgfRecValid(ctrlMhgf);
-        } else {
-            return true;
-        }
     }
 
     @Override

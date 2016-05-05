@@ -1,18 +1,12 @@
 package function.coverage.base;
 
 import function.genotype.base.SampleManager;
-import global.Data;
 
 /**
  *
  * @author qwang
  */
 public class SqlQuery {
-
-    public static String EVS_COVERAGE_RANGE
-            = "SELECT position, ALLSampleCovered, EASampleCovered, AASampleCovered "
-            + "FROM evs.coverage "
-            + "WHERE chr = '_CHR_' AND position >= _POS1_ AND position <= _POS2_ ";
 
     public static String GENE_EXON_NAME = "SELECT e.exon_id, e.seq_region_id, e.seq_region_start, "
             + "e.seq_region_end, e.stable_id, r.name,t.stable_id as t_stable_id "
@@ -200,14 +194,6 @@ public class SqlQuery {
             + "WHERE position in (_POSITIONS_) "
             + "AND c.sample_id = t.id ";
 
-    public static String Region_Coverage = " SELECT * FROM _SAMPLE_TYPE__read_coverage_chr_CHROM_ "
-            + ", " + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
-            + "WHERE "
-            + "seq_region_pos >= IF(_START_ - _REGIONLENGTH_ - 1 > 0,_START_ - _REGIONLENGTH_ - 1,0) "
-            + "AND seq_region_pos <= _END_ + _REGIONLENGTH_ + 1 "
-            + "AND seq_region_pos <= _END_ + _REGIONLENGTH_ + 1 - region_length "
-            + "AND sample_id = t.id "
-            + "AND min_coverage >= _MIN_COV_ ";
     public static String GENE_CHR = "SELECT name "
             + "FROM _VAR_TYPE__gene_hit g, _VAR_TYPE_ v, seq_region r "
             + "WHERE g.gene_name = '_GENE_' "

@@ -1,6 +1,5 @@
 package function.variant.base;
 
-import utils.FormatManager;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.CommonCommand;
@@ -22,7 +21,7 @@ public class RegionManager {
     private static HashMap<Integer, String> idChrMap = new HashMap<Integer, String>();
     private static HashMap<String, Integer> chrIdMap = new HashMap<String, Integer>();
     private static boolean isUsed = false;
-    
+
     public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
         "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT"};
 
@@ -152,50 +151,52 @@ public class RegionManager {
     }
 
     private static Region getRegion(String str) {
-        int start = 0, end = 0;
-        String chr;
-        int index_1 = str.indexOf(":");
-        if (index_1 != -1) {
-            chr = str.substring(0, index_1);
-            String range = str.substring(index_1 + 1);
-            int index_2 = range.indexOf("-");
-            if (index_2 != -1) {
-                start = Integer.parseInt(range.substring(0, index_2));
-                if (FormatManager.isDigit(range.substring(index_2 + 1))) {
-                    end = Integer.parseInt(range.substring(index_2 + 1));
-                }
-            } else {
-                if (FormatManager.isDigit(range)) {
-                    start = Integer.parseInt(range);
+        str = str.toUpperCase().replace("CHR", "");
+
+        String[] tmp = str.split(":");
+
+        String chr = getChr(tmp[0]);
+
+        int start = Data.NA, end = Data.NA;
+
+        try {
+            if (tmp.length == 2) {
+                tmp = tmp[1].split("-");
+
+                if (tmp.length == 2) {
+                    start = Integer.valueOf(tmp[0]);
+                    end = Integer.valueOf(tmp[1]);
+                } else {
+                    throw new Exception();
                 }
             }
-        } else {
-            chr = str;
+        } catch (Exception e) {
+            ErrorManager.print("Invalid region: " + str);
         }
 
-        if (!chr.startsWith("chr")) {
-            chr = "chr" + chr;
-        }
+        return new Region(chr, start, end);
+    }
 
-        if (chr.equalsIgnoreCase("chrXY")) {
-            chr = "chrX";
+    private static String getChr(String chr) {
+        if (chr.equalsIgnoreCase("XY")) {
+            chr = "X";
         }
 
         checkChrValid(chr);
 
-        return new Region(chr, start, end);
+        return chr;
     }
 
     private static void checkChrValid(String chr) {
         boolean isValid = false;
         for (String str : ALL_CHR) {
-            if (chr.equalsIgnoreCase("chr" + str)) {
+            if (chr.equalsIgnoreCase(str)) {
                 isValid = true;
             }
         }
 
         if (!isValid) {
-            ErrorManager.print("Invalid region: " + chr);
+            ErrorManager.print("Invalid chr: " + chr);
         }
     }
 

@@ -1,7 +1,6 @@
 package function.coverage.base;
 
 import function.variant.base.Region;
-import function.variant.base.Variant;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,14 +14,6 @@ public class Exon {
     String stable_id;
     String transcript_stable_id;
     CoveredRegion covRegion;
-
-    public Exon(int id, String stableId, int region_id, String chr, int start, int end) {
-        exon_id = id;
-        stable_id = stableId;
-        transcript_stable_id = "";
-
-        covRegion = new CoveredRegion(region_id, chr, start, end);
-    }
 
     public Exon(int id, String stableId, int region_id, String chr,
             int start, int end, String trans_stable_id) {
@@ -62,10 +53,6 @@ public class Exon {
         return covRegion.getCoverage(min_cov);
     }
     
-    public boolean contains(Variant var) {
-        return covRegion.contains(var.getRegion());
-    }
-
     public boolean contains(Region region) {
         return covRegion.contains(region);
     }

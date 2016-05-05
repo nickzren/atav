@@ -396,11 +396,6 @@ public class SampleStatistics {
         }
     }
 
-    public int getSampleCoverageById(int sampleid) {
-        int column = Id2Index.get(sampleid);
-        return getSampleCoverageByIndex(column);
-    }
-
     public int getSampleCoverageByIndex(int sampleIndex) {
         int CumResult = 0;
         for (int i = 0; i < aLength.length; i++) {

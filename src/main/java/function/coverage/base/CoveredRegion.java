@@ -31,13 +31,11 @@ public class CoveredRegion extends Region {
         ArrayList<HashMap<Integer, Integer>> result = CalculateCoverage(strQuery, min_cov);
         strQuery = getCoverageString(1, min_cov[0]); //for exome
         ArrayList<HashMap<Integer, Integer>> result1 = CalculateCoverage(strQuery, min_cov);
-        strQuery = getEVSCoverageRangeString();
-
-        ArrayList<HashMap<Integer, Integer>> result2 = null;
 
         for (int i = 0; i < min_cov.length; i++) { //merge genome and exome results
             result.get(i).putAll(result1.get(i));
         }
+        
         return result;
     }
 
@@ -51,19 +49,6 @@ public class CoveredRegion extends Region {
             result.get(1)[i] += result1.get(1)[i]; //control
         }
         return result;
-    }
-
-    public String getEVSCoverageRangeString() {
-        if (chrStr.length() > 2) { //a quick and dirty check
-            return "";
-        } else {
-            String str = SqlQuery.EVS_COVERAGE_RANGE;
-            str = str.replaceAll("_CHR_", chrStr);
-            str = str.replaceAll("_POS1_", new Integer(startPosition).toString());
-            str = str.replaceAll("_POS2_", new Integer(endPosition).toString());
-            return str;
-        }
-
     }
 
     public String getCoverageString(int DataTypeIndex, int min_cov) {//min_cov  not used here
@@ -227,7 +212,7 @@ public class CoveredRegion extends Region {
 
         int endIndex = 0;
 
-        String oneCovBinStr, oneCovBinLength, covStr;
+        String oneCovBinStr, oneCovBinLength;
 
         for (int i = 0; i < allCovBinArray.length; i++) {
             oneCovBinStr = allCovBinArray[i];
@@ -236,8 +221,8 @@ public class CoveredRegion extends Region {
             int startIndex = endIndex + 1;
             endIndex += Integer.valueOf(oneCovBinLength);
 
-            covStr = oneCovBinStr.substring(oneCovBinStr.length() - 1);
-            int cov = getCoverageByBin(covStr);
+            char covStr = oneCovBinStr.charAt(oneCovBinStr.length() - 1);
+            int cov = CoverageBlockManager.getCoverageByBin(covStr);
 
             if (cov >= minCoverage) {
                 list.add(new CoverageInterval(sampleBlockPos, startIndex, endIndex, cov));
@@ -249,26 +234,5 @@ public class CoveredRegion extends Region {
         }
 
         return list;
-    }
-
-    /* 
-     a: 0-2
-     b: 3-9
-     c: 10-19
-     d: 20-200
-     e: 201
-     */
-    private static int getCoverageByBin(String bin) {
-        if (bin.equals("b")) {
-            return 3;
-        } else if (bin.equals("c")) {
-            return 10;
-        } else if (bin.equals("d")) {
-            return 20;
-        } else if (bin.equals("e")) {
-            return 201;
-        } else {
-            return Data.NA;
-        }
     }
 }

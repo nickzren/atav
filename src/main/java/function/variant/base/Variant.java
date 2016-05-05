@@ -136,4 +136,8 @@ public class Variant {
     public boolean isDel() {
         return refAllele.length() > allele.length();
     }
+    
+    public String getSiteId() {
+        return region.getChrStr() + "-" + region.getStartPosition();
+    }
 }
