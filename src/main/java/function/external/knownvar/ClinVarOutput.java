@@ -67,7 +67,7 @@ public class ClinVarOutput {
         sb.append(clinvar.getDiseaseName()).append(",");
         sb.append(clinvar.getPubmedID()).append(",");
         sb.append(flankingCount).append(",");
-        sb.append(siteCount).append(",");
+//        sb.append(siteCount).append(",");
 
         return sb.toString();
     }

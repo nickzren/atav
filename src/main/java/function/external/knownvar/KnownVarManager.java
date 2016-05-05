@@ -48,7 +48,7 @@ public class KnownVarManager {
                     + "ClinVar Disease Name,"
                     + "ClinVar PubmedID,"
                     + "ClinVar Flanking Count,"
-                    + "ClinVar Site Count,"
+//                    + "ClinVar Site Count,"
                     + "ClinVar Pathogenic Indel Count,"
                     + "Clinvar Pathogenic CNV Count,"
                     + "ClinVar Pathogenic SNV Splice Count,"
