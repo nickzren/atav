@@ -1,8 +1,8 @@
 package function.variant.base;
 
 import function.annotation.base.GeneManager;
+import function.external.knownvar.ClinVar;
 import function.external.knownvar.KnownVarManager;
-import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -96,8 +96,8 @@ public class VariantManager {
         clearIncludeVarSet();
 
         // init ClinVar variants set
-        for (String var : KnownVarManager.getClinVarMap().keySet()) {
-            addVariantToList(var, includeVariantSet, true);
+        for (ClinVar clinvar : KnownVarManager.getClinVarMultiMap().values()) {
+            addVariantToList(clinvar.getVariantId(), includeVariantSet, true);
         }
 
         // init HGMD variants set

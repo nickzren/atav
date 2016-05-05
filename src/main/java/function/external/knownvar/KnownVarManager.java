@@ -1,10 +1,13 @@
 package function.external.knownvar;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import utils.DBManager;
@@ -27,7 +30,8 @@ public class KnownVarManager {
     public static final String pgxTable = "knownvar.PGx_2016_04_26";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
 
-    private static final HashMap<String, ClinVar> clinVarMap = new HashMap<String, ClinVar>();
+    private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
+
     private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<String, ClinVarPathoratio>();
     private static final HashMap<String, HGMD> hgmdMap = new HashMap<String, HGMD>();
     private static final HashMap<String, String> omimMap = new HashMap<String, String>();
@@ -44,6 +48,7 @@ public class KnownVarManager {
                     + "ClinVar Disease Name,"
                     + "ClinVar PubmedID,"
                     + "ClinVar Flanking Count,"
+                    + "ClinVar Site Count,"
                     + "ClinVar Pathogenic Indel Count,"
                     + "Clinvar Pathogenic CNV Count,"
                     + "ClinVar Pathogenic SNV Splice Count,"
@@ -102,15 +107,15 @@ public class KnownVarManager {
                 int pos = rs.getInt("pos");
                 String ref = rs.getString("ref");
                 String alt = rs.getString("alt");
-                String clinicalSignificance = rs.getString("ClinicalSignificance");
-                String otherIds = rs.getString("OtherIds").replaceAll(",", " | ");
-                String diseaseName = rs.getString("DiseaseName").replaceAll(",", "");
-                String pubmedID = rs.getString("PubmedID");
+                String clinicalSignificance = FormatManager.getString(rs.getString("ClinicalSignificance"));
+                String otherIds = FormatManager.getString(rs.getString("OtherIds").replaceAll(",", " | "));
+                String diseaseName = FormatManager.getString(rs.getString("DiseaseName").replaceAll(",", ""));
+                String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
 
                 ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
                         clinicalSignificance, otherIds, diseaseName, pubmedID);
 
-                clinVarMap.put(clinVar.getVariantId(), clinVar);
+                clinVarMultiMap.put(clinVar.getSiteId(), clinVar);
             }
 
             rs.close();
@@ -295,21 +300,17 @@ public class KnownVarManager {
         }
     }
 
-    public static ClinVar getClinVar(Variant var) {
-        ClinVar clinVar = clinVarMap.get(var.variantIdStr);
+    public static ClinVarOutput getClinVarOutput(Variant var) {
+        Collection<ClinVar> collection = clinVarMultiMap.get(var.getSiteId());
 
-        if (clinVar == null) {
-            clinVar = new ClinVar(var.region.chrStr, var.region.startPosition,
-                    var.refAllele, var.allele, "NA", "NA", "NA", "NA");
-        }
+        ClinVarOutput output = new ClinVarOutput(var.region.chrStr, var.region.startPosition,
+                    var.refAllele, var.allele, collection);
 
-        clinVar.initFlankingCount();
-
-        return clinVar;
+        return output;
     }
 
-    public static HashMap<String, ClinVar> getClinVarMap() {
-        return clinVarMap;
+    public static Multimap<String, ClinVar> getClinVarMultiMap() {
+        return clinVarMultiMap;
     }
 
     public static ClinGen getClinGen(String geneName) {

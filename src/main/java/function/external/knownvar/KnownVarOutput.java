@@ -11,7 +11,7 @@ import function.external.subrvis.SubRvisManager;
  */
 public class KnownVarOutput {
 
-    private ClinVar clinVar;
+    private ClinVarOutput clinVarOutput;
     private ClinVarPathoratio clinVarPathoratio;
     private HGMD hgmd;
     private String omimDiseaseName;
@@ -31,7 +31,7 @@ public class KnownVarOutput {
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
             String geneName = annotatedVar.getGeneName().toUpperCase();
-            clinVar = KnownVarManager.getClinVar(annotatedVar);
+            clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
             clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
             hgmd = KnownVarManager.getHGMD(annotatedVar);
             omimDiseaseName = KnownVarManager.getOMIM(geneName);
@@ -46,7 +46,7 @@ public class KnownVarOutput {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(clinVar.toString());
+        sb.append(clinVarOutput.toString());
         sb.append(clinVarPathoratio.toString());
         sb.append(hgmd.toString());
         sb.append(omimDiseaseName).append(",");
