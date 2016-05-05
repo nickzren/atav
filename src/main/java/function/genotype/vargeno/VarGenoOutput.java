@@ -86,23 +86,6 @@ public class VarGenoOutput extends Output {
     public VarGenoOutput(CalledVariant c) {
         super(c);
     }
-    
-    @Override
-    public boolean isRecessive() {
-        if (isMinorRef) {
-            if (sampleCount[Index.REF][Index.CASE]
-                    + sampleCount[Index.REF_MALE][Index.CASE] > 0) {
-                return true;
-            }
-        } else {
-            if (sampleCount[Index.HOM][Index.CASE]
-                    + sampleCount[Index.HOM_MALE][Index.CASE] > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     public String getString(Sample sample) {
         StringBuilder sb = new StringBuilder();

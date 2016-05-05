@@ -21,7 +21,6 @@ public class CollapsingCommand {
     public static String coverageSummaryFile = "";
     public static double maxLooMaf = Data.NO_FILTER;
     public static double maxLooMafRec = Data.NO_FILTER;
-    public static double maxLooMhgfRec = Data.NO_FILTER;
     public static double maxLooCombFreq = Data.NO_FILTER;
     public static boolean isCollapsingDoLinear = false;
     public static boolean isCollapsingDoLogistic = false;
@@ -42,11 +41,6 @@ public class CollapsingCommand {
                     || option.getName().equals("--max-loo-maf-rec")) {
                 checkValueValid(0.5, 0, option);
                 maxLooMafRec = getValidDouble(option);
-            } else if (option.getName().equals("--loo-mhgf-rec")
-                    || option.getName().equals("--loo-mhgf-recessive")
-                    || option.getName().equals("--max-loo-mhgf-rec")) {
-                checkValueValid(0.5, 0, option);
-                maxLooMhgfRec = getValidDouble(option);
             } else if (option.getName().equals("--read-coverage-summary")) {
                 coverageSummaryFile = getValidPath(option);
                 GeneManager.initCoverageSummary();
@@ -85,11 +79,6 @@ public class CollapsingCommand {
                     || option.getName().equals("--max-loo-maf-rec")) {
                 checkValueValid(0.5, 0, option);
                 maxLooMafRec = getValidDouble(option);
-            } else if (option.getName().equals("--loo-mhgf-rec")
-                    || option.getName().equals("--loo-mhgf-recessive")
-                    || option.getName().equals("--max-loo-mhgf-rec")) {
-                checkValueValid(0.5, 0, option);
-                maxLooMhgfRec = getValidDouble(option);
             } else if (option.getName().equals("--loo-comb-freq")
                     || option.getName().equals("--max-loo-comb-freq")) {
                 checkValueValid(1, 0, option);
@@ -133,18 +122,6 @@ public class CollapsingCommand {
         }
 
         if (value <= maxLooMafRec) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isMaxLooMhgfRecValid(double value) {
-        if (maxLooMhgfRec == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value <= maxLooMhgfRec) {
             return true;
         }
 

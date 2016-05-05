@@ -1,5 +1,4 @@
 
-import com.google.common.base.Stopwatch;
 import function.genotype.base.SampleManager;
 import function.variant.base.RegionManager;
 import function.annotation.base.FunctionManager;

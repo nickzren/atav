@@ -23,8 +23,6 @@ public class GenotypeLevelFilterCommand {
     public static double maf = 0.5;
     public static double maxCtrlMaf = 0.5; // max ctrl maf
     public static double minCtrlMaf = Data.NO_FILTER;
-    public static double maxCtrlMafRec = Data.NO_FILTER;
-    public static double maxCtrlMhgfRec = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
     public static int minCaseCoverageCall = Data.NO_FILTER;
     public static int minCaseCoverageNoCall = Data.NO_FILTER;
@@ -72,14 +70,6 @@ public class GenotypeLevelFilterCommand {
             } else if (option.getName().equals("--min-ctrl-maf")) {
                 checkValueValid(0.5, 0, option);
                 minCtrlMaf = getValidDouble(option);
-            } else if (option.getName().equals("--ctrl-maf-rec")
-                    || option.getName().equals("--max-ctrl-maf-rec")) {
-                maxCtrlMafRec = getValidDouble(option);
-                checkValueValid(0.5, 0, option);
-            } else if (option.getName().equals("--ctrl-mhgf-rec")
-                    || option.getName().equals("--max-ctrl-mhgf-rec")) {
-                maxCtrlMhgfRec = getValidDouble(option);
-                checkValueValid(0.5, 0, option);
             } else if (option.getName().equals("--min-coverage")) {
                 checkValueValid(new String[]{"0", "3", "10", "20", "201"}, option);
                 minCoverage = getValidInteger(option);
@@ -191,30 +181,6 @@ public class GenotypeLevelFilterCommand {
         }
 
         if (value >= minCtrlMaf) {
-            return true;
-        }
-
-        return false;
-    }
-    
-     public static boolean isMaxCtrlMafRecValid(double value) {
-        if (maxCtrlMafRec == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value <= maxCtrlMafRec) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isMaxCtrlMhgfRecValid(double value) {
-        if (maxCtrlMhgfRec == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value <= maxCtrlMhgfRec) {
             return true;
         }
 
