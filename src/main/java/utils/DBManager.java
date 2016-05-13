@@ -12,6 +12,8 @@ import java.util.Properties;
  */
 public class DBManager {
 
+    private static int maxATAVJobNum; // using this to control max connections to AnnoDB server
+
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_PORT = "3306";
 
@@ -74,6 +76,7 @@ public class DBManager {
             homoSapiensCoreName = prop.getProperty("homo_sapiens_core");
             dbUser = prop.getProperty("dbuser");
             dbPassword = prop.getProperty("dbpassword");
+            maxATAVJobNum = Integer.parseInt(prop.getProperty("max-atav-job"));
         } catch (IOException e) {
             ErrorManager.send(e);
         }
@@ -142,11 +145,11 @@ public class DBManager {
             while (true) {
                 minNum = getMinNumFromServers();
 
-                if (minNum <= 10) {
+                if (minNum <= maxATAVJobNum) {
                     break;
                 } else {
                     LogManager.writeAndPrint("All available AnnoDB servers are "
-                            + "reached to max concurrent jobs(10), your job "
+                            + "reached to max concurrent jobs, your job "
                             + "will wait for 30 minutes then auto restart.");
 
                     Thread.sleep(1800000);
