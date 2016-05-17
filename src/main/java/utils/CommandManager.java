@@ -266,17 +266,11 @@ public class CommandManager {
                 CollapsingCommand.isCollapsingCompHet = true;
             } else if (option.getName().equals("--fisher")) {
                 StatisticsCommand.isFisher = true;
-                StatisticsCommand.models = new String[4];
-                StatisticsCommand.models[0] = "allelic";
-                StatisticsCommand.models[1] = "dominant";
-                StatisticsCommand.models[2] = "recessive";
-                StatisticsCommand.models[3] = "genotypic";
             } else if (option.getName().equals("--linear")) {
                 StatisticsCommand.isLinear = true;
-                StatisticsCommand.models = new String[4];
-                StatisticsCommand.models[0] = "allelic";
-                StatisticsCommand.models[1] = "dominant";
-                StatisticsCommand.models[2] = "recessive";
+                StatisticsCommand.models[3] = "additive";
+            } else if (option.getName().equals("--logistic")) {
+                StatisticsCommand.isLogistic = true;
                 StatisticsCommand.models[3] = "additive";
             } else if (option.getName().equals("--family-analysis")) {
                 FamilyCommand.isFamilyAnalysis = true;
@@ -379,7 +373,9 @@ public class CommandManager {
             StatisticsCommand.initFisherOptions(optionList.iterator());
         } else if (StatisticsCommand.isLinear) {
             StatisticsCommand.initLinearOptions(optionList.iterator());
-        } else if (FamilyCommand.isFamilyAnalysis) {
+        } else if (StatisticsCommand.isLogistic) {
+            StatisticsCommand.initLogisticOptions(optionList.iterator());
+        }else if (FamilyCommand.isFamilyAnalysis) {
             FamilyCommand.initOptions(optionList.iterator());
         } else if (SiblingCommand.isSiblingCompHet) {
 
