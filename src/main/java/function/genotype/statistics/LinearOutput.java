@@ -58,7 +58,7 @@ public class LinearOutput extends StatisticOutput {
             + "Artifacts in Gene,"
             + "Codon Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle() 
+            + ExacManager.getTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
@@ -87,7 +87,7 @@ public class LinearOutput extends StatisticOutput {
         SimpleRegression sr = new SimpleRegression(true);
         for (Sample sample : SampleManager.getList()) {
             int geno = calledVar.getGenotype(sample.getIndex());
-            if (geno >= 0) {
+            if (geno != Data.NA) {
                 double y = sample.getQuantitativeTrait();
                 if (model.equals("allelic")) {
                     if (isMinorRef) {
@@ -271,15 +271,15 @@ public class LinearOutput extends StatisticOutput {
         sb.append(calledVar.getTranscriptSet()).append(",");
 
         sb.append(calledVar.getExacStr());
-        
+
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
-        
+
         sb.append(calledVar.getRvis());
-        
+
         sb.append(calledVar.getSubRvis());
-        
+
         sb.append(calledVar.get1000Genomes());
 
         return sb.toString();
