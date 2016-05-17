@@ -15,8 +15,9 @@ public class StatisticsCommand {
 
     public static boolean isFisher = false;
     public static boolean isLinear = false;
+    public static boolean isLogistic = false;
     public static double threshold4Sort = Data.NO_FILTER;
-    public static String[] models = {"allelic", "dominant", "recessive", "genotypic"};
+    public static String[] models = {"allelic", "dominant", "recessive", "genotypic"}; // default is fisher models
     public static boolean isCaseOnly = false;
     public static String covariateFile = "";
     public static String quantitativeFile = "";
@@ -51,6 +52,21 @@ public class StatisticsCommand {
                 covariateFile = getValidPath(option);
             } else if (option.getName().equals("--quantitative")) {
                 quantitativeFile = getValidPath(option);
+            } else {
+                continue;
+            }
+
+            iterator.remove();
+        }
+    }
+
+    public static void initLogisticOptions(Iterator<CommandOption> iterator) {
+        CommandOption option;
+
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            if (option.getName().equals("--covariate")) {
+                covariateFile = getValidPath(option);
             } else {
                 continue;
             }
