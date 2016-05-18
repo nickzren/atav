@@ -1,15 +1,10 @@
 package function.coverage.base;
 
 import function.variant.base.Region;
-import global.Data;
 import function.annotation.base.GeneManager;
-import function.genotype.base.GenotypeLevelFilterCommand;
-import function.genotype.base.SampleManager;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -42,7 +37,15 @@ public class Gene {
         try {
             chr = "";
 
-            String geneChrSql = SqlQuery.GENE_CHR.replaceAll("_GENE_", name);
+            String GENE_CHR = "SELECT name "
+                    + "FROM _VAR_TYPE__gene_hit g, _VAR_TYPE_ v, seq_region r "
+                    + "WHERE g.gene_name = '_GENE_' "
+                    + "AND g._VAR_TYPE__id = v._VAR_TYPE__id "
+                    + "AND v.seq_region_id = r.seq_region_id "
+                    + "AND coord_system_id = 2 "
+                    + "LIMIT 1";
+
+            String geneChrSql = GENE_CHR.replaceAll("_GENE_", name);
 
             String sql = geneChrSql.replaceAll("_VAR_TYPE_", "snv");
 
@@ -105,139 +108,6 @@ public class Gene {
         return false;
     }
 
-    private int getFirstCCDSTranscriptId() throws Exception {
-        String str;
-        if (nameType.equalsIgnoreCase("Slave") || nameType.equals("stable_id")) {
-            System.out.println("Should not happen");
-            return Data.NA;
-        }
-
-        str = "SELECT t.transcript_id "
-                + "FROM _DB_HSC_.transcript t, "
-                + "_DB_HSC_.object_xref ox, _DB_HSC_.xref x "
-                + "WHERE t.gene_id = ox.ensembl_id "
-                + "AND ox.ensembl_object_type = 'Gene' "
-                + "AND ox.xref_id = x.xref_id "
-                + "AND external_db_id = 1100 "
-                + "AND display_label = '_GENE_' "
-                + "AND t.stable_id like 'ENST%' ";
-
-        str = str.replaceAll("_GENE_", name);
-        str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
-
-        ArrayList<Integer> candidates = DBUtils.getIntList(str, "transcript_id");
-        for (int i = 0; i < candidates.size(); i++) {
-            int transcriptid = candidates.get(i);
-            if (isCCDS(transcriptid)) {
-                return transcriptid;
-            }
-        }
-        return Data.NA;
-    }
-
-    public int getCanonicalTranscriptId() throws Exception {
-        String str;
-        if (nameType.equalsIgnoreCase("Slave")) {
-            System.out.println("Should not happen");
-            return Data.NA;
-        }
-        if (nameType.equals("stable_id")) {
-            str = "SELECT t.transcript_id "
-                    + "FROM _DB_HSC_.transcript t, _DB_HSC_.gene g "
-                    + "WHERE t.gene_id = g.gene_id "
-                    + "AND t.transcript_id = g.canonical_transcript_id "
-                    + "AND g.stable_id = '_GENE_' ";
-        } else {
-            str = "SELECT t.transcript_id "
-                    + "FROM _DB_HSC_.transcript t, _DB_HSC_.gene g, "
-                    + "_DB_HSC_.object_xref ox, _DB_HSC_.xref x "
-                    + "WHERE t.gene_id = ox.ensembl_id "
-                    + "AND t.transcript_id = g.canonical_transcript_id "
-                    + "AND ox.ensembl_object_type = 'Gene' "
-                    + "AND ox.xref_id = x.xref_id "
-                    + "AND external_db_id = 1100 "
-                    + "AND display_label = '_GENE_' "
-                    + "AND t.stable_id like 'ENST%' ";
-        }
-        str = str.replaceAll("_GENE_", name);
-        str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
-
-        return DBUtils.getUniqueInt(str, "transcript_id");
-    }
-
-    public boolean isCCDS(int transcriptid) throws Exception {
-        String str = "SELECT t.transcript_id "
-                + "FROM _DB_HSC_.transcript t, _DB_HSC_.object_xref ox,_DB_HSC_.xref x "
-                + "WHERE transcript_id = ensembl_id "
-                + "AND x.xref_id = ox.xref_id "
-                + "AND ensembl_object_type = 'Transcript' "
-                + "AND external_db_id = 3800 "
-                + "AND t.transcript_id ='_TRANSCRIPT_' ";
-
-        str = str.replaceAll("_TRANSCRIPT_", new Integer(transcriptid).toString());
-        str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
-
-        return DBUtils.isEmpty(str);
-    }
-
-    public boolean isCCDS() throws Exception {
-        int ConalticalID = getCanonicalTranscriptId();
-        if (ConalticalID == Data.NA) {
-            return false;
-        }
-        return isCCDS(ConalticalID);
-    }
-
-    public HashMap<Integer, Double> getCoverageFromTable() {
-        HashMap<Integer, Double> result = new HashMap<Integer, Double>();
-        String strQuery = "SELECT sample_id, coverage_ratio FROM gene_coverage_summary c,"
-                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
-                + "WHERE gene = '" + name + "' AND c.sample_id = t.id "
-                + "AND min_coverage = " + GenotypeLevelFilterCommand.minCoverage;
-
-        try {
-            ResultSet rs = DBManager.executeQuery(strQuery);
-
-            while (rs.next()) {
-                int sample_id = rs.getInt("sample_id");
-                int coverage_ratio = rs.getInt("coverage_ratio");
-                result.put(sample_id, (double) coverage_ratio / 10000.0); //scaled by 10000
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
-        return result;
-    }
-
-    private void filterByUTR(Region translated) {
-        if (translated != null) {
-            InputList FilteredExons = new InputList();
-            for (Iterator it = exonList.iterator(); it.hasNext();) {
-                Exon exon = (Exon) it.next();
-                CoveredRegion region = exon.getCoveredRegion().intersect(translated);
-                if (region != null) {
-                    exon.setRegion(region);
-                    FilteredExons.add(exon);
-                }
-            }
-
-            exonList = FilteredExons;
-        }
-    }
-
-    public void filterByUTR() {
-        Region translated = getTranslatedRegion();
-        filterByUTR(translated);
-    }
-
-    public void filterByUTRFromTranscriptID(int transcriptid) {
-        Region translated = getTranslatedRegionFromTranscriptID(transcriptid);
-        filterByUTR(translated);
-    }
-
     private String getStdName() {
         if (getType().equalsIgnoreCase("Slave")) {
             String[] fields = name.trim().replace("(", "").replace(")", "").split(" ");
@@ -265,33 +135,8 @@ public class Gene {
             int seq_region_end = Integer.parseInt(r[2]);
             //String chr = fields[1];
             String stable_id = "Exon_" + seq_region_start + "_" + seq_region_end;
-            exonList.add(new Exon(exon_id, stable_id, seq_region_id, chr, seq_region_start, seq_region_end, ""));
+            exonList.add(new Exon(exon_id, stable_id, seq_region_id, chr, seq_region_start, seq_region_end));
         }
-    }
-
-    public void populateExonList() {
-        exonList = DBUtils.getExonList(getExonString());
-    }
-
-    public int populateExonListFromTranscriptID() throws Exception {
-        int transcriptid = getFirstCCDSTranscriptId();
-        String sql = getExonStringfromTranscriptID(transcriptid);
-        exonList = DBUtils.getExonList(sql);
-        return transcriptid;
-    }
-
-    public Region getTranslatedRegion() {
-        if (translatedRegion == null) {
-            translatedRegion = DBUtils.getTranslatedRegion(getUTRString());
-        }
-        return translatedRegion;
-    }
-
-    public Region getTranslatedRegionFromTranscriptID(int transcriptid) {
-        if (translatedRegion == null) {
-            translatedRegion = DBUtils.getTranslatedRegion(getUTRStringFromTranscriptID(transcriptid));
-        }
-        return translatedRegion;
     }
 
     public InputList getExonList() {
@@ -299,64 +144,6 @@ public class Gene {
             exonList = new InputList();
         }
         return exonList;
-    }
-
-    private String getExonStringfromTranscriptID(int transcriptid) { //please refactor this name if necessary
-        if (isValid() && transcriptid > 0) {
-            String str = SqlQuery.GENE_EXON_TRANSCRIPTID;
-            str = str.replaceAll("_TRANSCRIPTID_", new Integer(transcriptid).toString());
-            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
-            return str;
-        } else {
-            return "";
-        }
-    }
-
-    public String getExonString() {
-        if (isValid()) {
-            String str;
-
-            if (nameType.equals("symbol")) {
-                str = SqlQuery.GENE_EXON_NAME;
-
-            } else {
-                str = SqlQuery.GENE_EXON_STABLEID;
-            }
-            str = str.replaceAll("_GENE_", name);
-            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
-            return str;
-        } else {
-            return "";
-        }
-    }
-
-    public String getUTRString() {  //should be merged with getExon 
-        if (isValid()) {
-            String str;
-            if (nameType.equals("symbol")) {
-                str = SqlQuery.GENE_UTR_NAME;
-
-            } else {
-                str = SqlQuery.GENE_UTR_STABLEID;
-            }
-            str = str.replaceAll("_GENE_", name);
-            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
-            return str;
-        } else {
-            return "";
-        }
-    }
-
-    public String getUTRStringFromTranscriptID(int transcriptid) {  //should be merged with getExon 
-        if (isValid()) {
-            String str = SqlQuery.GENE_UTR_TRANSCRIPTID;
-            str = str.replaceAll("_GENE_", name);
-            str = str.replaceAll("_TRANSCRIPTID_", new Integer(transcriptid).toString());
-            str = str.replaceAll("_DB_HSC_", DBManager.homoSapiensCoreName);
-            return str;
-        } else {
-            return "";
-        }
     }
 
     public int getLength() {

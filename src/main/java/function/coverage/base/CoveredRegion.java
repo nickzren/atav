@@ -2,7 +2,6 @@ package function.coverage.base;
 
 import function.genotype.base.CoverageBlockManager;
 import function.variant.base.Region;
-import global.Data;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.DBManager;
@@ -35,7 +34,7 @@ public class CoveredRegion extends Region {
         for (int i = 0; i < min_cov.length; i++) { //merge genome and exome results
             result.get(i).putAll(result1.get(i));
         }
-        
+
         return result;
     }
 
@@ -55,7 +54,13 @@ public class CoveredRegion extends Region {
         if (chrStr.length() > 2) {
             return "";
         } else {
-            String str = SqlQuery.Region_Coverage_1024;
+            String str = "SELECT sample_id, position, min_coverage FROM "
+                    //+ "_SAMPLE_TYPE__read_coverage_1024_test_chr_CHROM_ c ,"
+                    + "_SAMPLE_TYPE__read_coverage_1024_chr_CHROM_ c ,"
+                    + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
+                    + "WHERE position in (_POSITIONS_) "
+                    + "AND c.sample_id = t.id ";
+
             str = str.replaceAll("_SAMPLE_TYPE_", SampleManager.SAMPLE_TYPE[DataTypeIndex]);
             str = str.replaceAll("_CHROM_", chrStr);
             str = str.replaceAll("_POSITIONS_", getPositionString());
@@ -75,19 +80,6 @@ public class CoveredRegion extends Region {
             int newend = Math.min(endPosition, end);
             return new CoveredRegion(regionId, chrStr, newstart, newend);
         }
-        return null;
-    }
-
-    // find the intersection of two regions
-    public CoveredRegion intersect(Region other) {
-        if (regionId == other.getRegionId()) {
-            if (other.getEndPosition() >= startPosition && other.getStartPosition() <= endPosition) {
-                int start = Math.max(startPosition, other.getStartPosition());
-                int end = Math.min(endPosition, other.getEndPosition());
-                return new CoveredRegion(regionId, chrStr, start, end);
-            }
-        }
-
         return null;
     }
 
@@ -144,10 +136,10 @@ public class CoveredRegion extends Region {
     public ArrayList<int[]> CalculateCoverageForSites(String strQuery) {
         int SiteStart = getStartPosition();
         // now store results for cases and controls separately
-        ArrayList<int []> result = new ArrayList<>();
+        ArrayList<int[]> result = new ArrayList<>();
         result.add(new int[getLength()]);
         result.add(new int[getLength()]);
-       
+
         int min_coverage = GenotypeLevelFilterCommand.minCoverage;
         if (!strQuery.isEmpty()) {
             try {

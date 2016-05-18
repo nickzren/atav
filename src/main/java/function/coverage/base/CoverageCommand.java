@@ -20,9 +20,7 @@ public class CoverageCommand {
     public static String coveredRegionFile = "";
     public static boolean isCaseControlSeparate = false;
     public static double minPercentRegionCovered = 0; //so all is output by default 
-    public static boolean isExcludeUTR = false;
     public static boolean isByExon = false;
-    public static boolean isTerse = false;
     public static double exonCleanCutoff = -1.0; //not used by default
     public static double geneCleanCutoff = 1.0;
     public static double siteCleanCutoff = -1.0; // not used by default
@@ -41,8 +39,6 @@ public class CoverageCommand {
             option = (CommandOption) iterator.next();
             if (option.getName().equals("--covered-region")) { //this will be the only option allowed for pipeline
                 coveredRegionFile = getValidPath(option);
-            } else if (option.getName().equals("--terse")) {
-                isTerse = true;
             } else {
                 continue;
             }
@@ -90,13 +86,9 @@ public class CoverageCommand {
                 coveredRegionFile = getValidPath(option);
             } else if (option.getName().equals("--percent-region-covered")) {
                 minPercentRegionCovered = getValidDouble(option);
-            } else if (option.getName().equals("--exclude-utr")) {
-                isExcludeUTR = true;
             } else if (option.getName().equals("--by-exon")
                     || option.getName().equals("--include-exon-file")) {
                 isByExon = true;
-            } else if (option.getName().equals("--terse")) {
-                isTerse = true;
             } else {
                 continue;
             }

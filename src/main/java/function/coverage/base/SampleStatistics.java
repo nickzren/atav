@@ -319,19 +319,6 @@ public class SampleStatistics {
         }
     }
 
-    public void updateMatrixRowInDataBase(int record) throws Exception {
-        int scaledCoverageRatio[] = new int[SampleNames.length];
-        for (int i = 0; i < SampleNames.length; i++) {
-            if (aLength[record] > 0) {
-                scaledCoverageRatio[i] = (int) (aCoverage[record][i] / aLength[record] * 10000);
-            } else {
-                scaledCoverageRatio[i] = Data.NA; //should not happen in Slave's case
-            }
-        }
-
-        DBUtils.updateGeneCoverageSummary(RecordNames[record], Index2Id, scaledCoverageRatio);
-    }
-
     //a hack here, Nick, please refactor to merge with one of the print function 
     //only used by siteCoverageComparison for some extra output
     public void updateSampleRegionCoverage(int record) {

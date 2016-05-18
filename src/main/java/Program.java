@@ -15,7 +15,6 @@ import function.genotype.collapsing.CollapsingCompHet;
 import function.genotype.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
 import function.coverage.summary.CoverageSummary;
-import function.coverage.summary.CoverageSummaryPipeline;
 import function.coverage.summary.SiteCoverageSummary;
 import function.genotype.family.FamilyAnalysis;
 import function.genotype.parental.ParentalMosaic;
@@ -170,10 +169,6 @@ public class Program {
                 LogManager.writeAndPrint("It is running a site coverage comparison function...");
                 SiteCoverageComparison coverageList = new SiteCoverageComparison();
                 coverageList.run();
-            } else if (CoverageCommand.isCoverageSummaryPipeline) {
-                LogManager.writeAndPrint("It is running a coverage summary for pipeline function...");
-                CoverageSummaryPipeline coverageSummary = new CoverageSummaryPipeline();
-                coverageSummary.run();
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
             } else if (ExacCommand.isListExac) {

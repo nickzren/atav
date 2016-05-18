@@ -1,16 +1,13 @@
 package function.coverage.summary;
 
-import function.annotation.base.AnnotationLevelFilterCommand;
 import function.coverage.base.CoverageCommand;
 import function.coverage.base.SampleStatistics;
 import function.coverage.base.CoveredRegion;
 import function.coverage.base.Exon;
 import function.coverage.base.Gene;
 import function.coverage.base.InputList;
-import function.coverage.base.Transcript;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
-import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -27,7 +24,6 @@ import java.util.Iterator;
  */
 public class CoverageSummary extends InputList {
 
-    boolean isSystemGeneIndexFile = false;
     public BufferedWriter bwSampleSummary = null;
     public BufferedWriter bwSampleRegionSummary = null;
     public BufferedWriter bwSampleMatrixSummary = null;
@@ -44,33 +40,25 @@ public class CoverageSummary extends InputList {
 
     public CoverageSummary() {
         super();
-        
+
         if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
             ErrorManager.print("--min-coverage option has to be used in this function.");
         }
 
         try {
-            isSystemGeneIndexFile = CoverageCommand.coveredRegionFile.contains("/nfs/goldstein/software/atav_home/data");
             BufferedReader br = new BufferedReader(new FileReader(CoverageCommand.coveredRegionFile));
             String str;
-            int LineCount = 0;
             while ((str = br.readLine()) != null && str.length() > 0) {
                 try {
                     if (!addRegion(str)) {
-                        Transcript transcript = new Transcript(str);
-                        if (transcript.isValid()) {
-                            add(transcript);
-                        } else {
-                            Gene gene = new Gene(str);
-                            if (gene.isValid()) {
-                                add(gene);
-                            }
+                        Gene gene = new Gene(str);
+                        if (gene.isValid()) {
+                            add(gene);
                         }
                     }
                 } catch (NumberFormatException e) {
                     LogManager.writeAndPrint("Invalid region format: " + str);
                 }
-                LineCount++;
             }
             br.close();
         } catch (Exception e) {
@@ -99,11 +87,9 @@ public class CoverageSummary extends InputList {
             int record = ss.getNextRecord();
 
             Object obj = it.next();
-            if (!CoverageCommand.isTerse) {
-                System.out.print("Processing " + (record + 1) + " of " + size() + ":        " + obj.toString() + "                              \r");
-            }
 
-            boolean NeedToUpdateDatabase = false;
+            System.out.print("Processing " + (record + 1) + " of " + size() + ":        " + obj.toString() + "                              \r");
+
             String JobType = obj.getClass().getSimpleName();
             //the following should be simplified by implementing a same interface. Q.
             if (JobType.contains("CoveredRegion")) {
@@ -114,81 +100,26 @@ public class CoverageSummary extends InputList {
                 HashMap<Integer, Integer> result = region.getCoverage(mincovs).get(0);
                 ss.accumulateCoverage(record, result);
             } else if (JobType.equals("Gene")) {
-                String trans_stable_id = "";
                 Gene gene = (Gene) obj;
-                ss.setRecordName(record, gene.toString(), gene.getChr());
-                if (gene.getType().equalsIgnoreCase("Slave")) {
-                    NeedToUpdateDatabase = true;
-                    gene.populateSlaveList();
-                    ss.setRecordName(record, gene.getName(), gene.getChr());
-                    ss.setLength(record, gene.getLength());
+                
+                gene.populateSlaveList();
+                ss.setRecordName(record, gene.getName(), gene.getChr());
+                ss.setLength(record, gene.getLength());
 
-                    trans_stable_id = "CONSENOUS_TRANSCRIPT";
-                    if (!CoverageCommand.isByExon && isSystemGeneIndexFile) { //if by exon, then we can't use gene_coverage_summary as we don't have exon info
-                        HashMap<Integer, Double> cv = gene.getCoverageFromTable();
-                        if (cv.size() == SampleManager.getListSize()) {
-                            NeedToUpdateDatabase = false;
-                            ss.setGeneCoverage(record, cv);
-                        }
-                    }
-
-                } else {
-                    if (!AnnotationLevelFilterCommand.isCcdsOnly || gene.isCCDS()) {
-                        gene.populateExonList();
-                        if (CoverageCommand.isExcludeUTR) {
-                            gene.filterByUTR();
-                        }
-                    } else { //deal with --ccsds-only but canonical transcript is not ccds
-                        int transcriptid = gene.populateExonListFromTranscriptID();
-                        if (CoverageCommand.isExcludeUTR && transcriptid > 0) {
-                            gene.filterByUTRFromTranscriptID(transcriptid);
-                        }
-                    }
-                    ss.setRecordName(record, gene.getName(), gene.getChrFromExon());
-                    ss.setLength(record, gene.getLength());
+                for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
+                    Exon exon = (Exon) r.next();
+                    HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
+                    ss.accumulateCoverage(record, result);
+                    ss.printMatrixRowbyExon(record, result, exon, bwSampleExonMatrixSummary);
+                    DoExonSummary(ss, record, result, exon);
                 }
-
-                if (NeedToUpdateDatabase || !gene.getType().equalsIgnoreCase("Slave")) {
-                    for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
-                        Exon exon = (Exon) r.next();
-                        trans_stable_id = exon.getTransStableId();
-                        HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
-                        ss.accumulateCoverage(record, result);
-                        ss.printMatrixRowbyExon(record, result, exon, bwSampleExonMatrixSummary);
-                        DoExonSummary(ss, record, result, exon);
-                    }
-                }
-
-                LogManager.writeLog("Gene ENSTID: " + gene.getName() + "(" + gene.getChr() + ")\t" + trans_stable_id + "\t(" + (record + 1) + " of " + size() + ")");
-
-            } else if (JobType.equals("Transcript")) {
-                Transcript transcript = (Transcript) obj;
-                ss.setRecordName(record, transcript.toString(), "");
-                if (!AnnotationLevelFilterCommand.isCcdsOnly || transcript.isCCDS()) {
-                    transcript.populateExonList();
-                    if (CoverageCommand.isExcludeUTR) {
-                        transcript.filterByUTR();
-                    }
-                    ss.setLength(record, transcript.getLength());
-                    for (Iterator r = transcript.getExonList().iterator(); r.hasNext();) {
-                        Exon exon = (Exon) r.next();
-                        HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
-                        ss.accumulateCoverage(record, result);
-                        if (CoverageCommand.isCoverageSummary) {
-                            ss.print(record, result, exon, bwCoverageDetailsByExon);
-                        }
-                    }
-                }
-            } else {
-                ErrorManager.print("Coverage: undefined object type found: " + JobType);
             }
+
             ss.print(record, bwSampleRegionSummary);
             ss.printMatrixRow(record, bwSampleMatrixSummary);
             DoGeneSummary(ss, record);
-            if (NeedToUpdateDatabase && isSystemGeneIndexFile) {
-                ss.updateMatrixRowInDataBase(record);
-            }
         }
+
         ss.print(bwSampleSummary);
         closeOutput();
     }

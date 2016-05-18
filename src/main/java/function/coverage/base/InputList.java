@@ -43,10 +43,6 @@ public class InputList extends Vector {
         }
     }
 
-    public void addRegion(String chr, int start, int end) {
-        add(new CoveredRegion(chr, start, end));
-    }
-
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
