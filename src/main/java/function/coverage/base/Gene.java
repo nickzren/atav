@@ -22,10 +22,8 @@ public class Gene {
     public Gene(String name) {
         this.name = name.trim();
 
-        if (name.startsWith("ENSG")) {
-            nameType = "stable_id";
-        } else if (name.contains("(")) {
-            nameType = "Slave"; //for now
+        if (name.contains("(")) {
+            nameType = "boundary";
         } else {
             nameType = "symbol";
         }
@@ -109,7 +107,7 @@ public class Gene {
     }
 
     private String getStdName() {
-        if (getType().equalsIgnoreCase("Slave")) {
+        if (getType().equalsIgnoreCase("boundary")) {
             String[] fields = name.trim().replace("(", "").replace(")", "").split(" ");
             return fields[0];
         } else {

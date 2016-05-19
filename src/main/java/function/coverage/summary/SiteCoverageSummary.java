@@ -1,6 +1,7 @@
 package function.coverage.summary;
 
 import function.coverage.base.CoverageCommand;
+import function.coverage.base.CoverageManager;
 import function.coverage.base.CoveredRegion;
 import function.coverage.base.SampleStatistics;
 import function.coverage.base.Exon;
@@ -58,9 +59,9 @@ public class SiteCoverageSummary extends InputList {
         initOutput();
         SampleStatistics ss = new SampleStatistics(size());
 
+        int record = 0;
+        
         for (Iterator it = this.iterator(); it.hasNext();) {
-            int record = ss.getNextRecord();
-
             Object obj = it.next();
             ss.setRecordName(record, obj.toString(),"");
 
@@ -68,7 +69,7 @@ public class SiteCoverageSummary extends InputList {
 
             if (JobType.equals("Gene")) {
                 Gene gene = (Gene) obj;
-                if (gene.getType().equalsIgnoreCase("Slave")) {
+                if (gene.getType().equalsIgnoreCase("boundary")) {
                     gene.populateSlaveList();
                     ss.setRecordName(record, gene.getName(),gene.getChr());
                     ss.setLength(record, gene.getLength());
@@ -79,8 +80,10 @@ public class SiteCoverageSummary extends InputList {
                       
                         CoveredRegion cr = exon.getCoveredRegion();
                         String chr = cr.getChrStr();
-                        int SiteStart = cr.getStartPosition(); 
-                        ArrayList<int[]> SiteCoverage = cr.getCoverageForSites(GenotypeLevelFilterCommand.minCoverage);
+                        int SiteStart = cr.getStartPosition();
+                        
+                        ArrayList<int[]> SiteCoverage =  CoverageManager.getCoverageForSites(GenotypeLevelFilterCommand.minCoverage, cr);
+                        
                         for (int pos = 0; pos < SiteCoverage.get(0).length; pos++) {
                             StringBuilder sb = new StringBuilder();
                             sb.append(gene.getName()).append(",").append(chr).append(",");
@@ -102,6 +105,8 @@ public class SiteCoverageSummary extends InputList {
 
                 LogManager.writeLog("Gene: " + gene.getName() + "\t(" + (record + 1) + " of " + size() + ")");
             }
+            
+            record++;
         }
         emitSS(ss);
         closeOutput();

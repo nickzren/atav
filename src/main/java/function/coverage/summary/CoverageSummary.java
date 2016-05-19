@@ -1,6 +1,7 @@
 package function.coverage.summary;
 
 import function.coverage.base.CoverageCommand;
+import function.coverage.base.CoverageManager;
 import function.coverage.base.SampleStatistics;
 import function.coverage.base.CoveredRegion;
 import function.coverage.base.Exon;
@@ -83,9 +84,9 @@ public class CoverageSummary extends InputList {
             ss.printMatrixHeader(bwSampleExonMatrixSummary, true);
         }
 
+        int record = 0;
+        
         for (Iterator it = this.iterator(); it.hasNext();) {
-            int record = ss.getNextRecord();
-
             Object obj = it.next();
 
             System.out.print("Processing " + (record + 1) + " of " + size() + ":        " + obj.toString() + "                              \r");
@@ -97,7 +98,7 @@ public class CoverageSummary extends InputList {
                 ss.setRecordName(record, region.toString(), region.getChrStr());
                 ss.setLength(record, region.getLength());
                 int[] mincovs = {GenotypeLevelFilterCommand.minCoverage};
-                HashMap<Integer, Integer> result = region.getCoverage(mincovs).get(0);
+                HashMap<Integer, Integer> result = CoverageManager.getCoverage(mincovs, region).get(0);
                 ss.accumulateCoverage(record, result);
             } else if (JobType.equals("Gene")) {
                 Gene gene = (Gene) obj;
@@ -118,6 +119,8 @@ public class CoverageSummary extends InputList {
             ss.print(record, bwSampleRegionSummary);
             ss.printMatrixRow(record, bwSampleMatrixSummary);
             DoGeneSummary(ss, record);
+            
+            record++;
         }
 
         ss.print(bwSampleSummary);

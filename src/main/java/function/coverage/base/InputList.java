@@ -43,6 +43,10 @@ public class InputList extends Vector {
         }
     }
 
+    private String[] parse(String r) {
+        return r.trim().toUpperCase().replace("CHR", "").replaceAll("\\W+", ".").split("\\W");
+    }
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
@@ -55,9 +59,5 @@ public class InputList extends Vector {
             str.append("Empty List");
         }
         return str.toString();
-    }
-
-    private String[] parse(String r) {
-        return r.trim().toUpperCase().replace("CHR", "").replaceAll("\\W+", ".").split("\\W");
     }
 }

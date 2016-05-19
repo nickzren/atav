@@ -32,20 +32,6 @@ public class CoverageCommand {
     //public static double ExonMaxCovDiffPValue = 0.0;
     //public static double ExonMaxPercentVarExplained = 100.0;
 
-    public static void initCoverageSummaryPipeline(Iterator<CommandOption> iterator) {
-        CommandOption option;
-
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            if (option.getName().equals("--covered-region")) { //this will be the only option allowed for pipeline
-                coveredRegionFile = getValidPath(option);
-            } else {
-                continue;
-            }
-            iterator.remove();
-        }
-    }
-
     public static void initCoverageComparison(Iterator<CommandOption> iterator) {
         CommandOption option;
         isByExon = true;
@@ -82,7 +68,8 @@ public class CoverageCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--covered-region")) {
+            if (option.getName().equals("--gene-boundaries")
+                    || option.getName().equals("--gene-boundary")) {
                 coveredRegionFile = getValidPath(option);
             } else if (option.getName().equals("--percent-region-covered")) {
                 minPercentRegionCovered = getValidDouble(option);

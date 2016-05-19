@@ -1,7 +1,6 @@
 package function.coverage.base;
 
 import function.genotype.base.Sample;
-import global.Data;
 import function.genotype.base.SampleManager;
 import java.io.BufferedWriter;
 import java.text.DecimalFormat;
@@ -26,7 +25,7 @@ public class SampleStatistics {
     String[] SampleNames;
     String[] RecordNames;
     String[] RecordChrs;
-    int NextRecord;
+    
     NumberFormat pformat6 = new DecimalFormat("0.######");
 
     public SampleStatistics(int NumberOfRecord) {
@@ -43,12 +42,6 @@ public class SampleStatistics {
             Id2Index.put(sample.getId(), i);
             Index2Id.put(i, sample.getId());
         }
-        NextRecord = 0;
-    }
-
-    public int getNextRecord() {
-        NextRecord++;
-        return NextRecord - 1;
     }
 
     public void setRecordName(int record, String name, String chr) {

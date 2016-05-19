@@ -35,7 +35,7 @@ public class Exon {
 
     public HashMap<Integer, Integer> getCoverage(int min_cov) {
         int [] mincovs = {min_cov};
-        return covRegion.getCoverage(mincovs).get(0);
+        return CoverageManager.getCoverage(mincovs, covRegion).get(0);
     }
     
     public boolean contains(Region region) {

@@ -140,6 +140,12 @@ public class Region implements Comparable {
         return false;
     }
 
+    public boolean contains(Region r) {
+        return r.getChrStr().equalsIgnoreCase(chrStr)
+                && r.getStartPosition() >= startPosition
+                && r.getStartPosition() <= endPosition;
+    }
+
     @Override
     public String toString() {
         String chr = "chr" + chrStr;
