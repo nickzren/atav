@@ -11,14 +11,14 @@ public class Exon {
 
     int exon_id;
     String stable_id;
-    CoveredRegion covRegion;
+    Region region;
 
-    public Exon(int id, String stableId, int region_id, String chr,
+    public Exon(int id, String stableId, String chr,
             int start, int end) {
         exon_id = id;
         stable_id = stableId;
 
-        covRegion = new CoveredRegion(region_id, chr, start, end);
+        region = new Region(chr, start, end);
     }
 
     public int getExonId() {
@@ -29,17 +29,17 @@ public class Exon {
         return stable_id;
     }
 
-    public CoveredRegion getCoveredRegion() {
-        return covRegion;
+    public Region getRegion() {
+        return region;
     }
 
     public HashMap<Integer, Integer> getCoverage(int min_cov) {
         int [] mincovs = {min_cov};
-        return CoverageManager.getCoverage(mincovs, covRegion).get(0);
+        return CoverageManager.getCoverage(mincovs, region).get(0);
     }
     
     public boolean contains(Region region) {
-        return covRegion.contains(region);
+        return this.region.contains(region);
     }
 
     @Override

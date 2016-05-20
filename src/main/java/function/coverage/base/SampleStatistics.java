@@ -76,9 +76,9 @@ public class SampleStatistics {
                 sb.append(RecordNames[record]).append(",");
                 sb.append(RecordChrs[record]).append(",");
                 sb.append(e.getStableId()).append(",");
-                sb.append(e.covRegion.getStartPosition()).append(",");
-                sb.append(e.covRegion.getEndPosition()).append(",");
-                sb.append(e.getCoveredRegion().getLength()).append(",");
+                sb.append(e.region.getStartPosition()).append(",");
+                sb.append(e.region.getEndPosition()).append(",");
+                sb.append(e.getRegion().getLength()).append(",");
                 int sampleid = Index2Id.get(i);
                 int cov = 0;
                 if (samples.contains(sampleid)) {
@@ -88,8 +88,8 @@ public class SampleStatistics {
                 sb.append(cov).append(",");
 
                 int pass;
-                if (e.getCoveredRegion().getLength() > 0) {
-                    double ratio = (double) cov / (double) e.getCoveredRegion().getLength();
+                if (e.getRegion().getLength() > 0) {
+                    double ratio = (double) cov / (double) e.getRegion().getLength();
                     sb.append(pformat6.format(ratio)).append(",");
                     pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
                 } else {
@@ -147,9 +147,9 @@ public class SampleStatistics {
             StringBuilder sb = new StringBuilder();
             sb.append(RecordNames[record]).append("_").append(e.getStableId());
             sb.append(",").append(RecordChrs[record]);
-            sb.append(",").append(e.covRegion.getStartPosition());
-            sb.append(",").append(e.covRegion.getEndPosition());
-            sb.append(",").append(e.getCoveredRegion().getLength());
+            sb.append(",").append(e.region.getStartPosition());
+            sb.append(",").append(e.region.getEndPosition());
+            sb.append(",").append(e.getRegion().getLength());
             for (int i = 0; i < SampleNames.length; i++) {
                 int sampleid = Index2Id.get(i);
                 int cov = 0;
@@ -158,8 +158,8 @@ public class SampleStatistics {
 
                 }
 
-                if (e.getCoveredRegion().getLength() > 0) {
-                    double ratio = (double) cov / (double) e.getCoveredRegion().getLength();
+                if (e.getRegion().getLength() > 0) {
+                    double ratio = (double) cov / (double) e.getRegion().getLength();
                     sb.append(",").append(pformat6.format(ratio));
                 } else {
                     sb.append(",").append("NA");
@@ -233,7 +233,7 @@ public class SampleStatistics {
     public void printExonSummaryLinearTrait(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
         if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
-            double RegoinLength = e.getCoveredRegion().getLength();
+            double RegoinLength = e.getRegion().getLength();
             double avgAll = 0;
             SimpleRegression sr = new SimpleRegression(true);
             SummaryStatistics lss = new SummaryStatistics();
@@ -267,7 +267,7 @@ public class SampleStatistics {
             }
             sb.append(",").append(Variance);
             
-            sb.append(",").append(e.getCoveredRegion().getLength());
+            sb.append(",").append(e.getRegion().getLength());
             sb.append("\n");
             bw.write(sb.toString());
         }
@@ -295,8 +295,8 @@ public class SampleStatistics {
                     avgCtrl = avgCtrl + cov;
                 }
             }
-            avgCase = avgCase / SampleManager.getCaseNum() / e.getCoveredRegion().getLength();
-            avgCtrl = avgCtrl / SampleManager.getCtrlNum() / e.getCoveredRegion().getLength();
+            avgCase = avgCase / SampleManager.getCaseNum() / e.getRegion().getLength();
+            avgCtrl = avgCtrl / SampleManager.getCtrlNum() / e.getRegion().getLength();
 
             //if (avgCase + avgCtrl > 0) {
             StringBuilder sb = new StringBuilder();
@@ -305,7 +305,7 @@ public class SampleStatistics {
             sb.append(",").append(pformat6.format(avgCase));
             sb.append(",").append(pformat6.format(avgCtrl));
             sb.append(",").append(pformat6.format(Math.abs((avgCase - avgCtrl))));
-            sb.append(",").append(e.getCoveredRegion().getLength());
+            sb.append(",").append(e.getRegion().getLength());
             sb.append("\n");
             bw.write(sb.toString());
             //}

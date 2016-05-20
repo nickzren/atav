@@ -124,14 +124,14 @@ public class ExonCleanLinearTrait {
             Exon exon = (Exon) r.next();
             String exonid = gene.getName() + "_" + exon.getStableId();
             if (cleanedExons.contains(exonid)) {
-                size += exon.getCoveredRegion().getLength();
+                size += exon.getRegion().getLength();
                 if (isFirst) {
                     isFirst = false;
                 } else {
                     sb.append(",");
                 }
-                sb.append(exon.getCoveredRegion().getStartPosition());
-                sb.append("..").append(exon.getCoveredRegion().getEndPosition());
+                sb.append(exon.getRegion().getStartPosition());
+                sb.append("..").append(exon.getRegion().getEndPosition());
             }
         }
         sb.append(") ").append(size);

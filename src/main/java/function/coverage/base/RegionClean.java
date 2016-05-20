@@ -160,8 +160,8 @@ public class RegionClean {
         boolean isFirst = true;
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) { 
             Exon exon = (Exon) r.next();
-            int startPosition = exon.getCoveredRegion().getStartPosition();
-            int endPosition = exon.getCoveredRegion().getEndPosition();
+            int startPosition = exon.getRegion().getStartPosition();
+            int endPosition = exon.getRegion().getEndPosition();
 
             int previouStartPosition = -1;
             int previousEndPosition = -1;
@@ -221,14 +221,14 @@ public class RegionClean {
             Exon exon = (Exon) r.next();
             String exonid = gene.getName() + "_" + exon.getStableId();
             if (cleanedRegions.contains(exonid)) {
-                size += exon.getCoveredRegion().getLength();
+                size += exon.getRegion().getLength();
                 if (isFirst) {
                     isFirst = false;
                 } else {
                     sb.append(",");
                 }
-                sb.append(exon.getCoveredRegion().getStartPosition());
-                sb.append("..").append(exon.getCoveredRegion().getEndPosition());
+                sb.append(exon.getRegion().getStartPosition());
+                sb.append("..").append(exon.getRegion().getEndPosition());
             }
         }
         sb.append(") ").append(size);
@@ -251,8 +251,8 @@ public class RegionClean {
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
             Exon exon = (Exon) r.next();
             if (isSite) {
-                int startPosition = exon.getCoveredRegion().getStartPosition();
-                int endPosition = exon.getCoveredRegion().getEndPosition();
+                int startPosition = exon.getRegion().getStartPosition();
+                int endPosition = exon.getRegion().getEndPosition();
                 for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
                     StringBuilder regionid = new StringBuilder();
                     regionid.append(gene).append("_").append(gene.chr).append("_").append(currentPosition);

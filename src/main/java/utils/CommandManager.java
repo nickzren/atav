@@ -418,7 +418,7 @@ public class CommandManager {
         }
     }
 
-    private static void initCommonOptions() throws Exception {
+    private static void initCommonOptions() throws Exception {        
         VariantLevelFilterCommand.initOptions(optionList.iterator());
 
         AnnotationLevelFilterCommand.initOptions(optionList.iterator());

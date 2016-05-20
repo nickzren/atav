@@ -35,7 +35,7 @@ public class AnnotationLevelFilterCommand {
                 geneInput = getValidPath(option);
             } else if (option.getName().equals("--gene-boundaries") ||
                     option.getName().equals("--gene-boundary")) {
-                geneBoundaryFile = getValidPath(option);
+                geneBoundaryFile = getValidPath(option); 
             } else if (option.getName().equals("--transcript")) {
                 transcriptFile = getValidPath(option);
             } else if (option.getName().equals("--ccds-only")) {

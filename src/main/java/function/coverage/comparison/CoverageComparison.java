@@ -1,5 +1,6 @@
 package function.coverage.comparison;
 
+import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
 import function.coverage.base.ExonCleanLinearTrait;
 import function.coverage.base.RegionClean;
@@ -18,15 +19,14 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  *
  * @author qwang
  */
 //this class can be potentially splitted into two classes of deriving one from another once the functionality is finallized.
-
 public class CoverageComparison extends CoverageSummary {
+
     final String coverageSummaryByExon = CommonCommand.outputPath + "coverage.summary.by.exon.csv";
     final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
     final String CleanedExonList = CommonCommand.outputPath + "exon.clean.txt";
@@ -55,7 +55,7 @@ public class CoverageComparison extends CoverageSummary {
             LogManager.writeAndPrint("User specified cutoff value " + pformat6.format(cutoff) + " is applied instead.");
         }
         HashSet<String> CleanedList = ec.GetExonCleanList(cutoff);
-        
+
         int NumExonsTotal = ec.GetNumberOfExons();
         int NumExonsPruned = NumExonsTotal - CleanedList.size();
 
@@ -72,25 +72,20 @@ public class CoverageComparison extends CoverageSummary {
         LogManager.writeAndPrint("The average coverage rate for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
-        for (Iterator it = this.iterator(); it.hasNext();) {
-            Object obj = it.next();
-            String JobType = obj.getClass().getSimpleName();
-            if (JobType.equals("Gene")) {
-                Gene gene = (Gene) obj;
-                //gene.populateSlaveList(); only enable during testing
-                String str = ec.GetCleanedGeneString(gene, CleanedList);
-                if (!str.isEmpty()) {
-                    bwExonClean.write(str);
-                    bwExonClean.newLine();
-                }
+        for (Gene gene : GeneManager.getGeneBoundaryList()) {
+            String str = ec.GetCleanedGeneString(gene, CleanedList);
+            if (!str.isEmpty()) {
+                bwExonClean.write(str);
+                bwExonClean.newLine();
+            }
 
-                str = ec.GetCleanedGeneSummaryString(gene, CleanedList);
-                if (!str.isEmpty()) {
-                    bwGeneSummaryClean.write(str);
-                    bwGeneSummaryClean.newLine();
-                }
+            str = ec.GetCleanedGeneSummaryString(gene, CleanedList);
+            if (!str.isEmpty()) {
+                bwGeneSummaryClean.write(str);
+                bwGeneSummaryClean.newLine();
             }
         }
+
         bwExonClean.flush();
         bwExonClean.close();
         bwGeneSummaryClean.flush();
@@ -135,26 +130,20 @@ public class CoverageComparison extends CoverageSummary {
         LogManager.writeAndPrint("The average coverage rate for controls after pruning is  " + pformat6.format(ec.GetControlCoverage() * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is  " + pformat6.format(ec.GetControlCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
+        for (Gene gene : GeneManager.getGeneBoundaryList()) {
+            String str = ec.GetCleanedGeneString(gene, CleanedList);
+            if (!str.isEmpty()) {
+                bwExonClean.write(str);
+                bwExonClean.newLine();
+            }
 
-        for (Iterator it = this.iterator(); it.hasNext();) {
-            Object obj = it.next();
-            String JobType = obj.getClass().getSimpleName();
-            if (JobType.equals("Gene")) {
-                Gene gene = (Gene) obj;
-                //gene.populateSlaveList(); only enable during testing
-                String str = ec.GetCleanedGeneString(gene, CleanedList);
-                if (!str.isEmpty()) {
-                    bwExonClean.write(str);
-                    bwExonClean.newLine();
-                }
-
-                str = ec.GetCleanedGeneSummaryString(gene, CleanedList,false);
-                if (!str.isEmpty()) {
-                    bwGeneSummaryClean.write(str);
-                    bwGeneSummaryClean.newLine();
-                }
+            str = ec.GetCleanedGeneSummaryString(gene, CleanedList, false);
+            if (!str.isEmpty()) {
+                bwGeneSummaryClean.write(str);
+                bwGeneSummaryClean.newLine();
             }
         }
+        
         bwExonClean.flush();
         bwExonClean.close();
         bwGeneSummaryClean.flush();
@@ -169,7 +158,7 @@ public class CoverageComparison extends CoverageSummary {
             ss.printExonSummary(record, result, e, bwCoverageSummaryByExon);
         }
     }
-    
+
     @Override
     public void DoGeneSummary(SampleStatistics ss, int record) throws Exception {
         if (CoverageCommand.isCoverageComparisonDoLinear) {
@@ -178,6 +167,7 @@ public class CoverageComparison extends CoverageSummary {
             ss.printGeneSummary(record, bwCoverageSummaryByGene);
         }
     }
+
     @Override
     public void run() throws Exception {
         super.run();
@@ -203,9 +193,9 @@ public class CoverageComparison extends CoverageSummary {
         if (CoverageCommand.isByExon) {
             bwCoverageSummaryByExon = new BufferedWriter(new FileWriter(coverageSummaryByExon));
             if (CoverageCommand.isCoverageComparisonDoLinear) {
-                 bwCoverageSummaryByExon.write("EXON,Chr,AvgAll,pvalue,R2,Variance,Length");
+                bwCoverageSummaryByExon.write("EXON,Chr,AvgAll,pvalue,R2,Variance,Length");
             } else {
-                 bwCoverageSummaryByExon.write("EXON,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
+                bwCoverageSummaryByExon.write("EXON,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
             }
             bwCoverageSummaryByExon.newLine();
         }
@@ -220,7 +210,7 @@ public class CoverageComparison extends CoverageSummary {
             bwCoverageSummaryByExon.flush();
             bwCoverageSummaryByExon.close();
         }
-        
+
         ThirdPartyToolManager.gzipFile(coverageDetailsFilePath);
         ThirdPartyToolManager.gzipFile(coverageMatrixFilePath);
         ThirdPartyToolManager.gzipFile(coverageExonMatrixFilePath);

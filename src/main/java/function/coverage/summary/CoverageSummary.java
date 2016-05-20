@@ -1,20 +1,15 @@
 package function.coverage.summary;
 
+import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
-import function.coverage.base.CoverageManager;
 import function.coverage.base.SampleStatistics;
-import function.coverage.base.CoveredRegion;
 import function.coverage.base.Exon;
 import function.coverage.base.Gene;
-import function.coverage.base.InputList;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
-import utils.LogManager;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +18,7 @@ import java.util.Iterator;
  *
  * @author qwang
  */
-public class CoverageSummary extends InputList {
+public class CoverageSummary {
 
     public BufferedWriter bwSampleSummary = null;
     public BufferedWriter bwSampleRegionSummary = null;
@@ -46,25 +41,6 @@ public class CoverageSummary extends InputList {
             ErrorManager.print("--min-coverage option has to be used in this function.");
         }
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(CoverageCommand.coveredRegionFile));
-            String str;
-            while ((str = br.readLine()) != null && str.length() > 0) {
-                try {
-                    if (!addRegion(str)) {
-                        Gene gene = new Gene(str);
-                        if (gene.isValid()) {
-                            add(gene);
-                        }
-                    }
-                } catch (NumberFormatException e) {
-                    LogManager.writeAndPrint("Invalid region format: " + str);
-                }
-            }
-            br.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
     }
 
     public void DoExonSummary(SampleStatistics ss, int record, HashMap<Integer, Integer> result, Exon e) throws Exception {
@@ -77,7 +53,7 @@ public class CoverageSummary extends InputList {
 
     public void run() throws Exception {
         initOutput();
-        SampleStatistics ss = new SampleStatistics(size());
+        SampleStatistics ss = new SampleStatistics(GeneManager.getGeneBoundaryList().size());
         ss.printMatrixHeader(bwSampleMatrixSummary, false);
 
         if (CoverageCommand.isByExon) {
@@ -85,41 +61,24 @@ public class CoverageSummary extends InputList {
         }
 
         int record = 0;
-        
-        for (Iterator it = this.iterator(); it.hasNext();) {
-            Object obj = it.next();
 
-            System.out.print("Processing " + (record + 1) + " of " + size() + ":        " + obj.toString() + "                              \r");
+        for (Gene gene : GeneManager.getGeneBoundaryList()) {
+            System.out.print("Processing " + (record + 1) + " of " + GeneManager.getGeneBoundaryList().size() + ":        " + gene.toString() + "                              \r");
 
-            String JobType = obj.getClass().getSimpleName();
-            //the following should be simplified by implementing a same interface. Q.
-            if (JobType.contains("CoveredRegion")) {
-                CoveredRegion region = (CoveredRegion) obj;
-                ss.setRecordName(record, region.toString(), region.getChrStr());
-                ss.setLength(record, region.getLength());
-                int[] mincovs = {GenotypeLevelFilterCommand.minCoverage};
-                HashMap<Integer, Integer> result = CoverageManager.getCoverage(mincovs, region).get(0);
+            ss.setRecordName(record, gene.getName(), gene.getChr());
+            ss.setLength(record, gene.getLength());
+
+            for (Exon exon : gene.getExonList()) {
+                HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
                 ss.accumulateCoverage(record, result);
-            } else if (JobType.equals("Gene")) {
-                Gene gene = (Gene) obj;
-                
-                gene.populateSlaveList();
-                ss.setRecordName(record, gene.getName(), gene.getChr());
-                ss.setLength(record, gene.getLength());
-
-                for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
-                    Exon exon = (Exon) r.next();
-                    HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
-                    ss.accumulateCoverage(record, result);
-                    ss.printMatrixRowbyExon(record, result, exon, bwSampleExonMatrixSummary);
-                    DoExonSummary(ss, record, result, exon);
-                }
+                ss.printMatrixRowbyExon(record, result, exon, bwSampleExonMatrixSummary);
+                DoExonSummary(ss, record, result, exon);
             }
 
             ss.print(record, bwSampleRegionSummary);
             ss.printMatrixRow(record, bwSampleMatrixSummary);
             DoGeneSummary(ss, record);
-            
+
             record++;
         }
 
@@ -166,20 +125,5 @@ public class CoverageSummary extends InputList {
             bwSampleExonMatrixSummary.flush();
             bwSampleExonMatrixSummary.close();
         }
-    }
-
-    @Override
-    public String toString() { //for debug purpose, echo the input genes/transcripts/regions
-        StringBuilder str = new StringBuilder();
-        if (!this.isEmpty()) {
-            for (Iterator it = this.iterator(); it.hasNext();) {
-                Object obj = it.next();
-                String JobType = obj.getClass().getSimpleName();
-                str.append(JobType + ": " + obj.toString()).append("\n");
-            }
-        } else {
-            str.append("Warning: no valid regions/genes/transcripts found!");
-        }
-        return str.toString();
     }
 }
