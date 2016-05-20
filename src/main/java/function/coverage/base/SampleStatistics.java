@@ -1,5 +1,6 @@
 package function.coverage.base;
 
+import function.annotation.base.Exon;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import java.io.BufferedWriter;
@@ -75,10 +76,10 @@ public class SampleStatistics {
                 sb.append(SampleNames[i]).append(",");
                 sb.append(RecordNames[record]).append(",");
                 sb.append(RecordChrs[record]).append(",");
-                sb.append(e.getStableId()).append(",");
-                sb.append(e.region.getStartPosition()).append(",");
-                sb.append(e.region.getEndPosition()).append(",");
-                sb.append(e.getRegion().getLength()).append(",");
+                sb.append(e.getIdStr()).append(",");
+                sb.append(e.getStartPosition()).append(",");
+                sb.append(e.getEndPosition()).append(",");
+                sb.append(e.getLength()).append(",");
                 int sampleid = Index2Id.get(i);
                 int cov = 0;
                 if (samples.contains(sampleid)) {
@@ -88,8 +89,8 @@ public class SampleStatistics {
                 sb.append(cov).append(",");
 
                 int pass;
-                if (e.getRegion().getLength() > 0) {
-                    double ratio = (double) cov / (double) e.getRegion().getLength();
+                if (e.getLength() > 0) {
+                    double ratio = (double) cov / (double) e.getLength();
                     sb.append(pformat6.format(ratio)).append(",");
                     pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
                 } else {
@@ -145,11 +146,11 @@ public class SampleStatistics {
         if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
             StringBuilder sb = new StringBuilder();
-            sb.append(RecordNames[record]).append("_").append(e.getStableId());
+            sb.append(RecordNames[record]).append("_").append(e.getIdStr());
             sb.append(",").append(RecordChrs[record]);
-            sb.append(",").append(e.region.getStartPosition());
-            sb.append(",").append(e.region.getEndPosition());
-            sb.append(",").append(e.getRegion().getLength());
+            sb.append(",").append(e.getStartPosition());
+            sb.append(",").append(e.getEndPosition());
+            sb.append(",").append(e.getLength());
             for (int i = 0; i < SampleNames.length; i++) {
                 int sampleid = Index2Id.get(i);
                 int cov = 0;
@@ -158,8 +159,8 @@ public class SampleStatistics {
 
                 }
 
-                if (e.getRegion().getLength() > 0) {
-                    double ratio = (double) cov / (double) e.getRegion().getLength();
+                if (e.getLength() > 0) {
+                    double ratio = (double) cov / (double) e.getLength();
                     sb.append(",").append(pformat6.format(ratio));
                 } else {
                     sb.append(",").append("NA");
@@ -233,7 +234,7 @@ public class SampleStatistics {
     public void printExonSummaryLinearTrait(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
         if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
-            double RegoinLength = e.getRegion().getLength();
+            double RegoinLength = e.getLength();
             double avgAll = 0;
             SimpleRegression sr = new SimpleRegression(true);
             SummaryStatistics lss = new SummaryStatistics();
@@ -255,7 +256,7 @@ public class SampleStatistics {
             double Variance = lss.getVariance();
             
             StringBuilder sb = new StringBuilder();
-            sb.append(RecordNames[record]).append("_").append(e.getStableId());
+            sb.append(RecordNames[record]).append("_").append(e.getIdStr());
             sb.append(",").append(RecordChrs[record]);
             sb.append(",").append(pformat6.format(avgAll));
             if (Double.isNaN(pValue)) { //happens if all coverages are the same
@@ -267,7 +268,7 @@ public class SampleStatistics {
             }
             sb.append(",").append(Variance);
             
-            sb.append(",").append(e.getRegion().getLength());
+            sb.append(",").append(e.getLength());
             sb.append("\n");
             bw.write(sb.toString());
         }
@@ -295,17 +296,17 @@ public class SampleStatistics {
                     avgCtrl = avgCtrl + cov;
                 }
             }
-            avgCase = avgCase / SampleManager.getCaseNum() / e.getRegion().getLength();
-            avgCtrl = avgCtrl / SampleManager.getCtrlNum() / e.getRegion().getLength();
+            avgCase = avgCase / SampleManager.getCaseNum() / e.getLength();
+            avgCtrl = avgCtrl / SampleManager.getCtrlNum() / e.getLength();
 
             //if (avgCase + avgCtrl > 0) {
             StringBuilder sb = new StringBuilder();
-            sb.append(RecordNames[record]).append("_").append(e.getStableId());
+            sb.append(RecordNames[record]).append("_").append(e.getIdStr());
             sb.append(",").append(RecordChrs[record]);
             sb.append(",").append(pformat6.format(avgCase));
             sb.append(",").append(pformat6.format(avgCtrl));
             sb.append(",").append(pformat6.format(Math.abs((avgCase - avgCtrl))));
-            sb.append(",").append(e.getRegion().getLength());
+            sb.append(",").append(e.getLength());
             sb.append("\n");
             bw.write(sb.toString());
             //}

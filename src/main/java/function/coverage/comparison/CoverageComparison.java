@@ -5,8 +5,8 @@ import function.coverage.base.CoverageCommand;
 import function.coverage.base.ExonCleanLinearTrait;
 import function.coverage.base.RegionClean;
 import function.coverage.base.SampleStatistics;
-import function.coverage.base.Exon;
-import function.coverage.base.Gene;
+import function.annotation.base.Exon;
+import function.annotation.base.Gene;
 import function.coverage.summary.CoverageSummary;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
@@ -73,7 +73,7 @@ public class CoverageComparison extends CoverageSummary {
         LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
-            String str = ec.GetCleanedGeneString(gene, CleanedList);
+            String str = ec.getCleanedGeneString(gene, CleanedList);
             if (!str.isEmpty()) {
                 bwExonClean.write(str);
                 bwExonClean.newLine();

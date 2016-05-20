@@ -2,9 +2,10 @@ package function.coverage.summary;
 
 import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
+import function.coverage.base.CoverageManager;
 import function.coverage.base.SampleStatistics;
-import function.coverage.base.Exon;
-import function.coverage.base.Gene;
+import function.annotation.base.Exon;
+import function.annotation.base.Gene;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import utils.CommonCommand;
@@ -12,7 +13,6 @@ import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  *
@@ -35,8 +35,6 @@ public class CoverageSummary {
     public final String coverageExonMatrixFilePath = CommonCommand.outputPath + "coverage.details.matrix.by.exon.csv";
 
     public CoverageSummary() {
-        super();
-
         if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
             ErrorManager.print("--min-coverage option has to be used in this function.");
         }
@@ -63,13 +61,13 @@ public class CoverageSummary {
         int record = 0;
 
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
-            System.out.print("Processing " + (record + 1) + " of " + GeneManager.getGeneBoundaryList().size() + ":        " + gene.toString() + "                              \r");
+            System.out.print("Processing " + (record + 1) + " of " + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
 
             ss.setRecordName(record, gene.getName(), gene.getChr());
             ss.setLength(record, gene.getLength());
 
             for (Exon exon : gene.getExonList()) {
-                HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
+                HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
                 ss.accumulateCoverage(record, result);
                 ss.printMatrixRowbyExon(record, result, exon, bwSampleExonMatrixSummary);
                 DoExonSummary(ss, record, result, exon);

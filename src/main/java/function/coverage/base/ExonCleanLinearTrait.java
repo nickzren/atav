@@ -1,5 +1,7 @@
 package function.coverage.base;
 
+import function.annotation.base.Gene;
+import function.annotation.base.Exon;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -114,28 +116,28 @@ public class ExonCleanLinearTrait {
         return result;        
     }
 
-    public String GetCleanedGeneString(Gene gene, HashSet<String> cleanedExons) {
+    public String getCleanedGeneString(Gene gene, HashSet<String> cleanedExons) {
         StringBuilder sb = new StringBuilder();
         int size = 0;
         sb.append(gene.getName());
-        sb.append(" ").append(gene.chr).append(" (");
+        sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
             Exon exon = (Exon) r.next();
-            String exonid = gene.getName() + "_" + exon.getStableId();
+            String exonid = gene.getName() + "_" + exon.getIdStr();
             if (cleanedExons.contains(exonid)) {
-                size += exon.getRegion().getLength();
+                size += exon.getLength();
                 if (isFirst) {
                     isFirst = false;
                 } else {
                     sb.append(",");
                 }
-                sb.append(exon.getRegion().getStartPosition());
-                sb.append("..").append(exon.getRegion().getEndPosition());
+                sb.append(exon.getStartPosition());
+                sb.append("..").append(exon.getEndPosition());
             }
         }
         sb.append(") ").append(size);
-        if (size > 0 && !gene.chr.isEmpty()) {
+        if (size > 0 && !gene.getChr().isEmpty()) {
             return sb.toString();
         } else {
             return "";
@@ -151,7 +153,7 @@ public class ExonCleanLinearTrait {
         double AvgAll = 0;
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
             Exon exon = (Exon) r.next();
-            String exonid = gene.getName() + "_" + exon.getStableId();
+            String exonid = gene.getName() + "_" + exon.getIdStr();
             if (cleanedExons.contains(exonid)) {
                 SortedExon se = ExonMap.get(exonid);
                 GeneSize += se.Size;
@@ -164,7 +166,7 @@ public class ExonCleanLinearTrait {
         }
         NumberFormat pformat6 = new DecimalFormat("0.######");
         sb.append(gene.getName());
-        sb.append(",").append(gene.chr);
+        sb.append(",").append(gene.getChr());
         sb.append(",").append(gene.getLength());
         sb.append(",").append(pformat6.format(AvgAll));
         sb.append(",").append(GeneSize);

@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import function.coverage.base.Gene;
 import function.genotype.collapsing.CollapsingCommand;
 import global.Data;
 import utils.CommonCommand;
@@ -168,7 +167,7 @@ public class GeneManager {
                 ArrayList<String> chrList = new ArrayList<String>();
 
                 for (HashSet<Gene> geneSet : geneMap.values()) {
-                    String chr = geneSet.iterator().next().getChrStr();
+                    String chr = geneSet.iterator().next().getChr();
 
                     if (!chr.isEmpty()
                             && !chrList.contains(chr)) {

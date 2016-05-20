@@ -1,4 +1,4 @@
-package function.coverage.base;
+package function.annotation.base;
 
 import function.variant.base.Region;
 import utils.DBManager;
@@ -8,14 +8,14 @@ import java.util.ArrayList;
 
 /**
  *
- * @author qwang
+ * @author nick
  */
 public class Gene {
 
     String name;
     String boundary;
     String chr;
-    ArrayList<Exon> exonList = new ArrayList<Exon>();
+    ArrayList<Exon> exonList = new ArrayList<>();
 
     public Gene(String name) {
         this.name = name.trim();
@@ -89,12 +89,11 @@ public class Gene {
 
         String[] exons = fields[2].trim().split(",");
         for (int i = 0; i < exons.length; i++) {
-            int exon_id = i + 1;
             String[] r = exons[i].split("\\W");
             int seq_region_start = Integer.parseInt(r[0]);
             int seq_region_end = Integer.parseInt(r[2]);
-            String stable_id = "Exon_" + seq_region_start + "_" + seq_region_end;
-            exonList.add(new Exon(exon_id, stable_id, chr, seq_region_start, seq_region_end));
+            String idStr = "Exon_" + seq_region_start + "_" + seq_region_end;
+            exonList.add(new Exon(idStr, chr, seq_region_start, seq_region_end));
         }
     }
 
@@ -106,14 +105,10 @@ public class Gene {
         int length = 0;
 
         for (Exon exon : exonList) {
-            length = length + exon.getRegion().getLength();
+            length = length + exon.getLength();
         }
 
         return length;
-    }
-
-    public String getChrStr() {
-        return chr;
     }
 
     @Override

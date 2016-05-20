@@ -33,24 +33,6 @@ public class Variant {
         initVariantIdStr();
     }
 
-    public Variant(int v_id, boolean isIndel,
-            String alt, String ref, String rs,
-            int pos, String chr) throws Exception {
-        variantId = v_id;
-
-        allele = alt;
-        refAllele = ref;
-        rsNumber = rs;
-
-        region = new Region(chr, pos, pos);
-
-        type = "snv";
-
-        if (isIndel) {
-            type = "indel";
-        }
-    }
-
     private void initBasic(ResultSet rset) throws SQLException {
         allele = rset.getString("allele");
         refAllele = rset.getString("ref_allele");
@@ -63,7 +45,7 @@ public class Variant {
 
         String chrStr = RegionManager.getChrById(id);
 
-        region = new Region(id, chrStr, position, position);
+        region = new Region(chrStr, position, position);
 
         type = "snv";
     }

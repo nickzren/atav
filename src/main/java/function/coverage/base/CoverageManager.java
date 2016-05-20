@@ -17,23 +17,20 @@ import utils.ErrorManager;
  */
 public class CoverageManager {
 
-    public static ArrayList<HashMap<Integer, Integer>> getCoverage(int[] min_cov, Region region) {
-        String strQuery = getCoverageString(0, min_cov[0], region); //for genome
-        ArrayList<HashMap<Integer, Integer>> result = CoverageManager.calculateCoverage(strQuery, min_cov, region);
-        strQuery = getCoverageString(1, min_cov[0], region); //for exome
-        ArrayList<HashMap<Integer, Integer>> result1 = CoverageManager.calculateCoverage(strQuery, min_cov, region);
+    public static HashMap<Integer, Integer> getCoverage(Region region) {
+        String strQuery = getCoverageString(0, region); //for genome
+        HashMap<Integer, Integer> result = CoverageManager.calculateCoverage(strQuery, region);
 
-        for (int i = 0; i < min_cov.length; i++) { //merge genome and exome results
-            result.get(i).putAll(result1.get(i));
-        }
+        strQuery = getCoverageString(1, region); //for exome
+        result.putAll(CoverageManager.calculateCoverage(strQuery, region));
 
         return result;
     }
 
-    public static ArrayList<int[]> getCoverageForSites(int min_cov, Region region) {
-        String strQuery = getCoverageString(0, min_cov, region); //for genome
+    public static ArrayList<int[]> getCoverageForSites(Region region) {
+        String strQuery = getCoverageString(0, region); //for genome
         ArrayList<int[]> result = CoverageManager.calculateCoverageForSites(strQuery, region);
-        strQuery = getCoverageString(1, min_cov, region); //for exome
+        strQuery = getCoverageString(1, region); //for exome
         ArrayList<int[]> result1 = CoverageManager.calculateCoverageForSites(strQuery, region);
         for (int i = 0; i < result.get(0).length; i++) {
             result.get(0)[i] += result1.get(0)[i]; //case
@@ -42,12 +39,11 @@ public class CoverageManager {
         return result;
     }
 
-    public static String getCoverageString(int DataTypeIndex, int min_cov, Region region) {//min_cov  not used here
+    public static String getCoverageString(int DataTypeIndex, Region region) {
         if (region.chrStr.length() > 2) {
             return "";
         } else {
             String str = "SELECT sample_id, position, min_coverage FROM "
-                    //+ "_SAMPLE_TYPE__read_coverage_1024_test_chr_CHROM_ c ,"
                     + "_SAMPLE_TYPE__read_coverage_1024_chr_CHROM_ c ,"
                     + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
                     + "WHERE position in (_POSITIONS_) "
@@ -59,7 +55,7 @@ public class CoverageManager {
             return str;
         }
     }
-    
+
     private static int getPosition(int pos) { //optimize it later
         int posIndex = pos % CoverageBlockManager.COVERAGE_BLOCK_SIZE; // coverage data block size is 1024
         if (posIndex == 0) {
@@ -83,12 +79,9 @@ public class CoverageManager {
         }
     }
 
-    private static ArrayList<HashMap<Integer, Integer>> calculateCoverage(String strQuery,
-            int[] min_cov, Region region) {
-        ArrayList<HashMap<Integer, Integer>> result = new ArrayList<HashMap<Integer, Integer>>();
-        for (int i = 0; i < min_cov.length; i++) {
-            result.add(new HashMap<Integer, Integer>());
-        }
+    private static HashMap<Integer, Integer> calculateCoverage(String strQuery, Region region) {
+        HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
+
         if (!strQuery.isEmpty()) {
             try {
                 ResultSet rs = DBManager.executeQuery(strQuery);
@@ -96,20 +89,19 @@ public class CoverageManager {
                     String strCoverage = rs.getString("min_coverage");
                     int position = rs.getInt("position");
                     ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(position,
-                            strCoverage, min_cov[0], false);
+                            strCoverage, false);
+
                     for (CoverageInterval ci : cilist) {
                         int overlap = region.intersectLength(ci.getStartPos(), ci.getEndPos());
                         if (overlap > 0) {
                             int sample_id = rs.getInt("sample_id");
                             int min_coverage = ci.getCoverage();
-                            for (int i = 0; i < min_cov.length; i++) {
-                                if (min_coverage >= min_cov[i]) {
-                                    HashMap<Integer, Integer> currentMap = result.get(i);
-                                    if (currentMap.containsKey(sample_id)) {
-                                        currentMap.put(sample_id, currentMap.get(sample_id) + overlap);
-                                    } else {
-                                        currentMap.put(sample_id, overlap);
-                                    }
+
+                            if (min_coverage >= GenotypeLevelFilterCommand.minCoverage) {
+                                if (result.containsKey(sample_id)) {
+                                    result.put(sample_id, result.get(sample_id) + overlap);
+                                } else {
+                                    result.put(sample_id, overlap);
                                 }
                             }
                         }
@@ -131,7 +123,6 @@ public class CoverageManager {
         result.add(new int[region.getLength()]);
         result.add(new int[region.getLength()]);
 
-        int min_coverage = GenotypeLevelFilterCommand.minCoverage;
         if (!strQuery.isEmpty()) {
             try {
                 ResultSet rs = DBManager.executeQuery(strQuery);
@@ -141,7 +132,7 @@ public class CoverageManager {
                     int sampleid = rs.getInt("sample_id");
                     boolean isCase = SampleManager.getMap().get(sampleid).isCase();
                     ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(position,
-                            strCoverage, min_coverage, false);
+                            strCoverage, false);
                     for (CoverageInterval ci : cilist) {
                         Region cr = region.intersect(ci.getStartPos(), ci.getEndPos());
                         if (cr != null) {
@@ -165,7 +156,7 @@ public class CoverageManager {
     }
 
     private static ArrayList<CoverageInterval> getCoverageIntervalListByMinCoverage(
-            int sampleBlockPos, String sampleCovBinStr, int minCoverage, boolean isSortingByCov) {
+            int sampleBlockPos, String sampleCovBinStr, boolean isSortingByCov) {
         String[] allCovBinArray = sampleCovBinStr.split(",");
 
         ArrayList<CoverageInterval> list = new ArrayList<CoverageInterval>();
@@ -184,7 +175,7 @@ public class CoverageManager {
             char covStr = oneCovBinStr.charAt(oneCovBinStr.length() - 1);
             int cov = CoverageBlockManager.getCoverageByBin(covStr);
 
-            if (cov >= minCoverage) {
+            if (cov >= GenotypeLevelFilterCommand.minCoverage) {
                 list.add(new CoverageInterval(sampleBlockPos, startIndex, endIndex, cov));
             }
         }

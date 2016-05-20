@@ -2,12 +2,12 @@ package function.coverage.comparison;
 
 import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
-import function.coverage.base.Exon;
+import function.coverage.base.CoverageManager;
+import function.annotation.base.Exon;
 import function.coverage.base.RegionClean;
-import function.coverage.base.Gene;
+import function.annotation.base.Gene;
 import function.coverage.base.SampleStatistics;
 import function.coverage.summary.SiteCoverageSummary;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -124,7 +124,7 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
         //summary views from sites and from (gene, sample) pair 
         //Can be a lot more efficient if we combine two pass, but code could be messy. 
         //revisit this if the performnce is of concern
-        HashMap<Integer, Integer> result = exon.getCoverage(GenotypeLevelFilterCommand.minCoverage);
+        HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
         ss.accumulateCoverage(record, result);
     }
 

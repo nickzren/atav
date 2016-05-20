@@ -1,5 +1,7 @@
 package function.coverage.base;
 
+import function.annotation.base.Gene;
+import function.annotation.base.Exon;
 import function.genotype.base.SampleManager;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -156,18 +158,18 @@ public class RegionClean {
         StringBuilder sb = new StringBuilder();
         int size = 0;
         sb.append(gene.getName());
-        sb.append(" ").append(gene.chr).append(" (");
+        sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) { 
             Exon exon = (Exon) r.next();
-            int startPosition = exon.getRegion().getStartPosition();
-            int endPosition = exon.getRegion().getEndPosition();
+            int startPosition = exon.getStartPosition();
+            int endPosition = exon.getEndPosition();
 
             int previouStartPosition = -1;
             int previousEndPosition = -1;
             for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
                 StringBuilder regionid = new StringBuilder();
-                regionid.append(gene).append("_").append(gene.chr).append("_").append(currentPosition);
+                regionid.append(gene).append("_").append(gene.getChr()).append("_").append(currentPosition);
                 if (cleanedRegions.contains(regionid.toString())) {
                     if (previouStartPosition < 0) {
                         previouStartPosition = currentPosition;
@@ -203,7 +205,7 @@ public class RegionClean {
             }
         }
         sb.append(") ").append(size);
-        if (size > 0 && !gene.chr.isEmpty()) {
+        if (size > 0 && !gene.getChr().isEmpty()) {
             return sb.toString();
         } else {
             return "";
@@ -213,26 +215,26 @@ public class RegionClean {
         StringBuilder sb = new StringBuilder();
         int size = 0;
         sb.append(gene.getName());
-        sb.append(" ").append(gene.chr).append(" (");
+        sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) { 
         //reuse exon here, might need to change to a more approriate name later
         // Should be region in general
             Exon exon = (Exon) r.next();
-            String exonid = gene.getName() + "_" + exon.getStableId();
+            String exonid = gene.getName() + "_" + exon.getIdStr();
             if (cleanedRegions.contains(exonid)) {
-                size += exon.getRegion().getLength();
+                size += exon.getLength();
                 if (isFirst) {
                     isFirst = false;
                 } else {
                     sb.append(",");
                 }
-                sb.append(exon.getRegion().getStartPosition());
-                sb.append("..").append(exon.getRegion().getEndPosition());
+                sb.append(exon.getStartPosition());
+                sb.append("..").append(exon.getEndPosition());
             }
         }
         sb.append(") ").append(size);
-        if (size > 0 && !gene.chr.isEmpty()) {
+        if (size > 0 && !gene.getChr().isEmpty()) {
             return sb.toString();
         } else {
             return "";
@@ -251,11 +253,11 @@ public class RegionClean {
         for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
             Exon exon = (Exon) r.next();
             if (isSite) {
-                int startPosition = exon.getRegion().getStartPosition();
-                int endPosition = exon.getRegion().getEndPosition();
+                int startPosition = exon.getStartPosition();
+                int endPosition = exon.getEndPosition();
                 for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
                     StringBuilder regionid = new StringBuilder();
-                    regionid.append(gene).append("_").append(gene.chr).append("_").append(currentPosition);
+                    regionid.append(gene).append("_").append(gene.getChr()).append("_").append(currentPosition);
                     if (cleanedRegions.contains(regionid.toString())) {
                         GeneSize++;
                         SortedRegion se = RegionMap.get(regionid.toString());
@@ -264,7 +266,7 @@ public class RegionClean {
                     }
                 }
             } else {
-                String exonid = gene.getName() + "_" + exon.getStableId();
+                String exonid = gene.getName() + "_" + exon.getIdStr();
                 if (cleanedRegions.contains(exonid)) {
                     SortedRegion se = RegionMap.get(exonid);
                     GeneSize += se.Size;
@@ -281,7 +283,7 @@ public class RegionClean {
         }
         NumberFormat pformat6 = new DecimalFormat("0.######");
         sb.append(gene.getName());
-        sb.append(",").append(gene.chr);
+        sb.append(",").append(gene.getChr());
         sb.append(",").append(gene.getLength());
         sb.append(",").append(pformat6.format(CaseAvg));
         sb.append(",").append(pformat6.format(CtrlAvg));
