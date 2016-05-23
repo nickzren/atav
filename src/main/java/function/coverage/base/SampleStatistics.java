@@ -33,8 +33,10 @@ public class SampleStatistics {
         aLength = new int[NumberOfRecord];
         RecordNames = new String[NumberOfRecord];
         RecordChrs = new String[NumberOfRecord];
+        
         aSampleRegionCoverage = new int[SampleManager.getListSize()];
         aCoverage = new double[NumberOfRecord][SampleManager.getListSize()];
+        
         SampleNames = new String[SampleManager.getListSize()];
 
         for (int i = 0; i < SampleManager.getListSize(); i++) {

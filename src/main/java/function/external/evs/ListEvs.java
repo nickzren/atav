@@ -30,10 +30,6 @@ public class ListEvs extends AnalysisBase {
     }
 
     @Override
-    public void doOutput() {
-    }
-
-    @Override
     public void closeOutput() {
         try {
             bwEvs.flush();

@@ -40,10 +40,6 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
     }
 
     @Override
-    public void doOutput() {
-    }
-
-    @Override
     public void closeOutput() {
         try {
             bwRvis.flush();

@@ -59,8 +59,6 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
                     clearData();
                 }
             }
-
-            doOutput(); // only comphet function support it
         }
     }
 

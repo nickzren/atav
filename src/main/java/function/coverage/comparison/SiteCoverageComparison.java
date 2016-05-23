@@ -33,8 +33,8 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     BufferedWriter bwSampleSummary = null;
     RegionClean ec = new RegionClean();
 
-    public SiteCoverageComparison() {
-        super();
+    @Override
+    public void beforeProcessDatabaseData() {
         int sampleSize = SampleManager.getListSize();
         if (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum()) {
             ErrorManager.print("Error: this function is not supposed to run with case only or control only sample file. ");
@@ -42,13 +42,28 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
 
     @Override
-    public void emitSiteInfo(String gene, String chr, int position, int caseCoverage, int ctrlCoverage) {
-        StringBuilder str = new StringBuilder();
-        str.append(gene).append("_").append(chr).append("_").append(position);
-        double caseAverage = ((double) caseCoverage) / SampleManager.getCaseNum();
-        double ctrlAverage = ((double) ctrlCoverage) / SampleManager.getCtrlNum();
-        double abs_diff = Math.abs(caseAverage - ctrlAverage);
-        ec.AddRegionToList(str.toString(), caseAverage, ctrlAverage, abs_diff);
+    public void processDatabaseData() {
+        try {
+            bwSampleSummary = new BufferedWriter(new FileWriter(sampleSummaryFilePath));
+            bwSampleSummary.write("Sample,Total_Bases,Total_Covered_Base,%Overall_Bases_Covered,"
+                    + "Total_Regions,Total_Covered_Regions,%Regions_Covered");
+            bwSampleSummary.newLine();
+
+            bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
+            bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
+            bwCoverageSummaryByGene.newLine();
+
+            super.processDatabaseData();
+
+            bwSampleSummary.flush();
+            bwSampleSummary.close();
+            bwCoverageSummaryByGene.flush();
+            bwCoverageSummaryByGene.close();
+            outputCleanedExonList();
+            ThirdPartyToolManager.gzipFile(siteSummaryFilePath);
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
     }
 
     public void outputCleanedExonList() throws Exception {
@@ -119,6 +134,16 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
 
     @Override
+    public void emitSiteInfo(String gene, String chr, int position, int caseCoverage, int ctrlCoverage) {
+        StringBuilder str = new StringBuilder();
+        str.append(gene).append("_").append(chr).append("_").append(position);
+        double caseAverage = ((double) caseCoverage) / SampleManager.getCaseNum();
+        double ctrlAverage = ((double) ctrlCoverage) / SampleManager.getCtrlNum();
+        double abs_diff = Math.abs(caseAverage - ctrlAverage);
+        ec.AddRegionToList(str.toString(), caseAverage, ctrlAverage, abs_diff);
+    }
+
+    @Override
     public void emitExoninfo(SampleStatistics ss, Exon exon, int record) {
         //Quanli: Here we are querying the database twice to generate 
         //summary views from sites and from (gene, sample) pair 
@@ -129,22 +154,7 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
 
     @Override
-    public void run() throws Exception {
-        bwSampleSummary = new BufferedWriter(new FileWriter(sampleSummaryFilePath));
-        bwSampleSummary.write("Sample,Total_Bases,Total_Covered_Base,%Overall_Bases_Covered,"
-                + "Total_Regions,Total_Covered_Regions,%Regions_Covered");
-        bwSampleSummary.newLine();
-
-        bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
-        bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
-        bwCoverageSummaryByGene.newLine();
-        super.run();
-
-        bwSampleSummary.flush();
-        bwSampleSummary.close();
-        bwCoverageSummaryByGene.flush();
-        bwCoverageSummaryByGene.close();
-        outputCleanedExonList();
-        ThirdPartyToolManager.gzipFile(siteSummaryFilePath);
+    public String toString() {
+        return "It is running site coverage comparison function...";
     }
 }

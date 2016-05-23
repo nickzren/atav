@@ -28,10 +28,6 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     }
 
     @Override
-    public void doOutput() {
-    }
-
-    @Override
     public void closeOutput() {
         try {
             bwKnownVar.flush();

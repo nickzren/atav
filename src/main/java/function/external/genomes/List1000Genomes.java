@@ -30,10 +30,6 @@ public class List1000Genomes extends AnalysisBase {
     }
 
     @Override
-    public void doOutput() {
-    }
-
-    @Override
     public void closeOutput() {
         try {
             bw1000Genomes.flush();

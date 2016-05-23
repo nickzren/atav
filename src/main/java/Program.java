@@ -154,21 +154,13 @@ public class Program {
             } else if (GeneDxCommand.isListGeneDx) {
                 runAnalysis(new ListGeneDx());
             } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
-                LogManager.writeAndPrint("It is running a coverage summary function...");
-                CoverageSummary coverageList = new CoverageSummary();
-                coverageList.run();
+                runAnalysis(new CoverageSummary());
             } else if (CoverageCommand.isSiteCoverageSummary) {
-                LogManager.writeAndPrint("It is running a site coverage summary function...");
-                SiteCoverageSummary coverageList = new SiteCoverageSummary();
-                coverageList.run();
+                runAnalysis(new SiteCoverageSummary());
             } else if (CoverageCommand.isCoverageComparison) {
-                LogManager.writeAndPrint("It is running a coverage comparison function...");
-                CoverageComparison coverageList = new CoverageComparison();
-                coverageList.run();
+                runAnalysis(new CoverageComparison());
             } else if (CoverageCommand.isSiteCoverageComparison) {
-                LogManager.writeAndPrint("It is running a site coverage comparison function...");
-                SiteCoverageComparison coverageList = new SiteCoverageComparison();
-                coverageList.run();
+                runAnalysis(new SiteCoverageComparison());
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
             } else if (ExacCommand.isListExac) {

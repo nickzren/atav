@@ -28,11 +28,7 @@ public class ListKaviar extends AnalysisBase {
             ErrorManager.send(ex);
         }
     }
-
-    @Override
-    public void doOutput() {
-    }
-
+    
     @Override
     public void closeOutput() {
         try {
