@@ -1,7 +1,8 @@
-package function.coverage.base;
+package function.coverage.comparison;
 
 import function.annotation.base.Gene;
 import function.annotation.base.Exon;
+import function.coverage.base.CoverageCommand;
 import function.genotype.base.SampleManager;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import utils.FormatManager;
 
 /**
  *
@@ -281,14 +283,14 @@ public class RegionClean {
             CaseAvg /= (double) GeneSize;
             CtrlAvg /= (double) GeneSize;
         }
-        NumberFormat pformat6 = new DecimalFormat("0.######");
+        
         sb.append(gene.getName());
         sb.append(",").append(gene.getChr());
         sb.append(",").append(gene.getLength());
-        sb.append(",").append(pformat6.format(CaseAvg));
-        sb.append(",").append(pformat6.format(CtrlAvg));
+        sb.append(",").append(FormatManager.getSixDegitDouble(CaseAvg));
+        sb.append(",").append(FormatManager.getSixDegitDouble(CtrlAvg));
         double abs_diff = Math.abs(CaseAvg - CtrlAvg);
-        sb.append(",").append(pformat6.format(abs_diff));
+        sb.append(",").append(FormatManager.getSixDegitDouble(abs_diff));
         sb.append(",").append(GeneSize);
         if (abs_diff > CoverageCommand.geneCleanCutoff) {
             if (CaseAvg < CtrlAvg) {

@@ -16,6 +16,8 @@ public class Gene {
     String boundary;
     String chr;
     ArrayList<Exon> exonList = new ArrayList<>();
+    
+    int index; // index for line in gene boundary file
 
     public Gene(String name) {
         this.name = name.trim();
@@ -110,6 +112,14 @@ public class Gene {
 
         return length;
     }
+    
+    public void setIndex(int index){
+        this.index = index;
+    }
+    
+    public int getIndex(){
+        return index;
+    }       
 
     @Override
     public String toString() {

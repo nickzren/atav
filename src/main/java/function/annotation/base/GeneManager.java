@@ -107,6 +107,8 @@ public class GeneManager {
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;
+        
+        int geneIndex = 0;
 
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
@@ -130,6 +132,7 @@ public class GeneManager {
                     geneMapByBoundaries.put(geneId, set);
                 }
 
+                gene.setIndex(geneIndex++);
                 geneBoundaryList.add(gene);
             }
         }

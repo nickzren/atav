@@ -27,6 +27,14 @@ public class FormatManager {
             return pformat1.format(value);
         }
     }
+    
+    public static String getSixDegitDouble(double value) {
+        if (value == Data.NA) {
+            return "NA";
+        }
+        
+        return pformat3.format(value);
+    }
 
     public static String getInteger(int value) {
         if (value == Data.NA) {

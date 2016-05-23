@@ -7,6 +7,8 @@ import function.coverage.base.CoverageManager;
 import function.coverage.base.SampleStatistics;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
+import function.genotype.base.GenotypeLevelFilterCommand;
+import global.Data;
 import utils.CommonCommand;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -53,6 +55,9 @@ public class SiteCoverageSummary extends AnalysisBase {
 
     @Override
     public void beforeProcessDatabaseData() {
+        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
+            ErrorManager.print("--min-coverage option has to be used in this function.");
+        }
     }
 
     @Override
@@ -64,31 +69,27 @@ public class SiteCoverageSummary extends AnalysisBase {
         try {
             SampleStatistics ss = new SampleStatistics(GeneManager.getGeneBoundaryList().size());
 
-            int record = 0;
-
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                System.out.print("Processing " + (record + 1) + " of " + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
-
-                ss.setLength(record, gene.getLength());
+                System.out.print("Processing " + (gene.getIndex() + 1) + " of "
+                        + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
 
                 for (Exon exon : gene.getExonList()) {
-                    emitExoninfo(ss, exon, record);
+                    emitExoninfo(ss, gene, exon);
 
-                    String chr = exon.getChrStr();
                     int SiteStart = exon.getStartPosition();
 
                     ArrayList<int[]> SiteCoverage = CoverageManager.getCoverageForSites(exon);
 
                     for (int pos = 0; pos < SiteCoverage.get(0).length; pos++) {
                         StringBuilder sb = new StringBuilder();
-                        sb.append(gene.getName()).append(",").append(chr).append(",");
+                        sb.append(gene.getName()).append(",").append(exon.getChrStr()).append(",");
                         int total_coverage = SiteCoverage.get(0)[pos] + SiteCoverage.get(1)[pos];
                         sb.append(SiteStart + pos).append(",").append(total_coverage);
                         if (CoverageCommand.isCaseControlSeparate) {
                             sb.append(",").append(SiteCoverage.get(0)[pos]);
                             sb.append(",").append(SiteCoverage.get(1)[pos]);
                             //emit site info for potential processing
-                            emitSiteInfo(gene.getName(), chr, SiteStart + pos,
+                            emitSiteInfo(gene.getName(), exon.getChrStr(), SiteStart + pos,
                                     SiteCoverage.get(0)[pos], SiteCoverage.get(1)[pos]);
                         }
                         sb.append("\n");
@@ -96,8 +97,7 @@ public class SiteCoverageSummary extends AnalysisBase {
                     }
                 }
 
-                DoGeneSummary(ss, gene, record);
-                record++;
+                DoGeneSummary(ss, gene);
             }
 
             emitSS(ss);
@@ -110,11 +110,11 @@ public class SiteCoverageSummary extends AnalysisBase {
         //allow derived class to peek into SampleStatistics
     }
 
-    public void emitExoninfo(SampleStatistics ss, Exon exon, int record) {
+    public void emitExoninfo(SampleStatistics ss, Gene gene, Exon exon) {
         //allow derived class to do extra on an exon
     }
 
-    public void DoGeneSummary(SampleStatistics ss, Gene gene, int record) throws Exception {
+    public void DoGeneSummary(SampleStatistics ss, Gene gene) throws Exception {
         //do nothing for coverage summary
     }
 

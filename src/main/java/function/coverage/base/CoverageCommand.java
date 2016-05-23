@@ -17,8 +17,7 @@ public class CoverageCommand {
     public static boolean isCoverageSummary = false;
     public static boolean isSiteCoverageSummary = false;
     public static boolean isCaseControlSeparate = false;
-    public static double minPercentRegionCovered = 0; //so all is output by default 
-    public static boolean isByExon = false;
+    public static double minPercentRegionCovered = 0; //so all is output by default
     public static double exonCleanCutoff = -1.0; //not used by default
     public static double geneCleanCutoff = 1.0;
     public static double siteCleanCutoff = -1.0; // not used by default
@@ -32,7 +31,6 @@ public class CoverageCommand {
 
     public static void initCoverageComparison(Iterator<CommandOption> iterator) {
         CommandOption option;
-        isByExon = true;
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
@@ -65,9 +63,6 @@ public class CoverageCommand {
             option = (CommandOption) iterator.next();
             if (option.getName().equals("--percent-region-covered")) {
                 minPercentRegionCovered = getValidDouble(option);
-            } else if (option.getName().equals("--by-exon")
-                    || option.getName().equals("--include-exon-file")) {
-                isByExon = true;
             } else {
                 continue;
             }

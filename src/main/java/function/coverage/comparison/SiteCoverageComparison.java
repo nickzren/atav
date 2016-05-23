@@ -4,20 +4,20 @@ import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
 import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
-import function.coverage.base.RegionClean;
 import function.annotation.base.Gene;
 import function.coverage.base.SampleStatistics;
 import function.coverage.summary.SiteCoverageSummary;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import utils.FormatManager;
 import utils.ThirdPartyToolManager;
 
 /**
@@ -35,6 +35,10 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
 
     @Override
     public void beforeProcessDatabaseData() {
+        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
+            ErrorManager.print("--min-coverage option has to be used in this function.");
+        }
+        
         int sampleSize = SampleManager.getListSize();
         if (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum()) {
             ErrorManager.print("Error: this function is not supposed to run with case only or control only sample file. ");
@@ -67,7 +71,6 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
 
     public void outputCleanedExonList() throws Exception {
-        NumberFormat pformat6 = new DecimalFormat("0.######");
         final String CleanedSiteList = CommonCommand.outputPath + "site.clean.txt";
         BufferedWriter bwSiteClean = new BufferedWriter(new FileWriter(CleanedSiteList));
         BufferedWriter bwGeneSummaryClean = new BufferedWriter(new FileWriter(CleanedGeneSummaryList));
@@ -81,22 +84,22 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
         LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for sites is " + Double.toString(cutoff));
         if (CoverageCommand.siteCleanCutoff >= 0) {
             cutoff = CoverageCommand.siteCleanCutoff;
-            LogManager.writeAndPrint("User specified cutoff value " + pformat6.format(cutoff) + " is applied instead.");
+            LogManager.writeAndPrint("User specified cutoff value " + FormatManager.getSixDegitDouble(cutoff) + " is applied instead.");
         }
         HashSet<String> CleanedList = ec.GetRegionCleanList(cutoff);
 
-        LogManager.writeAndPrint("The total number of bases before pruning is " + pformat6.format((double) ec.GetTotalBases() / 1000000.0) + " MB");
-        LogManager.writeAndPrint("The total number of bases after pruning is " + pformat6.format((double) ec.GetTotalCleanedBases() / 1000000.0) + " MB");
-        LogManager.writeAndPrint("The % of bases pruned is " + pformat6.format(100.0 - (double) ec.GetTotalCleanedBases() / (double) ec.GetTotalBases() * 100) + "%");
+        LogManager.writeAndPrint("The total number of bases before pruning is " + FormatManager.getSixDegitDouble((double) ec.GetTotalBases() / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The total number of bases after pruning is " + FormatManager.getSixDegitDouble((double) ec.GetTotalCleanedBases() / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The % of bases pruned is " + FormatManager.getSixDegitDouble(100.0 - (double) ec.GetTotalCleanedBases() / (double) ec.GetTotalBases() * 100) + "%");
 
-        LogManager.writeAndPrint("The average coverage rate for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * 100) + "%");
-        LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The average coverage rate for all samples after pruning is  " + FormatManager.getSixDegitDouble(ec.GetAllCoverage() * 100) + "%");
+        LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  " + FormatManager.getSixDegitDouble(ec.GetAllCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
-        LogManager.writeAndPrint("The average coverage rate for cases after pruning is  " + pformat6.format(ec.GetCaseCoverage() * 100) + "%");
-        LogManager.writeAndPrint("The average number of bases well covered for cases after pruning is  " + pformat6.format(ec.GetCaseCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The average coverage rate for cases after pruning is  " + FormatManager.getSixDegitDouble(ec.GetCaseCoverage() * 100) + "%");
+        LogManager.writeAndPrint("The average number of bases well covered for cases after pruning is  " + FormatManager.getSixDegitDouble(ec.GetCaseCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
-        LogManager.writeAndPrint("The average coverage rate for controls after pruning is  " + pformat6.format(ec.GetControlCoverage() * 100) + "%");
-        LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is  " + pformat6.format(ec.GetControlCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The average coverage rate for controls after pruning is  " + FormatManager.getSixDegitDouble(ec.GetControlCoverage() * 100) + "%");
+        LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is  " + FormatManager.getSixDegitDouble(ec.GetControlCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
             String str = ec.GetCleanedGeneStringSite(gene, CleanedList);
@@ -128,9 +131,9 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
 
     @Override
-    public void DoGeneSummary(SampleStatistics ss, Gene gene, int record) throws Exception {
-        ss.updateSampleRegionCoverage(record);
-        ss.printGeneSummary(record, gene, bwCoverageSummaryByGene);
+    public void DoGeneSummary(SampleStatistics ss, Gene gene) throws Exception {
+        ss.updateSampleRegionCoverage(gene);
+        ss.printGeneSummary(gene, bwCoverageSummaryByGene);
     }
 
     @Override
@@ -144,13 +147,13 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
 
     @Override
-    public void emitExoninfo(SampleStatistics ss, Exon exon, int record) {
+    public void emitExoninfo(SampleStatistics ss, Gene gene, Exon exon) {
         //Quanli: Here we are querying the database twice to generate 
         //summary views from sites and from (gene, sample) pair 
         //Can be a lot more efficient if we combine two pass, but code could be messy. 
         //revisit this if the performnce is of concern
         HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-        ss.accumulateCoverage(record, result);
+        ss.accumulateCoverage(gene, result);
     }
 
     @Override

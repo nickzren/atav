@@ -50,14 +50,13 @@ public class CoverageSummary extends AnalysisBase {
 
             bwSampleMatrixSummary = new BufferedWriter(new FileWriter(coverageMatrixFilePath));
 
-            if (CoverageCommand.isByExon) {
-                if (CoverageCommand.isCoverageSummary) {
-                    bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
-                    bwCoverageDetailsByExon.write("Sample,Gene/Transcript,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
-                    bwCoverageDetailsByExon.newLine();
-                }
-                bwSampleExonMatrixSummary = new BufferedWriter(new FileWriter(coverageExonMatrixFilePath));
+            if (CoverageCommand.isCoverageSummary) {
+                bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
+                bwCoverageDetailsByExon.write("Sample,Gene/Transcript,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
+                bwCoverageDetailsByExon.newLine();
             }
+
+            bwSampleExonMatrixSummary = new BufferedWriter(new FileWriter(coverageExonMatrixFilePath));
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -73,14 +72,13 @@ public class CoverageSummary extends AnalysisBase {
             bwSampleMatrixSummary.flush();
             bwSampleMatrixSummary.close();
 
-            if (CoverageCommand.isByExon) {
-                if (CoverageCommand.isCoverageSummary) {
-                    bwCoverageDetailsByExon.flush();
-                    bwCoverageDetailsByExon.close();
-                }
-                bwSampleExonMatrixSummary.flush();
-                bwSampleExonMatrixSummary.close();
+            if (CoverageCommand.isCoverageSummary) {
+                bwCoverageDetailsByExon.flush();
+                bwCoverageDetailsByExon.close();
             }
+
+            bwSampleExonMatrixSummary.flush();
+            bwSampleExonMatrixSummary.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -105,7 +103,7 @@ public class CoverageSummary extends AnalysisBase {
         ss.print(result, gene, exon, bwCoverageDetailsByExon);
     }
 
-    public void DoGeneSummary(SampleStatistics ss, Gene gene, int record) throws Exception {
+    public void DoGeneSummary(SampleStatistics ss, Gene gene) throws Exception {
         //do nothing for coverage summary
     }
 
@@ -114,30 +112,23 @@ public class CoverageSummary extends AnalysisBase {
         try {
             SampleStatistics ss = new SampleStatistics(GeneManager.getGeneBoundaryList().size());
             ss.printMatrixHeader(bwSampleMatrixSummary, false);
-
-            if (CoverageCommand.isByExon) {
-                ss.printMatrixHeader(bwSampleExonMatrixSummary, true);
-            }
-
-            int record = 0;
+            
+            ss.printMatrixHeader(bwSampleExonMatrixSummary, true);
 
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                System.out.print("Processing " + (record + 1) + " of " + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
-
-                ss.setLength(record, gene.getLength());
+                System.out.print("Processing " + (gene.getIndex() + 1) + " of " 
+                        + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
 
                 for (Exon exon : gene.getExonList()) {
                     HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                    ss.accumulateCoverage(record, result);
-                    ss.printMatrixRowbyExon(record, result, gene, exon, bwSampleExonMatrixSummary);
+                    ss.accumulateCoverage(gene, result);
+                    ss.printMatrixRowbyExon(result, gene, exon, bwSampleExonMatrixSummary);
                     DoExonSummary(ss, result, gene, exon);
                 }
 
-                ss.print(record, gene, bwSampleRegionSummary);
-                ss.printMatrixRow(record, gene, bwSampleMatrixSummary);
-                DoGeneSummary(ss, gene, record);
-
-                record++;
+                ss.print(gene, bwSampleRegionSummary);
+                ss.printMatrixRow(gene, bwSampleMatrixSummary);
+                DoGeneSummary(ss, gene);
             }
 
             ss.print(bwSampleSummary);

@@ -2,23 +2,22 @@ package function.coverage.comparison;
 
 import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
-import function.coverage.base.ExonCleanLinearTrait;
-import function.coverage.base.RegionClean;
 import function.coverage.base.SampleStatistics;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.summary.CoverageSummary;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import utils.ThirdPartyToolManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import utils.FormatManager;
 
 /**
  *
@@ -44,15 +43,14 @@ public class CoverageComparison extends CoverageSummary {
                 bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
             }
             bwCoverageSummaryByGene.newLine();
-            if (CoverageCommand.isByExon) {
-                bwCoverageSummaryByExon = new BufferedWriter(new FileWriter(coverageSummaryByExon));
-                if (CoverageCommand.isCoverageComparisonDoLinear) {
-                    bwCoverageSummaryByExon.write("EXON,Chr,AvgAll,pvalue,R2,Variance,Length");
-                } else {
-                    bwCoverageSummaryByExon.write("EXON,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
-                }
-                bwCoverageSummaryByExon.newLine();
+
+            bwCoverageSummaryByExon = new BufferedWriter(new FileWriter(coverageSummaryByExon));
+            if (CoverageCommand.isCoverageComparisonDoLinear) {
+                bwCoverageSummaryByExon.write("EXON,Chr,AvgAll,pvalue,R2,Variance,Length");
+            } else {
+                bwCoverageSummaryByExon.write("EXON,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
             }
+            bwCoverageSummaryByExon.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -65,10 +63,6 @@ public class CoverageComparison extends CoverageSummary {
 
             bwCoverageSummaryByGene.flush();
             bwCoverageSummaryByGene.close();
-
-            ThirdPartyToolManager.gzipFile(coverageDetailsFilePath);
-            ThirdPartyToolManager.gzipFile(coverageMatrixFilePath);
-            ThirdPartyToolManager.gzipFile(coverageExonMatrixFilePath);
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -76,10 +70,17 @@ public class CoverageComparison extends CoverageSummary {
 
     @Override
     public void doAfterCloseOutput() {
+        ThirdPartyToolManager.gzipFile(coverageDetailsFilePath);
+        ThirdPartyToolManager.gzipFile(coverageMatrixFilePath);
+        ThirdPartyToolManager.gzipFile(coverageExonMatrixFilePath);
     }
 
     @Override
     public void beforeProcessDatabaseData() {
+        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
+            ErrorManager.print("--min-coverage option has to be used in this function.");
+        }
+
         int sampleSize = SampleManager.getListSize();
         if (!CoverageCommand.isCoverageComparisonDoLinear && (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum())) {
             ErrorManager.print("Error: this function does not support to run with case only or control only sample file. ");
@@ -91,15 +92,13 @@ public class CoverageComparison extends CoverageSummary {
         super.processDatabaseData();
 
         try {
-            if (CoverageCommand.isByExon) {
-                bwCoverageSummaryByExon.flush();
-                bwCoverageSummaryByExon.close();
+            bwCoverageSummaryByExon.flush();
+            bwCoverageSummaryByExon.close();
 
-                if (CoverageCommand.isCoverageComparisonDoLinear) {
-                    outputCleanedExonListLinearTrait();
-                } else {
-                    outputCleanedExonList();
-                }
+            if (CoverageCommand.isCoverageComparisonDoLinear) {
+                outputCleanedExonListLinearTrait();
+            } else {
+                outputCleanedExonList();
             }
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -108,7 +107,6 @@ public class CoverageComparison extends CoverageSummary {
 
     public void outputCleanedExonListLinearTrait() {
         try {
-            NumberFormat pformat6 = new DecimalFormat("0.######");
             BufferedWriter bwExonClean = new BufferedWriter(new FileWriter(CleanedExonList)); //for now, will be much easier to test run
             BufferedWriter bwGeneSummaryClean = new BufferedWriter(new FileWriter(CleanedGeneSummaryList));
             bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgAll,CleanedLength");
@@ -119,7 +117,7 @@ public class CoverageComparison extends CoverageSummary {
             LogManager.writeAndPrint("\nThe automated cutoff value for variance for exons is " + Double.toString(cutoff));
             if (CoverageCommand.exonCleanCutoff >= 0) {
                 cutoff = CoverageCommand.exonCleanCutoff;
-                LogManager.writeAndPrint("User specified cutoff value " + pformat6.format(cutoff) + " is applied instead.");
+                LogManager.writeAndPrint("User specified cutoff value " + FormatManager.getSixDegitDouble(cutoff) + " is applied instead.");
             }
             HashSet<String> CleanedList = ec.GetExonCleanList(cutoff);
 
@@ -130,14 +128,14 @@ public class CoverageComparison extends CoverageSummary {
             LogManager.writeAndPrint("The number of exons after pruning is " + Integer.toString(CleanedList.size()));
             LogManager.writeAndPrint("The number of exons pruned is " + Integer.toString(NumExonsPruned));
             double percentExonsPruned = (double) NumExonsPruned / (double) NumExonsTotal * 100;
-            LogManager.writeAndPrint("The % of exons pruned is " + pformat6.format(percentExonsPruned) + "%");
+            LogManager.writeAndPrint("The % of exons pruned is " + FormatManager.getSixDegitDouble(percentExonsPruned) + "%");
 
-            LogManager.writeAndPrint("The total number of bases before pruning is " + pformat6.format((double) ec.GetTotalBases() / 1000000.0) + " MB");
-            LogManager.writeAndPrint("The total number of bases after pruning is " + pformat6.format((double) ec.GetTotalCleanedBases() / 1000000.0) + " MB");
-            LogManager.writeAndPrint("The % of bases pruned is " + pformat6.format(100.0 - (double) ec.GetTotalCleanedBases() / (double) ec.GetTotalBases() * 100) + "%");
+            LogManager.writeAndPrint("The total number of bases before pruning is " + FormatManager.getSixDegitDouble((double) ec.GetTotalBases() / 1000000.0) + " MB");
+            LogManager.writeAndPrint("The total number of bases after pruning is " + FormatManager.getSixDegitDouble((double) ec.GetTotalCleanedBases() / 1000000.0) + " MB");
+            LogManager.writeAndPrint("The % of bases pruned is " + FormatManager.getSixDegitDouble(100.0 - (double) ec.GetTotalCleanedBases() / (double) ec.GetTotalBases() * 100) + "%");
 
-            LogManager.writeAndPrint("The average coverage rate for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * 100) + "%");
-            LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
+            LogManager.writeAndPrint("The average coverage rate for all samples after pruning is  " + FormatManager.getSixDegitDouble(ec.GetAllCoverage() * 100) + "%");
+            LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  " + FormatManager.getSixDegitDouble(ec.GetAllCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
                 String str = ec.getCleanedGeneString(gene, CleanedList);
@@ -164,7 +162,6 @@ public class CoverageComparison extends CoverageSummary {
 
     public void outputCleanedExonList() {
         try {
-            NumberFormat pformat6 = new DecimalFormat("0.######");
             BufferedWriter bwExonClean = new BufferedWriter(new FileWriter(CleanedExonList)); //for now, will be much easier to test run
             BufferedWriter bwGeneSummaryClean = new BufferedWriter(new FileWriter(CleanedGeneSummaryList));
             bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
@@ -175,7 +172,7 @@ public class CoverageComparison extends CoverageSummary {
             LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for exons is " + Double.toString(cutoff));
             if (CoverageCommand.exonCleanCutoff >= 0) {
                 cutoff = CoverageCommand.exonCleanCutoff;
-                LogManager.writeAndPrint("User specified cutoff value " + pformat6.format(cutoff) + " is applied instead.");
+                LogManager.writeAndPrint("User specified cutoff value " + FormatManager.getSixDegitDouble(cutoff) + " is applied instead.");
             }
             HashSet<String> CleanedList = ec.GetRegionCleanList(cutoff);
             int NumExonsTotal = ec.GetNumberOfRegions();
@@ -186,20 +183,20 @@ public class CoverageComparison extends CoverageSummary {
             LogManager.writeAndPrint("The number of exons after pruning is " + Integer.toString(CleanedList.size()));
             LogManager.writeAndPrint("The number of exons pruned is " + Integer.toString(NumExonsPruned));
             double percentExonsPruned = (double) NumExonsPruned / (double) NumExonsTotal * 100;
-            LogManager.writeAndPrint("The % of exons pruned is " + pformat6.format(percentExonsPruned) + "%");
+            LogManager.writeAndPrint("The % of exons pruned is " + FormatManager.getSixDegitDouble(percentExonsPruned) + "%");
 
-            LogManager.writeAndPrint("The total number of bases before pruning is " + pformat6.format((double) ec.GetTotalBases() / 1000000.0) + " MB");
-            LogManager.writeAndPrint("The total number of bases after pruning is " + pformat6.format((double) ec.GetTotalCleanedBases() / 1000000.0) + " MB");
-            LogManager.writeAndPrint("The % of bases pruned is " + pformat6.format(100.0 - (double) ec.GetTotalCleanedBases() / (double) ec.GetTotalBases() * 100) + "%");
+            LogManager.writeAndPrint("The total number of bases before pruning is " + FormatManager.getSixDegitDouble((double) ec.GetTotalBases() / 1000000.0) + " MB");
+            LogManager.writeAndPrint("The total number of bases after pruning is " + FormatManager.getSixDegitDouble((double) ec.GetTotalCleanedBases() / 1000000.0) + " MB");
+            LogManager.writeAndPrint("The % of bases pruned is " + FormatManager.getSixDegitDouble(100.0 - (double) ec.GetTotalCleanedBases() / (double) ec.GetTotalBases() * 100) + "%");
 
-            LogManager.writeAndPrint("The average coverage rate for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * 100) + "%");
-            LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  " + pformat6.format(ec.GetAllCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
+            LogManager.writeAndPrint("The average coverage rate for all samples after pruning is  " + FormatManager.getSixDegitDouble(ec.GetAllCoverage() * 100) + "%");
+            LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  " + FormatManager.getSixDegitDouble(ec.GetAllCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
-            LogManager.writeAndPrint("The average coverage rate for cases after pruning is  " + pformat6.format(ec.GetCaseCoverage() * 100) + "%");
-            LogManager.writeAndPrint("The average number of bases well covered for cases after pruning is  " + pformat6.format(ec.GetCaseCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
+            LogManager.writeAndPrint("The average coverage rate for cases after pruning is  " + FormatManager.getSixDegitDouble(ec.GetCaseCoverage() * 100) + "%");
+            LogManager.writeAndPrint("The average number of bases well covered for cases after pruning is  " + FormatManager.getSixDegitDouble(ec.GetCaseCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
-            LogManager.writeAndPrint("The average coverage rate for controls after pruning is  " + pformat6.format(ec.GetControlCoverage() * 100) + "%");
-            LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is  " + pformat6.format(ec.GetControlCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
+            LogManager.writeAndPrint("The average coverage rate for controls after pruning is  " + FormatManager.getSixDegitDouble(ec.GetControlCoverage() * 100) + "%");
+            LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is  " + FormatManager.getSixDegitDouble(ec.GetControlCoverage() * ec.GetTotalBases() / 1000000.0) + " MB");
 
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
                 String str = ec.GetCleanedGeneString(gene, CleanedList);
@@ -234,11 +231,11 @@ public class CoverageComparison extends CoverageSummary {
     }
 
     @Override
-    public void DoGeneSummary(SampleStatistics ss, Gene gene, int record) throws Exception {
+    public void DoGeneSummary(SampleStatistics ss, Gene gene) throws Exception {
         if (CoverageCommand.isCoverageComparisonDoLinear) {
-            ss.printGeneSummaryLinearTrait(record, gene, bwCoverageSummaryByGene);
+            ss.printGeneSummaryLinearTrait(gene, bwCoverageSummaryByGene);
         } else {
-            ss.printGeneSummary(record, gene, bwCoverageSummaryByGene);
+            ss.printGeneSummary(gene, bwCoverageSummaryByGene);
         }
     }
 

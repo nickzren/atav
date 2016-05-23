@@ -1,4 +1,4 @@
-package function.coverage.base;
+package function.coverage.comparison;
 
 import function.annotation.base.Gene;
 import function.annotation.base.Exon;
@@ -6,13 +6,12 @@ import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import utils.FormatManager;
 
 /**
  *
@@ -164,11 +163,11 @@ public class ExonCleanLinearTrait {
         if (GeneSize > 0) {
             AvgAll /= (double) GeneSize;
         }
-        NumberFormat pformat6 = new DecimalFormat("0.######");
+
         sb.append(gene.getName());
         sb.append(",").append(gene.getChr());
         sb.append(",").append(gene.getLength());
-        sb.append(",").append(pformat6.format(AvgAll));
+        sb.append(",").append(FormatManager.getSixDegitDouble(AvgAll));
         sb.append(",").append(GeneSize);
 
         return sb.toString();
