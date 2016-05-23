@@ -225,20 +225,20 @@ public class CoverageComparison extends CoverageSummary {
     }
 
     @Override
-    public void DoExonSummary(SampleStatistics ss, int record, HashMap<Integer, Integer> result, Exon e) throws Exception {
+    public void DoExonSummary(SampleStatistics ss, HashMap<Integer, Integer> result, Gene gene, Exon exon) throws Exception {
         if (CoverageCommand.isCoverageComparisonDoLinear) {
-            ss.printExonSummaryLinearTrait(record, result, e, bwCoverageSummaryByExon);
+            ss.printExonSummaryLinearTrait(result, gene, exon, bwCoverageSummaryByExon);
         } else {
-            ss.printExonSummary(record, result, e, bwCoverageSummaryByExon);
+            ss.printExonSummary(result, gene, exon, bwCoverageSummaryByExon);
         }
     }
 
     @Override
-    public void DoGeneSummary(SampleStatistics ss, int record) throws Exception {
+    public void DoGeneSummary(SampleStatistics ss, Gene gene, int record) throws Exception {
         if (CoverageCommand.isCoverageComparisonDoLinear) {
-            ss.printGeneSummaryLinearTrait(record, bwCoverageSummaryByGene);
+            ss.printGeneSummaryLinearTrait(record, gene, bwCoverageSummaryByGene);
         } else {
-            ss.printGeneSummary(record, bwCoverageSummaryByGene);
+            ss.printGeneSummary(record, gene, bwCoverageSummaryByGene);
         }
     }
 

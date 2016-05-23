@@ -128,9 +128,9 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
 
     @Override
-    public void DoGeneSummary(SampleStatistics ss, int record) throws Exception {
+    public void DoGeneSummary(SampleStatistics ss, Gene gene, int record) throws Exception {
         ss.updateSampleRegionCoverage(record);
-        ss.printGeneSummary(record, bwCoverageSummaryByGene);
+        ss.printGeneSummary(record, gene, bwCoverageSummaryByGene);
     }
 
     @Override

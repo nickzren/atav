@@ -1,6 +1,8 @@
 package function.coverage.base;
 
 import function.annotation.base.Exon;
+import function.annotation.base.Gene;
+import function.annotation.base.GeneManager;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import java.io.BufferedWriter;
@@ -18,74 +20,44 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  */
 public class SampleStatistics {
 
-    HashMap<Integer, Integer> Id2Index = new HashMap<Integer, Integer>();
-    HashMap<Integer, Integer> Index2Id = new HashMap<Integer, Integer>();
-    int[] aLength;
     int[] aSampleRegionCoverage;
+    int[] aLength;
     double[][] aCoverage;
-    String[] SampleNames;
-    String[] RecordNames;
-    String[] RecordChrs;
-    
+
     NumberFormat pformat6 = new DecimalFormat("0.######");
 
     public SampleStatistics(int NumberOfRecord) {
         aLength = new int[NumberOfRecord];
-        RecordNames = new String[NumberOfRecord];
-        RecordChrs = new String[NumberOfRecord];
-        
         aSampleRegionCoverage = new int[SampleManager.getListSize()];
         aCoverage = new double[NumberOfRecord][SampleManager.getListSize()];
-        
-        SampleNames = new String[SampleManager.getListSize()];
-
-        for (int i = 0; i < SampleManager.getListSize(); i++) {
-            Sample sample = SampleManager.getList().get(i);
-            SampleNames[i] = sample.getName();
-            Id2Index.put(sample.getId(), i);
-            Index2Id.put(i, sample.getId());
-        }
-    }
-
-    public void setRecordName(int record, String name, String chr) {
-        RecordNames[record] = name;
-        RecordChrs[record] = chr;
     }
 
     public void accumulateCoverage(int record, HashMap<Integer, Integer> result) {
         Set<Integer> samples = result.keySet();
         for (Iterator it = samples.iterator(); it.hasNext();) {
             int sampleid = (Integer) it.next();
-            int column = Id2Index.get(sampleid);
+
+            int column = SampleManager.getIndexById(sampleid);
             aCoverage[record][column] = aCoverage[record][column] + result.get(sampleid);
         }
     }
 
-    public void setGeneCoverage(int record, HashMap<Integer, Double> result) {
-        Set<Integer> samples = result.keySet();
-        for (Iterator it = samples.iterator(); it.hasNext();) {
-            int sampleid = (Integer) it.next();
-            int column = Id2Index.get(sampleid);
-            aCoverage[record][column] = result.get(sampleid) * aLength[record];
-        }
-    }
-
-    public void print(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
+    public void print(HashMap<Integer, Integer> result, Gene gene, Exon e, BufferedWriter bw) throws Exception {
         if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
-            for (int i = 0; i < SampleNames.length; i++) {
+            for (Sample sample : SampleManager.getList()) {
                 StringBuilder sb = new StringBuilder();
-                sb.append(SampleNames[i]).append(",");
-                sb.append(RecordNames[record]).append(",");
-                sb.append(RecordChrs[record]).append(",");
+                sb.append(sample.getName()).append(",");
+                sb.append(gene.getName()).append(",");
+                sb.append(e.getChrStr()).append(",");
                 sb.append(e.getIdStr()).append(",");
                 sb.append(e.getStartPosition()).append(",");
                 sb.append(e.getEndPosition()).append(",");
                 sb.append(e.getLength()).append(",");
-                int sampleid = Index2Id.get(i);
+
                 int cov = 0;
-                if (samples.contains(sampleid)) {
-                    cov = result.get(sampleid);
+                if (samples.contains(sample.getId())) {
+                    cov = result.get(sample.getId());
 
                 }
                 sb.append(cov).append(",");
@@ -119,21 +91,21 @@ public class SampleStatistics {
             sb.append(" ,Chr");
         }
 
-        for (int i = 0; i < SampleNames.length; i++) {
-            sb.append(",").append(SampleNames[i]);
+        for (Sample sample : SampleManager.getList()) {
+            sb.append(",").append(sample.getName());
         }
         sb.append("\n");
         bw.write(sb.toString());
     }
 
-    public void printMatrixRow(int record, BufferedWriter bw) throws Exception {
+    public void printMatrixRow(int record, Gene gene, BufferedWriter bw) throws Exception {
         StringBuilder sb = new StringBuilder();
-        sb.append(RecordNames[record]);
-        sb.append(",").append(RecordChrs[record]);
-        for (int i = 0; i < SampleNames.length; i++) {
+        sb.append(gene.getName());
+        sb.append(",").append(gene.getChr());
+        for (Sample sample : SampleManager.getList()) {
             if (aLength[record] > 0) {
                 //we only save scaled int in database, so need to do this to make output consistant
-                int scaledCoverageRatio = (int) (aCoverage[record][i] / aLength[record] * 10000);
+                int scaledCoverageRatio = (int) (aCoverage[record][sample.getIndex()] / aLength[record] * 10000);
                 double ratio = (double) scaledCoverageRatio / 10000.0;
                 sb.append(",").append(pformat6.format(ratio));
             } else {
@@ -144,21 +116,19 @@ public class SampleStatistics {
         bw.write(sb.toString());
     }
 
-    public void printMatrixRowbyExon(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
+    public void printMatrixRowbyExon(int record, HashMap<Integer, Integer> result, Gene gene, Exon e, BufferedWriter bw) throws Exception {
         if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
             StringBuilder sb = new StringBuilder();
-            sb.append(RecordNames[record]).append("_").append(e.getIdStr());
-            sb.append(",").append(RecordChrs[record]);
+            sb.append(gene.getName()).append("_").append(e.getIdStr());
+            sb.append(",").append(gene.getChr());
             sb.append(",").append(e.getStartPosition());
             sb.append(",").append(e.getEndPosition());
             sb.append(",").append(e.getLength());
-            for (int i = 0; i < SampleNames.length; i++) {
-                int sampleid = Index2Id.get(i);
+            for (Sample sample : SampleManager.getList()) {
                 int cov = 0;
-                if (samples.contains(sampleid)) {
-                    cov = result.get(sampleid);
-
+                if (samples.contains(sample.getId())) {
+                    cov = result.get(sample.getId());
                 }
 
                 if (e.getLength() > 0) {
@@ -168,14 +138,13 @@ public class SampleStatistics {
                     sb.append(",").append("NA");
                 }
 
-
             }
             sb.append("\n");
             bw.write(sb.toString());
         }
     }
 
-    public void printGeneSummary(int record, BufferedWriter bw) throws Exception {
+    public void printGeneSummary(int record, Gene gene, BufferedWriter bw) throws Exception {
         if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
             return;
         }
@@ -185,19 +154,19 @@ public class SampleStatistics {
 
         double avgCase = 0;
         double avgCtrl = 0;
-        for (int i = 0; i < SampleNames.length; i++) {
-            int sampleid = Index2Id.get(i);
-            if (SampleManager.getMap().get(sampleid).isCase()) {
-                avgCase = avgCase + aCoverage[record][i];
+        for (Sample sample : SampleManager.getList()) {
+            if (sample.isCase()) {
+                avgCase = avgCase + aCoverage[record][sample.getIndex()];
             } else {
-                avgCtrl = avgCtrl + aCoverage[record][i];
+                avgCtrl = avgCtrl + aCoverage[record][sample.getIndex()];
             }
         }
+
         avgCase = avgCase / SampleManager.getCaseNum() / (double) aLength[record];
         avgCtrl = avgCtrl / SampleManager.getCtrlNum() / (double) aLength[record];
         StringBuilder sb = new StringBuilder();
-        sb.append(RecordNames[record]);
-        sb.append(",").append(RecordChrs[record]);
+        sb.append(gene.getName());
+        sb.append(",").append(gene.getChr());
         sb.append(",").append(pformat6.format(avgCase));
         sb.append(",").append(pformat6.format(avgCtrl));
         double abs_diff = Math.abs(avgCase - avgCtrl);
@@ -216,67 +185,68 @@ public class SampleStatistics {
         sb.append("\n");
         bw.write(sb.toString());
     }
-    public void printGeneSummaryLinearTrait(int record, BufferedWriter bw) throws Exception {
+
+    public void printGeneSummaryLinearTrait(int record, Gene gene, BufferedWriter bw) throws Exception {
         if (aLength[record] == 0) {
             return;
         }
         double avgAll = 0;
-        for (int i = 0; i < SampleNames.length; i++) {
-            avgAll = avgAll + aCoverage[record][i];
+        for (Sample sample : SampleManager.getList()) {
+            avgAll = avgAll + aCoverage[record][sample.getIndex()];
         }
-        avgAll = avgAll / SampleNames.length / (double) aLength[record];
+        avgAll = avgAll / SampleManager.getListSize() / (double) aLength[record];
         StringBuilder sb = new StringBuilder();
-        sb.append(RecordNames[record]);
-        sb.append(",").append(RecordChrs[record]);
+        sb.append(gene.getName());
+        sb.append(",").append(gene.getChr());
         sb.append(",").append(pformat6.format(avgAll));
         sb.append(",").append(aLength[record]);
         sb.append("\n");
         bw.write(sb.toString());
     }
-    public void printExonSummaryLinearTrait(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
+
+    public void printExonSummaryLinearTrait(HashMap<Integer, Integer> result, Gene gene, Exon exon, BufferedWriter bw) throws Exception {
         if (CoverageCommand.isByExon) {
             Set<Integer> samples = result.keySet();
-            double RegoinLength = e.getLength();
+            double RegoinLength = exon.getLength();
             double avgAll = 0;
             SimpleRegression sr = new SimpleRegression(true);
             SummaryStatistics lss = new SummaryStatistics();
-            for (int i = 0; i < SampleNames.length; i++) {
-                int sampleid = Index2Id.get(i);
+            for (Sample sample : SampleManager.getList()) {
                 double cov = 0;
-                if (samples.contains(sampleid)) {
-                    cov = result.get(sampleid);
+                if (samples.contains(sample.getId())) {
+                    cov = result.get(sample.getId());
                 }
                 avgAll = avgAll + cov;
-                double x = SampleManager.getMap().get(sampleid).getQuantitativeTrait();
+                double x = sample.getQuantitativeTrait();
                 double y = cov / RegoinLength;
                 sr.addData(x, y);
                 lss.addValue(y);
             }
-            avgAll = avgAll / SampleNames.length / RegoinLength;
+            avgAll = avgAll / SampleManager.getListSize() / RegoinLength;
             double R2 = sr.getRSquare();
             double pValue = sr.getSignificance();
             double Variance = lss.getVariance();
-            
+
             StringBuilder sb = new StringBuilder();
-            sb.append(RecordNames[record]).append("_").append(e.getIdStr());
-            sb.append(",").append(RecordChrs[record]);
+            sb.append(gene.getName()).append("_").append(exon.getIdStr());
+            sb.append(",").append(gene.getChr());
             sb.append(",").append(pformat6.format(avgAll));
             if (Double.isNaN(pValue)) { //happens if all coverages are the same
                 sb.append(",").append(1);     //do not format here as we need to reuse it for precision
                 sb.append(",").append(0);
             } else {
                 sb.append(",").append(pValue); //do not format here as we need to reuse it for precision
-                sb.append(",").append(R2*100);
+                sb.append(",").append(R2 * 100);
             }
             sb.append(",").append(Variance);
-            
-            sb.append(",").append(e.getLength());
+
+            sb.append(",").append(exon.getLength());
             sb.append("\n");
             bw.write(sb.toString());
         }
     }
 
-    public void printExonSummary(int record, HashMap<Integer, Integer> result, Exon e, BufferedWriter bw) throws Exception {
+    public void printExonSummary(HashMap<Integer, Integer> result, Gene gene, Exon exon, BufferedWriter bw) throws Exception {
         if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
             return;
         }
@@ -285,64 +255,61 @@ public class SampleStatistics {
 
             double avgCase = 0;
             double avgCtrl = 0;
-            for (int i = 0; i < SampleNames.length; i++) {
-                int sampleid = Index2Id.get(i);
+            for (Sample sample : SampleManager.getList()) {
                 int cov = 0;
-                if (samples.contains(sampleid)) {
-                    cov = result.get(sampleid);
+                if (samples.contains(sample.getId())) {
+                    cov = result.get(sample.getId());
 
                 }
-                if (SampleManager.getMap().get(sampleid).isCase()) {
+                if (sample.isCase()) {
                     avgCase = avgCase + cov;
                 } else {
                     avgCtrl = avgCtrl + cov;
                 }
             }
-            avgCase = avgCase / SampleManager.getCaseNum() / e.getLength();
-            avgCtrl = avgCtrl / SampleManager.getCtrlNum() / e.getLength();
+            avgCase = avgCase / SampleManager.getCaseNum() / exon.getLength();
+            avgCtrl = avgCtrl / SampleManager.getCtrlNum() / exon.getLength();
 
-            //if (avgCase + avgCtrl > 0) {
             StringBuilder sb = new StringBuilder();
-            sb.append(RecordNames[record]).append("_").append(e.getIdStr());
-            sb.append(",").append(RecordChrs[record]);
+            sb.append(gene.getName()).append("_").append(exon.getIdStr());
+            sb.append(",").append(gene.getChr());
             sb.append(",").append(pformat6.format(avgCase));
             sb.append(",").append(pformat6.format(avgCtrl));
             sb.append(",").append(pformat6.format(Math.abs((avgCase - avgCtrl))));
-            sb.append(",").append(e.getLength());
+            sb.append(",").append(exon.getLength());
             sb.append("\n");
             bw.write(sb.toString());
-            //}
         }
     }
 
     //a hack here, Nick, please refactor to merge with one of the print function 
     //only used by siteCoverageComparison for some extra output
     public void updateSampleRegionCoverage(int record) {
-        for (int i = 0; i < SampleNames.length; i++) {
+        for (Sample sample : SampleManager.getList()) {
             int pass;
             if (aLength[record] > 0) {
-                double ratio = aCoverage[record][i] / aLength[record];
+                double ratio = aCoverage[record][sample.getIndex()] / aLength[record];
                 pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
             } else {
                 pass = 0;
             }
             //also accumalate region information here
-            aSampleRegionCoverage[i] = aSampleRegionCoverage[i] + pass;
+            aSampleRegionCoverage[sample.getIndex()] = aSampleRegionCoverage[sample.getIndex()] + pass;
         }
     }
-    
-    public void print(int record, BufferedWriter bw) throws Exception {
-        for (int i = 0; i < SampleNames.length; i++) {
+
+    public void print(int record, Gene gene, BufferedWriter bw) throws Exception {
+        for (Sample sample : SampleManager.getList()) {
             StringBuilder sb = new StringBuilder();
-            sb.append(SampleNames[i]).append(",");
-            sb.append(RecordNames[record]).append(",");
-            sb.append(RecordChrs[record]).append(",");
+            sb.append(sample.getName()).append(",");
+            sb.append(gene.getName()).append(",");
+            sb.append(gene.getChr()).append(",");
             sb.append(aLength[record]).append(",");
-            sb.append((int) aCoverage[record][i]).append(",");
+            sb.append((int) aCoverage[record][sample.getIndex()]).append(",");
 
             int pass;
             if (aLength[record] > 0) {
-                double ratio = aCoverage[record][i] / aLength[record];
+                double ratio = aCoverage[record][sample.getIndex()] / aLength[record];
                 sb.append(pformat6.format(ratio)).append(",");
                 pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
             } else {
@@ -350,7 +317,7 @@ public class SampleStatistics {
                 pass = 0;
             }
             //also accumalate region information here
-            aSampleRegionCoverage[i] = aSampleRegionCoverage[i] + pass;
+            aSampleRegionCoverage[sample.getIndex()] = aSampleRegionCoverage[sample.getIndex()] + pass;
             sb.append(pass);
             sb.append("\n");
             bw.write(sb.toString());
@@ -359,20 +326,20 @@ public class SampleStatistics {
 
     public void print(BufferedWriter bw) throws Exception {
         int TotalLength = 0;
-        for (int i = 0; i < RecordNames.length; i++) {
+        for (int i = 0; i < GeneManager.getGeneBoundaryList().size(); i++) {
             TotalLength = TotalLength + aLength[i];
         }
-        for (int i = 0; i < SampleNames.length; i++) {
-            int total_coverage = getSampleCoverageByIndex(i);
+        for (Sample sample : SampleManager.getList()) {
+            int total_coverage = getSampleCoverageByIndex(sample.getIndex());
             double ratio = (double) total_coverage / (double) TotalLength;
             StringBuilder sb = new StringBuilder();
-            sb.append(SampleNames[i]).append(",");
+            sb.append(sample.getName()).append(",");
             sb.append(TotalLength).append(",");
             sb.append(total_coverage).append(",");
             sb.append(pformat6.format(ratio)).append(",");
-            sb.append(RecordNames.length).append(",");
-            sb.append(aSampleRegionCoverage[i]).append(",");
-            ratio = (double) aSampleRegionCoverage[i] / (double) RecordNames.length;
+            sb.append(GeneManager.getGeneBoundaryList().size()).append(",");
+            sb.append(aSampleRegionCoverage[sample.getIndex()]).append(",");
+            ratio = (double) aSampleRegionCoverage[sample.getIndex()] / (double) GeneManager.getGeneBoundaryList().size();
             sb.append(pformat6.format(ratio));
             sb.append("\n");
             bw.write(sb.toString());

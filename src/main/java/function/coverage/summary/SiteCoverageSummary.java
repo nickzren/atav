@@ -27,7 +27,7 @@ public class SiteCoverageSummary extends AnalysisBase {
         try {
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
             bwSiteSummary.write("Gene,Chr,Pos,Site Coverage");
-            
+
             if (CoverageCommand.isCaseControlSeparate) {
                 bwSiteSummary.write(",Site Coverage Case, Site Coverage Control");
             }
@@ -69,7 +69,6 @@ public class SiteCoverageSummary extends AnalysisBase {
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
                 System.out.print("Processing " + (record + 1) + " of " + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
 
-                ss.setRecordName(record, gene.getName(), gene.getChr());
                 ss.setLength(record, gene.getLength());
 
                 for (Exon exon : gene.getExonList()) {
@@ -97,7 +96,7 @@ public class SiteCoverageSummary extends AnalysisBase {
                     }
                 }
 
-                DoGeneSummary(ss, record);
+                DoGeneSummary(ss, gene, record);
                 record++;
             }
 
@@ -115,7 +114,7 @@ public class SiteCoverageSummary extends AnalysisBase {
         //allow derived class to do extra on an exon
     }
 
-    public void DoGeneSummary(SampleStatistics ss, int record) throws Exception {
+    public void DoGeneSummary(SampleStatistics ss, Gene gene, int record) throws Exception {
         //do nothing for coverage summary
     }
 
