@@ -1,6 +1,5 @@
 package function.coverage.base;
 
-import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.annotation.base.GeneManager;
 import function.genotype.base.Sample;
@@ -9,13 +8,11 @@ import java.io.BufferedWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import utils.FormatManager;
 
 /**
  *
- * @author quanli
+ * @author quanli, nick
  */
 public class SampleStatistics {
 
@@ -34,41 +31,6 @@ public class SampleStatistics {
 
             int column = SampleManager.getIndexById(sampleid);
             aCoverage[gene.getIndex()][column] = aCoverage[gene.getIndex()][column] + result.get(sampleid);
-        }
-    }
-
-    public void print(HashMap<Integer, Integer> result, Gene gene, Exon e, BufferedWriter bw) throws Exception {
-        Set<Integer> samples = result.keySet();
-        for (Sample sample : SampleManager.getList()) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(sample.getName()).append(",");
-            sb.append(gene.getName()).append(",");
-            sb.append(e.getChrStr()).append(",");
-            sb.append(e.getIdStr()).append(",");
-            sb.append(e.getStartPosition()).append(",");
-            sb.append(e.getEndPosition()).append(",");
-            sb.append(e.getLength()).append(",");
-
-            int cov = 0;
-            if (samples.contains(sample.getId())) {
-                cov = result.get(sample.getId());
-
-            }
-            sb.append(cov).append(",");
-
-            int pass;
-            if (e.getLength() > 0) {
-                double ratio = FormatManager.devide(cov, e.getLength());
-                sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
-                pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
-            } else {
-                sb.append("NA").append(",");
-                pass = 0;
-            }
-            sb.append(pass);
-
-            sb.append("\n");
-            bw.write(sb.toString());
         }
     }
 
@@ -128,81 +90,6 @@ public class SampleStatistics {
         sb.append(",").append(gene.getChr());
         sb.append(",").append(FormatManager.getSixDegitDouble(avgAll));
         sb.append(",").append(gene.getLength());
-        sb.append("\n");
-        bw.write(sb.toString());
-    }
-
-    public void printExonSummaryLinearTrait(HashMap<Integer, Integer> result, Gene gene, Exon exon, BufferedWriter bw) throws Exception {
-        Set<Integer> samples = result.keySet();
-        double RegoinLength = exon.getLength();
-        double avgAll = 0;
-        SimpleRegression sr = new SimpleRegression(true);
-        SummaryStatistics lss = new SummaryStatistics();
-        for (Sample sample : SampleManager.getList()) {
-            double cov = 0;
-            if (samples.contains(sample.getId())) {
-                cov = result.get(sample.getId());
-            }
-            avgAll = avgAll + cov;
-            double x = sample.getQuantitativeTrait();
-            double y = cov / RegoinLength;
-            sr.addData(x, y);
-            lss.addValue(y);
-        }
-        avgAll = avgAll / SampleManager.getListSize() / RegoinLength;
-        double R2 = sr.getRSquare();
-        double pValue = sr.getSignificance();
-        double Variance = lss.getVariance();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(gene.getName()).append("_").append(exon.getIdStr());
-        sb.append(",").append(gene.getChr());
-        sb.append(",").append(FormatManager.getSixDegitDouble(avgAll));
-        if (Double.isNaN(pValue)) { //happens if all coverages are the same
-            sb.append(",").append(1);     //do not format here as we need to reuse it for precision
-            sb.append(",").append(0);
-        } else {
-            sb.append(",").append(pValue); //do not format here as we need to reuse it for precision
-            sb.append(",").append(R2 * 100);
-        }
-        sb.append(",").append(Variance);
-
-        sb.append(",").append(exon.getLength());
-        sb.append("\n");
-        bw.write(sb.toString());
-    }
-
-    public void printExonSummary(HashMap<Integer, Integer> result, Gene gene, Exon exon, BufferedWriter bw) throws Exception {
-        if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
-            return;
-        }
-
-        Set<Integer> samples = result.keySet();
-
-        double avgCase = 0;
-        double avgCtrl = 0;
-        for (Sample sample : SampleManager.getList()) {
-            int cov = 0;
-            if (samples.contains(sample.getId())) {
-                cov = result.get(sample.getId());
-
-            }
-            if (sample.isCase()) {
-                avgCase = avgCase + cov;
-            } else {
-                avgCtrl = avgCtrl + cov;
-            }
-        }
-        avgCase = avgCase / SampleManager.getCaseNum() / exon.getLength();
-        avgCtrl = avgCtrl / SampleManager.getCtrlNum() / exon.getLength();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(gene.getName()).append("_").append(exon.getIdStr());
-        sb.append(",").append(gene.getChr());
-        sb.append(",").append(FormatManager.getSixDegitDouble(avgCase));
-        sb.append(",").append(FormatManager.getSixDegitDouble(avgCtrl));
-        sb.append(",").append(FormatManager.getSixDegitDouble(Math.abs((avgCase - avgCtrl))));
-        sb.append(",").append(exon.getLength());
         sb.append("\n");
         bw.write(sb.toString());
     }
@@ -273,7 +160,7 @@ public class SampleStatistics {
         }
     }
 
-    public int getSampleCoverageByIndex(int sampleIndex) {
+    private int getSampleCoverageByIndex(int sampleIndex) {
         int CumResult = 0;
         for (int i = 0; i < GeneManager.getGeneBoundaryList().size(); i++) {
             CumResult = CumResult + (int) aCoverage[i][sampleIndex];

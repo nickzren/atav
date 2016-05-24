@@ -8,6 +8,7 @@ import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.CoverageManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import global.Data;
 import utils.CommonCommand;
@@ -18,6 +19,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 import utils.FormatManager;
 
 /**
@@ -126,11 +130,11 @@ public class CoverageComparison extends AnalysisBase {
                 for (Exon exon : gene.getExonList()) {
                     HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
                     ss.accumulateCoverage(gene, result);
-                    
+
                     if (CoverageCommand.isCoverageComparisonDoLinear) {
-                        ss.printExonSummaryLinearTrait(result, gene, exon, bwCoverageSummaryByExon);
+                        outputExonSummaryLinearTrait(result, gene, exon);
                     } else {
-                        ss.printExonSummary(result, gene, exon, bwCoverageSummaryByExon);
+                        outputExonSummary(result, gene, exon);
                     }
                 }
 
@@ -147,6 +151,81 @@ public class CoverageComparison extends AnalysisBase {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+
+    public void outputExonSummaryLinearTrait(HashMap<Integer, Integer> result, Gene gene, Exon exon) throws Exception {
+        Set<Integer> samples = result.keySet();
+        double RegoinLength = exon.getLength();
+        double avgAll = 0;
+        SimpleRegression sr = new SimpleRegression(true);
+        SummaryStatistics lss = new SummaryStatistics();
+        for (Sample sample : SampleManager.getList()) {
+            double cov = 0;
+            if (samples.contains(sample.getId())) {
+                cov = result.get(sample.getId());
+            }
+            avgAll = avgAll + cov;
+            double x = sample.getQuantitativeTrait();
+            double y = cov / RegoinLength;
+            sr.addData(x, y);
+            lss.addValue(y);
+        }
+        avgAll = avgAll / SampleManager.getListSize() / RegoinLength;
+        double R2 = sr.getRSquare();
+        double pValue = sr.getSignificance();
+        double Variance = lss.getVariance();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(gene.getName()).append("_").append(exon.getIdStr());
+        sb.append(",").append(gene.getChr());
+        sb.append(",").append(FormatManager.getSixDegitDouble(avgAll));
+        if (Double.isNaN(pValue)) { //happens if all coverages are the same
+            sb.append(",").append(1);     //do not format here as we need to reuse it for precision
+            sb.append(",").append(0);
+        } else {
+            sb.append(",").append(pValue); //do not format here as we need to reuse it for precision
+            sb.append(",").append(R2 * 100);
+        }
+        sb.append(",").append(Variance);
+
+        sb.append(",").append(exon.getLength());
+        sb.append("\n");
+        bwCoverageSummaryByExon.write(sb.toString());
+    }
+
+    public void outputExonSummary(HashMap<Integer, Integer> result, Gene gene, Exon exon) throws Exception {
+        if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
+            return;
+        }
+
+        Set<Integer> samples = result.keySet();
+
+        double avgCase = 0;
+        double avgCtrl = 0;
+        for (Sample sample : SampleManager.getList()) {
+            int cov = 0;
+            if (samples.contains(sample.getId())) {
+                cov = result.get(sample.getId());
+
+            }
+            if (sample.isCase()) {
+                avgCase = avgCase + cov;
+            } else {
+                avgCtrl = avgCtrl + cov;
+            }
+        }
+        avgCase = avgCase / SampleManager.getCaseNum() / exon.getLength();
+        avgCtrl = avgCtrl / SampleManager.getCtrlNum() / exon.getLength();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(gene.getName()).append("_").append(exon.getIdStr());
+        sb.append(",").append(gene.getChr());
+        sb.append(",").append(FormatManager.getSixDegitDouble(avgCase));
+        sb.append(",").append(FormatManager.getSixDegitDouble(avgCtrl));
+        sb.append(",").append(FormatManager.getSixDegitDouble(Math.abs((avgCase - avgCtrl))));
+        sb.append(",").append(exon.getLength());
+        sb.append("\n");
+        bwCoverageSummaryByExon.write(sb.toString());
     }
 
     public void outputCleanedExonListLinearTrait() {
