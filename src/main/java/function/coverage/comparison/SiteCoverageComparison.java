@@ -23,7 +23,7 @@ import utils.ThirdPartyToolManager;
 
 /**
  *
- * @author qwang
+ * @author qwang, nick
  */
 public class SiteCoverageComparison extends AnalysisBase {
 

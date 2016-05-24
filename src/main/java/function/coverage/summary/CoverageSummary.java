@@ -2,7 +2,6 @@ package function.coverage.summary;
 
 import function.AnalysisBase;
 import function.annotation.base.GeneManager;
-import function.coverage.base.CoverageCommand;
 import function.coverage.base.CoverageManager;
 import function.coverage.base.SampleStatistics;
 import function.annotation.base.Exon;
@@ -17,7 +16,7 @@ import java.util.HashMap;
 
 /**
  *
- * @author qwang
+ * @author qwang, nick
  */
 public class CoverageSummary extends AnalysisBase {
 
@@ -50,11 +49,9 @@ public class CoverageSummary extends AnalysisBase {
 
             bwSampleMatrixSummary = new BufferedWriter(new FileWriter(coverageMatrixFilePath));
 
-            if (CoverageCommand.isCoverageSummary) {
-                bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
-                bwCoverageDetailsByExon.write("Sample,Gene/Transcript,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
-                bwCoverageDetailsByExon.newLine();
-            }
+            bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
+            bwCoverageDetailsByExon.write("Sample,Gene/Transcript,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
+            bwCoverageDetailsByExon.newLine();
 
             bwSampleExonMatrixSummary = new BufferedWriter(new FileWriter(coverageExonMatrixFilePath));
         } catch (Exception ex) {
@@ -71,12 +68,8 @@ public class CoverageSummary extends AnalysisBase {
             bwSampleRegionSummary.close();
             bwSampleMatrixSummary.flush();
             bwSampleMatrixSummary.close();
-
-            if (CoverageCommand.isCoverageSummary) {
-                bwCoverageDetailsByExon.flush();
-                bwCoverageDetailsByExon.close();
-            }
-
+            bwCoverageDetailsByExon.flush();
+            bwCoverageDetailsByExon.close();
             bwSampleExonMatrixSummary.flush();
             bwSampleExonMatrixSummary.close();
         } catch (Exception ex) {
@@ -99,36 +92,26 @@ public class CoverageSummary extends AnalysisBase {
     public void afterProcessDatabaseData() {
     }
 
-    public void DoExonSummary(SampleStatistics ss, HashMap<Integer, Integer> result, Gene gene, Exon exon) throws Exception {
-        ss.print(result, gene, exon, bwCoverageDetailsByExon);
-    }
-
-    public void DoGeneSummary(SampleStatistics ss, Gene gene) throws Exception {
-        //do nothing for coverage summary
-    }
-
     @Override
     public void processDatabaseData() {
         try {
             SampleStatistics ss = new SampleStatistics(GeneManager.getGeneBoundaryList().size());
             ss.printMatrixHeader(bwSampleMatrixSummary, false);
-            
             ss.printMatrixHeader(bwSampleExonMatrixSummary, true);
 
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                System.out.print("Processing " + (gene.getIndex() + 1) + " of " 
+                System.out.print("Processing " + (gene.getIndex() + 1) + " of "
                         + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
 
                 for (Exon exon : gene.getExonList()) {
                     HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
                     ss.accumulateCoverage(gene, result);
                     ss.printMatrixRowbyExon(result, gene, exon, bwSampleExonMatrixSummary);
-                    DoExonSummary(ss, result, gene, exon);
+                    ss.print(result, gene, exon, bwCoverageDetailsByExon);
                 }
 
                 ss.print(gene, bwSampleRegionSummary);
                 ss.printMatrixRow(gene, bwSampleMatrixSummary);
-                DoGeneSummary(ss, gene);
             }
 
             ss.print(bwSampleSummary);
