@@ -72,65 +72,6 @@ public class SampleStatistics {
         }
     }
 
-    public void printMatrixHeader(BufferedWriter bw, boolean by_exon) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        if (by_exon) {
-            sb.append(" ,Chr,Start_Position,Stop_Position,Size");
-        } else {
-            sb.append(" ,Chr");
-        }
-
-        for (Sample sample : SampleManager.getList()) {
-            sb.append(",").append(sample.getName());
-        }
-        sb.append("\n");
-        bw.write(sb.toString());
-    }
-
-    public void printMatrixRow(Gene gene, BufferedWriter bw) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        sb.append(gene.getName());
-        sb.append(",").append(gene.getChr());
-        for (Sample sample : SampleManager.getList()) {
-            if (gene.getLength() > 0) {
-                //we only save scaled int in database, so need to do this to make output consistant
-                int scaledCoverageRatio = (int) (aCoverage[gene.getIndex()][sample.getIndex()] / gene.getLength() * 10000);
-                double ratio = FormatManager.devide(scaledCoverageRatio, 10000.0);
-                sb.append(",").append(FormatManager.getSixDegitDouble(ratio));
-            } else {
-                sb.append(",").append("NA");
-            }
-        }
-        sb.append("\n");
-        bw.write(sb.toString());
-    }
-
-    public void printMatrixRowbyExon(HashMap<Integer, Integer> result, Gene gene, Exon e, BufferedWriter bw) throws Exception {
-        Set<Integer> samples = result.keySet();
-        StringBuilder sb = new StringBuilder();
-        sb.append(gene.getName()).append("_").append(e.getIdStr());
-        sb.append(",").append(gene.getChr());
-        sb.append(",").append(e.getStartPosition());
-        sb.append(",").append(e.getEndPosition());
-        sb.append(",").append(e.getLength());
-        for (Sample sample : SampleManager.getList()) {
-            int cov = 0;
-            if (samples.contains(sample.getId())) {
-                cov = result.get(sample.getId());
-            }
-
-            if (e.getLength() > 0) {
-                double ratio = FormatManager.devide(cov, e.getLength());
-                sb.append(",").append(FormatManager.getSixDegitDouble(ratio));
-            } else {
-                sb.append(",").append("NA");
-            }
-
-        }
-        sb.append("\n");
-        bw.write(sb.toString());
-    }
-
     public void printGeneSummary(Gene gene, BufferedWriter bw) throws Exception {
         if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
             return;

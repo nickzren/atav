@@ -28,8 +28,6 @@ public class CoverageComparison extends AnalysisBase {
 
     public BufferedWriter bwSampleSummary = null;
     public BufferedWriter bwSampleRegionSummary = null;
-    public BufferedWriter bwSampleMatrixSummary = null;
-    public BufferedWriter bwSampleExonMatrixSummary = null;
     public BufferedWriter bwCoverageSummaryByExon = null;
     public BufferedWriter bwCoverageSummaryByGene = null;
 
@@ -39,8 +37,6 @@ public class CoverageComparison extends AnalysisBase {
     final String CleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
     final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
     final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
-    final String coverageMatrixFilePath = CommonCommand.outputPath + "coverage.details.matrix.csv";
-    final String coverageExonMatrixFilePath = CommonCommand.outputPath + "coverage.details.matrix.by.exon.csv";
 
     @Override
     public void initOutput() {
@@ -54,10 +50,6 @@ public class CoverageComparison extends AnalysisBase {
             bwSampleRegionSummary.write("Sample,Gene/Transcript/Region,Chr,Length,"
                     + "Covered_Base,%Bases_Covered,Coverage_Status");
             bwSampleRegionSummary.newLine();
-
-            bwSampleMatrixSummary = new BufferedWriter(new FileWriter(coverageMatrixFilePath));
-
-            bwSampleExonMatrixSummary = new BufferedWriter(new FileWriter(coverageExonMatrixFilePath));
 
             bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
             if (CoverageCommand.isCoverageComparisonDoLinear) {
@@ -86,10 +78,6 @@ public class CoverageComparison extends AnalysisBase {
             bwSampleSummary.close();
             bwSampleRegionSummary.flush();
             bwSampleRegionSummary.close();
-            bwSampleMatrixSummary.flush();
-            bwSampleMatrixSummary.close();
-            bwSampleExonMatrixSummary.flush();
-            bwSampleExonMatrixSummary.close();
             bwCoverageSummaryByGene.flush();
             bwCoverageSummaryByGene.close();
             bwCoverageSummaryByExon.flush();
@@ -108,8 +96,6 @@ public class CoverageComparison extends AnalysisBase {
         }
 
         ThirdPartyToolManager.gzipFile(coverageDetailsFilePath);
-        ThirdPartyToolManager.gzipFile(coverageMatrixFilePath);
-        ThirdPartyToolManager.gzipFile(coverageExonMatrixFilePath);
     }
 
     @Override
@@ -132,8 +118,6 @@ public class CoverageComparison extends AnalysisBase {
     public void processDatabaseData() {
         try {
             SampleStatistics ss = new SampleStatistics(GeneManager.getGeneBoundaryList().size());
-            ss.printMatrixHeader(bwSampleMatrixSummary, false);
-            ss.printMatrixHeader(bwSampleExonMatrixSummary, true);
 
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
                 System.out.print("Processing " + (gene.getIndex() + 1) + " of "
@@ -142,7 +126,6 @@ public class CoverageComparison extends AnalysisBase {
                 for (Exon exon : gene.getExonList()) {
                     HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
                     ss.accumulateCoverage(gene, result);
-                    ss.printMatrixRowbyExon(result, gene, exon, bwSampleExonMatrixSummary);
                     
                     if (CoverageCommand.isCoverageComparisonDoLinear) {
                         ss.printExonSummaryLinearTrait(result, gene, exon, bwCoverageSummaryByExon);
@@ -152,7 +135,6 @@ public class CoverageComparison extends AnalysisBase {
                 }
 
                 ss.print(gene, bwSampleRegionSummary);
-                ss.printMatrixRow(gene, bwSampleMatrixSummary);
 
                 if (CoverageCommand.isCoverageComparisonDoLinear) {
                     ss.printGeneSummaryLinearTrait(gene, bwCoverageSummaryByGene);
