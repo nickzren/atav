@@ -396,7 +396,7 @@ public class CommandManager {
         } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
             CoverageCommand.initCoverageSummary(optionList.iterator());
         } else if (CoverageCommand.isSiteCoverageSummary) {
-            CoverageCommand.initSiteCoverageSummary(optionList.iterator());
+
         } else if (CoverageCommand.isCoverageComparison) {
             CoverageCommand.initCoverageComparison(optionList.iterator());
         } else if (CoverageCommand.isSiteCoverageComparison) {

@@ -16,7 +16,6 @@ public class CoverageCommand {
     // coverage summary
     public static boolean isCoverageSummary = false;
     public static boolean isSiteCoverageSummary = false;
-    public static boolean isCaseControlSeparate = false;
     public static double minPercentRegionCovered = 0; //so all is output by default
     public static double exonCleanCutoff = -1.0; //not used by default
     public static double geneCleanCutoff = 1.0;
@@ -70,22 +69,7 @@ public class CoverageCommand {
         }
     }
 
-    public static void initSiteCoverageSummary(Iterator<CommandOption> iterator) {
-        CommandOption option;
-
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            if (option.getName().equals("--case-control")) {
-                isCaseControlSeparate = true;
-            } else {
-                continue;
-            }
-            iterator.remove();
-        }
-    }
-
     public static void initCoverageComparisonSite(Iterator<CommandOption> iterator) {
-        isCaseControlSeparate = true; // always true for comparison
         CommandOption option;
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();

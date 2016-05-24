@@ -1,12 +1,12 @@
 package function.coverage.comparison;
 
+import function.AnalysisBase;
 import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
 import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.SampleStatistics;
-import function.coverage.summary.SiteCoverageSummary;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import global.Data;
@@ -15,6 +15,7 @@ import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import utils.FormatManager;
@@ -24,30 +25,24 @@ import utils.ThirdPartyToolManager;
  *
  * @author qwang
  */
-public class SiteCoverageComparison extends SiteCoverageSummary {
+public class SiteCoverageComparison extends AnalysisBase {
 
     final String CleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
     final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
     final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
+    final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
+    BufferedWriter bwSiteSummary = null;
     BufferedWriter bwCoverageSummaryByGene = null;
     BufferedWriter bwSampleSummary = null;
     RegionClean ec = new RegionClean();
 
     @Override
-    public void beforeProcessDatabaseData() {
-        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
-            ErrorManager.print("--min-coverage option has to be used in this function.");
-        }
-        
-        int sampleSize = SampleManager.getListSize();
-        if (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum()) {
-            ErrorManager.print("Error: this function is not supposed to run with case only or control only sample file. ");
-        }
-    }
-
-    @Override
-    public void processDatabaseData() {
+    public void initOutput() {
         try {
+            bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
+            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,Site Coverage Case, Site Coverage Control");
+            bwSiteSummary.newLine();
+
             bwSampleSummary = new BufferedWriter(new FileWriter(sampleSummaryFilePath));
             bwSampleSummary.write("Sample,Total_Bases,Total_Covered_Base,%Overall_Bases_Covered,"
                     + "Total_Regions,Total_Covered_Regions,%Regions_Covered");
@@ -56,15 +51,93 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
             bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
             bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
             bwCoverageSummaryByGene.newLine();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
 
-            super.processDatabaseData();
-
+    @Override
+    public void closeOutput() {
+        try {
+            bwSiteSummary.flush();
+            bwSiteSummary.close();
             bwSampleSummary.flush();
             bwSampleSummary.close();
             bwCoverageSummaryByGene.flush();
             bwCoverageSummaryByGene.close();
-            outputCleanedExonList();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
+
+    @Override
+    public void doAfterCloseOutput() {
+        try {
             ThirdPartyToolManager.gzipFile(siteSummaryFilePath);
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    @Override
+    public void beforeProcessDatabaseData() {
+        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
+            ErrorManager.print("--min-coverage option has to be used in this function.");
+        }
+
+        int sampleSize = SampleManager.getListSize();
+        if (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum()) {
+            ErrorManager.print("Error: this function is not supposed to run with case only or control only sample file. ");
+        }
+    }
+
+    @Override
+    public void afterProcessDatabaseData() {
+        try {
+            outputCleanedExonList();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    @Override
+    public void processDatabaseData() {
+        try {
+            SampleStatistics ss = new SampleStatistics(GeneManager.getGeneBoundaryList().size());
+
+            for (Gene gene : GeneManager.getGeneBoundaryList()) {
+                System.out.print("Processing " + (gene.getIndex() + 1) + " of "
+                        + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
+
+                for (Exon exon : gene.getExonList()) {
+                    HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
+                    ss.accumulateCoverage(gene, result);
+
+                    int SiteStart = exon.getStartPosition();
+
+                    ArrayList<int[]> SiteCoverage = CoverageManager.getCoverageForSites(exon);
+
+                    for (int pos = 0; pos < SiteCoverage.get(0).length; pos++) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(gene.getName()).append(",").append(exon.getChrStr()).append(",");
+                        int total_coverage = SiteCoverage.get(0)[pos] + SiteCoverage.get(1)[pos];
+                        sb.append(SiteStart + pos).append(",").append(total_coverage);
+                        sb.append(",").append(SiteCoverage.get(0)[pos]);
+                        sb.append(",").append(SiteCoverage.get(1)[pos]);
+                        sb.append("\n");
+                        bwSiteSummary.write(sb.toString());
+
+                        //emit site info for potential processing
+                        emitSiteInfo(gene.getName(), exon.getChrStr(), SiteStart + pos,
+                                SiteCoverage.get(0)[pos], SiteCoverage.get(1)[pos]);
+                    }
+                }
+
+                ss.updateSampleRegionCoverage(gene);
+                ss.printGeneSummary(gene, bwCoverageSummaryByGene);
+            }
+
+            ss.print(bwSampleSummary);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -121,23 +194,7 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
         bwGeneSummaryClean.close();
     }
 
-    @Override
-    public void emitSS(SampleStatistics ss) {
-        try {
-            ss.print(bwSampleSummary);
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    @Override
-    public void DoGeneSummary(SampleStatistics ss, Gene gene) throws Exception {
-        ss.updateSampleRegionCoverage(gene);
-        ss.printGeneSummary(gene, bwCoverageSummaryByGene);
-    }
-
-    @Override
-    public void emitSiteInfo(String gene, String chr, int position, int caseCoverage, int ctrlCoverage) {
+    private void emitSiteInfo(String gene, String chr, int position, int caseCoverage, int ctrlCoverage) {
         StringBuilder str = new StringBuilder();
         str.append(gene).append("_").append(chr).append("_").append(position);
         double caseAverage = ((double) caseCoverage) / SampleManager.getCaseNum();
@@ -147,17 +204,8 @@ public class SiteCoverageComparison extends SiteCoverageSummary {
     }
 
     @Override
-    public void emitExoninfo(SampleStatistics ss, Gene gene, Exon exon) {
-        //Quanli: Here we are querying the database twice to generate 
-        //summary views from sites and from (gene, sample) pair 
-        //Can be a lot more efficient if we combine two pass, but code could be messy. 
-        //revisit this if the performnce is of concern
-        HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-        ss.accumulateCoverage(gene, result);
-    }
-
-    @Override
     public String toString() {
         return "It is running site coverage comparison function...";
     }
+
 }
