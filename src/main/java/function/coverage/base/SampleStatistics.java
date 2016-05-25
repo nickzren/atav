@@ -19,9 +19,9 @@ public class SampleStatistics {
     int[] aSampleRegionCoverage;
     double[][] aCoverage;
 
-    public SampleStatistics(int NumberOfRecord) {
+    public SampleStatistics() {
         aSampleRegionCoverage = new int[SampleManager.getListSize()];
-        aCoverage = new double[NumberOfRecord][SampleManager.getListSize()];
+        aCoverage = new double[GeneManager.getGeneBoundaryList().size()][SampleManager.getListSize()];
     }
 
     public void accumulateCoverage(Gene gene, HashMap<Integer, Integer> result) {

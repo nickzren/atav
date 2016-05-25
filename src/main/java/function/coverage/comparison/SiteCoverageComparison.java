@@ -1,15 +1,12 @@
 package function.coverage.comparison;
 
-import function.AnalysisBase;
 import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
 import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
-import function.coverage.base.SampleStatistics;
-import function.genotype.base.GenotypeLevelFilterCommand;
+import function.coverage.base.CoverageAnalysisBase;
 import function.genotype.base.SampleManager;
-import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -25,28 +22,24 @@ import utils.ThirdPartyToolManager;
  *
  * @author qwang, nick
  */
-public class SiteCoverageComparison extends AnalysisBase {
+public class SiteCoverageComparison extends CoverageAnalysisBase {
 
-    final String CleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
+    final String cleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
     final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
     final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
     final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
     BufferedWriter bwSiteSummary = null;
     BufferedWriter bwCoverageSummaryByGene = null;
-    BufferedWriter bwSampleSummary = null;
     RegionClean ec = new RegionClean();
 
     @Override
     public void initOutput() {
         try {
+            super.initOutput();
+
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
             bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,Site Coverage Case, Site Coverage Control");
             bwSiteSummary.newLine();
-
-            bwSampleSummary = new BufferedWriter(new FileWriter(sampleSummaryFilePath));
-            bwSampleSummary.write("Sample,Total_Bases,Total_Covered_Base,%Overall_Bases_Covered,"
-                    + "Total_Regions,Total_Covered_Regions,%Regions_Covered");
-            bwSampleSummary.newLine();
 
             bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
             bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
@@ -59,10 +52,10 @@ public class SiteCoverageComparison extends AnalysisBase {
     @Override
     public void closeOutput() {
         try {
+            super.closeOutput();
+
             bwSiteSummary.flush();
             bwSiteSummary.close();
-            bwSampleSummary.flush();
-            bwSampleSummary.close();
             bwCoverageSummaryByGene.flush();
             bwCoverageSummaryByGene.close();
         } catch (Exception ex) {
@@ -81,9 +74,7 @@ public class SiteCoverageComparison extends AnalysisBase {
 
     @Override
     public void beforeProcessDatabaseData() {
-        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
-            ErrorManager.print("--min-coverage option has to be used in this function.");
-        }
+        super.beforeProcessDatabaseData();
 
         int sampleSize = SampleManager.getListSize();
         if (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum()) {
@@ -101,43 +92,34 @@ public class SiteCoverageComparison extends AnalysisBase {
     }
 
     @Override
-    public void processDatabaseData() {
+    public void processGene(Gene gene) {
         try {
-            SampleStatistics ss = new SampleStatistics(GeneManager.getGeneBoundaryList().size());
+            for (Exon exon : gene.getExonList()) {
+                HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
+                ss.accumulateCoverage(gene, result);
 
-            for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                System.out.print("Processing " + (gene.getIndex() + 1) + " of "
-                        + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
+                int SiteStart = exon.getStartPosition();
 
-                for (Exon exon : gene.getExonList()) {
-                    HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                    ss.accumulateCoverage(gene, result);
+                ArrayList<int[]> SiteCoverage = CoverageManager.getCoverageForSites(exon);
 
-                    int SiteStart = exon.getStartPosition();
+                for (int pos = 0; pos < SiteCoverage.get(0).length; pos++) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(gene.getName()).append(",").append(exon.getChrStr()).append(",");
+                    int total_coverage = SiteCoverage.get(0)[pos] + SiteCoverage.get(1)[pos];
+                    sb.append(SiteStart + pos).append(",").append(total_coverage);
+                    sb.append(",").append(SiteCoverage.get(0)[pos]);
+                    sb.append(",").append(SiteCoverage.get(1)[pos]);
+                    sb.append("\n");
+                    bwSiteSummary.write(sb.toString());
 
-                    ArrayList<int[]> SiteCoverage = CoverageManager.getCoverageForSites(exon);
-
-                    for (int pos = 0; pos < SiteCoverage.get(0).length; pos++) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(gene.getName()).append(",").append(exon.getChrStr()).append(",");
-                        int total_coverage = SiteCoverage.get(0)[pos] + SiteCoverage.get(1)[pos];
-                        sb.append(SiteStart + pos).append(",").append(total_coverage);
-                        sb.append(",").append(SiteCoverage.get(0)[pos]);
-                        sb.append(",").append(SiteCoverage.get(1)[pos]);
-                        sb.append("\n");
-                        bwSiteSummary.write(sb.toString());
-
-                        //emit site info for potential processing
-                        emitSiteInfo(gene.getName(), exon.getChrStr(), SiteStart + pos,
-                                SiteCoverage.get(0)[pos], SiteCoverage.get(1)[pos]);
-                    }
+                    //emit site info for potential processing
+                    emitSiteInfo(gene.getName(), exon.getChrStr(), SiteStart + pos,
+                            SiteCoverage.get(0)[pos], SiteCoverage.get(1)[pos]);
                 }
-
-                ss.updateSampleRegionCoverage(gene);
-                ss.printGeneSummary(gene, bwCoverageSummaryByGene);
             }
 
-            ss.print(bwSampleSummary);
+            ss.updateSampleRegionCoverage(gene);
+            ss.printGeneSummary(gene, bwCoverageSummaryByGene);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -146,7 +128,7 @@ public class SiteCoverageComparison extends AnalysisBase {
     public void outputCleanedExonList() throws Exception {
         final String CleanedSiteList = CommonCommand.outputPath + "site.clean.txt";
         BufferedWriter bwSiteClean = new BufferedWriter(new FileWriter(CleanedSiteList));
-        BufferedWriter bwGeneSummaryClean = new BufferedWriter(new FileWriter(CleanedGeneSummaryList));
+        BufferedWriter bwGeneSummaryClean = new BufferedWriter(new FileWriter(cleanedGeneSummaryList));
         bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
         bwGeneSummaryClean.newLine();
 
@@ -207,5 +189,4 @@ public class SiteCoverageComparison extends AnalysisBase {
     public String toString() {
         return "It is running site coverage comparison function...";
     }
-
 }

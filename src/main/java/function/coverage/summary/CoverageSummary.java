@@ -1,16 +1,12 @@
 package function.coverage.summary;
 
-import function.AnalysisBase;
-import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageManager;
-import function.coverage.base.SampleStatistics;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
+import function.coverage.base.CoverageAnalysisBase;
 import function.coverage.base.CoverageCommand;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
-import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -24,33 +20,26 @@ import utils.FormatManager;
  *
  * @author qwang, nick
  */
-public class CoverageSummary extends AnalysisBase {
+public class CoverageSummary extends CoverageAnalysisBase {
 
-    public BufferedWriter bwSampleSummary = null;
     public BufferedWriter bwSampleRegionSummary = null;
     public BufferedWriter bwCoverageDetailsByExon = null;
-    public BufferedWriter bwCoverageSummaryByExon = null;
-    public BufferedWriter bwCoverageSummaryByGene = null;
 
-    public final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
     public final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
     public final String coverageDetailsByExonFilePath = CommonCommand.outputPath + "coverage.details.by.exon.csv";
 
     @Override
     public void initOutput() {
         try {
-            bwSampleSummary = new BufferedWriter(new FileWriter(sampleSummaryFilePath));
-            bwSampleSummary.write("Sample,Total_Bases,Total_Covered_Base,%Overall_Bases_Covered,"
-                    + "Total_Regions,Total_Covered_Regions,%Regions_Covered");
-            bwSampleSummary.newLine();
-
+            super.initOutput();
+            
             bwSampleRegionSummary = new BufferedWriter(new FileWriter(coverageDetailsFilePath));
             bwSampleRegionSummary.write("Sample,Gene/Transcript/Region,Chr,Length,"
                     + "Covered_Base,%Bases_Covered,Coverage_Status");
             bwSampleRegionSummary.newLine();
 
             bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
-            bwCoverageDetailsByExon.write("Sample,Gene/Transcript,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
+            bwCoverageDetailsByExon.write("Sample,Gene,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
             bwCoverageDetailsByExon.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -60,8 +49,8 @@ public class CoverageSummary extends AnalysisBase {
     @Override
     public void closeOutput() {
         try {
-            bwSampleSummary.flush();
-            bwSampleSummary.close();
+            super.closeOutput();
+            
             bwSampleRegionSummary.flush();
             bwSampleRegionSummary.close();
             bwCoverageDetailsByExon.flush();
@@ -72,39 +61,15 @@ public class CoverageSummary extends AnalysisBase {
     }
 
     @Override
-    public void doAfterCloseOutput() {
-    }
-
-    @Override
-    public void beforeProcessDatabaseData() {
-        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
-            ErrorManager.print("--min-coverage option has to be used in this function.");
-        }
-    }
-
-    @Override
-    public void afterProcessDatabaseData() {
-    }
-
-    @Override
-    public void processDatabaseData() {
+    public void processGene(Gene gene) {
         try {
-            SampleStatistics ss = new SampleStatistics(GeneManager.getGeneBoundaryList().size());
-
-            for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                System.out.print("Processing " + (gene.getIndex() + 1) + " of "
-                        + GeneManager.getGeneBoundaryList().size() + ": " + gene.toString() + "                              \r");
-
-                for (Exon exon : gene.getExonList()) {
-                    HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                    ss.accumulateCoverage(gene, result);
-                    outputCoverageDetailsByExon(result, gene, exon);
-                }
-
-                ss.print(gene, bwSampleRegionSummary);
+            for (Exon exon : gene.getExonList()) {
+                HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
+                ss.accumulateCoverage(gene, result);
+                outputCoverageDetailsByExon(result, gene, exon);
             }
 
-            ss.print(bwSampleSummary);
+            ss.print(gene, bwSampleRegionSummary);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
