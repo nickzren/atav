@@ -79,4 +79,5 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 + GeneManager.getGeneBoundaryList().size()
                 + ": " + gene.toString() + "                              \r");
     }
+    
 }
