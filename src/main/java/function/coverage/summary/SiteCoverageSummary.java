@@ -4,10 +4,12 @@ import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.CoverageAnalysisBase;
+import global.Index;
 import utils.CommonCommand;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.HashMap;
 import utils.ErrorManager;
 
 /**
@@ -48,21 +50,26 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
     public void processGene(Gene gene) {
         try {
             for (Exon exon : gene.getExonList()) {
-                int SiteStart = exon.getStartPosition();
+                HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
+                ss.accumulateCoverage(gene.getIndex(), result);
 
-                ArrayList<int[]> SiteCoverage = CoverageManager.getCoverageForSites(exon);
-
-                for (int pos = 0; pos < SiteCoverage.get(0).length; pos++) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(gene.getName()).append(",").append(exon.getChrStr()).append(",");
-                    int total_coverage = SiteCoverage.get(0)[pos] + SiteCoverage.get(1)[pos];
-                    sb.append(SiteStart + pos).append(",").append(total_coverage);
-                    sb.append("\n");
-                    bwSiteSummary.write(sb.toString());
-                }
+                outputSiteSummary(gene, exon);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    private void outputSiteSummary(Gene gene, Exon exon) throws IOException {
+        int[][] sampleSiteCoverage = CoverageManager.getSampleSiteCoverage(exon);
+        for (int pos = 0; pos < exon.getLength(); pos++) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(gene.getName()).append(",");
+            sb.append(exon.getChrStr()).append(",");
+            sb.append(exon.getStartPosition() + pos).append(",");
+            sb.append(sampleSiteCoverage[Index.CASE][pos] + sampleSiteCoverage[Index.CTRL][pos]);
+            sb.append("\n");
+            bwSiteSummary.write(sb.toString());
         }
     }
 

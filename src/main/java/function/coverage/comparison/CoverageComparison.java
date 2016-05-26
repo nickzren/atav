@@ -11,7 +11,6 @@ import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
-import utils.ThirdPartyToolManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import utils.FormatManager;
  */
 public class CoverageComparison extends CoverageAnalysisBase {
 
-    public BufferedWriter bwSampleRegionSummary = null;
     public BufferedWriter bwCoverageSummaryByGene = null;
     public BufferedWriter bwCoverageSummaryByExon = null;
 
@@ -35,17 +33,11 @@ public class CoverageComparison extends CoverageAnalysisBase {
     final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
     final String cleanedExonList = CommonCommand.outputPath + "exon.clean.txt";
     final String cleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
-    final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
 
     @Override
     public void initOutput() {
         try {
             super.initOutput();
-
-            bwSampleRegionSummary = new BufferedWriter(new FileWriter(coverageDetailsFilePath));
-            bwSampleRegionSummary.write("Sample,Gene/Transcript/Region,Chr,Length,"
-                    + "Covered_Base,%Bases_Covered,Coverage_Status");
-            bwSampleRegionSummary.newLine();
 
             bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
             if (CoverageCommand.isCoverageComparisonDoLinear) {
@@ -72,8 +64,6 @@ public class CoverageComparison extends CoverageAnalysisBase {
         try {
             super.closeOutput();
 
-            bwSampleRegionSummary.flush();
-            bwSampleRegionSummary.close();
             bwCoverageSummaryByGene.flush();
             bwCoverageSummaryByGene.close();
             bwCoverageSummaryByExon.flush();
@@ -90,16 +80,14 @@ public class CoverageComparison extends CoverageAnalysisBase {
         } else {
             outputCleanedExonList();
         }
-
-        ThirdPartyToolManager.gzipFile(coverageDetailsFilePath);
     }
 
     @Override
     public void beforeProcessDatabaseData() {
         super.beforeProcessDatabaseData();
 
-        int sampleSize = SampleManager.getListSize();
-        if (!CoverageCommand.isCoverageComparisonDoLinear && (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum())) {
+        if (!CoverageCommand.isCoverageComparisonDoLinear && 
+                (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0)) {
             ErrorManager.print("Error: this function does not support to run with case only or control only sample file. ");
         }
     }
@@ -109,7 +97,7 @@ public class CoverageComparison extends CoverageAnalysisBase {
         try {
             for (Exon exon : gene.getExonList()) {
                 HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                ss.accumulateCoverage(gene, result);
+                ss.accumulateCoverage(gene.getIndex(), result);
 
                 if (CoverageCommand.isCoverageComparisonDoLinear) {
                     outputExonSummaryLinearTrait(result, gene, exon);
@@ -117,8 +105,6 @@ public class CoverageComparison extends CoverageAnalysisBase {
                     outputExonSummary(result, gene, exon);
                 }
             }
-
-            ss.print(gene, bwSampleRegionSummary);
 
             if (CoverageCommand.isCoverageComparisonDoLinear) {
                 ss.printGeneSummaryLinearTrait(gene, bwCoverageSummaryByGene);
@@ -171,10 +157,6 @@ public class CoverageComparison extends CoverageAnalysisBase {
     }
 
     public void outputExonSummary(HashMap<Integer, Integer> result, Gene gene, Exon exon) throws Exception {
-        if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
-            return;
-        }
-
         Set<Integer> samples = result.keySet();
 
         double avgCase = 0;

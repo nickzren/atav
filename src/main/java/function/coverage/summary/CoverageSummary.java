@@ -22,10 +22,7 @@ import utils.FormatManager;
  */
 public class CoverageSummary extends CoverageAnalysisBase {
 
-    public BufferedWriter bwSampleRegionSummary = null;
     public BufferedWriter bwCoverageDetailsByExon = null;
-
-    public final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
     public final String coverageDetailsByExonFilePath = CommonCommand.outputPath + "coverage.details.by.exon.csv";
 
     @Override
@@ -33,11 +30,6 @@ public class CoverageSummary extends CoverageAnalysisBase {
         try {
             super.initOutput();
             
-            bwSampleRegionSummary = new BufferedWriter(new FileWriter(coverageDetailsFilePath));
-            bwSampleRegionSummary.write("Sample,Gene/Transcript/Region,Chr,Length,"
-                    + "Covered_Base,%Bases_Covered,Coverage_Status");
-            bwSampleRegionSummary.newLine();
-
             bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
             bwCoverageDetailsByExon.write("Sample,Gene,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
             bwCoverageDetailsByExon.newLine();
@@ -51,8 +43,6 @@ public class CoverageSummary extends CoverageAnalysisBase {
         try {
             super.closeOutput();
             
-            bwSampleRegionSummary.flush();
-            bwSampleRegionSummary.close();
             bwCoverageDetailsByExon.flush();
             bwCoverageDetailsByExon.close();
         } catch (Exception ex) {
@@ -65,11 +55,9 @@ public class CoverageSummary extends CoverageAnalysisBase {
         try {
             for (Exon exon : gene.getExonList()) {
                 HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                ss.accumulateCoverage(gene, result);
+                ss.accumulateCoverage(gene.getIndex(), result);
                 outputCoverageDetailsByExon(result, gene, exon);
             }
-
-            ss.print(gene, bwSampleRegionSummary);
         } catch (Exception e) {
             ErrorManager.send(e);
         }

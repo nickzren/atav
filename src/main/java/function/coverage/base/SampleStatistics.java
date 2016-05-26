@@ -6,8 +6,6 @@ import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import java.io.BufferedWriter;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 import utils.FormatManager;
 
 /**
@@ -24,26 +22,16 @@ public class SampleStatistics {
         aCoverage = new double[GeneManager.getGeneBoundaryList().size()][SampleManager.getListSize()];
     }
 
-    public void accumulateCoverage(Gene gene, HashMap<Integer, Integer> result) {
-        Set<Integer> samples = result.keySet();
-        for (Iterator it = samples.iterator(); it.hasNext();) {
-            int sampleid = (Integer) it.next();
-
-            int column = SampleManager.getIndexById(sampleid);
-            aCoverage[gene.getIndex()][column] = aCoverage[gene.getIndex()][column] + result.get(sampleid);
-        }
+    public void accumulateCoverage(int geneIndex, HashMap<Integer, Integer> result) {
+        result.keySet().parallelStream().forEach((sampleId) -> {
+            int sampleIndex = SampleManager.getIndexById(sampleId);
+            aCoverage[geneIndex][sampleIndex]
+                    = aCoverage[geneIndex][sampleIndex] + result.get(sampleId);
+        });
     }
 
     public void printGeneSummary(Gene gene, BufferedWriter bw) throws Exception {
-        if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
-            return;
-        }
-        if (gene.getLength() == 0) {
-            return;
-        }
-
-        double avgCase = 0;
-        double avgCtrl = 0;
+        double avgCase = 0, avgCtrl = 0;        
         for (Sample sample : SampleManager.getList()) {
             if (sample.isCase()) {
                 avgCase = avgCase + aCoverage[gene.getIndex()][sample.getIndex()];
@@ -55,31 +43,28 @@ public class SampleStatistics {
         avgCase = avgCase / SampleManager.getCaseNum() / (double) gene.getLength();
         avgCtrl = avgCtrl / SampleManager.getCtrlNum() / (double) gene.getLength();
         StringBuilder sb = new StringBuilder();
-        sb.append(gene.getName());
-        sb.append(",").append(gene.getChr());
-        sb.append(",").append(FormatManager.getSixDegitDouble(avgCase));
-        sb.append(",").append(FormatManager.getSixDegitDouble(avgCtrl));
+        sb.append(gene.getName()).append(",");
+        sb.append(gene.getChr()).append(",");
+        sb.append(FormatManager.getSixDegitDouble(avgCase)).append(",");
+        sb.append(FormatManager.getSixDegitDouble(avgCtrl)).append(",");
         double abs_diff = Math.abs(avgCase - avgCtrl);
-        sb.append(",").append(FormatManager.getSixDegitDouble(abs_diff));
-        sb.append(",").append(gene.getLength());
+        sb.append(FormatManager.getSixDegitDouble(abs_diff)).append(",");
+        sb.append(gene.getLength()).append(",");
         if (abs_diff > CoverageCommand.geneCleanCutoff) {
             if (avgCase < avgCtrl) {
-                sb.append(",").append("bias against discovery");
+                sb.append("bias against discovery");
             } else {
-                sb.append(",").append("bias for discovery");
+                sb.append("bias for discovery");
             }
 
         } else {
-            sb.append(",").append("none");
+            sb.append("none");
         }
         sb.append("\n");
         bw.write(sb.toString());
     }
 
     public void printGeneSummaryLinearTrait(Gene gene, BufferedWriter bw) throws Exception {
-        if (gene.getLength() == 0) {
-            return;
-        }
         double avgAll = 0;
         for (Sample sample : SampleManager.getList()) {
             avgAll = avgAll + aCoverage[gene.getIndex()][sample.getIndex()];
@@ -92,22 +77,6 @@ public class SampleStatistics {
         sb.append(",").append(gene.getLength());
         sb.append("\n");
         bw.write(sb.toString());
-    }
-
-    //a hack here, Nick, please refactor to merge with one of the print function 
-    //only used by siteCoverageComparison for some extra output
-    public void updateSampleRegionCoverage(Gene gene) {
-        for (Sample sample : SampleManager.getList()) {
-            int pass;
-            if (gene.getLength() > 0) {
-                double ratio = aCoverage[gene.getIndex()][sample.getIndex()] / gene.getLength();
-                pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
-            } else {
-                pass = 0;
-            }
-            //also accumalate region information here
-            aSampleRegionCoverage[sample.getIndex()] = aSampleRegionCoverage[sample.getIndex()] + pass;
-        }
     }
 
     public void print(Gene gene, BufferedWriter bw) throws Exception {

@@ -29,7 +29,7 @@ public class RegionClean {
     private double CaseCoverage = 0;
     private double ControlCoverage = 0;
     private HashMap<String, SortedRegion> RegionMap = new HashMap<String, SortedRegion>();
-    
+
     public RegionClean(String inputfile) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(inputfile));
@@ -59,18 +59,22 @@ public class RegionClean {
     public RegionClean() {
         // for site coverage comparison, instead of reading from output file
         // we allow the SortedRegionList to be accumalted when they are generated 
-        SortedRegionList.clear(); 
+        SortedRegionList.clear();
     }
-    
-    public void AddRegionToList(String name, double caseavg, double controlavg, double diff) {
-        //site has a fixed length of 1
-        SortedRegionList.add(new SortedRegion(name, caseavg,controlavg,diff, 1));              
+
+    public void AddRegionToList(String name, int caseCoverage, int ctrlCoverage) {
+        double caseAverage = FormatManager.devide(caseCoverage, SampleManager.getCaseNum());
+        double ctrlAverage = FormatManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
+        double abs_diff = Math.abs(caseAverage - ctrlAverage);
+
+        SortedRegionList.add(new SortedRegion(name, caseAverage, ctrlAverage, abs_diff, 1));
         TotalBases += 1;
     }
-    
+
     public void FinalizeRegionList() {
         Collections.sort(SortedRegionList);
     }
+
     public int GetTotalBases() {
         return TotalBases;
     }
@@ -162,7 +166,7 @@ public class RegionClean {
         sb.append(gene.getName());
         sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
-        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) { 
+        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
             Exon exon = (Exon) r.next();
             int startPosition = exon.getStartPosition();
             int endPosition = exon.getEndPosition();
@@ -213,15 +217,16 @@ public class RegionClean {
             return "";
         }
     }
+
     public String GetCleanedGeneString(Gene gene, HashSet<String> cleanedRegions) {
         StringBuilder sb = new StringBuilder();
         int size = 0;
         sb.append(gene.getName());
         sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
-        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) { 
-        //reuse exon here, might need to change to a more approriate name later
-        // Should be region in general
+        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
+            //reuse exon here, might need to change to a more approriate name later
+            // Should be region in general
             Exon exon = (Exon) r.next();
             String exonid = gene.getName() + "_" + exon.getIdStr();
             if (cleanedRegions.contains(exonid)) {
@@ -283,7 +288,7 @@ public class RegionClean {
             CaseAvg /= (double) GeneSize;
             CtrlAvg /= (double) GeneSize;
         }
-        
+
         sb.append(gene.getName());
         sb.append(",").append(gene.getChr());
         sb.append(",").append(gene.getLength());

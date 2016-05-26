@@ -7,12 +7,13 @@ import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.CoverageAnalysisBase;
 import function.genotype.base.SampleManager;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import utils.FormatManager;
@@ -76,8 +77,7 @@ public class SiteCoverageComparison extends CoverageAnalysisBase {
     public void beforeProcessDatabaseData() {
         super.beforeProcessDatabaseData();
 
-        int sampleSize = SampleManager.getListSize();
-        if (sampleSize == SampleManager.getCaseNum() || sampleSize == SampleManager.getCtrlNum()) {
+        if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
             ErrorManager.print("Error: this function is not supposed to run with case only or control only sample file. ");
         }
     }
@@ -96,32 +96,37 @@ public class SiteCoverageComparison extends CoverageAnalysisBase {
         try {
             for (Exon exon : gene.getExonList()) {
                 HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                ss.accumulateCoverage(gene, result);
+                ss.accumulateCoverage(gene.getIndex(), result);
 
-                int SiteStart = exon.getStartPosition();
-
-                ArrayList<int[]> SiteCoverage = CoverageManager.getCoverageForSites(exon);
-
-                for (int pos = 0; pos < SiteCoverage.get(0).length; pos++) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(gene.getName()).append(",").append(exon.getChrStr()).append(",");
-                    int total_coverage = SiteCoverage.get(0)[pos] + SiteCoverage.get(1)[pos];
-                    sb.append(SiteStart + pos).append(",").append(total_coverage);
-                    sb.append(",").append(SiteCoverage.get(0)[pos]);
-                    sb.append(",").append(SiteCoverage.get(1)[pos]);
-                    sb.append("\n");
-                    bwSiteSummary.write(sb.toString());
-
-                    //emit site info for potential processing
-                    emitSiteInfo(gene.getName(), exon.getChrStr(), SiteStart + pos,
-                            SiteCoverage.get(0)[pos], SiteCoverage.get(1)[pos]);
-                }
+                outputSiteSummary(gene, exon);
             }
 
-            ss.updateSampleRegionCoverage(gene);
             ss.printGeneSummary(gene, bwCoverageSummaryByGene);
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    private void outputSiteSummary(Gene gene, Exon exon) throws IOException {
+        int[][] sampleSiteCoverage = CoverageManager.getSampleSiteCoverage(exon);
+
+        for (int pos = 0; pos < exon.getLength(); pos++) {
+            int caseCoverage = sampleSiteCoverage[Index.CASE][pos];
+            int ctrlCoverage = sampleSiteCoverage[Index.CTRL][pos];
+            int start = exon.getStartPosition() + pos;
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(gene.getName()).append(",");
+            sb.append(gene.getChr()).append(",");
+            sb.append(start).append(",");
+            sb.append(caseCoverage + ctrlCoverage).append(",");
+            sb.append(caseCoverage).append(",");
+            sb.append(ctrlCoverage);
+            sb.append("\n");
+            bwSiteSummary.write(sb.toString());
+            
+            String name = gene.getName() + "_" + gene.getChr() + "_" + start;
+            ec.AddRegionToList(name, caseCoverage, ctrlCoverage);
         }
     }
 
@@ -174,15 +179,6 @@ public class SiteCoverageComparison extends CoverageAnalysisBase {
         bwSiteClean.close();
         bwGeneSummaryClean.flush();
         bwGeneSummaryClean.close();
-    }
-
-    private void emitSiteInfo(String gene, String chr, int position, int caseCoverage, int ctrlCoverage) {
-        StringBuilder str = new StringBuilder();
-        str.append(gene).append("_").append(chr).append("_").append(position);
-        double caseAverage = ((double) caseCoverage) / SampleManager.getCaseNum();
-        double ctrlAverage = ((double) ctrlCoverage) / SampleManager.getCtrlNum();
-        double abs_diff = Math.abs(caseAverage - ctrlAverage);
-        ec.AddRegionToList(str.toString(), caseAverage, ctrlAverage, abs_diff);
     }
 
     @Override
