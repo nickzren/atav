@@ -93,8 +93,9 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             } else {
                 sb.append("none");
             }
-            sb.append("\n");
+            
             bwCoverageSummaryByGene.write(sb.toString());
+            bwCoverageSummaryByGene.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }

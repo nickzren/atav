@@ -115,8 +115,8 @@ public class CoverageComparison extends CoverageComparisonBase {
             sb.append(",").append(Variance);
 
             sb.append(",").append(exon.getLength());
-            sb.append("\n");
             bwCoverageSummaryByExon.write(sb.toString());
+            bwCoverageSummaryByExon.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -150,8 +150,8 @@ public class CoverageComparison extends CoverageComparisonBase {
             sb.append(",").append(FormatManager.getSixDegitDouble(avgCtrl));
             sb.append(",").append(FormatManager.getSixDegitDouble(Math.abs((avgCase - avgCtrl))));
             sb.append(",").append(exon.getLength());
-            sb.append("\n");
             bwCoverageSummaryByExon.write(sb.toString());
+            bwCoverageSummaryByExon.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

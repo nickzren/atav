@@ -78,31 +78,23 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     @Override
     public void processDatabaseData() {
-        try {
-            for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                count(gene);
+        for (Gene gene : GeneManager.getGeneBoundaryList()) {
+            count(gene);
 
-                processGene(gene);
+            processGene(gene);
 
-                outputSampleGeneSummary(gene);
-            }
-
-            outputSampleSummary();
-        } catch (Exception e) {
-            ErrorManager.send(e);
+            outputSampleGeneSummary(gene);
         }
+
+        outputSampleSummary();
     }
 
     public void processGene(Gene gene) {
-        try {
-            for (Exon exon : gene.getExonList()) {
-                HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                accumulateCoverage(gene.getIndex(), result);
-                
-                processExon(result, gene, exon);
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
+        for (Exon exon : gene.getExonList()) {
+            HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
+            accumulateCoverage(gene.getIndex(), result);
+
+            processExon(result, gene, exon);
         }
     }
 
@@ -116,48 +108,57 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
         });
     }
 
-    private void outputSampleGeneSummary(Gene gene) throws Exception {
-        for (Sample sample : SampleManager.getList()) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(sample.getName()).append(",");
-            sb.append(gene.getName()).append(",");
-            sb.append(gene.getChr()).append(",");
-            sb.append(gene.getLength()).append(",");
-            sb.append((int) aCoverage[gene.getIndex()][sample.getIndex()]).append(",");
+    private void outputSampleGeneSummary(Gene gene) {
+        try {
+            for (Sample sample : SampleManager.getList()) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(sample.getName()).append(",");
+                sb.append(gene.getName()).append(",");
+                sb.append(gene.getChr()).append(",");
+                sb.append(gene.getLength()).append(",");
+                sb.append((int) aCoverage[gene.getIndex()][sample.getIndex()]).append(",");
 
-            double ratio = FormatManager.devide(
-                    aCoverage[gene.getIndex()][sample.getIndex()], gene.getLength());
-            sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
+                double ratio = FormatManager.devide(
+                        aCoverage[gene.getIndex()][sample.getIndex()], gene.getLength());
+                sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
 
-            int pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
-            sb.append(pass);
-            sb.append("\n");
-            bwCoverageDetails.write(sb.toString());
+                int pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
+                sb.append(pass);
 
-            // count region per sample
-            aSampleRegionCoverage[sample.getIndex()] += pass;
+                bwCoverageDetails.write(sb.toString());
+                bwCoverageDetails.newLine();
+
+                // count region per sample
+                aSampleRegionCoverage[sample.getIndex()] += pass;
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
     }
-    
-    private void outputSampleSummary() throws Exception {
-        for (Sample sample : SampleManager.getList()) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(sample.getName()).append(",");
-            sb.append(GeneManager.getAllGeneBoundaryLength()).append(",");
-            int totalSampleCov = getSampleCoverageByIndex(sample.getIndex());
-            sb.append(totalSampleCov).append(",");
-            double ratio = FormatManager.devide(totalSampleCov, GeneManager.getAllGeneBoundaryLength());
-            sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
-            sb.append(GeneManager.getGeneBoundaryList().size()).append(",");
-            int totalSampleRegionCovered = aSampleRegionCoverage[sample.getIndex()];
-            sb.append(totalSampleRegionCovered).append(",");
-            ratio = FormatManager.devide(totalSampleRegionCovered, GeneManager.getGeneBoundaryList().size());
-            sb.append(FormatManager.getSixDegitDouble(ratio));
-            sb.append("\n");
-            bwSampleSummary.write(sb.toString());
+
+    private void outputSampleSummary() {
+        try {
+            for (Sample sample : SampleManager.getList()) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(sample.getName()).append(",");
+                sb.append(GeneManager.getAllGeneBoundaryLength()).append(",");
+                int totalSampleCov = getSampleCoverageByIndex(sample.getIndex());
+                sb.append(totalSampleCov).append(",");
+                double ratio = FormatManager.devide(totalSampleCov, GeneManager.getAllGeneBoundaryLength());
+                sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
+                sb.append(GeneManager.getGeneBoundaryList().size()).append(",");
+                int totalSampleRegionCovered = aSampleRegionCoverage[sample.getIndex()];
+                sb.append(totalSampleRegionCovered).append(",");
+                ratio = FormatManager.devide(totalSampleRegionCovered, GeneManager.getGeneBoundaryList().size());
+                sb.append(FormatManager.getSixDegitDouble(ratio));
+                bwSampleSummary.write(sb.toString());
+                bwSampleSummary.newLine();
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
     }
-    
+
     private int getSampleCoverageByIndex(int sampleIndex) {
         int cov = 0;
         for (Gene gene : GeneManager.getGeneBoundaryList()) {

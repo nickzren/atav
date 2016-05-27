@@ -73,8 +73,8 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
                 sb.append(exon.getChrStr()).append(",");
                 sb.append(exon.getStartPosition() + pos).append(",");
                 sb.append(sampleSiteCoverage[Index.CASE][pos] + sampleSiteCoverage[Index.CTRL][pos]);
-                sb.append("\n");
                 bwSiteSummary.write(sb.toString());
+                bwSiteSummary.newLine();
                 sb.setLength(0);
             }
         } catch (Exception e) {

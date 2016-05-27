@@ -90,8 +90,8 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 sb.append(caseCoverage + ctrlCoverage).append(",");
                 sb.append(caseCoverage).append(",");
                 sb.append(ctrlCoverage);
-                sb.append("\n");
                 bwSiteSummary.write(sb.toString());
+                bwSiteSummary.newLine();
                 sb.setLength(0);
 
                 String name = gene.getName() + "_" + gene.getChr() + "_" + start;
