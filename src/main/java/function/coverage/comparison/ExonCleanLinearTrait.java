@@ -61,7 +61,7 @@ public class ExonCleanLinearTrait {
         return AllCoverage;
     }
     
-    public int GetNumberOfExons() {
+    public int getNumberOfExons() {
         return SortedExonList.size();
     }
     
@@ -98,7 +98,7 @@ public class ExonCleanLinearTrait {
 
     }
     
-    public HashSet<String> GetExonCleanList(double cutoff) {
+    public HashSet<String> getExonCleanList(double cutoff) {
         TotalCleanedBases = 0;
         AllCoverage = 0;
         HashSet<String> result = new HashSet<String>();

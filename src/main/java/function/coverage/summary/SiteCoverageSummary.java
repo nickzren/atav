@@ -8,7 +8,6 @@ import global.Index;
 import utils.CommonCommand;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 import utils.ErrorManager;
 
@@ -51,7 +50,7 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
         try {
             for (Exon exon : gene.getExonList()) {
                 HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                ss.accumulateCoverage(gene.getIndex(), result);
+                accumulateCoverage(gene.getIndex(), result);
 
                 outputSiteSummary(gene, exon);
             }
@@ -60,16 +59,26 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
         }
     }
 
-    private void outputSiteSummary(Gene gene, Exon exon) throws IOException {
-        int[][] sampleSiteCoverage = CoverageManager.getSampleSiteCoverage(exon);
-        for (int pos = 0; pos < exon.getLength(); pos++) {
+    @Override
+    public void processExon(HashMap<Integer, Integer> result, Gene gene, Exon exon) {
+        outputSiteSummary(gene, exon);
+    }
+
+    private void outputSiteSummary(Gene gene, Exon exon) {
+        try {
+            int[][] sampleSiteCoverage = CoverageManager.getSampleSiteCoverage(exon);
             StringBuilder sb = new StringBuilder();
-            sb.append(gene.getName()).append(",");
-            sb.append(exon.getChrStr()).append(",");
-            sb.append(exon.getStartPosition() + pos).append(",");
-            sb.append(sampleSiteCoverage[Index.CASE][pos] + sampleSiteCoverage[Index.CTRL][pos]);
-            sb.append("\n");
-            bwSiteSummary.write(sb.toString());
+            for (int pos = 0; pos < exon.getLength(); pos++) {
+                sb.append(gene.getName()).append(",");
+                sb.append(exon.getChrStr()).append(",");
+                sb.append(exon.getStartPosition() + pos).append(",");
+                sb.append(sampleSiteCoverage[Index.CASE][pos] + sampleSiteCoverage[Index.CTRL][pos]);
+                sb.append("\n");
+                bwSiteSummary.write(sb.toString());
+                sb.setLength(0);
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
     }
 

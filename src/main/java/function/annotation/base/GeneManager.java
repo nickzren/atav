@@ -25,6 +25,7 @@ public class GeneManager {
     private static HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<String, HashSet<Gene>>();
 
     private static ArrayList<Gene> geneBoundaryList = new ArrayList<Gene>();
+    private static int allGeneBoundaryLength;
 
     private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<String, String>();
     private static HashMap<String, Integer> artifactsGeneMap = new HashMap<String, Integer>();
@@ -109,6 +110,7 @@ public class GeneManager {
         String line;
         
         int geneIndex = 0;
+        allGeneBoundaryLength = 0;
 
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
@@ -134,6 +136,7 @@ public class GeneManager {
 
                 gene.setIndex(geneIndex++);
                 geneBoundaryList.add(gene);
+                allGeneBoundaryLength += gene.getLength();
             }
         }
     }
@@ -298,6 +301,10 @@ public class GeneManager {
 
     public static ArrayList<Gene> getGeneBoundaryList() {
         return geneBoundaryList;
+    }
+    
+    public static int getAllGeneBoundaryLength(){
+        return allGeneBoundaryLength;
     }
 
     public static boolean isValid(Annotation annotation) {

@@ -8,8 +8,6 @@ import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +60,7 @@ public class RegionClean {
         SortedRegionList.clear();
     }
 
-    public void AddRegionToList(String name, int caseCoverage, int ctrlCoverage) {
+    public void addRegionToList(String name, int caseCoverage, int ctrlCoverage) {
         double caseAverage = FormatManager.devide(caseCoverage, SampleManager.getCaseNum());
         double ctrlAverage = FormatManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
         double abs_diff = Math.abs(caseAverage - ctrlAverage);
@@ -95,7 +93,7 @@ public class RegionClean {
         return (CaseCoverage * SampleManager.getCaseNum() + ControlCoverage * SampleManager.getCtrlNum()) / SampleManager.getListSize();
     }
 
-    public int GetNumberOfRegions() {
+    public int getNumberOfRegions() {
         return SortedRegionList.size();
     }
 
@@ -139,7 +137,7 @@ public class RegionClean {
 
     }
 
-    public HashSet<String> GetRegionCleanList(double cutoff) {
+    public HashSet<String> getRegionCleanList(double cutoff) {
         TotalCleanedBases = 0;
         CaseCoverage = 0;
         ControlCoverage = 0;
@@ -160,7 +158,7 @@ public class RegionClean {
         return result;
     }
 
-    public String GetCleanedGeneStringSite(Gene gene, HashSet<String> cleanedRegions) {
+    public String getCleanedGeneStringSite(Gene gene, HashSet<String> cleanedRegions) {
         StringBuilder sb = new StringBuilder();
         int size = 0;
         sb.append(gene.getName());
@@ -248,7 +246,7 @@ public class RegionClean {
         }
     }
 
-    public String GetCleanedGeneSummaryString(Gene gene, HashSet<String> cleanedRegions, boolean isSite) {
+    public String getCleanedGeneSummaryString(Gene gene, HashSet<String> cleanedRegions, boolean isSite) {
         if (RegionMap.isEmpty()) {
             for (int i = 0; i < SortedRegionList.size(); i++) {
                 RegionMap.put(SortedRegionList.get(i).Name, SortedRegionList.get(i));
