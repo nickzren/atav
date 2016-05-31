@@ -7,8 +7,8 @@ export ATAV_HOME=/nfs/goldstein/software/atav_home
 export ATAV_TEST_PATH=$ATAV_HOME/test
 
 #output folder (subfolders 'new' and 'old')
-#export ATAV_OUTPUT_PATH=$ATAV_HOME/test/output
-export ATAV_OUTPUT_PATH=~/output
+export ATAV_OUTPUT_PATH=$ATAV_HOME/test/output
+#export ATAV_OUTPUT_PATH=~/output
 
 #folder that contains .diff files
 export ATAV_DIFF_PATH=~/Desktop
