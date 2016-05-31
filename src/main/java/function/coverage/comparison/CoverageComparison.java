@@ -91,29 +91,29 @@ public class CoverageComparison extends CoverageComparisonBase {
     }
 
     @Override
-    public void processExon(HashMap<Integer, Integer> result, Gene gene, Exon exon) {
+    public void processExon(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon) {
         if (CoverageCommand.isCoverageComparisonDoLinear) {
-            outputExonSummaryLinearTrait(result, gene, exon);
+            outputExonSummaryLinearTrait(sampleCoveredLengthMap, gene, exon);
         } else {
-            outputExonSummary(result, gene, exon);
+            outputExonSummary(sampleCoveredLengthMap, gene, exon);
         }
     }
 
-    private void outputExonSummaryLinearTrait(HashMap<Integer, Integer> result, Gene gene, Exon exon) {
+    private void outputExonSummaryLinearTrait(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon) {
         try {
-            Set<Integer> samples = result.keySet();
+            Set<Integer> samples = sampleCoveredLengthMap.keySet();
             double regoinLength = exon.getLength();
             double avgAll = 0;
             SimpleRegression sr = new SimpleRegression(true);
             SummaryStatistics lss = new SummaryStatistics();
             for (Sample sample : SampleManager.getList()) {
-                double cov = 0;
+                double coveredLength = 0;
                 if (samples.contains(sample.getId())) {
-                    cov = result.get(sample.getId());
+                    coveredLength = sampleCoveredLengthMap.get(sample.getId());
                 }
-                avgAll = avgAll + cov;
+                avgAll = avgAll + coveredLength;
                 double x = sample.getQuantitativeTrait();
-                double y = MathManager.devide(cov, regoinLength);
+                double y = MathManager.devide(coveredLength, regoinLength);
                 sr.addData(x, y);
                 lss.addValue(y);
             }
@@ -126,19 +126,18 @@ public class CoverageComparison extends CoverageComparisonBase {
             double Variance = lss.getVariance();
 
             StringBuilder sb = new StringBuilder();
-            sb.append(gene.getName()).append("_").append(exon.getIdStr());
-            sb.append(",").append(gene.getChr());
-            sb.append(",").append(FormatManager.getSixDegitDouble(avgAll));
+            sb.append(gene.getName()).append("_").append(exon.getIdStr()).append(",");
+            sb.append(gene.getChr()).append(",");
+            sb.append(FormatManager.getSixDegitDouble(avgAll)).append(",");
             if (Double.isNaN(pValue)) { //happens if all coverages are the same
-                sb.append(",").append(1);     //do not format here as we need to reuse it for precision
-                sb.append(",").append(0);
+                sb.append(1).append(",");     //do not format here as we need to reuse it for precision
+                sb.append(0).append(",");
             } else {
-                sb.append(",").append(pValue); //do not format here as we need to reuse it for precision
-                sb.append(",").append(R2 * 100);
+                sb.append(pValue).append(","); //do not format here as we need to reuse it for precision
+                sb.append(R2 * 100).append(",");
             }
-            sb.append(",").append(Variance);
-
-            sb.append(",").append(exon.getLength());
+            sb.append(Variance).append(",");
+            sb.append(exon.getLength());
             bwCoverageSummaryByExon.write(sb.toString());
             bwCoverageSummaryByExon.newLine();
         } catch (Exception e) {
@@ -146,22 +145,22 @@ public class CoverageComparison extends CoverageComparisonBase {
         }
     }
 
-    private void outputExonSummary(HashMap<Integer, Integer> result, Gene gene, Exon exon) {
+    private void outputExonSummary(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon) {
         try {
-            Set<Integer> samples = result.keySet();
+            Set<Integer> samples = sampleCoveredLengthMap.keySet();
 
             double avgCase = 0;
             double avgCtrl = 0;
             for (Sample sample : SampleManager.getList()) {
-                int cov = 0;
+                int coveredLength = 0;
                 if (samples.contains(sample.getId())) {
-                    cov = result.get(sample.getId());
-
+                    coveredLength = sampleCoveredLengthMap.get(sample.getId());
                 }
+                
                 if (sample.isCase()) {
-                    avgCase = avgCase + cov;
+                    avgCase = avgCase + coveredLength;
                 } else {
-                    avgCtrl = avgCtrl + cov;
+                    avgCtrl = avgCtrl + coveredLength;
                 }
             }
             

@@ -46,21 +46,7 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
     }
 
     @Override
-    public void processGene(Gene gene) {
-        try {
-            for (Exon exon : gene.getExonList()) {
-                HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-                accumulateCoverage(gene.getIndex(), result);
-
-                outputSiteSummary(gene, exon);
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    @Override
-    public void processExon(HashMap<Integer, Integer> result, Gene gene, Exon exon) {
+    public void processExon(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon) {
         outputSiteSummary(gene, exon);
     }
 

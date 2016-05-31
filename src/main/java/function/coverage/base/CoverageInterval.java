@@ -10,14 +10,12 @@ public class CoverageInterval {
 
     private int startPos;
     private int endPos;
-    private int coverage;
 
-    public CoverageInterval(int sampleBlockPos, int startIndex, int endIndex, int cov) {
+    public CoverageInterval(int sampleBlockPos, int startIndex, int endIndex) {
         int sampleStartPos = sampleBlockPos - CoverageBlockManager.COVERAGE_BLOCK_SIZE;
 
         startPos = sampleStartPos + startIndex;
         endPos = sampleStartPos + endIndex;
-        coverage = cov;
     }
 
     public int getStartPos() {
@@ -26,9 +24,5 @@ public class CoverageInterval {
 
     public int getEndPos() {
         return endPos;
-    }
-
-    public int getCoverage() {
-        return coverage;
     }
 }

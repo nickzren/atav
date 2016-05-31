@@ -92,20 +92,20 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     public void processGene(Gene gene) {
         for (Exon exon : gene.getExonList()) {
-            HashMap<Integer, Integer> result = CoverageManager.getCoverage(exon);
-            accumulateCoverage(gene.getIndex(), result);
+            HashMap<Integer, Integer> sampleCoveredLengthMap = CoverageManager.getSampleCoveredLengthMap(exon);
+            accumulateCoverage(gene.getIndex(), sampleCoveredLengthMap);
 
-            processExon(result, gene, exon);
+            processExon(sampleCoveredLengthMap, gene, exon);
         }
     }
 
-    public abstract void processExon(HashMap<Integer, Integer> result, Gene gene, Exon exon);
+    public abstract void processExon(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon);
 
-    public void accumulateCoverage(int geneIndex, HashMap<Integer, Integer> result) {
-        result.keySet().parallelStream().forEach((sampleId) -> {
+    public void accumulateCoverage(int geneIndex, HashMap<Integer, Integer> sampleCoveredLengthMap) {
+        sampleCoveredLengthMap.keySet().parallelStream().forEach((sampleId) -> {
             int sampleIndex = SampleManager.getIndexById(sampleId);
             geneSampleCoverage[geneIndex][sampleIndex]
-                    = geneSampleCoverage[geneIndex][sampleIndex] + result.get(sampleId);
+                    = geneSampleCoverage[geneIndex][sampleIndex] + sampleCoveredLengthMap.get(sampleId);
         });
     }
 

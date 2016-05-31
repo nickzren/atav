@@ -50,14 +50,14 @@ public class CoverageSummary extends CoverageAnalysisBase {
     }
 
     @Override
-    public void processExon(HashMap<Integer, Integer> result, Gene gene, Exon exon) {
-        outputCoverageDetailsByExon(result, gene, exon);
+    public void processExon(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon) {
+        outputCoverageDetailsByExon(sampleCoveredLengthMap, gene, exon);
     }
 
-    private void outputCoverageDetailsByExon(HashMap<Integer, Integer> result,
+    private void outputCoverageDetailsByExon(HashMap<Integer, Integer> sampleCoveredLengthMap,
             Gene gene, Exon exon) {
         try {
-            Set<Integer> samples = result.keySet();
+            Set<Integer> samples = sampleCoveredLengthMap.keySet();
             StringBuilder sb = new StringBuilder();
             for (Sample sample : SampleManager.getList()) {
                 sb.append(sample.getName()).append(",");
@@ -70,7 +70,7 @@ public class CoverageSummary extends CoverageAnalysisBase {
 
                 int cov = 0;
                 if (samples.contains(sample.getId())) {
-                    cov = result.get(sample.getId());
+                    cov = sampleCoveredLengthMap.get(sample.getId());
 
                 }
                 sb.append(cov).append(",");

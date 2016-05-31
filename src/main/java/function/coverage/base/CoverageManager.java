@@ -17,12 +17,12 @@ import utils.ErrorManager;
  */
 public class CoverageManager {
 
-    public static HashMap<Integer, Integer> getCoverage(Region region) {
+    public static HashMap<Integer, Integer> getSampleCoveredLengthMap(Region region) {
         String strQuery = getCoverageString(Index.GENOME, region);
-        HashMap<Integer, Integer> result = CoverageManager.calculateCoverage(strQuery, region);
+        HashMap<Integer, Integer> result = CoverageManager.getSampleCoveredLengthMap(strQuery, region);
 
         strQuery = getCoverageString(Index.EXOME, region);
-        result.putAll(CoverageManager.calculateCoverage(strQuery, region));
+        result.putAll(CoverageManager.getSampleCoveredLengthMap(strQuery, region));
 
         return result;
     }
@@ -82,7 +82,7 @@ public class CoverageManager {
         }
     }
 
-    private static HashMap<Integer, Integer> calculateCoverage(String strQuery, Region region) {
+    private static HashMap<Integer, Integer> getSampleCoveredLengthMap(String strQuery, Region region) {
         HashMap<Integer, Integer> result = new HashMap<>();
 
         if (!strQuery.isEmpty()) {
@@ -97,14 +97,10 @@ public class CoverageManager {
                         int overlap = region.intersectLength(ci.getStartPos(), ci.getEndPos());
                         if (overlap > 0) {
                             int sample_id = rs.getInt("sample_id");
-                            int min_coverage = ci.getCoverage();
-
-                            if (min_coverage >= GenotypeLevelFilterCommand.minCoverage) {
-                                if (result.containsKey(sample_id)) {
-                                    result.put(sample_id, result.get(sample_id) + overlap);
-                                } else {
-                                    result.put(sample_id, overlap);
-                                }
+                            if (result.containsKey(sample_id)) {
+                                result.put(sample_id, result.get(sample_id) + overlap);
+                            } else {
+                                result.put(sample_id, overlap);
                             }
                         }
                     }
@@ -155,24 +151,18 @@ public class CoverageManager {
             int sampleBlockPos, String sampleCovBinStr) {
         String[] allCovBinArray = sampleCovBinStr.split(",");
 
-        ArrayList<CoverageInterval> list = new ArrayList<CoverageInterval>();
+        ArrayList<CoverageInterval> list = new ArrayList<>();
 
         int endIndex = 0;
 
-        String oneCovBinStr, oneCovBinLength;
-
-        for (int i = 0; i < allCovBinArray.length; i++) {
-            oneCovBinStr = allCovBinArray[i];
-            oneCovBinLength = oneCovBinStr.substring(0, oneCovBinStr.length() - 1);
-
+        for (String oneCovBinStr : allCovBinArray) {
+            String oneCovBinLength = oneCovBinStr.substring(0, oneCovBinStr.length() - 1);
             int startIndex = endIndex + 1;
             endIndex += Integer.valueOf(oneCovBinLength);
-
             char covStr = oneCovBinStr.charAt(oneCovBinStr.length() - 1);
             int cov = CoverageBlockManager.getCoverageByBin(covStr);
-
             if (cov >= GenotypeLevelFilterCommand.minCoverage) {
-                list.add(new CoverageInterval(sampleBlockPos, startIndex, endIndex, cov));
+                list.add(new CoverageInterval(sampleBlockPos, startIndex, endIndex));
             }
         }
 

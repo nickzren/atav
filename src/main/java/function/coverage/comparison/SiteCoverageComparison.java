@@ -83,7 +83,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     }
 
     @Override
-    public void processExon(HashMap<Integer, Integer> result, Gene gene, Exon exon) {
+    public void processExon(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon) {
         outputSiteSummary(gene, exon);
     }
 
