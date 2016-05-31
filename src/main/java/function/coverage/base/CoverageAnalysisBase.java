@@ -14,6 +14,7 @@ import java.util.HashMap;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
+import utils.MathManager;
 import utils.ThirdPartyToolManager;
 
 /**
@@ -27,8 +28,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
     final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
 
-    public int[] aSampleRegionCoverage = new int[SampleManager.getListSize()];
-    public double[][] aCoverage = new double[GeneManager.getGeneBoundaryList().size()][SampleManager.getListSize()];
+    public int[] sampleCoverageCount = new int[SampleManager.getListSize()];
+    public double[][] geneSampleCoverage = new double[GeneManager.getGeneBoundaryList().size()][SampleManager.getListSize()];
 
     @Override
     public void initOutput() {
@@ -103,8 +104,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     public void accumulateCoverage(int geneIndex, HashMap<Integer, Integer> result) {
         result.keySet().parallelStream().forEach((sampleId) -> {
             int sampleIndex = SampleManager.getIndexById(sampleId);
-            aCoverage[geneIndex][sampleIndex]
-                    = aCoverage[geneIndex][sampleIndex] + result.get(sampleId);
+            geneSampleCoverage[geneIndex][sampleIndex]
+                    = geneSampleCoverage[geneIndex][sampleIndex] + result.get(sampleId);
         });
     }
 
@@ -116,10 +117,9 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 sb.append(gene.getName()).append(",");
                 sb.append(gene.getChr()).append(",");
                 sb.append(gene.getLength()).append(",");
-                sb.append((int) aCoverage[gene.getIndex()][sample.getIndex()]).append(",");
+                sb.append((int) geneSampleCoverage[gene.getIndex()][sample.getIndex()]).append(",");
 
-                double ratio = FormatManager.devide(
-                        aCoverage[gene.getIndex()][sample.getIndex()], gene.getLength());
+                double ratio = MathManager.devide(geneSampleCoverage[gene.getIndex()][sample.getIndex()], gene.getLength());
                 sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
 
                 int pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
@@ -129,7 +129,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 bwCoverageDetails.newLine();
 
                 // count region per sample
-                aSampleRegionCoverage[sample.getIndex()] += pass;
+                sampleCoverageCount[sample.getIndex()] += pass;
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -144,12 +144,12 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 sb.append(GeneManager.getAllGeneBoundaryLength()).append(",");
                 int totalSampleCov = getSampleCoverageByIndex(sample.getIndex());
                 sb.append(totalSampleCov).append(",");
-                double ratio = FormatManager.devide(totalSampleCov, GeneManager.getAllGeneBoundaryLength());
+                double ratio = MathManager.devide(totalSampleCov, GeneManager.getAllGeneBoundaryLength());
                 sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
                 sb.append(GeneManager.getGeneBoundaryList().size()).append(",");
-                int totalSampleRegionCovered = aSampleRegionCoverage[sample.getIndex()];
+                int totalSampleRegionCovered = sampleCoverageCount[sample.getIndex()];
                 sb.append(totalSampleRegionCovered).append(",");
-                ratio = FormatManager.devide(totalSampleRegionCovered, GeneManager.getGeneBoundaryList().size());
+                ratio = MathManager.devide(totalSampleRegionCovered, GeneManager.getGeneBoundaryList().size());
                 sb.append(FormatManager.getSixDegitDouble(ratio));
                 bwSampleSummary.write(sb.toString());
                 bwSampleSummary.newLine();
@@ -162,7 +162,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     private int getSampleCoverageByIndex(int sampleIndex) {
         int cov = 0;
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
-            cov = cov + (int) aCoverage[gene.getIndex()][sampleIndex];
+            cov = cov + (int) geneSampleCoverage[gene.getIndex()][sampleIndex];
         }
         return cov;
     }

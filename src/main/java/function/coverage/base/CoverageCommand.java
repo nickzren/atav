@@ -1,6 +1,7 @@
 package function.coverage.base;
 
 import function.genotype.statistics.StatisticsCommand;
+import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidDouble;
@@ -17,9 +18,9 @@ public class CoverageCommand {
     public static boolean isCoverageSummary = false;
     public static boolean isSiteCoverageSummary = false;
     public static double minPercentRegionCovered = 0; //so all is output by default
-    public static double exonCleanCutoff = -1.0; //not used by default
+    public static double exonCleanCutoff = Data.NO_FILTER;
     public static double geneCleanCutoff = 1.0;
-    public static double siteCleanCutoff = -1.0; // not used by default
+    public static double siteCleanCutoff = Data.NO_FILTER;
 
     // coverage comparison 
     public static boolean isCoverageComparison = false;

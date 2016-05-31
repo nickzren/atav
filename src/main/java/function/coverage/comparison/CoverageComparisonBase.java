@@ -5,11 +5,13 @@ import function.coverage.base.CoverageAnalysisBase;
 import function.coverage.base.CoverageCommand;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -67,23 +69,27 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             double avgCase = 0, avgCtrl = 0;
             for (Sample sample : SampleManager.getList()) {
                 if (sample.isCase()) {
-                    avgCase += aCoverage[gene.getIndex()][sample.getIndex()];
+                    avgCase += geneSampleCoverage[gene.getIndex()][sample.getIndex()];
                 } else {
-                    avgCtrl += aCoverage[gene.getIndex()][sample.getIndex()];
+                    avgCtrl += geneSampleCoverage[gene.getIndex()][sample.getIndex()];
                 }
             }
 
-            avgCase = avgCase / SampleManager.getCaseNum() / (double) gene.getLength();
-            avgCtrl = avgCtrl / SampleManager.getCtrlNum() / (double) gene.getLength();
+            avgCase = MathManager.devide(avgCase, SampleManager.getCaseNum());
+            avgCase = MathManager.devide(avgCase, gene.getLength());
+            avgCtrl = MathManager.devide(avgCtrl, SampleManager.getCtrlNum());
+            avgCtrl = MathManager.devide(avgCtrl, gene.getLength());
+
             StringBuilder sb = new StringBuilder();
             sb.append(gene.getName()).append(",");
             sb.append(gene.getChr()).append(",");
             sb.append(FormatManager.getSixDegitDouble(avgCase)).append(",");
             sb.append(FormatManager.getSixDegitDouble(avgCtrl)).append(",");
-            double abs_diff = Math.abs(avgCase - avgCtrl);
+            double abs_diff = MathManager.abs(avgCase, avgCtrl);
             sb.append(FormatManager.getSixDegitDouble(abs_diff)).append(",");
             sb.append(gene.getLength()).append(",");
-            if (abs_diff > CoverageCommand.geneCleanCutoff) {
+            if (abs_diff != Data.NA
+                    && abs_diff > CoverageCommand.geneCleanCutoff) {
                 if (avgCase < avgCtrl) {
                     sb.append("bias against discovery");
                 } else {
@@ -93,7 +99,7 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             } else {
                 sb.append("none");
             }
-            
+
             bwCoverageSummaryByGene.write(sb.toString());
             bwCoverageSummaryByGene.newLine();
         } catch (Exception ex) {

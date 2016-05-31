@@ -4,6 +4,7 @@ import function.annotation.base.Gene;
 import function.annotation.base.Exon;
 import function.coverage.base.CoverageCommand;
 import function.genotype.base.SampleManager;
+import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -11,22 +12,21 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
- * @author qwang
+ * @author qwang, nick
  */
 public class RegionClean {
 
-    private ArrayList<SortedRegion> SortedRegionList = new ArrayList<SortedRegion>();
-    private int TotalBases = 0;
-    private int TotalCleanedBases = 0;
-    private double CaseCoverage = 0;
-    private double ControlCoverage = 0;
-    private HashMap<String, SortedRegion> RegionMap = new HashMap<String, SortedRegion>();
+    private int totalBases = 0;
+    private int totalCleanedBases = 0;
+    private double caseCoverage = 0;
+    private double ctrlCoverage = 0;
+    private ArrayList<SortedRegion> sortedRegionList = new ArrayList<>();
+    private HashMap<String, SortedRegion> sortedRegionMap = new HashMap<>();
 
     public RegionClean(String inputfile) {
         try {
@@ -37,10 +37,15 @@ public class RegionClean {
                 if (LineCount > 0) { //skip the headline
                     try {
                         String[] fields = str.split(",");
-                        SortedRegionList.add(new SortedRegion(fields[0], Double.parseDouble(fields[2]),
-                                Double.parseDouble(fields[3]), Double.parseDouble(fields[4]),
-                                Integer.parseInt(fields[5])));
-                        TotalBases += Integer.parseInt(fields[5]);
+
+                        sortedRegionList.add(
+                                new SortedRegion(fields[0],
+                                        Double.parseDouble(fields[2]),
+                                        Double.parseDouble(fields[3]),
+                                        Double.parseDouble(fields[4]),
+                                        Integer.parseInt(fields[5])));
+
+                        totalBases += Integer.parseInt(fields[5]);
                     } catch (NumberFormatException e) {
                         LogManager.writeAndPrint("Invalid Exon Summary file format: " + str);
                     }
@@ -51,60 +56,55 @@ public class RegionClean {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-        Collections.sort(SortedRegionList);
     }
 
     public RegionClean() {
-        // for site coverage comparison, instead of reading from output file
-        // we allow the SortedRegionList to be accumalted when they are generated 
-        SortedRegionList.clear();
     }
 
     public void addRegionToList(String name, int caseCoverage, int ctrlCoverage) {
-        double caseAverage = FormatManager.devide(caseCoverage, SampleManager.getCaseNum());
-        double ctrlAverage = FormatManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
-        double abs_diff = Math.abs(caseAverage - ctrlAverage);
+        double caseAverage = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
+        double ctrlAverage = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
+        double abs_diff = MathManager.abs(caseAverage, ctrlAverage);
 
-        SortedRegionList.add(new SortedRegion(name, caseAverage, ctrlAverage, abs_diff, 1));
-        TotalBases += 1;
+        sortedRegionList.add(new SortedRegion(name, caseAverage, ctrlAverage, abs_diff, 1));
+        totalBases += 1;
     }
 
-    public void FinalizeRegionList() {
-        Collections.sort(SortedRegionList);
+    public int getTotalBases() {
+        return totalBases;
     }
 
-    public int GetTotalBases() {
-        return TotalBases;
+    public int getTotalCleanedBases() {
+        return totalCleanedBases;
     }
 
-    public int GetTotalCleanedBases() {
-        return TotalCleanedBases;
+    public double getCaseCoverage() {
+        return caseCoverage;
     }
 
-    public double GetCaseCoverage() {
-        return CaseCoverage;
+    public double getCtrlCoverage() {
+        return ctrlCoverage;
     }
 
-    public double GetControlCoverage() {
-        return ControlCoverage;
+    public double getAllCoverage() {
+        return (caseCoverage * SampleManager.getCaseNum() + ctrlCoverage * SampleManager.getCtrlNum()) / SampleManager.getListSize();
     }
 
-    public double GetAllCoverage() {
-        return (CaseCoverage * SampleManager.getCaseNum() + ControlCoverage * SampleManager.getCtrlNum()) / SampleManager.getListSize();
+    public int getSortedRegionListSite() {
+        return sortedRegionList.size();
     }
 
-    public int getNumberOfRegions() {
-        return SortedRegionList.size();
-    }
+    private double getCutoff() {
+        //make sure the list has included all data and sortd.
+        Collections.sort(sortedRegionList);
 
-    public double GetCutoff() {
         int i;
         double cutoff;
-        double[] data = new double[SortedRegionList.size()];
+        double[] data = new double[sortedRegionList.size()];
         double meandata = 0.0;
         //calculate mean data
         for (i = 0; i < data.length; i++) {
-            data[i] = SortedRegionList.get(i).Coverage_Difference;
+            data[i] = sortedRegionList.get(i).coverageDifference;
             meandata += data[i];
         }
         meandata /= data.length;
@@ -132,57 +132,67 @@ public class RegionClean {
                 index = i;
             }
         }
-        cutoff = SortedRegionList.get(index).Coverage_Difference;
+
+        cutoff = sortedRegionList.get(index).coverageDifference;
+
+        LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for sites is " + Double.toString(cutoff));
+
+        if (CoverageCommand.siteCleanCutoff != Data.NO_FILTER) {
+            cutoff = CoverageCommand.siteCleanCutoff;
+            LogManager.writeAndPrint("User specified cutoff value " + FormatManager.getSixDegitDouble(cutoff) + " is applied instead.");
+        }
+
         return cutoff;
 
     }
 
-    public HashSet<String> getRegionCleanList(double cutoff) {
-        TotalCleanedBases = 0;
-        CaseCoverage = 0;
-        ControlCoverage = 0;
-        HashSet<String> result = new HashSet<String>();
-        for (int i = 0; i < SortedRegionList.size(); i++) {
-            if (SortedRegionList.get(i).Coverage_Difference < cutoff
-                    && SortedRegionList.get(i).Case_Average + SortedRegionList.get(i).Control_Avarage > 0) {
-                TotalCleanedBases += SortedRegionList.get(i).Size;
-                ControlCoverage += SortedRegionList.get(i).Control_Avarage * SortedRegionList.get(i).Size;
-                CaseCoverage += SortedRegionList.get(i).Case_Average * SortedRegionList.get(i).Size;
-                result.add(SortedRegionList.get(i).Name);
+    public void initSortedRegionMap() {
+        double cutoff = getCutoff();
+
+        for (SortedRegion sortedRegion : sortedRegionList) {
+            if (sortedRegion.coverageDifference < cutoff
+                    && sortedRegion.caseAverage + sortedRegion.controlAvarage > 0) {
+                totalCleanedBases += sortedRegion.size;
+                ctrlCoverage += sortedRegion.controlAvarage * sortedRegion.size;
+                caseCoverage += sortedRegion.caseAverage * sortedRegion.size;
+
+                sortedRegionMap.put(sortedRegion.name, sortedRegion);
             }
         }
-        if (TotalBases > 0) {
-            ControlCoverage /= TotalBases;
-            CaseCoverage /= TotalBases;
+
+        if (totalBases > 0) {
+            ctrlCoverage /= totalBases;
+            caseCoverage /= totalBases;
         }
-        return result;
     }
 
-    public String getCleanedGeneStringSite(Gene gene, HashSet<String> cleanedRegions) {
+    public int getSortedRegionMapSize() {
+        return sortedRegionMap.size();
+    }
+
+    public String getCleanedGeneStrBySite(Gene gene) {
         StringBuilder sb = new StringBuilder();
         int size = 0;
         sb.append(gene.getName());
         sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
-        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
-            Exon exon = (Exon) r.next();
-            int startPosition = exon.getStartPosition();
-            int endPosition = exon.getEndPosition();
+        for (Exon exon : gene.getExonList()) {
+            int start = exon.getStartPosition();
+            int end = exon.getEndPosition();
 
-            int previouStartPosition = -1;
-            int previousEndPosition = -1;
-            for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
-                StringBuilder regionid = new StringBuilder();
-                regionid.append(gene).append("_").append(gene.getChr()).append("_").append(currentPosition);
-                if (cleanedRegions.contains(regionid.toString())) {
-                    if (previouStartPosition < 0) {
+            int previouStartPosition = Data.NA;
+            int previousEndPosition = Data.NA;
+            for (int currentPosition = start; currentPosition <= end; currentPosition++) {
+                String regionIdStr = gene.getName() + "_" + gene.getChr() + "_" + currentPosition;
+                if (sortedRegionMap.containsKey(regionIdStr)) {
+                    if (previouStartPosition == Data.NA) {
                         previouStartPosition = currentPosition;
                     }
                     size += 1;
                     previousEndPosition = currentPosition;
                 } else { //there are gaps within the exon, so record the previos discovered region if any
                     //need to record the new discovered region
-                    if (previouStartPosition > 0) {
+                    if (previouStartPosition != Data.NA) {
                         if (isFirst) {
                             isFirst = false;
                         } else {
@@ -191,14 +201,14 @@ public class RegionClean {
                         sb.append(previouStartPosition);
                         sb.append("..").append(previousEndPosition);
                         //reset to no region
-                        previouStartPosition = -1;
-                        previousEndPosition = -1;
+                        previouStartPosition = Data.NA;
+                        previousEndPosition = Data.NA;
                     }
                 }
             }
             //repeat the recoring for last potential region
             //make sure this code is consistent with the code in previous section
-            if (previouStartPosition > 0) {
+            if (previouStartPosition != Data.NA) {
                 if (isFirst) {
                     isFirst = false;
                 } else {
@@ -216,18 +226,15 @@ public class RegionClean {
         }
     }
 
-    public String GetCleanedGeneString(Gene gene, HashSet<String> cleanedRegions) {
+    public String getCleanedGeneStrByExon(Gene gene) {
         StringBuilder sb = new StringBuilder();
         int size = 0;
         sb.append(gene.getName());
         sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
-        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
-            //reuse exon here, might need to change to a more approriate name later
-            // Should be region in general
-            Exon exon = (Exon) r.next();
-            String exonid = gene.getName() + "_" + exon.getIdStr();
-            if (cleanedRegions.contains(exonid)) {
+        for (Exon exon : gene.getExonList()) {
+            String exonIdStr = gene.getName() + "_" + exon.getIdStr();
+            if (sortedRegionMap.containsKey(exonIdStr)) {
                 size += exon.getLength();
                 if (isFirst) {
                     isFirst = false;
@@ -246,64 +253,70 @@ public class RegionClean {
         }
     }
 
-    public String getCleanedGeneSummaryString(Gene gene, HashSet<String> cleanedRegions, boolean isSite) {
-        if (RegionMap.isEmpty()) {
-            for (int i = 0; i < SortedRegionList.size(); i++) {
-                RegionMap.put(SortedRegionList.get(i).Name, SortedRegionList.get(i));
-            }
-        }
-        int GeneSize = 0;
-        double CaseAvg = 0;
-        double CtrlAvg = 0;
-        for (Iterator r = gene.getExonList().iterator(); r.hasNext();) {
-            Exon exon = (Exon) r.next();
-            if (isSite) {
-                int startPosition = exon.getStartPosition();
-                int endPosition = exon.getEndPosition();
-                for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
-                    StringBuilder regionid = new StringBuilder();
-                    regionid.append(gene).append("_").append(gene.getChr()).append("_").append(currentPosition);
-                    if (cleanedRegions.contains(regionid.toString())) {
-                        GeneSize++;
-                        SortedRegion se = RegionMap.get(regionid.toString());
-                        CaseAvg += se.Case_Average;
-                        CtrlAvg += se.Control_Avarage;
-                    }
-                }
-            } else {
-                String exonid = gene.getName() + "_" + exon.getIdStr();
-                if (cleanedRegions.contains(exonid)) {
-                    SortedRegion se = RegionMap.get(exonid);
-                    GeneSize += se.Size;
-                    CaseAvg += (double) se.Size * se.Case_Average;
-                    CtrlAvg += (double) se.Size * se.Control_Avarage;
+    public String getCleanedGeneSummaryStrBySite(Gene gene) {
+        int geneSize = 0;
+        double caseAvg = 0;
+        double ctrlAvg = 0;
+        for (Exon exon : gene.getExonList()) {
+            int start = exon.getStartPosition();
+            int end = exon.getEndPosition();
+            for (int currentPosition = start; currentPosition <= end; currentPosition++) {
+                String regionIdStr = gene.getName() + "_" + gene.getChr() + "_" + currentPosition;
+                SortedRegion sortedRegion = sortedRegionMap.get(regionIdStr);
+                if (sortedRegion != null) {
+                    geneSize++;
+                    caseAvg += sortedRegion.caseAverage;
+                    ctrlAvg += sortedRegion.controlAvarage;
                 }
             }
         }
+
+        return getGeneStr(gene, geneSize, caseAvg, ctrlAvg);
+    }
+
+    public String getCleanedGeneSummaryStrByExon(Gene gene) {
+        int geneSize = 0;
+        double caseAvg = 0;
+        double ctrlAvg = 0;
+        for (Exon exon : gene.getExonList()) {
+            String regionIdStr = gene.getName() + "_" + exon.getIdStr();
+            SortedRegion sortedRegion = sortedRegionMap.get(regionIdStr);
+            if (sortedRegion != null) {
+                geneSize += sortedRegion.size;
+                caseAvg += (double) sortedRegion.size * sortedRegion.caseAverage;
+                ctrlAvg += (double) sortedRegion.size * sortedRegion.controlAvarage;
+            }
+        }
+
+        return getGeneStr(gene, geneSize, caseAvg, ctrlAvg);
+    }
+
+    private String getGeneStr(Gene gene, int geneSize, double caseAvg, double ctrlAvg) {
         StringBuilder sb = new StringBuilder();
 
-        if (GeneSize > 0) {
-            CaseAvg /= (double) GeneSize;
-            CtrlAvg /= (double) GeneSize;
+        if (geneSize > 0) {
+            caseAvg /= (double) geneSize;
+            ctrlAvg /= (double) geneSize;
         }
 
-        sb.append(gene.getName());
-        sb.append(",").append(gene.getChr());
-        sb.append(",").append(gene.getLength());
-        sb.append(",").append(FormatManager.getSixDegitDouble(CaseAvg));
-        sb.append(",").append(FormatManager.getSixDegitDouble(CtrlAvg));
-        double abs_diff = Math.abs(CaseAvg - CtrlAvg);
-        sb.append(",").append(FormatManager.getSixDegitDouble(abs_diff));
-        sb.append(",").append(GeneSize);
-        if (abs_diff > CoverageCommand.geneCleanCutoff) {
-            if (CaseAvg < CtrlAvg) {
-                sb.append(",").append("bias against discovery");
+        sb.append(gene.getName()).append(",");
+        sb.append(gene.getChr()).append(",");
+        sb.append(gene.getLength()).append(",");
+        sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
+        sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
+        double abs_diff = MathManager.abs(caseAvg, ctrlAvg);
+        sb.append(FormatManager.getSixDegitDouble(abs_diff)).append(",");
+        sb.append(geneSize).append(",");
+        if (abs_diff != Data.NA
+                && abs_diff > CoverageCommand.geneCleanCutoff) {
+            if (caseAvg < ctrlAvg) {
+                sb.append("bias against discovery").append(",");
             } else {
-                sb.append(",").append("bias for discovery");
+                sb.append("bias for discovery").append(",");
             }
 
         } else {
-            sb.append(",").append("none");
+            sb.append("none");
         }
 
         return sb.toString();
@@ -311,23 +324,23 @@ public class RegionClean {
 
     class SortedRegion implements Comparable {
 
-        String Name;
-        public double Coverage_Difference;
-        public double Case_Average;
-        public double Control_Avarage;
-        public int Size;
+        String name;
+        public double coverageDifference;
+        public double caseAverage;
+        public double controlAvarage;
+        public int size;
 
         public SortedRegion(String name, double caseavg, double controlavg, double diff, int regionsize) {
-            Name = name;
-            Coverage_Difference = diff;
-            Case_Average = caseavg;
-            Control_Avarage = controlavg;
-            Size = regionsize;
+            this.name = name;
+            coverageDifference = diff;
+            caseAverage = caseavg;
+            controlAvarage = controlavg;
+            size = regionsize;
         }
 
         public int compareTo(Object other) {
             SortedRegion that = (SortedRegion) other;
-            return Double.compare(that.Coverage_Difference, this.Coverage_Difference); // large -> small
+            return Double.compare(that.coverageDifference, this.coverageDifference); // large -> small
         }
     }
 }

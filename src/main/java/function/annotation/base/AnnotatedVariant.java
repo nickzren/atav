@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import utils.MathManager;
 
 /**
  *
@@ -62,8 +63,8 @@ public class AnnotatedVariant extends Variant {
             polyphenHumdiv = Data.NA;
             polyphenHumvar = Data.NA;
         } else {
-            polyphenHumdiv = FormatManager.devide(rset.getInt("polyphen_humdiv"), 1000);
-            polyphenHumvar = FormatManager.devide(rset.getInt("polyphen_humvar"), 1000);
+            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
+            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
         }
 
         function = "";

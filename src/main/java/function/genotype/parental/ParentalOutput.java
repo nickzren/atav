@@ -134,7 +134,7 @@ public class ParentalOutput extends Output {
             int readsAlt = calledVar.getReadsAlt(child.getId());
             int gatkFilteredCoverage = calledVar.getGatkFilteredCoverage(child.getId());
 
-            percAltRead = FormatManager.devide(readsAlt, gatkFilteredCoverage);
+            percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
         }
 
         return ParentalCommand.isChildHetPercentAltReadValid(percAltRead);

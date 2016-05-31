@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import utils.MathManager;
 
 /**
  *
@@ -189,7 +190,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
         LogManager.writeAndPrint("Total qualified " + model + " variants: " + num);
 
-        double bonferroniP = FormatManager.devide(0.05, num);
+        double bonferroniP = MathManager.devide(0.05, num);
 
         LogManager.writeAndPrint("Bonferroni correction p-value (" + model + "): "
                 + FormatManager.getDouble(bonferroniP));

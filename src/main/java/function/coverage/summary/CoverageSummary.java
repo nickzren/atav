@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Set;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -74,7 +75,7 @@ public class CoverageSummary extends CoverageAnalysisBase {
                 }
                 sb.append(cov).append(",");
 
-                double ratio = FormatManager.devide(cov, exon.getLength());
+                double ratio = MathManager.devide(cov, exon.getLength());
                 sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
                 sb.append(ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0);
 

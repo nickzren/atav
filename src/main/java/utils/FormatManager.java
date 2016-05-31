@@ -1,7 +1,6 @@
 package utils;
 
 import global.Data;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -27,12 +26,12 @@ public class FormatManager {
             return pformat1.format(value);
         }
     }
-    
+
     public static String getSixDegitDouble(double value) {
         if (value == Data.NA) {
             return "NA";
         }
-        
+
         return pformat3.format(value);
     }
 
@@ -104,33 +103,6 @@ public class FormatManager {
             return true;
         } catch (Exception e) {
             return false;
-        }
-    }
-
-//    public static double roundToDecimals(double d, double c) {
-//        int t = (int) (d * c + 0.5);
-//
-//        return (double) t / c;
-//    }
-    public static double roundToDecimals(double value) {
-        int t = (int) (value * 100000000 + 0.5);
-        double pValue = (double) t / 100000000;
-
-        if (pValue > 0.00001) {
-            return pValue;
-        }
-
-        BigDecimal temp = new BigDecimal(value);
-        temp = temp.setScale(8, BigDecimal.ROUND_HALF_UP);
-
-        return temp.doubleValue();
-    }
-
-    public static double devide(double a, double b) {
-        if (b <= 0) {
-            return Data.NA;
-        } else {
-            return a / b;
         }
     }
 

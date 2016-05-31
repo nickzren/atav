@@ -19,6 +19,7 @@ import utils.LogManager;
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
+import utils.MathManager;
 
 /**
  *
@@ -144,7 +145,7 @@ public class LinearOutput extends StatisticOutput {
             double[] stds = mr.estimateRegressionParametersStandardErrors();
 
             beta1 = parameters[1];
-            double t = Math.abs(beta1 / stds[1]);
+            double t = MathManager.abs(beta1, stds[1]);
             pValue = 2 * td.cumulativeProbability(t);
 
         } else {

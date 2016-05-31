@@ -6,6 +6,7 @@ import function.variant.base.RegionManager;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import utils.MathManager;
 
 /**
  *
@@ -29,8 +30,8 @@ public class Annotation {
             polyphenHumdiv = Data.NA;
             polyphenHumvar = Data.NA;
         } else {
-            polyphenHumdiv = FormatManager.devide(rset.getInt("polyphen_humdiv"), 1000);
-            polyphenHumvar = FormatManager.devide(rset.getInt("polyphen_humvar"), 1000);
+            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
+            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
         }
 
         geneName = FormatManager.getString(rset.getString("gene_name"));
