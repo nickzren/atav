@@ -57,7 +57,7 @@ public class FormatManager {
     }
 
     public static float getFloat(String str) {
-        if (str == null) {
+        if (str == null || str.equals("NA")) {
             return Data.NA;
         }
 
