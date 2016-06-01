@@ -8,11 +8,9 @@ import function.genotype.base.SampleManager;
 import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
-import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
-import utils.FormatManager;
 import utils.MathManager;
 import utils.ThirdPartyToolManager;
 
@@ -24,13 +22,11 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
     BufferedWriter bwSiteSummary = null;
     BufferedWriter bwSiteClean = null;
-    BufferedWriter bwGeneSummaryClean = null;
 
     final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
     final String cleanedSiteList = CommonCommand.outputPath + "site.clean.txt";
-    final String cleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
 
-    ExonClean regionClean = new ExonClean();
+    RegionClean regionClean = new RegionClean();
 
     @Override
     public void initOutput() {
@@ -42,10 +38,6 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             bwSiteSummary.newLine();
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
-            
-            bwGeneSummaryClean = new BufferedWriter(new FileWriter(cleanedGeneSummaryList));
-            bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
-            bwGeneSummaryClean.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -60,8 +52,6 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             bwSiteSummary.close();
             bwSiteClean.flush();
             bwSiteClean.close();
-            bwGeneSummaryClean.flush();
-            bwGeneSummaryClean.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -120,9 +110,8 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     }
 
     public void outputCleanedExonData() throws Exception {
-        regionClean.initCleanedExonMap();
-
-        printCleanedExonLog();
+        regionClean.initCleanedRegionMap();
+        regionClean.outputLog();
 
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
             String str = regionClean.getCleanedGeneStrBySite(gene);
@@ -137,30 +126,6 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 bwGeneSummaryClean.newLine();
             }
         }
-    }
-
-    private void printCleanedExonLog() {
-        LogManager.writeAndPrint("The total number of bases before pruning is "
-                + FormatManager.getSixDegitDouble((double) regionClean.getTotalBases() / 1000000.0) + " MB");
-        LogManager.writeAndPrint("The total number of bases after pruning is "
-                + FormatManager.getSixDegitDouble((double) regionClean.getTotalCleanedBases() / 1000000.0) + " MB");
-        LogManager.writeAndPrint("The % of bases pruned is "
-                + FormatManager.getSixDegitDouble(100.0 - (double) regionClean.getTotalCleanedBases() / (double) regionClean.getTotalBases() * 100) + "%");
-
-        LogManager.writeAndPrint("The average coverage rate for all samples after pruning is  "
-                + FormatManager.getSixDegitDouble(regionClean.getAllCoverage() * 100) + "%");
-        LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is  "
-                + FormatManager.getSixDegitDouble(regionClean.getAllCoverage() * regionClean.getTotalBases() / 1000000.0) + " MB");
-
-        LogManager.writeAndPrint("The average coverage rate for cases after pruning is  "
-                + FormatManager.getSixDegitDouble(regionClean.getCaseCoverage() * 100) + "%");
-        LogManager.writeAndPrint("The average number of bases well covered for cases after pruning is  "
-                + FormatManager.getSixDegitDouble(regionClean.getCaseCoverage() * regionClean.getTotalBases() / 1000000.0) + " MB");
-
-        LogManager.writeAndPrint("The average coverage rate for controls after pruning is  "
-                + FormatManager.getSixDegitDouble(regionClean.getCtrlCoverage() * 100) + "%");
-        LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is  "
-                + FormatManager.getSixDegitDouble(regionClean.getCtrlCoverage() * regionClean.getTotalBases() / 1000000.0) + " MB");
     }
 
     @Override

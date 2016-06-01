@@ -19,7 +19,10 @@ import utils.MathManager;
 public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
 
     BufferedWriter bwCoverageSummaryByGene = null;
+    BufferedWriter bwGeneSummaryClean = null;
+
     final String coverageSummaryByGene = CommonCommand.outputPath + "coverage.summary.csv";
+    final String cleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
 
     @Override
     public void initOutput() {
@@ -29,6 +32,10 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
             bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
             bwCoverageSummaryByGene.newLine();
+
+            bwGeneSummaryClean = new BufferedWriter(new FileWriter(cleanedGeneSummaryList));
+            bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
+            bwGeneSummaryClean.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -41,6 +48,8 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
 
             bwCoverageSummaryByGene.flush();
             bwCoverageSummaryByGene.close();
+            bwGeneSummaryClean.flush();
+            bwGeneSummaryClean.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }

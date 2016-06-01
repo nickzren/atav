@@ -16,55 +16,35 @@ import utils.MathManager;
  *
  * @author qwang, nick
  */
-public class ExonClean {
+public class RegionClean {
 
-    private int totalBases = 0;
-    private int totalCleanedBases = 0;
-    private double caseCoverage = 0;
-    private double ctrlCoverage = 0;
-    private ArrayList<SortedExon> exonList = new ArrayList<>();
-    private HashMap<String, SortedExon> cleanedExonMap = new HashMap<>();
+    int totalBases = 0;
+    int totalCleanedBases = 0;
+    double caseCoverage = 0;
+    double ctrlCoverage = 0;
+    ArrayList<SortedRegion> regionList = new ArrayList<>();
+    HashMap<String, SortedRegion> cleanedRegionMap = new HashMap<>();
 
     public void addExon(String name, double caseAvg, double ctrlAvg, double absDiff, int regionSize) {
-        exonList.add(new SortedExon(name, caseAvg, ctrlAvg, absDiff, regionSize));
+        regionList.add(new SortedRegion(name, caseAvg, ctrlAvg, absDiff, regionSize));
         totalBases += regionSize;
     }
 
-    public int getTotalBases() {
-        return totalBases;
-    }
-
-    public int getTotalCleanedBases() {
-        return totalCleanedBases;
-    }
-
-    public double getCaseCoverage() {
-        return caseCoverage;
-    }
-
-    public double getCtrlCoverage() {
-        return ctrlCoverage;
-    }
-
-    public double getAllCoverage() {
+    private double getAllCoverage() {
         return (caseCoverage * SampleManager.getCaseNum() + ctrlCoverage * SampleManager.getCtrlNum()) / SampleManager.getListSize();
     }
 
-    public int getExonListSite() {
-        return exonList.size();
-    }
-
-    private double getCutoff() {
+    protected double getCutoff() {
         //make sure the list has included all data and sortd.
-        Collections.sort(exonList);
+        Collections.sort(regionList);
 
         int i;
         double cutoff;
-        double[] data = new double[exonList.size()];
+        double[] data = new double[regionList.size()];
         double meandata = 0.0;
         //calculate mean data
         for (i = 0; i < data.length; i++) {
-            data[i] = exonList.get(i).coverageDifference;
+            data[i] = regionList.get(i).getCovDiff();
             meandata += data[i];
         }
         meandata /= data.length;
@@ -93,7 +73,7 @@ public class ExonClean {
             }
         }
 
-        cutoff = exonList.get(index).coverageDifference;
+        cutoff = regionList.get(index).getCovDiff();
 
         LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for sites is " + Double.toString(cutoff));
 
@@ -106,28 +86,22 @@ public class ExonClean {
 
     }
 
-    public void initCleanedExonMap() {
+    public void initCleanedRegionMap() {
         double cutoff = getCutoff();
 
-        for (SortedExon sortedRegion : exonList) {
-            if (sortedRegion.coverageDifference < cutoff
-                    && sortedRegion.caseAverage + sortedRegion.controlAvarage > 0) {
-                totalCleanedBases += sortedRegion.size;
-                ctrlCoverage += sortedRegion.controlAvarage * sortedRegion.size;
-                caseCoverage += sortedRegion.caseAverage * sortedRegion.size;
+        for (SortedRegion sortedRegion : regionList) {
+            if (sortedRegion.getCutoff() < cutoff
+                    && sortedRegion.getCaseAvg() + sortedRegion.getCtrlAvg() > 0) {
+                totalCleanedBases += sortedRegion.getLength();
+                ctrlCoverage += sortedRegion.getCtrlAvg() * sortedRegion.getLength();
+                caseCoverage += sortedRegion.getCaseAvg() * sortedRegion.getLength();
 
-                cleanedExonMap.put(sortedRegion.name, sortedRegion);
+                cleanedRegionMap.put(sortedRegion.getName(), sortedRegion);
             }
         }
 
-        if (totalBases > 0) {
-            ctrlCoverage /= totalBases;
-            caseCoverage /= totalBases;
-        }
-    }
-
-    public int getCleanedExonMapSize() {
-        return cleanedExonMap.size();
+        caseCoverage = MathManager.devide(caseCoverage, totalBases);
+        ctrlCoverage = MathManager.devide(ctrlCoverage, totalBases);
     }
 
     public String getCleanedGeneStrBySite(Gene gene) {
@@ -144,7 +118,7 @@ public class ExonClean {
             int previousEndPosition = Data.NA;
             for (int currentPosition = start; currentPosition <= end; currentPosition++) {
                 String regionIdStr = gene.getName() + "_" + gene.getChr() + "_" + currentPosition;
-                if (cleanedExonMap.containsKey(regionIdStr)) {
+                if (cleanedRegionMap.containsKey(regionIdStr)) {
                     if (previouStartPosition == Data.NA) {
                         previouStartPosition = currentPosition;
                     }
@@ -194,7 +168,7 @@ public class ExonClean {
         boolean isFirst = true;
         for (Exon exon : gene.getExonList()) {
             String exonIdStr = gene.getName() + "_" + exon.getIdStr();
-            if (cleanedExonMap.containsKey(exonIdStr)) {
+            if (cleanedRegionMap.containsKey(exonIdStr)) {
                 size += exon.getLength();
                 if (isFirst) {
                     isFirst = false;
@@ -222,11 +196,11 @@ public class ExonClean {
             int end = exon.getEndPosition();
             for (int currentPosition = start; currentPosition <= end; currentPosition++) {
                 String regionIdStr = gene.getName() + "_" + gene.getChr() + "_" + currentPosition;
-                SortedExon sortedRegion = cleanedExonMap.get(regionIdStr);
-                if (sortedRegion != null) {
+                SortedRegion sortedExon = cleanedRegionMap.get(regionIdStr);
+                if (sortedExon != null) {
                     geneSize++;
-                    caseAvg += sortedRegion.caseAverage;
-                    ctrlAvg += sortedRegion.controlAvarage;
+                    caseAvg += sortedExon.getCaseAvg();
+                    ctrlAvg += sortedExon.getCtrlAvg();
                 }
             }
         }
@@ -240,11 +214,11 @@ public class ExonClean {
         double ctrlAvg = 0;
         for (Exon exon : gene.getExonList()) {
             String regionIdStr = gene.getName() + "_" + exon.getIdStr();
-            SortedExon sortedExon = cleanedExonMap.get(regionIdStr);
+            SortedRegion sortedExon = cleanedRegionMap.get(regionIdStr);
             if (sortedExon != null) {
-                geneSize += sortedExon.size;
-                caseAvg += (double) sortedExon.size * sortedExon.caseAverage;
-                ctrlAvg += (double) sortedExon.size * sortedExon.controlAvarage;
+                geneSize += sortedExon.getLength();
+                caseAvg += (double) sortedExon.getLength() * sortedExon.getCaseAvg();
+                ctrlAvg += (double) sortedExon.getLength() * sortedExon.getCtrlAvg();
             }
         }
 
@@ -268,26 +242,36 @@ public class ExonClean {
         return sb.toString();
     }
 
-    class SortedExon implements Comparable {
+    public void outputLog() {
+        int numExonsTotal = regionList.size();
+        int numExonsPruned = numExonsTotal - cleanedRegionMap.size();
+        LogManager.writeAndPrint("The number of exons before pruning is " + numExonsTotal);
+        LogManager.writeAndPrint("The number of exons after pruning is " + cleanedRegionMap.size());
+        LogManager.writeAndPrint("The number of exons pruned is " + numExonsPruned);
+        double percentExonsPruned = (double) numExonsPruned / (double) numExonsTotal * 100;
+        LogManager.writeAndPrint("The % of exons pruned is "
+                + FormatManager.getSixDegitDouble(percentExonsPruned) + "%");
 
-        String name;
-        public double coverageDifference;
-        public double caseAverage;
-        public double controlAvarage;
-        public int size;
+        LogManager.writeAndPrint("The total number of bases before pruning is "
+                + FormatManager.getSixDegitDouble((double) totalBases / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The total number of bases after pruning is "
+                + FormatManager.getSixDegitDouble((double) totalCleanedBases / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The % of bases pruned is "
+                + FormatManager.getSixDegitDouble(100.0 - (double) totalCleanedBases / (double) totalBases * 100) + "%");
+        
+        LogManager.writeAndPrint("The average coverage rate for all samples after pruning is "
+                + FormatManager.getSixDegitDouble(getAllCoverage() * 100) + "%");
+        LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is "
+                + FormatManager.getSixDegitDouble(getAllCoverage() * totalBases / 1000000.0) + " MB");
 
-        public SortedExon(String name, double caseAvg, double ctrlAvg, double diff, int regionSize) {
-            this.name = name;
-            coverageDifference = diff;
-            caseAverage = caseAvg;
-            controlAvarage = ctrlAvg;
-            size = regionSize;
-        }
+        LogManager.writeAndPrint("The average coverage rate for cases after pruning is  "
+                + FormatManager.getSixDegitDouble(caseCoverage * 100) + "%");
+        LogManager.writeAndPrint("The average number of bases well covered for cases after pruning is "
+                + FormatManager.getSixDegitDouble(caseCoverage * totalBases / 1000000.0) + " MB");
 
-        @Override
-        public int compareTo(Object other) {
-            SortedExon that = (SortedExon) other;
-            return Double.compare(that.coverageDifference, this.coverageDifference); // large -> small
-        }
+        LogManager.writeAndPrint("The average coverage rate for controls after pruning is  "
+                + FormatManager.getSixDegitDouble(ctrlCoverage * 100) + "%");
+        LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is "
+                + FormatManager.getSixDegitDouble(ctrlCoverage * totalBases / 1000000.0) + " MB");
     }
 }
