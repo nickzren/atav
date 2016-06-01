@@ -5,7 +5,6 @@ import function.coverage.base.CoverageAnalysisBase;
 import function.coverage.base.CoverageCommand;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
-import global.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import utils.CommonCommand;
@@ -66,40 +65,29 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
 
     private void outputGeneSummary(Gene gene) {
         try {
-            double avgCase = 0, avgCtrl = 0;
+            double caseAvg = 0, ctrlAvg = 0;
             for (Sample sample : SampleManager.getList()) {
                 if (sample.isCase()) {
-                    avgCase += geneSampleCoverage[gene.getIndex()][sample.getIndex()];
+                    caseAvg += geneSampleCoverage[gene.getIndex()][sample.getIndex()];
                 } else {
-                    avgCtrl += geneSampleCoverage[gene.getIndex()][sample.getIndex()];
+                    ctrlAvg += geneSampleCoverage[gene.getIndex()][sample.getIndex()];
                 }
             }
 
-            avgCase = MathManager.devide(avgCase, SampleManager.getCaseNum());
-            avgCase = MathManager.devide(avgCase, gene.getLength());
-            avgCtrl = MathManager.devide(avgCtrl, SampleManager.getCtrlNum());
-            avgCtrl = MathManager.devide(avgCtrl, gene.getLength());
+            caseAvg = MathManager.devide(caseAvg, SampleManager.getCaseNum());
+            caseAvg = MathManager.devide(caseAvg, gene.getLength());
+            ctrlAvg = MathManager.devide(ctrlAvg, SampleManager.getCtrlNum());
+            ctrlAvg = MathManager.devide(ctrlAvg, gene.getLength());
 
             StringBuilder sb = new StringBuilder();
             sb.append(gene.getName()).append(",");
             sb.append(gene.getChr()).append(",");
-            sb.append(FormatManager.getSixDegitDouble(avgCase)).append(",");
-            sb.append(FormatManager.getSixDegitDouble(avgCtrl)).append(",");
-            double abs_diff = MathManager.abs(avgCase, avgCtrl);
-            sb.append(FormatManager.getSixDegitDouble(abs_diff)).append(",");
+            sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
+            sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
+            double absDiff = MathManager.abs(caseAvg, ctrlAvg);
+            sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
             sb.append(gene.getLength()).append(",");
-            if (abs_diff != Data.NA
-                    && abs_diff > CoverageCommand.geneCleanCutoff) {
-                if (avgCase < avgCtrl) {
-                    sb.append("bias against discovery");
-                } else {
-                    sb.append("bias for discovery");
-                }
-
-            } else {
-                sb.append("none");
-            }
-
+            sb.append(CoverageCommand.checkGeneCleanCutoff(absDiff, caseAvg, ctrlAvg));
             bwCoverageSummaryByGene.write(sb.toString());
             bwCoverageSummaryByGene.newLine();
         } catch (Exception ex) {

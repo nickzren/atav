@@ -4,6 +4,7 @@ import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
+import function.genotype.base.SampleManager;
 import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -12,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 import utils.FormatManager;
+import utils.MathManager;
 import utils.ThirdPartyToolManager;
 
 /**
@@ -28,7 +30,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     final String cleanedSiteList = CommonCommand.outputPath + "site.clean.txt";
     final String cleanedGeneSummaryList = CommonCommand.outputPath + "coverage.summary.clean.csv";
 
-    RegionClean regionClean = new RegionClean();
+    ExonClean regionClean = new ExonClean();
 
     @Override
     public void initOutput() {
@@ -40,6 +42,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             bwSiteSummary.newLine();
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
+            
             bwGeneSummaryClean = new BufferedWriter(new FileWriter(cleanedGeneSummaryList));
             bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
             bwGeneSummaryClean.newLine();
@@ -106,7 +109,10 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 sb.setLength(0);
 
                 String name = gene.getName() + "_" + gene.getChr() + "_" + start;
-                regionClean.addRegionToList(name, caseCoverage, ctrlCoverage);
+                double caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
+                double ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
+                double absDiff = MathManager.abs(caseAvg, ctrlAvg);
+                regionClean.addExon(name, caseAvg, ctrlAvg, absDiff, 1);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -114,10 +120,10 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     }
 
     public void outputCleanedExonData() throws Exception {
-        regionClean.initSortedRegionMap();
+        regionClean.initCleanedExonMap();
 
         printCleanedExonLog();
-        
+
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
             String str = regionClean.getCleanedGeneStrBySite(gene);
             if (!str.isEmpty()) {

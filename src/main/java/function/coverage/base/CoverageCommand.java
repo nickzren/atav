@@ -88,4 +88,17 @@ public class CoverageCommand {
             iterator.remove();
         }
     }
+
+    public static String checkGeneCleanCutoff(double absDiff, double caseAvg, double ctrlAvg) {
+        if (absDiff != Data.NA
+                && absDiff > geneCleanCutoff) {
+            if (caseAvg < ctrlAvg) {
+                return "bias against discovery";
+            } else {
+                return "bias for discovery";
+            }
+        } else {
+            return "none";
+        }
+    }
 }

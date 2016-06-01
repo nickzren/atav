@@ -11,7 +11,6 @@ import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
-import java.util.Set;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -57,7 +56,6 @@ public class CoverageSummary extends CoverageAnalysisBase {
     private void outputCoverageDetailsByExon(HashMap<Integer, Integer> sampleCoveredLengthMap,
             Gene gene, Exon exon) {
         try {
-            Set<Integer> samples = sampleCoveredLengthMap.keySet();
             StringBuilder sb = new StringBuilder();
             for (Sample sample : SampleManager.getList()) {
                 sb.append(sample.getName()).append(",");
@@ -68,14 +66,13 @@ public class CoverageSummary extends CoverageAnalysisBase {
                 sb.append(exon.getEndPosition()).append(",");
                 sb.append(exon.getLength()).append(",");
 
-                int cov = 0;
-                if (samples.contains(sample.getId())) {
-                    cov = sampleCoveredLengthMap.get(sample.getId());
-
+                Integer coveredLength = sampleCoveredLengthMap.get(sample.getId());
+                if (coveredLength == null) {
+                    coveredLength = 0;
                 }
-                sb.append(cov).append(",");
+                sb.append(coveredLength).append(",");
 
-                double ratio = MathManager.devide(cov, exon.getLength());
+                double ratio = MathManager.devide(coveredLength, exon.getLength());
                 sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
                 sb.append(ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0);
 
