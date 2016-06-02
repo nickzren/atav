@@ -1,6 +1,7 @@
 package function.external.knownvar;
 
 import java.util.Collection;
+import utils.FormatManager;
 
 /**
  *
@@ -12,12 +13,12 @@ public class ClinVarOutput {
     private int pos;
     private String ref;
     private String alt;
-    private boolean isSnv;
 
     private ClinVar clinvar;
 
-    private int flankingCount;
     private int siteCount;
+    private int pathogenicIndelsCount;
+    private int allIndelsCount;
 
     public ClinVarOutput(String chr, int pos, String ref, String alt,
             Collection<ClinVar> collection) {
@@ -26,32 +27,44 @@ public class ClinVarOutput {
         this.ref = ref;
         this.alt = alt;
 
-        isSnv = true;
-        if (ref.length() > 1
-                || alt.length() > 1) {
-            isSnv = false;
-        }
-
         clinvar = getClinVar(collection);
 
-        flankingCount = KnownVarManager.getFlankingCount(isSnv, chr, pos,
-                KnownVarManager.clinVarTable);
-
         siteCount = collection.size();
+
+        pathogenicIndelsCount = KnownVarManager.getClinVarPathogenicIndelFlankingCount(chr, pos);
+        allIndelsCount = KnownVarManager.getClinVarAllIndelFlankingCount(chr, pos);
     }
 
     /*
      1. get ClinVar by matching chr-pos-ref-alt
-     2. or return a site count
+     2. or return site accumulated ClinVar
      */
     private ClinVar getClinVar(Collection<ClinVar> collection) {
-        for (ClinVar var : collection) {
-            if (getVariantId().equals(var.getVariantId())) {
-                return var;
+        ClinVar clinvar = new ClinVar(chr, pos, ref, alt, "NA", "NA", "NA", "NA");
+
+        boolean isFirstSiteHgmd = true;
+
+        for (ClinVar tmpClinvar : collection) {
+            if (getVariantId().equals(tmpClinvar.getVariantId())) {
+                return tmpClinvar;
+            } else {
+                if (isFirstSiteHgmd) {
+                    isFirstSiteHgmd = false;
+                    clinvar.setDiseaseName("?Site - " + tmpClinvar.getDiseaseName());
+                    clinvar.setClinicalSignificance(tmpClinvar.getClinicalSignificance());
+                    clinvar.setPubmedID(tmpClinvar.getPubmedID());
+                    clinvar.setOtherIds(tmpClinvar.getOtherIds());
+                } else {
+                    clinvar.append(
+                            tmpClinvar.getClinicalSignificance(),
+                            tmpClinvar.getOtherIds(),
+                            tmpClinvar.getDiseaseName(),
+                            tmpClinvar.getPubmedID());
+                }
             }
         }
 
-        return new ClinVar(chr, pos, ref, alt, "NA", "NA", "NA", "NA");
+        return clinvar;
     }
 
     public String getVariantId() {
@@ -62,12 +75,13 @@ public class ClinVarOutput {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(clinvar.getClinicalSignificance()).append(",");
-        sb.append(clinvar.getOtherIds()).append(",");
+        sb.append(FormatManager.getInteger(siteCount)).append(",");
         sb.append(clinvar.getDiseaseName()).append(",");
+        sb.append(clinvar.getClinicalSignificance()).append(",");
         sb.append(clinvar.getPubmedID()).append(",");
-        sb.append(flankingCount).append(",");
-//        sb.append(siteCount).append(",");
+        sb.append(clinvar.getOtherIds()).append(",");
+        sb.append(FormatManager.getInteger(pathogenicIndelsCount)).append(",");
+        sb.append(FormatManager.getInteger(allIndelsCount)).append(",");
 
         return sb.toString();
     }

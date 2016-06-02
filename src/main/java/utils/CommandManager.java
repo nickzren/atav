@@ -410,7 +410,7 @@ public class CommandManager {
         } else if (ExacCommand.isListExac) {
 
         } else if (KnownVarCommand.isListKnownVar) {
-            KnownVarCommand.initOptions(optionList.iterator());
+
         } else if (FlankingCommand.isListFlankingSeq) {
             FlankingCommand.initOptions(optionList.iterator());
         } else if (TestCommand.isTest) { // Test Functions

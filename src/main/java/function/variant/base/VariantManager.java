@@ -2,6 +2,7 @@ package function.variant.base;
 
 import function.annotation.base.GeneManager;
 import function.external.knownvar.ClinVar;
+import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -21,14 +22,14 @@ public class VariantManager {
     private static final String ARTIFACTS_Variant_PATH = "data/artifacts_variant.txt";
     public static final String[] VARIANT_TYPE = {"snv", "indel"};
 
-    private static HashSet<String> includeVariantSet = new HashSet<String>();
-    private static HashSet<String> excludeVariantSet = new HashSet<String>();
-    private static ArrayList<String> includeIdList = new ArrayList<String>();
-    private static ArrayList<String> includeVariantTypeList = new ArrayList<String>();
-    private static ArrayList<String> includeChrList = new ArrayList<String>();
+    private static HashSet<String> includeVariantSet = new HashSet<>();
+    private static HashSet<String> excludeVariantSet = new HashSet<>();
+    private static ArrayList<String> includeIdList = new ArrayList<>();
+    private static ArrayList<String> includeVariantTypeList = new ArrayList<>();
+    private static ArrayList<String> includeChrList = new ArrayList<>();
 
     // used this id set to avoid output duplicate variants
-    private static HashSet<Integer> outputVariantIdSet = new HashSet<Integer>();
+    private static HashSet<Integer> outputVariantIdSet = new HashSet<>();
 
     private static final int maxIncludeNum = 10000000;
 
@@ -101,8 +102,8 @@ public class VariantManager {
         }
 
         // init HGMD variants set
-        for (String var : KnownVarManager.getHGMDMap().keySet()) {
-            addVariantToList(var, includeVariantSet, true);
+        for (HGMD hgmd : KnownVarManager.getHGMDMultiMap().values()) {
+            addVariantToList(hgmd.getVariantId(), includeVariantSet, true);
         }
 
         resetRegionList();

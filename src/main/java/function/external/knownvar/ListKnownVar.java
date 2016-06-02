@@ -76,9 +76,7 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
                 + KnownVarManager.hgmdTable + "\n"
                 + KnownVarManager.omimTable + "\n"
                 + KnownVarManager.acmgTable + "\n"
-                + KnownVarManager.adultOnsetTable + "\n"
                 + KnownVarManager.clinGenTable + "\n"
-                + KnownVarManager.pgxTable + "\n"
                 + KnownVarManager.recessiveCarrierTable;
     }
 }
