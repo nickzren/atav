@@ -4,7 +4,7 @@ import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import function.genotype.statistics.FisherExact;
 import global.Data;
-import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -94,8 +94,8 @@ public class CollapsingSummary implements Comparable {
         unqualifiedCase = totalCase - qualifiedCase;
         unqualifiedCtrl = totalCtrl - qualifiedCtrl;
 
-        qualifiedCaseFreq = FormatManager.devide(qualifiedCase, totalCase);
-        qualifiedCtrlFreq = FormatManager.devide(qualifiedCtrl, totalCtrl);
+        qualifiedCaseFreq = MathManager.devide(qualifiedCase, totalCase);
+        qualifiedCtrlFreq = MathManager.devide(qualifiedCtrl, totalCtrl);
 
         if (qualifiedCaseFreq == 0
                 && qualifiedCtrlFreq == 0) {

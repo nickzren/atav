@@ -17,6 +17,7 @@ import global.Data;
 import global.Index;
 import java.util.HashSet;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -130,7 +131,7 @@ public class CollapsingOutput extends Output {
                 + 2 * sampleCount[Index.REF][Index.ALL]
                 + sampleCount[Index.REF_MALE][Index.ALL];
 
-        double varAllFreq = FormatManager.devide(totalVar, totalNum);
+        double varAllFreq = MathManager.devide(totalVar, totalNum);
         looMaf = varAllFreq;
 
         if (varAllFreq > 0.5) {
@@ -149,11 +150,11 @@ public class CollapsingOutput extends Output {
                 + sampleCount[Index.HOM_MALE][Index.ALL]
                 + sampleCount[Index.REF_MALE][Index.ALL];
 
-        looMhgf = FormatManager.devide(sampleCount[Index.HOM][Index.ALL]
+        looMhgf = MathManager.devide(sampleCount[Index.HOM][Index.ALL]
                 + sampleCount[Index.HOM_MALE][Index.ALL], allSample); // hom / (hom + het + ref)
 
         if (isMinorRef) {
-            looMhgf = FormatManager.devide(sampleCount[Index.REF][Index.ALL]
+            looMhgf = MathManager.devide(sampleCount[Index.REF][Index.ALL]
                     + sampleCount[Index.REF_MALE][Index.ALL], allSample); // ref / (hom + het + ref)
         }
     }

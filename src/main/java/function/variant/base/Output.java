@@ -8,6 +8,7 @@ import global.Data;
 import global.Index;
 import function.genotype.base.SampleManager;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -140,18 +141,18 @@ public class Output implements Cloneable {
 
     private void calculateSampleFreq() {
         sampleFreq[Index.HOM][Index.CASE]
-                = FormatManager.devide(sampleCount[Index.HOM][Index.CASE]
+                = MathManager.devide(sampleCount[Index.HOM][Index.CASE]
                         + sampleCount[Index.HOM_MALE][Index.CASE], totalCase);
 
         sampleFreq[Index.HET][Index.CASE]
-                = FormatManager.devide(sampleCount[Index.HET][Index.CASE], totalCase);
+                = MathManager.devide(sampleCount[Index.HET][Index.CASE], totalCase);
 
         sampleFreq[Index.HOM][Index.CTRL]
-                = FormatManager.devide(sampleCount[Index.HOM][Index.CTRL]
+                = MathManager.devide(sampleCount[Index.HOM][Index.CTRL]
                         + sampleCount[Index.HOM_MALE][Index.CTRL], totalCtrl);
 
         sampleFreq[Index.HET][Index.CTRL]
-                = FormatManager.devide(sampleCount[Index.HET][Index.CTRL], totalCtrl);
+                = MathManager.devide(sampleCount[Index.HET][Index.CTRL], totalCtrl);
     }
 
     public void calculateHweP() {
@@ -165,8 +166,8 @@ public class Output implements Cloneable {
     }
 
     private void calculateAvgCov() {
-        averageCov[Index.CASE] = FormatManager.devide(totalCov[Index.CASE], totalCase);
-        averageCov[Index.CTRL] = FormatManager.devide(totalCov[Index.CTRL], totalCtrl);
+        averageCov[Index.CASE] = MathManager.devide(totalCov[Index.CASE], totalCase);
+        averageCov[Index.CTRL] = MathManager.devide(totalCov[Index.CTRL], totalCtrl);
     }
 
     private void calculateVarFreq() {
@@ -177,7 +178,7 @@ public class Output implements Cloneable {
                 + 2 * sampleCount[Index.REF][Index.CASE]
                 + sampleCount[Index.REF_MALE][Index.CASE];
 
-        varCaseFreq = FormatManager.devide(varCase, caseNum); // (2*hom + het + homMale) / (2*hom + homMale +2*het+2*ref + refMale)
+        varCaseFreq = MathManager.devide(varCase, caseNum); // (2*hom + het + homMale) / (2*hom + homMale +2*het+2*ref + refMale)
 
         int varCtrl = 2 * sampleCount[Index.HOM][Index.CTRL]
                 + sampleCount[Index.HET][Index.CTRL]
@@ -186,7 +187,7 @@ public class Output implements Cloneable {
                 + 2 * sampleCount[Index.REF][Index.CTRL]
                 + sampleCount[Index.REF_MALE][Index.CTRL];
 
-        varCtrlFreq = FormatManager.devide(varCtrl, ctrlNum); // (2*hom + het + homMale) / (2*hom + homMale +2*het+2*ref + refMale)
+        varCtrlFreq = MathManager.devide(varCtrl, ctrlNum); // (2*hom + het + homMale) / (2*hom + homMale +2*het+2*ref + refMale)
     }
 
     public void checkMinorRef() {
@@ -215,11 +216,11 @@ public class Output implements Cloneable {
         ctrlMhgf = sampleFreq[Index.HOM][Index.CTRL]; // hom / (hom + het + ref)
 
         if (isMinorRef) {
-            ctrlMhgf = FormatManager.devide(sampleCount[Index.REF][Index.CTRL]
+            ctrlMhgf = MathManager.devide(sampleCount[Index.REF][Index.CTRL]
                     + sampleCount[Index.REF_MALE][Index.CTRL],
                     totalCtrl); // ref / (hom + het + ref)
 
-            caseMhgf = FormatManager.devide(sampleCount[Index.REF][Index.CASE]
+            caseMhgf = MathManager.devide(sampleCount[Index.REF][Index.CASE]
                     + sampleCount[Index.REF_MALE][Index.CASE],
                     totalCase); // ref / (hom + het + ref)
         }

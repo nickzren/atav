@@ -15,7 +15,6 @@ import function.genotype.collapsing.CollapsingCompHet;
 import function.genotype.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
 import function.coverage.summary.CoverageSummary;
-import function.coverage.summary.CoverageSummaryPipeline;
 import function.coverage.summary.SiteCoverageSummary;
 import function.genotype.family.FamilyAnalysis;
 import function.genotype.parental.ParentalMosaic;
@@ -155,25 +154,13 @@ public class Program {
             } else if (GeneDxCommand.isListGeneDx) {
                 runAnalysis(new ListGeneDx());
             } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
-                LogManager.writeAndPrint("It is running a coverage summary function...");
-                CoverageSummary coverageList = new CoverageSummary();
-                coverageList.run();
+                runAnalysis(new CoverageSummary());
             } else if (CoverageCommand.isSiteCoverageSummary) {
-                LogManager.writeAndPrint("It is running a site coverage summary function...");
-                SiteCoverageSummary coverageList = new SiteCoverageSummary();
-                coverageList.run();
+                runAnalysis(new SiteCoverageSummary());
             } else if (CoverageCommand.isCoverageComparison) {
-                LogManager.writeAndPrint("It is running a coverage comparison function...");
-                CoverageComparison coverageList = new CoverageComparison();
-                coverageList.run();
+                runAnalysis(new CoverageComparison());
             } else if (CoverageCommand.isSiteCoverageComparison) {
-                LogManager.writeAndPrint("It is running a site coverage comparison function...");
-                SiteCoverageComparison coverageList = new SiteCoverageComparison();
-                coverageList.run();
-            } else if (CoverageCommand.isCoverageSummaryPipeline) {
-                LogManager.writeAndPrint("It is running a coverage summary for pipeline function...");
-                CoverageSummaryPipeline coverageSummary = new CoverageSummaryPipeline();
-                coverageSummary.run();
+                runAnalysis(new SiteCoverageComparison());
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
             } else if (ExacCommand.isListExac) {

@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import utils.MathManager;
 
 /**
  *
@@ -235,8 +236,8 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             }
         }
 
-        freq[Index.CTRL] = FormatManager.devide(qualifiedCtrlCount, totalCtrlCount);
-        freq[Index.CASE] = FormatManager.devide(quanlifiedCaseCount, totalCaseCount);
+        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
+        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
 
         return freq;
     }

@@ -1,6 +1,7 @@
 package function.genotype.statistics;
 
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -40,7 +41,7 @@ public class FisherExact {
 //        p = (logGamma(a + b +1) + logGamma(c + d +1) + logGamma(a + c +1) + logGamma(b + d +1)) -
 //            (logGamma(a +1) + logGamma(b +1) + logGamma(c +1) + logGamma(d +1) + logGamma(n +1));
 //        return Math.exp(p);
-        return Math.exp(FormatManager.roundToDecimals(p));
+        return Math.exp(MathManager.roundToDecimals(p));
     }
 
     private static double getP(int a, int b, int c, int d, int e, int f) {
@@ -53,7 +54,7 @@ public class FisherExact {
 //        p = (logGamma(a + d +1) + logGamma(c + f +1) + logGamma(b + e +1) + logGamma(a + b + c +1) + logGamma(d + e + f +1)) -
 //            (logGamma(a +1) + logGamma(b +1) + logGamma(c +1) + logGamma(d +1) + logGamma(e +1) + logGamma(f +1) + logGamma(n +1));
 //        return Math.exp(p);
-        return Math.exp(FormatManager.roundToDecimals(p));
+        return Math.exp(MathManager.roundToDecimals(p));
     }
 
     public static double getTwoTailedP(int a, int b, int c, int d) {

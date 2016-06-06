@@ -4,7 +4,7 @@ import function.genotype.vargeno.SampleVariantCount;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
-import function.coverage.base.Gene;
+import function.annotation.base.Gene;
 import function.annotation.base.GeneManager;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;

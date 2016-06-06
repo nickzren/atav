@@ -3,7 +3,6 @@ package function.test;
 import function.genotype.base.CoverageBlockManager;
 import function.genotype.base.SampleManager;
 import function.variant.base.RegionManager;
-import global.Data;
 import java.sql.SQLException;
 import utils.DBManager;
 import utils.LogManager;
@@ -23,8 +22,6 @@ public class OutputSubsetSample {
 //        outputCarrierData();
 //
 //        outputNonCarrierData();
-
-        outputGeneCoverageSummary();
     }
 
     public static void outputCarrierData() throws SQLException {
@@ -62,16 +59,5 @@ public class OutputSubsetSample {
                 DBManager.executeQuery(nonCarrierSql);
             }
         }
-    }
-
-    public static void outputGeneCoverageSummary() throws SQLException {
-        String geneCoverageSummarySql = "SELECT * "
-                + "FROM gene_coverage_summary g,"
-                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
-                + "WHERE g.sample_id = t.id "
-                + "INTO OUTFILE '" + OUTPUT_PATH + "gene_coverage_summary_subset.txt'";
-
-        LogManager.writeAndPrint(geneCoverageSummarySql);
-        DBManager.executeQuery(geneCoverageSummarySql);
     }
 }

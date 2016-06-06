@@ -9,23 +9,14 @@ import utils.FormatManager;
  */
 public class Region implements Comparable {
 
-    public int regionId;
     public String chrStr;
     public int chrNum;
     public int startPosition;
     public int endPosition;
     public int length;
 
-    public Region(int id, String chr, int start, int end) {
-        init(chr, start, end);
-
-        regionId = id;
-    }
-
     public Region(String chr, int start, int end) {
         init(chr, start, end);
-
-        regionId = RegionManager.getIdByChr(chrStr);
     }
 
     public void init(String chr, int start, int end) {
@@ -53,11 +44,7 @@ public class Region implements Comparable {
             return Data.NA;
         }
     }
-
-    public int getRegionId() {
-        return regionId;
-    }
-
+    
     public String getChrStr() {
         return chrStr;
     }
@@ -138,6 +125,31 @@ public class Region implements Comparable {
         }
 
         return false;
+    }
+
+    public boolean contains(Region r) {
+        return r.getChrStr().equalsIgnoreCase(chrStr)
+                && r.getStartPosition() >= startPosition
+                && r.getStartPosition() <= endPosition;
+    }
+
+    public Region intersect(int start, int end) {
+        if (end >= startPosition && start <= endPosition) {
+            int newstart = Math.max(startPosition, start);
+            int newend = Math.min(endPosition, end);
+            return new Region(chrStr, newstart, newend);
+        }
+        return null;
+    }
+
+    public int intersectLength(int region_start, int region_end) {
+        if (region_end >= startPosition && region_start <= endPosition) {
+            int start = Math.max(startPosition, region_start);
+            int end = Math.min(endPosition, region_end);
+            return end - start + 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override

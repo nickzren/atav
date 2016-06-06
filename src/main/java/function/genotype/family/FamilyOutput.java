@@ -16,6 +16,7 @@ import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -168,21 +169,21 @@ public class FamilyOutput extends Output {
                 + familySampleCount[Index.REF][Index.CASE]
                 + familySampleCount[Index.HOM_MALE][Index.CASE]
                 + familySampleCount[Index.REF_MALE][Index.CASE];
-        familySampleFreq[Index.HOM][Index.CASE] = FormatManager.devide(familySampleCount[Index.HOM][Index.CASE]
+        familySampleFreq[Index.HOM][Index.CASE] = MathManager.devide(familySampleCount[Index.HOM][Index.CASE]
                 + familySampleCount[Index.HOM_MALE][Index.CASE], totalFamilyCase);
-        familySampleFreq[Index.HET][Index.CASE] = FormatManager.devide(familySampleCount[Index.HET][Index.CASE], totalFamilyCase);
+        familySampleFreq[Index.HET][Index.CASE] = MathManager.devide(familySampleCount[Index.HET][Index.CASE], totalFamilyCase);
 
         int totalFamilyCtrl = familySampleCount[Index.HOM][Index.CTRL]
                 + familySampleCount[Index.HET][Index.CTRL]
                 + familySampleCount[Index.REF][Index.CTRL]
                 + familySampleCount[Index.HOM_MALE][Index.CTRL]
                 + familySampleCount[Index.REF_MALE][Index.CTRL];
-        familySampleFreq[Index.HOM][Index.CTRL] = FormatManager.devide(familySampleCount[Index.HOM][Index.CTRL]
+        familySampleFreq[Index.HOM][Index.CTRL] = MathManager.devide(familySampleCount[Index.HOM][Index.CTRL]
                 + familySampleCount[Index.HOM_MALE][Index.CTRL], totalFamilyCtrl);
-        familySampleFreq[Index.HET][Index.CTRL] = FormatManager.devide(familySampleCount[Index.HET][Index.CTRL], totalFamilyCtrl);
+        familySampleFreq[Index.HET][Index.CTRL] = MathManager.devide(familySampleCount[Index.HET][Index.CTRL], totalFamilyCtrl);
 
-        familyAverageCov[Index.CASE] = FormatManager.devide(familyTotalCov[Index.CASE], totalFamilyCase);
-        familyAverageCov[Index.CTRL] = FormatManager.devide(familyTotalCov[Index.CTRL], totalFamilyCtrl);
+        familyAverageCov[Index.CASE] = MathManager.devide(familyTotalCov[Index.CASE], totalFamilyCase);
+        familyAverageCov[Index.CTRL] = MathManager.devide(familyTotalCov[Index.CTRL], totalFamilyCtrl);
     }
 
     /*

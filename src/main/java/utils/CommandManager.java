@@ -312,8 +312,6 @@ public class CommandManager {
                 CoverageCommand.isCoverageComparison = true;
             } else if (option.getName().equals("--site-coverage-comparison")) {
                 CoverageCommand.isSiteCoverageComparison = true;
-            } else if (option.getName().equals("--coverage-summary-pipeline")) {
-                CoverageCommand.isCoverageSummaryPipeline = true;
             } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
                 CommonCommand.isNonSampleAnalysis = true;
                 EvsCommand.isListEvs = true;
@@ -398,13 +396,11 @@ public class CommandManager {
         } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
             CoverageCommand.initCoverageSummary(optionList.iterator());
         } else if (CoverageCommand.isSiteCoverageSummary) {
-            CoverageCommand.initSiteCoverageSummary(optionList.iterator());
+
         } else if (CoverageCommand.isCoverageComparison) {
             CoverageCommand.initCoverageComparison(optionList.iterator());
         } else if (CoverageCommand.isSiteCoverageComparison) {
             CoverageCommand.initCoverageComparisonSite(optionList.iterator());
-        } else if (CoverageCommand.isCoverageSummaryPipeline) {
-            CoverageCommand.initCoverageComparison(optionList.iterator());
         } else if (EvsCommand.isListEvs) { // External Datasets Functions
 
         } else if (ExacCommand.isListExac) {
