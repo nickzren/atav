@@ -161,17 +161,9 @@ public class CoverageComparison extends CoverageComparisonBase {
             exonCleanLinear.outputLog();
 
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                String str = exonCleanLinear.getCleanedGeneStrByExon(gene);
-                if (!str.isEmpty()) {
-                    bwExonClean.write(str);
-                    bwExonClean.newLine();
-                }
+                writeToFile(exonCleanLinear.getCleanedGeneStrByExon(gene), bwExonClean);
 
-                str = exonCleanLinear.getCleanedGeneSummaryStrByExon(gene);
-                if (!str.isEmpty()) {
-                    bwGeneSummaryClean.write(str);
-                    bwGeneSummaryClean.newLine();
-                }
+                writeToFile(exonCleanLinear.getCleanedGeneSummaryStrByExon(gene), bwGeneSummaryClean);
             }
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -184,17 +176,9 @@ public class CoverageComparison extends CoverageComparisonBase {
             regionClean.outputLog();
 
             for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                String str = regionClean.getCleanedGeneStrByExon(gene);
-                if (!str.isEmpty()) {
-                    bwExonClean.write(str);
-                    bwExonClean.newLine();
-                }
+                writeToFile(regionClean.getCleanedGeneStrByExon(gene), bwExonClean);
 
-                str = regionClean.getCleanedGeneSummaryStrByExon(gene);
-                if (!str.isEmpty()) {
-                    bwGeneSummaryClean.write(str);
-                    bwGeneSummaryClean.newLine();
-                }
+                writeToFile(regionClean.getCleanedGeneSummaryStrByExon(gene), bwGeneSummaryClean);
             }
         } catch (Exception ex) {
             ErrorManager.send(ex);

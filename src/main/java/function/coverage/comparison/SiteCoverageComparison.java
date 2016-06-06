@@ -94,8 +94,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 sb.append(caseCoverage + ctrlCoverage).append(",");
                 sb.append(caseCoverage).append(",");
                 sb.append(ctrlCoverage);
-                bwSiteSummary.write(sb.toString());
-                bwSiteSummary.newLine();
+                writeToFile(sb.toString(), bwSiteSummary);
                 sb.setLength(0);
 
                 String name = gene.getName() + "_" + gene.getChr() + "_" + start;
@@ -114,17 +113,9 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
         regionClean.outputLog();
 
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
-            String str = regionClean.getCleanedGeneStrBySite(gene);
-            if (!str.isEmpty()) {
-                bwSiteClean.write(str);
-                bwSiteClean.newLine();
-            }
+            writeToFile(regionClean.getCleanedGeneStrBySite(gene), bwSiteClean);
 
-            str = regionClean.getCleanedGeneSummaryStrBySite(gene);
-            if (!str.isEmpty()) {
-                bwGeneSummaryClean.write(str);
-                bwGeneSummaryClean.newLine();
-            }
+            writeToFile(regionClean.getCleanedGeneSummaryStrBySite(gene), bwGeneSummaryClean);
         }
     }
 

@@ -90,6 +90,17 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
         outputSampleSummary();
     }
 
+    public void writeToFile(String str, BufferedWriter bw) {
+        try {
+            if (!str.isEmpty()) {
+                bw.write(str);
+                bw.newLine();
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
     public void processGene(Gene gene) {
         for (Exon exon : gene.getExonList()) {
             HashMap<Integer, Integer> sampleCoveredLengthMap = CoverageManager.getSampleCoveredLengthMap(exon);
@@ -111,8 +122,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     private void outputSampleGeneSummary(Gene gene) {
         try {
+            StringBuilder sb = new StringBuilder();
             for (Sample sample : SampleManager.getList()) {
-                StringBuilder sb = new StringBuilder();
                 sb.append(sample.getName()).append(",");
                 sb.append(gene.getName()).append(",");
                 sb.append(gene.getChr()).append(",");
@@ -125,8 +136,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 int pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
                 sb.append(pass);
 
-                bwCoverageDetails.write(sb.toString());
-                bwCoverageDetails.newLine();
+                writeToFile(sb.toString(), bwCoverageDetails);
+                sb.setLength(0);
 
                 // count region per sample
                 sampleCoverageCount[sample.getIndex()] += pass;
@@ -138,8 +149,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     private void outputSampleSummary() {
         try {
+            StringBuilder sb = new StringBuilder();
             for (Sample sample : SampleManager.getList()) {
-                StringBuilder sb = new StringBuilder();
                 sb.append(sample.getName()).append(",");
                 sb.append(GeneManager.getAllGeneBoundaryLength()).append(",");
                 int totalSampleCov = getSampleCoverageByIndex(sample.getIndex());
@@ -151,8 +162,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 sb.append(totalSampleRegionCovered).append(",");
                 ratio = MathManager.devide(totalSampleRegionCovered, GeneManager.getGeneBoundaryList().size());
                 sb.append(FormatManager.getSixDegitDouble(ratio));
-                bwSampleSummary.write(sb.toString());
-                bwSampleSummary.newLine();
+                writeToFile(sb.toString(), bwSampleSummary);
+                sb.setLength(0);
             }
         } catch (Exception e) {
             ErrorManager.send(e);

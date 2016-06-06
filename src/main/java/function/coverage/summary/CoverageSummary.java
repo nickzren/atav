@@ -76,8 +76,7 @@ public class CoverageSummary extends CoverageAnalysisBase {
                 sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
                 sb.append(ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0);
 
-                bwCoverageDetailsByExon.write(sb.toString());
-                bwCoverageDetailsByExon.newLine();
+                writeToFile(sb.toString(), bwCoverageDetailsByExon);
                 sb.setLength(0);
             }
         } catch (Exception e) {

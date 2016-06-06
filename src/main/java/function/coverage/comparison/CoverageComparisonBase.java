@@ -96,9 +96,8 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             double absDiff = MathManager.abs(caseAvg, ctrlAvg);
             sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
             sb.append(gene.getLength()).append(",");
-            sb.append(CoverageCommand.checkGeneCleanCutoff(absDiff, caseAvg, ctrlAvg));
-            bwCoverageSummaryByGene.write(sb.toString());
-            bwCoverageSummaryByGene.newLine();
+            sb.append(CoverageCommand.checkGeneCleanCutoff(absDiff, caseAvg, ctrlAvg));           
+            writeToFile(sb.toString(), bwCoverageSummaryByGene);
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
