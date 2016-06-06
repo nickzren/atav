@@ -5,6 +5,15 @@
     <artifactId>atav</artifactId>
     <version>trunk</version>
     <packaging>jar</packaging>
+
+    <repositories>
+        <repository>
+            <id>bedatadriven</id>
+            <name>bedatadriven public repo</name>
+            <url>https://nexus.bedatadriven.com/content/groups/public/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -21,6 +30,13 @@
             <artifactId>guava</artifactId>
             <version>19.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.renjin</groupId>
+            <artifactId>renjin-script-engine</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

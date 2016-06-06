@@ -14,7 +14,16 @@ import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import global.Data;
 import global.Index;
+import org.renjin.sexp.DoubleVector;
 import utils.FormatManager;
+import utils.LogManager;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 
 /**
  *
@@ -77,14 +86,164 @@ public class LogisticOutput extends StatisticOutput {
         return false;
     }
 
-    public void doRegression(String model) {
-        for (Sample sample : SampleManager.getList()) {
-            sample.getCovariateList();
-            
-            // ......
-            
-            pValue = Data.NA;
+    public double doLogisticRegression(List<Double> response, List<List<Double>> covariates ){
+        final StringBuilder expression= new StringBuilder("y~");
+        int covariantcount=covariates.size();
+        ScriptEngineManager manager = new ScriptEngineManager();
+        double pval=Data.NA;
+
+
+        for (int i=0; i< covariantcount; i++){
+            expression.append("x").append(i+1);
+            if (i!=covariantcount-1) expression.append("+");
         }
+
+        ScriptEngine engine = manager.getEngineByName("Renjin");
+        if(engine == null) {
+            throw new RuntimeException("Renjin Script Engine not found on the classpath.");
+        }
+
+
+        try{
+            String glmExpression="logredmd <-glm("+expression.toString()+", family=\"binomial\" )";
+            String fitExpression="with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
+            String regParam;
+
+
+            for(int i=1; i<=covariantcount; i++){
+                regParam="x"+i;
+                engine.put(regParam,covariates.get(i-1));
+                engine.eval(regParam+" <- as.numeric(unlist("+regParam+"))");
+            }
+
+            engine.put("y", response);
+            engine.eval(" y <- as.numeric(unlist(y))");
+
+            LogManager.writeAndPrint("Evaluating "+glmExpression);
+
+            engine.eval(glmExpression);
+            DoubleVector res =(DoubleVector) engine.eval(fitExpression);
+            pval=(null!=res)?res.getElementAsDouble(0):Data.NA;
+        }catch (ScriptException e) {
+            e.printStackTrace();
+        }
+
+        return pval;
+    }
+
+    public void doRegression(String model) {
+        int eigencount=SampleManager.getList().get(1).getCovariateList().size();
+
+        if (eigencount<=0){
+            pValue = Data.NA;
+            return;
+        }
+
+        //Initializing Params
+        List<Double> response= new ArrayList<>();
+        List<List<Double>> covariates = new ArrayList<>();
+
+        for (int i=0; i< eigencount; i++){
+            covariates.add(new ArrayList<Double>());
+        }
+
+        for (Sample sample : SampleManager.getList()) {
+            ArrayList<String> covData = sample.getCovariateList();
+
+            //Set predictors
+            for (int i=0; i< eigencount; i++){
+                covariates.get(i).add(Double.parseDouble(covData.get(i)));
+            }
+
+            //Set REsponse
+
+            int geno = calledVar.getGenotype(sample.getIndex());
+            if (geno != Data.NA) {
+                if (model.equals("allelic")) {
+                    if (isMinorRef) {
+                        if (geno == Index.REF) {
+                            response.add(1d);
+                            response.add(1d);
+                        } else if (geno == Index.HET) {
+                            response.add(1d);
+                            response.add(0d);
+                        } else if (geno == Index.HOM) {
+                            response.add(0d);
+                            response.add(0d);
+                        }
+                    } else {
+                        if (geno == Index.REF) {
+                            response.add(0d);
+                            response.add(0d);
+                        } else if (geno == Index.HET) {
+                            response.add(1d);
+                            response.add(0d);
+                        } else if (geno == Index.HOM) {
+                            response.add(1d);
+                            response.add(1d);
+                        }
+                    }
+                } else if (model.equals("dominant")) {
+                    if (isMinorRef) {
+                        if (geno == Index.REF) {
+                            response.add(1d);
+                        } else if (geno == Index.HET) {
+                            response.add(1d);
+                        } else if (geno == Index.HOM) {
+                            response.add(0d);
+                        } else if (geno == Index.HOM_MALE) {
+                            response.add(0d);
+                        } else if (geno == Index.REF_MALE) {
+                            response.add(1d);
+                        }
+                    } else {
+                        if (geno == Index.REF) {
+                            response.add(0d);
+                        } else if (geno == Index.HET) {
+                            response.add(1d);
+                        } else if (geno == Index.HOM) {
+                            response.add(1d);
+                        } else if (geno == Index.HOM_MALE) {
+                            response.add(1d);
+                        } else if (geno == Index.REF_MALE) {
+                            response.add(0d);
+                        }
+                    }
+                } else if (model.equals("recessive")) {
+                    if (isMinorRef) {
+                        if (geno == Index.REF) {
+                            response.add(1d);
+                        } else if (geno == Index.HET) {
+                            response.add(0d);
+                        } else if (geno == Index.HOM) {
+                            response.add(0d);
+                        } else if (geno == Index.HOM_MALE) {
+                            response.add(0d);
+                        } else if (geno == Index.REF_MALE) {
+                            response.add(1d);
+                        }
+                    } else {
+                        if (geno == Index.REF) {
+                            response.add(0d);
+                        } else if (geno == Index.HET) {
+                            response.add(0d);
+                        } else if (geno == Index.HOM) {
+                            response.add(1d);
+                        } else if (geno == Index.HOM_MALE) {
+                            response.add(1d);
+                        } else if (geno == Index.REF_MALE) {
+                            response.add(0d);
+                        }
+                    }
+                }
+            }
+            else {
+                LogManager.writeAndPrint("model is not recognized");
+            }
+        }
+
+        pValue = doLogisticRegression(response, covariates);
+        LogManager.writeAndPrint("Logistic regression completed successfully with P - Value " + pValue);
     }
 
     @Override
