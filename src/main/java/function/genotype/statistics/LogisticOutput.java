@@ -92,7 +92,6 @@ public class LogisticOutput extends StatisticOutput {
         ScriptEngineManager manager = new ScriptEngineManager();
         double pval=Data.NA;
 
-
         for (int i=0; i< covariantcount; i++){
             expression.append("x").append(i+1);
             if (i!=covariantcount-1) expression.append("+");
