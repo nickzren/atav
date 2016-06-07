@@ -14,14 +14,14 @@ import utils.ThirdPartyToolManager;
  */
 public class LogisticRegression extends AnalysisBase4CalledVar {
 
-    String[] originalPOutputPath = new String[StatisticsCommand.models.length];
-    BufferedWriter[] logisticBw = new BufferedWriter[StatisticsCommand.models.length];
+    String[] originalPOutputPath = new String[StatisticsCommand.logisticModels.length];
+    BufferedWriter[] logisticBw = new BufferedWriter[StatisticsCommand.logisticModels.length];
 
     @Override
     public void initOutput() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
             try {
-                String testModel = StatisticsCommand.models[m];
+                String testModel = StatisticsCommand.logisticModels[m];
                 originalPOutputPath[m] = CommonCommand.outputPath + testModel + ".csv";
                 logisticBw[m] = new BufferedWriter(new FileWriter(originalPOutputPath[m]));
                 logisticBw[m].write(LogisticOutput.title);
@@ -38,7 +38,7 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
 
     @Override
     public void closeOutput() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
             try {
                 logisticBw[m].flush();
                 logisticBw[m].close();
@@ -68,10 +68,10 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
             output.countSampleGenoCov();
             output.calculate();
 
-            for (int m = 0; m < StatisticsCommand.models.length; m++) {
-                if (output.isValid(StatisticsCommand.models[m])) {
+            for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
+                if (output.isValid(StatisticsCommand.logisticModels[m])) {
                     // needs to calculate logistic p below
-                    output.doRegression(StatisticsCommand.models[m]);
+                    output.doRegression(StatisticsCommand.logisticModels[m]);
 
                     logisticBw[m].write(output.toString());
                     logisticBw[m].newLine();
@@ -83,11 +83,16 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
             ThirdPartyToolManager.generatePvaluesQQPlot(LogisticOutput.title,
                     "P value",
                     originalPOutputPath[m],
                     originalPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));
         }
+    }
+    
+    @Override
+    public String toString() {
+        return "It is running a logistic regression function...";
     }
 }

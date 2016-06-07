@@ -141,15 +141,20 @@ public class LogisticOutput extends StatisticOutput {
         for (Sample sample : SampleManager.getList()) {
             ArrayList<Double> covData = sample.getCovariateList();
 
-            //Set predictors
-            for (int i = 0; i < eigenCount; i++) {
-                covariates.get(i).add(covData.get(i));
-            }
-
             //Set REsponse
             int geno = calledVar.getGenotype(sample.getIndex());
             if (geno != Data.NA) {
+
+                //Set predictors
+                for (int i = 0; i < eigenCount; i++) {
+                    covariates.get(i).add(covData.get(i));
+                }
+
                 if (model.equals("allelic")) {
+                    for (int i = 0; i < eigenCount; i++) {
+                        covariates.get(i).add(covData.get(i));
+                    }
+
                     if (isMinorRef) {
                         if (geno == Index.REF) {
                             response.add(1d);
