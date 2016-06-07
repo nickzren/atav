@@ -25,7 +25,7 @@ public class Sample {
     private String captureKit;
     private String finishTime; // in annoDB
     // covariate
-    private ArrayList<String> covariateList = new ArrayList<String>();
+    private ArrayList<Double> covariateList = new ArrayList<>();
     // sample file order
     private int index;
 
@@ -124,11 +124,7 @@ public class Sample {
     }
 
     public boolean isMale() {
-        if (sex == 1) {
-            return true;
-        }
-
-        return false;
+        return sex == 1;
     }
 
     public boolean isFemale() {
@@ -136,11 +132,7 @@ public class Sample {
     }
 
     public boolean isCase() {
-        if (pheno == 1) {
-            return true;
-        }
-
-        return false;
+        return pheno == 1;
     }
 
     public boolean isFamily() {
@@ -160,11 +152,11 @@ public class Sample {
                 continue;
             }
 
-            covariateList.add(value);
+            covariateList.add(Double.valueOf(value));
         }
     }
 
-    public ArrayList<String> getCovariateList() {
+    public ArrayList<Double> getCovariateList() {
         return covariateList;
     }
 }

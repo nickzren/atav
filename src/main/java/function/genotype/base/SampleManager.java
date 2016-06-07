@@ -528,7 +528,7 @@ public class SampleManager {
                         bwCov.write(String.valueOf(sample.getQuantitativeTrait()));
                     }
 
-                    for (String covar : sample.getCovariateList()) {
+                    for (Double covar : sample.getCovariateList()) {
                         bwCov.write("\t" + covar);
                     }
 

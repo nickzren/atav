@@ -16,14 +16,12 @@ import global.Data;
 import global.Index;
 import org.renjin.sexp.DoubleVector;
 import utils.FormatManager;
-import utils.LogManager;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
+import utils.ErrorManager;
+import utils.MathManager;
 
 /**
  *
@@ -68,6 +66,8 @@ public class LogisticOutput extends StatisticOutput {
             + SubRvisManager.getTitle()
             + GenomesManager.getTitle();
 
+    private static final StringBuilder expression = new StringBuilder();
+
     public LogisticOutput(CalledVariant c) {
         super(c);
     }
@@ -86,76 +86,67 @@ public class LogisticOutput extends StatisticOutput {
         return false;
     }
 
-    public double doLogisticRegression(List<Double> response, List<List<Double>> covariates ){
-        final StringBuilder expression= new StringBuilder("y~");
-        int covariantcount=covariates.size();
-        ScriptEngineManager manager = new ScriptEngineManager();
-        double pval=Data.NA;
+    private double doLogisticRegression(List<Double> response, List<List<Double>> covariates) {
+        initExpression(covariates.size());
 
-        for (int i=0; i< covariantcount; i++){
-            expression.append("x").append(i+1);
-            if (i!=covariantcount-1) expression.append("+");
-        }
+        double pValue = Data.NA;
 
-        ScriptEngine engine = manager.getEngineByName("Renjin");
-        if(engine == null) {
-            throw new RuntimeException("Renjin Script Engine not found on the classpath.");
-        }
-
-
-        try{
-            String glmExpression="logredmd <-glm("+expression.toString()+", family=\"binomial\" )";
-            String fitExpression="with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
+        try {
             String regParam;
 
-
-            for(int i=1; i<=covariantcount; i++){
-                regParam="x"+i;
-                engine.put(regParam,covariates.get(i-1));
-                engine.eval(regParam+" <- as.numeric(unlist("+regParam+"))");
+            for (int i = 1; i <= covariates.size(); i++) {
+                regParam = "x" + i;
+                MathManager.getRenjinEngine().put(regParam, covariates.get(i - 1));
+                MathManager.getRenjinEngine().eval(regParam + " <- as.numeric(unlist(" + regParam + "))");
             }
 
-            engine.put("y", response);
-            engine.eval(" y <- as.numeric(unlist(y))");
+            MathManager.getRenjinEngine().put("y", response);
+            MathManager.getRenjinEngine().eval(" y <- as.numeric(unlist(y))");
+            MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
 
-            LogManager.writeAndPrint("Evaluating "+glmExpression);
-
-            engine.eval(glmExpression);
-            DoubleVector res =(DoubleVector) engine.eval(fitExpression);
-            pval=(null!=res)?res.getElementAsDouble(0):Data.NA;
-        }catch (ScriptException e) {
-            e.printStackTrace();
+            String fitExpression = "with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
+            DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval(fitExpression);
+            pValue = (null != res) ? res.getElementAsDouble(0) : Data.NA;
+        } catch (ScriptException e) {
+            ErrorManager.send(e);
         }
 
-        return pval;
+        return pValue;
+    }
+
+    private static void initExpression(int covariantCount) {
+        if (expression.length() == 0) {
+            expression.append("y~");
+
+            for (int i = 0; i < covariantCount; i++) {
+                expression.append("x").append(i + 1);
+                if (i != covariantCount - 1) {
+                    expression.append("+");
+                }
+            }
+        }
     }
 
     public void doRegression(String model) {
-        int eigencount=SampleManager.getList().get(1).getCovariateList().size();
-
-        if (eigencount<=0){
-            pValue = Data.NA;
-            return;
-        }
+        int eigenCount = SampleManager.getList().get(0).getCovariateList().size();
 
         //Initializing Params
-        List<Double> response= new ArrayList<>();
-        List<List<Double>> covariates = new ArrayList<>();
+        List<Double> response = new ArrayList<>();
+        List<List<Double>> covariates = new ArrayList<>(); // all sample covaiates per column per list
 
-        for (int i=0; i< eigencount; i++){
-            covariates.add(new ArrayList<Double>());
+        for (int i = 0; i < eigenCount; i++) {
+            covariates.add(new ArrayList<>());
         }
 
         for (Sample sample : SampleManager.getList()) {
-            ArrayList<String> covData = sample.getCovariateList();
+            ArrayList<Double> covData = sample.getCovariateList();
 
             //Set predictors
-            for (int i=0; i< eigencount; i++){
-                covariates.get(i).add(Double.parseDouble(covData.get(i)));
+            for (int i = 0; i < eigenCount; i++) {
+                covariates.get(i).add(covData.get(i));
             }
 
             //Set REsponse
-
             int geno = calledVar.getGenotype(sample.getIndex());
             if (geno != Data.NA) {
                 if (model.equals("allelic")) {
@@ -236,13 +227,9 @@ public class LogisticOutput extends StatisticOutput {
                     }
                 }
             }
-            else {
-                LogManager.writeAndPrint("model is not recognized");
-            }
         }
 
         pValue = doLogisticRegression(response, covariates);
-        LogManager.writeAndPrint("Logistic regression completed successfully with P - Value " + pValue);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package utils;
 
 import global.Data;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import org.apache.commons.math3.stat.inference.BinomialTest;
 
@@ -11,6 +13,20 @@ import org.apache.commons.math3.stat.inference.BinomialTest;
 public class MathManager {
 
     private static final BinomialTest BT = new BinomialTest();
+
+    private static ScriptEngine renjinEngine;
+
+    public static ScriptEngine getRenjinEngine() {
+        if (renjinEngine == null) {
+            renjinEngine = new ScriptEngineManager().getEngineByName("Renjin");
+
+            if (renjinEngine == null) {
+                ErrorManager.print("Renjin Script Engine not found on the classpath.");
+            }
+        }
+
+        return renjinEngine;
+    }
 
     public static double getBinomial(int numberOfTrials, int numberOfSuccesses, double probability) {
         if (numberOfTrials == Data.NA || numberOfTrials == Data.NA) {
