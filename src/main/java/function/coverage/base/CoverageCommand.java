@@ -25,7 +25,7 @@ public class CoverageCommand {
     // coverage comparison 
     public static boolean isCoverageComparison = false;
     public static boolean isSiteCoverageComparison = false;
-    public static boolean isCoverageComparisonDoLinear = false;
+    public static boolean isLinear = false;
     //public static double ExonMaxCovDiffPValue = 0.0;
     //public static double ExonMaxPercentVarExplained = 100.0;
 
@@ -41,7 +41,7 @@ public class CoverageCommand {
                 checkValueValid(1, 0, option);
                 geneCleanCutoff = getValidDouble(option);
             } else if (option.getName().equals("--quantitative")) {
-                isCoverageComparisonDoLinear = true;
+                isLinear = true;
                 StatisticsCommand.quantitativeFile = getValidPath(option);
             } /*else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
              checkValueValid(1, 0, option);

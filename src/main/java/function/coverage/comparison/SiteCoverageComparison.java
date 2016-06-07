@@ -1,11 +1,12 @@
 package function.coverage.comparison;
 
+import function.coverage.base.SiteCoverage;
 import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
+import function.coverage.base.CoverageCommand;
 import function.genotype.base.SampleManager;
-import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -82,11 +83,11 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
     private void outputSiteSummary(Gene gene, Exon exon) {
         try {
-            int[][] sampleSiteCoverage = CoverageManager.getSampleSiteCoverage(exon);
+            SiteCoverage siteCoverage = CoverageManager.getSiteCoverage(exon);
             StringBuilder sb = new StringBuilder();
             for (int pos = 0; pos < exon.getLength(); pos++) {
-                int caseCoverage = sampleSiteCoverage[Index.CASE][pos];
-                int ctrlCoverage = sampleSiteCoverage[Index.CTRL][pos];
+                int caseCoverage = siteCoverage.getCaseSiteCov(pos);
+                int ctrlCoverage = siteCoverage.getCtrlSiteCov(pos);
                 int start = exon.getStartPosition() + pos;
                 sb.append(gene.getName()).append(",");
                 sb.append(gene.getChr()).append(",");

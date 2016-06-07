@@ -38,8 +38,8 @@ public class CoverageComparison extends CoverageComparisonBase {
 
             bwCoverageSummaryByExon = new BufferedWriter(new FileWriter(coverageSummaryByExon));
             bwCoverageSummaryByExon.write("EXON,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
-            if (CoverageCommand.isCoverageComparisonDoLinear) {
-                bwCoverageSummaryByExon.write(",pvalue,R2,Variance");
+            if (CoverageCommand.isLinear) {
+                bwCoverageSummaryByExon.write(",P Value,R2,Variance");
             }
             bwCoverageSummaryByExon.newLine();
 
@@ -66,7 +66,7 @@ public class CoverageComparison extends CoverageComparisonBase {
     @Override
     public void afterProcessDatabaseData() {
         try {
-            if (CoverageCommand.isCoverageComparisonDoLinear) {
+            if (CoverageCommand.isLinear) {
                 outputCleanedExonListLinear();
             } else {
                 outputCleanedExonList();
@@ -124,7 +124,7 @@ public class CoverageComparison extends CoverageComparisonBase {
     }
 
     private void addRegressionData(SimpleRegression sr, SummaryStatistics lss, Sample sample, int coveredLength, int exonLength) {
-        if (CoverageCommand.isCoverageComparisonDoLinear) {
+        if (CoverageCommand.isLinear) {
             double x = sample.getQuantitativeTrait();
             double y = MathManager.devide(coveredLength, exonLength);
             sr.addData(x, y);
@@ -134,7 +134,7 @@ public class CoverageComparison extends CoverageComparisonBase {
 
     private void addExon(StringBuilder sb, String name, double caseAvg, double ctrlAvg, double absDiff, int regionSize,
             SimpleRegression sr, SummaryStatistics lss) {
-        if (CoverageCommand.isCoverageComparisonDoLinear) {
+        if (CoverageCommand.isLinear) {
             double r2 = sr.getRSquare();
             double pValue = sr.getSignificance();
             double variance = lss.getVariance();
@@ -146,7 +146,7 @@ public class CoverageComparison extends CoverageComparisonBase {
             }
             sb.append(",").append(pValue);
             sb.append(",").append(r2);
-            sb.append(variance);
+            sb.append(",").append(variance);
 
             exonCleanLinear.addExon(name, caseAvg, ctrlAvg, absDiff,
                     regionSize, pValue, r2, variance);
