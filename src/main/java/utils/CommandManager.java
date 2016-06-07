@@ -271,7 +271,6 @@ public class CommandManager {
                 StatisticsCommand.models[3] = "additive";
             } else if (option.getName().equals("--logistic")) {
                 StatisticsCommand.isLogistic = true;
-                StatisticsCommand.models[3] = "additive";
             } else if (option.getName().equals("--family-analysis")) {
                 FamilyCommand.isFamilyAnalysis = true;
             } else if (option.getName().equals("--list-sibling-comp-het")) {
@@ -375,7 +374,7 @@ public class CommandManager {
             StatisticsCommand.initLinearOptions(optionList.iterator());
         } else if (StatisticsCommand.isLogistic) {
             StatisticsCommand.initLogisticOptions(optionList.iterator());
-        }else if (FamilyCommand.isFamilyAnalysis) {
+        } else if (FamilyCommand.isFamilyAnalysis) {
             FamilyCommand.initOptions(optionList.iterator());
         } else if (SiblingCommand.isSiblingCompHet) {
 

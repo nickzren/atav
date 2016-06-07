@@ -58,6 +58,7 @@ import function.genotype.family.FamilyCommand;
 import function.genotype.parental.ParentalCommand;
 import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
+import function.genotype.statistics.LogisticRegression;
 import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
 import function.genotype.vargeno.VarGenoCommand;
@@ -85,11 +86,11 @@ public class Program {
             SampleManager.recheckSampleList();
 
             RunTimeManager.stop();
-            
+
             LogManager.logRunTime();
 
             LogManager.logUserCommand();
-            
+
             LogManager.close();
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -117,9 +118,9 @@ public class Program {
             CoverageBlockManager.init();
 
             KnownVarManager.init();
-            
+
             RvisManager.init();
-            
+
             SubRvisManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -138,6 +139,8 @@ public class Program {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {
                 runAnalysis(new LinearRegression());
+            } else if (StatisticsCommand.isLogistic) {
+                runAnalysis(new LogisticRegression());
             } else if (FamilyCommand.isFamilyAnalysis) {
                 runAnalysis(new FamilyAnalysis());
             } else if (SiblingCommand.isSiblingCompHet) {
