@@ -146,7 +146,7 @@ public class CoverageComparison extends CoverageComparisonBase {
             }
             sb.append(",").append(pValue);
             sb.append(",").append(r2);
-            sb.append(variance);
+            sb.append(",").append(variance);
 
             exonCleanLinear.addExon(name, caseAvg, ctrlAvg, absDiff,
                     regionSize, pValue, r2, variance);
