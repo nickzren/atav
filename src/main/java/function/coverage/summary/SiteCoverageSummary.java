@@ -4,7 +4,7 @@ import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.CoverageAnalysisBase;
-import global.Index;
+import function.coverage.base.SiteCoverage;
 import utils.CommonCommand;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -52,13 +52,15 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
 
     private void outputSiteSummary(Gene gene, Exon exon) {
         try {
-            int[][] sampleSiteCoverage = CoverageManager.getSampleSiteCoverage(exon);
+            SiteCoverage siteCoverage = CoverageManager.getSiteCoverage(exon);
             StringBuilder sb = new StringBuilder();
             for (int pos = 0; pos < exon.getLength(); pos++) {
                 sb.append(gene.getName()).append(",");
                 sb.append(exon.getChrStr()).append(",");
                 sb.append(exon.getStartPosition() + pos).append(",");
-                sb.append(sampleSiteCoverage[Index.CASE][pos] + sampleSiteCoverage[Index.CTRL][pos]);
+                int siteTotalCov = siteCoverage.getCaseSiteCov(pos)
+                        + siteCoverage.getCtrlSiteCov(pos);
+                sb.append(siteTotalCov);
                 writeToFile(sb.toString(), bwSiteSummary);
                 sb.setLength(0);
             }
