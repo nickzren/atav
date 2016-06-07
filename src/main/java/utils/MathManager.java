@@ -12,8 +12,7 @@ import org.apache.commons.math3.stat.inference.BinomialTest;
  */
 public class MathManager {
 
-    private static final BinomialTest BT = new BinomialTest();
-
+    private static BinomialTest BT;
     private static ScriptEngine renjinEngine;
 
     public static ScriptEngine getRenjinEngine() {
@@ -29,6 +28,10 @@ public class MathManager {
     }
 
     public static double getBinomial(int numberOfTrials, int numberOfSuccesses, double probability) {
+        if (BT == null) {
+            BT = new BinomialTest();
+        }
+
         if (numberOfTrials == Data.NA || numberOfTrials == Data.NA) {
             return Data.NA;
         }
