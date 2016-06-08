@@ -20,6 +20,7 @@ import utils.FormatManager;
 import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
+import org.renjin.sexp.SEXP;
 import utils.ErrorManager;
 import utils.MathManager;
 
@@ -107,7 +108,7 @@ public class LogisticOutput extends StatisticOutput {
             String fitExpression = "with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
             DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval(fitExpression);
             pValue = (null != res) ? res.getElementAsDouble(0) : Data.NA;
-        } catch (ScriptException e) {
+        } catch (Exception e) {
             ErrorManager.send(e);
         }
 
@@ -149,36 +150,8 @@ public class LogisticOutput extends StatisticOutput {
                 for (int i = 0; i < eigenCount; i++) {
                     covariates.get(i).add(covData.get(i));
                 }
-
-                if (model.equals("allelic")) {
-                    for (int i = 0; i < eigenCount; i++) {
-                        covariates.get(i).add(covData.get(i));
-                    }
-
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            response.add(1d);
-                            response.add(1d);
-                        } else if (geno == Index.HET) {
-                            response.add(1d);
-                            response.add(0d);
-                        } else if (geno == Index.HOM) {
-                            response.add(0d);
-                            response.add(0d);
-                        }
-                    } else {
-                        if (geno == Index.REF) {
-                            response.add(0d);
-                            response.add(0d);
-                        } else if (geno == Index.HET) {
-                            response.add(1d);
-                            response.add(0d);
-                        } else if (geno == Index.HOM) {
-                            response.add(1d);
-                            response.add(1d);
-                        }
-                    }
-                } else if (model.equals("dominant")) {
+                
+                if (model.equals("dominant")) {
                     if (isMinorRef) {
                         if (geno == Index.REF) {
                             response.add(1d);
@@ -234,7 +207,7 @@ public class LogisticOutput extends StatisticOutput {
             }
         }
 
-        pValue = doLogisticRegression(response, covariates);
+        pValue = response.size() <= 1 ? Data.NA : doLogisticRegression(response, covariates);
     }
 
     @Override
