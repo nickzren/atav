@@ -42,12 +42,12 @@ import java.util.Iterator;
 public class CommandManager {
 
     private static String[] optionArray;
-    private static ArrayList<CommandOption> optionList = new ArrayList<CommandOption>();
+    private static ArrayList<CommandOption> optionList = new ArrayList<>();
     public static String command = "";
     private static String commandFile = "";
 
     private static void initCommand4Debug() {
-        String cmd = "";
+        String cmd = "--list-var-anno –-gene-boundary ~/Desktop/covered_region --out test";
 
         optionArray = cmd.split("\\s+");
     }
@@ -95,7 +95,18 @@ public class CommandManager {
             }
         }
 
+        cleanUpOddSymbol();
+
         initCommand4Log();
+    }
+
+    private static void cleanUpOddSymbol() {
+        for (int i = 0; i < optionArray.length; i++) {
+            // below solve situation: dash hyphen or dash only
+            optionArray[i] = optionArray[i].replaceAll("\\u2013", "--"); // en dash --> hyphen
+            optionArray[i] = optionArray[i].replaceAll("\\u2014", "--"); // em dash --> hyphen
+            optionArray[i] = optionArray[i].replace("---", "--");
+        }
     }
 
     private static boolean isCommandFileIncluded(String[] options) {
