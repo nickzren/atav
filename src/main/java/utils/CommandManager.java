@@ -47,7 +47,7 @@ public class CommandManager {
     private static String commandFile = "";
 
     private static void initCommand4Debug() {
-        String cmd = "--list-var-anno –-gene-boundary ~/Desktop/covered_region --out test";
+        String cmd = "";
 
         optionArray = cmd.split("\\s+");
     }
