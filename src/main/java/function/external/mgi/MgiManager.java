@@ -1,4 +1,4 @@
-package function.external.rvis;
+package function.external.mgi;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -12,16 +12,16 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class RvisManager {
+public class MgiManager {
 
-    private static final String RVIS_PATH = "data/rvis/gene_score_120316.csv";
+    private static final String MGI_PATH = "data/mgi/mouse_essential_gene_060616.csv";
 
     public static String title;
-    private static final HashMap<String, String> rvisMap = new HashMap<>();
+    private static final HashMap<String, String> mgiMap = new HashMap<>();
     public static String NA = "";
 
     public static String getTitle() {
-        if (RvisCommand.isIncludeRvis) {
+        if (MgiCommand.isIncludeMgi) {
             return title + ",";
         } else {
             return "";
@@ -29,20 +29,20 @@ public class RvisManager {
     }
 
     public static void init() {
-        if (RvisCommand.isIncludeRvis) {
-            initRvisMap();
+        if (MgiCommand.isIncludeMgi) {
+            initMgiMap();
         }
     }
 
-    private static void initRvisMap() {
+    private static void initMgiMap() {
         try {
-            File f = new File(RVIS_PATH);
+            File f = new File(MGI_PATH);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             String lineStr = "";
-            while ((lineStr = br.readLine()) != null) {
+            while ((lineStr = br.readLine()) != null) {  
                 int firstCommaIndex = lineStr.indexOf(",");
                 String geneName = lineStr.substring(0, firstCommaIndex);
                 String values = lineStr.substring(firstCommaIndex + 1);
@@ -54,7 +54,7 @@ public class RvisManager {
                         NA += "NA,";
                     }
                 } else {
-                    rvisMap.put(geneName, values + ",");
+                    mgiMap.put(geneName, values + ",");
                 }
             }
 
@@ -67,7 +67,7 @@ public class RvisManager {
     }
 
     public static String getLine(String geneName) {
-        String line = rvisMap.get(geneName);
+        String line = mgiMap.get(geneName);
 
         return line == null ? NA : line;
     }

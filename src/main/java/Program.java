@@ -45,6 +45,9 @@ import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.knownvar.ListKnownVar;
+import function.external.mgi.ListMgi;
+import function.external.mgi.MgiCommand;
+import function.external.mgi.MgiManager;
 import function.external.rvis.ListRvis;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
@@ -120,6 +123,8 @@ public class Program {
             RvisManager.init();
             
             SubRvisManager.init();
+            
+            MgiManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -179,6 +184,8 @@ public class Program {
                 runAnalysis(new ListRvis());
             } else if (GenomesCommand.isList1000Genomes) {
                 runAnalysis(new List1000Genomes());
+            } else if (MgiCommand.isListMgi) {
+                runAnalysis(new ListMgi());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }

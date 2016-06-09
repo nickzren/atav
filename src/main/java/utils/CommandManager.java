@@ -12,6 +12,7 @@ import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.mgi.MgiCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
@@ -301,6 +302,7 @@ public class CommandManager {
                 RvisCommand.isIncludeRvis = true;
                 SubRvisCommand.isIncludeSubRvis = true;
                 GenomesCommand.isInclude1000Genomes = true;
+                MgiCommand.isIncludeMgi = true;
             } else if (option.getName().equals("--list-gene-dx")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GeneDxCommand.isListGeneDx = true;
@@ -347,6 +349,10 @@ public class CommandManager {
                 CommonCommand.isNonSampleAnalysis = true;
                 GenomesCommand.isList1000Genomes = true;
                 GenomesCommand.isInclude1000Genomes = true;
+            } else if (option.getName().equals("--list-mgi")) {
+                CommonCommand.isNonSampleAnalysis = true;
+                MgiCommand.isListMgi = true;
+                MgiCommand.isIncludeMgi = true;
             } else if (option.getName().equals("--test")) { // Test Functions
 //                CommonCommand.isNonDBAnalysis = true;
                 CommonCommand.isNonSampleAnalysis = true;

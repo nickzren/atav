@@ -14,6 +14,8 @@ import function.external.kaviar.Kaviar;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
+import function.external.mgi.MgiCommand;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
@@ -53,6 +55,7 @@ public class AnnotatedVariant extends Variant {
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
     GenomesOutput genomesOutput;
+    private String mgiStr;
 
     public boolean isValid = true;
 
@@ -89,6 +92,10 @@ public class AnnotatedVariant extends Variant {
             subRvisOutput = new SubRvisOutput(getGeneName(),
                     getRegion().getChrStr(),
                     getRegion().getStartPosition());
+        }
+
+        if (MgiCommand.isIncludeMgi) {
+            mgiStr = MgiManager.getLine(getGeneName());
         }
     }
 
@@ -167,7 +174,7 @@ public class AnnotatedVariant extends Variant {
 
         if (isValid & GenomesCommand.isInclude1000Genomes) {
             genomesOutput = new GenomesOutput(variantIdStr);
-            
+
             isValid = genomesOutput.isValid();
         }
 
@@ -364,6 +371,14 @@ public class AnnotatedVariant extends Variant {
     public String get1000Genomes() {
         if (GenomesCommand.isInclude1000Genomes) {
             return genomesOutput.toString();
+        } else {
+            return "";
+        }
+    }
+
+    public String getMgi() {
+        if (MgiCommand.isIncludeMgi) {
+            return mgiStr;
         } else {
             return "";
         }

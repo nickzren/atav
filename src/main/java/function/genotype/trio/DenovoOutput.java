@@ -8,6 +8,7 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
@@ -94,7 +95,8 @@ public class DenovoOutput extends TrioOutput {
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
             + SubRvisManager.getTitle()
-            + GenomesManager.getTitle();
+            + GenomesManager.getTitle()
+            + MgiManager.getTitle();
 
     public DenovoOutput(CalledVariant c) {
         super(c);
@@ -237,10 +239,12 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getKnownVarStr());
 
         sb.append(calledVar.getRvis());
-        
+
         sb.append(calledVar.getSubRvis());
-        
+
         sb.append(calledVar.get1000Genomes());
+
+        sb.append(calledVar.getMgi());
 
         return sb.toString();
     }

@@ -11,6 +11,7 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import global.Data;
@@ -95,7 +96,8 @@ public class ParentalOutput extends Output {
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
             + SubRvisManager.getTitle()
-            + GenomesManager.getTitle();
+            + GenomesManager.getTitle()
+            + MgiManager.getTitle();
 
     public ParentalOutput(CalledVariant c) {
         super(c);
@@ -254,6 +256,8 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.getSubRvis());
 
         sb.append(calledVar.get1000Genomes());
+
+        sb.append(calledVar.getMgi());
 
         return sb.toString();
     }
