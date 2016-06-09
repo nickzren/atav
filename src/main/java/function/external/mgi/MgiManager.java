@@ -14,7 +14,7 @@ import utils.ErrorManager;
  */
 public class MgiManager {
 
-    private static final String MGI_PATH = "data/mgi/mouse_essential.csv";
+    private static final String MGI_PATH = "data/mgi/mouse_essential_gene_060616.csv";
 
     public static String title;
     private static final HashMap<String, String> mgiMap = new HashMap<>();

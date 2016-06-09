@@ -302,6 +302,7 @@ public class CommandManager {
                 RvisCommand.isIncludeRvis = true;
                 SubRvisCommand.isIncludeSubRvis = true;
                 GenomesCommand.isInclude1000Genomes = true;
+                MgiCommand.isIncludeMgi = true;
             } else if (option.getName().equals("--list-gene-dx")) {
                 CommonCommand.isNonSampleAnalysis = true;
                 GeneDxCommand.isListGeneDx = true;

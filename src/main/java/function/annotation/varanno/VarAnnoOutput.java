@@ -8,6 +8,7 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
@@ -51,7 +52,8 @@ public class VarAnnoOutput {
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
             + SubRvisManager.getTitle()
-            + GenomesManager.getTitle();
+            + GenomesManager.getTitle()
+            + MgiManager.getTitle();
 
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
@@ -98,7 +100,9 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getSubRvis());
 
         sb.append(annotatedVar.get1000Genomes());
-        
+
+        sb.append(annotatedVar.getMgi());
+
         return sb.toString();
     }
 }

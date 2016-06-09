@@ -9,6 +9,7 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.mgi.MgiCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import global.Data;
@@ -139,6 +140,8 @@ public class VariantLevelFilterCommand {
                 SubRvisCommand.isIncludeSubRvis = true;
             } else if (option.getName().equals("--include-1000-genomes")) {
                 GenomesCommand.isInclude1000Genomes = true;
+            } else if (option.getName().equals("--include-mgi")) {
+                MgiCommand.isIncludeMgi = true;
             } else if (option.getName().equals("--include-all-external-data")) {
                 EvsCommand.isIncludeEvs = true;
                 ExacCommand.isIncludeExac = true;
@@ -148,6 +151,7 @@ public class VariantLevelFilterCommand {
                 RvisCommand.isIncludeRvis = true;
                 SubRvisCommand.isIncludeSubRvis = true;
                 GenomesCommand.isInclude1000Genomes = true;
+                MgiCommand.isIncludeMgi = true;
             } else {
                 continue;
             }

@@ -8,6 +8,7 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
@@ -80,7 +81,8 @@ public class FamilyOutput extends Output {
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
             + SubRvisManager.getTitle()
-            + GenomesManager.getTitle();
+            + GenomesManager.getTitle()
+            + MgiManager.getTitle();
 
     public FamilyOutput(CalledVariant c) {
         super(c);
@@ -284,12 +286,14 @@ public class FamilyOutput extends Output {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
-        
+
         sb.append(calledVar.getRvis());
-        
+
         sb.append(calledVar.getSubRvis());
-        
+
         sb.append(calledVar.get1000Genomes());
+
+        sb.append(calledVar.getMgi());
 
         return sb.toString();
     }
