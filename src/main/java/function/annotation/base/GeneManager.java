@@ -108,16 +108,18 @@ public class GeneManager {
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;
-        
+
         int geneIndex = 0;
         allGeneBoundaryLength = 0;
 
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
+                line = line.replaceAll("\"", "");
+                
                 Gene gene = new Gene(line);
                 gene.initExonList();
 
-                HashSet<Gene> set = new HashSet<Gene>();
+                HashSet<Gene> set = new HashSet<>();
                 set.add(gene);
 
                 String geneId = gene.getName();
@@ -302,8 +304,8 @@ public class GeneManager {
     public static ArrayList<Gene> getGeneBoundaryList() {
         return geneBoundaryList;
     }
-    
-    public static int getAllGeneBoundaryLength(){
+
+    public static int getAllGeneBoundaryLength() {
         return allGeneBoundaryLength;
     }
 
