@@ -85,7 +85,7 @@ public class Gene {
     }
 
     public void initExonList() {
-        String[] fields = boundary.trim().replace("(", "").replace(")", "").split(" ");
+        String[] fields = boundary.trim().replace("(", "").replace(")", "").split("( )+");
         name = fields[0];
         chr = fields[1];
 
