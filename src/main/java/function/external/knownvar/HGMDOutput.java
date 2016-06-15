@@ -1,5 +1,7 @@
 package function.external.knownvar;
 
+import function.variant.base.Variant;
+import global.Data;
 import java.util.Collection;
 import utils.FormatManager;
 
@@ -9,10 +11,7 @@ import utils.FormatManager;
  */
 public class HGMDOutput {
 
-    private String chr;
-    private int pos;
-    private String ref;
-    private String alt;
+    private Variant var;
 
     private HGMD hgmd;
 
@@ -24,23 +23,19 @@ public class HGMDOutput {
     private String p2Site;
     private int indel9bpflanks;
 
-    public HGMDOutput(String chr, int pos, String ref, String alt,
-            Collection<HGMD> collection) {
-        this.chr = chr;
-        this.pos = pos;
-        this.ref = ref;
-        this.alt = alt;
+    public HGMDOutput(Variant var, Collection<HGMD> collection) {
+        this.var = var;
 
         hgmd = getHGMD(collection);
 
-        m2Site = KnownVarManager.getHGMDBySite(chr, pos, -2);
-        m1Site = KnownVarManager.getHGMDBySite(chr, pos, -1);
-        p1Site = KnownVarManager.getHGMDBySite(chr, pos, 1);
-        p2Site = KnownVarManager.getHGMDBySite(chr, pos, 2);
-        
-        siteCount = collection.size();
-        
-        indel9bpflanks = KnownVarManager.getHGMDIndelFlankingCount(chr, pos);
+        m2Site = KnownVarManager.getHGMDBySite(var, -2);
+        m1Site = KnownVarManager.getHGMDBySite(var, -1);
+        p1Site = KnownVarManager.getHGMDBySite(var, 1);
+        p2Site = KnownVarManager.getHGMDBySite(var, 2);
+
+        siteCount = var.isSnv() ? collection.size() : Data.NA; // only for SNVs
+
+        indel9bpflanks = var.isIndel() ? KnownVarManager.getHGMDIndelFlankingCount(var) : Data.NA; // only for INDELs
     }
 
     /*
@@ -48,33 +43,42 @@ public class HGMDOutput {
      2. or return site accumulated HGMD
      */
     private HGMD getHGMD(Collection<HGMD> collection) {
-        HGMD hgmd = new HGMD(chr, pos, ref, alt, "NA", "NA", "NA");
+        HGMD hgmd = new HGMD(
+                var.getRegion().getChrStr(),
+                var.getRegion().getStartPosition(),
+                var.getRefAllele(),
+                var.getAllele(),
+                "NA",
+                "NA",
+                "NA");
 
         boolean isFirstSiteHgmd = true;
 
         for (HGMD tmpHgmd : collection) {
-            if (getVariantId().equals(tmpHgmd.getVariantId())) {
+            String idStr = var.getVariantIdStr().replaceAll("XY", "X");
+
+            if (idStr.equals(tmpHgmd.getVariantId())) {
                 return tmpHgmd;
+            }
+
+            if (var.isIndel()) { // site values only for SNVs
+                continue;
+            }
+
+            if (isFirstSiteHgmd) {
+                isFirstSiteHgmd = false;
+                hgmd.setDiseaseName("?Site - " + tmpHgmd.getDiseaseName());
+                hgmd.setPmid(tmpHgmd.getPmid());
+                hgmd.setVariantClass(tmpHgmd.getVariantClass());
             } else {
-                if (isFirstSiteHgmd) {
-                    isFirstSiteHgmd = false;
-                    hgmd.setDiseaseName("?Site - " + tmpHgmd.getDiseaseName());
-                    hgmd.setPmid(tmpHgmd.getPmid());
-                    hgmd.setVariantClass(tmpHgmd.getVariantClass());
-                } else {
-                    hgmd.append(
-                            tmpHgmd.getDiseaseName(),
-                            tmpHgmd.getPmid(),
-                            tmpHgmd.getVariantClass());
-                }
+                hgmd.append(
+                        tmpHgmd.getDiseaseName(),
+                        tmpHgmd.getPmid(),
+                        tmpHgmd.getVariantClass());
             }
         }
 
         return hgmd;
-    }
-
-    public String getVariantId() {
-        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
     @Override

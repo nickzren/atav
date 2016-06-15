@@ -22,7 +22,7 @@ public class KnownVarManager {
 
     public static final String clinVarTable = "knownvar.clinvar_2016_04_26";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_04_26";
-    public static final String hgmdTable = "knownvar.hgmd_2016_1";
+    public static final String hgmdTable = "knownvar.hgmd_2016_1_new";
     public static final String omimTable = "knownvar.omim_2016_04_26";
     public static final String acmgTable = "knownvar.ACMG_2016_04_26";
     public static final String clinGenTable = "knownvar.ClinGen_2016_04_26";
@@ -63,7 +63,7 @@ public class KnownVarManager {
                     + "ClinGen HaploinsufficiencyDesc,"
                     + "ClinGen TriplosensitivityDesc,"
                     + "OMIM Disease,"
-                    + "RecessiveCarrier," 
+                    + "RecessiveCarrier,"
                     + "ACMG,";
         } else {
             return "";
@@ -258,8 +258,7 @@ public class KnownVarManager {
     public static ClinVarOutput getClinVarOutput(Variant var) {
         Collection<ClinVar> collection = clinVarMultiMap.get(var.getSiteId());
 
-        ClinVarOutput output = new ClinVarOutput(var.region.chrStr, var.region.startPosition,
-                var.refAllele, var.allele, collection);
+        ClinVarOutput output = new ClinVarOutput(var, collection);
 
         return output;
     }
@@ -285,8 +284,7 @@ public class KnownVarManager {
     public static HGMDOutput getHGMDOutput(Variant var) {
         Collection<HGMD> collection = hgmdMultiMap.get(var.getSiteId());
 
-        HGMDOutput output = new HGMDOutput(var.region.chrStr, var.region.startPosition,
-                var.refAllele, var.allele, collection);
+        HGMDOutput output = new HGMDOutput(var, collection);
 
         return output;
     }
@@ -317,14 +315,14 @@ public class KnownVarManager {
         return 0;
     }
 
-    public static int getClinVarPathogenicIndelFlankingCount(String chr, int pos) {
+    public static int getClinVarPathogenicIndelFlankingCount(Variant var) {
         try {
-            int distance = 9;
+            int width = 9;
 
             String sql = "SELECT count(*) as count "
                     + "From " + clinVarTable + " "
-                    + "WHERE chr='" + chr + "' "
-                    + "AND pos BETWEEN " + (pos - distance) + " AND " + (pos + distance) + " "
+                    + "WHERE chr='" + var.getRegion().getChrStr() + "' "
+                    + "AND pos BETWEEN " + (var.getRegion().getStartPosition() - width) + " AND " + (var.getRegion().getStartPosition() + width) + " "
                     + "AND ClinicalSignificance like '%pathogenic%' "
                     + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
 
@@ -342,14 +340,14 @@ public class KnownVarManager {
         return Data.NA;
     }
 
-    public static int getClinVarAllIndelFlankingCount(String chr, int pos) {
+    public static int getClinVarAllIndelFlankingCount(Variant var) {
         try {
-            int distance = 9;
+            int width = 9;
 
             String sql = "SELECT count(*) as count "
                     + "From " + clinVarTable + " "
-                    + "WHERE chr='" + chr + "' "
-                    + "AND pos BETWEEN " + (pos - distance) + " AND " + (pos + distance) + " "
+                    + "WHERE chr='" + var.getRegion().getChrStr() + "' "
+                    + "AND pos BETWEEN " + (var.getRegion().getStartPosition() - width) + " AND " + (var.getRegion().getStartPosition() + width) + " "
                     + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
 
             ResultSet rs = DBManager.executeQuery(sql);
@@ -366,14 +364,14 @@ public class KnownVarManager {
         return Data.NA;
     }
 
-    public static int getHGMDIndelFlankingCount(String chr, int pos) {
+    public static int getHGMDIndelFlankingCount(Variant var) {
         try {
             int width = 9;
 
             String sql = "SELECT count(*) as count "
                     + "From " + hgmdTable + " "
-                    + "WHERE chr='" + chr + "' "
-                    + "AND pos BETWEEN " + (pos - width) + " AND " + (pos + width) + " "
+                    + "WHERE chr='" + var.getRegion().getChrStr() + "' "
+                    + "AND pos BETWEEN " + (var.getRegion().getStartPosition() - width) + " AND " + (var.getRegion().getStartPosition() + width) + " "
                     + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
 
             ResultSet rs = DBManager.executeQuery(sql);
@@ -390,39 +388,41 @@ public class KnownVarManager {
         return Data.NA;
     }
 
-    public static String getHGMDBySite(String chr, int pos, int distance) {
+    public static String getHGMDBySite(Variant var, int distance) {
         try {
-            String sql = "SELECT ref,alt,DiseaseName,variantClass,pmid "
-                    + "From " + hgmdTable + " "
-                    + "WHERE chr='" + chr + "' "
-                    + "AND pos = " + (pos + distance);
+            if (var.isSnv()) { // only query for SNVs
+                String sql = "SELECT ref,alt,DiseaseName,variantClass,pmid "
+                        + "From " + hgmdTable + " "
+                        + "WHERE chr='" + var.getRegion().getChrStr() + "' "
+                        + "AND pos = " + (var.getRegion().getStartPosition() + distance);
 
-            ResultSet rs = DBManager.executeQuery(sql);
+                ResultSet rs = DBManager.executeQuery(sql);
 
-            StringBuilder sb = new StringBuilder();
-            int count = 0;
+                StringBuilder sb = new StringBuilder();
+                int count = 0;
 
-            while (rs.next()) {
-                if (rs.getString("ref").length() > 1
-                        || rs.getString("alt").length() > 1) { // skip indels
-                    continue;
+                while (rs.next()) {
+                    if (rs.getString("ref").length() > 1
+                            || rs.getString("alt").length() > 1) { // skip indels
+                        continue;
+                    }
+
+                    if (count > 0) {
+                        sb.append("|");
+                    }
+
+                    sb.append(rs.getString("DiseaseName")).append(";");
+                    sb.append(rs.getString("variantClass")).append(";");
+                    sb.append(rs.getString("pmid"));
+
+                    count++;
                 }
 
-                if (count > 0) {
-                    sb.append("|");
+                rs.close();
+
+                if (sb.length() > 0) {
+                    return count + ";" + sb.toString();
                 }
-
-                sb.append(rs.getString("DiseaseName")).append(";");
-                sb.append(rs.getString("variantClass")).append(";");
-                sb.append(rs.getString("pmid"));
-
-                count++;
-            }
-
-            rs.close();
-
-            if (sb.length() > 0) {
-                return count + ";" + sb.toString();
             }
         } catch (Exception e) {
             ErrorManager.send(e);

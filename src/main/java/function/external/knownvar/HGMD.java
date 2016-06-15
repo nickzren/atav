@@ -59,11 +59,11 @@ public class HGMD {
     public void setDiseaseName(String diseaseName) {
         this.diseaseName = diseaseName;
     }
-    
+
     public String getPmid() {
         return pmid;
     }
-    
+
     public void setPmid(String pmid) {
         this.pmid = pmid;
     }
@@ -71,14 +71,14 @@ public class HGMD {
     public String getVariantClass() {
         return variantClass;
     }
-    
+
     public void setVariantClass(String variantClass) {
         this.variantClass = variantClass;
     }
-    
-    public void append(String variantClass, String pmid, String diseaseName) {
-        this.variantClass += " | " + variantClass;
-        this.pmid += " | " + pmid;
+
+    public void append(String diseaseName, String pmid, String variantClass) {
         this.diseaseName += " | " + diseaseName;
+        this.pmid += " | " + pmid;
+        this.variantClass += " | " + variantClass;
     }
 }

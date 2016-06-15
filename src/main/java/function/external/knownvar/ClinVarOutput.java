@@ -1,5 +1,7 @@
 package function.external.knownvar;
 
+import function.variant.base.Variant;
+import global.Data;
 import java.util.Collection;
 import utils.FormatManager;
 
@@ -9,10 +11,7 @@ import utils.FormatManager;
  */
 public class ClinVarOutput {
 
-    private String chr;
-    private int pos;
-    private String ref;
-    private String alt;
+    private Variant var;
 
     private ClinVar clinvar;
 
@@ -20,19 +19,15 @@ public class ClinVarOutput {
     private int pathogenicIndelsCount;
     private int allIndelsCount;
 
-    public ClinVarOutput(String chr, int pos, String ref, String alt,
-            Collection<ClinVar> collection) {
-        this.chr = chr;
-        this.pos = pos;
-        this.ref = ref;
-        this.alt = alt;
+    public ClinVarOutput(Variant var, Collection<ClinVar> collection) {
+        this.var = var;
 
         clinvar = getClinVar(collection);
 
-        siteCount = collection.size();
+        siteCount = var.isSnv() ? collection.size() : Data.NA; // only for SNVs
 
-        pathogenicIndelsCount = KnownVarManager.getClinVarPathogenicIndelFlankingCount(chr, pos);
-        allIndelsCount = KnownVarManager.getClinVarAllIndelFlankingCount(chr, pos);
+        pathogenicIndelsCount = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var) : Data.NA; // only for INDELs
+        allIndelsCount = var.isIndel() ? KnownVarManager.getClinVarAllIndelFlankingCount(var) : Data.NA; // only for INDELs
     }
 
     /*
@@ -40,35 +35,45 @@ public class ClinVarOutput {
      2. or return site accumulated ClinVar
      */
     private ClinVar getClinVar(Collection<ClinVar> collection) {
-        ClinVar clinvar = new ClinVar(chr, pos, ref, alt, "NA", "NA", "NA", "NA");
+        ClinVar clinvar = new ClinVar(
+                var.getRegion().getChrStr(),
+                var.getRegion().getStartPosition(),
+                var.getRefAllele(),
+                var.getAllele(),
+                "NA",
+                "NA",
+                "NA",
+                "NA");
 
-        boolean isFirstSiteHgmd = true;
+        boolean isFirstSiteClinvar = true;
 
         for (ClinVar tmpClinvar : collection) {
-            if (getVariantId().equals(tmpClinvar.getVariantId())) {
+            String idStr = var.getVariantIdStr().replaceAll("XY", "X");
+
+            if (idStr.equals(tmpClinvar.getVariantId())) {
                 return tmpClinvar;
+            }
+
+            if (var.isIndel()) { // site values only for SNVs
+                continue;
+            }
+
+            if (isFirstSiteClinvar) {
+                isFirstSiteClinvar = false;
+                clinvar.setDiseaseName("?Site - " + tmpClinvar.getDiseaseName());
+                clinvar.setClinicalSignificance(tmpClinvar.getClinicalSignificance());
+                clinvar.setPubmedID(tmpClinvar.getPubmedID());
+                clinvar.setOtherIds(tmpClinvar.getOtherIds());
             } else {
-                if (isFirstSiteHgmd) {
-                    isFirstSiteHgmd = false;
-                    clinvar.setDiseaseName("?Site - " + tmpClinvar.getDiseaseName());
-                    clinvar.setClinicalSignificance(tmpClinvar.getClinicalSignificance());
-                    clinvar.setPubmedID(tmpClinvar.getPubmedID());
-                    clinvar.setOtherIds(tmpClinvar.getOtherIds());
-                } else {
-                    clinvar.append(
-                            tmpClinvar.getClinicalSignificance(),
-                            tmpClinvar.getOtherIds(),
-                            tmpClinvar.getDiseaseName(),
-                            tmpClinvar.getPubmedID());
-                }
+                clinvar.append(
+                        tmpClinvar.getClinicalSignificance(),
+                        tmpClinvar.getOtherIds(),
+                        tmpClinvar.getDiseaseName(),
+                        tmpClinvar.getPubmedID());
             }
         }
 
         return clinvar;
-    }
-
-    public String getVariantId() {
-        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
     @Override
