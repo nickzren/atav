@@ -21,6 +21,7 @@ import utils.FormatManager;
 import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
+import org.renjin.sexp.SEXP;
 import utils.ErrorManager;
 import utils.MathManager;
 
@@ -110,7 +111,7 @@ public class LogisticOutput extends StatisticOutput {
             String extractPval = "summary(logredmd)$coefficients[2,4]";
             DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval(extractPval);
             pValue = (null != res) ? res.getElementAsDouble(0) : Data.NA;
-        } catch (ScriptException e) {
+        } catch (Exception e) {
             ErrorManager.send(e);
         }
 
@@ -174,6 +175,23 @@ public class LogisticOutput extends StatisticOutput {
                     //Set other predictors
                         for (int i = 1; i < eigenCount; i++) {
                             covariates.get(i).add(sample.getCovariateList().get(i-1));
+                //Set predictors
+                for (int i = 0; i < eigenCount; i++) {
+                    covariates.get(i).add(covData.get(i));
+                }
+
+                if (model.equals("dominant")) {
+                    if (isMinorRef) {
+                        if (geno == Index.REF) {
+                            response.add(1d);
+                        } else if (geno == Index.HET) {
+                            response.add(1d);
+                        } else if (geno == Index.HOM) {
+                            response.add(0d);
+                        } else if (geno == Index.HOM_MALE) {
+                            response.add(0d);
+                        } else if (geno == Index.REF_MALE) {
+                            response.add(1d);
                         }
                     //Set Response
                     response.add((double) sample.getPheno());
@@ -181,7 +199,7 @@ public class LogisticOutput extends StatisticOutput {
             }
         }
 
-        pValue = doLogisticRegression(response, covariates);
+        pValue = response.size() <= 1 ? Data.NA : doLogisticRegression(response, covariates);
     }
 
     @Override
