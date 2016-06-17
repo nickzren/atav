@@ -14,6 +14,7 @@ import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import global.Data;
 import global.Index;
+import org.renjin.sexp.DoubleArrayVector;
 import org.renjin.sexp.DoubleVector;
 import utils.FormatManager;
 
@@ -102,10 +103,12 @@ public class LogisticOutput extends StatisticOutput {
 
             MathManager.getRenjinEngine().put("y", response);
             MathManager.getRenjinEngine().eval(" y <- as.numeric(unlist(y))");
+            MathManager.getRenjinEngine().eval("x1<-factor(x1)");
             MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
 
-            String fitExpression = "with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
-            DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval(fitExpression);
+            //String fitExpression = "with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
+            String extractPval = "summary(logredmd)$coefficients[2,4]";
+            DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval(extractPval);
             pValue = (null != res) ? res.getElementAsDouble(0) : Data.NA;
         } catch (ScriptException e) {
             ErrorManager.send(e);
@@ -129,107 +132,51 @@ public class LogisticOutput extends StatisticOutput {
 
     public void doRegression(String model) {
         int eigenCount = SampleManager.getList().get(0).getCovariateList().size();
-
+        //One more covariate for genotype
+        eigenCount++;
+        int genoNum=0;
         //Initializing Params
         List<Double> response = new ArrayList<>();
-        List<List<Double>> covariates = new ArrayList<>(); // all sample covaiates per column per list
 
+        List<List<Double>> covariates = new ArrayList<>(); // all sample covariates per column per list
+
+        //init X for log reg
         for (int i = 0; i < eigenCount; i++) {
             covariates.add(new ArrayList<>());
         }
 
         for (Sample sample : SampleManager.getList()) {
-            ArrayList<Double> covData = sample.getCovariateList();
 
-            //Set REsponse
+            //get genotype
             int geno = calledVar.getGenotype(sample.getIndex());
+
             if (geno != Data.NA) {
 
-                //Set predictors
-                for (int i = 0; i < eigenCount; i++) {
-                    covariates.get(i).add(covData.get(i));
-                }
 
-                if (model.equals("allelic")) {
-                    for (int i = 0; i < eigenCount; i++) {
-                        covariates.get(i).add(covData.get(i));
+                if (model.equals("dominant")) {
+                    if (isMinorRef) {
+                        if (geno == Index.REF || geno == Index.HET || geno == Index.REF_MALE) {
+                            genoNum=1;
+                        } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
+                            genoNum=0;
+                        }
+                    } else {
+                        if (geno == Index.REF || geno == Index.REF_MALE) {
+                            genoNum=0;
+                        } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
+                            genoNum=1;
+                        }
                     }
 
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            response.add(1d);
-                            response.add(1d);
-                        } else if (geno == Index.HET) {
-                            response.add(1d);
-                            response.add(0d);
-                        } else if (geno == Index.HOM) {
-                            response.add(0d);
-                            response.add(0d);
+                    //Set genotype
+                    covariates.get(0).add((double) genoNum);
+
+                    //Set other predictors
+                        for (int i = 1; i < eigenCount; i++) {
+                            covariates.get(i).add(sample.getCovariateList().get(i-1));
                         }
-                    } else {
-                        if (geno == Index.REF) {
-                            response.add(0d);
-                            response.add(0d);
-                        } else if (geno == Index.HET) {
-                            response.add(1d);
-                            response.add(0d);
-                        } else if (geno == Index.HOM) {
-                            response.add(1d);
-                            response.add(1d);
-                        }
-                    }
-                } else if (model.equals("dominant")) {
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            response.add(1d);
-                        } else if (geno == Index.HET) {
-                            response.add(1d);
-                        } else if (geno == Index.HOM) {
-                            response.add(0d);
-                        } else if (geno == Index.HOM_MALE) {
-                            response.add(0d);
-                        } else if (geno == Index.REF_MALE) {
-                            response.add(1d);
-                        }
-                    } else {
-                        if (geno == Index.REF) {
-                            response.add(0d);
-                        } else if (geno == Index.HET) {
-                            response.add(1d);
-                        } else if (geno == Index.HOM) {
-                            response.add(1d);
-                        } else if (geno == Index.HOM_MALE) {
-                            response.add(1d);
-                        } else if (geno == Index.REF_MALE) {
-                            response.add(0d);
-                        }
-                    }
-                } else if (model.equals("recessive")) {
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            response.add(1d);
-                        } else if (geno == Index.HET) {
-                            response.add(0d);
-                        } else if (geno == Index.HOM) {
-                            response.add(0d);
-                        } else if (geno == Index.HOM_MALE) {
-                            response.add(0d);
-                        } else if (geno == Index.REF_MALE) {
-                            response.add(1d);
-                        }
-                    } else {
-                        if (geno == Index.REF) {
-                            response.add(0d);
-                        } else if (geno == Index.HET) {
-                            response.add(0d);
-                        } else if (geno == Index.HOM) {
-                            response.add(1d);
-                        } else if (geno == Index.HOM_MALE) {
-                            response.add(1d);
-                        } else if (geno == Index.REF_MALE) {
-                            response.add(0d);
-                        }
-                    }
+                    //Set Response
+                    response.add((double) sample.getPheno());
                 }
             }
         }
