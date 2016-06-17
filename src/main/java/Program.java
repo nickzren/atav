@@ -33,6 +33,7 @@ import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
 import function.external.exac.ListExac;
 import function.external.flanking.FlankingCommand;
 import function.external.flanking.ListFlankingSeq;
@@ -125,6 +126,8 @@ public class Program {
             SubRvisManager.init();
             
             MgiManager.init();
+
+            ExacManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

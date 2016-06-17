@@ -16,9 +16,9 @@ public class RvisManager {
 
     private static final String RVIS_PATH = "data/rvis/gene_score_120316.csv";
 
-    public static String title;
-    private static final HashMap<String, String> rvisMap = new HashMap<>();
-    public static String NA = "";
+    private static String title;
+    private static final HashMap<String, String> rvisMap = new HashMap<String, String>();
+    private static String NA = "";
 
     public static String getTitle() {
         if (RvisCommand.isIncludeRvis) {

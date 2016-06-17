@@ -4,6 +4,7 @@ import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
 import function.external.genomes.GenomesCommand;
 import function.external.genomes.GenomesOutput;
 import function.external.gerp.GerpCommand;
@@ -314,7 +315,7 @@ public class AnnotatedVariant extends Variant {
 
     public String getExacStr() {
         if (ExacCommand.isIncludeExac) {
-            return exac.toString();
+            return exac.toString() + ExacManager.getGeneDamagingCountsLine(geneName);
         } else {
             return "";
         }
