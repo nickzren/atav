@@ -169,7 +169,7 @@ public class LogisticOutput extends StatisticOutput {
                     }
 
                     //Set genotype
-                    covariates.get(0).add((double) geno);
+                    covariates.get(0).add((double) genoNum);
 
                     //Set other predictors
                         for (int i = 1; i < eigenCount; i++) {
