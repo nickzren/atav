@@ -21,6 +21,7 @@ import utils.FormatManager;
 import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
+import org.renjin.sexp.SEXP;
 import utils.ErrorManager;
 import utils.MathManager;
 
@@ -88,9 +89,11 @@ public class LogisticOutput extends StatisticOutput {
     }
 
     private double doLogisticRegression(List<Double> response, List<List<Double>> covariates) {
-        initExpression(covariates.size());
+        if (response.size() <= 1) {
+            return Data.NA;
+        }
 
-        double pValue = Data.NA;
+        initExpression(covariates.size());
 
         try {
             String regParam;
@@ -103,18 +106,22 @@ public class LogisticOutput extends StatisticOutput {
 
             MathManager.getRenjinEngine().put("y", response);
             MathManager.getRenjinEngine().eval(" y <- as.numeric(unlist(y))");
-            MathManager.getRenjinEngine().eval("x1<-factor(x1)");
+
+            System.out.println("y= " + ((SEXP) MathManager.getRenjinEngine().eval("length(y)")).asReal());
+            System.out.println("x1= " + ((SEXP) MathManager.getRenjinEngine().eval("length(x1)")).asReal());
+            System.out.println("x2= " + ((SEXP) MathManager.getRenjinEngine().eval("length(x2)")).asReal());
+
             MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
 
             //String fitExpression = "with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
             String extractPval = "summary(logredmd)$coefficients[2,4]";
             DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval(extractPval);
-            pValue = (null != res) ? res.getElementAsDouble(0) : Data.NA;
+            return (null != res) ? res.getElementAsDouble(0) : Data.NA;
         } catch (Exception e) {
             ErrorManager.send(e);
         }
 
-        return pValue;
+        return Data.NA;
     }
 
     private static void initExpression(int covariantCount) {
@@ -134,7 +141,7 @@ public class LogisticOutput extends StatisticOutput {
         int eigenCount = SampleManager.getList().get(0).getCovariateList().size();
         //One more covariate for genotype
         eigenCount++;
-        int genoNum=0;
+
         //Initializing Params
         List<Double> response = new ArrayList<>();
 
@@ -151,30 +158,24 @@ public class LogisticOutput extends StatisticOutput {
             int geno = calledVar.getGenotype(sample.getIndex());
 
             if (geno != Data.NA) {
-
-
                 if (model.equals("dominant")) {
                     if (isMinorRef) {
                         if (geno == Index.REF || geno == Index.HET || geno == Index.REF_MALE) {
-                            genoNum=1;
+                            covariates.get(0).add(1d);
                         } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
-                            genoNum=0;
+                            covariates.get(0).add(0d);
                         }
-                    } else {
-                        if (geno == Index.REF || geno == Index.REF_MALE) {
-                            genoNum=0;
-                        } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
-                            genoNum=1;
-                        }
+                    } else if (geno == Index.REF || geno == Index.REF_MALE) {
+                        covariates.get(0).add(0d);
+                    } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
+                        covariates.get(0).add(1d);
                     }
 
-                    //Set genotype
-                    covariates.get(0).add((double) geno);
-
                     //Set other predictors
-                        for (int i = 1; i < eigenCount; i++) {
-                            covariates.get(i).add(sample.getCovariateList().get(i-1));
-                        }
+                    for (int i = 1; i < eigenCount; i++) {
+                        covariates.get(i).add(sample.getCovariateList().get(i - 1));
+                    }
+
                     //Set Response
                     response.add((double) sample.getPheno());
                 }
