@@ -106,11 +106,6 @@ public class LogisticOutput extends StatisticOutput {
 
             MathManager.getRenjinEngine().put("y", response);
             MathManager.getRenjinEngine().eval(" y <- as.numeric(unlist(y))");
-
-            System.out.println("y= " + ((SEXP) MathManager.getRenjinEngine().eval("length(y)")).asReal());
-            System.out.println("x1= " + ((SEXP) MathManager.getRenjinEngine().eval("length(x1)")).asReal());
-            System.out.println("x2= " + ((SEXP) MathManager.getRenjinEngine().eval("length(x2)")).asReal());
-
             MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
 
             //String fitExpression = "with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
