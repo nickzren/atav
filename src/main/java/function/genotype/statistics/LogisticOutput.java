@@ -21,6 +21,8 @@ import utils.FormatManager;
 import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.renjin.sexp.SEXP;
 import utils.ErrorManager;
 import utils.MathManager;
@@ -31,6 +33,7 @@ import utils.MathManager;
  */
 public class LogisticOutput extends StatisticOutput {
 
+    int eigencount;
     public static final String title
             = "Variant ID,"
             + "Variant Type,"
@@ -70,8 +73,9 @@ public class LogisticOutput extends StatisticOutput {
 
     private static final StringBuilder expression = new StringBuilder();
 
-    public LogisticOutput(CalledVariant c) {
+    public LogisticOutput(CalledVariant c, int n) {
         super(c);
+        eigencount=n;
     }
 
     public boolean isValid(String model) {
@@ -88,34 +92,36 @@ public class LogisticOutput extends StatisticOutput {
         return false;
     }
 
-    private double doLogisticRegression(List<Double> response, List<List<Double>> covariates) {
-        if (response.size() <= 1) {
+    private double doLogisticRegression( List<Double> genotypicInfo , List<Integer> indices) {
+        if (genotypicInfo.size() <= 1) {
             return Data.NA;
         }
 
-        initExpression(covariates.size());
 
         try {
-            String regParam;
+            //Put indices
+            MathManager.getRenjinEngine().put("ind", indices);
+            MathManager.getRenjinEngine().eval(" ind <- as.numeric(unlist(ind))");
 
-            for (int i = 1; i <= covariates.size(); i++) {
-                regParam = "x" + i;
-                MathManager.getRenjinEngine().put(regParam, covariates.get(i - 1));
-                MathManager.getRenjinEngine().eval(regParam + " <- as.numeric(unlist(" + regParam + "))");
+            //Getting genotype info
+            MathManager.getRenjinEngine().put("xt1", genotypicInfo);
+            MathManager.getRenjinEngine().eval(" xt1 <- as.numeric(unlist(xt1))");
+
+            //Getting covariate subset
+            for (int i=1; i<=eigencount; i++){
+                MathManager.getRenjinEngine().eval("xt"+(i+1)+"<- x"+i+"[ind+1]");
             }
 
-            MathManager.getRenjinEngine().put("y", response);
-            MathManager.getRenjinEngine().eval(" y <- as.numeric(unlist(y))");
+            //Getting response subset
+            MathManager.getRenjinEngine().eval("yt <- y[ind+1]");
 
-            System.out.println("y= " + ((SEXP) MathManager.getRenjinEngine().eval("length(y)")).asReal());
-            System.out.println("x1= " + ((SEXP) MathManager.getRenjinEngine().eval("length(x1)")).asReal());
-            System.out.println("x2= " + ((SEXP) MathManager.getRenjinEngine().eval("length(x2)")).asReal());
-
+            //Evaluating regression
             MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
 
-            //String fitExpression = "with(logredmd, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail=FALSE))";
-            String extractPval = "summary(logredmd)$coefficients[2,4]";
-            DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval(extractPval);
+            //Getting P value for genotype
+            DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval("summary(logredmd)$coefficients[2,4]");
+
+
             return (null != res) ? res.getElementAsDouble(0) : Data.NA;
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -126,10 +132,10 @@ public class LogisticOutput extends StatisticOutput {
 
     private static void initExpression(int covariantCount) {
         if (expression.length() == 0) {
-            expression.append("y~");
+            expression.append("yt~");
 
             for (int i = 0; i < covariantCount; i++) {
-                expression.append("x").append(i + 1);
+                expression.append("xt").append(i + 1);
                 if (i != covariantCount - 1) {
                     expression.append("+");
                 }
@@ -138,51 +144,42 @@ public class LogisticOutput extends StatisticOutput {
     }
 
     public void doRegression(String model) {
-        int eigenCount = SampleManager.getList().get(0).getCovariateList().size();
-        //One more covariate for genotype
-        eigenCount++;
-
-        //Initializing Params
-        List<Double> response = new ArrayList<>();
-
-        List<List<Double>> covariates = new ArrayList<>(); // all sample covariates per column per list
-
-        //init X for log reg
-        for (int i = 0; i < eigenCount; i++) {
-            covariates.add(new ArrayList<>());
-        }
+        List<Double> genotypicInfo = new ArrayList<>();
+        List<Integer> qualifiedIndices= new ArrayList<>();
+        /*int eigenCount = SampleManager.getList().get(0).getCovariateList().size();*/
 
         for (Sample sample : SampleManager.getList()) {
 
             //get genotype
             int geno = calledVar.getGenotype(sample.getIndex());
-
+            //set genotypicInfo
             if (geno != Data.NA) {
                 if (model.equals("dominant")) {
+                    // Index Qualified
+                    qualifiedIndices.add(sample.getIndex());
                     if (isMinorRef) {
                         if (geno == Index.REF || geno == Index.HET || geno == Index.REF_MALE) {
-                            covariates.get(0).add(1d);
+                            genotypicInfo.add(1d);
                         } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
-                            covariates.get(0).add(0d);
+                            genotypicInfo.add(0d);
                         }
-                    } else if (geno == Index.REF || geno == Index.REF_MALE) {
-                        covariates.get(0).add(0d);
-                    } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
-                        covariates.get(0).add(1d);
+                    } else {
+                        if (geno == Index.REF || geno == Index.REF_MALE) {
+                            genotypicInfo.add(0d);
+                        } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
+                            genotypicInfo.add(1d);
+                        }
                     }
-
-                    //Set other predictors
-                    for (int i = 1; i < eigenCount; i++) {
-                        covariates.get(i).add(sample.getCovariateList().get(i - 1));
-                    }
-
-                    //Set Response
-                    response.add((double) sample.getPheno());
                 }
             }
+
+
         }
 
-        pValue = doLogisticRegression(response, covariates);
+        //Initialize expression for covariates plus genotype
+        initExpression(eigencount+1);
+
+        pValue = doLogisticRegression(genotypicInfo, qualifiedIndices);
     }
 
     @Override
