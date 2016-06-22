@@ -56,8 +56,6 @@ public class CollapsingOutput extends Output {
             + "Ctrl Maf,"
             + "Loo Maf,"
             + "Loo Minor Hom Freq,"
-            + "Case HWE_P,"
-            + "Ctrl HWE_P,"
             + "Samtools Raw Coverage,"
             + "Gatk Filtered Coverage,"
             + "Reads Alt,"
@@ -92,7 +90,7 @@ public class CollapsingOutput extends Output {
             + MgiManager.getTitle();
 
     String geneName = "";
-    double looMaf = 0;
+    double looMAF = 0;
     double looMhgf = 0;
 
     HashSet<String> regionBoundaryNameSet; // for --region-boundary only
@@ -126,20 +124,20 @@ public class CollapsingOutput extends Output {
     }
 
     private void calculateLooMaf() {
-        int totalVar = 2 * sampleCount[Index.HOM][Index.ALL]
+        int alleleCount = 2 * sampleCount[Index.HOM][Index.ALL]
                 + sampleCount[Index.HET][Index.ALL]
                 + sampleCount[Index.HOM_MALE][Index.ALL];
-        int totalNum = totalVar + sampleCount[Index.HET][Index.ALL]
+        int totalCount = alleleCount + sampleCount[Index.HET][Index.ALL]
                 + 2 * sampleCount[Index.REF][Index.ALL]
                 + sampleCount[Index.REF_MALE][Index.ALL];
 
-        double varAllFreq = MathManager.devide(totalVar, totalNum);
-        looMaf = varAllFreq;
+        double allAF = MathManager.devide(alleleCount, totalCount);
+        looMAF = allAF;
 
-        if (varAllFreq > 0.5) {
+        if (allAF > 0.5) {
             isMinorRef = true;
 
-            looMaf = 1.0 - varAllFreq;
+            looMAF = 1.0 - allAF;
         } else {
             isMinorRef = false;
         }
@@ -226,9 +224,9 @@ public class CollapsingOutput extends Output {
 
     public boolean isMaxLooMafValid(boolean isRecessive) {
         if (isRecessive) {
-            return CollapsingCommand.isMaxLooMafRecValid(looMaf);
+            return CollapsingCommand.isMaxLooMafRecValid(looMAF);
         } else {
-            return CollapsingCommand.isMaxLooMafValid(looMaf);
+            return CollapsingCommand.isMaxLooMafValid(looMAF);
         }
     }
 
@@ -260,12 +258,10 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(caseMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
-        sb.append(FormatManager.getDouble(looMaf)).append(",");
+        sb.append(FormatManager.getDouble(caseMAF)).append(",");
+        sb.append(FormatManager.getDouble(ctrlMAF)).append(",");
+        sb.append(FormatManager.getDouble(looMAF)).append(",");
         sb.append(FormatManager.getDouble(looMhgf)).append(",");
-        sb.append(FormatManager.getDouble(caseHweP)).append(",");
-        sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getReadsAlt(sample.getId()))).append(",");

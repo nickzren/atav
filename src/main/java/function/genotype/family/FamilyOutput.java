@@ -63,7 +63,6 @@ public class FamilyOutput extends Output {
             + "Minor Hom Ctrl Freq,"
             + "Het Ctrl Freq,"
             + "Ctrl Maf,"
-            + "Ctrl HWEp,"
             + "Avg Min Case Cov,"
             + "Avg Min Ctrl Cov,"
             + EvsManager.getTitle()
@@ -263,8 +262,7 @@ public class FamilyOutput extends Output {
         sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(FormatManager.getDouble(ctrlMhgf)).append(",");
         sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
+        sb.append(FormatManager.getDouble(ctrlMAF)).append(",");
         sb.append(FormatManager.getDouble(familyAverageCov[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(familyAverageCov[Index.CTRL])).append(",");
 

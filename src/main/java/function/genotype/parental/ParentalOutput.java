@@ -64,8 +64,6 @@ public class ParentalOutput extends Output {
             + "QC Fail Ctrl,"
             + "Case Maf,"
             + "Ctrl Maf,"
-            + "Case HWE_P,"
-            + "Ctrl HWE_P,"
             + "Samtools Raw Coverage (child),"
             + "Gatk Filtered Coverage (child),"
             + "Reads Alt (child),"
@@ -210,10 +208,8 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(caseMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
-        sb.append(FormatManager.getDouble(caseHweP)).append(",");
-        sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
+        sb.append(FormatManager.getDouble(caseMAF)).append(",");
+        sb.append(FormatManager.getDouble(ctrlMAF)).append(",");
 
         sb.append(FormatManager.getDouble(calledVar.getCoverage(child.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getGatkFilteredCoverage(child.getId()))).append(",");

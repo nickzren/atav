@@ -49,8 +49,6 @@ public class FisherOutput extends StatisticOutput {
             + "QC Fail Ctrl,"
             + "Case Maf,"
             + "Ctrl Maf,"
-            + "Case HWE_P,"
-            + "Ctrl HWE_P,"
             + "P value,"
             + "Odds Ratio,"
             + EvsManager.getTitle()
@@ -138,10 +136,8 @@ public class FisherOutput extends StatisticOutput {
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(caseMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
-        sb.append(FormatManager.getDouble(caseHweP)).append(",");
-        sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
+        sb.append(FormatManager.getDouble(caseMAF)).append(",");
+        sb.append(FormatManager.getDouble(ctrlMAF)).append(",");
         sb.append(FormatManager.getDouble(pValue)).append(",");
         sb.append(FormatManager.getDouble(oddsRatio)).append(",");
 

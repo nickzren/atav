@@ -3,7 +3,6 @@ package function.variant.base;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
-import function.genotype.statistics.HWEExact;
 import global.Data;
 import global.Index;
 import function.genotype.base.SampleManager;
@@ -19,11 +18,9 @@ public class Output implements Cloneable {
     protected CalledVariant calledVar;
     public int[][] sampleCount = new int[6][3];
     public double[][] sampleFreq = new double[4][3];
-    public double varCaseFreq = 0;
-    public double varCtrlFreq = 0;
-    public double caseMaf = 0;
+    public double caseMAF = 0;
     public double caseMhgf = 0;
-    public double ctrlMaf = 0;
+    public double ctrlMAF = 0;
     public double ctrlMhgf = 0;
     public boolean isMinorRef = false;
     // not output
@@ -33,8 +30,6 @@ public class Output implements Cloneable {
     public int minorHomCase = 0;
     public int majorHomCtrl = 0;
     public int majorHomCase = 0;
-    public double caseHweP = 0;
-    public double ctrlHweP = 0;
     int totalCase;
     int totalCtrl;
 
@@ -93,14 +88,8 @@ public class Output implements Cloneable {
         calculateTotalCaseAndCtrl();
 
         calculateSampleFreq();
-
-        calculateHweP(); // only collapsing, fisher, linear, var geno, family output
         
-        calculateVarFreq();
-
-        checkMinorRef();
-
-        calculateMaf();
+        calculateAF();
 
         calculateMhgf();
 
@@ -137,54 +126,36 @@ public class Output implements Cloneable {
                 = MathManager.devide(sampleCount[Index.HET][Index.CTRL], totalCtrl);
     }
 
-    public void calculateHweP() {
-        caseHweP = HWEExact.getP(sampleCount[Index.HOM][Index.CASE],
-                sampleCount[Index.HET][Index.CASE],
-                sampleCount[Index.REF][Index.CASE]);
-
-        ctrlHweP = HWEExact.getP(sampleCount[Index.HOM][Index.CTRL],
-                sampleCount[Index.HET][Index.CTRL],
-                sampleCount[Index.REF][Index.CTRL]);
-    }
-
-    private void calculateVarFreq() {
-        int varCase = 2 * sampleCount[Index.HOM][Index.CASE]
+    private void calculateAF() {
+        int caseAC = 2 * sampleCount[Index.HOM][Index.CASE]
                 + sampleCount[Index.HET][Index.CASE]
                 + sampleCount[Index.HOM_MALE][Index.CASE];
-        int caseNum = varCase + sampleCount[Index.HET][Index.CASE]
+        int caseNum = caseAC + sampleCount[Index.HET][Index.CASE]
                 + 2 * sampleCount[Index.REF][Index.CASE]
                 + sampleCount[Index.REF_MALE][Index.CASE];
 
-        varCaseFreq = MathManager.devide(varCase, caseNum); // (2*hom + het + homMale) / (2*hom + homMale +2*het+2*ref + refMale)
+        double caseAF = MathManager.devide(caseAC, caseNum); // (2*hom + het + homMale) / (2*hom + homMale +2*het+2*ref + refMale)
 
-        int varCtrl = 2 * sampleCount[Index.HOM][Index.CTRL]
+        caseMAF = caseAF;
+        if (caseAF > 0.5) {
+            caseMAF = 1.0 - caseAF;
+        }
+        
+        int ctrlAC = 2 * sampleCount[Index.HOM][Index.CTRL]
                 + sampleCount[Index.HET][Index.CTRL]
                 + sampleCount[Index.HOM_MALE][Index.CTRL];
-        int ctrlNum = varCtrl + sampleCount[Index.HET][Index.CTRL]
+        int ctrlNum = ctrlAC + sampleCount[Index.HET][Index.CTRL]
                 + 2 * sampleCount[Index.REF][Index.CTRL]
                 + sampleCount[Index.REF_MALE][Index.CTRL];
 
-        varCtrlFreq = MathManager.devide(varCtrl, ctrlNum); // (2*hom + het + homMale) / (2*hom + homMale +2*het+2*ref + refMale)
-    }
-
-    public void checkMinorRef() {
-        if (varCtrlFreq > 0.5) {
+        double ctrlAF = MathManager.devide(ctrlAC, ctrlNum); // (2*hom + het + homMale) / (2*hom + homMale +2*het+2*ref + refMale)
+        
+        ctrlMAF = ctrlAF;
+        if (ctrlAF > 0.5) {
             isMinorRef = true;
+            ctrlMAF = 1.0 - ctrlAF; 
         } else {
             isMinorRef = false;
-        }
-    }
-
-    private void calculateMaf() {
-        caseMaf = varCaseFreq;
-        ctrlMaf = varCtrlFreq;
-
-        if (isMinorRef) {
-            ctrlMaf = 1.0 - varCtrlFreq; // (2*ref + het + refMale) / (2*hom + homMale +2*het+2*ref + refMale)
-
-            if (varCaseFreq != Data.NA) {
-                caseMaf = 1.0 - varCaseFreq;
-            }
         }
     }
 
@@ -272,8 +243,8 @@ public class Output implements Cloneable {
     public boolean isValid() {
         return GenotypeLevelFilterCommand.isMinVarPresentValid(varPresent)
                 && GenotypeLevelFilterCommand.isMinCaseCarrierValid(caseCarrier)
-                && GenotypeLevelFilterCommand.isMaxCtrlMafValid(ctrlMaf)
-                && GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf);
+                && GenotypeLevelFilterCommand.isMaxCtrlMafValid(ctrlMAF)
+                && GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMAF);
     }
 
     /*

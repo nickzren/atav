@@ -164,8 +164,8 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(caseMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
+        sb.append(FormatManager.getDouble(caseMAF)).append(",");
+        sb.append(FormatManager.getDouble(ctrlMAF)).append(",");
 
         sb.append(calledVar.getEvsStr());
 
