@@ -49,7 +49,6 @@ public class LinearOutput extends StatisticOutput {
             + "Ctrl HWE_P,"
             + "P value,"
             + "Beta1,"
-            + "Avg Min Ctrl Cov,"
             + EvsManager.getTitle()
             + "Polyphen Humdiv Score,"
             + "Polyphen Humdiv Prediction,"
@@ -339,7 +338,6 @@ public class LinearOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
         sb.append(FormatManager.getDouble(pValue)).append(",");
         sb.append(FormatManager.getDouble(beta1)).append(",");
-        sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
 
         sb.append(calledVar.getEvsStr());
 

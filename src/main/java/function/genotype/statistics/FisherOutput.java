@@ -53,8 +53,6 @@ public class FisherOutput extends StatisticOutput {
             + "Ctrl HWE_P,"
             + "P value,"
             + "Odds Ratio,"
-            + "Avg Min Case Cov,"
-            + "Avg Min Ctrl Cov,"
             + EvsManager.getTitle()
             + "Polyphen Humdiv Score,"
             + "Polyphen Humdiv Prediction,"
@@ -146,8 +144,6 @@ public class FisherOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
         sb.append(FormatManager.getDouble(pValue)).append(",");
         sb.append(FormatManager.getDouble(oddsRatio)).append(",");
-        sb.append(FormatManager.getDouble(averageCov[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
 
         sb.append(calledVar.getEvsStr());
 

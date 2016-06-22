@@ -27,8 +27,6 @@ public class Output implements Cloneable {
     public double ctrlMhgf = 0;
     public boolean isMinorRef = false;
     // not output
-    public int[] totalCov = new int[2];
-    public double[] averageCov = new double[2];
     public int varPresent = 0;
     public int caseCarrier = 0;
     public int minorHomCtrl = 0;
@@ -49,16 +47,14 @@ public class Output implements Cloneable {
     }
 
     public void countSampleGenoCov() {
-        int cov, geno, pheno;
+        int geno, pheno;
 
         for (Sample sample : SampleManager.getList()) {
-            cov = calledVar.getCoverage(sample.getIndex());
             geno = calledVar.getGenotype(sample.getIndex());
             geno = getGenoType(geno, sample);
             pheno = (int) sample.getPheno();
 
             addSampleGeno(geno, pheno);
-            addSampleCov(cov, pheno);
         }
     }
 
@@ -80,18 +76,6 @@ public class Output implements Cloneable {
         sampleCount[genotype][pheno]--;
     }
 
-    public void addSampleCov(int cov, int phone) {
-        if (cov != Data.NA) {
-            totalCov[phone] += cov;
-        }
-    }
-
-    public void deleteSampleCov(int cov, int phone) {
-        if (cov != Data.NA) {
-            totalCov[phone] -= cov;
-        }
-    }
-
     public void countMissingSamples() {
         sampleCount[Index.MISSING][Index.CASE] = SampleManager.getCaseNum();
         sampleCount[Index.MISSING][Index.CTRL] = SampleManager.getCtrlNum();
@@ -111,9 +95,7 @@ public class Output implements Cloneable {
         calculateSampleFreq();
 
         calculateHweP(); // only collapsing, fisher, linear, var geno, family output
-
-        calculateAvgCov();
-
+        
         calculateVarFreq();
 
         checkMinorRef();
@@ -163,11 +145,6 @@ public class Output implements Cloneable {
         ctrlHweP = HWEExact.getP(sampleCount[Index.HOM][Index.CTRL],
                 sampleCount[Index.HET][Index.CTRL],
                 sampleCount[Index.REF][Index.CTRL]);
-    }
-
-    private void calculateAvgCov() {
-        averageCov[Index.CASE] = MathManager.devide(totalCov[Index.CASE], totalCase);
-        averageCov[Index.CTRL] = MathManager.devide(totalCov[Index.CTRL], totalCtrl);
     }
 
     private void calculateVarFreq() {
@@ -260,8 +237,6 @@ public class Output implements Cloneable {
     public void reset() {
         sampleCount = new int[6][3];
         sampleFreq = new double[4][3];
-        totalCov = new int[2];
-        averageCov = new double[2];
     }
 
     public int getGenoType(int geno, Sample sample) {
@@ -295,15 +270,10 @@ public class Output implements Cloneable {
     }
 
     public boolean isValid() {
-        if (GenotypeLevelFilterCommand.isMinVarPresentValid(varPresent)
+        return GenotypeLevelFilterCommand.isMinVarPresentValid(varPresent)
                 && GenotypeLevelFilterCommand.isMinCaseCarrierValid(caseCarrier)
-                && GenotypeLevelFilterCommand.isMinCtrlAverageCoverageValid(averageCov[Index.CTRL])
                 && GenotypeLevelFilterCommand.isMaxCtrlMafValid(ctrlMaf)
-                && GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf)) {
-            return true;
-        }
-
-        return false;
+                && GenotypeLevelFilterCommand.isMinCtrlMafValid(ctrlMaf);
     }
 
     /*
@@ -340,8 +310,6 @@ public class Output implements Cloneable {
 
         output.sampleCount = FormatManager.deepCopyIntArray(sampleCount);
         output.sampleFreq = FormatManager.deepCopyDoubleArray(sampleFreq);
-        output.totalCov = FormatManager.deepCopyIntArray(totalCov);
-        output.averageCov = FormatManager.deepCopyDoubleArray(averageCov);
 
         return output;
     }
