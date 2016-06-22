@@ -21,8 +21,6 @@ import utils.FormatManager;
 import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.renjin.sexp.SEXP;
 import utils.ErrorManager;
 import utils.MathManager;
@@ -116,6 +114,8 @@ public class LogisticOutput extends StatisticOutput {
             MathManager.getRenjinEngine().eval("yt <- y[ind+1]");
 
             //Evaluating regression
+            MathManager.getRenjinEngine().put("y", response);
+            MathManager.getRenjinEngine().eval(" y <- as.numeric(unlist(y))");
             MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
 
             //Getting P value for genotype
