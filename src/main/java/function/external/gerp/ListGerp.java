@@ -22,7 +22,7 @@ public class ListGerp extends AnalysisBase {
     public void initOutput() {
         try {
             bwGerp = new BufferedWriter(new FileWriter(gerpFilePath));
-            bwGerp.write(GerpOutput.title);
+            bwGerp.write(GerpOutput.getTitle());
             bwGerp.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

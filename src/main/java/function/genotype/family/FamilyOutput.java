@@ -31,54 +31,55 @@ public class FamilyOutput extends Output {
     String flag = "";
     public int[][] familyGenoCount = new int[6][3];
     public double[][] familySampleFreq = new double[4][3];
-    
-    public static final String title
-            = "Family ID,"
-            + "Variant ID,"
-            + "Variant Type,"
-            + "Rs Number,"
-            + "Ref Allele,"
-            + "Alt Allele,"
-            + "CADD Score Phred,"
-            + GerpManager.getTitle()
-            + "Is Minor Ref,"
-            + "Flag,"
-            + "Hom Family Case,"
-            + "Het Family Case,"
-            + "Ref Family Case,"
-            + "Missing Family Case,"
-            + "Hom Family Case Freq,"
-            + "Het Family Case Freq,"
-            + "Hom Family Ctrl,"
-            + "Het Family Ctrl,"
-            + "Ref Family Ctrl,"
-            + "Missing Family Ctrl,"
-            + "Hom Family Ctrl Freq,"
-            + "Het Family Ctrl Freq,"
-            + "Major Hom Ctrl,"
-            + "Het Ctrl,"
-            + "Minor Hom Ctrl,"
-            + "Missing Ctrl,"
-            + "Minor Hom Ctrl Freq,"
-            + "Het Ctrl Freq,"
-            + "Ctrl Maf,"
-            + EvsManager.getTitle()
-            + "Polyphen Humdiv Score,"
-            + "Polyphen Humdiv Prediction,"
-            + "Polyphen Humvar Score,"
-            + "Polyphen Humvar Prediction,"
-            + "Function,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Codon Change,"
-            + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle()
-            + KaviarManager.getTitle()
-            + KnownVarManager.getTitle()
-            + RvisManager.getTitle()
-            + SubRvisManager.getTitle()
-            + GenomesManager.getTitle()
-            + MgiManager.getTitle();
+
+    public static String getTitle() {
+        return "Family ID,"
+                + "Variant ID,"
+                + "Variant Type,"
+                + "Rs Number,"
+                + "Ref Allele,"
+                + "Alt Allele,"
+                + "CADD Score Phred,"
+                + GerpManager.getTitle()
+                + "Is Minor Ref,"
+                + "Flag,"
+                + "Hom Family Case,"
+                + "Het Family Case,"
+                + "Ref Family Case,"
+                + "Missing Family Case,"
+                + "Hom Family Case Freq,"
+                + "Het Family Case Freq,"
+                + "Hom Family Ctrl,"
+                + "Het Family Ctrl,"
+                + "Ref Family Ctrl,"
+                + "Missing Family Ctrl,"
+                + "Hom Family Ctrl Freq,"
+                + "Het Family Ctrl Freq,"
+                + "Major Hom Ctrl,"
+                + "Het Ctrl,"
+                + "Minor Hom Ctrl,"
+                + "Missing Ctrl,"
+                + "Minor Hom Ctrl Freq,"
+                + "Het Ctrl Freq,"
+                + "Ctrl Maf,"
+                + EvsManager.getTitle()
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Function,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Codon Change,"
+                + "Gene Transcript (AA Change),"
+                + ExacManager.getTitle()
+                + KaviarManager.getTitle()
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
+    }
 
     public FamilyOutput(CalledVariant c) {
         super(c);

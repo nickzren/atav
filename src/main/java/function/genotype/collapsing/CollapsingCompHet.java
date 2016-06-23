@@ -36,7 +36,7 @@ public class CollapsingCompHet extends CollapsingBase {
             super.initOutput();
 
             bwCompHet = new BufferedWriter(new FileWriter(comphetFilePath));
-            bwCompHet.write(CompHetOutput.title);
+            bwCompHet.write(CompHetOutput.getTitle());
             bwCompHet.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

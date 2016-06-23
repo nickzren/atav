@@ -19,20 +19,21 @@ import utils.FormatManager;
  */
 public class CompHetOutput extends TrioOutput implements Comparable {
 
-    public static final String title
-            = "Family ID,"
-            + "Child,"
-            + "Sample Type (Child),"
-            + "Mother,"
-            + "Father,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Flag,"
-            + "Multi qualified var combinations,"
-            + "Var Case Freq #1 & #2 (co-occurance),"
-            + "Var Ctrl Freq #1 & #2 (co-occurance),"
-            + initVarTitleStr("1") + ","
-            + initVarTitleStr("2");
+    public static String getTitle() {
+        return "Family ID,"
+                + "Child,"
+                + "Sample Type (Child),"
+                + "Mother,"
+                + "Father,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Flag,"
+                + "Multi qualified var combinations,"
+                + "Var Case Freq #1 & #2 (co-occurance),"
+                + "Var Ctrl Freq #1 & #2 (co-occurance),"
+                + initVarTitleStr("1") + ","
+                + initVarTitleStr("2");
+    }
 
     private static String initVarTitleStr(String var) {
         String varTitle = "Variant ID,"
@@ -183,13 +184,13 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
-        
+
         sb.append(calledVar.getRvis());
-        
+
         sb.append(calledVar.getSubRvis());
-        
+
         sb.append(calledVar.get1000Genomes());
-        
+
         sb.append(calledVar.getMgi());
 
         return sb.toString();

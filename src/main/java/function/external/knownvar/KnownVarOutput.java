@@ -18,22 +18,23 @@ public class KnownVarOutput {
     private String pgx;
     private int recessiveCarrier;
 
-    public static final String title
-            = "Variant ID,"
-            + "Gene Name,"
-            + KnownVarManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + "Gene Name,"
+                + KnownVarManager.getTitle();
+    }
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
-            String geneName = annotatedVar.getGeneName().toUpperCase();
-            clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
-            clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
-            hgmd = KnownVarManager.getHGMD(annotatedVar);
-            omimDiseaseName = KnownVarManager.getOMIM(geneName);
-            acmg = KnownVarManager.getACMG(geneName);
-            adultOnset = KnownVarManager.getAdultOnset(geneName);
-            clinGen = KnownVarManager.getClinGen(geneName);
-            pgx = KnownVarManager.getPGx(geneName);
-            recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
+        String geneName = annotatedVar.getGeneName().toUpperCase();
+        clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
+        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
+        hgmd = KnownVarManager.getHGMD(annotatedVar);
+        omimDiseaseName = KnownVarManager.getOMIM(geneName);
+        acmg = KnownVarManager.getACMG(geneName);
+        adultOnset = KnownVarManager.getAdultOnset(geneName);
+        clinGen = KnownVarManager.getClinGen(geneName);
+        pgx = KnownVarManager.getPGx(geneName);
+        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
     }
 
     @Override

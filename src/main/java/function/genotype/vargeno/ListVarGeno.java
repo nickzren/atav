@@ -25,11 +25,11 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwDetails = new BufferedWriter(new FileWriter(genotypesFilePath));
-            bwDetails.write(VarGenoOutput.title);
+            bwDetails.write(VarGenoOutput.getTitle());
             bwDetails.newLine();
             //bwDirty = new BufferedWriter(new FileWriter(dirtyFilePath));
             bwSampleVariantCount = new BufferedWriter(new FileWriter(sampleVariantCountFilePath));
-            bwSampleVariantCount.write(SampleVariantCount.title);
+            bwSampleVariantCount.write(SampleVariantCount.getTitle());
             bwSampleVariantCount.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

@@ -36,7 +36,7 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
     public void initOutput() {
         try {
             bwSubRvis = new BufferedWriter(new FileWriter(subRvisFilePath));
-            bwSubRvis.write(SubRvisOutput.title);
+            bwSubRvis.write(SubRvisOutput.getTitle());
             bwSubRvis.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

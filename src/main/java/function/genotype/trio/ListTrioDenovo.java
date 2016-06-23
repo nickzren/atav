@@ -22,12 +22,12 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwDetails = new BufferedWriter(new FileWriter(flagFilePath));
-            bwDetails.write(DenovoOutput.title);
+            bwDetails.write(DenovoOutput.getTitle());
             bwDetails.newLine();
 
             if (TrioCommand.isIncludeNoflag) {
                 bwDetails_noflag = new BufferedWriter(new FileWriter(noFlagFilePath));
-                bwDetails_noflag.write(DenovoOutput.title);
+                bwDetails_noflag.write(DenovoOutput.getTitle());
                 bwDetails_noflag.newLine();
             }
         } catch (Exception ex) {

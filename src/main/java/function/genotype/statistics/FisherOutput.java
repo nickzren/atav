@@ -24,50 +24,52 @@ import java.util.ArrayList;
 public class FisherOutput extends StatisticOutput {
 
     double oddsRatio = 0;
-    public static final String title
-            = "Variant ID,"
-            + "Variant Type,"
-            + "Rs Number,"
-            + "Ref Allele,"
-            + "Alt Allele,"
-            + "CADD Score Phred,"
-            + GerpManager.getTitle()
-            + "Is Minor Ref,"
-            + "Major Hom Case,"
-            + "Het Case,"
-            + "Minor Hom Case,"
-            + "Minor Hom Case Freq,"
-            + "Het Case Freq,"
-            + "Major Hom Ctrl,"
-            + "Het Ctrl,"
-            + "Minor Hom Ctrl,"
-            + "Minor Hom Ctrl Freq,"
-            + "Het Ctrl Freq,"
-            + "Missing Case,"
-            + "QC Fail Case,"
-            + "Missing Ctrl,"
-            + "QC Fail Ctrl,"
-            + "Case Maf,"
-            + "Ctrl Maf,"
-            + "P value,"
-            + "Odds Ratio,"
-            + EvsManager.getTitle()
-            + "Polyphen Humdiv Score,"
-            + "Polyphen Humdiv Prediction,"
-            + "Polyphen Humvar Score,"
-            + "Polyphen Humvar Prediction,"
-            + "Function,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Codon Change,"
-            + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle()
-            + KaviarManager.getTitle()
-            + KnownVarManager.getTitle()
-            + RvisManager.getTitle()
-            + SubRvisManager.getTitle()
-            + GenomesManager.getTitle()
-            + MgiManager.getTitle();
+
+    public static String getTitle() {
+        return "Variant ID,"
+                + "Variant Type,"
+                + "Rs Number,"
+                + "Ref Allele,"
+                + "Alt Allele,"
+                + "CADD Score Phred,"
+                + GerpManager.getTitle()
+                + "Is Minor Ref,"
+                + "Major Hom Case,"
+                + "Het Case,"
+                + "Minor Hom Case,"
+                + "Minor Hom Case Freq,"
+                + "Het Case Freq,"
+                + "Major Hom Ctrl,"
+                + "Het Ctrl,"
+                + "Minor Hom Ctrl,"
+                + "Minor Hom Ctrl Freq,"
+                + "Het Ctrl Freq,"
+                + "Missing Case,"
+                + "QC Fail Case,"
+                + "Missing Ctrl,"
+                + "QC Fail Ctrl,"
+                + "Case Maf,"
+                + "Ctrl Maf,"
+                + "P value,"
+                + "Odds Ratio,"
+                + EvsManager.getTitle()
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Function,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Codon Change,"
+                + "Gene Transcript (AA Change),"
+                + ExacManager.getTitle()
+                + KaviarManager.getTitle()
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
+    }
 
     public FisherOutput(CalledVariant c) {
         super(c);
@@ -92,12 +94,10 @@ public class FisherOutput extends StatisticOutput {
                         + genoCount[Index.REF_MALE][Index.CASE]) > 0) {
                     return true;
                 }
-            } else {
-                if ((genoCount[Index.HET][Index.CASE]
-                        + genoCount[Index.HOM][Index.CASE]
-                        + genoCount[Index.HOM_MALE][Index.CASE]) > 0) {
-                    return true;
-                }
+            } else if ((genoCount[Index.HET][Index.CASE]
+                    + genoCount[Index.HOM][Index.CASE]
+                    + genoCount[Index.HOM_MALE][Index.CASE]) > 0) {
+                return true;
             }
 
             return false;

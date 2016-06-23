@@ -26,68 +26,69 @@ import utils.MathManager;
  */
 public class CollapsingOutput extends Output {
 
-    public static String title
-            = "Variant ID,"
-            + "Variant Type,"
-            + "Rs Number,"
-            + "Is Minor Ref,"
-            + "Ref Allele,"
-            + "Alt Allele,"
-            + "CADD Score Phred,"
-            + GerpManager.getTitle()
-            + "Genotype,"
-            + "Sample Name,"
-            + "Sample Type,"
-            + "Major Hom Case,"
-            + "Het Case,"
-            + "Minor Hom Case,"
-            + "Minor Hom Case Freq,"
-            + "Het Case Freq,"
-            + "Major Hom Ctrl,"
-            + "Het Ctrl,"
-            + "Minor Hom Ctrl,"
-            + "Minor Hom Ctrl Freq,"
-            + "Het Ctrl Freq,"
-            + "Missing Case,"
-            + "QC Fail Case,"
-            + "Missing Ctrl,"
-            + "QC Fail Ctrl,"
-            + "Case Maf,"
-            + "Ctrl Maf,"
-            + "Loo Maf,"
-            + "Loo Minor Hom Freq,"
-            + "Samtools Raw Coverage,"
-            + "Gatk Filtered Coverage,"
-            + "Reads Alt,"
-            + "Reads Ref,"
-            + "Percent Alt Read,"
-            + "Vqslod,"
-            + "Pass Fail Status,"
-            + "Genotype Qual GQ,"
-            + "Strand Bias FS,"
-            + "Haplotype Score,"
-            + "Rms Map Qual MQ,"
-            + "Qual By Depth QD,"
-            + "Qual,"
-            + "Read Pos Rank Sum,"
-            + "Map Qual Rank Sum,"
-            + EvsManager.getTitle()
-            + "Polyphen Humdiv Score,"
-            + "Polyphen Humdiv Prediction,"
-            + "Polyphen Humvar Score,"
-            + "Polyphen Humvar Prediction,"
-            + "Function,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Codon Change,"
-            + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle()
-            + KaviarManager.getTitle()
-            + KnownVarManager.getTitle()
-            + RvisManager.getTitle()
-            + SubRvisManager.getTitle()
-            + GenomesManager.getTitle()
-            + MgiManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + "Variant Type,"
+                + "Rs Number,"
+                + "Is Minor Ref,"
+                + "Ref Allele,"
+                + "Alt Allele,"
+                + "CADD Score Phred,"
+                + GerpManager.getTitle()
+                + "Genotype,"
+                + "Sample Name,"
+                + "Sample Type,"
+                + "Major Hom Case,"
+                + "Het Case,"
+                + "Minor Hom Case,"
+                + "Minor Hom Case Freq,"
+                + "Het Case Freq,"
+                + "Major Hom Ctrl,"
+                + "Het Ctrl,"
+                + "Minor Hom Ctrl,"
+                + "Minor Hom Ctrl Freq,"
+                + "Het Ctrl Freq,"
+                + "Missing Case,"
+                + "QC Fail Case,"
+                + "Missing Ctrl,"
+                + "QC Fail Ctrl,"
+                + "Case Maf,"
+                + "Ctrl Maf,"
+                + "Loo Maf,"
+                + "Loo Minor Hom Freq,"
+                + "Samtools Raw Coverage,"
+                + "Gatk Filtered Coverage,"
+                + "Reads Alt,"
+                + "Reads Ref,"
+                + "Percent Alt Read,"
+                + "Vqslod,"
+                + "Pass Fail Status,"
+                + "Genotype Qual GQ,"
+                + "Strand Bias FS,"
+                + "Haplotype Score,"
+                + "Rms Map Qual MQ,"
+                + "Qual By Depth QD,"
+                + "Qual,"
+                + "Read Pos Rank Sum,"
+                + "Map Qual Rank Sum,"
+                + EvsManager.getTitle()
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Function,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Codon Change,"
+                + "Gene Transcript (AA Change),"
+                + ExacManager.getTitle()
+                + KaviarManager.getTitle()
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
+    }
 
     String geneName = "";
     double looMAF = 0;
@@ -183,11 +184,9 @@ public class CollapsingOutput extends Output {
                     + genoCount[Index.REF_MALE][Index.ALL] > 0) {
                 return true;
             }
-        } else {
-            if (genoCount[Index.HOM][Index.ALL]
-                    + genoCount[Index.HOM_MALE][Index.ALL] > 0) {
-                return true;
-            }
+        } else if (genoCount[Index.HOM][Index.ALL]
+                + genoCount[Index.HOM_MALE][Index.ALL] > 0) {
+            return true;
         }
 
         return false;
@@ -213,10 +212,8 @@ public class CollapsingOutput extends Output {
             if (geno == 0 || geno == 1) {
                 return true;
             }
-        } else {
-            if (geno == 2 || geno == 1) {
-                return true;
-            }
+        } else if (geno == 2 || geno == 1) {
+            return true;
         }
 
         return false;

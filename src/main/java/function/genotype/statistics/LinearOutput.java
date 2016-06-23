@@ -29,42 +29,44 @@ import utils.MathManager;
 public class LinearOutput extends StatisticOutput {
 
     double beta1 = 0;
-    public static final String title
-            = "Variant ID,"
-            + "Variant Type,"
-            + "Rs Number,"
-            + "Ref Allele,"
-            + "Alt Allele,"
-            + "CADD Score Phred,"
-            + GerpManager.getTitle()
-            + "Is Minor Ref,"
-            + "Major Hom Ctrl,"
-            + "Het Ctrl,"
-            + "Minor Hom Ctrl,"
-            + "Minor Hom Ctrl Freq,"
-            + "Het Ctrl Freq,"
-            + "Missing Ctrl,"
-            + "QC Fail Ctrl,"
-            + "Ctrl Maf,"
-            + "P value,"
-            + "Beta1,"
-            + EvsManager.getTitle()
-            + "Polyphen Humdiv Score,"
-            + "Polyphen Humdiv Prediction,"
-            + "Polyphen Humvar Score,"
-            + "Polyphen Humvar Prediction,"
-            + "Function,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Codon Change,"
-            + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle()
-            + KaviarManager.getTitle()
-            + KnownVarManager.getTitle()
-            + RvisManager.getTitle()
-            + SubRvisManager.getTitle()
-            + GenomesManager.getTitle()
-            + MgiManager.getTitle();
+
+    public static String getTitle() {
+        return "Variant ID,"
+                + "Variant Type,"
+                + "Rs Number,"
+                + "Ref Allele,"
+                + "Alt Allele,"
+                + "CADD Score Phred,"
+                + GerpManager.getTitle()
+                + "Is Minor Ref,"
+                + "Major Hom Ctrl,"
+                + "Het Ctrl,"
+                + "Minor Hom Ctrl,"
+                + "Minor Hom Ctrl Freq,"
+                + "Het Ctrl Freq,"
+                + "Missing Ctrl,"
+                + "QC Fail Ctrl,"
+                + "Ctrl Maf,"
+                + "P value,"
+                + "Beta1,"
+                + EvsManager.getTitle()
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Function,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Codon Change,"
+                + "Gene Transcript (AA Change),"
+                + ExacManager.getTitle()
+                + KaviarManager.getTitle()
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
+    }
 
     public LinearOutput(CalledVariant c) {
         super(c);
@@ -117,23 +119,21 @@ public class LinearOutput extends StatisticOutput {
                         sr.addData(1, y);
                         data[base + 1] = 1; //data[base+2] = 0;
                     }
-                } else {
-                    if (geno == Index.REF) {
-                        sr.addData(0, y);
-                        data[base + 1] = 0; //data[base+2] = 0;
-                    } else if (geno == Index.HET) {
-                        sr.addData(1, y);
-                        data[base + 1] = 1; //data[base+2] = 1;
-                    } else if (geno == Index.HOM) {
-                        sr.addData(2, y);
-                        data[base + 1] = 2; //data[base+2] = 0;
-                    } else if (geno == Index.HOM_MALE) {
-                        sr.addData(1, y);
-                        data[base + 1] = 1; //data[base+2] = 0;
-                    } else if (geno == Index.REF_MALE) {
-                        sr.addData(0, y);
-                        data[base + 1] = 0; //data[base+2] = 0;
-                    }
+                } else if (geno == Index.REF) {
+                    sr.addData(0, y);
+                    data[base + 1] = 0; //data[base+2] = 0;
+                } else if (geno == Index.HET) {
+                    sr.addData(1, y);
+                    data[base + 1] = 1; //data[base+2] = 1;
+                } else if (geno == Index.HOM) {
+                    sr.addData(2, y);
+                    data[base + 1] = 2; //data[base+2] = 0;
+                } else if (geno == Index.HOM_MALE) {
+                    sr.addData(1, y);
+                    data[base + 1] = 1; //data[base+2] = 0;
+                } else if (geno == Index.REF_MALE) {
+                    sr.addData(0, y);
+                    data[base + 1] = 0; //data[base+2] = 0;
                 }
                 nobs++;
             }
@@ -183,17 +183,15 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(0, y);
                             sr.addData(0, y);
                         }
-                    } else {
-                        if (geno == Index.REF) {
-                            sr.addData(0, y);
-                            sr.addData(0, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(1, y);
-                            sr.addData(0, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(1, y);
-                            sr.addData(1, y);
-                        }
+                    } else if (geno == Index.REF) {
+                        sr.addData(0, y);
+                        sr.addData(0, y);
+                    } else if (geno == Index.HET) {
+                        sr.addData(1, y);
+                        sr.addData(0, y);
+                    } else if (geno == Index.HOM) {
+                        sr.addData(1, y);
+                        sr.addData(1, y);
                     }
                 } else if (model.equals("dominant")) {
                     if (isMinorRef) {
@@ -208,18 +206,16 @@ public class LinearOutput extends StatisticOutput {
                         } else if (geno == Index.REF_MALE) {
                             sr.addData(1, y);
                         }
-                    } else {
-                        if (geno == Index.REF) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                    } else if (geno == Index.REF) {
+                        sr.addData(0, y);
+                    } else if (geno == Index.HET) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.HOM) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.HOM_MALE) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.REF_MALE) {
+                        sr.addData(0, y);
                     }
                 } else if (model.equals("recessive")) {
                     if (isMinorRef) {
@@ -234,18 +230,16 @@ public class LinearOutput extends StatisticOutput {
                         } else if (geno == Index.REF_MALE) {
                             sr.addData(1, y);
                         }
-                    } else {
-                        if (geno == Index.REF) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                    } else if (geno == Index.REF) {
+                        sr.addData(0, y);
+                    } else if (geno == Index.HET) {
+                        sr.addData(0, y);
+                    } else if (geno == Index.HOM) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.HOM_MALE) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.REF_MALE) {
+                        sr.addData(0, y);
                     }
                 } else if (model.equals("genotypic")) { // not complete yet, to be finished a bit later
                     if (isMinorRef) {
@@ -260,18 +254,16 @@ public class LinearOutput extends StatisticOutput {
                         } else if (geno == Index.REF_MALE) {
                             sr.addData(1, y);
                         }
-                    } else {
-                        if (geno == Index.REF) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(2, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                    } else if (geno == Index.REF) {
+                        sr.addData(0, y);
+                    } else if (geno == Index.HET) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.HOM) {
+                        sr.addData(2, y);
+                    } else if (geno == Index.HOM_MALE) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.REF_MALE) {
+                        sr.addData(0, y);
                     }
                 } else if (model.equals("additive")) {
                     if (isMinorRef) {
@@ -286,18 +278,16 @@ public class LinearOutput extends StatisticOutput {
                         } else if (geno == Index.REF_MALE) {
                             sr.addData(1, y);
                         }
-                    } else {
-                        if (geno == Index.REF) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(2, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                    } else if (geno == Index.REF) {
+                        sr.addData(0, y);
+                    } else if (geno == Index.HET) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.HOM) {
+                        sr.addData(2, y);
+                    } else if (geno == Index.HOM_MALE) {
+                        sr.addData(1, y);
+                    } else if (geno == Index.REF_MALE) {
+                        sr.addData(0, y);
                     }
                 } else {
                     LogManager.writeAndPrint("model is not recognized");

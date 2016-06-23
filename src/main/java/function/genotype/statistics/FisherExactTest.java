@@ -27,8 +27,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     BufferedWriter[] originalBw = new BufferedWriter[StatisticsCommand.models.length];
     BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.models.length];
 
-    HashMap<Integer, ArrayList<UnsortedOutputData>> unsortedMap
-            = new HashMap<Integer, ArrayList<UnsortedOutputData>>();
+    HashMap<Integer, ArrayList<UnsortedOutputData>> unsortedMap = new HashMap<>();
 
     static int qualifiedDomVarNum = 0;
     static int qualifiedAleVarNum = 0;
@@ -42,17 +41,17 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
                 String testModel = StatisticsCommand.models[m];
                 originalPOutputPath[m] = CommonCommand.outputPath + testModel + ".csv";
                 originalBw[m] = new BufferedWriter(new FileWriter(originalPOutputPath[m]));
-                originalBw[m].write(FisherOutput.title);
+                originalBw[m].write(FisherOutput.getTitle());
                 originalBw[m].newLine();
 
                 if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                     sortedPOutputPath[m] = CommonCommand.outputPath + testModel
                             + ".p_" + StatisticsCommand.threshold4Sort + ".sorted" + ".csv";
                     sortedBw[m] = new BufferedWriter(new FileWriter(sortedPOutputPath[m]));
-                    sortedBw[m].write(FisherOutput.title);
+                    sortedBw[m].write(FisherOutput.getTitle());
                     sortedBw[m].newLine();
 
-                    unsortedMap.put(m, new ArrayList<UnsortedOutputData>());
+                    unsortedMap.put(m, new ArrayList<>());
                 }
             } catch (Exception ex) {
                 ErrorManager.send(ex);
@@ -84,7 +83,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     @Override
     public void doAfterCloseOutput() {
         generatePvaluesQQPlot();
-        
+
         gzipFiles();
     }
 
@@ -198,20 +197,20 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     private void generatePvaluesQQPlot() {
         for (int m = 0; m < StatisticsCommand.models.length; m++) {
-            ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.title,
+            ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getTitle(),
                     "P value",
                     originalPOutputPath[m],
                     originalPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));
 
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
-                ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.title,
+                ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getTitle(),
                         "P value",
                         sortedPOutputPath[m],
                         sortedPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));
             }
         }
     }
-    
+
     private void gzipFiles() {
         if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
             for (int m = 0; m < StatisticsCommand.models.length; m++) {

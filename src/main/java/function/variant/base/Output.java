@@ -17,14 +17,14 @@ public class Output implements Cloneable {
 
     protected CalledVariant calledVar;
 
-    public boolean isMinorRef = false; // reference allele is minor or major
+    protected boolean isMinorRef = false; // reference allele is minor or major
 
-    public int[][] genoCount = new int[6][3];
-    public int[] minorHomCount = new int[2];
-    public int[] majorHomCount = new int[2];
-    public double[] hetFreq = new double[2];
-    public double[] minorAlleleFreq = new double[2];
-    public double[] minorHomFreq = new double[2];
+    protected int[][] genoCount = new int[6][3];
+    protected int[] minorHomCount = new int[2];
+    protected int[] majorHomCount = new int[2];
+    protected double[] hetFreq = new double[2];
+    protected double[] minorAlleleFreq = new double[2];
+    protected double[] minorHomFreq = new double[2];
 
     public Output(CalledVariant c) {
         calledVar = c;
@@ -242,6 +242,10 @@ public class Output implements Cloneable {
         }
 
         return false;
+    }
+
+    public boolean isMinorRef() {
+        return isMinorRef;
     }
 
     @Override

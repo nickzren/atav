@@ -16,17 +16,18 @@ public class SampleVariantCount {
     private static int[] sampleSnvCount; // all
     private static int[] sampleIndelCount;
 
-    public static final String title
-            = "Sample Name,"
-            + "Total Sample Variant,"
-            + "Total Sample SNV,"
-            + "Total Ref SNV,"
-            + "Total Het SNV,"
-            + "Total Hom SNV,"
-            + "Total Sample INDEL,"
-            + "Total Ref INDEL,"
-            + "Total Het INDEL,"
-            + "Total Hom INDEL";
+    public static String getTitle() {
+        return "Sample Name,"
+                + "Total Sample Variant,"
+                + "Total Sample SNV,"
+                + "Total Ref SNV,"
+                + "Total Het SNV,"
+                + "Total Hom SNV,"
+                + "Total Sample INDEL,"
+                + "Total Ref INDEL,"
+                + "Total Het INDEL,"
+                + "Total Hom INDEL";
+    }
 
     public static void init() {
         genoSnvCount = new int[5][SampleManager.getListSize()];

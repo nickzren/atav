@@ -9,10 +9,11 @@ import utils.FormatManager;
  */
 public class SubRvisOutput {
 
-    public static final String title
-            = "Variant ID,"
-            + "Gene Name,"
-            + SubRvisManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + "Gene Name,"
+                + SubRvisManager.getTitle();
+    }
 
     private String domainName = "NA";
     private float domainScore = Data.NA;

@@ -20,16 +20,17 @@ import utils.FormatManager;
  */
 public class CompHetOutput extends CollapsingOutput implements Comparable {
 
-    public static final String title
-            = "Family ID,"
-            + "Sample Name,"
-            + "Sample Type,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Var Case Freq #1 & #2 (co-occurance),"
-            + "Var Ctrl Freq #1 & #2 (co-occurance),"
-            + initVarTitleStr("1") + ","
-            + initVarTitleStr("2");
+    public static String getTitle() {
+        return "Family ID,"
+                + "Sample Name,"
+                + "Sample Type,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Var Case Freq #1 & #2 (co-occurance),"
+                + "Var Ctrl Freq #1 & #2 (co-occurance),"
+                + initVarTitleStr("1") + ","
+                + initVarTitleStr("2");
+    }
 
     private static String initVarTitleStr(String var) {
         String varTitle = "Variant ID,"
@@ -160,7 +161,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getSubRvis());
 
         sb.append(calledVar.get1000Genomes());
-        
+
         sb.append(calledVar.getMgi());
 
         return sb.toString();
@@ -171,10 +172,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
             if (calledVar.getGenotype(sample.getIndex()) == 0) {
                 return true;
             }
-        } else {
-            if (calledVar.getGenotype(sample.getIndex()) == 2) {
-                return true;
-            }
+        } else if (calledVar.getGenotype(sample.getIndex()) == 2) {
+            return true;
         }
 
         return false;

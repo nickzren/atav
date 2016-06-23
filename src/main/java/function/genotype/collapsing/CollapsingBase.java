@@ -46,11 +46,12 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
             if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
                 bwSampleMatrix.write("sample/gene" + "\t");
-                bwSummary.write(CollapsingGeneSummary.title);
+                bwSummary.write(CollapsingGeneSummary.getTitle());
             } else {
                 bwSampleMatrix.write("sample/region boundary" + "\t");
-                bwSummary.write(CollapsingRegionSummary.title);
+                bwSummary.write(CollapsingRegionSummary.getTitle());
             }
+            bwSummary.newLine();
 
             for (Sample sample : SampleManager.getList()) {
                 bwSampleMatrix.write(sample.getName() + "\t");
@@ -58,7 +59,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
             bwSampleMatrix.newLine();
 
             bwSampleVariantCount = new BufferedWriter(new FileWriter(sampleVariantCountFilePath));
-            bwSampleVariantCount.write(SampleVariantCount.title);
+            bwSampleVariantCount.write(SampleVariantCount.getTitle());
             bwSampleVariantCount.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -203,14 +204,14 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     private void generatePvaluesQQPlot() {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
-            ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.title,
+            ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),
                     "Fet P", summaryFilePath, geneFetPQQPlotPath);
 
             if (CollapsingCommand.isCollapsingDoLogistic) {
-                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.title,
+                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),
                         "Logistic P", summaryFilePath, geneLogisticPQQPlotPath);
             } else if (CollapsingCommand.isCollapsingDoLinear) {
-                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.title,
+                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),
                         "Linear P", summaryFilePath, geneLinearPQQPlotPath);
             }
         }

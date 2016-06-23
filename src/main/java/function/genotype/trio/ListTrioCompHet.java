@@ -25,15 +25,14 @@ import utils.MathManager;
  */
 public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
-    ArrayList<CompHetOutput> outputList = new ArrayList<CompHetOutput>();
-    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<ArrayList<CompHetOutput>>();
-    HashSet<String> currentGeneList = new HashSet<String>();
-    HashSet<String> uniqueId = new HashSet<String>();
+    ArrayList<CompHetOutput> outputList = new ArrayList<>();
+    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
+    HashSet<String> currentGeneList = new HashSet<>();
+    HashSet<String> uniqueId = new HashSet<>();
     BufferedWriter bwDetails = null;
     BufferedWriter bwDetails_noflag = null;
     final String flagFilePath = CommonCommand.outputPath + "comphet.csv";
     final String noFlagFilePath = CommonCommand.outputPath + "comphet_noflag.csv";
-//    BufferedWriter bwFlagSummary = null;
     public static final String[] FLAG = {
         "compound heterozygote", // 0
         "possibly compound heterozygote", // 1
@@ -45,21 +44,14 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwDetails = new BufferedWriter(new FileWriter(flagFilePath));
-            bwDetails.write(CompHetOutput.title);
+            bwDetails.write(CompHetOutput.getTitle());
             bwDetails.newLine();
 
             if (TrioCommand.isIncludeNoflag) {
                 bwDetails_noflag = new BufferedWriter(new FileWriter(noFlagFilePath));
-                bwDetails_noflag.write(CompHetOutput.title);
+                bwDetails_noflag.write(CompHetOutput.getTitle());
                 bwDetails_noflag.newLine();
             }
-
-            //        String geneSummary = "Variant Type, Total number of trio/families analyzed,Gene,"
-            //                + "Number of cases with a 'functional' variant in this gene,"
-            //                + "Contributing variants,Family IDs\n";
-            //        tmpFile = CommandValue.outputPath + "comphet_summary.csv";
-            //        bwFlagSummary = new BufferedWriter(new FileWriter(tmpFile));
-            //        bwFlagSummary.write(geneSummary);
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -82,8 +74,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                 bwDetails_noflag.flush();
                 bwDetails_noflag.close();
             }
-            //        bwFlagSummary.flush();
-            //        bwFlagSummary.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -91,7 +81,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-//        generatePvaluesQQPlot();
     }
 
     @Override
@@ -381,11 +370,11 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                     output1.cGeno, output1.cSamtoolsRawCoverage,
                                     output1.mGeno, output1.mSamtoolsRawCoverage,
                                     output1.fGeno, output1.fSamtoolsRawCoverage,
-                                    output1.isMinorRef,
+                                    output1.isMinorRef(),
                                     output2.cGeno, output2.cSamtoolsRawCoverage,
                                     output2.mGeno, output2.mSamtoolsRawCoverage,
                                     output2.fGeno, output2.fSamtoolsRawCoverage,
-                                    output2.isMinorRef);
+                                    output2.isMinorRef());
 
                             if (!flag.isEmpty()) {
                                 if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {

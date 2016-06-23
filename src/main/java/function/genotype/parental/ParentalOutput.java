@@ -32,70 +32,71 @@ public class ParentalOutput extends Output {
     int parentGeno;
     double parentBinomial;
 
-    public static final String title
-            = "Family Id,"
-            + "Sample Name (child),"
-            + "Genotype (child),"
-            + "Binomial (child),"
-            + "Sample Name (parent),"
-            + "Genotype (parent),"
-            + "Binomial (parent),"
-            + "Variant ID,"
-            + "Variant Type,"
-            + "Rs Number,"
-            + "Ref Allele,"
-            + "Alt Allele,"
-            + "CADD Score Phred,"
-            + GerpManager.getTitle()
-            + "Is Minor Ref,"
-            + "Major Hom Case,"
-            + "Het Case,"
-            + "Minor Hom Case,"
-            + "Minor Hom Case Freq,"
-            + "Het Case Freq,"
-            + "Major Hom Ctrl,"
-            + "Het Ctrl,"
-            + "Minor Hom Ctrl,"
-            + "Minor Hom Ctrl Freq,"
-            + "Het Ctrl Freq,"
-            + "Missing Case,"
-            + "QC Fail Case,"
-            + "Missing Ctrl,"
-            + "QC Fail Ctrl,"
-            + "Case Maf,"
-            + "Ctrl Maf,"
-            + "Samtools Raw Coverage (child),"
-            + "Gatk Filtered Coverage (child),"
-            + "Reads Alt (child),"
-            + "Reads Ref (child),"
-            + "Percent Alt Read (child),"
-            + "Vqslod (child),"
-            + "Pass Fail Status (child),"
-            + "Genotype Qual GQ (child),"
-            + "Strand Bias FS (child),"
-            + "Haplotype Score (child),"
-            + "Rms Map Qual MQ (child),"
-            + "Qual By Depth QD (child),"
-            + "Qual (child),"
-            + "Read Pos Rank Sum (child),"
-            + "Map Qual Rank Sum (child),"
-            + EvsManager.getTitle()
-            + "Polyphen Humdiv Score,"
-            + "Polyphen Humdiv Prediction,"
-            + "Polyphen Humvar Score,"
-            + "Polyphen Humvar Prediction,"
-            + "Function,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Codon Change,"
-            + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle()
-            + KaviarManager.getTitle()
-            + KnownVarManager.getTitle()
-            + RvisManager.getTitle()
-            + SubRvisManager.getTitle()
-            + GenomesManager.getTitle()
-            + MgiManager.getTitle();
+    public static String getTitle() {
+        return "Family Id,"
+                + "Sample Name (child),"
+                + "Genotype (child),"
+                + "Binomial (child),"
+                + "Sample Name (parent),"
+                + "Genotype (parent),"
+                + "Binomial (parent),"
+                + "Variant ID,"
+                + "Variant Type,"
+                + "Rs Number,"
+                + "Ref Allele,"
+                + "Alt Allele,"
+                + "CADD Score Phred,"
+                + GerpManager.getTitle()
+                + "Is Minor Ref,"
+                + "Major Hom Case,"
+                + "Het Case,"
+                + "Minor Hom Case,"
+                + "Minor Hom Case Freq,"
+                + "Het Case Freq,"
+                + "Major Hom Ctrl,"
+                + "Het Ctrl,"
+                + "Minor Hom Ctrl,"
+                + "Minor Hom Ctrl Freq,"
+                + "Het Ctrl Freq,"
+                + "Missing Case,"
+                + "QC Fail Case,"
+                + "Missing Ctrl,"
+                + "QC Fail Ctrl,"
+                + "Case Maf,"
+                + "Ctrl Maf,"
+                + "Samtools Raw Coverage (child),"
+                + "Gatk Filtered Coverage (child),"
+                + "Reads Alt (child),"
+                + "Reads Ref (child),"
+                + "Percent Alt Read (child),"
+                + "Vqslod (child),"
+                + "Pass Fail Status (child),"
+                + "Genotype Qual GQ (child),"
+                + "Strand Bias FS (child),"
+                + "Haplotype Score (child),"
+                + "Rms Map Qual MQ (child),"
+                + "Qual By Depth QD (child),"
+                + "Qual (child),"
+                + "Read Pos Rank Sum (child),"
+                + "Map Qual Rank Sum (child),"
+                + EvsManager.getTitle()
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Function,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Codon Change,"
+                + "Gene Transcript (AA Change),"
+                + ExacManager.getTitle()
+                + KaviarManager.getTitle()
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
+    }
 
     public ParentalOutput(CalledVariant c) {
         super(c);

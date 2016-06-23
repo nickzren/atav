@@ -20,7 +20,7 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     public void initOutput() {
         try {
             bwKnownVar = new BufferedWriter(new FileWriter(knownVarFilePath));
-            bwKnownVar.write(KnownVarOutput.title);
+            bwKnownVar.write(KnownVarOutput.getTitle());
             bwKnownVar.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
