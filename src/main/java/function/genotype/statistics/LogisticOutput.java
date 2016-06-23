@@ -85,7 +85,43 @@ public class LogisticOutput extends StatisticOutput {
         return false;
     }
 
-    private double doLogisticRegression(List<Double> genotypeInfo, List<Integer> sampleIndexList) {
+    public void doRegression(String model) {
+        List<Double> genotypeList = new ArrayList<>();
+        List<Integer> sampleIndexList = new ArrayList<>();
+
+        initGenotypeAndSampleIndexList(model, genotypeList, sampleIndexList);
+
+        pValue = getPValue(genotypeList, sampleIndexList);
+    }
+
+    private void initGenotypeAndSampleIndexList(String model,
+            List<Double> genotypeList,
+            List<Integer> sampleIndexList) {
+        for (Sample sample : SampleManager.getList()) {
+            //get genotype
+            int geno = calledVar.getGenotype(sample.getIndex());
+            //set genotypicInfo
+            if (geno != Data.NA) {
+                if (model.equals("dominant")) {
+                    // Index Qualified
+                    sampleIndexList.add(sample.getIndex());
+                    if (isMinorRef) {
+                        if (geno == Index.REF || geno == Index.HET || geno == Index.REF_MALE) {
+                            genotypeList.add(1d);
+                        } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
+                            genotypeList.add(0d);
+                        }
+                    } else if (geno == Index.REF || geno == Index.REF_MALE) {
+                        genotypeList.add(0d);
+                    } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
+                        genotypeList.add(1d);
+                    }
+                }
+            }
+        }
+    }
+
+    private double getPValue(List<Double> genotypeInfo, List<Integer> sampleIndexList) {
         if (genotypeInfo.size() <= 1) {
             return Data.NA;
         }
@@ -132,36 +168,6 @@ public class LogisticOutput extends StatisticOutput {
                 expression.append("+");
             }
         }
-    }
-
-    public void doRegression(String model) {
-        List<Double> genotypeList = new ArrayList<>();
-        List<Integer> sampleIndexList = new ArrayList<>();
-
-        for (Sample sample : SampleManager.getList()) {
-            //get genotype
-            int geno = calledVar.getGenotype(sample.getIndex());
-            //set genotypicInfo
-            if (geno != Data.NA) {
-                if (model.equals("dominant")) {
-                    // Index Qualified
-                    sampleIndexList.add(sample.getIndex());
-                    if (isMinorRef) {
-                        if (geno == Index.REF || geno == Index.HET || geno == Index.REF_MALE) {
-                            genotypeList.add(1d);
-                        } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
-                            genotypeList.add(0d);
-                        }
-                    } else if (geno == Index.REF || geno == Index.REF_MALE) {
-                        genotypeList.add(0d);
-                    } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
-                        genotypeList.add(1d);
-                    }
-                }
-            }
-        }
-
-        pValue = doLogisticRegression(genotypeList, sampleIndexList);
     }
 
     @Override
