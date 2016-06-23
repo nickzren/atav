@@ -47,7 +47,7 @@ public class Variant {
 
         String chrStr = RegionManager.getChrById(id);
 
-        region = new Region(id, chrStr, position, position);
+        region = new Region(chrStr, position, position);
     }
 
     public boolean isAutosome() {

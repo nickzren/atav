@@ -208,7 +208,9 @@ public class RegionManager {
     }
 
     public static String addRegionToSQL(Region region, String sqlCode, boolean isIndel) {
-        sqlCode += " WHERE v.seq_region_id = " + region.getRegionId() + " ";
+        int regionId = RegionManager.getIdByChr(region.chrStr);
+        
+        sqlCode += " WHERE v.seq_region_id = " + regionId + " ";
 
         if (region.getStartPosition() > 0) {
             sqlCode += "AND v.seq_region_pos >= " + region.getStartPosition() + " ";

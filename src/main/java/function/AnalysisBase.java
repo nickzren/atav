@@ -10,8 +10,6 @@ public abstract class AnalysisBase {
 
     public abstract void initOutput();
 
-    public abstract void doOutput();
-
     public abstract void closeOutput();
 
     public abstract void doAfterCloseOutput();

@@ -18,13 +18,13 @@ public class StatisticOutput extends Output {
 
     public boolean isRecessive() {
         if (isMinorRef) {
-            if (sampleCount[Index.REF][Index.ALL]
-                    + sampleCount[Index.REF_MALE][Index.ALL] > 0) {
+            if (genoCount[Index.REF][Index.ALL]
+                    + genoCount[Index.REF_MALE][Index.ALL] > 0) {
                 return true;
             }
         } else {
-            if (sampleCount[Index.HOM][Index.ALL]
-                    + sampleCount[Index.HOM_MALE][Index.ALL] > 0) {
+            if (genoCount[Index.HOM][Index.ALL]
+                    + genoCount[Index.HOM_MALE][Index.ALL] > 0) {
                 return true;
             }
         }

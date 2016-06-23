@@ -10,6 +10,7 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import utils.FormatManager;
@@ -22,19 +23,20 @@ public class CompHetOutput extends Output implements Comparable {
 
     String geneName = "";
 
-    public static final String title
-            = "Family ID,"
-            + "Mother,"
-            + "Father,"
-            + "Flag,"
-            + "Child1,"
-            + "Child1 Trio Comp Het Flag,"
-            + "Child2,"
-            + "Child2 Trio Comp Het Flag,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + initVarTitleStr("1")
-            + initVarTitleStr("2");
+    public static String getTitle() {
+        return "Family ID,"
+                + "Mother,"
+                + "Father,"
+                + "Flag,"
+                + "Child1,"
+                + "Child1 Trio Comp Het Flag,"
+                + "Child2,"
+                + "Child2 Trio Comp Het Flag,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + initVarTitleStr("1")
+                + initVarTitleStr("2");
+    }
 
     private static String initVarTitleStr(String var) {
         String varTitle = "Variant ID,"
@@ -78,7 +80,8 @@ public class CompHetOutput extends Output implements Comparable {
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
-                + GenomesManager.getTitle();
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -113,22 +116,22 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(getGenoStr(calledVar.getGenotype(child2.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(child2.getIndex()))).append(",");
 
-        sb.append(majorHomCase).append(",");
-        sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
-        sb.append(minorHomCase).append(",");
-        sb.append(FormatManager.getDouble(caseMhgf)).append(",");
-        sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CASE])).append(",");
-        sb.append(majorHomCtrl).append(",");
-        sb.append(sampleCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(minorHomCtrl).append(",");
-        sb.append(FormatManager.getDouble(ctrlMhgf)).append(",");
-        sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CTRL])).append(",");
-        sb.append(sampleCount[Index.MISSING][Index.CASE]).append(",");
+        sb.append(majorHomCount[Index.CASE]).append(",");
+        sb.append(genoCount[Index.HET][Index.CASE]).append(",");
+        sb.append(minorHomCount[Index.CASE]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CASE])).append(",");
+        sb.append(majorHomCount[Index.CTRL]).append(",");
+        sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
+        sb.append(minorHomCount[Index.CTRL]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CASE]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
-        sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(caseMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
 
         sb.append(calledVar.getEvsStr());
 
@@ -146,12 +149,14 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getKaviarStr());
 
         sb.append(calledVar.getKnownVarStr());
-        
+
         sb.append(calledVar.getRvis());
-        
+
         sb.append(calledVar.getSubRvis());
-        
+
         sb.append(calledVar.get1000Genomes());
+
+        sb.append(calledVar.getMgi());
 
         return sb.toString();
     }

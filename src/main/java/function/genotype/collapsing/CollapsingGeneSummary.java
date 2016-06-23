@@ -16,27 +16,27 @@ import java.util.HashMap;
  * @author nick
  */
 public class CollapsingGeneSummary extends CollapsingSummary {
-    
+
     // output columns 
-    public static final String title
-            = "Rank,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Total Variant,"
-            + "Total SNV,"
-            + "Total Indel,"
-            + "Qualified Case,"
-            + "Unqualified Case,"
-            + "Qualified Case Freq,"
-            + "Qualified Ctrl,"
-            + "Unqualified Ctrl,"
-            + "Qualified Ctrl Freq,"
-            + "Enriched Direction,"
-            + "Fet P,"
-            + "Linear P,"
-            + "Logistic P,"
-            + GeneManager.getCoverageSummary("title")
-            + "\n";
+    public static String getTitle() {
+        return "Rank,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Total Variant,"
+                + "Total SNV,"
+                + "Total Indel,"
+                + "Qualified Case,"
+                + "Unqualified Case,"
+                + "Qualified Case Freq,"
+                + "Qualified Ctrl,"
+                + "Unqualified Ctrl,"
+                + "Qualified Ctrl Freq,"
+                + "Enriched Direction,"
+                + "Fet P,"
+                + "Linear P,"
+                + "Logistic P,"
+                + GeneManager.getCoverageSummary("title");
+    }
 
     String coverageSummaryLine;
 

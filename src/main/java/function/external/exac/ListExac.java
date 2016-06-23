@@ -22,15 +22,11 @@ public class ListExac extends AnalysisBase {
     public void initOutput() {
         try {
             bwExac = new BufferedWriter(new FileWriter(exacFilePath));
-            bwExac.write(ExacOutput.title);
+            bwExac.write(ExacOutput.getTitle());
             bwExac.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-    }
-
-    @Override
-    public void doOutput() {
     }
 
     @Override

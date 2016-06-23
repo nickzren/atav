@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -23,10 +22,9 @@ public class TrioManager {
     
     private static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
     
-    static ArrayList<Trio> trioList = new ArrayList<Trio>();
-    static HashMap<String, DenovoSummary> denovoSummaryMap = new HashMap<String, DenovoSummary>();
+    static ArrayList<Trio> trioList = new ArrayList<>();
     static HashSet<Integer> parentIdSet = new HashSet();
-    static HashMap<String, String> denovoRules = new HashMap<String, String>();
+    static HashMap<String, String> denovoRules = new HashMap<>();
 
     public static void init() {
         initList();
@@ -44,9 +42,6 @@ public class TrioManager {
 
                 if (trio.isValid()) {
                     trioList.add(trio);
-
-                    DenovoSummary denovoSummary = new DenovoSummary(trio.getFamilyId());
-                    denovoSummaryMap.put(trio.getFamilyId(), denovoSummary);
 
                     parentIdSet.add(trio.getFatherId());
                     parentIdSet.add(trio.getMotherId());
@@ -268,41 +263,5 @@ public class TrioManager {
         } else { // no wild cardm so it is a final rule
             denovoRules.put(key, value.toLowerCase());
         }
-    }
-
-    public static void updateDenovoSummary(DenovoOutput dOutput) {
-        DenovoSummary denovoSummary = denovoSummaryMap.get(dOutput.getFamilyId());
-
-        if (dOutput.getCalledVariant().getVariantIdStr().startsWith("X")) {
-            if (dOutput.getFlag().startsWith("de novo")) {
-                denovoSummary.denovoVarXNum++;
-            } else if (dOutput.getFlag().startsWith("possibly de novo")) {
-                denovoSummary.possiblyDenovoVarXNum++;
-            } else if (dOutput.getFlag().startsWith("newly homozygous")) {
-                denovoSummary.newlyRecessiveVarXNum++;
-            } else if (dOutput.getFlag().startsWith("possibly newly homozygous")) {
-                denovoSummary.possiblyNewlyRecessiveVarXNum++;
-            }
-        } else if (dOutput.getCalledVariant().getVariantIdStr().startsWith("Y")) {
-            if (dOutput.getFlag().startsWith("de novo")) {
-                denovoSummary.denovoVarYNum++;
-            } else if (dOutput.getFlag().startsWith("possibly de novo")) {
-                denovoSummary.possiblyDenovoVarYNum++;
-            }
-        } else {
-            if (dOutput.getFlag().startsWith("de novo")) {
-                denovoSummary.denovoVarAutosomesNum++;
-            } else if (dOutput.getFlag().startsWith("possibly de novo")) {
-                denovoSummary.possiblyDenovoVarAutosomesNum++;
-            } else if (dOutput.getFlag().startsWith("newly homozygous")) {
-                denovoSummary.newlyRecessiveVarAutosomesNum++;
-            } else if (dOutput.getFlag().startsWith("possibly newly homozygous")) {
-                denovoSummary.possiblyNewlyRecessiveVarAutosomesNum++;
-            }
-        }
-    }
-
-    public static Collection<DenovoSummary> getDenovoSummaryList() {
-        return denovoSummaryMap.values();
     }
 }

@@ -22,15 +22,11 @@ public class List1000Genomes extends AnalysisBase {
     public void initOutput() {
         try {
             bw1000Genomes = new BufferedWriter(new FileWriter(genomesFilePath));
-            bw1000Genomes.write(GenomesOutput.title);
+            bw1000Genomes.write(GenomesOutput.getTitle());
             bw1000Genomes.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-    }
-
-    @Override
-    public void doOutput() {
     }
 
     @Override

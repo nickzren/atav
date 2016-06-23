@@ -8,9 +8,10 @@ public class ExacOutput {
 
     Exac exac;
 
-    public static final String title
-            = "Variant ID,"
-            + ExacManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + ExacManager.getTitle();
+    }
 
     public ExacOutput(String id) {
         exac = new Exac(id);

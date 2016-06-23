@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import utils.MathManager;
 
 /**
  *
@@ -22,10 +23,10 @@ import java.util.HashSet;
  */
 public class CollapsingCompHet extends CollapsingBase {
 
-    ArrayList<CompHetOutput> outputList = new ArrayList<CompHetOutput>();
-    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<ArrayList<CompHetOutput>>();
-    HashSet<Integer> variantIdSet = new HashSet<Integer>();
-    HashSet<String> currentGeneList = new HashSet<String>();
+    ArrayList<CompHetOutput> outputList = new ArrayList<>();
+    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
+    HashSet<Integer> variantIdSet = new HashSet<>();
+    HashSet<String> currentGeneList = new HashSet<>();
     BufferedWriter bwCompHet = null;
     final String comphetFilePath = CommonCommand.outputPath + "comphet.csv";
 
@@ -35,7 +36,7 @@ public class CollapsingCompHet extends CollapsingBase {
             super.initOutput();
 
             bwCompHet = new BufferedWriter(new FileWriter(comphetFilePath));
-            bwCompHet.write(CompHetOutput.title);
+            bwCompHet.write(CompHetOutput.getTitle());
             bwCompHet.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -66,7 +67,7 @@ public class CollapsingCompHet extends CollapsingBase {
         try {
             CompHetOutput output = new CompHetOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             output.calculate();
 
@@ -283,8 +284,8 @@ public class CollapsingCompHet extends CollapsingBase {
             }
         }
 
-        freq[Index.CTRL] = FormatManager.devide(qualifiedCtrlCount, totalCtrlCount);
-        freq[Index.CASE] = FormatManager.devide(quanlifiedCaseCount, totalCaseCount);
+        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
+        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
 
         output1.calculateLooFreq(observedSample); // update 'is maf ref' back for observed sample value
         output2.calculateLooFreq(observedSample);

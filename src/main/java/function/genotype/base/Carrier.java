@@ -2,9 +2,9 @@ package function.genotype.base;
 
 import function.variant.base.Region;
 import global.Data;
-import utils.FormatManager;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import utils.MathManager;
 
 /**
  *
@@ -129,7 +129,7 @@ public class Carrier extends NonCarrier {
         }
 
         if (genotype == 2) { // --hom-percent-alt-read 
-            double percAltRead = FormatManager.devide(readsAlt, gatkFilteredCoverage);
+            double percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
 
             if (!GenotypeLevelFilterCommand.isHomPercentAltReadValid(percAltRead)) {
                 genotype = Data.NA;
@@ -137,7 +137,7 @@ public class Carrier extends NonCarrier {
         }
         
         if (genotype == 1) { // --het-percent-alt-read 
-            double percAltRead = FormatManager.devide(readsAlt, gatkFilteredCoverage);
+            double percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
 
             if (!GenotypeLevelFilterCommand.isHetPercentAltReadValid(percAltRead)) {
                 genotype = Data.NA;

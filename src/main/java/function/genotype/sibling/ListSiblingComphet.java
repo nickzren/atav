@@ -40,10 +40,10 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             compHetSharedBw = new BufferedWriter(new FileWriter(comphetSharedFilePath));
-            compHetSharedBw.write(CompHetOutput.title);
+            compHetSharedBw.write(CompHetOutput.getTitle());
             compHetSharedBw.newLine();
             compHetNotSharedBw = new BufferedWriter(new FileWriter(comphetNotSharedFilePath));
-            compHetNotSharedBw.write(CompHetOutput.title);
+            compHetNotSharedBw.write(CompHetOutput.getTitle());
             compHetNotSharedBw.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -87,7 +87,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
         try {
             CompHetOutput output = new CompHetOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             output.calculate();
 
@@ -223,11 +223,11 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 cGeno1, cCov1,
                 mGeno1, mCov1,
                 fGeno1, fCov1,
-                output1.isMinorRef,
+                output1.isMinorRef(),
                 cGeno2, cCov2,
                 mGeno2, mCov2,
                 fGeno2, fCov2,
-                output2.isMinorRef);
+                output2.isMinorRef());
     }
 
     private void doOutput(StringBuilder sb,

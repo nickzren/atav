@@ -18,17 +18,18 @@ public class FamilySummary implements Comparable {
     private HashSet<String> totalSharedHetFamilySet = new HashSet<String>();
     private HashSet<String> totalSharedHomFamilySet = new HashSet<String>();
 
-    public static final String title
-            = "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Total Shared Variant Family,"
-            + "Total Shared Het Family,"
-            + "Total Shared Hom Family,"
-            + "Total Shared Cpht Family,"
-            + "Total SNV,"
-            + "Total Indel,"
-            + "Family IDs,"
-            + "Variant IDs";
+    public static String getTitle() {
+        return "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Total Shared Variant Family,"
+                + "Total Shared Het Family,"
+                + "Total Shared Hom Family,"
+                + "Total Shared Cpht Family,"
+                + "Total SNV,"
+                + "Total Indel,"
+                + "Family IDs,"
+                + "Variant IDs";
+    }
 
     public FamilySummary(String name) {
         geneName = name;

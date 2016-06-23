@@ -9,6 +9,7 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import utils.FormatManager;
@@ -19,16 +20,17 @@ import utils.FormatManager;
  */
 public class CompHetOutput extends CollapsingOutput implements Comparable {
 
-    public static final String title
-            = "Family ID,"
-            + "Sample Name,"
-            + "Sample Type,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Var Case Freq #1 & #2 (co-occurance),"
-            + "Var Ctrl Freq #1 & #2 (co-occurance),"
-            + initVarTitleStr("1") + ","
-            + initVarTitleStr("2");
+    public static String getTitle() {
+        return "Family ID,"
+                + "Sample Name,"
+                + "Sample Type,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Var Case Freq #1 & #2 (co-occurance),"
+                + "Var Ctrl Freq #1 & #2 (co-occurance),"
+                + initVarTitleStr("1") + ","
+                + initVarTitleStr("2");
+    }
 
     private static String initVarTitleStr(String var) {
         String varTitle = "Variant ID,"
@@ -74,7 +76,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
-                + GenomesManager.getTitle();
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -98,6 +101,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         super(c);
     }
 
+    @Override
     public String getString(Sample sample) {
         StringBuilder sb = new StringBuilder();
 
@@ -118,22 +122,22 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(FormatManager.getPercAltRead(calledVar.getReadsAlt(sample.getId()),
                 calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
 
-        sb.append(majorHomCase).append(",");
-        sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
-        sb.append(minorHomCase).append(",");
-        sb.append(FormatManager.getDouble(caseMhgf)).append(",");
-        sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CASE])).append(",");
-        sb.append(majorHomCtrl).append(",");
-        sb.append(sampleCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(minorHomCtrl).append(",");
-        sb.append(FormatManager.getDouble(ctrlMhgf)).append(",");
-        sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CTRL])).append(",");
-        sb.append(sampleCount[Index.MISSING][Index.CASE]).append(",");
+        sb.append(majorHomCount[Index.CASE]).append(",");
+        sb.append(genoCount[Index.HET][Index.CASE]).append(",");
+        sb.append(minorHomCount[Index.CASE]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CASE])).append(",");
+        sb.append(majorHomCount[Index.CTRL]).append(",");
+        sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
+        sb.append(minorHomCount[Index.CTRL]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CASE]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
-        sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(caseMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
 
         sb.append(calledVar.getEvsStr());
 
@@ -158,6 +162,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
 
         sb.append(calledVar.get1000Genomes());
 
+        sb.append(calledVar.getMgi());
+
         return sb.toString();
     }
 
@@ -166,10 +172,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
             if (calledVar.getGenotype(sample.getIndex()) == 0) {
                 return true;
             }
-        } else {
-            if (calledVar.getGenotype(sample.getIndex()) == 2) {
-                return true;
-            }
+        } else if (calledVar.getGenotype(sample.getIndex()) == 2) {
+            return true;
         }
 
         return false;
@@ -179,13 +183,10 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
     public boolean isLooFreqValid() {
         boolean isRecessive = isRecessive();
 
-        if (isMaxLooMafValid(isRecessive)) {
-            return true;
-        }
-
-        return false;
+        return isMaxLooMafValid(isRecessive);
     }
 
+    @Override
     public int compareTo(Object another) throws ClassCastException {
         CollapsingOutput that = (CollapsingOutput) another;
         return this.geneName.compareTo(that.geneName); //small -> large

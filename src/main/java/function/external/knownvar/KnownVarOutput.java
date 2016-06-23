@@ -16,10 +16,11 @@ public class KnownVarOutput {
     private ClinGen clinGen;
     private int recessiveCarrier;
 
-    public static final String title
-            = "Variant ID,"
-            + "Gene Name,"
-            + KnownVarManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + "Gene Name,"
+                + KnownVarManager.getTitle();
+    }
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
         String geneName = annotatedVar.getGeneName().toUpperCase();

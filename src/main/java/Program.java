@@ -15,7 +15,6 @@ import function.genotype.collapsing.CollapsingCompHet;
 import function.genotype.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
 import function.coverage.summary.CoverageSummary;
-import function.coverage.summary.CoverageSummaryPipeline;
 import function.coverage.summary.SiteCoverageSummary;
 import function.genotype.family.FamilyAnalysis;
 import function.genotype.parental.ParentalMosaic;
@@ -34,6 +33,7 @@ import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
 import function.external.exac.ListExac;
 import function.external.flanking.FlankingCommand;
 import function.external.flanking.ListFlankingSeq;
@@ -46,6 +46,9 @@ import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.knownvar.ListKnownVar;
+import function.external.mgi.ListMgi;
+import function.external.mgi.MgiCommand;
+import function.external.mgi.MgiManager;
 import function.external.rvis.ListRvis;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
@@ -121,6 +124,10 @@ public class Program {
             RvisManager.init();
             
             SubRvisManager.init();
+            
+            MgiManager.init();
+
+            ExacManager.init();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -155,25 +162,13 @@ public class Program {
             } else if (GeneDxCommand.isListGeneDx) {
                 runAnalysis(new ListGeneDx());
             } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
-                LogManager.writeAndPrint("It is running a coverage summary function...");
-                CoverageSummary coverageList = new CoverageSummary();
-                coverageList.run();
+                runAnalysis(new CoverageSummary());
             } else if (CoverageCommand.isSiteCoverageSummary) {
-                LogManager.writeAndPrint("It is running a site coverage summary function...");
-                SiteCoverageSummary coverageList = new SiteCoverageSummary();
-                coverageList.run();
+                runAnalysis(new SiteCoverageSummary());
             } else if (CoverageCommand.isCoverageComparison) {
-                LogManager.writeAndPrint("It is running a coverage comparison function...");
-                CoverageComparison coverageList = new CoverageComparison();
-                coverageList.run();
+                runAnalysis(new CoverageComparison());
             } else if (CoverageCommand.isSiteCoverageComparison) {
-                LogManager.writeAndPrint("It is running a site coverage comparison function...");
-                SiteCoverageComparison coverageList = new SiteCoverageComparison();
-                coverageList.run();
-            } else if (CoverageCommand.isCoverageSummaryPipeline) {
-                LogManager.writeAndPrint("It is running a coverage summary for pipeline function...");
-                CoverageSummaryPipeline coverageSummary = new CoverageSummaryPipeline();
-                coverageSummary.run();
+                runAnalysis(new SiteCoverageComparison());
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
             } else if (ExacCommand.isListExac) {
@@ -192,6 +187,8 @@ public class Program {
                 runAnalysis(new ListRvis());
             } else if (GenomesCommand.isList1000Genomes) {
                 runAnalysis(new List1000Genomes());
+            } else if (MgiCommand.isListMgi) {
+                runAnalysis(new ListMgi());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }

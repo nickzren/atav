@@ -19,7 +19,6 @@ public class DBManager {
 
     // init from config
     private static String annodbName;
-    public static String homoSapiensCoreName;
     private static String dbUser;
     private static String dbPassword;
     private static HashMap<String, String> dbHostMap = new HashMap<String, String>();
@@ -73,7 +72,6 @@ public class DBManager {
             initServers(prop.getProperty("servers"));
 
             annodbName = prop.getProperty("annodb");
-            homoSapiensCoreName = prop.getProperty("homo_sapiens_core");
             dbUser = prop.getProperty("dbuser");
             dbPassword = prop.getProperty("dbpassword");
             maxATAVJobNum = Integer.parseInt(prop.getProperty("max-atav-job"));
