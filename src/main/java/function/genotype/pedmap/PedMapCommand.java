@@ -12,6 +12,7 @@ public class PedMapCommand {
     public static boolean isPedMap = false;
     public static boolean isVariantIdOnly = false;
     public static boolean isEigenstrat = false;
+    public static boolean isEigenstratFixed = false;
     public static String pedMapPath = "";
 
     public static void initOptions(Iterator<CommandOption> iterator) {
@@ -25,6 +26,9 @@ public class PedMapCommand {
                     break;
                 case "--eigenstrat":
                     isEigenstrat = true;
+                    break;
+                case "--eigenstrat-fixed":
+                    isEigenstratFixed = true;
                     break;
                 default:
                     continue;

@@ -6,6 +6,7 @@ import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -74,6 +75,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     public void doAfterCloseOutput() {
         if (PedMapCommand.isEigenstrat) {
             doEigesntrat();
+        } else if (PedMapCommand.isEigenstratFixed) {
+            doEigesntratFixed();
         }
     }
 
@@ -165,40 +168,42 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     }
 
     private void outputTempGeno(CalledVariant calledVar) throws Exception {
-        for (int s = 0; s < SampleManager.getListSize(); s++) {
-            int geno = calledVar.getGenotype(SampleManager.getList().get(s).getIndex());
-            if (geno == 2) {
-                if (calledVar.isSnv()) {
-                    bwTmpPed.write(calledVar.getAllele() + calledVar.getAllele());
-                } else {
-                    if (calledVar.isDel()) {
+        for (Sample sample : SampleManager.getList()) {
+            int geno = calledVar.getGenotype(sample.getIndex());
+            switch (geno) {
+                case Index.HOM:
+                    if (calledVar.isSnv()) {
+                        bwTmpPed.write(calledVar.getAllele() + calledVar.getAllele());
+                    } else if (calledVar.isDel()) {
                         bwTmpPed.write("DD");
                     } else {
                         bwTmpPed.write("II");
                     }
-                }
-            } else if (geno == 1) {
-                if (calledVar.isSnv()) {
-                    bwTmpPed.write(calledVar.getRefAllele() + calledVar.getAllele());
-                } else {
-                    bwTmpPed.write("ID");
-                }
-            } else if (geno == 0) {
-                if (calledVar.isSnv()) {
-                    bwTmpPed.write(calledVar.getRefAllele() + calledVar.getRefAllele());
-                } else {
-                    if (calledVar.isDel()) {
+                    break;
+                case Index.HET:
+                    if (calledVar.isSnv()) {
+                        bwTmpPed.write(calledVar.getRefAllele() + calledVar.getAllele());
+                    } else {
+                        bwTmpPed.write("ID");
+                    }
+                    break;
+                case Index.REF:
+                    if (calledVar.isSnv()) {
+                        bwTmpPed.write(calledVar.getRefAllele() + calledVar.getRefAllele());
+                    } else if (calledVar.isDel()) {
                         bwTmpPed.write("II");
                     } else {
                         bwTmpPed.write("DD");
                     }
-                }
-            } else if (geno == Data.NA) {
-                bwTmpPed.write("00");
-            } else {
-                bwTmpPed.write("00");
-                LogManager.writeAndPrint("Invalid genotype: " + geno
-                        + " (Variant ID: " + calledVar.getVariantIdStr() + ")");
+                    break;
+                case Data.NA:
+                    bwTmpPed.write("00");
+                    break;
+                default:
+                    bwTmpPed.write("00");
+                    LogManager.writeAndPrint("Invalid genotype: " + geno
+                            + " (Variant ID: " + calledVar.getVariantIdStr() + ")");
+                    break;
             }
         }
 
@@ -226,6 +231,31 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
         cmd = "cd " + chip2pcaDir + "; "
                 + CHIP2PCA2_HOME + " " + CommonCommand.outputDirName + " snppca";
+
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+    }
+
+    public void doEigesntratFixed() {
+        initDir(chip2pcaDir);
+
+        File dir = initDir(crDir);
+
+        String cmd = "cp " + EXAMPLE_OPT_PATH + " " + outputOpt;
+
+        ThirdPartyToolManager.systemCall(new String[]{cmd});
+
+        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --recode12 "
+                + "--out " + crDir + File.separator + dir.getName();
+
+        ThirdPartyToolManager.systemCall((new String[]{cmd}));
+
+        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --make-bed "
+                + "--out " + crDir + File.separator + dir.getName();
+
+        ThirdPartyToolManager.systemCall((new String[]{cmd}));
+
+        cmd = "cd " + chip2pcaDir + "; "
+                + CHIP2PCA2_HOME + " " + CommonCommand.outputDirName + " snppca.phenotype_fixed.pl";
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
