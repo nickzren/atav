@@ -140,18 +140,11 @@ public class DBManager {
 
             minNum = getNumOfATAV(dbHostIp);
         } else {
-            while (true) {
-                minNum = getMinNumFromServers();
+            minNum = getMinNumFromServers();
 
-                if (minNum <= maxATAVJobNum) {
-                    break;
-                } else {
-                    LogManager.writeAndPrint("All available AnnoDB servers are "
-                            + "reached to max concurrent jobs, your job "
-                            + "will wait for 30 minutes then auto restart.");
-
-                    Thread.sleep(1800000);
-                }
+            if (minNum > maxATAVJobNum) {
+                ErrorManager.print("All available AnnoDB servers "
+                        + "reached to max concurrent jobs, please submit your ATAV job latter.");
             }
         }
 

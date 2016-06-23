@@ -1,7 +1,5 @@
 package function.external.knownvar;
 
-import utils.FormatManager;
-
 /**
  *
  * @author nick
@@ -12,13 +10,11 @@ public class HGMD {
     private int pos;
     private String ref;
     private String alt;
-    private boolean isSnv;
 
     // hgmd
     private String variantClass;
     private String pmid;
     private String diseaseName;
-    int flankingCount;
 
     public HGMD(String chr, int pos, String ref, String alt, String variantClass,
             String pmid, String diseaseName) {
@@ -27,61 +23,62 @@ public class HGMD {
         this.ref = ref;
         this.alt = alt;
 
-        isSnv = true;
-        if (ref.length() > 1
-                || alt.length() > 1) {
-            isSnv = false;
-        }
-
         this.variantClass = variantClass;
         this.pmid = pmid;
         this.diseaseName = diseaseName;
     }
 
-    public void initFlankingCount() {
-        flankingCount = KnownVarManager.getFlankingCount(isSnv, chr, pos,
-                KnownVarManager.hgmdTable);
+    public String getSiteId() {
+        return chr + "-" + pos;
     }
 
-    public void append(String variantClass, String pmid, String diseaseName) {
-        this.variantClass += " | " + variantClass;
-        this.pmid += " | " + pmid;
-        this.diseaseName += " | " + diseaseName;
-    }
-    
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
-    public String getChr(){
+    public String getChr() {
         return chr;
     }
-    
-    public int getPos(){
+
+    public int getPos() {
         return pos;
     }
-    
-    public String getRef(){
+
+    public String getRef() {
         return ref;
     }
-    
-    public String getAlt(){
+
+    public String getAlt() {
         return alt;
     }
-    
-    public boolean isSnv(){
-        return isSnv;
+
+    public String getDiseaseName() {
+        return diseaseName;
     }
-    
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append(FormatManager.getString(variantClass)).append(",");
-        sb.append(FormatManager.getString(pmid)).append(",");
-        sb.append(FormatManager.getString(diseaseName)).append(",");
-        sb.append(flankingCount).append(",");
+    public void setDiseaseName(String diseaseName) {
+        this.diseaseName = diseaseName;
+    }
 
-        return sb.toString();
+    public String getPmid() {
+        return pmid;
+    }
+
+    public void setPmid(String pmid) {
+        this.pmid = pmid;
+    }
+
+    public String getVariantClass() {
+        return variantClass;
+    }
+
+    public void setVariantClass(String variantClass) {
+        this.variantClass = variantClass;
+    }
+
+    public void append(String diseaseName, String pmid, String variantClass) {
+        this.diseaseName += " | " + diseaseName;
+        this.pmid += " | " + pmid;
+        this.variantClass += " | " + variantClass;
     }
 }

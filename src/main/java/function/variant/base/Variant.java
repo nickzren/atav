@@ -12,7 +12,6 @@ public class Variant {
 
     public int variantId;
     public String variantIdStr;
-    public String type;
     public String allele;
     public String refAllele;
     public String rsNumber;
@@ -20,6 +19,7 @@ public class Variant {
     public float cscorePhred;
     //Indel attributes
     public String indelType;
+    private boolean isIndel;
 
     public Variant(int v_id, boolean isIndel, ResultSet rset) throws Exception {
         variantId = v_id;
@@ -31,6 +31,8 @@ public class Variant {
         }
 
         initVariantIdStr();
+        
+        this.isIndel = isIndel;
     }
 
     private void initBasic(ResultSet rset) throws SQLException {
@@ -46,8 +48,6 @@ public class Variant {
         String chrStr = RegionManager.getChrById(id);
 
         region = new Region(chrStr, position, position);
-
-        type = "snv";
     }
 
     public boolean isAutosome() {
@@ -58,8 +58,6 @@ public class Variant {
         int len = rset.getInt("length");
         indelType = rset.getString("indel_type").substring(0, 3).toUpperCase();
 
-        type = "indel";
-
         region.setLength(len);
         region.setEndPosition(region.getStartPosition() + len - 1);
     }
@@ -69,7 +67,11 @@ public class Variant {
     }
 
     public String getType() {
-        return type;
+        if (isIndel) {
+            return "indel";
+        } else {
+            return "snv";
+        }
     }
 
     public String getAllele() {
@@ -108,17 +110,17 @@ public class Variant {
     }
 
     public boolean isSnv() {
-        return type.equals("snv");
+        return !isIndel;
     }
 
     public boolean isIndel() {
-        return type.equals("indel");
+        return isIndel;
     }
 
     public boolean isDel() {
         return refAllele.length() > allele.length();
     }
-    
+
     public String getSiteId() {
         return region.getChrStr() + "-" + region.getStartPosition();
     }
