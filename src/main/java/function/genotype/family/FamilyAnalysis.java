@@ -90,7 +90,7 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
         try {
             FamilyOutput output = new FamilyOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             output.calculate();
 

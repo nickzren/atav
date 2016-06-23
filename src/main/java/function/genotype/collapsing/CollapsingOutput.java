@@ -124,12 +124,12 @@ public class CollapsingOutput extends Output {
     }
 
     private void calculateLooMaf() {
-        int alleleCount = 2 * sampleCount[Index.HOM][Index.ALL]
-                + sampleCount[Index.HET][Index.ALL]
-                + sampleCount[Index.HOM_MALE][Index.ALL];
-        int totalCount = alleleCount + sampleCount[Index.HET][Index.ALL]
-                + 2 * sampleCount[Index.REF][Index.ALL]
-                + sampleCount[Index.REF_MALE][Index.ALL];
+        int alleleCount = 2 * genoCount[Index.HOM][Index.ALL]
+                + genoCount[Index.HET][Index.ALL]
+                + genoCount[Index.HOM_MALE][Index.ALL];
+        int totalCount = alleleCount + genoCount[Index.HET][Index.ALL]
+                + 2 * genoCount[Index.REF][Index.ALL]
+                + genoCount[Index.REF_MALE][Index.ALL];
 
         double allAF = MathManager.devide(alleleCount, totalCount);
         looMAF = allAF;
@@ -144,18 +144,18 @@ public class CollapsingOutput extends Output {
     }
 
     private void calculateLooMhgf() {
-        int allSample = sampleCount[Index.HOM][Index.ALL]
-                + sampleCount[Index.HET][Index.ALL]
-                + sampleCount[Index.REF][Index.ALL]
-                + sampleCount[Index.HOM_MALE][Index.ALL]
-                + sampleCount[Index.REF_MALE][Index.ALL];
+        int allSample = genoCount[Index.HOM][Index.ALL]
+                + genoCount[Index.HET][Index.ALL]
+                + genoCount[Index.REF][Index.ALL]
+                + genoCount[Index.HOM_MALE][Index.ALL]
+                + genoCount[Index.REF_MALE][Index.ALL];
 
-        looMhgf = MathManager.devide(sampleCount[Index.HOM][Index.ALL]
-                + sampleCount[Index.HOM_MALE][Index.ALL], allSample); // hom / (hom + het + ref)
+        looMhgf = MathManager.devide(genoCount[Index.HOM][Index.ALL]
+                + genoCount[Index.HOM_MALE][Index.ALL], allSample); // hom / (hom + het + ref)
 
         if (isMinorRef) {
-            looMhgf = MathManager.devide(sampleCount[Index.REF][Index.ALL]
-                    + sampleCount[Index.REF_MALE][Index.ALL], allSample); // ref / (hom + het + ref)
+            looMhgf = MathManager.devide(genoCount[Index.REF][Index.ALL]
+                    + genoCount[Index.REF_MALE][Index.ALL], allSample); // ref / (hom + het + ref)
         }
     }
 
@@ -179,13 +179,13 @@ public class CollapsingOutput extends Output {
 
     public boolean isRecessive() {
         if (isMinorRef) {
-            if (sampleCount[Index.REF][Index.ALL]
-                    + sampleCount[Index.REF_MALE][Index.ALL] > 0) {
+            if (genoCount[Index.REF][Index.ALL]
+                    + genoCount[Index.REF_MALE][Index.ALL] > 0) {
                 return true;
             }
         } else {
-            if (sampleCount[Index.HOM][Index.ALL]
-                    + sampleCount[Index.HOM_MALE][Index.ALL] > 0) {
+            if (genoCount[Index.HOM][Index.ALL]
+                    + genoCount[Index.HOM_MALE][Index.ALL] > 0) {
                 return true;
             }
         }
@@ -244,22 +244,22 @@ public class CollapsingOutput extends Output {
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
         sb.append(sample.getName()).append(",");
         sb.append(sample.getPhenotype()).append(",");
-        sb.append(majorHomCase).append(",");
-        sb.append(sampleCount[Index.HET][Index.CASE]).append(",");
-        sb.append(minorHomCase).append(",");
-        sb.append(FormatManager.getDouble(caseMhgf)).append(",");
-        sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CASE])).append(",");
-        sb.append(majorHomCtrl).append(",");
-        sb.append(sampleCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(minorHomCtrl).append(",");
-        sb.append(FormatManager.getDouble(ctrlMhgf)).append(",");
-        sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CTRL])).append(",");
-        sb.append(sampleCount[Index.MISSING][Index.CASE]).append(",");
+        sb.append(majorHomCount[Index.CASE]).append(",");
+        sb.append(genoCount[Index.HET][Index.CASE]).append(",");
+        sb.append(minorHomCount[Index.CASE]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CASE])).append(",");
+        sb.append(majorHomCount[Index.CTRL]).append(",");
+        sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
+        sb.append(minorHomCount[Index.CTRL]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CASE]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
-        sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(caseMAF)).append(",");
-        sb.append(FormatManager.getDouble(ctrlMAF)).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(looMAF)).append(",");
         sb.append(FormatManager.getDouble(looMhgf)).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");

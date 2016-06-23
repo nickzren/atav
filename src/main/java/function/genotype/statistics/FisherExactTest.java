@@ -103,7 +103,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             FisherOutput output = new FisherOutput(calledVar);
-            output.countSampleGenoCov();
+            output.countSampleGeno();
             output.calculate();
 
             for (int m = 0; m < StatisticsCommand.models.length; m++) {

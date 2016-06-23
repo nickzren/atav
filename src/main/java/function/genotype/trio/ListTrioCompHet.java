@@ -108,7 +108,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         try {
             CompHetOutput output = new CompHetOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             for (Trio trio : TrioManager.getList()) {
                 output.initTrioFamilyData(trio);

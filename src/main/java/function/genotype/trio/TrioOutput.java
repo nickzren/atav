@@ -83,12 +83,11 @@ public class TrioOutput extends Output {
             Sample sample = SampleManager.getMap().get(id);
 
             int geno = calledVar.getGenotype(sample.getIndex());
-            int pheno = (int) sample.getPheno();
             int type = getGenoType(geno, sample);
 
-            deleteSampleGeno(type, pheno);
+            deleteSampleGeno(type, sample.getPheno());
 
-            sampleCount[Index.MISSING][pheno]++;
+            genoCount[Index.MISSING][sample.getPheno()]++;
         }
     }
 
@@ -103,12 +102,11 @@ public class TrioOutput extends Output {
             Sample sample = SampleManager.getMap().get(id);
 
             int geno = calledVar.getGenotype(sample.getIndex());
-            int pheno = (int) sample.getPheno();
             int type = getGenoType(geno, sample);
 
-            addSampleGeno(type, pheno);
+            addSampleGeno(type, sample.getPheno());
 
-            sampleCount[Index.MISSING][pheno]--;
+            genoCount[Index.MISSING][sample.getPheno()]--;
         }
     }
 }

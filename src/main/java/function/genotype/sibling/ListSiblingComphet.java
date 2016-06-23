@@ -87,7 +87,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
         try {
             CompHetOutput output = new CompHetOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             output.calculate();
 

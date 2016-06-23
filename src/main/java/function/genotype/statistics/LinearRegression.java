@@ -93,7 +93,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             LinearOutput output = new LinearOutput(calledVar);
-            output.countSampleGenoCov();
+            output.countSampleGeno();
             output.calculate();
 
             for (int m = 0; m < StatisticsCommand.models.length; m++) {

@@ -61,7 +61,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             ParentalOutput output = new ParentalOutput(calledVar);
-            output.countSampleGenoCov();
+            output.countSampleGeno();
             output.calculate();
 
             if (output.isValid()) {

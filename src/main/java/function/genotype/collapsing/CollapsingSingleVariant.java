@@ -58,7 +58,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             initSummaryList(output, summaryList);
 
             if (!summaryList.isEmpty()) {
-                output.countSampleGenoCov();
+                output.countSampleGeno();
 
                 output.calculate();
 

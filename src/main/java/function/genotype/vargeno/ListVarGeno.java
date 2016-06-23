@@ -70,7 +70,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             VarGenoOutput output = new VarGenoOutput(calledVar);
-            output.countSampleGenoCov();
+            output.countSampleGeno();
             output.calculate();
 
             if (output.isValid()) {

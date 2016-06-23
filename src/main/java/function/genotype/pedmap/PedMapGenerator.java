@@ -90,7 +90,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             Output output = new Output(calledVar);
-            output.countSampleGenoCov();
+            output.countSampleGeno();
             output.calculate();
 
             if (output.isValid()) {

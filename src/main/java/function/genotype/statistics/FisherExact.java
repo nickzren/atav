@@ -1,6 +1,5 @@
 package function.genotype.statistics;
 
-import utils.FormatManager;
 import utils.MathManager;
 
 /**
@@ -105,7 +104,7 @@ public class FisherExact {
     }
 
     public static double getTwoTailedP(int a, int b, int c, int d, int e, int f) {
-        int n = a + b + c + d + e + f;
+//        int n = a + b + c + d + e + f;
 
         double p = 0;
         double baseP = getP(a, b, c, d, e, f);
@@ -114,7 +113,7 @@ public class FisherExact {
         int n2 = d + e + f;
         int n3 = a + d;
         int n4 = b + e;
-        int n5 = c + f;
+//        int n5 = c + f;
 
         double tempP = 0.0;
         int min1, min2;

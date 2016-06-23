@@ -67,7 +67,7 @@ public class CollapsingCompHet extends CollapsingBase {
         try {
             CompHetOutput output = new CompHetOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             output.calculate();
 
