@@ -32,28 +32,35 @@ public class CollapsingCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--loo-maf")
-                    || option.getName().equals("--max-loo-maf")) {
-                checkValueValid(0.5, 0, option);
-                maxLooMaf = getValidDouble(option);
-            } else if (option.getName().equals("--loo-maf-rec")
-                    || option.getName().equals("--loo-maf-recessive")
-                    || option.getName().equals("--max-loo-maf-rec")) {
-                checkValueValid(0.5, 0, option);
-                maxLooMafRec = getValidDouble(option);
-            } else if (option.getName().equals("--read-coverage-summary")) {
-                coverageSummaryFile = getValidPath(option);
-                GeneManager.initCoverageSummary();
-            } else if (option.getName().equals("--covariate")) {
-                StatisticsCommand.covariateFile = getValidPath(option);
-                isCollapsingDoLogistic = true;
-            } else if (option.getName().equals("--quantitative")) {
-                StatisticsCommand.quantitativeFile = getValidPath(option);
-                isCollapsingDoLinear = true;
-            } else if (option.getName().equals("--region-boundary")) {
-                regionBoundaryFile = getValidPath(option);
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--loo-maf":
+                case "--max-loo-maf":
+                    checkValueValid(0.5, 0, option);
+                    maxLooMaf = getValidDouble(option);
+                    break;
+                case "--loo-maf-rec":
+                case "--loo-maf-recessive":
+                case "--max-loo-maf-rec":
+                    checkValueValid(0.5, 0, option);
+                    maxLooMafRec = getValidDouble(option);
+                    break;
+                case "--read-coverage-summary":
+                    coverageSummaryFile = getValidPath(option);
+                    GeneManager.initCoverageSummary();
+                    break;
+                case "--covariate":
+                    StatisticsCommand.covariateFile = getValidPath(option);
+                    isCollapsingDoLogistic = true;
+                    break;
+                case "--quantitative":
+                    StatisticsCommand.quantitativeFile = getValidPath(option);
+                    isCollapsingDoLinear = true;
+                    break;
+                case "--region-boundary":
+                    regionBoundaryFile = getValidPath(option);
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
@@ -70,30 +77,37 @@ public class CollapsingCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--loo-maf")
-                    || option.getName().equals("--max-loo-maf")) {
-                checkValueValid(0.5, 0, option);
-                maxLooMaf = getValidDouble(option);
-            } else if (option.getName().equals("--loo-maf-rec")
-                    || option.getName().equals("--loo-maf-recessive")
-                    || option.getName().equals("--max-loo-maf-rec")) {
-                checkValueValid(0.5, 0, option);
-                maxLooMafRec = getValidDouble(option);
-            } else if (option.getName().equals("--loo-comb-freq")
-                    || option.getName().equals("--max-loo-comb-freq")) {
-                checkValueValid(1, 0, option);
-                maxLooCombFreq = getValidDouble(option);
-            } else if (option.getName().equals("--read-coverage-summary")) {
-                coverageSummaryFile = getValidPath(option);
-                GeneManager.initCoverageSummary();
-            } else if (option.getName().equals("--covariate")) {
-                StatisticsCommand.covariateFile = getValidPath(option);
-                isCollapsingDoLogistic = true;
-            } else if (option.getName().equals("--quantitative")) {
-                StatisticsCommand.quantitativeFile = getValidPath(option);
-                isCollapsingDoLinear = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--loo-maf":
+                case "--max-loo-maf":
+                    checkValueValid(0.5, 0, option);
+                    maxLooMaf = getValidDouble(option);
+                    break;
+                case "--loo-maf-rec":
+                case "--loo-maf-recessive":
+                case "--max-loo-maf-rec":
+                    checkValueValid(0.5, 0, option);
+                    maxLooMafRec = getValidDouble(option);
+                    break;
+                case "--loo-comb-freq":
+                case "--max-loo-comb-freq":
+                    checkValueValid(1, 0, option);
+                    maxLooCombFreq = getValidDouble(option);
+                    break;
+                case "--read-coverage-summary":
+                    coverageSummaryFile = getValidPath(option);
+                    GeneManager.initCoverageSummary();
+                    break;
+                case "--covariate":
+                    StatisticsCommand.covariateFile = getValidPath(option);
+                    isCollapsingDoLogistic = true;
+                    break;
+                case "--quantitative":
+                    StatisticsCommand.quantitativeFile = getValidPath(option);
+                    isCollapsingDoLinear = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
@@ -109,11 +123,7 @@ public class CollapsingCommand {
             return true;
         }
 
-        if (value <= maxLooMaf) {
-            return true;
-        }
-
-        return false;
+        return value <= maxLooMaf;
     }
 
     public static boolean isMaxLooMafRecValid(double value) {
@@ -121,11 +131,7 @@ public class CollapsingCommand {
             return true;
         }
 
-        if (value <= maxLooMafRec) {
-            return true;
-        }
-
-        return false;
+        return value <= maxLooMafRec;
     }
 
     public static boolean isMaxLooCombFreqValid(double value) {
@@ -133,10 +139,6 @@ public class CollapsingCommand {
             return true;
         }
 
-        if (value <= maxLooCombFreq) {
-            return true;
-        }
-
-        return false;
+        return value <= maxLooCombFreq;
     }
 }

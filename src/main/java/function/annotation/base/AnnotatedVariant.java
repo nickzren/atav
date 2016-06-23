@@ -42,8 +42,8 @@ public class AnnotatedVariant extends Variant {
     String codonChange;
     String aminoAcidChange;
     String stableId;
-    HashSet<String> geneSet = new HashSet<String>();
-    HashSet<String> transcriptSet = new HashSet<String>();
+    HashSet<String> geneSet = new HashSet<>();
+    HashSet<String> transcriptSet = new HashSet<>();
     double polyphenHumdiv;
     double polyphenHumvar;
 

@@ -35,8 +35,8 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     final String geneLinearPQQPlotPath = CommonCommand.outputPath + "summary.linear.p.qq.plot.pdf";
     final String geneLogisticPQQPlotPath = CommonCommand.outputPath + "summary.logistic.p.qq.plot.pdf";
 
-    ArrayList<CollapsingSummary> summaryList = new ArrayList<CollapsingSummary>();
-    HashMap<String, CollapsingSummary> summaryMap = new HashMap<String, CollapsingSummary>();
+    ArrayList<CollapsingSummary> summaryList = new ArrayList<>();
+    HashMap<String, CollapsingSummary> summaryMap = new HashMap<>();
 
     @Override
     public void initOutput() {

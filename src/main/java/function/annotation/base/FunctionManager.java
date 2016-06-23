@@ -6,6 +6,7 @@ import utils.LogManager;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -55,13 +56,9 @@ public class FunctionManager {
             rankingFunctionMap.put(RANDKING_FUNCTION__LIST[i], i);
         }
 
-        for (String function : SNV_EFFECT_FULL_LIST) {
-            snvFunctionSet.add(function);
-        }
+        snvFunctionSet.addAll(Arrays.asList(SNV_EFFECT_FULL_LIST));
 
-        for (String function : INDEL_EFFECT_FULL_LIST) {
-            indelFunctionSet.add(function);
-        }
+        indelFunctionSet.addAll(Arrays.asList(INDEL_EFFECT_FULL_LIST));
 
         for (String function : HIT_TYPE_FULL_LIST) {
             snvFunctionSet.add(function);

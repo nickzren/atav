@@ -17,9 +17,9 @@ public class TranscriptManager {
     private static final String CCDS_TRANSCRIPT_PATH = "data/ccds_transcript.txt";
     private static final String CANONICAL_TRANSCRIPT_PATH = "data/canonical_transcript.txt";
 
-    private static HashSet<String> currentTranscriptSet = new HashSet<String>();
-    private static HashSet<String> ccdsTranscriptSet = new HashSet<String>();
-    private static HashSet<String> canonicalTranscriptSet = new HashSet<String>();
+    private static HashSet<String> currentTranscriptSet = new HashSet<>();
+    private static HashSet<String> ccdsTranscriptSet = new HashSet<>();
+    private static HashSet<String> canonicalTranscriptSet = new HashSet<>();
     private static String ccdsTranscriptFile = "";
     private static String canonicalTranscriptFile = "";
 

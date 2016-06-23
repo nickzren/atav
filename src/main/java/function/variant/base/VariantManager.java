@@ -326,10 +326,6 @@ public class VariantManager {
 
         ResultSet rs = DBManager.executeQuery(sql);
 
-        if (rs.next()) {
-            return true;
-        } else {
-            return false;
-        }
+        return rs.next();
     }
 }

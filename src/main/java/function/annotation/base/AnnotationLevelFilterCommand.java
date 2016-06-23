@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidPath;
@@ -29,30 +28,39 @@ public class AnnotationLevelFilterCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--function")) {
-                functionInput = getValidPath(option);
-            } else if (option.getName().equals("--gene")) {
-                geneInput = getValidPath(option);
-            } else if (option.getName().equals("--gene-boundaries") ||
-                    option.getName().equals("--gene-boundary")) {
-                geneBoundaryFile = getValidPath(option); 
-            } else if (option.getName().equals("--transcript")) {
-                transcriptFile = getValidPath(option);
-            } else if (option.getName().equals("--ccds-only")) {
-                isCcdsOnly = true;
-                TranscriptManager.initCCDSTranscriptPath();
-            } else if (option.getName().equals("--canonical-only")) {
-                isCanonicalOnly = true;
-                TranscriptManager.initCanonicalTranscriptPath();
-            } else if (option.getName().equals("--polyphen")
-                    || option.getName().equals("--polyphen-humdiv")) {
-                checkValuesValid(POLYPHEN_CAT, option);
-                polyphenHumdiv = option.getValue();
-            } else if (option.getName().equals("--polyphen-humvar")) {
-                checkValuesValid(POLYPHEN_CAT, option);
-                polyphenHumvar = option.getValue();
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--function":
+                    functionInput = getValidPath(option);
+                    break;
+                case "--gene":
+                    geneInput = getValidPath(option);
+                    break;
+                case "--gene-boundaries":
+                case "--gene-boundary":
+                    geneBoundaryFile = getValidPath(option);
+                    break;
+                case "--transcript":
+                    transcriptFile = getValidPath(option);
+                    break;
+                case "--ccds-only":
+                    isCcdsOnly = true;
+                    TranscriptManager.initCCDSTranscriptPath();
+                    break;
+                case "--canonical-only":
+                    isCanonicalOnly = true;
+                    TranscriptManager.initCanonicalTranscriptPath();
+                    break;
+                case "--polyphen":
+                case "--polyphen-humdiv":
+                    checkValuesValid(POLYPHEN_CAT, option);
+                    polyphenHumdiv = option.getValue();
+                    break;
+                case "--polyphen-humvar":
+                    checkValuesValid(POLYPHEN_CAT, option);
+                    polyphenHumvar = option.getValue();
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();

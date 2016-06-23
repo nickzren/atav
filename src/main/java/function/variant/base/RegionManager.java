@@ -17,9 +17,9 @@ import java.util.HashMap;
  */
 public class RegionManager {
 
-    private static ArrayList<Region> regionList = new ArrayList<Region>();
-    private static HashMap<Integer, String> idChrMap = new HashMap<Integer, String>();
-    private static HashMap<String, Integer> chrIdMap = new HashMap<String, Integer>();
+    private static ArrayList<Region> regionList = new ArrayList<>();
+    private static HashMap<Integer, String> idChrMap = new HashMap<>();
+    private static HashMap<String, Integer> chrIdMap = new HashMap<>();
     private static boolean isUsed = false;
 
     public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
@@ -115,7 +115,7 @@ public class RegionManager {
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-            ArrayList<String> chrList = new ArrayList<String>();
+            ArrayList<String> chrList = new ArrayList<>();
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -126,7 +126,7 @@ public class RegionManager {
 
                 lineStr = lineStr.replaceAll("( )+", "").toLowerCase();
 
-                if (lineStr.indexOf(":") == -1) {
+                if (!lineStr.contains(":")) {
                     String[] values = lineStr.split("\t");
                     if (values.length > 1) {
                         lineStr = values[0] + ":" + values[1] + "-" + values[2];

@@ -12,8 +12,8 @@ import java.util.HashMap;
  */
 public class CalledVariant extends AnnotatedVariant {
 
-    private HashMap<Integer, Carrier> carrierMap = new HashMap<Integer, Carrier>();
-    private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<Integer, NonCarrier>();
+    private HashMap<Integer, Carrier> carrierMap = new HashMap<>();
+    private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<>();
     private int[] genotype = new int[SampleManager.getListSize()];
     private int[] coverage = new int[SampleManager.getListSize()];
     private int[] qcFailSample = new int[2];

@@ -19,12 +19,15 @@ public class PedMapCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--variant-id-only")) {
-                isVariantIdOnly = true;
-            } else if (option.getName().equals("--eigenstrat")) {
-                isEigenstrat = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--variant-id-only":
+                    isVariantIdOnly = true;
+                    break;
+                case "--eigenstrat":
+                    isEigenstrat = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();

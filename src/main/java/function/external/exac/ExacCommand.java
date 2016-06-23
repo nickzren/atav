@@ -23,12 +23,8 @@ public class ExacCommand {
             return true;
         }
 
-        if (value <= exacMaf
-                || value == Data.NA) {
-            return true;
-        }
-
-        return false;
+        return value <= exacMaf
+                || value == Data.NA;
     }
 
     public static boolean isExacVqslodValid(float value, boolean isSnv) {
@@ -44,12 +40,8 @@ public class ExacCommand {
             return true;
         }
 
-        if (value >= exacVqslodSnv
-                || value == Data.NA) {
-            return true;
-        }
-
-        return false;
+        return value >= exacVqslodSnv
+                || value == Data.NA;
     }
 
     private static boolean isExacVqslodIndelValid(float value) {
@@ -57,12 +49,8 @@ public class ExacCommand {
             return true;
         }
 
-        if (value >= exacVqslodIndel
-                || value == Data.NA) {
-            return true;
-        }
-
-        return false;
+        return value >= exacVqslodIndel
+                || value == Data.NA;
     }
 
     public static boolean isExacMeanCoverageValid(float value) {
@@ -70,10 +58,6 @@ public class ExacCommand {
             return true;
         }
 
-        if (value >= exacMeanCoverage) {
-            return true;
-        }
-
-        return false;
+        return value >= exacMeanCoverage;
     }
 }

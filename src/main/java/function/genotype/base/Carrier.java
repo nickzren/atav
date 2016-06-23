@@ -50,7 +50,7 @@ public class Carrier extends NonCarrier {
             return Data.NA;
         }
 
-        return f.floatValue();
+        return f;
     }
     
     private float getFloat(BigDecimal f) {

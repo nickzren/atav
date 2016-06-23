@@ -25,17 +25,22 @@ public class ParentalCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--child-qd")) {
-                childQD = getValidDouble(option);
-            } else if (option.getName().equals("--child-het-percent-alt-read")) {
-                checkRangeValid("0-1", option);
-                childHetPercentAltRead = getValidRange(option);
-            } else if (option.getName().equals("--min-child-binomial")) {
-                minChildBinomial = getValidDouble(option);
-            } else if (option.getName().equals("--max-parent-binomial")) {
-                maxParentBinomial = getValidDouble(option);
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--child-qd":
+                    childQD = getValidDouble(option);
+                    break;
+                case "--child-het-percent-alt-read":
+                    checkRangeValid("0-1", option);
+                    childHetPercentAltRead = getValidRange(option);
+                    break;
+                case "--min-child-binomial":
+                    minChildBinomial = getValidDouble(option);
+                    break;
+                case "--max-parent-binomial":
+                    maxParentBinomial = getValidDouble(option);
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();

@@ -85,12 +85,8 @@ public class Region implements Comparable {
             return true;
         }
 
-        if (isInsideXPseudoautosomalRegions()
-                || isInsideYPseudoautosomalRegions()) {
-            return true;
-        }
-
-        return false;
+        return isInsideXPseudoautosomalRegions()
+                || isInsideYPseudoautosomalRegions();
     }
 
     /*
@@ -102,13 +98,9 @@ public class Region implements Comparable {
         int startX1 = 60001, endX1 = 2699520;
         int startX2 = 154931044, endX2 = 155260560;
 
-        if (chrNum == 23
+        return chrNum == 23
                 && ((startPosition >= startX1 && endPosition <= endX1)
-                || (startPosition >= startX2 && endPosition <= endX2))) {
-            return true;
-        }
-
-        return false;
+                || (startPosition >= startX2 && endPosition <= endX2));
     }
 
     /*
@@ -118,13 +110,9 @@ public class Region implements Comparable {
         int startY1 = 10001, endY1 = 2649520;
         int startY2 = 59034050, endY2 = 59363566;
 
-        if (chrNum == 24
+        return chrNum == 24
                 && ((startPosition >= startY1 && endPosition <= endY1)
-                || (startPosition >= startY2 && endPosition <= endY2))) {
-            return true;
-        }
-
-        return false;
+                || (startPosition >= startY2 && endPosition <= endY2));
     }
 
     public boolean contains(Region r) {
@@ -164,6 +152,7 @@ public class Region implements Comparable {
         return chr;
     }
 
+    @Override
     public int compareTo(Object another) throws ClassCastException {
         Region that = (Region) another;
         return Double.compare(this.chrNum, that.chrNum); //small -> large

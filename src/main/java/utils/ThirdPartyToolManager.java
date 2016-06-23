@@ -43,7 +43,7 @@ public class ThirdPartyToolManager {
 
             String line;
 
-            Vector<String> result = new Vector<String>();
+            Vector<String> result = new Vector<>();
             while ((line = br.readLine()) != null) {
                 result.add(line);
             }

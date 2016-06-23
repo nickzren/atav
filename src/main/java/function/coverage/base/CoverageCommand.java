@@ -34,23 +34,28 @@ public class CoverageCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--exon-max-percent-cov-difference")) {
-                checkValueValid(1, 0, option);
-                exonCleanCutoff = getValidDouble(option);
-            } else if (option.getName().equals("--gene-max-percent-cov-difference")) {
-                checkValueValid(1, 0, option);
-                geneCleanCutoff = getValidDouble(option);
-            } else if (option.getName().equals("--quantitative")) {
-                isLinear = true;
-                StatisticsCommand.quantitativeFile = getValidPath(option);
-            } /*else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
-             checkValueValid(1, 0, option);
-             ExonMaxCovDiffPValue = getValidDouble(option);
-             } else if (option.getName().equals("--exon-max-percent-var-explained")) {
-             checkValueValid(100, 0, option);
-             ExonMaxPercentVarExplained = getValidDouble(option);
-             } */ else {
-                continue;
+            switch (option.getName()) {
+                case "--exon-max-percent-cov-difference":
+                    checkValueValid(1, 0, option);
+                    exonCleanCutoff = getValidDouble(option);
+                    break;
+                case "--gene-max-percent-cov-difference":
+                    checkValueValid(1, 0, option);
+                    geneCleanCutoff = getValidDouble(option);
+                    break;
+            /*else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
+            checkValueValid(1, 0, option);
+            ExonMaxCovDiffPValue = getValidDouble(option);
+            } else if (option.getName().equals("--exon-max-percent-var-explained")) {
+            checkValueValid(100, 0, option);
+            ExonMaxPercentVarExplained = getValidDouble(option);
+            } */
+                case "--quantitative":
+                    isLinear = true;
+                    StatisticsCommand.quantitativeFile = getValidPath(option);
+                    break;
+                default:
+                    continue;
             }
             iterator.remove();
         }
@@ -74,16 +79,20 @@ public class CoverageCommand {
         CommandOption option;
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--site-max-percent-cov-difference")) {
-                checkValueValid(1, 0, option);
-                siteCleanCutoff = getValidDouble(option);
-            } else if (option.getName().equals("--percent-region-covered")) {
-                minPercentRegionCovered = getValidDouble(option);
-            } else if (option.getName().equals("--gene-max-percent-cov-difference")) {
-                checkValueValid(1, 0, option);
-                geneCleanCutoff = getValidDouble(option);
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--site-max-percent-cov-difference":
+                    checkValueValid(1, 0, option);
+                    siteCleanCutoff = getValidDouble(option);
+                    break;
+                case "--percent-region-covered":
+                    minPercentRegionCovered = getValidDouble(option);
+                    break;
+                case "--gene-max-percent-cov-difference":
+                    checkValueValid(1, 0, option);
+                    geneCleanCutoff = getValidDouble(option);
+                    break;
+                default:
+                    continue;
             }
             iterator.remove();
         }

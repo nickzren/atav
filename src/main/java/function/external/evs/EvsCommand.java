@@ -23,12 +23,8 @@ public class EvsCommand {
             return true;
         }
 
-        if (value <= evsMaf
-                || value == Data.NA) {
-            return true;
-        }
-
-        return false;
+        return value <= evsMaf
+                || value == Data.NA;
     }
 
     public static boolean isEvsAllCoverageValid(int value) {
@@ -36,21 +32,13 @@ public class EvsCommand {
             return true;
         }
 
-        if (value >= evsAllAverageCoverage) {
-            return true;
-        }
-
-        return false;
+        return value >= evsAllAverageCoverage;
     }
 
     public static boolean isEvsStatusValid(String status) {
         if (isExcludeEvsQcFailed) {
-            if (status.equalsIgnoreCase("NA")
-                    || status.equalsIgnoreCase("pass")) {
-                return true;
-            } else {
-                return false;
-            }
+            return status.equalsIgnoreCase("NA")
+                    || status.equalsIgnoreCase("pass");
         } else {
             return true;
         }

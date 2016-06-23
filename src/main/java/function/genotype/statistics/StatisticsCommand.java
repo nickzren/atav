@@ -26,13 +26,16 @@ public class StatisticsCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--threshold-sort")) {
-                threshold4Sort = getValidDouble(option);
-                checkValueValid(1, 0, option);
-            } else if (option.getName().equals("--case-only")) {
-                isCaseOnly = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--threshold-sort":
+                    threshold4Sort = getValidDouble(option);
+                    checkValueValid(1, 0, option);
+                    break;
+                case "--case-only":
+                    isCaseOnly = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
@@ -44,15 +47,19 @@ public class StatisticsCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--threshold-sort")) {
-                threshold4Sort = getValidDouble(option);
-                checkValueValid(1, 0, option);
-            } else if (option.getName().equals("--covariate")) {
-                covariateFile = getValidPath(option);
-            } else if (option.getName().equals("--quantitative")) {
-                quantitativeFile = getValidPath(option);
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--threshold-sort":
+                    threshold4Sort = getValidDouble(option);
+                    checkValueValid(1, 0, option);
+                    break;
+                case "--covariate":
+                    covariateFile = getValidPath(option);
+                    break;
+                case "--quantitative":
+                    quantitativeFile = getValidPath(option);
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();

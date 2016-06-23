@@ -52,89 +52,115 @@ public class GenotypeLevelFilterCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--sample")
-                    || option.getName().equals("--pedinfo")) {
-                sampleFile = getValidPath(option);
-            } else if (option.getName().equals("--all-sample")) {
-                isAllSample = true;
-            } else if (option.getName().equals("--all-non-ref")) {
-                isAllNonRef = true;
-            } else if (option.getName().equals("--all-geno")) {
-                isAllGeno = true;
-            } else if (option.getName().equals("--ctrlMAF")
-                    || option.getName().equals("--ctrl-maf")
-                    || option.getName().equals("--max-ctrl-maf")) {
-                checkValueValid(0.5, 0, option);
-                maxCtrlMaf = getValidDouble(option);
-            } else if (option.getName().equals("--min-ctrl-maf")) {
-                checkValueValid(0.5, 0, option);
-                minCtrlMaf = getValidDouble(option);
-            } else if (option.getName().equals("--min-coverage")) {
-                checkValueValid(new String[]{"0", "3", "10", "20", "201"}, option);
-                minCoverage = getValidInteger(option);
-            } else if (option.getName().equals("--min-case-coverage-call")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                minCaseCoverageCall = getValidInteger(option);
-            } else if (option.getName().equals("--min-case-coverage-no-call")) {
-                checkValueValid(new String[]{"3", "10", "20", "201"}, option);
-                minCaseCoverageNoCall = getValidInteger(option);
-            } else if (option.getName().equals("--min-ctrl-coverage-call")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                minCtrlCoverageCall = getValidInteger(option);
-            } else if (option.getName().equals("--min-ctrl-coverage-no-call")) {
-                checkValueValid(new String[]{"3", "10", "20", "201"}, option);
-                minCtrlCoverageNoCall = getValidInteger(option);
-            } else if (option.getName().equals("--min-variant-present")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                minVarPresent = getValidInteger(option);
-            } else if (option.getName().equals("--min-case-carrier")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                minCaseCarrier = getValidInteger(option);
-            } else if (option.getName().equals("--var-status")) {
-                checkValueValid(VARIANT_STATUS, option);
-                String str = option.getValue().replace("+", ",");
-                if (str.contains("all")) {
-                    varStatus = null;
-                } else {
-                    varStatus = str.split(",");
-                }
-            } else if (option.getName().equals("--het-percent-alt-read")) {
-                checkRangeValid("0-1", option);
-                hetPercentAltRead = getValidRange(option);
-            } else if (option.getName().equals("--hom-percent-alt-read")) {
-                checkRangeValid("0-1", option);
-                homPercentAltRead = getValidRange(option);
-            } else if (option.getName().equals("--gq")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                genotypeQualGQ = getValidDouble(option);
-            } else if (option.getName().equals("--fs")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                strandBiasFS = getValidDouble(option);
-            } else if (option.getName().equals("--hap-score")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                haplotypeScore = getValidDouble(option);
-            } else if (option.getName().equals("--mq")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                rmsMapQualMQ = getValidDouble(option);
-            } else if (option.getName().equals("--qd")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                qualByDepthQD = getValidDouble(option);
-            } else if (option.getName().equals("--qual")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                qual = getValidDouble(option);
-            } else if (option.getName().equals("--rprs")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                readPosRankSum = getValidDouble(option);
-            } else if (option.getName().equals("--mqrs")) {
-                checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                mapQualRankSum = getValidDouble(option);
-            } else if (option.getName().equals("--include-qc-missing")) {
-                isQcMissingIncluded = true;
-            } else if (option.getName().equals("--max-qc-fail-sample")) {
-                checkValueValid(Data.NO_FILTER, 0, option);
-                maxQcFailSample = getValidInteger(option);
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--sample":
+                case "--pedinfo":
+                    sampleFile = getValidPath(option);
+                    break;
+                case "--all-sample":
+                    isAllSample = true;
+                    break;
+                case "--all-non-ref":
+                    isAllNonRef = true;
+                    break;
+                case "--all-geno":
+                    isAllGeno = true;
+                    break;
+                case "--ctrlMAF":
+                case "--ctrl-maf":
+                case "--max-ctrl-maf":
+                    checkValueValid(0.5, 0, option);
+                    maxCtrlMaf = getValidDouble(option);
+                    break;
+                case "--min-ctrl-maf":
+                    checkValueValid(0.5, 0, option);
+                    minCtrlMaf = getValidDouble(option);
+                    break;
+                case "--min-coverage":
+                    checkValueValid(new String[]{"0", "3", "10", "20", "201"}, option);
+                    minCoverage = getValidInteger(option);
+                    break;
+                case "--min-case-coverage-call":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minCaseCoverageCall = getValidInteger(option);
+                    break;
+                case "--min-case-coverage-no-call":
+                    checkValueValid(new String[]{"3", "10", "20", "201"}, option);
+                    minCaseCoverageNoCall = getValidInteger(option);
+                    break;
+                case "--min-ctrl-coverage-call":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minCtrlCoverageCall = getValidInteger(option);
+                    break;
+                case "--min-ctrl-coverage-no-call":
+                    checkValueValid(new String[]{"3", "10", "20", "201"}, option);
+                    minCtrlCoverageNoCall = getValidInteger(option);
+                    break;
+                case "--min-variant-present":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minVarPresent = getValidInteger(option);
+                    break;
+                case "--min-case-carrier":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minCaseCarrier = getValidInteger(option);
+                    break;
+                case "--var-status":
+                    checkValueValid(VARIANT_STATUS, option);
+                    String str = option.getValue().replace("+", ",");
+                    if (str.contains("all")) {
+                        varStatus = null;
+                    } else {
+                        varStatus = str.split(",");
+                    }   break;
+                case "--het-percent-alt-read":
+                    checkRangeValid("0-1", option);
+                    hetPercentAltRead = getValidRange(option);
+                    break;
+                case "--hom-percent-alt-read":
+                    checkRangeValid("0-1", option);
+                    homPercentAltRead = getValidRange(option);
+                    break;
+                case "--gq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    genotypeQualGQ = getValidDouble(option);
+                    break;
+                case "--fs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    strandBiasFS = getValidDouble(option);
+                    break;
+                case "--hap-score":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    haplotypeScore = getValidDouble(option);
+                    break;
+                case "--mq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    rmsMapQualMQ = getValidDouble(option);
+                    break;
+                case "--qd":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    qualByDepthQD = getValidDouble(option);
+                    break;
+                case "--qual":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    qual = getValidDouble(option);
+                    break;
+                case "--rprs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    readPosRankSum = getValidDouble(option);
+                    break;
+                case "--mqrs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    mapQualRankSum = getValidDouble(option);
+                    break;
+                case "--include-qc-missing":
+                    isQcMissingIncluded = true;
+                    break;
+                case "--max-qc-fail-sample":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    maxQcFailSample = getValidInteger(option);
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
@@ -164,11 +190,7 @@ public class GenotypeLevelFilterCommand {
     }
     
     public static boolean isMaxCtrlMafValid(double value) {
-        if (value <= maxCtrlMaf) {
-            return true;
-        }
-
-        return false;
+        return value <= maxCtrlMaf;
     }
 
     public static boolean isMinCtrlMafValid(double value) {
@@ -176,11 +198,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value >= minCtrlMaf) {
-            return true;
-        }
-
-        return false;
+        return value >= minCtrlMaf;
     }
 
     public static boolean isMinCoverageValid(int value, int minCov) {
@@ -188,11 +206,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value >= minCov) {
-            return true;
-        }
-
-        return false;
+        return value >= minCov;
     }
 
     public static boolean isMinVarPresentValid(int value) {
@@ -212,11 +226,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value >= minCaseCarrier) {
-            return true;
-        }
-
-        return false;
+        return value >= minCaseCarrier;
     }
 
     public static boolean isVarStatusValid(String value) {
@@ -418,10 +428,6 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value <= maxQcFailSample) {
-            return true;
-        }
-
-        return false;
+        return value <= maxQcFailSample;
     }
 }

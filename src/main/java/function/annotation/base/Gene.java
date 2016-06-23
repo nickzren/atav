@@ -75,13 +75,7 @@ public class Gene {
     }
 
     public boolean contains(Region r) {
-        for (Exon exon : exonList) {
-            if (exon.contains(r)) {
-                return true;
-            }
-        }
-
-        return false;
+        return exonList.parallelStream().anyMatch((exon) -> (exon.contains(r)));
     }
 
     public void initExonList() {
@@ -90,8 +84,8 @@ public class Gene {
         chr = fields[1];
 
         String[] exons = fields[2].trim().split(",");
-        for (int i = 0; i < exons.length; i++) {
-            String[] r = exons[i].split("\\W");
+        for (String exon : exons) {
+            String[] r = exon.split("\\W");
             int seq_region_start = Integer.parseInt(r[0]);
             int seq_region_end = Integer.parseInt(r[2]);
             String idStr = "Exon_" + seq_region_start + "_" + seq_region_end;

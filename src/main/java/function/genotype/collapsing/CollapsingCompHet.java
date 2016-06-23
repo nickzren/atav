@@ -118,7 +118,7 @@ public class CollapsingCompHet extends CollapsingBase {
                 currentGeneList.add(output.geneName);
                 updateGeneSummaryMap(output.geneName);
 
-                geneOutputList = new ArrayList<CompHetOutput>();
+                geneOutputList = new ArrayList<>();
                 geneOutputList.add(output);
                 geneListVector.add(geneOutputList);
             } else {
