@@ -104,8 +104,8 @@ public class KnownVarManager {
                 String ref = rs.getString("ref");
                 String alt = rs.getString("alt");
                 String clinicalSignificance = FormatManager.getString(rs.getString("ClinicalSignificance"));
-                String otherIds = FormatManager.getString(rs.getString("OtherIds").replaceAll(",", " | "));
-                String diseaseName = FormatManager.getString(rs.getString("DiseaseName").replaceAll(",", ""));
+                String otherIds = FormatManager.getString(rs.getString("OtherIds"));
+                String diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
                 String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
 
                 ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
