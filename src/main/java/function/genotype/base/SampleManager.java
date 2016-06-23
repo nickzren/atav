@@ -60,6 +60,7 @@ public class SampleManager {
 
     private static String tempCovarFile;
     private static String covariateFileTitle = "";
+    private static int covariateNum = Data.NA;
 
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
@@ -406,20 +407,24 @@ public class SampleManager {
                 if (lineStr.isEmpty()) {
                     continue;
                 }
-                
+
                 lineStr = lineStr.replaceAll("( )+", "");
 
                 if (covariateFileTitle.isEmpty()) {
                     covariateFileTitle = lineStr;
                     continue;
                 }
-                
+
                 String[] values = lineStr.split("\t");
 
                 Sample sample = getSampleByName(values[1]);
 
                 if (sample != null) {
                     sample.initCovariate(values);
+
+                    if (covariateNum == Data.NA) {
+                        covariateNum = sample.getCovariateList().size();
+                    }
                 }
             }
         } catch (Exception e) {
@@ -430,6 +435,10 @@ public class SampleManager {
         }
 
         resetSampleListByCovariate();
+    }
+
+    public static int getCovariateNum() {
+        return covariateNum;
     }
 
     private static void resetSampleListByCovariate() {

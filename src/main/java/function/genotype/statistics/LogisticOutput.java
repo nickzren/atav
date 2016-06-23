@@ -14,14 +14,11 @@ import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import global.Data;
 import global.Index;
-import org.renjin.sexp.DoubleArrayVector;
 import org.renjin.sexp.DoubleVector;
 import utils.FormatManager;
 
-import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
-import org.renjin.sexp.SEXP;
 import utils.ErrorManager;
 import utils.MathManager;
 
@@ -31,7 +28,6 @@ import utils.MathManager;
  */
 public class LogisticOutput extends StatisticOutput {
 
-    int eigencount;
     public static final String title
             = "Variant ID,"
             + "Variant Type,"
@@ -71,9 +67,8 @@ public class LogisticOutput extends StatisticOutput {
 
     private static final StringBuilder expression = new StringBuilder();
 
-    public LogisticOutput(CalledVariant c, int n) {
+    public LogisticOutput(CalledVariant c) {
         super(c);
-        eigencount = n;
     }
 
     public boolean isValid(String model) {
@@ -90,22 +85,22 @@ public class LogisticOutput extends StatisticOutput {
         return false;
     }
 
-    private double doLogisticRegression(List<Double> genotypicInfo, List<Integer> indices) {
-        if (genotypicInfo.size() <= 1) {
+    private double doLogisticRegression(List<Double> genotypeInfo, List<Integer> sampleIndexList) {
+        if (genotypeInfo.size() <= 1) {
             return Data.NA;
         }
 
         try {
             //Put indices
-            MathManager.getRenjinEngine().put("ind", indices);
+            MathManager.getRenjinEngine().put("ind", sampleIndexList);
             MathManager.getRenjinEngine().eval(" ind <- as.numeric(unlist(ind))");
 
             //Getting genotype info
-            MathManager.getRenjinEngine().put("xt1", genotypicInfo);
+            MathManager.getRenjinEngine().put("xt1", genotypeInfo);
             MathManager.getRenjinEngine().eval(" xt1 <- as.numeric(unlist(xt1))");
 
             //Getting covariate subset
-            for (int i = 1; i <= eigencount; i++) {
+            for (int i = 1; i <= SampleManager.getCovariateNum(); i++) {
                 MathManager.getRenjinEngine().eval("xt" + (i + 1) + "<- x" + i + "[ind+1]");
             }
 
@@ -126,23 +121,22 @@ public class LogisticOutput extends StatisticOutput {
         return Data.NA;
     }
 
-    private static void initExpression(int covariantCount) {
-        if (expression.length() == 0) {
-            expression.append("yt~");
+    public static void initExpression() {
+        int covariantCount = SampleManager.getCovariateNum() + 1;
 
-            for (int i = 0; i < covariantCount; i++) {
-                expression.append("xt").append(i + 1);
-                if (i != covariantCount - 1) {
-                    expression.append("+");
-                }
+        expression.append("yt~");
+
+        for (int i = 0; i < covariantCount; i++) {
+            expression.append("xt").append(i + 1);
+            if (i != covariantCount - 1) {
+                expression.append("+");
             }
         }
     }
 
     public void doRegression(String model) {
-        List<Double> genotypicInfo = new ArrayList<>();
-        List<Integer> qualifiedIndices = new ArrayList<>();
-        /*int eigenCount = SampleManager.getList().get(0).getCovariateList().size();*/
+        List<Double> genotypeList = new ArrayList<>();
+        List<Integer> sampleIndexList = new ArrayList<>();
 
         for (Sample sample : SampleManager.getList()) {
             //get genotype
@@ -151,26 +145,23 @@ public class LogisticOutput extends StatisticOutput {
             if (geno != Data.NA) {
                 if (model.equals("dominant")) {
                     // Index Qualified
-                    qualifiedIndices.add(sample.getIndex());
+                    sampleIndexList.add(sample.getIndex());
                     if (isMinorRef) {
                         if (geno == Index.REF || geno == Index.HET || geno == Index.REF_MALE) {
-                            genotypicInfo.add(1d);
+                            genotypeList.add(1d);
                         } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
-                            genotypicInfo.add(0d);
+                            genotypeList.add(0d);
                         }
                     } else if (geno == Index.REF || geno == Index.REF_MALE) {
-                        genotypicInfo.add(0d);
+                        genotypeList.add(0d);
                     } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
-                        genotypicInfo.add(1d);
+                        genotypeList.add(1d);
                     }
                 }
             }
         }
 
-        //Initialize expression for covariates plus genotype
-        initExpression(eigencount + 1);
-
-        pValue = doLogisticRegression(genotypicInfo, qualifiedIndices);
+        pValue = doLogisticRegression(genotypeList, sampleIndexList);
     }
 
     @Override
