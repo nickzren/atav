@@ -31,7 +31,7 @@ public class Variant {
         }
 
         initVariantIdStr();
-
+        
         this.isIndel = isIndel;
     }
 
