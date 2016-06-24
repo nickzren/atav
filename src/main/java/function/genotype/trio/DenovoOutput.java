@@ -80,6 +80,8 @@ public class DenovoOutput extends TrioOutput {
                 + "QC Fail Ctrl,"
                 + "Case MAF,"
                 + "Ctrl MAF,"
+                + "Case HWE_P,"
+                + "Ctrl HWE_P,"
                 + "Average Ctrl Coverage,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
@@ -219,6 +221,8 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(ctrlAvgCov)).append(",");
 
         sb.append(calledVar.getEvsStr());

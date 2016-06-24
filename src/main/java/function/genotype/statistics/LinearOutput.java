@@ -47,6 +47,7 @@ public class LinearOutput extends StatisticOutput {
                 + "Missing Ctrl,"
                 + "QC Fail Ctrl,"
                 + "Ctrl Maf,"
+                + "Ctrl HWE_P,"
                 + "P value,"
                 + "Beta1,"
                 + EvsManager.getTitle()
@@ -324,6 +325,7 @@ public class LinearOutput extends StatisticOutput {
         sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(pValue)).append(",");
         sb.append(FormatManager.getDouble(beta1)).append(",");
 

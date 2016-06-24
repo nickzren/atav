@@ -54,6 +54,8 @@ public class CollapsingOutput extends Output {
                 + "QC Fail Ctrl,"
                 + "Case Maf,"
                 + "Ctrl Maf,"
+                + "Case HWE_P,"
+                + "Ctrl HWE_P,"
                 + "Loo Maf,"
                 + "Loo Minor Hom Freq,"
                 + "Samtools Raw Coverage,"
@@ -275,6 +277,8 @@ public class CollapsingOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getQual(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
 
         sb.append(calledVar.getEvsStr());
 

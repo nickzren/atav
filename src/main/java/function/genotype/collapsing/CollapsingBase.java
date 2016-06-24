@@ -4,7 +4,6 @@ import function.genotype.vargeno.SampleVariantCount;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
-import function.annotation.base.Gene;
 import function.annotation.base.GeneManager;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
@@ -16,7 +15,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  *
@@ -92,7 +90,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     @Override
     public void beforeProcessDatabaseData() {
         RegionBoundaryManager.init();
-        
+
         initSummaryMap();
 
         SampleManager.generateCovariateFile();
@@ -121,17 +119,17 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     private void initGeneSummaryMap() {
-        for (HashSet<Gene> geneSet : GeneManager.getMap().values()) {
-            for (Gene gene : geneSet) {
+        GeneManager.getMap().values().stream().forEach((geneSet) -> {
+            geneSet.stream().forEach((gene) -> {
                 updateGeneSummaryMap(gene.getName());
-            }
-        }
+            });
+        });
     }
 
     private void initRegionSummaryMap() {
-        for (RegionBoundary regionBoundary : RegionBoundaryManager.getList()) {
+        RegionBoundaryManager.getList().stream().forEach((regionBoundary) -> {
             updateRegionSummaryMap(regionBoundary.getName());
-        }
+        });
     }
 
     public void updateGeneSummaryMap(String geneName) {

@@ -50,6 +50,8 @@ public class VarGenoOutput extends Output {
                 + "QC Fail Ctrl,"
                 + "Case Maf,"
                 + "Ctrl Maf,"
+                + "Case HWE_P,"
+                + "Ctrl HWE_P,"
                 + "Samtools Raw Coverage,"
                 + "Gatk Filtered Coverage,"
                 + "Reads Alt,"
@@ -118,6 +120,8 @@ public class VarGenoOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getReadsAlt(sample.getId()))).append(",");

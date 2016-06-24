@@ -6,6 +6,7 @@ import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import function.genotype.base.SampleManager;
+import function.genotype.statistics.HWEExact;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -25,6 +26,7 @@ public class Output implements Cloneable {
     protected double[] hetFreq = new double[2];
     protected double[] minorAlleleFreq = new double[2];
     protected double[] minorHomFreq = new double[2];
+    protected double[] hweP = new double[2];
 
     public Output(CalledVariant c) {
         calledVar = c;
@@ -80,6 +82,8 @@ public class Output implements Cloneable {
         calculateAlleleFreq();
 
         calculateGenotypeFreq();
+
+        calculateHweP();
 
         countMajorMinorHomHet();
     }
@@ -149,6 +153,16 @@ public class Output implements Cloneable {
 
         hetFreq[Index.CASE] = MathManager.devide(genoCount[Index.HET][Index.CASE], totalCaseGenotypeCount);
         hetFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HET][Index.CTRL], totalCtrlGenotypeCount);
+    }
+
+    public void calculateHweP() {
+        hweP[Index.CASE] = HWEExact.getP(genoCount[Index.HOM][Index.CASE],
+                genoCount[Index.HET][Index.CASE],
+                genoCount[Index.REF][Index.CASE]);
+
+        hweP[Index.CTRL] = HWEExact.getP(genoCount[Index.HOM][Index.CTRL],
+                genoCount[Index.HET][Index.CTRL],
+                genoCount[Index.REF][Index.CTRL]);
     }
 
     public void countMajorMinorHomHet() {
@@ -258,6 +272,7 @@ public class Output implements Cloneable {
         output.hetFreq = FormatManager.deepCopyDoubleArray(hetFreq);
         output.minorAlleleFreq = FormatManager.deepCopyDoubleArray(minorAlleleFreq);
         output.minorHomFreq = FormatManager.deepCopyDoubleArray(minorHomFreq);
+        output.hweP = FormatManager.deepCopyDoubleArray(hweP);
 
         return output;
     }

@@ -62,6 +62,7 @@ public class FamilyOutput extends Output {
                 + "Minor Hom Ctrl Freq,"
                 + "Het Ctrl Freq,"
                 + "Ctrl Maf,"
+                + "Ctrl HWE_P,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
                 + "Polyphen Humdiv Prediction,"
@@ -248,6 +249,7 @@ public class FamilyOutput extends Output {
         sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
 
         sb.append(calledVar.getEvsStr());
 

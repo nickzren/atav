@@ -63,6 +63,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + "QC Fail Ctrl,"
                 + "Case MAF,"
                 + "Ctrl MAF,"
+                + "Case HWE_P,"
+                + "Ctrl HWE_P,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
                 + "Polyphen Humdiv Prediction,"
@@ -138,6 +140,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
 
         sb.append(calledVar.getEvsStr());
 
