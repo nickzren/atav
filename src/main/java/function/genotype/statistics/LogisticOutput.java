@@ -102,17 +102,12 @@ public class LogisticOutput extends StatisticOutput {
         this.genotypeList=new HashMap<>();
         this.sampleIndexList=new ArrayList<>();
 
-        /*** Building the Pipeline**/
-        //Lazy evaluation..so nothing happens here
-        Stream<Sample> qualified = SampleManager.getList()
-                                                .parallelStream()  // !! Switching to parallel !!
-                                                .filter(p -> calledVar.getGenotype(p.getIndex()) != Data.NA);
-
-        Stream<Integer> qualifiedGeno=qualified.map(k -> calledVar.getGenotype(k.getIndex()));
-
         //Dominant Model
         if (Arrays.asList(models).contains(DOMINANT))
-            this.genotypeList.put(DOMINANT, qualifiedGeno
+            this.genotypeList.put(DOMINANT, SampleManager.getList()
+                    .parallelStream()  // !! Switching to parallel !!
+                    .filter(p -> calledVar.getGenotype(p.getIndex()) != Data.NA)
+                    .map(k -> calledVar.getGenotype(k.getIndex()))
                     .map((j) -> {
                         double t=-1;
                         if (isMinorRef) {
@@ -133,7 +128,10 @@ public class LogisticOutput extends StatisticOutput {
                     .collect(Collectors.toList()));  /**Everything happens here**/
         //Recessive Model
         if (Arrays.asList(models).contains(RECESSIVE))
-            this.genotypeList.put(RECESSIVE, qualifiedGeno
+            this.genotypeList.put(RECESSIVE, SampleManager.getList()
+                    .parallelStream()  // !! Switching to parallel !!
+                    .filter(p -> calledVar.getGenotype(p.getIndex()) != Data.NA)
+                    .map(k -> calledVar.getGenotype(k.getIndex()))
                     .map((j) -> {
                         double t=-1;
                         if (isMinorRef) {
@@ -155,8 +153,11 @@ public class LogisticOutput extends StatisticOutput {
                     .collect(Collectors.toList()));/**... and here**/
 
         //getting qualified indices
-        this.sampleIndexList.addAll(qualified.map(p -> p.getIndex())
-                                             .collect(Collectors.toList()));
+        this.sampleIndexList.addAll(SampleManager.getList()
+                                                 .parallelStream()  // !! Switching to parallel !!
+                                                 .filter(p -> calledVar.getGenotype(p.getIndex()) != Data.NA).map(p -> p.getIndex())
+                                                 .collect(Collectors.toList())
+                                    );
 
 
                 //Putting **Additive** on the burner
