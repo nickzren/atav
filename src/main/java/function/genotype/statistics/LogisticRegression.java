@@ -5,7 +5,6 @@ import function.genotype.base.CalledVariant;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import function.genotype.base.Sample;
@@ -115,11 +114,11 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
             LogisticOutput output = new LogisticOutput(calledVar);
             output.countSampleGenoCov();
             output.calculate();
+            
             //initialize genotypes for all models
             output.initGenotypeAndSampleIndexList(StatisticsCommand.logisticModels);
 
             //for each model run sequentially
-
             for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
                 if (output.isValid(StatisticsCommand.logisticModels[m])) {
                     // needs to calculate logistic p below

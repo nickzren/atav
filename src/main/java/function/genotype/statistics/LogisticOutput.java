@@ -68,11 +68,12 @@ public class LogisticOutput extends StatisticOutput {
             + GenomesManager.getTitle();
 
     private static final StringBuilder expression = new StringBuilder();
-    public static final String DOMINANT="dominant";
-    public static final String RECESSIVE="recessive";
+    public static final String DOMINANT = "dominant";
+    public static final String RECESSIVE = "recessive";
 
-    private Map<String, List<Double>> genotypeList;
+    private Map<String, List<Double>> modelGenoMap;
     private List<Integer> sampleIndexList;
+
     public LogisticOutput(CalledVariant c) {
         super(c);
     }
@@ -92,88 +93,11 @@ public class LogisticOutput extends StatisticOutput {
     }
 
     public void doRegression(String model) {
-        pValue = getPValue(model);
-    }
+        List<Double> gt = modelGenoMap.get(model);
 
-
-    public void initGenotypeAndSampleIndexList(String[]  models) {
-
-
-        this.genotypeList=new HashMap<>();
-        this.sampleIndexList=new ArrayList<>();
-
-        //Dominant Model
-        if (Arrays.asList(models).contains(DOMINANT))
-            this.genotypeList.put(DOMINANT, SampleManager.getList()
-                    .parallelStream()  // !! Switching to parallel !!
-                    .filter(p -> calledVar.getGenotype(p.getIndex()) != Data.NA)
-                    .map(k -> calledVar.getGenotype(k.getIndex()))
-                    .map((j) -> {
-                        double t=-1;
-                        if (isMinorRef) {
-                            if (j == Index.REF || j == Index.HET || j == Index.REF_MALE) {
-                                t = 1;
-                            } else if (j == Index.HOM || j == Index.HOM_MALE) {
-                                t = 0;
-                            }
-                        } else {
-                            if (j == Index.REF || j == Index.REF_MALE) {
-                                t = 0;
-                            } else if (j == Index.HET || j == Index.HOM || j == Index.HOM_MALE) {
-                                t = 1;
-                            }
-                        }
-                        return t;
-                    })
-                    .collect(Collectors.toList()));  /**Everything happens here**/
-        //Recessive Model
-        if (Arrays.asList(models).contains(RECESSIVE))
-            this.genotypeList.put(RECESSIVE, SampleManager.getList()
-                    .parallelStream()  // !! Switching to parallel !!
-                    .filter(p -> calledVar.getGenotype(p.getIndex()) != Data.NA)
-                    .map(k -> calledVar.getGenotype(k.getIndex()))
-                    .map((j) -> {
-                        double t=-1;
-                        if (isMinorRef) {
-                            if (j == Index.REF || j == Index.REF_MALE) {
-                                t=1;
-                            } else if (j == Index.HOM || j == Index.HOM_MALE || j == Index.HET) {
-                                t=0;
-                            }
-                        } else {
-                            if (j == Index.HOM || j == Index.HOM_MALE) {
-                                t=1;
-                            } else if (j == Index.HET || j == Index.REF_MALE || j == Index.REF) {
-                                t=0;
-                            }
-                        }
-
-                        return t;
-                        })
-                    .collect(Collectors.toList()));/**... and here**/
-
-        //getting qualified indices
-        this.sampleIndexList.addAll(SampleManager.getList()
-                                                 .parallelStream()  // !! Switching to parallel !!
-                                                 .filter(p -> calledVar.getGenotype(p.getIndex()) != Data.NA).map(p -> p.getIndex())
-                                                 .collect(Collectors.toList())
-                                    );
-
-
-                //Putting **Additive** on the burner
-
-
-
-
-    }
-
-    private double getPValue(String model) {
-
-        List<Double> gt=genotypeList.get(model);
-
-
-        if (null==gt || gt.size() <= 1) {
-            return Data.NA;
+        if (null == gt || gt.size() <= 1) {
+            pValue = Data.NA;
+            return;
         }
 
         try {
@@ -199,12 +123,80 @@ public class LogisticOutput extends StatisticOutput {
             //Getting P value for genotype
             DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval("summary(logredmd)$coefficients[2,4]");
 
-            return (null != res) ? res.getElementAsDouble(0) : Data.NA;
+            pValue = (null != res) ? res.getElementAsDouble(0) : Data.NA;
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
 
-        return Data.NA;
+    public void initGenotypeAndSampleIndexList(String[] models) {
+        this.modelGenoMap = new HashMap<>();
+        this.sampleIndexList = new ArrayList<>();
+
+        //Dominant Model
+        if (Arrays.asList(models).contains(DOMINANT)) {
+            this.modelGenoMap.put(DOMINANT, SampleManager.getList()
+                    .parallelStream() // !! Switching to parallel !!
+                    .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
+                    .map(sample -> calledVar.getGenotype(sample.getIndex()))
+                    .map((geno) -> {
+                        double t = Data.NA;
+                        if (isMinorRef) {
+                            if (geno == Index.REF || geno == Index.HET || geno == Index.REF_MALE) {
+                                t = 1;
+                            } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
+                                t = 0;
+                            }
+                        } else if (geno == Index.REF || geno == Index.REF_MALE) {
+                            t = 0;
+                        } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
+                            t = 1;
+                        }
+                        return t;
+                    })
+                    .collect(Collectors.toList()));
+        }
+        /**
+         * Everything happens here*
+         */
+        //Recessive Model
+        if (Arrays.asList(models).contains(RECESSIVE)
+                && isRecessive()) { // has to match variant recessive rule
+            this.modelGenoMap.put(RECESSIVE, SampleManager.getList()
+                    .parallelStream() // !! Switching to parallel !!
+                    .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
+                    .map(sample -> calledVar.getGenotype(sample.getIndex()))
+                    .map((geno) -> {
+                        double t = Data.NA;
+                        if (isMinorRef) {
+                            if (geno == Index.REF || geno == Index.REF_MALE) {
+                                t = 1;
+                            } else if (geno == Index.HOM || geno == Index.HOM_MALE || geno == Index.HET) {
+                                t = 0;
+                            }
+                        } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
+                            t = 1;
+                        } else if (geno == Index.HET || geno == Index.REF_MALE || geno == Index.REF) {
+                            t = 0;
+                        }
+                        return t;
+                    })
+                    .collect(Collectors.toList()));
+        }
+        /**
+         * ... and here*
+         */
+
+        //getting qualified indices
+        this.sampleIndexList.addAll(
+                SampleManager.getList()
+                .parallelStream() // !! Switching to parallel !!
+                .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
+                .map(sample -> sample.getIndex())
+                .collect(Collectors.toList())
+        );
+
+        //Putting **Additive** on the burner
     }
 
     public static void initExpression() {
