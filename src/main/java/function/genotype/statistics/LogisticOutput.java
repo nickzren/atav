@@ -93,6 +93,11 @@ public class LogisticOutput extends StatisticOutput {
     }
 
     public void doRegression(String model) {
+        if (model.equals(RECESSIVE) && !isRecessive()) {
+            pValue = Data.NA;
+            return;
+        }
+
         List<Double> gt = modelGenoMap.get(model);
 
         if (null == gt || gt.size() <= 1) {
