@@ -18,13 +18,14 @@ public class StatisticsCommand {
     public static boolean isLogistic = false;
     public static double threshold4Sort = Data.NO_FILTER;
     public static String[] models = {"allelic", "dominant", "recessive", "genotypic"}; // default is fisher models
-    public static String[] logisticModels = {"dominant"};
+    public static String[] logisticModels = {LogisticOutput.DOMINANT}; //Use LogisticOutput qualifiers
     public static boolean isCaseOnly = false;
     public static String covariateFile = "";
     public static String quantitativeFile = "";
 
     public static void initFisherOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
+
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
@@ -74,5 +75,5 @@ public class StatisticsCommand {
 
             iterator.remove();
         }
-    }
 }
+    }
