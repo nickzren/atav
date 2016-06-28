@@ -88,10 +88,12 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-        if (isCommandFileIncluded(options)) {
-            initCommandFromFile();
-        } else {
-            optionArray = options;
+        {
+            if (isCommandFileIncluded(options)) {
+                initCommandFromFile();
+            } else {
+                optionArray = options;
+            }
         }
 
         cleanUpOddSymbol();
@@ -294,6 +296,9 @@ public class CommandManager {
                     StatisticsCommand.models[1] = "dominant";
                     StatisticsCommand.models[2] = "recessive";
                     StatisticsCommand.models[3] = "additive";
+                    break;
+                case "--logistic":
+                    StatisticsCommand.isLogistic = true;
                     break;
                 case "--family-analysis":
                     FamilyCommand.isFamilyAnalysis = true;
