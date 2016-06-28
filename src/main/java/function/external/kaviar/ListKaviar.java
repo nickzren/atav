@@ -22,17 +22,13 @@ public class ListKaviar extends AnalysisBase {
     public void initOutput() {
         try {
             bwKaviar = new BufferedWriter(new FileWriter(kaviarFilePath));
-            bwKaviar.write(KaviarOutput.title);
+            bwKaviar.write(KaviarOutput.getTitle());
             bwKaviar.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
     }
-
-    @Override
-    public void doOutput() {
-    }
-
+    
     @Override
     public void closeOutput() {
         try {

@@ -36,10 +36,6 @@ public class ListFlankingSeq extends AnalysisBase {
     }
 
     @Override
-    public void doOutput() {
-    }
-
-    @Override
     public void closeOutput() {
         try {
             bwUpdateFlankingSeq.flush();

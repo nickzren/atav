@@ -7,22 +7,22 @@ import utils.FormatManager;
  * @author nick
  */
 public class CollapsingRegionSummary extends CollapsingSummary {
-    
-    public static final String title
-            = "Rank,"
-            + "Region Name,"
-            + "Total Variant,"
-            + "Total SNV,"
-            + "Total Indel,"
-            + "Qualified Case,"
-            + "Unqualified Case,"
-            + "Qualified Case Freq,"
-            + "Qualified Ctrl,"
-            + "Unqualified Ctrl,"
-            + "Qualified Ctrl Freq,"
-            + "Enriched Direction,"
-            + "Fet P"
-            + "\n";
+
+    public static String getTitle() {
+        return "Rank,"
+                + "Region Name,"
+                + "Total Variant,"
+                + "Total SNV,"
+                + "Total Indel,"
+                + "Qualified Case,"
+                + "Unqualified Case,"
+                + "Qualified Case Freq,"
+                + "Qualified Ctrl,"
+                + "Unqualified Ctrl,"
+                + "Qualified Ctrl Freq,"
+                + "Enriched Direction,"
+                + "Fet P";
+    }
 
     public CollapsingRegionSummary(String name) {
         super(name);

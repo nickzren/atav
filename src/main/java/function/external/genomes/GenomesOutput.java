@@ -1,15 +1,17 @@
 package function.external.genomes;
 
 /**
- * 
+ *
  * @author nick
  */
 public class GenomesOutput {
+
     Genomes genomes;
 
-    public static final String title
-            = "Variant ID,"
-            + GenomesManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + GenomesManager.getTitle();
+    }
 
     public GenomesOutput(String id) {
         genomes = new Genomes(id);

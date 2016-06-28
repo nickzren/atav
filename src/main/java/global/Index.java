@@ -15,4 +15,6 @@ public class Index {
     public static final int CTRL = 0;
     public static final int CASE = 1;
     public static final int ALL = 2;
+    public static final int GENOME = 0;
+    public static final int EXOME = 1;
 }

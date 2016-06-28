@@ -22,15 +22,11 @@ public class ListEvs extends AnalysisBase {
     public void initOutput() {
         try {
             bwEvs = new BufferedWriter(new FileWriter(evsFilePath));
-            bwEvs.write(EvsOutput.title);
+            bwEvs.write(EvsOutput.getTitle());
             bwEvs.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-    }
-
-    @Override
-    public void doOutput() {
     }
 
     @Override

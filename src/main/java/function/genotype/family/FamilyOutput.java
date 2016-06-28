@@ -8,6 +8,7 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
@@ -16,6 +17,7 @@ import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -27,59 +29,58 @@ public class FamilyOutput extends Output {
         "Not shared", "Nnknown", "Partially shared"};
     String familyId = "";
     String flag = "";
-    public int[][] familySampleCount = new int[6][3];
+    public int[][] familyGenoCount = new int[6][3];
     public double[][] familySampleFreq = new double[4][3];
-    int[] familyTotalCov = new int[2];
-    double[] familyAverageCov = new double[2];
-    public static final String title
-            = "Family ID,"
-            + "Variant ID,"
-            + "Variant Type,"
-            + "Rs Number,"
-            + "Ref Allele,"
-            + "Alt Allele,"
-            + "CADD Score Phred,"
-            + GerpManager.getTitle()
-            + "Is Minor Ref,"
-            + "Flag,"
-            + "Hom Family Case,"
-            + "Het Family Case,"
-            + "Ref Family Case,"
-            + "Missing Family Case,"
-            + "Hom Family Case Freq,"
-            + "Het Family Case Freq,"
-            + "Hom Family Ctrl,"
-            + "Het Family Ctrl,"
-            + "Ref Family Ctrl,"
-            + "Missing Family Ctrl,"
-            + "Hom Family Ctrl Freq,"
-            + "Het Family Ctrl Freq,"
-            + "Major Hom Ctrl,"
-            + "Het Ctrl,"
-            + "Minor Hom Ctrl,"
-            + "Missing Ctrl,"
-            + "Minor Hom Ctrl Freq,"
-            + "Het Ctrl Freq,"
-            + "Ctrl Maf,"
-            + "Ctrl HWEp,"
-            + "Avg Min Case Cov,"
-            + "Avg Min Ctrl Cov,"
-            + EvsManager.getTitle()
-            + "Polyphen Humdiv Score,"
-            + "Polyphen Humdiv Prediction,"
-            + "Polyphen Humvar Score,"
-            + "Polyphen Humvar Prediction,"
-            + "Function,"
-            + "Gene Name,"
-            + "Artifacts in Gene,"
-            + "Codon Change,"
-            + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle()
-            + KaviarManager.getTitle()
-            + KnownVarManager.getTitle()
-            + RvisManager.getTitle()
-            + SubRvisManager.getTitle()
-            + GenomesManager.getTitle();
+
+    public static String getTitle() {
+        return "Family ID,"
+                + "Variant ID,"
+                + "Variant Type,"
+                + "Rs Number,"
+                + "Ref Allele,"
+                + "Alt Allele,"
+                + "CADD Score Phred,"
+                + GerpManager.getTitle()
+                + "Is Minor Ref,"
+                + "Flag,"
+                + "Hom Family Case,"
+                + "Het Family Case,"
+                + "Ref Family Case,"
+                + "Missing Family Case,"
+                + "Hom Family Case Freq,"
+                + "Het Family Case Freq,"
+                + "Hom Family Ctrl,"
+                + "Het Family Ctrl,"
+                + "Ref Family Ctrl,"
+                + "Missing Family Ctrl,"
+                + "Hom Family Ctrl Freq,"
+                + "Het Family Ctrl Freq,"
+                + "Major Hom Ctrl,"
+                + "Het Ctrl,"
+                + "Minor Hom Ctrl,"
+                + "Missing Ctrl,"
+                + "Minor Hom Ctrl Freq,"
+                + "Het Ctrl Freq,"
+                + "Ctrl Maf,"
+                + "Ctrl HWE_P,"
+                + EvsManager.getTitle()
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Function,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Codon Change,"
+                + "Gene Transcript (AA Change),"
+                + ExacManager.getTitle()
+                + KaviarManager.getTitle()
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
+    }
 
     public FamilyOutput(CalledVariant c) {
         super(c);
@@ -91,21 +92,21 @@ public class FamilyOutput extends Output {
 
     public int getHomFamily() {
         if (isMinorRef) {
-            return familySampleCount[Index.REF][Index.CASE]
-                    + familySampleCount[Index.REF_MALE][Index.CASE]
-                    + familySampleCount[Index.REF][Index.CTRL]
-                    + familySampleCount[Index.REF_MALE][Index.CTRL];
+            return familyGenoCount[Index.REF][Index.CASE]
+                    + familyGenoCount[Index.REF_MALE][Index.CASE]
+                    + familyGenoCount[Index.REF][Index.CTRL]
+                    + familyGenoCount[Index.REF_MALE][Index.CTRL];
         } else {
-            return familySampleCount[Index.HOM][Index.CASE]
-                    + familySampleCount[Index.HOM_MALE][Index.CASE]
-                    + familySampleCount[Index.HOM][Index.CTRL]
-                    + familySampleCount[Index.HOM_MALE][Index.CTRL];
+            return familyGenoCount[Index.HOM][Index.CASE]
+                    + familyGenoCount[Index.HOM_MALE][Index.CASE]
+                    + familyGenoCount[Index.HOM][Index.CTRL]
+                    + familyGenoCount[Index.HOM_MALE][Index.CTRL];
         }
     }
 
     public int getHetFamily() {
-        return familySampleCount[Index.HET][Index.CASE]
-                + familySampleCount[Index.HET][Index.CTRL];
+        return familyGenoCount[Index.HET][Index.CASE]
+                + familyGenoCount[Index.HET][Index.CTRL];
     }
 
     public boolean isAllShared() {
@@ -126,24 +127,20 @@ public class FamilyOutput extends Output {
     }
 
     public void resetFamilyData() {
-        familySampleCount = new int[6][3];
+        familyGenoCount = new int[6][3];
         familySampleFreq = new double[4][3];
-        familyTotalCov = new int[2];
-        familyAverageCov = new double[2];
     }
 
     public void calculateFamilyNum(String familyId) {
-        int cov, geno, pheno, type;
+        int geno, pheno, type;
 
         for (Sample sample : SampleManager.getList()) {
             if (familyId.equals(sample.getFamilyId())) {
-                cov = calledVar.getCoverage(sample.getIndex());
                 geno = calledVar.getGenotype(sample.getIndex());
                 pheno = (int) sample.getPheno();
                 type = getGenoType(geno, sample);
 
                 countFamilySample(type, pheno);
-                countFamilyCoverage(cov, pheno);
             }
         }
     }
@@ -153,36 +150,27 @@ public class FamilyOutput extends Output {
             genotype = Index.MISSING;
         }
 
-        familySampleCount[genotype][pheno]++;
-    }
-
-    private void countFamilyCoverage(int cov, int phone) {
-        if (cov != Data.NA) {
-            familyTotalCov[phone] += cov;
-        }
+        familyGenoCount[genotype][pheno]++;
     }
 
     public void calculateFamilyFreq() {
-        int totalFamilyCase = familySampleCount[Index.HOM][Index.CASE]
-                + familySampleCount[Index.HET][Index.CASE]
-                + familySampleCount[Index.REF][Index.CASE]
-                + familySampleCount[Index.HOM_MALE][Index.CASE]
-                + familySampleCount[Index.REF_MALE][Index.CASE];
-        familySampleFreq[Index.HOM][Index.CASE] = FormatManager.devide(familySampleCount[Index.HOM][Index.CASE]
-                + familySampleCount[Index.HOM_MALE][Index.CASE], totalFamilyCase);
-        familySampleFreq[Index.HET][Index.CASE] = FormatManager.devide(familySampleCount[Index.HET][Index.CASE], totalFamilyCase);
+        int totalFamilyCase = familyGenoCount[Index.HOM][Index.CASE]
+                + familyGenoCount[Index.HET][Index.CASE]
+                + familyGenoCount[Index.REF][Index.CASE]
+                + familyGenoCount[Index.HOM_MALE][Index.CASE]
+                + familyGenoCount[Index.REF_MALE][Index.CASE];
+        familySampleFreq[Index.HOM][Index.CASE] = MathManager.devide(familyGenoCount[Index.HOM][Index.CASE]
+                + familyGenoCount[Index.HOM_MALE][Index.CASE], totalFamilyCase);
+        familySampleFreq[Index.HET][Index.CASE] = MathManager.devide(familyGenoCount[Index.HET][Index.CASE], totalFamilyCase);
 
-        int totalFamilyCtrl = familySampleCount[Index.HOM][Index.CTRL]
-                + familySampleCount[Index.HET][Index.CTRL]
-                + familySampleCount[Index.REF][Index.CTRL]
-                + familySampleCount[Index.HOM_MALE][Index.CTRL]
-                + familySampleCount[Index.REF_MALE][Index.CTRL];
-        familySampleFreq[Index.HOM][Index.CTRL] = FormatManager.devide(familySampleCount[Index.HOM][Index.CTRL]
-                + familySampleCount[Index.HOM_MALE][Index.CTRL], totalFamilyCtrl);
-        familySampleFreq[Index.HET][Index.CTRL] = FormatManager.devide(familySampleCount[Index.HET][Index.CTRL], totalFamilyCtrl);
-
-        familyAverageCov[Index.CASE] = FormatManager.devide(familyTotalCov[Index.CASE], totalFamilyCase);
-        familyAverageCov[Index.CTRL] = FormatManager.devide(familyTotalCov[Index.CTRL], totalFamilyCtrl);
+        int totalFamilyCtrl = familyGenoCount[Index.HOM][Index.CTRL]
+                + familyGenoCount[Index.HET][Index.CTRL]
+                + familyGenoCount[Index.REF][Index.CTRL]
+                + familyGenoCount[Index.HOM_MALE][Index.CTRL]
+                + familyGenoCount[Index.REF_MALE][Index.CTRL];
+        familySampleFreq[Index.HOM][Index.CTRL] = MathManager.devide(familyGenoCount[Index.HOM][Index.CTRL]
+                + familyGenoCount[Index.HOM_MALE][Index.CTRL], totalFamilyCtrl);
+        familySampleFreq[Index.HET][Index.CTRL] = MathManager.devide(familyGenoCount[Index.HET][Index.CTRL], totalFamilyCtrl);
     }
 
     /*
@@ -196,15 +184,15 @@ public class FamilyOutput extends Output {
      * at all.
      */
     public void initFlag() {
-        int hom = familySampleCount[Index.HOM][Index.CASE] + familySampleCount[Index.HOM_MALE][Index.CASE];
-        int het = familySampleCount[Index.HET][Index.CASE];
-        int ref = familySampleCount[Index.REF][Index.CASE] + familySampleCount[Index.REF_MALE][Index.CASE];
-        int missing = familySampleCount[Index.MISSING][Index.CASE];
+        int hom = familyGenoCount[Index.HOM][Index.CASE] + familyGenoCount[Index.HOM_MALE][Index.CASE];
+        int het = familyGenoCount[Index.HET][Index.CASE];
+        int ref = familyGenoCount[Index.REF][Index.CASE] + familyGenoCount[Index.REF_MALE][Index.CASE];
+        int missing = familyGenoCount[Index.MISSING][Index.CASE];
         int totalFamilyCase = hom + het + ref + missing;
 
         if (isMinorRef) {
-            hom = familySampleCount[Index.REF][Index.CASE] + familySampleCount[Index.REF_MALE][Index.CASE];
-            ref = familySampleCount[Index.HOM][Index.CASE] + familySampleCount[Index.HOM_MALE][Index.CASE];
+            hom = familyGenoCount[Index.REF][Index.CASE] + familyGenoCount[Index.REF_MALE][Index.CASE];
+            ref = familyGenoCount[Index.HOM][Index.CASE] + familyGenoCount[Index.HOM_MALE][Index.CASE];
         }
 
         if (hom == totalFamilyCase || het == totalFamilyCase) {
@@ -238,57 +226,47 @@ public class FamilyOutput extends Output {
         sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
         sb.append(flag).append(",");
-        sb.append(familySampleCount[Index.HOM][Index.CASE]
-                + familySampleCount[Index.HOM_MALE][Index.CASE]).append(",");
-        sb.append(familySampleCount[Index.HET][Index.CASE]).append(",");
-        sb.append(familySampleCount[Index.REF][Index.CASE]
-                + familySampleCount[Index.REF_MALE][Index.CASE]).append(",");
-        sb.append(familySampleCount[Index.MISSING][Index.CASE]).append(",");
+        sb.append(familyGenoCount[Index.HOM][Index.CASE]
+                + familyGenoCount[Index.HOM_MALE][Index.CASE]).append(",");
+        sb.append(familyGenoCount[Index.HET][Index.CASE]).append(",");
+        sb.append(familyGenoCount[Index.REF][Index.CASE]
+                + familyGenoCount[Index.REF_MALE][Index.CASE]).append(",");
+        sb.append(familyGenoCount[Index.MISSING][Index.CASE]).append(",");
         sb.append(FormatManager.getDouble(familySampleFreq[Index.HOM][Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(familySampleFreq[Index.HET][Index.CASE])).append(",");
-        sb.append(familySampleCount[Index.HOM][Index.CTRL]
-                + familySampleCount[Index.HOM_MALE][Index.CTRL]).append(",");
-        sb.append(familySampleCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(familySampleCount[Index.REF][Index.CTRL]
-                + familySampleCount[Index.REF_MALE][Index.CTRL]).append(",");
-        sb.append(familySampleCount[Index.MISSING][Index.CTRL]).append(",");
+        sb.append(familyGenoCount[Index.HOM][Index.CTRL]
+                + familyGenoCount[Index.HOM_MALE][Index.CTRL]).append(",");
+        sb.append(familyGenoCount[Index.HET][Index.CTRL]).append(",");
+        sb.append(familyGenoCount[Index.REF][Index.CTRL]
+                + familyGenoCount[Index.REF_MALE][Index.CTRL]).append(",");
+        sb.append(familyGenoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(FormatManager.getDouble(familySampleFreq[Index.HOM][Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(familySampleFreq[Index.HET][Index.CTRL])).append(",");
-        sb.append(majorHomCtrl).append(",");
-        sb.append(sampleCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(minorHomCtrl).append(",");
-        sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
-        sb.append(FormatManager.getDouble(ctrlMhgf)).append(",");
-        sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
-        sb.append(FormatManager.getDouble(familyAverageCov[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(familyAverageCov[Index.CTRL])).append(",");
-
+        sb.append(majorHomCount[Index.CTRL]).append(",");
+        sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
+        sb.append(minorHomCount[Index.CTRL]).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(calledVar.getEvsStr());
-
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
-
         sb.append(calledVar.getExacStr());
-
         sb.append(calledVar.getKaviarStr());
-
         sb.append(calledVar.getKnownVarStr());
-        
         sb.append(calledVar.getRvis());
-        
         sb.append(calledVar.getSubRvis());
-        
         sb.append(calledVar.get1000Genomes());
+        sb.append(calledVar.getMgi());
 
         return sb.toString();
     }

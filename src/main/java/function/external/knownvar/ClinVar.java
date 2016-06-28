@@ -41,15 +41,38 @@ public class ClinVar {
         return clinicalSignificance;
     }
 
+    public void setClinicalSignificance(String clinicalSignificance) {
+        this.clinicalSignificance = clinicalSignificance;
+    }
+
     public String getOtherIds() {
         return otherIds;
+    }
+
+    public void setOtherIds(String otherIds) {
+        this.otherIds = otherIds;
     }
 
     public String getDiseaseName() {
         return diseaseName;
     }
 
+    public void setDiseaseName(String diseaseName) {
+        this.diseaseName = diseaseName;
+    }
+
     public String getPubmedID() {
         return pubmedID;
+    }
+
+    public void setPubmedID(String pubmedID) {
+        this.pubmedID = pubmedID;
+    }
+
+    public void append(String clinicalSignificance, String otherIds, String diseaseName, String pubmedID) {
+        this.clinicalSignificance += " | " + clinicalSignificance;
+        this.otherIds += " | " + otherIds;
+        this.diseaseName += " | " + diseaseName;
+        this.pubmedID += " | " + pubmedID;
     }
 }

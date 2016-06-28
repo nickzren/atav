@@ -19,10 +19,6 @@ public class GerpCommand {
             return true;
         }
 
-        if (value >= minGerpScore) {
-            return true;
-        }
-
-        return false;
+        return value >= minGerpScore;
     }
 }

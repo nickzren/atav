@@ -39,14 +39,23 @@ public class LogisticOutput extends StatisticOutput {
             + "CADD Score Phred,"
             + GerpManager.getTitle()
             + "Is Minor Ref,"
+            + "Major Hom Case,"
+            + "Het Case,"
+            + "Minor Hom Case,"
+            + "Minor Hom Case Freq,"
+            + "Het Case Freq,"
             + "Major Hom Ctrl,"
             + "Het Ctrl,"
             + "Minor Hom Ctrl,"
             + "Minor Hom Ctrl Freq,"
             + "Het Ctrl Freq,"
+            + "Missing Case,"
+            + "QC Fail Case,"
             + "Missing Ctrl,"
             + "QC Fail Ctrl,"
+            + "Case Maf,"
             + "Ctrl Maf,"
+            + "Case HWE_P,"
             + "Ctrl HWE_P,"
             + "P value,"
             + "Avg Min Ctrl Cov,"
@@ -229,42 +238,42 @@ public class LogisticOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
-        sb.append(majorHomCtrl).append(",");
-        sb.append(sampleCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(minorHomCtrl).append(",");
-        sb.append(FormatManager.getDouble(ctrlMhgf)).append(",");
-        sb.append(FormatManager.getDouble(sampleFreq[Index.HET][Index.CTRL])).append(",");
-        sb.append(sampleCount[Index.MISSING][Index.CTRL]).append(",");
+        sb.append(majorHomCount[Index.CASE]).append(",");
+        sb.append(genoCount[Index.HET][Index.CASE]).append(",");
+        sb.append(minorHomCount[Index.CASE]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CASE])).append(",");
+        sb.append(majorHomCount[Index.CTRL]).append(",");
+        sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
+        sb.append(minorHomCount[Index.CTRL]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CASE]).append(",");
+        sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(ctrlMaf)).append(",");
-        sb.append(FormatManager.getDouble(ctrlHweP)).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(pValue)).append(",");
-        sb.append(FormatManager.getDouble(averageCov[Index.CTRL])).append(",");
-
         sb.append(calledVar.getEvsStr());
-
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
-
         sb.append(calledVar.getExacStr());
-
         sb.append(calledVar.getKaviarStr());
-
         sb.append(calledVar.getKnownVarStr());
-
         sb.append(calledVar.getRvis());
-
         sb.append(calledVar.getSubRvis());
-
         sb.append(calledVar.get1000Genomes());
+        sb.append(calledVar.getMgi());
 
         return sb.toString();
     }

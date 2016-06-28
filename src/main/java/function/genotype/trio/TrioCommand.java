@@ -40,14 +40,17 @@ public class TrioCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--combfreq")
-                    || option.getName().equals("--comb-freq")) {
-                checkValueValid(1, 0, option);
-                combFreq = getValidDouble(option);
-            } else if (option.getName().equals("--include-noflag")) {
-                isIncludeNoflag = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--combfreq":
+                case "--comb-freq":
+                    checkValueValid(1, 0, option);
+                    combFreq = getValidDouble(option);
+                    break;
+                case "--include-noflag":
+                    isIncludeNoflag = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();

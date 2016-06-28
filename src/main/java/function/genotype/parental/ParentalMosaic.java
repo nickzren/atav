@@ -23,7 +23,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwOutput = new BufferedWriter(new FileWriter(outputFilePath));
-            bwOutput.write(ParentalOutput.title);
+            bwOutput.write(ParentalOutput.getTitle());
             bwOutput.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -61,7 +61,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             ParentalOutput output = new ParentalOutput(calledVar);
-            output.countSampleGenoCov();
+            output.countSampleGeno();
             output.calculate();
 
             if (output.isValid()) {

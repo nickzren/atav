@@ -29,10 +29,6 @@ public class ListVarAnno extends AnalysisBase4AnnotatedVar {
     }
 
     @Override
-    public void doOutput() {
-    }
-
-    @Override
     public void closeOutput() {
         try {
             bwAnnotations.flush();

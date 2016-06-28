@@ -14,6 +14,7 @@ public class UnsortedOutputData implements Comparable {
         line = output.toString();
     }
 
+    @Override
     public int compareTo(Object another) throws ClassCastException {
         UnsortedOutputData that = (UnsortedOutputData) another;
         return Double.compare(this.pValue, that.pValue); //small -> large

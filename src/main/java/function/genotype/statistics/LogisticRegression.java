@@ -112,7 +112,7 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             LogisticOutput output = new LogisticOutput(calledVar);
-            output.countSampleGenoCov();
+            output.countSampleGeno();
             output.calculate();
             
             //initialize genotypes for all models

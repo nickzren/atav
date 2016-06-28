@@ -1,7 +1,6 @@
 package utils;
 
 import global.Data;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -26,6 +25,14 @@ public class FormatManager {
         } else {
             return pformat1.format(value);
         }
+    }
+
+    public static String getSixDegitDouble(double value) {
+        if (value == Data.NA) {
+            return "NA";
+        }
+
+        return pformat3.format(value);
     }
 
     public static String getInteger(int value) {
@@ -57,7 +64,7 @@ public class FormatManager {
     }
 
     public static float getFloat(String str) {
-        if (str == null) {
+        if (str == null || str.equals("NA")) {
             return Data.NA;
         }
 
@@ -99,33 +106,6 @@ public class FormatManager {
         }
     }
 
-//    public static double roundToDecimals(double d, double c) {
-//        int t = (int) (d * c + 0.5);
-//
-//        return (double) t / c;
-//    }
-    public static double roundToDecimals(double value) {
-        int t = (int) (value * 100000000 + 0.5);
-        double pValue = (double) t / 100000000;
-
-        if (pValue > 0.00001) {
-            return pValue;
-        }
-
-        BigDecimal temp = new BigDecimal(value);
-        temp = temp.setScale(8, BigDecimal.ROUND_HALF_UP);
-
-        return temp.doubleValue();
-    }
-
-    public static double devide(double a, double b) {
-        if (b <= 0) {
-            return Data.NA;
-        } else {
-            return a / b;
-        }
-    }
-
     public static int[][] deepCopyIntArray(int[][] original) {
         final int[][] result = new int[original.length][];
         for (int i = 0; i < original.length; i++) {
@@ -150,5 +130,13 @@ public class FormatManager {
 
     public static double[] deepCopyDoubleArray(double[] original) {
         return Arrays.copyOf(original, original.length);
+    }
+
+    public static void deleteLastComma(StringBuilder sb) {
+        int lastCommaIndex = sb.lastIndexOf(",");
+
+        if (lastCommaIndex == (sb.length() - 1)) {
+            sb.deleteCharAt(lastCommaIndex);
+        }
     }
 }

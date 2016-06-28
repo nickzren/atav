@@ -7,17 +7,19 @@ import utils.FormatManager;
  * @author nick
  */
 public class GerpOutput {
+
     float gerpScore;
 
-    public static final String title
-            = "Variant ID,"
-            + GerpManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + GerpManager.getTitle();
+    }
 
-    public GerpOutput(String id) throws Exception{        
+    public GerpOutput(String id) throws Exception {
         gerpScore = GerpManager.getScore(id);
     }
-    
-    public boolean isValid(){
+
+    public boolean isValid() {
         return GerpCommand.isGerpScoreValid(gerpScore);
     }
 

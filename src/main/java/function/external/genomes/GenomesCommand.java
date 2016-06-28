@@ -18,11 +18,7 @@ public class GenomesCommand {
             return true;
         }
 
-        if (value <= maxGenomesMaf
-                || value == Data.NA) {
-            return true;
-        }
-
-        return false;
+        return value <= maxGenomesMaf
+                || value == Data.NA;
     }
 }

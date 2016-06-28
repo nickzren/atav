@@ -20,7 +20,7 @@ public class ClinVarPathoratio {
         this.copyCount = copyCount;
         this.snvSpliceCount = snvSpliceCount;
         this.snvNonsenseCount = snvNonsenseCount;
-        this.snvMissenseCount = snvMissenseCount;
+        this.snvMissenseCount = snvMissenseCount;        
     }
     
      @Override

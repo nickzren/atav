@@ -4,6 +4,7 @@ import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
 import function.external.genomes.GenomesCommand;
 import function.external.genomes.GenomesOutput;
 import function.external.gerp.GerpCommand;
@@ -14,6 +15,8 @@ import function.external.kaviar.Kaviar;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
+import function.external.mgi.MgiCommand;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
@@ -25,6 +28,7 @@ import java.sql.ResultSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import utils.MathManager;
 
 /**
  *
@@ -38,8 +42,8 @@ public class AnnotatedVariant extends Variant {
     String codonChange;
     String aminoAcidChange;
     String stableId;
-    HashSet<String> geneSet = new HashSet<String>();
-    HashSet<String> transcriptSet = new HashSet<String>();
+    HashSet<String> geneSet = new HashSet<>();
+    HashSet<String> transcriptSet = new HashSet<>();
     double polyphenHumdiv;
     double polyphenHumvar;
 
@@ -52,6 +56,7 @@ public class AnnotatedVariant extends Variant {
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
     GenomesOutput genomesOutput;
+    private String mgiStr;
 
     public boolean isValid = true;
 
@@ -62,8 +67,8 @@ public class AnnotatedVariant extends Variant {
             polyphenHumdiv = Data.NA;
             polyphenHumvar = Data.NA;
         } else {
-            polyphenHumdiv = FormatManager.devide(rset.getInt("polyphen_humdiv"), 1000);
-            polyphenHumvar = FormatManager.devide(rset.getInt("polyphen_humvar"), 1000);
+            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
+            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
         }
 
         function = "";
@@ -88,6 +93,10 @@ public class AnnotatedVariant extends Variant {
             subRvisOutput = new SubRvisOutput(getGeneName(),
                     getRegion().getChrStr(),
                     getRegion().getStartPosition());
+        }
+
+        if (MgiCommand.isIncludeMgi) {
+            mgiStr = MgiManager.getLine(getGeneName());
         }
     }
 
@@ -166,7 +175,7 @@ public class AnnotatedVariant extends Variant {
 
         if (isValid & GenomesCommand.isInclude1000Genomes) {
             genomesOutput = new GenomesOutput(variantIdStr);
-            
+
             isValid = genomesOutput.isValid();
         }
 
@@ -306,7 +315,7 @@ public class AnnotatedVariant extends Variant {
 
     public String getExacStr() {
         if (ExacCommand.isIncludeExac) {
-            return exac.toString();
+            return exac.toString() + ExacManager.getGeneDamagingCountsLine(geneName);
         } else {
             return "";
         }
@@ -363,6 +372,14 @@ public class AnnotatedVariant extends Variant {
     public String get1000Genomes() {
         if (GenomesCommand.isInclude1000Genomes) {
             return genomesOutput.toString();
+        } else {
+            return "";
+        }
+    }
+
+    public String getMgi() {
+        if (MgiCommand.isIncludeMgi) {
+            return mgiStr;
         } else {
             return "";
         }

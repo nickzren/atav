@@ -8,11 +8,9 @@ import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
-import function.external.rvis.RvisCommand;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
-import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
-import function.external.subrvis.SubRvisOutput;
 import utils.FormatManager;
 
 /**
@@ -51,7 +49,8 @@ public class VarAnnoOutput {
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
             + SubRvisManager.getTitle()
-            + GenomesManager.getTitle();
+            + GenomesManager.getTitle()
+            + MgiManager.getTitle();
 
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
@@ -68,37 +67,28 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
         sb.append(annotatedVar.getGerpScore());
-
         sb.append(annotatedVar.getEvsStr());
-
         sb.append(annotatedVar.getPolyphenHumdivScore()).append(",");
         sb.append(annotatedVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(annotatedVar.getPolyphenHumvarScore()).append(",");
         sb.append(annotatedVar.getPolyphenHumvarPrediction()).append(",");
-
         sb.append(annotatedVar.getFunction()).append(",");
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(annotatedVar.getGeneName()))).append(",");
-
         sb.append(annotatedVar.getStableId()).append(",");
         sb.append(GeneManager.getNmNpValuesByStableId(annotatedVar.getStableId())).append(",");
         sb.append(annotatedVar.getCodonChange()).append(",");
         sb.append(annotatedVar.getAminoAcidChange()).append(",");
         sb.append(annotatedVar.getCodingSequenceChange()).append(",");
         sb.append(annotatedVar.getTranscriptSet()).append(",");
-
         sb.append(annotatedVar.getExacStr());
-
         sb.append(annotatedVar.getKaviarStr());
-
         sb.append(annotatedVar.getKnownVarStr());
-
         sb.append(annotatedVar.getRvis());
-
         sb.append(annotatedVar.getSubRvis());
-
         sb.append(annotatedVar.get1000Genomes());
-        
+        sb.append(annotatedVar.getMgi());
+
         return sb.toString();
     }
 }

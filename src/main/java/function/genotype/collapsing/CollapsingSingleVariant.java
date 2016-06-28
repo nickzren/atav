@@ -25,7 +25,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             super.initOutput();
 
             bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
-            bwGenotypes.write(CollapsingOutput.title);
+            bwGenotypes.write(CollapsingOutput.getTitle());
             bwGenotypes.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -58,7 +58,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             initSummaryList(output, summaryList);
 
             if (!summaryList.isEmpty()) {
-                output.countSampleGenoCov();
+                output.countSampleGeno();
 
                 output.calculate();
 

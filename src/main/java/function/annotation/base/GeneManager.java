@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import function.coverage.base.Gene;
 import function.genotype.collapsing.CollapsingCommand;
 import global.Data;
 import utils.CommonCommand;
@@ -17,17 +16,21 @@ import function.variant.base.RegionManager;
  * @author nick
  */
 public class GeneManager {
-    
+
     private static final String ARTIFACTS_GENE_PATH = "data/artifacts_gene.txt";
     private static final String GENE_ENSEMBL_PATH = "data/gene_ensembl.txt";
 
-    private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<String, HashSet<Gene>>();
-    private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<String, HashSet<Gene>>();
-    private static HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<String, HashSet<Gene>>();
+    private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
+    private static HashMap<String, StringBuilder> chrAllGeneMap = new HashMap<>();
+    private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
+    private static final HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<>();
 
-    private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<String, String>();
-    private static HashMap<String, Integer> artifactsGeneMap = new HashMap<String, Integer>();
-    private static HashMap<String, String> genenStableIdNmNpMap = new HashMap<String, String>();
+    private static ArrayList<Gene> geneBoundaryList = new ArrayList<>();
+    private static int allGeneBoundaryLength;
+
+    private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<>();
+    private static HashMap<String, Integer> artifactsGeneMap = new HashMap<>();
+    private static HashMap<String, String> genenStableIdNmNpMap = new HashMap<>();
     private static boolean isUsed = false;
 
     public static void init() throws Exception {
@@ -56,7 +59,7 @@ public class GeneManager {
         } else {
             String[] genes = AnnotationLevelFilterCommand.geneInput.split(",");
             for (String geneName : genes) {
-                HashSet<Gene> set = new HashSet<Gene>();
+                HashSet<Gene> set = new HashSet<>();
                 Gene gene = new Gene(geneName);
                 set.add(gene);
                 geneMapByName.put(geneName, set);
@@ -80,7 +83,7 @@ public class GeneManager {
                     continue;
                 }
 
-                HashSet<Gene> set = new HashSet<Gene>();
+                HashSet<Gene> set = new HashSet<>();
                 Gene gene = new Gene(lineStr);
                 set.add(gene);
 
@@ -107,12 +110,17 @@ public class GeneManager {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;
 
+        int geneIndex = 0;
+        allGeneBoundaryLength = 0;
+
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
-                Gene gene = new Gene(line);
-                gene.populateSlaveList();
+                line = line.replaceAll("\"", "").replaceAll("\t", " ");
 
-                HashSet<Gene> set = new HashSet<Gene>();
+                Gene gene = new Gene(line);
+                gene.initExonList();
+
+                HashSet<Gene> set = new HashSet<>();
                 set.add(gene);
 
                 String geneId = gene.getName();
@@ -128,6 +136,10 @@ public class GeneManager {
                 } else {
                     geneMapByBoundaries.put(geneId, set);
                 }
+
+                gene.setIndex(geneIndex++);
+                geneBoundaryList.add(gene);
+                allGeneBoundaryLength += gene.getLength();
             }
         }
     }
@@ -139,7 +151,7 @@ public class GeneManager {
             } else if (geneMapByBoundaries.isEmpty()) {
                 geneMap.putAll(geneMapByName);
             } else {
-                HashSet<String> nameSet = new HashSet<String>();
+                HashSet<String> nameSet = new HashSet<>();
 
                 nameSet.addAll(geneMapByName.keySet());
                 nameSet.addAll(geneMapByBoundaries.keySet());
@@ -161,21 +173,36 @@ public class GeneManager {
             if (!RegionManager.isUsed()) {
                 RegionManager.clear();
 
-                ArrayList<String> chrList = new ArrayList<String>();
+                ArrayList<String> chrList = new ArrayList<>();
 
-                for (HashSet<Gene> geneSet : geneMap.values()) {
-                    String chr = geneSet.iterator().next().getChrStr();
-
-                    if (!chr.isEmpty()
-                            && !chrList.contains(chr)) {
-                        chrList.add(chr);
-                    }
+                for (String chr : RegionManager.ALL_CHR) {
+                    chrAllGeneMap.put(chr, new StringBuilder());
                 }
+
+                geneMap.entrySet().stream().forEach((entry) -> {
+                    Gene gene = entry.getValue().iterator().next();
+                    if (!gene.getChr().isEmpty()) {
+                        if (!chrList.contains(gene.getChr())) {
+                            chrList.add(gene.getChr());
+                        }
+
+                        StringBuilder sb = chrAllGeneMap.get(gene.getChr());
+                        if (sb.length() == 0) {
+                            sb.append("'").append(entry.getKey()).append("'");
+                        } else {
+                            sb.append(",'").append(entry.getKey()).append("'");
+                        }
+                    }
+                });
 
                 RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
                 RegionManager.sortRegionList();
             }
         }
+    }
+
+    public static String getAllGeneByChr(String chr) {
+        return "(" + chrAllGeneMap.get(chr) + ")";
     }
 
     private static void initArtifactsGeneMap() throws Exception {
@@ -290,6 +317,14 @@ public class GeneManager {
         return geneMap;
     }
 
+    public static ArrayList<Gene> getGeneBoundaryList() {
+        return geneBoundaryList;
+    }
+
+    public static int getAllGeneBoundaryLength() {
+        return allGeneBoundaryLength;
+    }
+
     public static boolean isValid(Annotation annotation) {
         if (geneMap.isEmpty()) {
             return true;
@@ -298,23 +333,19 @@ public class GeneManager {
         HashSet<Gene> set = geneMap.get(annotation.geneName);
 
         if (set != null) {
-            for (Gene gene : set) {
-                if (gene.contains(annotation.region)) {
-                    annotation.geneName = gene.getName();
-                    return true;
+            if (GeneManager.getGeneBoundaryList().isEmpty()) {
+                return true;
+            } else {
+                for (Gene gene : set) {
+                    if (gene.contains(annotation.region)) {
+                        annotation.geneName = gene.getName();
+                        return true;
+                    }
                 }
             }
         }
 
         return false;
-    }
-
-    public static boolean isValid(String name) {
-        if (geneMap.isEmpty()) {
-            return true;
-        } else {
-            return geneMap.containsKey(name);
-        }
     }
 
     public static boolean isUsed() {

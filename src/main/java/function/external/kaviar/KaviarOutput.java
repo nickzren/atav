@@ -8,9 +8,10 @@ public class KaviarOutput {
 
     Kaviar kaviar;
 
-    public static final String title
-            = "Variant ID,"
-            + KaviarManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + KaviarManager.getTitle();
+    }
 
     public KaviarOutput(String id) {
         kaviar = new Kaviar(id);
