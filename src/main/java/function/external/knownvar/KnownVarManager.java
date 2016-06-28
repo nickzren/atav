@@ -321,8 +321,8 @@ public class KnownVarManager {
 
             String sql = "SELECT count(*) as count "
                     + "From " + clinVarTable + " "
-                    + "WHERE chr='" + var.getRegion().getChrStr() + "' "
-                    + "AND pos BETWEEN " + (var.getRegion().getStartPosition() - width) + " AND " + (var.getRegion().getStartPosition() + width) + " "
+                    + "WHERE chr='" + var.getChrStr() + "' "
+                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
                     + "AND ClinicalSignificance like '%pathogenic%' "
                     + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
 
@@ -346,8 +346,8 @@ public class KnownVarManager {
 
             String sql = "SELECT count(*) as count "
                     + "From " + clinVarTable + " "
-                    + "WHERE chr='" + var.getRegion().getChrStr() + "' "
-                    + "AND pos BETWEEN " + (var.getRegion().getStartPosition() - width) + " AND " + (var.getRegion().getStartPosition() + width) + " "
+                    + "WHERE chr='" + var.getChrStr() + "' "
+                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
                     + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
 
             ResultSet rs = DBManager.executeQuery(sql);
@@ -370,8 +370,8 @@ public class KnownVarManager {
 
             String sql = "SELECT count(*) as count "
                     + "From " + hgmdTable + " "
-                    + "WHERE chr='" + var.getRegion().getChrStr() + "' "
-                    + "AND pos BETWEEN " + (var.getRegion().getStartPosition() - width) + " AND " + (var.getRegion().getStartPosition() + width) + " "
+                    + "WHERE chr='" + var.getChrStr() + "' "
+                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
                     + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
 
             ResultSet rs = DBManager.executeQuery(sql);
@@ -393,8 +393,8 @@ public class KnownVarManager {
             if (var.isSnv()) { // only query for SNVs
                 String sql = "SELECT ref,alt,DiseaseName,variantClass,pmid "
                         + "From " + hgmdTable + " "
-                        + "WHERE chr='" + var.getRegion().getChrStr() + "' "
-                        + "AND pos = " + (var.getRegion().getStartPosition() + distance);
+                        + "WHERE chr='" + var.getChrStr() + "' "
+                        + "AND pos = " + (var.getStartPosition() + distance);
 
                 ResultSet rs = DBManager.executeQuery(sql);
 

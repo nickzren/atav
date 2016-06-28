@@ -106,8 +106,8 @@ public class CollapsingOutput extends Output {
 
     public void initRegionBoundaryNameSet() {
         regionBoundaryNameSet = RegionBoundaryManager.getNameSet(
-                calledVar.getRegion().getChrStr(),
-                calledVar.getRegion().getStartPosition());
+                calledVar.getChrStr(),
+                calledVar.getStartPosition());
     }
 
     public void calculateLooFreq(Sample sample) {

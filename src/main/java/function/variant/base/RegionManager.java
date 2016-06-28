@@ -209,7 +209,7 @@ public class RegionManager {
     }
 
     public static String addRegionToSQL(Region region, String sqlCode, boolean isIndel) {
-        int regionId = RegionManager.getIdByChr(region.chrStr);
+        int regionId = RegionManager.getIdByChr(region.getChrStr());
 
         sqlCode += " WHERE v.seq_region_id = " + regionId + " ";
 
@@ -222,7 +222,7 @@ public class RegionManager {
         }
 
         if (GeneManager.isUsed()) {
-            sqlCode += "AND g.gene_name in " + GeneManager.getAllGeneByChr(region.chrStr) + " ";
+            sqlCode += "AND g.gene_name in " + GeneManager.getAllGeneByChr(region.getChrStr()) + " ";
         }
 
         return sqlCode;

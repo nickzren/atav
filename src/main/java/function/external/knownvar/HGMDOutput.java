@@ -44,8 +44,8 @@ public class HGMDOutput {
      */
     private HGMD getHGMD(Collection<HGMD> collection) {
         HGMD hgmd = new HGMD(
-                var.getRegion().getChrStr(),
-                var.getRegion().getStartPosition(),
+                var.getChrStr(),
+                var.getStartPosition(),
                 var.getRefAllele(),
                 var.getAllele(),
                 "NA",

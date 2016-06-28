@@ -117,7 +117,7 @@ public class DenovoOutput extends TrioOutput {
     public void initFlag(int id) {
         convertParentGeno();
 
-        flag = TrioManager.getStatus(calledVar.getRegion().getChrNum(),
+        flag = TrioManager.getStatus(calledVar.getChrNum(),
                 !isMinorRef, SampleManager.isMale(id),
                 cGeno, cSamtoolsRawCoverage,
                 mGeno, mSamtoolsRawCoverage,

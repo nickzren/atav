@@ -41,7 +41,7 @@ public class CoverageBlockManager {
                 if (!carrierMap.containsKey(entry.getKey())) {
                     NonCarrier noncarrier = new NonCarrier(entry.getKey(), getCoverage(varPosIndex, entry.getValue()));
                     
-                    noncarrier.applyFilters(var.getRegion());
+                    noncarrier.applyFilters(var);
                     
                     if (noncarrier.isValid()) {
                         noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
@@ -86,7 +86,7 @@ public class CoverageBlockManager {
     }
 
     protected static int getVarPosIndex(Variant var) {
-        int posIndex = var.getRegion().getStartPosition() % COVERAGE_BLOCK_SIZE;
+        int posIndex = var.getStartPosition() % COVERAGE_BLOCK_SIZE;
 
         if (posIndex == 0) {
             posIndex = COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
@@ -96,6 +96,6 @@ public class CoverageBlockManager {
     }
 
     protected static int getBlockEndPos(Variant var, int varPosIndex) {
-        return var.getRegion().getStartPosition() - varPosIndex + COVERAGE_BLOCK_SIZE;
+        return var.getStartPosition() - varPosIndex + COVERAGE_BLOCK_SIZE;
     }
 }

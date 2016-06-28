@@ -90,9 +90,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (SubRvisCommand.isIncludeSubRvis) {
-            subRvisOutput = new SubRvisOutput(getGeneName(),
-                    getRegion().getChrStr(),
-                    getRegion().getStartPosition());
+            subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
         }
 
         if (MgiCommand.isIncludeMgi) {
@@ -156,31 +154,31 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (isValid & GerpCommand.isIncludeGerp) {
-            gerpScore = GerpManager.getScore(variantIdStr);
+            gerpScore = GerpManager.getScore(getVariantIdStr());
 
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
         if (isValid & ExacCommand.isIncludeExac) {
-            exac = new Exac(variantIdStr);
+            exac = new Exac(getVariantIdStr());
 
             isValid = exac.isValid();
         }
 
         if (isValid & KaviarCommand.isIncludeKaviar) {
-            kaviar = new Kaviar(variantIdStr);
+            kaviar = new Kaviar(getVariantIdStr());
 
             isValid = kaviar.isValid();
         }
 
         if (isValid & GenomesCommand.isInclude1000Genomes) {
-            genomesOutput = new GenomesOutput(variantIdStr);
+            genomesOutput = new GenomesOutput(getVariantIdStr());
 
             isValid = genomesOutput.isValid();
         }
 
         if (isValid & EvsCommand.isIncludeEvs) {
-            evs = new Evs(variantIdStr);
+            evs = new Evs(getVariantIdStr());
 
             isValid = evs.isValid();
         }

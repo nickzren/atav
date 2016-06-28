@@ -802,20 +802,20 @@ public class SampleManager {
         ResultSet rs = null;
         String sql = "";
 
-        int posIndex = var.getRegion().getStartPosition() % CoverageBlockManager.COVERAGE_BLOCK_SIZE; // coverage data block size is 1024
+        int posIndex = var.getStartPosition() % CoverageBlockManager.COVERAGE_BLOCK_SIZE; // coverage data block size is 1024
 
         if (posIndex == 0) {
             posIndex = CoverageBlockManager.COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
         }
 
-        int endPos = var.getRegion().getStartPosition() - posIndex + CoverageBlockManager.COVERAGE_BLOCK_SIZE;
+        int endPos = var.getStartPosition() - posIndex + CoverageBlockManager.COVERAGE_BLOCK_SIZE;
 
         try {
             for (int i = 0; i < SAMPLE_TYPE.length; i++) {
                 sql = "SELECT sample_id, min_coverage "
                         + "FROM " + SAMPLE_TYPE[i]
                         + "_read_coverage_" + CoverageBlockManager.COVERAGE_BLOCK_SIZE + "_chr"
-                        + var.getRegion().getChrStr() + " c,"
+                        + var.getChrStr() + " c,"
                         + SAMPLE_TYPE[i] + "_sample_id t "
                         + "WHERE c.position = " + endPos
                         + " AND c.sample_id = t.id";
@@ -826,7 +826,7 @@ public class SampleManager {
 
                     if (!carrierMap.containsKey(noncarrier.getSampleId())) {
 
-                        noncarrier.applyFilters(var.getRegion());
+                        noncarrier.applyFilters(var);
 
                         if (noncarrier.isValid()) {
                             noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
@@ -856,7 +856,7 @@ public class SampleManager {
             while (rs.next()) {
                 Carrier carrier = new Carrier(rs);
 
-                carrier.applyFilters(var.getRegion());
+                carrier.applyFilters(var);
 
                 // intend to keep NA carrier , NA here is unqualified not missing
                 carrierMap.put(carrier.getSampleId(), carrier);

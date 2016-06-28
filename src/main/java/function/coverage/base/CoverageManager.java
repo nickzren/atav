@@ -30,7 +30,7 @@ public class CoverageManager {
     }
 
     public static SiteCoverage getSiteCoverage(Region region) {
-        SiteCoverage siteCoverage = new SiteCoverage(region.length);
+        SiteCoverage siteCoverage = new SiteCoverage(region.getLength());
 
         String strQuery = getCoverageString(Index.GENOME, region);
         CoverageManager.initSiteCoverage(strQuery, region, siteCoverage);
@@ -49,7 +49,7 @@ public class CoverageManager {
                 + "AND c.sample_id = t.id ";
 
         str = str.replaceAll("_SAMPLE_TYPE_", SampleManager.SAMPLE_TYPE[sampleTypeIndex]);
-        str = str.replaceAll("_CHROM_", region.chrStr);
+        str = str.replaceAll("_CHROM_", region.getChrStr());
         str = str.replaceAll("_POSITIONS_", getPositionString(region));
         return str;
     }
@@ -63,8 +63,8 @@ public class CoverageManager {
     }
 
     private static String getPositionString(Region region) {
-        int firstIndex = getPosition(region.startPosition);
-        int lastIndex = getPosition(region.endPosition);
+        int firstIndex = getPosition(region.getStartPosition());
+        int lastIndex = getPosition(region.getEndPosition());
         if (firstIndex == lastIndex) {
             return Integer.toString(firstIndex);
         } else {

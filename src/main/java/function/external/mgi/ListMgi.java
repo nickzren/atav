@@ -19,7 +19,7 @@ public class ListMgi extends AnalysisBase4AnnotatedVar {
     @Override
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
-            bwMgi.write(annotatedVar.variantIdStr + ",");
+            bwMgi.write(annotatedVar.getVariantIdStr() + ",");
             bwMgi.write(annotatedVar.getGeneName() + ",");
             bwMgi.write(MgiManager.getLine(annotatedVar.getGeneName()));
             bwMgi.newLine();

@@ -205,7 +205,7 @@ public class FisherOutput extends StatisticOutput {
     public void initCount(ArrayList<Integer> countList, String model) {
         switch (model) {
             case "allelic":
-                if (calledVar.getRegion().getChrNum() == 23) { // exclude male
+                if (calledVar.getChrNum() == 23) { // exclude male
                     countList.add(2 * genoCount[Index.HOM][Index.CASE]
                             + genoCount[Index.HET][Index.CASE]);
                     countList.add(2 * genoCount[Index.REF][Index.CASE]
