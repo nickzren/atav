@@ -188,7 +188,6 @@ public class ParentalOutput extends Output {
         sb.append(parent.getName()).append(",");
         sb.append(getGenoStr(parentGeno)).append(",");
         sb.append(FormatManager.getDouble(parentBinomial)).append(",");
-
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
@@ -215,7 +214,6 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
-
         sb.append(FormatManager.getDouble(calledVar.getCoverage(child.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getGatkFilteredCoverage(child.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getReadsAlt(child.getId()))).append(",");
@@ -232,32 +230,22 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getQual(child.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(child.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(child.getId()))).append(",");
-
         sb.append(calledVar.getEvsStr());
-
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
-
         sb.append(calledVar.getExacStr());
-
         sb.append(calledVar.getKaviarStr());
-
         sb.append(calledVar.getKnownVarStr());
-
         sb.append(calledVar.getRvis());
-
         sb.append(calledVar.getSubRvis());
-
         sb.append(calledVar.get1000Genomes());
-
         sb.append(calledVar.getMgi());
 
         return sb.toString();

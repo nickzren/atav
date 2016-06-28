@@ -114,7 +114,6 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(calledVar.getGerpScore());
-
         sb.append(isMinorRef).append(",");
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
@@ -123,7 +122,6 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(FormatManager.getDouble(calledVar.getReadsRef(sample.getId()))).append(",");
         sb.append(FormatManager.getPercAltRead(calledVar.getReadsAlt(sample.getId()),
                 calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
-
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCount[Index.CASE]).append(",");
@@ -142,30 +140,20 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
-
         sb.append(calledVar.getEvsStr());
-
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-
         sb.append(calledVar.getFunction()).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
-
         sb.append(calledVar.getExacStr());
-
         sb.append(calledVar.getKaviarStr());
-
         sb.append(calledVar.getKnownVarStr());
-
         sb.append(calledVar.getRvis());
-
         sb.append(calledVar.getSubRvis());
-
         sb.append(calledVar.get1000Genomes());
-
         sb.append(calledVar.getMgi());
 
         return sb.toString();

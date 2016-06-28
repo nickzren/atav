@@ -140,32 +140,22 @@ public class FisherOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(pValue)).append(",");
         sb.append(FormatManager.getDouble(oddsRatio)).append(",");
-
         sb.append(calledVar.getEvsStr());
-
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
-
         sb.append(calledVar.getExacStr());
-
         sb.append(calledVar.getKaviarStr());
-
         sb.append(calledVar.getKnownVarStr());
-
         sb.append(calledVar.getRvis());
-
         sb.append(calledVar.getSubRvis());
-
         sb.append(calledVar.get1000Genomes());
-
         sb.append(calledVar.getMgi());
 
         return sb.toString();
@@ -213,91 +203,97 @@ public class FisherOutput extends StatisticOutput {
      * refSampleNum
      */
     public void initCount(ArrayList<Integer> countList, String model) {
-        if (model.equals("allelic")) {
-            if (calledVar.getRegion().getChrNum() == 23) { // exclude male
-                countList.add(2 * genoCount[Index.HOM][Index.CASE]
-                        + genoCount[Index.HET][Index.CASE]);
-                countList.add(2 * genoCount[Index.REF][Index.CASE]
-                        + genoCount[Index.HET][Index.CASE]);
-                countList.add(2 * genoCount[Index.HOM][Index.CTRL]
-                        + genoCount[Index.HET][Index.CTRL]);
-                countList.add(2 * genoCount[Index.REF][Index.CTRL]
-                        + genoCount[Index.HET][Index.CTRL]);
-            } else {
-                countList.add(2 * genoCount[Index.HOM][Index.CASE]
-                        + genoCount[Index.HOM_MALE][Index.CASE]
-                        + genoCount[Index.HET][Index.CASE]);
-                countList.add(2 * genoCount[Index.REF][Index.CASE]
-                        + genoCount[Index.REF_MALE][Index.CASE]
-                        + genoCount[Index.HET][Index.CASE]);
-                countList.add(2 * genoCount[Index.HOM][Index.CTRL]
-                        + genoCount[Index.HOM_MALE][Index.CTRL]
-                        + genoCount[Index.HET][Index.CTRL]);
-                countList.add(2 * genoCount[Index.REF][Index.CTRL]
-                        + genoCount[Index.REF_MALE][Index.CTRL]
-                        + genoCount[Index.HET][Index.CTRL]);
-            }
-        } else if (model.equals("dominant")) {
-            if (isMinorRef) {
-                countList.add(genoCount[Index.REF][Index.CASE]
-                        + genoCount[Index.REF_MALE][Index.CASE]
-                        + genoCount[Index.HET][Index.CASE]);
+        switch (model) {
+            case "allelic":
+                if (calledVar.getRegion().getChrNum() == 23) { // exclude male
+                    countList.add(2 * genoCount[Index.HOM][Index.CASE]
+                            + genoCount[Index.HET][Index.CASE]);
+                    countList.add(2 * genoCount[Index.REF][Index.CASE]
+                            + genoCount[Index.HET][Index.CASE]);
+                    countList.add(2 * genoCount[Index.HOM][Index.CTRL]
+                            + genoCount[Index.HET][Index.CTRL]);
+                    countList.add(2 * genoCount[Index.REF][Index.CTRL]
+                            + genoCount[Index.HET][Index.CTRL]);
+                } else {
+                    countList.add(2 * genoCount[Index.HOM][Index.CASE]
+                            + genoCount[Index.HOM_MALE][Index.CASE]
+                            + genoCount[Index.HET][Index.CASE]);
+                    countList.add(2 * genoCount[Index.REF][Index.CASE]
+                            + genoCount[Index.REF_MALE][Index.CASE]
+                            + genoCount[Index.HET][Index.CASE]);
+                    countList.add(2 * genoCount[Index.HOM][Index.CTRL]
+                            + genoCount[Index.HOM_MALE][Index.CTRL]
+                            + genoCount[Index.HET][Index.CTRL]);
+                    countList.add(2 * genoCount[Index.REF][Index.CTRL]
+                            + genoCount[Index.REF_MALE][Index.CTRL]
+                            + genoCount[Index.HET][Index.CTRL]);
+                }
+                break;
+            case "dominant":
+                if (isMinorRef) {
+                    countList.add(genoCount[Index.REF][Index.CASE]
+                            + genoCount[Index.REF_MALE][Index.CASE]
+                            + genoCount[Index.HET][Index.CASE]);
+                    countList.add(genoCount[Index.HOM][Index.CASE]
+                            + genoCount[Index.HOM_MALE][Index.CASE]);
+                    countList.add(genoCount[Index.REF][Index.CTRL]
+                            + genoCount[Index.REF_MALE][Index.CTRL]
+                            + genoCount[Index.HET][Index.CTRL]);
+                    countList.add(genoCount[Index.HOM][Index.CTRL]
+                            + genoCount[Index.HOM_MALE][Index.CTRL]);
+                } else {
+                    countList.add(genoCount[Index.HOM][Index.CASE]
+                            + genoCount[Index.HOM_MALE][Index.CASE]
+                            + genoCount[Index.HET][Index.CASE]);
+                    countList.add(genoCount[Index.REF][Index.CASE]
+                            + genoCount[Index.REF_MALE][Index.CASE]);
+                    countList.add(genoCount[Index.HOM][Index.CTRL]
+                            + genoCount[Index.HOM_MALE][Index.CTRL]
+                            + genoCount[Index.HET][Index.CTRL]);
+                    countList.add(genoCount[Index.REF][Index.CTRL]
+                            + genoCount[Index.REF_MALE][Index.CTRL]);
+                }
+                break;
+            case "recessive":
+                if (isMinorRef) {
+                    countList.add(genoCount[Index.REF][Index.CASE]
+                            + genoCount[Index.REF_MALE][Index.CASE]);
+                    countList.add(genoCount[Index.HOM][Index.CASE]
+                            + genoCount[Index.HOM_MALE][Index.CASE]
+                            + genoCount[Index.HET][Index.CASE]);
+                    countList.add(genoCount[Index.REF][Index.CTRL]
+                            + genoCount[Index.REF_MALE][Index.CTRL]);
+                    countList.add(genoCount[Index.HET][Index.CTRL]
+                            + genoCount[Index.HOM][Index.CTRL]
+                            + genoCount[Index.HOM_MALE][Index.CTRL]);
+                } else {
+                    countList.add(genoCount[Index.HOM][Index.CASE]
+                            + genoCount[Index.HOM_MALE][Index.CASE]);
+                    countList.add(genoCount[Index.HET][Index.CASE]
+                            + genoCount[Index.REF][Index.CASE]
+                            + genoCount[Index.REF_MALE][Index.CASE]);
+                    countList.add(genoCount[Index.HOM][Index.CTRL]
+                            + genoCount[Index.HOM_MALE][Index.CTRL]);
+                    countList.add(genoCount[Index.HET][Index.CTRL]
+                            + genoCount[Index.REF][Index.CTRL]
+                            + genoCount[Index.REF_MALE][Index.CTRL]);
+                }
+                break;
+            case "genotypic":
                 countList.add(genoCount[Index.HOM][Index.CASE]
                         + genoCount[Index.HOM_MALE][Index.CASE]);
-                countList.add(genoCount[Index.REF][Index.CTRL]
-                        + genoCount[Index.REF_MALE][Index.CTRL]
-                        + genoCount[Index.HET][Index.CTRL]);
-                countList.add(genoCount[Index.HOM][Index.CTRL]
-                        + genoCount[Index.HOM_MALE][Index.CTRL]);
-            } else {
-                countList.add(genoCount[Index.HOM][Index.CASE]
-                        + genoCount[Index.HOM_MALE][Index.CASE]
-                        + genoCount[Index.HET][Index.CASE]);
+                countList.add(genoCount[Index.HET][Index.CASE]);
                 countList.add(genoCount[Index.REF][Index.CASE]
                         + genoCount[Index.REF_MALE][Index.CASE]);
                 countList.add(genoCount[Index.HOM][Index.CTRL]
-                        + genoCount[Index.HOM_MALE][Index.CTRL]
-                        + genoCount[Index.HET][Index.CTRL]);
+                        + genoCount[Index.HOM_MALE][Index.CTRL]);
+                countList.add(genoCount[Index.HET][Index.CTRL]);
                 countList.add(genoCount[Index.REF][Index.CTRL]
                         + genoCount[Index.REF_MALE][Index.CTRL]);
-            }
-        } else if (model.equals("recessive")) {
-            if (isMinorRef) {
-                countList.add(genoCount[Index.REF][Index.CASE]
-                        + genoCount[Index.REF_MALE][Index.CASE]);
-                countList.add(genoCount[Index.HOM][Index.CASE]
-                        + genoCount[Index.HOM_MALE][Index.CASE]
-                        + genoCount[Index.HET][Index.CASE]);
-                countList.add(genoCount[Index.REF][Index.CTRL]
-                        + genoCount[Index.REF_MALE][Index.CTRL]);
-                countList.add(genoCount[Index.HET][Index.CTRL]
-                        + genoCount[Index.HOM][Index.CTRL]
-                        + genoCount[Index.HOM_MALE][Index.CTRL]);
-            } else {
-                countList.add(genoCount[Index.HOM][Index.CASE]
-                        + genoCount[Index.HOM_MALE][Index.CASE]);
-                countList.add(genoCount[Index.HET][Index.CASE]
-                        + genoCount[Index.REF][Index.CASE]
-                        + genoCount[Index.REF_MALE][Index.CASE]);
-                countList.add(genoCount[Index.HOM][Index.CTRL]
-                        + genoCount[Index.HOM_MALE][Index.CTRL]);
-                countList.add(genoCount[Index.HET][Index.CTRL]
-                        + genoCount[Index.REF][Index.CTRL]
-                        + genoCount[Index.REF_MALE][Index.CTRL]);
-            }
-        } else if (model.equals("genotypic")) {
-            countList.add(genoCount[Index.HOM][Index.CASE]
-                    + genoCount[Index.HOM_MALE][Index.CASE]);
-            countList.add(genoCount[Index.HET][Index.CASE]);
-            countList.add(genoCount[Index.REF][Index.CASE]
-                    + genoCount[Index.REF_MALE][Index.CASE]);
-            countList.add(genoCount[Index.HOM][Index.CTRL]
-                    + genoCount[Index.HOM_MALE][Index.CTRL]);
-            countList.add(genoCount[Index.HET][Index.CTRL]);
-            countList.add(genoCount[Index.REF][Index.CTRL]
-                    + genoCount[Index.REF_MALE][Index.CTRL]);
-        } else {
-            LogManager.writeAndPrint("not available model");
+                break;
+            default:
+                LogManager.writeAndPrint("not available model");
+                break;
         }
     }
 }
