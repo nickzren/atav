@@ -108,10 +108,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         try {
             qualifiedVariants++;
 
-            bwMap.write(calledVar.getRegion().getChrStr() + "\t"
+            bwMap.write(calledVar.getChrStr() + "\t"
                     + calledVar.getVariantIdStr() + "\t"
                     + "0\t"
-                    + calledVar.getRegion().getStartPosition());
+                    + calledVar.getStartPosition());
             bwMap.newLine();
 
             outputTempGeno(calledVar);

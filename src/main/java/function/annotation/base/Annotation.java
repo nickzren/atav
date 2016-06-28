@@ -50,7 +50,7 @@ public class Annotation {
             region.setEndPosition(region.getStartPosition() + len - 1);
         }
 
-        region.init(chrStr, position, position + len - 1);
+        region.initRegion(chrStr, position, position + len - 1);
     }
 
     public boolean isValid() {

@@ -186,7 +186,7 @@ public class Output implements Cloneable {
 
     public int getGenoType(int geno, Sample sample) {
         if (sample.isMale()
-                && !calledVar.getRegion().isInsideAutosomalOrPseudoautosomalRegions()) {
+                && !calledVar.isInsideAutosomalOrPseudoautosomalRegions()) {
 
             if (geno == Index.HOM) {
                 return Index.HOM_MALE;

@@ -36,8 +36,8 @@ public class ClinVarOutput {
      */
     private ClinVar getClinVar(Collection<ClinVar> collection) {
         ClinVar clinvar = new ClinVar(
-                var.getRegion().getChrStr(),
-                var.getRegion().getStartPosition(),
+                var.getChrStr(),
+                var.getStartPosition(),
                 var.getRefAllele(),
                 var.getAllele(),
                 "NA",

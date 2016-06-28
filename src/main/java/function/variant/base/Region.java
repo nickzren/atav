@@ -9,17 +9,20 @@ import utils.FormatManager;
  */
 public class Region implements Comparable {
 
-    public String chrStr;
-    public int chrNum;
-    public int startPosition;
-    public int endPosition;
-    public int length;
+    private String chrStr;
+    private int chrNum;
+    private int startPosition;
+    private int endPosition;
+    private int length;
 
-    public Region(String chr, int start, int end) {
-        init(chr, start, end);
+    public Region() {
     }
 
-    public void init(String chr, int start, int end) {
+    public Region(String chr, int start, int end) {
+        initRegion(chr, start, end);
+    }
+
+    public void initRegion(String chr, int start, int end) {
         chrStr = chr;
 
         chrNum = intChr();
@@ -44,7 +47,7 @@ public class Region implements Comparable {
             return Data.NA;
         }
     }
-    
+
     public String getChrStr() {
         return chrStr;
     }
@@ -77,11 +80,15 @@ public class Region implements Comparable {
         return length;
     }
 
+    public boolean isAutosome() {
+        return chrNum < 23 || chrNum == 26;
+    }
+
     /*
      * inside Pseudoautosomal Region will be same as autosome
      */
     public boolean isInsideAutosomalOrPseudoautosomalRegions() {
-        if (chrNum < 23 || chrNum == 26) {
+        if (isAutosome()) {
             return true;
         }
 

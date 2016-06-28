@@ -54,7 +54,7 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
         try {
             KnownVarOutput knownVarOutput = new KnownVarOutput(annotatedVar);
 
-            bwKnownVar.write(annotatedVar.variantIdStr + ",");
+            bwKnownVar.write(annotatedVar.getVariantIdStr() + ",");
             bwKnownVar.write(annotatedVar.getGeneName() + ",");
             bwKnownVar.write(knownVarOutput.toString());
             bwKnownVar.newLine();

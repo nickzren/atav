@@ -19,7 +19,7 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
     @Override
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
-            bwRvis.write(annotatedVar.variantIdStr + ",");
+            bwRvis.write(annotatedVar.getVariantIdStr() + ",");
             bwRvis.write(annotatedVar.getGeneName() + ",");
             bwRvis.write(RvisManager.getLine(annotatedVar.getGeneName()));
             bwRvis.newLine();
