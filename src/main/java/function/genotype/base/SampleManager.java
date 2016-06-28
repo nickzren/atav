@@ -32,13 +32,11 @@ public class SampleManager {
     public static final String EXOME_SAMPLE_ID_TABLE = "exome_sample_id";
 
     // sample permission
-    private static HashMap<String, String> sampleGroupMap // sample_name, group_name
-            = new HashMap<String, String>();
-    private static HashMap<String, HashSet<String>> userGroupMap // group_name, user set
-            = new HashMap<String, HashSet<String>>();
+    private static HashMap<String, String> sampleGroupMap = new HashMap<>();// sample_name, group_name
+    private static HashMap<String, HashSet<String>> userGroupMap = new HashMap<>();// group_name, user set
 
-    private static ArrayList<Sample> sampleList = new ArrayList<Sample>();
-    private static HashMap<Integer, Sample> sampleMap = new HashMap<Integer, Sample>();
+    private static ArrayList<Sample> sampleList = new ArrayList<>();
+    private static HashMap<Integer, Sample> sampleMap = new HashMap<>();
 
     private static int listSize; // case + ctrl
     private static int caseNum = 0;
@@ -49,14 +47,14 @@ public class SampleManager {
     private static StringBuilder exomeSampleIdSb = new StringBuilder();
     private static StringBuilder genomeSampleIdSb = new StringBuilder();
 
-    private static ArrayList<Sample> failedSampleList = new ArrayList<Sample>();
-    private static ArrayList<Sample> diffTypeSampleList = new ArrayList<Sample>();
-    private static ArrayList<Sample> notExistSampleList = new ArrayList<Sample>();
+    private static ArrayList<Sample> failedSampleList = new ArrayList<>();
+    private static ArrayList<Sample> diffTypeSampleList = new ArrayList<>();
+    private static ArrayList<Sample> notExistSampleList = new ArrayList<>();
 
-    private static ArrayList<Sample> deletedSampleList = new ArrayList<Sample>();
-    private static ArrayList<Sample> replacedSampleList = new ArrayList<Sample>();
+    private static ArrayList<Sample> deletedSampleList = new ArrayList<>();
+    private static ArrayList<Sample> replacedSampleList = new ArrayList<>();
 
-    private static ArrayList<Sample> restrictedSampleList = new ArrayList<Sample>();
+    private static ArrayList<Sample> restrictedSampleList = new ArrayList<>();
 
     private static String tempCovarFile;
     private static String covariateFileTitle = "";
@@ -406,14 +404,14 @@ public class SampleManager {
                 if (lineStr.isEmpty()) {
                     continue;
                 }
-                
+
                 lineStr = lineStr.replaceAll("( )+", "");
 
                 if (covariateFileTitle.isEmpty()) {
                     covariateFileTitle = lineStr;
                     continue;
                 }
-                
+
                 String[] values = lineStr.split("\t");
 
                 Sample sample = getSampleByName(values[1]);
@@ -661,19 +659,13 @@ public class SampleManager {
             }
         }
 
-        deleteLastComma(allSampleIdSb);
-        deleteLastComma(genomeSampleIdSb);
-        deleteLastComma(exomeSampleIdSb);
+        FormatManager.deleteLastComma(allSampleIdSb);
+        FormatManager.deleteLastComma(genomeSampleIdSb);
+        FormatManager.deleteLastComma(exomeSampleIdSb);
     }
 
     private static void addToSampleIdSb(StringBuilder sb, int id) {
         sb.append("(").append(id).append(")").append(",");
-    }
-
-    private static void deleteLastComma(StringBuilder sb) {
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.lastIndexOf(","));
-        }
     }
 
     private static void insertSampleId2Tables() {

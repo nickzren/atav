@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.annotation.base.GeneManager;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.CommonCommand;
@@ -209,7 +210,7 @@ public class RegionManager {
 
     public static String addRegionToSQL(Region region, String sqlCode, boolean isIndel) {
         int regionId = RegionManager.getIdByChr(region.chrStr);
-        
+
         sqlCode += " WHERE v.seq_region_id = " + regionId + " ";
 
         if (region.getStartPosition() > 0) {
@@ -218,6 +219,10 @@ public class RegionManager {
 
         if (region.getEndPosition() > 0) {
             sqlCode += "AND v.seq_region_pos <= " + region.getEndPosition() + " ";
+        }
+
+        if (GeneManager.isUsed()) {
+            sqlCode += "AND g.gene_name in " + GeneManager.getAllGeneByChr(region.chrStr) + " ";
         }
 
         return sqlCode;
@@ -231,14 +236,13 @@ public class RegionManager {
         if (values.length == 3) // variant position format chr-pos-type
         {
             VariantManager.addType(values[2]);
-        } else { // variant id format chr-pos-ref-alt
-            if (values[2].length() == 1
+        } else // variant id format chr-pos-ref-alt
+         if (values[2].length() == 1
                     && values[3].length() == 1) {
                 VariantManager.addType("snv");
             } else {
                 VariantManager.addType("indel");
             }
-        }
 
         regionList.add(new Region(chr, pos, pos));
     }

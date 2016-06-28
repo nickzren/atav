@@ -64,13 +64,13 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
             sqlCode += "v.length, v.indel_type, ";
         }
 
-        sqlCode += "allele, ref_allele, rs_number, gene_name, effect_type, codon_change, ";
+        sqlCode += "v.allele, v.ref_allele, v.rs_number, g.gene_name, f.effect_type, f.codon_change, ";
 
         if (!isIndel) {
             sqlCode += "polyphen_humdiv, polyphen_humvar, ";
         }
 
-        sqlCode += "amino_acid_change, transcript_stable_id, g.hit_type FROM "
+        sqlCode += "f.amino_acid_change, f.transcript_stable_id, g.hit_type FROM "
                 + varType + " AS v ";
 
         if ((isIndel && !FunctionManager.isINDELAllFunction())
@@ -104,10 +104,10 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         sqlCode += " ORDER BY v.seq_region_pos,v." + varType + "_id,"
                 + "gene_name,codon_change,"
                 + "amino_acid_change,transcript_stable_id";
-
+        
         return sqlCode;
     }
-  
+
     private static String joinGeneHit(String varType) {
         return " JOIN " + varType + "_gene_hit AS g "
                 + "ON g." + varType + "_id = v." + varType + "_id ";

@@ -75,7 +75,7 @@ public class Gene {
     }
 
     public boolean contains(Region r) {
-        return exonList.parallelStream().anyMatch((exon) -> (exon.contains(r)));
+        return exonList.stream().anyMatch((exon) -> (exon.contains(r)));
     }
 
     public void initExonList() {

@@ -131,4 +131,12 @@ public class FormatManager {
     public static double[] deepCopyDoubleArray(double[] original) {
         return Arrays.copyOf(original, original.length);
     }
+
+    public static void deleteLastComma(StringBuilder sb) {
+        int lastCommaIndex = sb.lastIndexOf(",");
+
+        if (lastCommaIndex == (sb.length() - 1)) {
+            sb.deleteCharAt(lastCommaIndex);
+        }
+    }
 }

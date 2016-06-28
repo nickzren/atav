@@ -21,6 +21,7 @@ public class GeneManager {
     private static final String GENE_ENSEMBL_PATH = "data/gene_ensembl.txt";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
+    private static HashMap<String, StringBuilder> chrAllGeneMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
     private static final HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<>();
 
@@ -115,7 +116,7 @@ public class GeneManager {
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
                 line = line.replaceAll("\"", "").replaceAll("\t", " ");
-                
+
                 Gene gene = new Gene(line);
                 gene.initExonList();
 
@@ -174,19 +175,34 @@ public class GeneManager {
 
                 ArrayList<String> chrList = new ArrayList<>();
 
-                for (HashSet<Gene> geneSet : geneMap.values()) {
-                    String chr = geneSet.iterator().next().getChr();
-
-                    if (!chr.isEmpty()
-                            && !chrList.contains(chr)) {
-                        chrList.add(chr);
-                    }
+                for (String chr : RegionManager.ALL_CHR) {
+                    chrAllGeneMap.put(chr, new StringBuilder());
                 }
+
+                geneMap.entrySet().stream().forEach((entry) -> {
+                    Gene gene = entry.getValue().iterator().next();
+                    if (!gene.getChr().isEmpty()) {
+                        if (!chrList.contains(gene.getChr())) {
+                            chrList.add(gene.getChr());
+                        }
+
+                        StringBuilder sb = chrAllGeneMap.get(gene.getChr());
+                        if (sb.length() == 0) {
+                            sb.append("'").append(entry.getKey()).append("'");
+                        } else {
+                            sb.append(",'").append(entry.getKey()).append("'");
+                        }
+                    }
+                });
 
                 RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
                 RegionManager.sortRegionList();
             }
         }
+    }
+
+    public static String getAllGeneByChr(String chr) {
+        return "(" + chrAllGeneMap.get(chr) + ")";
     }
 
     private static void initArtifactsGeneMap() throws Exception {
