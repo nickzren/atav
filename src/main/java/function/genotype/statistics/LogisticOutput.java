@@ -88,7 +88,7 @@ public class LogisticOutput extends StatisticOutput {
     public static String getTitle(){
         StringBuilder pValHeader = new StringBuilder();
         for (String s: StatisticsCommand.logisticModels)
-            pValHeader.append(s+" P Value,");
+            pValHeader.append(s+" P Value ,");
 
         return LogisticOutput.title.replaceAll("P value,",pValHeader.toString().toUpperCase());
     }
