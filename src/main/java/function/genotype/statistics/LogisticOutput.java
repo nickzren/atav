@@ -10,20 +10,17 @@ import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
-import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import global.Data;
 import global.Index;
 import org.renjin.sexp.DoubleVector;
+import utils.ErrorManager;
 import utils.FormatManager;
+import utils.MathManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import utils.ErrorManager;
-import utils.MathManager;
 
 /**
  *
@@ -59,7 +56,7 @@ public class LogisticOutput extends StatisticOutput {
             + "Case HWE_P,"
             + "Ctrl HWE_P,"
             + "P value,"
-            + "Avg Min Ctrl Cov,"
+           // + "Avg Min Ctrl Cov,"
             + EvsManager.getTitle()
             + "Polyphen Humdiv Score,"
             + "Polyphen Humdiv Prediction,"
@@ -86,6 +83,14 @@ public class LogisticOutput extends StatisticOutput {
 
     public LogisticOutput(CalledVariant c) {
         super(c);
+    }
+
+    public static String getTitle(){
+        StringBuilder pValHeader = new StringBuilder();
+        for (String s: StatisticsCommand.logisticModels)
+            pValHeader.append(s+" P Value,");
+
+        return LogisticOutput.title.replaceAll("P value,",pValHeader.toString().toUpperCase());
     }
 
     public boolean isValid(String model) {

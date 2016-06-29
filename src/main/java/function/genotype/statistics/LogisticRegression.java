@@ -23,48 +23,32 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     /**Need Model list to be sorted
      * **/
 
-
-
-    String[] originalPOutputPath = new String[StatisticsCommand.logisticModels.length];
-    BufferedWriter[] logisticBw = new BufferedWriter[StatisticsCommand.logisticModels.length];
-
     String origOutPath;
     BufferedWriter logregBw;
-
+    Map<String,String> ModelHeaderMap;
 
     @Override
     public void initOutput() {
-        //https://github.com/igm-team/atav/blob/logistic/src/main/java/function/genotype/statistics/LogisticRegression.java
 
         try{
             StatisticsCommand.sortLogisticModels();
-            StringJoiner testModel = new StringJoiner(",");
-            StringBuilder pValHeader = new StringBuilder();
+            String header;
+            StringJoiner testModel = new StringJoiner(" ");
+            ModelHeaderMap= new HashMap<>();
                 for (String s: StatisticsCommand.logisticModels){
+                    header=s+" P Value";
+                    ModelHeaderMap.put(s,header);
                     testModel.add(s);
-                    pValHeader.append(s+"_pval");
-                    pValHeader.append(",");
                 }
             origOutPath = CommonCommand.outputPath + "master.csv";
             logregBw = new BufferedWriter(new FileWriter(origOutPath));
             logregBw.write("Models in this file: "+ testModel.toString());
             logregBw.newLine();
-            logregBw.write(LogisticOutput.title.replaceAll("P value,",pValHeader.toString().toUpperCase()));
+            logregBw.write(LogisticOutput.getTitle());
             logregBw.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-
-/*                        for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
-                            try {
-
-                                logisticBw[m] = new BufferedWriter(new FileWriter(originalPOutputPath[m]));
-                                logisticBw[m].write(LogisticOutput.title);
-                                logisticBw[m].newLine();
-                            } catch (Exception ex) {
-                                ErrorManager.send(ex);
-                            }
-                        }*/
     }
 
     @Override
@@ -82,15 +66,6 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-        /*
-                for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
-                    try {
-                        logisticBw[m].flush();
-                        logisticBw[m].close();
-                    } catch (Exception ex) {
-                        ErrorManager.send(ex);
-                    }
-                }*/
     }
 
     @Override
@@ -157,39 +132,26 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
             //initialize genotypes for all models
             output.initGenotypeAndSampleIndexList(StatisticsCommand.logisticModels);
 
-
             if (output.isValid()) {
                 output.doRegressionAll();
                 logregBw.write(output.toString());
                 logregBw.newLine();
             }
-            //for each model run sequentially
-/*            for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
-                if (output.isValid()) {
-                    // needs to calculate logistic p below
-                    output.doRegression(StatisticsCommand.logisticModels[m]);
-                    logisticBw[m].write(output.toString());
-                    logisticBw[m].newLine();
-                }
-            }*/
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
     private void generatePvaluesQQPlot() {
-
-        ThirdPartyToolManager.generatePvaluesQQPlot(LogisticOutput.title,
-                "P value",
-                origOutPath,
-                origOutPath.replace(".csv", ".p.qq.plot.pdf"));
-
-/*        for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
-            ThirdPartyToolManager.generatePvaluesQQPlot(LogisticOutput.title,
-                    "P value",
+        for (String s: StatisticsCommand.logisticModels){
+            String header=ModelHeaderMap.get(s);
+            ThirdPartyToolManager.generatePvaluesQQPlot(LogisticOutput.getTitle(),
+                    header,
                     origOutPath,
-                    origOutPath.replace(".csv", ".p.qq.plot.pdf"));
-        }*/
+                    origOutPath.replace(".csv", s+".p.qq.plot.pdf"));
+        }
+
+
     }
 
     @Override
