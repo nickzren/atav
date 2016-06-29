@@ -91,6 +91,10 @@ public class Variant extends Region {
             chrStr = "XY";
         }
 
-        return chrStr + "-" + getStartPosition() + "-" + refAllele + "-" + allele;
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(chrStr).append("-").append(getStartPosition()).append("-").append(refAllele).append("-").append(allele);
+
+        return sb.toString();
     }
 }
