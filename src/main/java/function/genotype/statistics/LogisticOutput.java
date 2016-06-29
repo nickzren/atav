@@ -19,6 +19,7 @@ import utils.FormatManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import utils.ErrorManager;
@@ -79,7 +80,7 @@ public class LogisticOutput extends StatisticOutput {
     private static final StringBuilder expression = new StringBuilder();
     public static final String DOMINANT = "dominant";
     public static final String RECESSIVE = "recessive";
-
+    private List<Double> pVals;
     private Map<String, List<Double>> modelGenoMap;
     private List<Integer> sampleIndexList;
 
@@ -101,17 +102,33 @@ public class LogisticOutput extends StatisticOutput {
         return false;
     }
 
-    public void doRegression(String model) {
+    public void doRegressionAll(){
+
+        //pVals = new Double[StatisticsCommand.logisticModels.length];
+
+        pVals= IntStream.range(0,StatisticsCommand.logisticModels.length)
+                        .parallel()
+                        .mapToObj(p ->  StatisticsCommand.logisticModels[p])
+                        .mapToDouble(p -> doRegression(p))
+                        .boxed()
+                        .collect(Collectors.toList());
+
+
+
+    }
+
+    public double doRegression(String model) {
+        double pValue;
         if (model.equals(RECESSIVE) && !isRecessive()) {
             pValue = Data.NA;
-            return;
+            return pValue;
         }
 
         List<Double> gt = modelGenoMap.get(model);
 
         if (null == gt || gt.size() <= 1) {
             pValue = Data.NA;
-            return;
+            return pValue;
         }
 
         try {
@@ -138,13 +155,16 @@ public class LogisticOutput extends StatisticOutput {
             DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval("summary(logredmd)$coefficients[2,4]");
 
             pValue = (null != res) ? res.getElementAsDouble(0) : Data.NA;
+
+            return pValue;
         } catch (Exception e) {
             ErrorManager.send(e);
+            return Data.NA;
         }
     }
 
     public void initGenotypeAndSampleIndexList(String[] models) {
-        this.modelGenoMap = new HashMap<>();
+        this.modelGenoMap = new LinkedHashMap<>();
         this.sampleIndexList = new ArrayList<>();
 
         //Dominant Model
@@ -256,7 +276,10 @@ public class LogisticOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(pValue)).append(",");
+        //sb.append(FormatManager.getDouble(pValue)).append(",");
+        //Appending all P values
+        for (int i=0; i<StatisticsCommand.logisticModels.length; i++)
+            sb.append(FormatManager.getDouble(pVals.get(i))).append(",");
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
