@@ -401,7 +401,7 @@ public class CommandManager {
                 case "--test":
                     // Test Functions
 //                CommonCommand.isNonDBAnalysis = true;
-                    CommonCommand.isNonSampleAnalysis = true;
+//                    CommonCommand.isNonSampleAnalysis = true;
                     TestCommand.isTest = true;
                     break;
                 default:
