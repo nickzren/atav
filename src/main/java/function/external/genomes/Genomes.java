@@ -21,18 +21,11 @@ public class Genomes {
 
     private float[] maf;
 
-    public Genomes(String id) {
-        initBasic(id);
-
-        initMaf();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public Genomes(String chr, int pos, String ref, String alt) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
 
@@ -40,6 +33,8 @@ public class Genomes {
                 || alt.length() > 1) {
             isSnv = false;
         }
+
+        initMaf();
     }
 
     private void initMaf() {

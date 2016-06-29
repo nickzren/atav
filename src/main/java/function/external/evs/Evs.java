@@ -35,20 +35,11 @@ public class Evs {
     private String allGenotypeCount;
     private String filterStatus;
 
-    public Evs(String id) {
-        initBasic(id);
-
-        initCoverage();
-
-        initMaf();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public Evs(String chr, int pos, String ref, String alt) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
 
@@ -56,6 +47,10 @@ public class Evs {
                 || alt.length() > 1) {
             isSnv = false;
         }
+
+        initCoverage();
+
+        initMaf();
     }
 
     private void initCoverage() {
@@ -132,9 +127,9 @@ public class Evs {
 
         if (EvsCommand.evsPop.contains("all")
                 && allMaf != Data.NA) {
-            maf = Math.max(allMaf, maf);   
+            maf = Math.max(allMaf, maf);
         }
-        
+
         return maf;
     }
 

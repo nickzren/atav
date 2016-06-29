@@ -14,7 +14,8 @@ public class GenomesOutput {
     }
 
     public GenomesOutput(String id) {
-        genomes = new Genomes(id);
+        String[] tmp = id.split("-"); // chr-pos-ref-alt
+        genomes = new Genomes(tmp[0], Integer.parseInt(tmp[1]), tmp[2], tmp[3]);
     }
 
     public boolean isValid() {

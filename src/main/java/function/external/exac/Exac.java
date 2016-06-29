@@ -25,20 +25,11 @@ public class Exac {
     private String[] gts;
     private float vqslod;
 
-    public Exac(String id) {
-        initBasic(id);
-
-        initCoverage();
-
-        initMaf();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public Exac(String chr, int pos, String ref, String alt) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
 
@@ -46,6 +37,10 @@ public class Exac {
                 || alt.length() > 1) {
             isSnv = false;
         }
+
+        initCoverage();
+
+        initMaf();
     }
 
     private void initCoverage() {

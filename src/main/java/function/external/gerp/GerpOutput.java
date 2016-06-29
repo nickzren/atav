@@ -16,7 +16,8 @@ public class GerpOutput {
     }
 
     public GerpOutput(String id) throws Exception {
-        gerpScore = GerpManager.getScore(id);
+        String[] tmp = id.split("-"); // chr-pos-ref-alt
+        gerpScore = GerpManager.getScore(tmp[0], Integer.parseInt(tmp[1]), tmp[2], tmp[3]);
     }
 
     public boolean isValid() {

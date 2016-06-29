@@ -9,11 +9,11 @@ import utils.FormatManager;
  */
 public class Region implements Comparable {
 
-    private String chrStr;
-    private int chrNum;
-    private int startPosition;
-    private int endPosition;
-    private int length;
+    protected String chrStr;
+    protected int chrNum;
+    protected int startPosition;
+    protected int endPosition;
+    protected int length;
 
     public Region() {
     }

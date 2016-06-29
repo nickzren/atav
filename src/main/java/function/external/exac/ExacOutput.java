@@ -14,7 +14,8 @@ public class ExacOutput {
     }
 
     public ExacOutput(String id) {
-        exac = new Exac(id);
+        String[] tmp = id.split("-"); // chr-pos-ref-alt
+        exac = new Exac(tmp[0], Integer.parseInt(tmp[1]), tmp[2], tmp[3]);
     }
 
     public boolean isValid() {

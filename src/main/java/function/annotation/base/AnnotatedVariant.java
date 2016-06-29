@@ -5,8 +5,8 @@ import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
 import function.external.exac.ExacCommand;
 import function.external.exac.ExacManager;
+import function.external.genomes.Genomes;
 import function.external.genomes.GenomesCommand;
-import function.external.genomes.GenomesOutput;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
@@ -55,7 +55,7 @@ public class AnnotatedVariant extends Variant {
     KnownVarOutput knownVarOutput;
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
-    GenomesOutput genomesOutput;
+    Genomes genomes;
     private String mgiStr;
 
     public boolean isValid = true;
@@ -98,26 +98,6 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
-    // update code below for unit testing
-//    
-//    public AnnotatedVariant(int v_id, boolean isIndel,
-//            String alt, String ref, String rs,
-//            int pos, String chr) throws Exception {
-//        super(v_id, isIndel, alt, ref, rs, pos, chr);
-//    }
-//    
-//    public static void main(String[] args) throws Exception {
-//        System.out.println("test");
-//
-//        AnnotatedVariant variant = new AnnotatedVariant(0, false, "C", "T", "", 78082311, "17");
-//
-//        variant.aminoAcidChange = "N570K";
-//        variant.codonChange = "aaC/aaG";
-//
-//        String result = variant.getCodingSequenceChange();
-//
-//        System.out.println(result);
-//    }
     public void update(Annotation annotation) {
         if (isValid) {
             geneSet.add(annotation.geneName);
@@ -154,31 +134,31 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (isValid & GerpCommand.isIncludeGerp) {
-            gerpScore = GerpManager.getScore(getVariantIdStr());
+            gerpScore = GerpManager.getScore(chrStr, startPosition, refAllele, allele);
 
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
         if (isValid & ExacCommand.isIncludeExac) {
-            exac = new Exac(getVariantIdStr());
+            exac = new Exac(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
         }
 
         if (isValid & KaviarCommand.isIncludeKaviar) {
-            kaviar = new Kaviar(getVariantIdStr());
+            kaviar = new Kaviar(chrStr, startPosition, refAllele, allele);
 
             isValid = kaviar.isValid();
         }
 
         if (isValid & GenomesCommand.isInclude1000Genomes) {
-            genomesOutput = new GenomesOutput(getVariantIdStr());
+            genomes = new Genomes(chrStr, startPosition, refAllele, allele);
 
-            isValid = genomesOutput.isValid();
+            isValid = genomes.isValid();
         }
 
         if (isValid & EvsCommand.isIncludeEvs) {
-            evs = new Evs(getVariantIdStr());
+            evs = new Evs(chrStr, startPosition, refAllele, allele);
 
             isValid = evs.isValid();
         }
@@ -369,7 +349,7 @@ public class AnnotatedVariant extends Variant {
 
     public String get1000Genomes() {
         if (GenomesCommand.isInclude1000Genomes) {
-            return genomesOutput.toString();
+            return genomes.toString();
         } else {
             return "";
         }

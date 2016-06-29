@@ -25,18 +25,9 @@ public class GerpManager {
         return title;
     }
 
-    public static float getScore(String id) {
-        String[] tmp = id.split("-");
-        String chr = tmp[0];
-
-        if (chr.equalsIgnoreCase("XY")) {
-            chr = "X";
-        }
-
-        int pos = Integer.valueOf(tmp[1]);
-
-        if (tmp[2].length() > 1
-                || tmp[3].length() > 1) { // indels
+    public static float getScore(String chr, int pos, String ref, String alt) {
+        if (ref.length() > 1
+                || alt.length() > 1) { // indels
             return Data.NA;
         }
 
