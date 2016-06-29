@@ -33,17 +33,13 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
         try{
             StatisticsCommand.sortLogisticModels();
             String header;
-            StringJoiner testModel = new StringJoiner(" ");
             ModelHeaderMap= new HashMap<>();
                 for (String s: StatisticsCommand.logisticModels){
                     header=s+" P Value";
                     ModelHeaderMap.put(s,header);
-                    testModel.add(s);
                 }
             origOutPath = CommonCommand.outputPath + "master.csv";
             logregBw = new BufferedWriter(new FileWriter(origOutPath));
-            logregBw.write("Models in this file: "+ testModel.toString());
-            logregBw.newLine();
             logregBw.write(LogisticOutput.getTitle());
             logregBw.newLine();
         } catch (Exception ex) {
