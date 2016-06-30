@@ -143,7 +143,8 @@ public class LogisticOutput extends StatisticOutput {
 
         //Dominant Model
         this.modelGenoMap.put("dominant", SampleManager.getList()
-                .parallelStream() // !! Switching to parallel !!
+                .stream()
+             //   .parallel() // !! Switching to parallel !!
                 .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
                 .map(sample -> calledVar.getGenotype(sample.getIndex()))
                 .map((geno) -> {
@@ -166,7 +167,8 @@ public class LogisticOutput extends StatisticOutput {
         //Recessive Model
         if (isRecessive()) { // has to match variant recessive rule
             this.modelGenoMap.put("recessive", SampleManager.getList()
-                    .parallelStream() // !! Switching to parallel !!
+                    .stream()
+                //    .parallel() // !! Switching to parallel !!
                     .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
                     .map(sample -> calledVar.getGenotype(sample.getIndex()))
                     .map((geno) -> {
@@ -193,10 +195,11 @@ public class LogisticOutput extends StatisticOutput {
         //getting qualified indices
         this.sampleIndexList.addAll(
                 SampleManager.getList()
-                .parallelStream() // !! Switching to parallel !!
-                .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
-                .map(sample -> sample.getIndex())
-                .collect(Collectors.toList())
+                        .stream()
+                  //      .parallel() // !! Switching to parallel !!
+                        .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
+                        .map(sample -> sample.getIndex())
+                        .collect(Collectors.toList())
         );
 
         //Putting **Additive** on the burner
