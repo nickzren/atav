@@ -120,13 +120,18 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-        for (String model : StatisticsCommand.logisticModels) {
+
             ThirdPartyToolManager.generatePvaluesQQPlot(
                     LogisticOutput.getTitle(),
-                    model + " P Value",
+                    "Dominant P value",
                     origOutPath,
-                    origOutPath.replace(".csv", "." + model + ".p.qq.plot.pdf"));
-        }
+                    origOutPath.replace(".csv", "." + "dominant.p.qq.plot.pdf"));
+
+            ThirdPartyToolManager.generatePvaluesQQPlot(
+                    LogisticOutput.getTitle(),
+                    "Recessive P value",
+                    origOutPath,
+                    origOutPath.replace(".csv", "." + "recessive.p.qq.plot.pdf"));
     }
 
     @Override
