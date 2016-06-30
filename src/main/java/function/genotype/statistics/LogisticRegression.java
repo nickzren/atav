@@ -25,7 +25,7 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     @Override
     public void initOutput() {
         try {
-            origOutPath = CommonCommand.outputPath + "logistic.csv";
+            origOutPath = CommonCommand.outputPath + "master.csv";
             logRegBw = new BufferedWriter(new FileWriter(origOutPath));
             logRegBw.write(LogisticOutput.getTitle());
             logRegBw.newLine();
