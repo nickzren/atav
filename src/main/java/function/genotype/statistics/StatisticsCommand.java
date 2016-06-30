@@ -2,8 +2,6 @@ package function.genotype.statistics;
 
 import global.Data;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidDouble;
@@ -21,17 +19,13 @@ public class StatisticsCommand {
     public static boolean isLogistic = false;
     public static double threshold4Sort = Data.NO_FILTER;
     public static String[] models = {"allelic", "dominant", "recessive", "genotypic"}; // default is fisher models
-    public static String[] logisticModels = {LogisticOutput.RECESSIVE ,LogisticOutput.DOMINANT }; //Use LogisticOutput qualifiers
+    public static String[] logisticModels = {"dominant", "recessive" }; //Use LogisticOutput qualifiers
     public static boolean isCaseOnly = false;
     public static String covariateFile = "";
     public static String quantitativeFile = "";
 
-    public static void sortLogisticModels(){
-         Arrays.sort(logisticModels);
-    }
     public static void initFisherOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
-
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
@@ -88,5 +82,5 @@ public class StatisticsCommand {
 
             iterator.remove();
         }
-}
     }
+}

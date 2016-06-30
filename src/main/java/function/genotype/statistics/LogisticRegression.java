@@ -15,33 +15,20 @@ import java.util.*;
 
 /**
  *
- * @author nick
+ * @author nick, kaustubh
  */
 public class LogisticRegression extends AnalysisBase4CalledVar {
 
-
-    /**Need Model list to be sorted
-     * **/
-
     String origOutPath;
-    BufferedWriter logregBw;
-    Map<String,String> ModelHeaderMap;
+    BufferedWriter logRegBw;
 
     @Override
     public void initOutput() {
-
-        try{
-            StatisticsCommand.sortLogisticModels();
-            String header;
-            ModelHeaderMap= new HashMap<>();
-                for (String s: StatisticsCommand.logisticModels){
-                    header=s+" P Value";
-                    ModelHeaderMap.put(s,header);
-                }
-            origOutPath = CommonCommand.outputPath + "master.csv";
-            logregBw = new BufferedWriter(new FileWriter(origOutPath));
-            logregBw.write(LogisticOutput.getTitle());
-            logregBw.newLine();
+        try {
+            origOutPath = CommonCommand.outputPath + "logistic.csv";
+            logRegBw = new BufferedWriter(new FileWriter(origOutPath));
+            logRegBw.write(LogisticOutput.getTitle());
+            logRegBw.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -53,12 +40,9 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
 
     @Override
     public void closeOutput() {
-
-
-
         try {
-            logregBw.flush();
-            logregBw.close();
+            logRegBw.flush();
+            logRegBw.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -71,12 +55,50 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
+        initResponseAndCoviates();
+    }
+
+    @Override
+    public void afterProcessDatabaseData() {
+    }
+
+    @Override
+    public void processVariant(CalledVariant calledVar) {
+        try {
+            LogisticOutput output = new LogisticOutput(calledVar);
+            output.countSampleGeno();
+            output.calculate();
+
+            if (output.isValid()) {
+                output.initGenoMapAndSampleIndexList();
+                output.doRegressionAll();
+                logRegBw.write(output.toString());
+                logRegBw.newLine();
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private void initResponseAndCoviates() {
         try {
             //Initializing Params
             List<Double> response = new ArrayList<>(); // all sample phenotypes
             List<List<Double>> covariates = new ArrayList<>(); // all sample covariates per column per list
 
-            initResponseAndCoviates(response, covariates);
+            for (int i = 0; i < SampleManager.getCovariateNum(); i++) {
+                covariates.add(new ArrayList<>());
+            }
+
+            //Get Data for response and covariates
+            for (Sample sample : SampleManager.getList()) {
+                response.add((double) sample.getPheno());
+
+                //Set other predictors
+                for (int i = 0; i < SampleManager.getCovariateNum(); i++) {
+                    covariates.get(i).add(sample.getCovariateList().get(i));
+                }
+            }
 
             //Set covariate data in Renjin
             String regParam;
@@ -97,57 +119,14 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
         }
     }
 
-    private void initResponseAndCoviates(List<Double> response,
-            List<List<Double>> covariates) {
-        for (int i = 0; i < SampleManager.getCovariateNum(); i++) {
-            covariates.add(new ArrayList<>());
-        }
-
-        //Get Data for response and covariates
-        for (Sample sample : SampleManager.getList()) {
-            response.add((double) sample.getPheno());
-
-            //Set other predictors
-            for (int i = 0; i < SampleManager.getCovariateNum(); i++) {
-                covariates.get(i).add(sample.getCovariateList().get(i));
-            }
-        }
-    }
-
-    @Override
-    public void afterProcessDatabaseData() {
-    }
-
-    @Override
-    public void processVariant(CalledVariant calledVar) {
-        try {
-            LogisticOutput output = new LogisticOutput(calledVar);
-            output.countSampleGeno();
-            output.calculate();
-            
-            //initialize genotypes for all models
-            output.initGenotypeAndSampleIndexList(StatisticsCommand.logisticModels);
-
-            if (output.isValid()) {
-                output.doRegressionAll();
-                logregBw.write(output.toString());
-                logregBw.newLine();
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
     private void generatePvaluesQQPlot() {
-        for (String s: StatisticsCommand.logisticModels){
-            String header=ModelHeaderMap.get(s);
-            ThirdPartyToolManager.generatePvaluesQQPlot(LogisticOutput.getTitle(),
-                    header,
+        for (String model : StatisticsCommand.logisticModels) {
+            ThirdPartyToolManager.generatePvaluesQQPlot(
+                    LogisticOutput.getTitle(),
+                    model + " P Value",
                     origOutPath,
-                    origOutPath.replace(".csv", s+".p.qq.plot.pdf"));
+                    origOutPath.replace(".csv", "." + model + ".p.qq.plot.pdf"));
         }
-
-
     }
 
     @Override

@@ -126,7 +126,7 @@ public class ThirdPartyToolManager {
         for (String str : temp) {
             col++;
 
-            if (str.equals(pvalueName)) {
+            if (str.equalsIgnoreCase(pvalueName)) {
                 break;
             }
         }
