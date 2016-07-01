@@ -11,15 +11,19 @@ import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.genotype.base.CalledVariant;
+import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import global.Data;
 import global.Index;
-import org.renjin.sexp.DoubleVector;
+import org.renjin.sexp.DoubleArrayVector;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.MathManager;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -78,22 +82,37 @@ public class LogisticOutput extends StatisticOutput {
     }
 
     private static final StringBuilder expression = new StringBuilder();
-    private List<Double> pVals;
-    private Map<String, List<Double>> modelGenoMap;
-    private List<Integer> sampleIndexList;
+    //
+    List<Sample> qualifiedSamples;
+    int[] qualifiedGeno;
+    //Shifting everything to primitives
+    private double [] pVals;
+    private Map<String, int []> modelGenoMap;
+    private int [] sampleIndexList;
 
     public LogisticOutput(CalledVariant c) {
         super(c);
     }
 
     public void doRegressionAll() {
+        setQualifiedGenoAndSamples();
         pVals = IntStream
                 .range(0, StatisticsCommand.logisticModels.length)
                 .parallel()
                 .mapToObj(index -> StatisticsCommand.logisticModels[index])
                 .mapToDouble(model -> doRegression(model))
-                .boxed() // comments , why
+                .toArray();
+    }
+    void setQualifiedGenoAndSamples(){
+        qualifiedSamples=SampleManager.getList()
+                .stream()
+                //   .parallel() // !! Switching to parallel !!
+                .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
                 .collect(Collectors.toList());
+        qualifiedGeno=qualifiedSamples
+                      .stream()
+                      .mapToInt(sample -> calledVar.getGenotype(sample.getIndex()))
+                      .toArray();
     }
 
     public double doRegression(String model) {
@@ -101,20 +120,20 @@ public class LogisticOutput extends StatisticOutput {
             return Data.NA;
         }
 
-        List<Double> genoList = modelGenoMap.get(model);
+        int [] genoList = modelGenoMap.get(model);
 
-        if (null == genoList || genoList.size() <= 1) {
+        if (null == genoList || genoList.length <= 1) {
             return Data.NA;
         }
 
         try {
             //Put indices
             MathManager.getRenjinEngine().put("ind", sampleIndexList);
-            MathManager.getRenjinEngine().eval(" ind <- as.numeric(unlist(ind))");
+            //MathManager.getRenjinEngine().eval(" ind <- as.numeric(unlist(ind))");
 
             //Getting genotype info
             MathManager.getRenjinEngine().put("xt1", genoList);
-            MathManager.getRenjinEngine().eval(" xt1 <- as.numeric(unlist(xt1))");
+            //MathManager.getRenjinEngine().eval(" xt1 <- as.numeric(unlist(xt1))");
 
             //Getting covariate subset
             for (int i = 1; i <= SampleManager.getCovariateNum(); i++) {
@@ -128,9 +147,10 @@ public class LogisticOutput extends StatisticOutput {
             MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
 
             //Getting P value for genotype
-            DoubleVector res = (DoubleVector) MathManager.getRenjinEngine().eval("summary(logredmd)$coefficients[2,4]");
+            DoubleArrayVector res = (DoubleArrayVector) MathManager.getRenjinEngine().eval("summary(logredmd)$coefficients[2,4]");
 
             return (null != res) ? res.getElementAsDouble(0) : Data.NA;
+            //return (null != res) ? res.getElementAsDouble(0) : Data.NA;
         } catch (Exception e) {
             ErrorManager.send(e);
             return Data.NA;
@@ -139,16 +159,13 @@ public class LogisticOutput extends StatisticOutput {
 
     public void initGenoMapAndSampleIndexList() {
         this.modelGenoMap = new LinkedHashMap<>();
-        this.sampleIndexList = new ArrayList<>();
+
 
         //Dominant Model
-        this.modelGenoMap.put("dominant", SampleManager.getList()
-                .stream()
-             //   .parallel() // !! Switching to parallel !!
-                .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
-                .map(sample -> calledVar.getGenotype(sample.getIndex()))
+        this.modelGenoMap.put("dominant",Arrays
+                .stream(qualifiedGeno)
                 .map((geno) -> {
-                    double t = Data.NA;
+                    int t = Data.NA;
                     if (isMinorRef) {
                         if (geno == Index.REF || geno == Index.HET || geno == Index.REF_MALE) {
                             t = 1;
@@ -162,17 +179,15 @@ public class LogisticOutput extends StatisticOutput {
                     }
                     return t;
                 })
-                .collect(Collectors.toList()));
+                .toArray()
+        );
 
         //Recessive Model
         if (isRecessive()) { // has to match variant recessive rule
-            this.modelGenoMap.put("recessive", SampleManager.getList()
-                    .stream()
-                //    .parallel() // !! Switching to parallel !!
-                    .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
-                    .map(sample -> calledVar.getGenotype(sample.getIndex()))
+            this.modelGenoMap.put("recessive", Arrays
+                    .stream(qualifiedGeno)
                     .map((geno) -> {
-                        double t = Data.NA;
+                        int t = Data.NA;
                         if (isMinorRef) {
                             if (geno == Index.REF || geno == Index.REF_MALE) {
                                 t = 1;
@@ -186,21 +201,19 @@ public class LogisticOutput extends StatisticOutput {
                         }
                         return t;
                     })
-                    .collect(Collectors.toList()));
+                    .toArray()
+            );
         }
         /**
          * ... and here*
          */
 
         //getting qualified indices
-        this.sampleIndexList.addAll(
-                SampleManager.getList()
+        sampleIndexList= qualifiedSamples
                         .stream()
-                  //      .parallel() // !! Switching to parallel !!
-                        .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
-                        .map(sample -> sample.getIndex())
-                        .collect(Collectors.toList())
-        );
+                        .mapToInt(sample -> sample.getIndex())
+                        .toArray();
+
 
         //Putting **Additive** on the burner
     }
@@ -249,7 +262,7 @@ public class LogisticOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         for (int i = 0; i < StatisticsCommand.logisticModels.length; i++) {
-            sb.append(FormatManager.getDouble(pVals.get(i))).append(",");
+            sb.append(FormatManager.getDouble(pVals[i])).append(",");
         }
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
