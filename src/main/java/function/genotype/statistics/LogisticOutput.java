@@ -95,7 +95,7 @@ public class LogisticOutput extends StatisticOutput {
     }
 
     public void doRegressionAll() {
-        setQualifiedGenoAndSamples();
+
         pVals = IntStream
                 .range(0, StatisticsCommand.logisticModels.length)
                 .parallel()
@@ -109,6 +109,7 @@ public class LogisticOutput extends StatisticOutput {
                 //   .parallel() // !! Switching to parallel !!
                 .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
                 .collect(Collectors.toList());
+
         qualifiedGeno=qualifiedSamples
                       .stream()
                       .mapToInt(sample -> calledVar.getGenotype(sample.getIndex()))
@@ -160,7 +161,7 @@ public class LogisticOutput extends StatisticOutput {
     public void initGenoMapAndSampleIndexList() {
         this.modelGenoMap = new LinkedHashMap<>();
 
-
+        setQualifiedGenoAndSamples();
         //Dominant Model
         this.modelGenoMap.put("dominant",Arrays
                 .stream(qualifiedGeno)
