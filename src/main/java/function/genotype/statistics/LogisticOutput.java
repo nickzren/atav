@@ -98,7 +98,7 @@ public class LogisticOutput extends StatisticOutput {
 
         pVals = IntStream
                 .range(0, StatisticsCommand.logisticModels.length)
-                .parallel()
+                //.parallel()
                 .mapToObj(index -> StatisticsCommand.logisticModels[index])
                 .mapToDouble(model -> doRegression(model))
                 .toArray();
