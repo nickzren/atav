@@ -98,7 +98,7 @@ public class LogisticOutput extends StatisticOutput {
 
         pVals = IntStream
                 .range(0, StatisticsCommand.logisticModels.length)
-                //.parallel()
+                .parallel()
                 .mapToObj(index -> StatisticsCommand.logisticModels[index])
                 .mapToDouble(model -> doRegression(model))
                 .toArray();
@@ -130,28 +130,19 @@ public class LogisticOutput extends StatisticOutput {
         try {
             //Put indices
             MathManager.getRenjinEngine().put("ind", sampleIndexList);
-            //MathManager.getRenjinEngine().eval(" ind <- as.numeric(unlist(ind))");
-
             //Getting genotype info
             MathManager.getRenjinEngine().put("xt1", genoList);
-            //MathManager.getRenjinEngine().eval(" xt1 <- as.numeric(unlist(xt1))");
-
             //Getting covariate subset
             for (int i = 1; i <= SampleManager.getCovariateNum(); i++) {
                 MathManager.getRenjinEngine().eval("xt" + (i + 1) + "<- x" + i + "[ind+1]");
             }
-
             //Getting response subset
             MathManager.getRenjinEngine().eval("yt <- y[ind+1]");
-
             //Evaluating regression
             MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
-
             //Getting P value for genotype
-            DoubleArrayVector res = (DoubleArrayVector) MathManager.getRenjinEngine().eval("summary(logredmd)$coefficients[2,4]");
-
+            DoubleArrayVector res = (DoubleArrayVector) MathManager.getRenjinEngine().eval("coef(summary(logredmd))[2,4]");
             return (null != res) ? res.getElementAsDouble(0) : Data.NA;
-            //return (null != res) ? res.getElementAsDouble(0) : Data.NA;
         } catch (Exception e) {
             ErrorManager.send(e);
             return Data.NA;
@@ -160,7 +151,6 @@ public class LogisticOutput extends StatisticOutput {
 
     public void initGenoMapAndSampleIndexList() {
         this.modelGenoMap = new LinkedHashMap<>();
-
         setQualifiedGenoAndSamples();
         //Dominant Model
         this.modelGenoMap.put("dominant",Arrays
@@ -177,6 +167,31 @@ public class LogisticOutput extends StatisticOutput {
                         t = 0;
                     } else if (geno == Index.HET || geno == Index.HOM || geno == Index.HOM_MALE) {
                         t = 1;
+                    }
+                    return t;
+                })
+                .toArray()
+        );
+
+        //Additive model
+        this.modelGenoMap.put("additive",Arrays
+                .stream(qualifiedGeno)
+                .map((geno) -> {
+                    int t = Data.NA;
+                    if (isMinorRef) {
+                        if (geno == Index.HET || geno == Index.REF_MALE) {
+                            t = 1;
+                        } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
+                            t = 0;
+                        } else if(geno == Index.REF){
+                            t = 2;
+                        }
+                    } else if (geno == Index.REF || geno == Index.REF_MALE) {
+                        t = 0;
+                    } else if (geno == Index.HET || geno == Index.HOM_MALE) {
+                        t = 1;
+                    } else if (geno == Index.HOM ){
+                        t = 2;
                     }
                     return t;
                 })
@@ -209,14 +224,13 @@ public class LogisticOutput extends StatisticOutput {
          * ... and here*
          */
 
+
         //getting qualified indices
         sampleIndexList= qualifiedSamples
                         .stream()
                         .mapToInt(sample -> sample.getIndex())
                         .toArray();
 
-
-        //Putting **Additive** on the burner
     }
 
     public static void initExpression() {
