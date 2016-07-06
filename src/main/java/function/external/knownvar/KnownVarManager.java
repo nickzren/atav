@@ -20,9 +20,9 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String clinVarTable = "knownvar.clinvar_2016_06_14";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_06_14";
-    public static final String hgmdTable = "knownvar.hgmd_2016_1_new";
+    public static final String clinVarTable = "knownvar.clinvar_2016_06_28";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_06_28";
+    public static final String hgmdTable = "knownvar.hgmd_2016_1_2016_07_06";
     public static final String omimTable = "knownvar.omim_2016_04_26";
     public static final String acmgTable = "knownvar.ACMG_2016_04_26";
     public static final String clinGenTable = "knownvar.ClinGen_2016_04_26";
