@@ -62,6 +62,7 @@ public class LogisticOutput extends StatisticOutput {
                 + "Ctrl HWE_P,"
                 + "Dominant P Value,"
                 + "Recessive P Value,"
+                + "Additive P Value,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
                 + "Polyphen Humdiv Prediction,"
@@ -87,6 +88,7 @@ public class LogisticOutput extends StatisticOutput {
     private double[] pValues;
     private Map<String, int[]> modelGenoMap;
     private int[] sampleIndexList;
+    private boolean isAdditive;
 
     public LogisticOutput(CalledVariant c) {
         super(c);
@@ -106,6 +108,8 @@ public class LogisticOutput extends StatisticOutput {
             return Data.NA;
         }
 
+        isAdditive=model.equals("additive");
+
         int[] genoList = modelGenoMap.get(model);
 
         if (null == genoList || genoList.length <= 1) {
@@ -117,17 +121,29 @@ public class LogisticOutput extends StatisticOutput {
             MathManager.getRenjinEngine().put("ind", sampleIndexList);
             //Getting genotype info
             MathManager.getRenjinEngine().put("xt1", genoList);
+            //Type 2 geno creates a 3rd level so need to factorize
+            if(isAdditive) MathManager.getRenjinEngine().eval("xt1 <- factor(xt1)");
             //Getting covariate subset
             for (int i = 1; i <= SampleManager.getCovariateNum(); i++) {
                 MathManager.getRenjinEngine().eval("xt" + (i + 1) + "<- x" + i + "[ind+1]");
             }
+
             //Getting response subset
             MathManager.getRenjinEngine().eval("yt <- y[ind+1]");
-            //Evaluating regression
-            MathManager.getRenjinEngine().eval("logredmd <-glm(" + expression.toString() + ", family=\"binomial\" )");
-            //Getting P value for genotype
-            DoubleArrayVector res = (DoubleArrayVector) MathManager.getRenjinEngine().eval("coef(summary(logredmd))[2,4]");
-            return (null != res) ? res.getElementAsDouble(0) : Data.NA;
+            //Formulating regression with geno
+            MathManager.getRenjinEngine().eval("withgeno <-glm(" + expression.toString() + ", family=\"binomial\" )");
+
+            if(isAdditive){
+                //Formulating regression without geno for additive
+                MathManager.getRenjinEngine().eval("withoutgeno <-glm(" + expression.toString().replaceAll("xt1\\+","") + ", family=\"binomial\" )");
+                //Getting P value for genotype
+                DoubleArrayVector res = (DoubleArrayVector)MathManager.getRenjinEngine().eval("anova(withgeno, withoutgeno, test=\"LRT\")$\"Pr(>Chi)\"[2]");
+                return (null != res) ? res.getElementAsDouble(0) : Data.NA;
+            }else {
+                //Getting P value for genotype
+                DoubleArrayVector res = (DoubleArrayVector) MathManager.getRenjinEngine().eval("coef(summary(withgeno))[2,4]");
+                return (null != res) ? res.getElementAsDouble(0) : Data.NA;
+            }
         } catch (Exception e) {
             ErrorManager.send(e);
             return Data.NA;

@@ -131,6 +131,12 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
                     "Recessive P Value",
                     origOutPath,
                     origOutPath.replace(".csv", "." + "recessive.p.qq.plot.pdf"));
+
+            ThirdPartyToolManager.generatePvaluesQQPlot(
+                    LogisticOutput.getTitle(),
+                    "Additive P Value",
+                    origOutPath,
+                    origOutPath.replace(".csv", "." + "additive.p.qq.plot.pdf"));
     }
 
     @Override
