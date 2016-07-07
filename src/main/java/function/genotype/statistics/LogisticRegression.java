@@ -25,7 +25,7 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     @Override
     public void initOutput() {
         try {
-            origOutPath = CommonCommand.outputPath + "master.csv";
+            origOutPath = CommonCommand.outputPath + "logistic.csv";
             logRegBw = new BufferedWriter(new FileWriter(origOutPath));
             logRegBw.write(LogisticOutput.getTitle());
             logRegBw.newLine();
@@ -120,16 +120,15 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-
             ThirdPartyToolManager.generatePvaluesQQPlot(
                     LogisticOutput.getTitle(),
-                    "Dominant P value",
+                    "Dominant P Value",
                     origOutPath,
                     origOutPath.replace(".csv", "." + "dominant.p.qq.plot.pdf"));
 
             ThirdPartyToolManager.generatePvaluesQQPlot(
                     LogisticOutput.getTitle(),
-                    "Recessive P value",
+                    "Recessive P Value",
                     origOutPath,
                     origOutPath.replace(".csv", "." + "recessive.p.qq.plot.pdf"));
     }

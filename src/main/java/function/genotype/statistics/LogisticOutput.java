@@ -60,8 +60,8 @@ public class LogisticOutput extends StatisticOutput {
                 + "Ctrl Maf,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,"
-                + "Dominant P value,"
-                + "Recessive P value,"
+                + "Dominant P Value,"
+                + "Recessive P Value,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
                 + "Polyphen Humdiv Prediction,"
@@ -82,46 +82,31 @@ public class LogisticOutput extends StatisticOutput {
     }
 
     private static final StringBuilder expression = new StringBuilder();
-    //
     List<Sample> qualifiedSamples;
     int[] qualifiedGeno;
-    //Shifting everything to primitives
-    private double [] pVals;
-    private Map<String, int []> modelGenoMap;
-    private int [] sampleIndexList;
+    private double[] pValues;
+    private Map<String, int[]> modelGenoMap;
+    private int[] sampleIndexList;
 
     public LogisticOutput(CalledVariant c) {
         super(c);
     }
 
     public void doRegressionAll() {
-
-        pVals = IntStream
+        pValues = IntStream
                 .range(0, StatisticsCommand.logisticModels.length)
                 .parallel()
                 .mapToObj(index -> StatisticsCommand.logisticModels[index])
-                .mapToDouble(model -> doRegression(model))
+                .mapToDouble(model -> getPValue(model))
                 .toArray();
     }
-    void setQualifiedGenoAndSamples(){
-        qualifiedSamples=SampleManager.getList()
-                .stream()
-                //   .parallel() // !! Switching to parallel !!
-                .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
-                .collect(Collectors.toList());
 
-        qualifiedGeno=qualifiedSamples
-                      .stream()
-                      .mapToInt(sample -> calledVar.getGenotype(sample.getIndex()))
-                      .toArray();
-    }
-
-    public double doRegression(String model) {
+    private double getPValue(String model) {
         if (model.equals("recessive") && !isRecessive()) {
             return Data.NA;
         }
 
-        int [] genoList = modelGenoMap.get(model);
+        int[] genoList = modelGenoMap.get(model);
 
         if (null == genoList || genoList.length <= 1) {
             return Data.NA;
@@ -150,10 +135,12 @@ public class LogisticOutput extends StatisticOutput {
     }
 
     public void initGenoMapAndSampleIndexList() {
-        this.modelGenoMap = new LinkedHashMap<>();
         setQualifiedGenoAndSamples();
+
+        modelGenoMap = new LinkedHashMap<>();
+
         //Dominant Model
-        this.modelGenoMap.put("dominant",Arrays
+        modelGenoMap.put("dominant", Arrays
                 .stream(qualifiedGeno)
                 .map((geno) -> {
                     int t = Data.NA;
@@ -174,7 +161,7 @@ public class LogisticOutput extends StatisticOutput {
         );
 
         //Additive model
-        this.modelGenoMap.put("additive",Arrays
+        modelGenoMap.put("additive", Arrays
                 .stream(qualifiedGeno)
                 .map((geno) -> {
                     int t = Data.NA;
@@ -183,14 +170,14 @@ public class LogisticOutput extends StatisticOutput {
                             t = 1;
                         } else if (geno == Index.HOM || geno == Index.HOM_MALE) {
                             t = 0;
-                        } else if(geno == Index.REF){
+                        } else if (geno == Index.REF) {
                             t = 2;
                         }
                     } else if (geno == Index.REF || geno == Index.REF_MALE) {
                         t = 0;
                     } else if (geno == Index.HET || geno == Index.HOM_MALE) {
                         t = 1;
-                    } else if (geno == Index.HOM ){
+                    } else if (geno == Index.HOM) {
                         t = 2;
                     }
                     return t;
@@ -200,7 +187,7 @@ public class LogisticOutput extends StatisticOutput {
 
         //Recessive Model
         if (isRecessive()) { // has to match variant recessive rule
-            this.modelGenoMap.put("recessive", Arrays
+            modelGenoMap.put("recessive", Arrays
                     .stream(qualifiedGeno)
                     .map((geno) -> {
                         int t = Data.NA;
@@ -224,13 +211,25 @@ public class LogisticOutput extends StatisticOutput {
          * ... and here*
          */
 
-
         //getting qualified indices
-        sampleIndexList= qualifiedSamples
-                        .stream()
-                        .mapToInt(sample -> sample.getIndex())
-                        .toArray();
+        sampleIndexList = qualifiedSamples
+                .stream()
+                .mapToInt(sample -> sample.getIndex())
+                .toArray();
 
+    }
+
+    private void setQualifiedGenoAndSamples() {
+        qualifiedSamples = SampleManager.getList()
+                .stream()
+                //   .parallel() // !! Switching to parallel !!
+                .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
+                .collect(Collectors.toList());
+
+        qualifiedGeno = qualifiedSamples
+                .stream()
+                .mapToInt(sample -> calledVar.getGenotype(sample.getIndex()))
+                .toArray();
     }
 
     public static void initExpression() {
@@ -277,7 +276,7 @@ public class LogisticOutput extends StatisticOutput {
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         for (int i = 0; i < StatisticsCommand.logisticModels.length; i++) {
-            sb.append(FormatManager.getDouble(pVals[i])).append(",");
+            sb.append(FormatManager.getDouble(pValues[i])).append(",");
         }
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
