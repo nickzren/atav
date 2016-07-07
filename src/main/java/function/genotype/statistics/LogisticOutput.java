@@ -63,6 +63,9 @@ public class LogisticOutput extends StatisticOutput {
                 + "Dominant P Value,"
                 + "Recessive P Value,"
                 + "Additive P Value,"
+                + "Dominant chksum,"
+                + "Recessive chksum,"
+                + "Additive chksum,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
                 + "Polyphen Humdiv Prediction,"
@@ -235,6 +238,10 @@ public class LogisticOutput extends StatisticOutput {
 
     }
 
+    public int tosum(int [] x){
+
+        return Arrays.stream(x).sum();
+    }
     private void setQualifiedGenoAndSamples() {
         qualifiedSamples = SampleManager.getList()
                 .stream()
@@ -294,6 +301,9 @@ public class LogisticOutput extends StatisticOutput {
         for (int i = 0; i < StatisticsCommand.logisticModels.length; i++) {
             sb.append(FormatManager.getDouble(pValues[i])).append(",");
         }
+        sb.append(tosum(modelGenoMap.get("dominant")));
+        sb.append(tosum(modelGenoMap.get("recessive")));
+        sb.append(tosum(modelGenoMap.get("additive")));
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
