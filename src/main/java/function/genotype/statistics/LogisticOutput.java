@@ -134,7 +134,7 @@ public class LogisticOutput extends StatisticOutput {
             //Getting response subset
             MathManager.getRenjinEngine().eval("yt <- y[ind+1]");
             //Formulating regression with geno
-            MathManager.getRenjinEngine().eval("withgeno <-glm(" + expression.toString().replaceAll("xt1","xt1"+model) + ", family=\"binomial\" )");
+            MathManager.getRenjinEngine().eval("withgeno <-glm(" + expression.toString().replaceAll("xt1\\+","xt1"+model+"\\+") + ", family=\"binomial\" )");
 
             if(isAdditive){
                 //Formulating regression without geno for additive
