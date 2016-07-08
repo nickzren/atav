@@ -123,9 +123,9 @@ public class LogisticOutput extends StatisticOutput {
             //Put indices
             MathManager.getRenjinEngine().put("ind", sampleIndexList);
             //Getting genotype info
-            MathManager.getRenjinEngine().put("xt1", genoList);
-            //Type 2 geno creates a 3rd level so need to factorize
-            if(isAdditive) MathManager.getRenjinEngine().eval("xt1 <- factor(xt1)");
+            MathManager.getRenjinEngine().put("xt1"+model, genoList);
+            //The additive model creates a 3rd level for genotype so need to factorize
+            if(isAdditive) MathManager.getRenjinEngine().eval("xt1"+model+" <- factor("+"xt1"+model+")");
             //Getting covariate subset
             for (int i = 1; i <= SampleManager.getCovariateNum(); i++) {
                 MathManager.getRenjinEngine().eval("xt" + (i + 1) + "<- x" + i + "[ind+1]");
@@ -134,7 +134,7 @@ public class LogisticOutput extends StatisticOutput {
             //Getting response subset
             MathManager.getRenjinEngine().eval("yt <- y[ind+1]");
             //Formulating regression with geno
-            MathManager.getRenjinEngine().eval("withgeno <-glm(" + expression.toString() + ", family=\"binomial\" )");
+            MathManager.getRenjinEngine().eval("withgeno <-glm(" + expression.toString().replaceAll("xt1","xt1"+model) + ", family=\"binomial\" )");
 
             if(isAdditive){
                 //Formulating regression without geno for additive
