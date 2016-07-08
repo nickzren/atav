@@ -200,8 +200,8 @@ public class CollapsingCompHet extends CollapsingBase {
 
     private void checkOutputValid(CompHetOutput output1, CompHetOutput output2,
             Sample sample, CollapsingSummary summary) throws Exception {
-        if (output1.getCalledVariant().getVariantId()
-                != output2.getCalledVariant().getVariantId()) {
+        if (!output1.getCalledVariant().getVariantIdStr()
+                .equals(output2.getCalledVariant().getVariantIdStr())) {
 
             int geno2 = output2.getCalledVariant().getGenotype(sample.getIndex());
 
@@ -307,9 +307,9 @@ public class CollapsingCompHet extends CollapsingBase {
     }
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {
-        if (!variantIdSet.contains(output.getCalledVariant().getVariantId())) {
+        if (!variantIdSet.contains(output.getCalledVariant().getVariantIdNegative4Indel())) {
             summary.updateVariantCount(output);
-            variantIdSet.add(output.getCalledVariant().getVariantId());
+            variantIdSet.add(output.getCalledVariant().getVariantIdNegative4Indel());
         }
     }
 
