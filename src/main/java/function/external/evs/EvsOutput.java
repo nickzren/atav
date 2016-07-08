@@ -14,7 +14,8 @@ public class EvsOutput {
     }
 
     public EvsOutput(String id) {
-        evs = new Evs(id);
+        String[] tmp = id.split("-"); // chr-pos-ref-alt
+        evs = new Evs(tmp[0], Integer.parseInt(tmp[1]), tmp[2], tmp[3]);
     }
 
     public boolean isValid() {

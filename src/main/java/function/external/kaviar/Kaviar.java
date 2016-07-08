@@ -22,18 +22,11 @@ public class Kaviar {
     private int alleleCount;
     private int alleleNumber;
 
-    public Kaviar(String id) {
-        initBasic(id);
-
-        initKaviarValue();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public Kaviar(String chr, int pos, String ref, String alt) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
 
@@ -41,8 +34,10 @@ public class Kaviar {
                 || alt.length() > 1) {
             isSnv = false;
         }
-    }
 
+        initKaviarValue();
+    }
+    
     private void initKaviarValue() {
         try {
             String sql = KaviarManager.getSql(isSnv, chr, pos, ref, alt);
