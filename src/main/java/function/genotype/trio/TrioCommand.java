@@ -1,5 +1,8 @@
 package function.genotype.trio;
 
+import function.external.evs.EvsCommand;
+import function.external.exac.ExacCommand;
+import function.external.knownvar.KnownVarCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -11,6 +14,8 @@ import utils.CommandOption;
  * @author nick
  */
 public class TrioCommand {
+
+    public static boolean isRunTier = false;
 
     // trio denovo
     public static boolean isTrioDenovo = false;
@@ -27,6 +32,11 @@ public class TrioCommand {
             option = (CommandOption) iterator.next();
             if (option.getName().equals("--include-noflag")) {
                 isIncludeNoflag = true;
+            } else if (option.getName().equals("--run-tier")) {
+                isRunTier = true;
+                EvsCommand.isIncludeEvs = true;
+                ExacCommand.isIncludeExac = true;
+                KnownVarCommand.isIncludeKnownVar = true;
             } else {
                 continue;
             }
@@ -62,10 +72,6 @@ public class TrioCommand {
             return true;
         }
 
-        if (value <= combFreq) {
-            return true;
-        }
-
-        return false;
+        return value <= combFreq;
     }
 }

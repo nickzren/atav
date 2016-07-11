@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import utils.MathManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -29,10 +30,10 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
     HashSet<String> currentGeneList = new HashSet<>();
     HashSet<String> uniqueId = new HashSet<>();
-    BufferedWriter bwDetails = null;
-    BufferedWriter bwDetails_noflag = null;
-    final String flagFilePath = CommonCommand.outputPath + "comphet.csv";
-    final String noFlagFilePath = CommonCommand.outputPath + "comphet_noflag.csv";
+    BufferedWriter bwCompHet = null;
+    BufferedWriter bwCompHetNoFlag = null;
+    final String compHetFilePath = CommonCommand.outputPath + "comphet.csv";
+    final String compHetNoFlagFilePath = CommonCommand.outputPath + "comphet_noflag.csv";
     public static final String[] FLAG = {
         "compound heterozygote", // 0
         "possibly compound heterozygote", // 1
@@ -43,14 +44,14 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     @Override
     public void initOutput() {
         try {
-            bwDetails = new BufferedWriter(new FileWriter(flagFilePath));
-            bwDetails.write(CompHetOutput.getTitle());
-            bwDetails.newLine();
+            bwCompHet = new BufferedWriter(new FileWriter(compHetFilePath));
+            bwCompHet.write(CompHetOutput.getTitle());
+            bwCompHet.newLine();
 
             if (TrioCommand.isIncludeNoflag) {
-                bwDetails_noflag = new BufferedWriter(new FileWriter(noFlagFilePath));
-                bwDetails_noflag.write(CompHetOutput.getTitle());
-                bwDetails_noflag.newLine();
+                bwCompHetNoFlag = new BufferedWriter(new FileWriter(compHetNoFlagFilePath));
+                bwCompHetNoFlag.write(CompHetOutput.getTitle());
+                bwCompHetNoFlag.newLine();
             }
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -67,12 +68,12 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     @Override
     public void closeOutput() {
         try {
-            bwDetails.flush();
-            bwDetails.close();
+            bwCompHet.flush();
+            bwCompHet.close();
 
             if (TrioCommand.isIncludeNoflag) {
-                bwDetails_noflag.flush();
-                bwDetails_noflag.close();
+                bwCompHetNoFlag.flush();
+                bwCompHetNoFlag.close();
             }
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -81,6 +82,9 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
+        if (TrioCommand.isRunTier) {
+            ThirdPartyToolManager.runTrioCompHetTier(compHetFilePath);
+        }
     }
 
     @Override
@@ -150,7 +154,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             if (!currentGeneList.contains(output.getCalledVariant().getGeneName())) {
                 currentGeneList.add(output.getCalledVariant().getGeneName());
 
-                geneOutputList = new ArrayList<CompHetOutput>();
+                geneOutputList = new ArrayList<>();
                 geneOutputList.add(output);
                 geneListVector.add(geneOutputList);
             } else {
@@ -236,12 +240,8 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         int geno1 = output1.getCalledVariant().getGenotype(index);
         int geno2 = output2.getCalledVariant().getGenotype(index);
 
-        if (output1.isQualifiedGeno(geno1)
-                && output2.isQualifiedGeno(geno2)) {
-            return true;
-        } else {
-            return false;
-        }
+        return output1.isQualifiedGeno(geno1)
+                && output2.isQualifiedGeno(geno2);
     }
 
     public static String getCompHetStatus(
@@ -400,11 +400,11 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                     sb.append(output2.toString());
 
                                     if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {
-                                        bwDetails.write(sb.toString());
-                                        bwDetails.newLine();
+                                        bwCompHet.write(sb.toString());
+                                        bwCompHet.newLine();
                                     } else if (TrioCommand.isIncludeNoflag) {
-                                        bwDetails_noflag.write(sb.toString());
-                                        bwDetails_noflag.newLine();
+                                        bwCompHetNoFlag.write(sb.toString());
+                                        bwCompHetNoFlag.newLine();
                                     }
 
                                     sb.setLength(0);
