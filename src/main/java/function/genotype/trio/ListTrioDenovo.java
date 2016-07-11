@@ -16,8 +16,8 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
     
     BufferedWriter bwDenovo = null;
     BufferedWriter bwDenovoNoFlag = null;
-    final String denovoFilePath = CommonCommand.outputPath + "denovo.csv";
-    final String denovoNoFlagFilePath = CommonCommand.outputPath + "denovo_noflag.csv";
+    final String denovoFilePath = CommonCommand.outputPath + "denovoandhom.csv";
+    final String denovoNoFlagFilePath = CommonCommand.outputPath + "denovoandhom_noflag.csv";
     
     @Override
     public void initOutput() {
