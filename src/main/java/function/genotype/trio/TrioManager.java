@@ -19,9 +19,9 @@ import java.util.HashSet;
  * @author nick
  */
 public class TrioManager {
-    
+
     private static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
-    
+
     static ArrayList<Trio> trioList = new ArrayList<>();
     static HashSet<Integer> parentIdSet = new HashSet();
     static HashMap<String, String> denovoRules = new HashMap<>();
@@ -36,7 +36,8 @@ public class TrioManager {
 
             if (sample.isCase()
                     && !sample.getPaternalId().equals("0")
-                    && !sample.getMaternalId().equals("0")) {
+                    && !sample.getMaternalId().equals("0")
+                    && !sample.getPaternalId().equals(sample.getMaternalId())) {
 
                 Trio trio = new Trio(sample);
 
