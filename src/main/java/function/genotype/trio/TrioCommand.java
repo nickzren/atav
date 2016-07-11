@@ -30,15 +30,18 @@ public class TrioCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--include-noflag")) {
-                isIncludeNoflag = true;
-            } else if (option.getName().equals("--run-tier")) {
-                isRunTier = true;
-                EvsCommand.isIncludeEvs = true;
-                ExacCommand.isIncludeExac = true;
-                KnownVarCommand.isIncludeKnownVar = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--include-noflag":
+                    isIncludeNoflag = true;
+                    break;
+                case "--run-tier":
+                    isRunTier = true;
+                    EvsCommand.isIncludeEvs = true;
+                    ExacCommand.isIncludeExac = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
@@ -58,6 +61,12 @@ public class TrioCommand {
                     break;
                 case "--include-noflag":
                     isIncludeNoflag = true;
+                    break;
+                case "--run-tier":
+                    isRunTier = true;
+                    EvsCommand.isIncludeEvs = true;
+                    ExacCommand.isIncludeExac = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
                     break;
                 default:
                     continue;
