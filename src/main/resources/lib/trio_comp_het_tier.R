@@ -3,7 +3,7 @@ do_comp_het_tier <- function(comphetFile){
     ### atavOutput is the directory to which ATAV will write the output files
     source("/nfs/goldstein/software/atav_home/lib/r0.3_filters_tier1.R")
     atav.output = read.csv(comphetFile,na.strings="NA")
-    atavOutput=dirname(comphetFile)
+    atavOutput <- dirname(comphetFile)
     data <- Filter.by.Flag(atav.output,'compound heterozygote', strict = FALSE)
     data <- Filter.for.compound.heterozygote(data)
     write.csv(data, file = paste(atavOutput,"/compound.heterozygote.csv", sep=""))
@@ -21,4 +21,4 @@ do_comp_het_tier <- function(comphetFile){
 args <- commandArgs(T)
 comphet.comphetFile <- args[1]
 comphet.atavOutput <-args[2]
-do_comp_het_tier(comphet.comphetFile ,comphet.atavOutput )
+do_comp_het_tier(comphet.comphetFile)

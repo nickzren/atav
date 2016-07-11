@@ -4,7 +4,7 @@ do_denovo_tier <- function(denovoFile){
 ###rm(list = ls())
 source("/nfs/goldstein/software/atav_home/lib/r0.3_filters_tier1.R")
 atav.output = read.csv(denovoFile,na.strings="NA")
-atavOutput=dirname(denovoFile)
+atavOutput <- dirname(denovoFile)
 data <- Filter.by.Flag(atav.output,'de novo', strict = TRUE)
 data <- Filter.for.denovo(data)
 write.csv(data, file = paste(atavOutput,"/denovo.csv", sep=""))
@@ -40,4 +40,4 @@ write.csv(data, file = paste(atavOutput,"/homozygous_tier2.csv", sep=""))
 args <- commandArgs(T)
 denovo.denovoFile <- args[1]
 deno.atavOutput <-args[2]
-do_denovo_tier(denovo.denovoFile,deno.atavOutput )
+do_denovo_tier(denovo.denovoFile)
