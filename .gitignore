@@ -3,3 +3,5 @@ target/
 nbactions.xml
 
 .DS_Store
+
+spark-warehouse
