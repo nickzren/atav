@@ -45,7 +45,7 @@ public class LinearOutput extends StatisticOutput {
                 + "QC Fail Ctrl,"
                 + "Ctrl Maf,"
                 + "Ctrl HWE_P,"
-                + "P value,"
+                + "P Value,"
                 + "Beta1,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"

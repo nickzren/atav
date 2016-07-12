@@ -4,6 +4,7 @@ import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.MathManager;
@@ -20,15 +21,33 @@ import java.util.*;
 public class LogisticRegression extends AnalysisBase4CalledVar {
 
     String origOutPath;
-    BufferedWriter logRegBw;
+    String[] sortedPOutPath = new String[StatisticsCommand.logisticModels.length];
+
+    BufferedWriter logisticBw;
+    BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.logisticModels.length];
+
+    ArrayList<ArrayList<UnsortedOutputData>> unsortedOutputByModelList = new ArrayList<>();
 
     @Override
     public void initOutput() {
         try {
             origOutPath = CommonCommand.outputPath + "logistic.csv";
-            logRegBw = new BufferedWriter(new FileWriter(origOutPath));
-            logRegBw.write(LogisticOutput.getTitle());
-            logRegBw.newLine();
+            logisticBw = new BufferedWriter(new FileWriter(origOutPath));
+            logisticBw.write(LogisticOutput.getTitle());
+            logisticBw.newLine();
+
+            if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+                for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
+                    String testModel = StatisticsCommand.logisticModels[m];
+                    sortedPOutPath[m] = CommonCommand.outputPath + testModel
+                            + ".p_" + StatisticsCommand.threshold4Sort + ".sorted" + ".csv";
+                    sortedBw[m] = new BufferedWriter(new FileWriter(sortedPOutPath[m]));
+                    sortedBw[m].write(LogisticOutput.getTitle());
+                    sortedBw[m].newLine();
+
+                    unsortedOutputByModelList.add(new ArrayList<>());
+                }
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -41,8 +60,15 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     @Override
     public void closeOutput() {
         try {
-            logRegBw.flush();
-            logRegBw.close();
+            logisticBw.flush();
+            logisticBw.close();
+
+            if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+                for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
+                    sortedBw[m].flush();
+                    sortedBw[m].close();
+                }
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -60,6 +86,7 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
 
     @Override
     public void afterProcessDatabaseData() {
+        outputSortedData();
     }
 
     @Override
@@ -72,9 +99,46 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
             if (output.isValid()) {
                 output.initGenoMapAndSampleIndexList();
                 output.doRegressionAll();
-                logRegBw.write(output.toString());
-                logRegBw.newLine();
+                logisticBw.write(output.toString());
+                logisticBw.newLine();
+
+                addToListByP(output);
             }
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private void addToListByP(LogisticOutput output) {
+        try {
+            if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+                for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
+                    if (output.pValues[m] <= StatisticsCommand.threshold4Sort) {
+                        UnsortedOutputData data = new UnsortedOutputData(output, output.pValues[m]);
+                        unsortedOutputByModelList.get(m).add(data);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private void outputSortedData() {
+        try {
+            if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+                for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
+                    ArrayList<UnsortedOutputData> list = unsortedOutputByModelList.get(m);
+
+                    Collections.sort(list);
+
+                    for (UnsortedOutputData output : list) {
+                        sortedBw[m].write(output.line);
+                        sortedBw[m].newLine();
+                    }
+                }
+            }
+
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -120,23 +184,23 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-            ThirdPartyToolManager.generatePvaluesQQPlot(
-                    LogisticOutput.getTitle(),
-                    "Dominant P Value",
-                    origOutPath,
-                    origOutPath.replace(".csv", "." + "dominant.p.qq.plot.pdf"));
+        ThirdPartyToolManager.generatePvaluesQQPlot(
+                LogisticOutput.getTitle(),
+                "Dominant P Value",
+                origOutPath,
+                origOutPath.replace(".csv", "." + "dominant.p.qq.plot.pdf"));
 
-            ThirdPartyToolManager.generatePvaluesQQPlot(
-                    LogisticOutput.getTitle(),
-                    "Recessive P Value",
-                    origOutPath,
-                    origOutPath.replace(".csv", "." + "recessive.p.qq.plot.pdf"));
+        ThirdPartyToolManager.generatePvaluesQQPlot(
+                LogisticOutput.getTitle(),
+                "Recessive P Value",
+                origOutPath,
+                origOutPath.replace(".csv", "." + "recessive.p.qq.plot.pdf"));
 
-            ThirdPartyToolManager.generatePvaluesQQPlot(
-                    LogisticOutput.getTitle(),
-                    "Additive P Value",
-                    origOutPath,
-                    origOutPath.replace(".csv", "." + "additive.p.qq.plot.pdf"));
+        ThirdPartyToolManager.generatePvaluesQQPlot(
+                LogisticOutput.getTitle(),
+                "Additive P Value",
+                origOutPath,
+                origOutPath.replace(".csv", "." + "additive.p.qq.plot.pdf"));
     }
 
     @Override

@@ -71,13 +71,19 @@ public class StatisticsCommand {
 
     public static void initLogisticOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
-
+        
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--covariate")) {
-                covariateFile = getValidPath(option);
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--threshold-sort":
+                    threshold4Sort = getValidDouble(option);
+                    checkValueValid(1, 0, option);
+                    break;
+                case "--covariate":
+                    covariateFile = getValidPath(option);
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();

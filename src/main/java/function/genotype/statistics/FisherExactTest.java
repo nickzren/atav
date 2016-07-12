@@ -140,7 +140,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
         try {
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER
                     && output.pValue <= StatisticsCommand.threshold4Sort) {
-                UnsortedOutputData data = new UnsortedOutputData(output);
+                UnsortedOutputData data = new UnsortedOutputData(output, output.pValue);
                 unsortedMap.get(m).add(data);
             }
         } catch (Exception e) {
@@ -198,13 +198,13 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     private void generatePvaluesQQPlot() {
         for (int m = 0; m < StatisticsCommand.models.length; m++) {
             ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getTitle(),
-                    "P value",
+                    "P Value",
                     originalPOutputPath[m],
                     originalPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));
 
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                 ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getTitle(),
-                        "P value",
+                        "P Value",
                         sortedPOutputPath[m],
                         sortedPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));
             }
