@@ -29,10 +29,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     HashMap<Integer, ArrayList<UnsortedOutputData>> unsortedMap = new HashMap<>();
 
-    static int qualifiedDomVarNum = 0;
-    static int qualifiedAleVarNum = 0;
-    static int qualifiedGenVarNum = 0;
-    static int qualifiedRecVarNum = 0;
+    static int[] qualifiedVarNum = new int[StatisticsCommand.fisherModels.length];
 
     @Override
     public void initOutput() {
@@ -107,7 +104,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
             for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
                 if (output.isValid(StatisticsCommand.fisherModels[m])) {
-                    countVarNum(StatisticsCommand.fisherModels[m]);
+                    qualifiedVarNum[m]++;
 
                     ArrayList<Integer> countList = new ArrayList<>();
                     output.initCount(countList, StatisticsCommand.fisherModels[m]);
@@ -121,18 +118,6 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
             }
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    private void countVarNum(String model) {
-        if (model.equals("dominant")) {
-            qualifiedDomVarNum++;
-        } else if (model.equals("allelic")) {
-            qualifiedAleVarNum++;
-        } else if (model.equals("genotypic")) {
-            qualifiedGenVarNum++;
-        } else if (model.equals("recessive")) {
-            qualifiedRecVarNum++;
         }
     }
 
@@ -169,30 +154,16 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     }
 
     private void outputBonferroni() {
-        for (String model : StatisticsCommand.fisherModels) {
-            printBonferroni(model);
+        for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
+            LogManager.writeAndPrint("Total qualified " 
+                    + StatisticsCommand.fisherModels[m] + " variants: " + qualifiedVarNum[m]);
+
+            double bonferroniP = MathManager.devide(0.05, qualifiedVarNum[m]);
+
+            LogManager.writeAndPrint("Bonferroni correction p-value (" 
+                    + StatisticsCommand.fisherModels[m] + "): "
+                    + FormatManager.getDouble(bonferroniP));
         }
-    }
-
-    private void printBonferroni(String model) {
-        int num = 0;
-
-        if (model.equals("dominant")) {
-            num = qualifiedDomVarNum;
-        } else if (model.equals("allelic")) {
-            num = qualifiedAleVarNum;
-        } else if (model.equals("genotypic")) {
-            num = qualifiedGenVarNum;
-        } else if (model.equals("recessive")) {
-            num = qualifiedRecVarNum;
-        }
-
-        LogManager.writeAndPrint("Total qualified " + model + " variants: " + num);
-
-        double bonferroniP = MathManager.devide(0.05, num);
-
-        LogManager.writeAndPrint("Bonferroni correction p-value (" + model + "): "
-                + FormatManager.getDouble(bonferroniP));
     }
 
     private void generatePvaluesQQPlot() {
