@@ -60,12 +60,9 @@ public class LogisticOutput extends StatisticOutput {
                 + "Ctrl Maf,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,"
-                + "Dominant P Value,"
-                + "Recessive P Value,"
-                + "Additive P Value,"
-/*                + "Dominant chksum,"
-                + "Recessive chksum,"
-                + "Additive chksum,"*/
+                + StatisticsCommand.logisticModels[0] + " P Value," // dom
+                + StatisticsCommand.logisticModels[1] + " P Value," // rec
+                + StatisticsCommand.logisticModels[2] + " P Value," // add
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
                 + "Polyphen Humdiv Prediction,"
@@ -91,7 +88,6 @@ public class LogisticOutput extends StatisticOutput {
     public double[] pValues;
     private Map<String, int[]> modelGenoMap;
     private int[] sampleIndexList;
-    private boolean isAdditive;
 
     public LogisticOutput(CalledVariant c) {
         super(c);
@@ -111,8 +107,6 @@ public class LogisticOutput extends StatisticOutput {
             return Data.NA;
         }
 
-        isAdditive=model.equals("additive");
-
         int[] genoList = modelGenoMap.get(model);
 
         if (null == genoList || genoList.length <= 1) {
@@ -123,9 +117,11 @@ public class LogisticOutput extends StatisticOutput {
             //Put indices
             MathManager.getRenjinEngine().put("ind", sampleIndexList);
             //Getting genotype info
-            MathManager.getRenjinEngine().put("xt1"+model, genoList);
+            MathManager.getRenjinEngine().put("xt1" + model, genoList);
             //The additive model creates a 3rd level for genotype so need to factorize
-            if(isAdditive) MathManager.getRenjinEngine().eval("xt1"+model+" <- factor("+"xt1"+model+")");
+            if (model.equals("additive")) {
+                MathManager.getRenjinEngine().eval("xt1" + model + " <- factor(" + "xt1" + model + ")");
+            }
             //Getting covariate subset
             for (int i = 1; i <= SampleManager.getCovariateNum(); i++) {
                 MathManager.getRenjinEngine().eval("xt" + (i + 1) + "<- x" + i + "[ind+1]");
@@ -134,15 +130,15 @@ public class LogisticOutput extends StatisticOutput {
             //Getting response subset
             MathManager.getRenjinEngine().eval("yt <- y[ind+1]");
             //Formulating regression with geno
-            MathManager.getRenjinEngine().eval("withgeno <-glm(" + expression.toString().replaceAll("xt1\\+","xt1"+model+"\\+") + ", family=\"binomial\" )");
+            MathManager.getRenjinEngine().eval("withgeno <-glm(" + expression.toString().replaceAll("xt1\\+", "xt1" + model + "\\+") + ", family=\"binomial\" )");
 
-            if(isAdditive){
+            if (model.equals("additive")) {
                 //Formulating regression without geno for additive
-                MathManager.getRenjinEngine().eval("withoutgeno <-glm(" + expression.toString().replaceAll("xt1\\+","") + ", family=\"binomial\" )");
+                MathManager.getRenjinEngine().eval("withoutgeno <-glm(" + expression.toString().replaceAll("xt1\\+", "") + ", family=\"binomial\" )");
                 //Getting P value for genotype
-                DoubleArrayVector res = (DoubleArrayVector)MathManager.getRenjinEngine().eval("anova(withgeno, withoutgeno, test=\"LRT\")$\"Pr(>Chi)\"[2]");
+                DoubleArrayVector res = (DoubleArrayVector) MathManager.getRenjinEngine().eval("anova(withgeno, withoutgeno, test=\"LRT\")$\"Pr(>Chi)\"[2]");
                 return (null != res) ? res.getElementAsDouble(0) : Data.NA;
-            }else {
+            } else {
                 //Getting P value for genotype
                 DoubleArrayVector res = (DoubleArrayVector) MathManager.getRenjinEngine().eval("coef(summary(withgeno))[2,4]");
                 return (null != res) ? res.getElementAsDouble(0) : Data.NA;

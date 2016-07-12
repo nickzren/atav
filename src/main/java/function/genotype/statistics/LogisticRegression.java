@@ -38,8 +38,8 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
 
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                 for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
-                    String testModel = StatisticsCommand.logisticModels[m];
-                    sortedPOutPath[m] = CommonCommand.outputPath + testModel
+                    String model = StatisticsCommand.logisticModels[m];
+                    sortedPOutPath[m] = CommonCommand.outputPath + model
                             + ".p_" + StatisticsCommand.threshold4Sort + ".sorted" + ".csv";
                     sortedBw[m] = new BufferedWriter(new FileWriter(sortedPOutPath[m]));
                     sortedBw[m].write(LogisticOutput.getTitle());
@@ -77,6 +77,8 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     @Override
     public void doAfterCloseOutput() {
         generatePvaluesQQPlot();
+        
+        gzipFiles();
     }
 
     @Override
@@ -184,23 +186,27 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-        ThirdPartyToolManager.generatePvaluesQQPlot(
-                LogisticOutput.getTitle(),
-                "Dominant P Value",
-                origOutPath,
-                origOutPath.replace(".csv", "." + "dominant.p.qq.plot.pdf"));
+        for (int m = 0; m < StatisticsCommand.logisticModels.length; m++) {
+            String model = StatisticsCommand.logisticModels[m];
 
-        ThirdPartyToolManager.generatePvaluesQQPlot(
-                LogisticOutput.getTitle(),
-                "Recessive P Value",
-                origOutPath,
-                origOutPath.replace(".csv", "." + "recessive.p.qq.plot.pdf"));
+            ThirdPartyToolManager.generatePvaluesQQPlot(LinearOutput.getTitle(),
+                    model + " P Value",
+                    origOutPath,
+                    origOutPath.replace(".csv", "." + model + ".p.qq.plot.pdf"));
 
-        ThirdPartyToolManager.generatePvaluesQQPlot(
-                LogisticOutput.getTitle(),
-                "Additive P Value",
-                origOutPath,
-                origOutPath.replace(".csv", "." + "additive.p.qq.plot.pdf"));
+            if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+                ThirdPartyToolManager.generatePvaluesQQPlot(LinearOutput.getTitle(),
+                        model + " P Value",
+                        sortedPOutPath[m],
+                        sortedPOutPath[m].replace(".csv", ".p.qq.plot.pdf"));
+            }
+        }
+    }
+
+    private void gzipFiles() {
+        if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
+            ThirdPartyToolManager.gzipFile(origOutPath);
+        }
     }
 
     @Override
