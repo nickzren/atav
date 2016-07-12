@@ -12,7 +12,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import utils.MathManager;
 
 /**
@@ -27,7 +26,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     BufferedWriter[] originalBw = new BufferedWriter[StatisticsCommand.fisherModels.length];
     BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.fisherModels.length];
 
-    HashMap<Integer, ArrayList<UnsortedOutputData>> unsortedMap = new HashMap<>();
+    ArrayList<ArrayList<UnsortedOutputData>> unsortedOutputByModelList = new ArrayList<>();
 
     static int[] qualifiedVarNum = new int[StatisticsCommand.fisherModels.length];
 
@@ -48,7 +47,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
                     sortedBw[m].write(FisherOutput.getTitle());
                     sortedBw[m].newLine();
 
-                    unsortedMap.put(m, new ArrayList<>());
+                    unsortedOutputByModelList.add(new ArrayList<>());
                 }
             } catch (Exception ex) {
                 ErrorManager.send(ex);
@@ -126,7 +125,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER
                     && output.pValue <= StatisticsCommand.threshold4Sort) {
                 UnsortedOutputData data = new UnsortedOutputData(output, output.pValue);
-                unsortedMap.get(m).add(data);
+                unsortedOutputByModelList.get(m).add(data);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -137,7 +136,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
         try {
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                 for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
-                    ArrayList<UnsortedOutputData> list = unsortedMap.get(m);
+                    ArrayList<UnsortedOutputData> list = unsortedOutputByModelList.get(m);
 
                     Collections.sort(list);
 

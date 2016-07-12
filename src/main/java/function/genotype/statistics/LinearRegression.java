@@ -9,7 +9,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import utils.CommonCommand;
 
 /**
@@ -24,7 +23,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
     BufferedWriter[] linearBw = new BufferedWriter[StatisticsCommand.linearModels.length];
     BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.linearModels.length];
 
-    HashMap<Integer, ArrayList<UnsortedOutputData>> unsortedMap = new HashMap<>();
+    ArrayList<ArrayList<UnsortedOutputData>> unsortedOutputByModelList = new ArrayList<>();
 
     @Override
     public void initOutput() {
@@ -43,7 +42,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
                     sortedBw[m].write(LinearOutput.getTitle());
                     sortedBw[m].newLine();
 
-                    unsortedMap.put(m, new ArrayList<>());
+                    unsortedOutputByModelList.add(new ArrayList<>());
                 }
             } catch (Exception ex) {
                 ErrorManager.send(ex);
@@ -115,7 +114,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER
                     && output.pValue <= StatisticsCommand.threshold4Sort) {
                 UnsortedOutputData data = new UnsortedOutputData(output, output.pValue);
-                unsortedMap.get(m).add(data);
+                unsortedOutputByModelList.get(m).add(data);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -126,7 +125,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
         try {
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                 for (int m = 0; m < StatisticsCommand.linearModels.length; m++) {
-                    ArrayList<UnsortedOutputData> list = unsortedMap.get(m);
+                    ArrayList<UnsortedOutputData> list = unsortedOutputByModelList.get(m);
 
                     Collections.sort(list);
 
