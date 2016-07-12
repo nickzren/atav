@@ -237,6 +237,7 @@ public class LogisticOutput extends StatisticOutput {
     private void setQualifiedGenoAndSamples() {
         qualifiedSamples = SampleManager.getList()
                 .stream()
+                /** Each job takes less than 100 micro seconds which is the penalty for parallel stream **/
                 //   .parallel() // !! Switching to parallel !!
                 .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
                 .collect(Collectors.toList());
