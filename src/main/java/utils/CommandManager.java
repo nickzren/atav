@@ -23,6 +23,7 @@ import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
 import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
+import function.genotype.var.VarCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
@@ -87,8 +88,8 @@ public class CommandManager {
                 System.out.println("\nError: without any input parameters to run ATAV. \n\nExit...\n");
                 System.exit(0);
             }
-        } else {
-            // init options from command file or command line
+        } else // init options from command file or command line
+        {
             if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
@@ -226,11 +227,9 @@ public class CommandManager {
             File dir = new File(path);
             if (!dir.exists()) {
                 dir.mkdirs();
-            } else {
-                if (!dir.canWrite()) {
-                    System.out.println("\nYou don't have write permissions into " + path + "! \n\nExit...\n");
-                    System.exit(0);
-                }
+            } else if (!dir.canWrite()) {
+                System.out.println("\nYou don't have write permissions into " + path + "! \n\nExit...\n");
+                System.exit(0);
             }
 
             CommonCommand.realOutputPath = path;
@@ -269,9 +268,12 @@ public class CommandManager {
             option = (CommandOption) iterator.next();
 
             switch (option.getName()) {
+                // Genotype Analysis Functions
                 case "--list-var-geno":
-                    // Genotype Analysis Functions
                     VarGenoCommand.isListVarGeno = true;
+                    break;
+                case "--list-var":
+                    VarCommand.isListVar = true;
                     break;
                 case "--collapsing-dom":
                     CollapsingCommand.isCollapsingSingleVariant = true;
@@ -317,8 +319,9 @@ public class CommandManager {
                 case "--ped-map":
                     PedMapCommand.isPedMap = true;
                     break;
+
+                // Variant Annotation Functions
                 case "--list-var-anno":
-                    // Variant Annotation Functions
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isListVarAnno = true;
                     EvsCommand.isIncludeEvs = true;
@@ -335,8 +338,9 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     GeneDxCommand.isListGeneDx = true;
                     break;
+                    
+                // Coverage Analysis Functions    
                 case "--coverage-summary":
-                    // Coverage Analysis Functions
                     CoverageCommand.isCoverageSummary = true;
                     break;
                 case "--site-coverage-summary":
@@ -348,8 +352,9 @@ public class CommandManager {
                 case "--site-coverage-comparison":
                     CoverageCommand.isSiteCoverageComparison = true;
                     break;
+                    
+                // External Datasets Functions    
                 case "--list-evs":
-                    // External Datasets Functions
                     CommonCommand.isNonSampleAnalysis = true;
                     EvsCommand.isListEvs = true;
                     EvsCommand.isIncludeEvs = true;
@@ -422,6 +427,8 @@ public class CommandManager {
     private static void initSubOptions() throws Exception {
         if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
+        } else if (VarCommand.isListVar) {
+
         } else if (CollapsingCommand.isCollapsingSingleVariant) {
             CollapsingCommand.initSingleVarOptions(optionList.iterator());
         } else if (CollapsingCommand.isCollapsingCompHet) {

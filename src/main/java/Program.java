@@ -63,6 +63,8 @@ import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
 import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
+import function.genotype.var.ListVar;
+import function.genotype.var.VarCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.test.Test;
 import function.test.TestCommand;
@@ -88,11 +90,11 @@ public class Program {
             SampleManager.recheckSampleList();
 
             RunTimeManager.stop();
-            
+
             LogManager.logRunTime();
 
             LogManager.logUserCommand();
-            
+
             LogManager.close();
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -120,11 +122,11 @@ public class Program {
             CoverageBlockManager.init();
 
             KnownVarManager.init();
-            
+
             RvisManager.init();
-            
+
             SubRvisManager.init();
-            
+
             MgiManager.init();
 
             ExacManager.init();
@@ -137,6 +139,8 @@ public class Program {
         try {
             if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
                 runAnalysis(new ListVarGeno());
+            } else if (VarCommand.isListVar) {
+                runAnalysis(new ListVar());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
                 runAnalysis(new CollapsingSingleVariant());
             } else if (CollapsingCommand.isCollapsingCompHet) {
