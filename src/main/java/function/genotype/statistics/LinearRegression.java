@@ -18,19 +18,19 @@ import utils.CommonCommand;
  */
 public class LinearRegression extends AnalysisBase4CalledVar {
 
-    String[] originalPOutputPath = new String[StatisticsCommand.models.length];
-    String[] sortedPOutputPath = new String[StatisticsCommand.models.length];
+    String[] originalPOutputPath = new String[StatisticsCommand.linearModels.length];
+    String[] sortedPOutputPath = new String[StatisticsCommand.linearModels.length];
 
-    BufferedWriter[] linearBw = new BufferedWriter[StatisticsCommand.models.length];
-    BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.models.length];
+    BufferedWriter[] linearBw = new BufferedWriter[StatisticsCommand.linearModels.length];
+    BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.linearModels.length];
 
     HashMap<Integer, ArrayList<UnsortedOutputData>> unsortedMap = new HashMap<>();
 
     @Override
     public void initOutput() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.linearModels.length; m++) {
             try {
-                String testModel = StatisticsCommand.models[m];
+                String testModel = StatisticsCommand.linearModels[m];
                 originalPOutputPath[m] = CommonCommand.outputPath + testModel + ".csv";
                 linearBw[m] = new BufferedWriter(new FileWriter(originalPOutputPath[m]));
                 linearBw[m].write(LinearOutput.getTitle());
@@ -57,7 +57,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
 
     @Override
     public void closeOutput() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.linearModels.length; m++) {
             try {
                 linearBw[m].flush();
                 linearBw[m].close();
@@ -95,9 +95,9 @@ public class LinearRegression extends AnalysisBase4CalledVar {
             output.countSampleGeno();
             output.calculate();
 
-            for (int m = 0; m < StatisticsCommand.models.length; m++) {
-                if (output.isValid(StatisticsCommand.models[m])) {
-                    output.doRegression(StatisticsCommand.models[m]);
+            for (int m = 0; m < StatisticsCommand.linearModels.length; m++) {
+                if (output.isValid(StatisticsCommand.linearModels[m])) {
+                    output.doRegression(StatisticsCommand.linearModels[m]);
 
                     addToListByP(output, m);
 
@@ -125,7 +125,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
     private void outputSortedData() {
         try {
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
-                for (int m = 0; m < StatisticsCommand.models.length; m++) {
+                for (int m = 0; m < StatisticsCommand.linearModels.length; m++) {
                     ArrayList<UnsortedOutputData> list = unsortedMap.get(m);
 
                     Collections.sort(list);
@@ -143,7 +143,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.linearModels.length; m++) {
             ThirdPartyToolManager.generatePvaluesQQPlot(LinearOutput.getTitle(),
                     "P Value",
                     originalPOutputPath[m],
@@ -160,7 +160,7 @@ public class LinearRegression extends AnalysisBase4CalledVar {
 
     private void gzipFiles() {
         if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
-            for (int m = 0; m < StatisticsCommand.models.length; m++) {
+            for (int m = 0; m < StatisticsCommand.linearModels.length; m++) {
                 ThirdPartyToolManager.gzipFile(originalPOutputPath[m]);
             }
         }

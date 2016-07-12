@@ -21,11 +21,11 @@ import utils.MathManager;
  */
 public class FisherExactTest extends AnalysisBase4CalledVar {
 
-    String[] originalPOutputPath = new String[StatisticsCommand.models.length];
-    String[] sortedPOutputPath = new String[StatisticsCommand.models.length];
+    String[] originalPOutputPath = new String[StatisticsCommand.fisherModels.length];
+    String[] sortedPOutputPath = new String[StatisticsCommand.fisherModels.length];
 
-    BufferedWriter[] originalBw = new BufferedWriter[StatisticsCommand.models.length];
-    BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.models.length];
+    BufferedWriter[] originalBw = new BufferedWriter[StatisticsCommand.fisherModels.length];
+    BufferedWriter[] sortedBw = new BufferedWriter[StatisticsCommand.fisherModels.length];
 
     HashMap<Integer, ArrayList<UnsortedOutputData>> unsortedMap = new HashMap<>();
 
@@ -36,9 +36,9 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     @Override
     public void initOutput() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
             try {
-                String testModel = StatisticsCommand.models[m];
+                String testModel = StatisticsCommand.fisherModels[m];
                 originalPOutputPath[m] = CommonCommand.outputPath + testModel + ".csv";
                 originalBw[m] = new BufferedWriter(new FileWriter(originalPOutputPath[m]));
                 originalBw[m].write(FisherOutput.getTitle());
@@ -65,7 +65,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     @Override
     public void closeOutput() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
             try {
                 originalBw[m].flush();
                 originalBw[m].close();
@@ -105,12 +105,12 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
             output.countSampleGeno();
             output.calculate();
 
-            for (int m = 0; m < StatisticsCommand.models.length; m++) {
-                if (output.isValid(StatisticsCommand.models[m])) {
-                    countVarNum(StatisticsCommand.models[m]);
+            for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
+                if (output.isValid(StatisticsCommand.fisherModels[m])) {
+                    countVarNum(StatisticsCommand.fisherModels[m]);
 
-                    ArrayList<Integer> countList = new ArrayList<Integer>();
-                    output.initCount(countList, StatisticsCommand.models[m]);
+                    ArrayList<Integer> countList = new ArrayList<>();
+                    output.initCount(countList, StatisticsCommand.fisherModels[m]);
                     output.calculateP(countList);
 
                     addToListByP(output, m);
@@ -151,7 +151,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     private void outputSortedData() {
         try {
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
-                for (int m = 0; m < StatisticsCommand.models.length; m++) {
+                for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
                     ArrayList<UnsortedOutputData> list = unsortedMap.get(m);
 
                     Collections.sort(list);
@@ -169,7 +169,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     }
 
     private void outputBonferroni() {
-        for (String model : StatisticsCommand.models) {
+        for (String model : StatisticsCommand.fisherModels) {
             printBonferroni(model);
         }
     }
@@ -196,7 +196,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-        for (int m = 0; m < StatisticsCommand.models.length; m++) {
+        for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
             ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getTitle(),
                     "P Value",
                     originalPOutputPath[m],
@@ -213,7 +213,7 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     private void gzipFiles() {
         if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
-            for (int m = 0; m < StatisticsCommand.models.length; m++) {
+            for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
                 ThirdPartyToolManager.gzipFile(originalPOutputPath[m]);
             }
         }
