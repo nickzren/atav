@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 public class Variant extends Region {
 
     public int variantId;
-//    public String variantIdStr;
+    public String variantIdStr;
     public String allele;
     public String refAllele;
     public String rsNumber;
@@ -38,10 +38,33 @@ public class Variant extends Region {
         int id = rset.getInt("seq_region_id");
 
         initRegion(RegionManager.getChrById(id), position, position);
+
+        String chrStr = getChrStr();
+
+        if (isInsideXPseudoautosomalRegions()) {
+            chrStr = "XY";
+        }
+
+        variantIdStr = chrStr + "-" + position + "-" + refAllele + "-" + allele;
     }
 
     public int getVariantId() {
         return variantId;
+    }
+
+    /*
+     * snv id and indel id could be identical, indel id will now return as negative number 
+     */
+    public int getVariantIdNegative4Indel() {
+        if (isIndel) {
+            return -variantId;
+        } else {
+            return variantId;
+        }
+    }
+
+    public String getVariantIdStr() {
+        return variantIdStr;
     }
 
     public String getType() {
@@ -82,19 +105,5 @@ public class Variant extends Region {
 
     public String getSiteId() {
         return getChrStr() + "-" + getStartPosition();
-    }
-
-    public String getVariantIdStr() {
-        String chrStr = getChrStr();
-
-        if (isInsideXPseudoautosomalRegions()) {
-            chrStr = "XY";
-        }
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(chrStr).append("-").append(getStartPosition()).append("-").append(refAllele).append("-").append(allele);
-
-        return sb.toString();
     }
 }
