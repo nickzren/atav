@@ -31,7 +31,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
                 + "Multi qualified var combinations,"
                 + "Var Case Freq #1 & #2 (co-occurance),"
                 + "Var Ctrl Freq #1 & #2 (co-occurance),"
-                + initVarTitleStr("1") + ","
+                + initVarTitleStr("1")
                 + initVarTitleStr("2");
     }
 
@@ -110,6 +110,8 @@ public class CompHetOutput extends TrioOutput implements Comparable {
                 varTitle += "," + s + " (#" + var + ")";
             }
         }
+        
+        varTitle += ",";
 
         return varTitle;
     }
@@ -181,7 +183,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getSubRvis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
-
+        
         return sb.toString();
     }
 
