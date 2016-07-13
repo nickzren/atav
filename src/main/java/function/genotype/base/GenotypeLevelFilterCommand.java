@@ -20,8 +20,7 @@ public class GenotypeLevelFilterCommand {
     public static boolean isAllSample = false;
     public static boolean isAllNonRef = false;
     public static boolean isAllGeno = false;
-    public static double maf = 0.5;
-    public static double maxCtrlMaf = 0.5; // max ctrl maf
+    public static double maxCtrlMaf = Data.NO_FILTER;
     public static double minCtrlMaf = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
     public static int minCaseCoverageCall = Data.NO_FILTER;
@@ -190,6 +189,10 @@ public class GenotypeLevelFilterCommand {
     }
     
     public static boolean isMaxCtrlMafValid(double value) {
+        if (maxCtrlMaf == Data.NO_FILTER) {
+            return true;
+        }
+        
         return value <= maxCtrlMaf;
     }
 

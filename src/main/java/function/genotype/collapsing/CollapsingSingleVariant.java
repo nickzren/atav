@@ -53,7 +53,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
         try {
             CollapsingOutput output = new CollapsingOutput(calledVar);
 
-            ArrayList<CollapsingSummary> summaryList = new ArrayList<CollapsingSummary>();
+            ArrayList<CollapsingSummary> summaryList = new ArrayList<>();
 
             initSummaryList(output, summaryList);
 

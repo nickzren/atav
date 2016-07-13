@@ -15,7 +15,7 @@ import java.io.FileWriter;
  */
 public class ListVarGeno extends AnalysisBase4CalledVar {
 
-    BufferedWriter bwDetails = null;
+    BufferedWriter bwGenotypes = null;
     BufferedWriter bwSampleVariantCount = null;
 
     final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
@@ -24,9 +24,9 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     @Override
     public void initOutput() {
         try {
-            bwDetails = new BufferedWriter(new FileWriter(genotypesFilePath));
-            bwDetails.write(VarGenoOutput.getTitle());
-            bwDetails.newLine();
+            bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
+            bwGenotypes.write(VarGenoOutput.getTitle());
+            bwGenotypes.newLine();
             //bwDirty = new BufferedWriter(new FileWriter(dirtyFilePath));
             bwSampleVariantCount = new BufferedWriter(new FileWriter(sampleVariantCountFilePath));
             bwSampleVariantCount.write(SampleVariantCount.getTitle());
@@ -43,8 +43,8 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     @Override
     public void closeOutput() {
         try {
-            bwDetails.flush();
-            bwDetails.close();
+            bwGenotypes.flush();
+            bwGenotypes.close();
             bwSampleVariantCount.flush();
             bwSampleVariantCount.close();
         } catch (Exception ex) {
@@ -79,8 +79,8 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
                         int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                         if (output.isQualifiedGeno(geno)) {
-                            bwDetails.write(output.getString(sample));
-                            bwDetails.newLine();
+                            bwGenotypes.write(output.getString(sample));
+                            bwGenotypes.newLine();
 
                             SampleVariantCount.update(output.getCalledVariant().isSnv(), 
                                     geno, sample.getIndex());
