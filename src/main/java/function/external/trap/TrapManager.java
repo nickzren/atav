@@ -16,7 +16,13 @@ public class TrapManager {
     static final String table = "trap.snv_chr";
 
     public static String getTitle() {
-        return "Trap Score,";
+        String title = "";
+
+        if (TrapCommand.isIncludeTrap) {
+            title = "Trap Score,";
+        }
+
+        return title;
     }
 
     public static float getScore(String chr, int pos, String alt, String gene) {
@@ -38,11 +44,10 @@ public class TrapManager {
 
         return Data.NA;
     }
-    
-    
+
     public static ArrayList<Trap> getTrapList(String chr, int pos, String alt) {
         ArrayList<Trap> list = new ArrayList<>();
-        
+
         try {
             String sql = "SELECT hgnc_gene,score "
                     + "FROM " + table + chr + " "
@@ -54,7 +59,7 @@ public class TrapManager {
             while (rs.next()) {
                 String gene = rs.getString("hgnc_gene");
                 float score = rs.getFloat("score");
-                
+
                 list.add(new Trap(gene, score));
             }
         } catch (SQLException ex) {

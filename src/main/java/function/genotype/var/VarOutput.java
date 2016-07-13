@@ -10,6 +10,7 @@ import function.external.knownvar.KnownVarManager;
 import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
+import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import global.Index;
@@ -29,6 +30,7 @@ public class VarOutput extends Output {
                 + "Alt Allele,"
                 + "CADD Score Phred,"
                 + GerpManager.getTitle()
+                + TrapManager.getTitle()
                 + "Is Minor Ref,"
                 + "Major Hom Case,"
                 + "Het Case,"
@@ -82,6 +84,7 @@ public class VarOutput extends Output {
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(calledVar.getGerpScore());
+        sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");

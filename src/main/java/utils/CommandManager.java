@@ -328,6 +328,7 @@ public class CommandManager {
                     EvsCommand.isIncludeEvs = true;
                     ExacCommand.isIncludeExac = true;
                     GerpCommand.isIncludeGerp = true;
+                    TrapCommand.isIncludeTrap = true;
                     KaviarCommand.isIncludeKaviar = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     RvisCommand.isIncludeRvis = true;
@@ -387,6 +388,7 @@ public class CommandManager {
                 case "--list-trap":
                     CommonCommand.isNonSampleAnalysis = true;
                     TrapCommand.isListTrap = true;
+                    TrapCommand.isIncludeTrap = true;
                     break;    
                 case "--list-sub-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
