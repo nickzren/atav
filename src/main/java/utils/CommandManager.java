@@ -15,6 +15,7 @@ import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
+import function.external.trap.TrapCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
@@ -383,6 +384,10 @@ public class CommandManager {
                     GerpCommand.isListGerp = true;
                     GerpCommand.isIncludeGerp = true;
                     break;
+                case "--list-trap":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    TrapCommand.isListTrap = true;
+                    break;    
                 case "--list-sub-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
                     SubRvisCommand.isListSubRvis = true;

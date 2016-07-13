@@ -55,6 +55,8 @@ import function.external.rvis.RvisManager;
 import function.external.subrvis.ListSubRvis;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
+import function.external.trap.ListTrap;
+import function.external.trap.TrapCommand;
 import function.genotype.base.CoverageBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
@@ -185,6 +187,8 @@ public class Program {
                 runAnalysis(new ListKaviar());
             } else if (GerpCommand.isListGerp) {
                 runAnalysis(new ListGerp());
+            } else if (TrapCommand.isListTrap) {
+                runAnalysis(new ListTrap());
             } else if (SubRvisCommand.isListSubRvis) {
                 runAnalysis(new ListSubRvis());
             } else if (RvisCommand.isListRvis) {
