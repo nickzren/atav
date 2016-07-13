@@ -9,8 +9,8 @@ public class UnsortedOutputData implements Comparable {
     double pValue;
     String line;
 
-    public UnsortedOutputData(StatisticOutput output) {
-        pValue = output.pValue;
+    public UnsortedOutputData(StatisticOutput output, double pValue) {
+        this.pValue = pValue;
         line = output.toString();
     }
 

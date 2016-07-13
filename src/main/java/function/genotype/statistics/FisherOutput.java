@@ -54,7 +54,7 @@ public class FisherOutput extends StatisticOutput {
                 + "Ctrl Maf,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,"
-                + "P value,"
+                + "P Value,"
                 + "Odds Ratio,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
