@@ -4,6 +4,7 @@ from pyspark.sql import SQLContext
 import sys
 import os
 from subprocess import Popen
+from dateutil import parser
 
 sc = SparkContext()
 sqlContext = SQLContext(sc)
@@ -187,7 +188,6 @@ sqlContext.registerFunction("extract_function",extractFunction,StringType())
 # checks if a given datetime string is inside a given interval
 def date_in_interval(datetimestr,start,end):
   try:
-    from dateutil import parser
     dateObj = parser.parse(str(datetimestr))
     date = str(dateObj.date())
     return (start <= date and date <= end)
