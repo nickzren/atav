@@ -24,6 +24,7 @@ public class ThirdPartyToolManager {
     private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/trio_comp_het_tier.R";
 
+
     public static int systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start...");
 
@@ -128,7 +129,7 @@ public class ThirdPartyToolManager {
         for (String str : temp) {
             col++;
 
-            if (str.equals(pvalueName)) {
+            if (str.trim().equalsIgnoreCase(pvalueName)) {
                 break;
             }
         }

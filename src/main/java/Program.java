@@ -55,14 +55,19 @@ import function.external.rvis.RvisManager;
 import function.external.subrvis.ListSubRvis;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
+import function.external.trap.ListTrap;
+import function.external.trap.TrapCommand;
 import function.genotype.base.CoverageBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
 import function.genotype.parental.ParentalCommand;
 import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
+import function.genotype.statistics.LogisticRegression;
 import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
+import function.genotype.var.ListVar;
+import function.genotype.var.VarCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.test.Test;
 import function.test.TestCommand;
@@ -88,11 +93,11 @@ public class Program {
             SampleManager.recheckSampleList();
 
             RunTimeManager.stop();
-            
+
             LogManager.logRunTime();
 
             LogManager.logUserCommand();
-            
+
             LogManager.close();
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -120,11 +125,11 @@ public class Program {
             CoverageBlockManager.init();
 
             KnownVarManager.init();
-            
+
             RvisManager.init();
-            
+
             SubRvisManager.init();
-            
+
             MgiManager.init();
 
             ExacManager.init();
@@ -137,6 +142,8 @@ public class Program {
         try {
             if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
                 runAnalysis(new ListVarGeno());
+            } else if (VarCommand.isListVar) {
+                runAnalysis(new ListVar());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
                 runAnalysis(new CollapsingSingleVariant());
             } else if (CollapsingCommand.isCollapsingCompHet) {
@@ -145,6 +152,8 @@ public class Program {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {
                 runAnalysis(new LinearRegression());
+            } else if (StatisticsCommand.isLogistic) {
+                runAnalysis(new LogisticRegression());
             } else if (FamilyCommand.isFamilyAnalysis) {
                 runAnalysis(new FamilyAnalysis());
             } else if (SiblingCommand.isSiblingCompHet) {
@@ -181,6 +190,8 @@ public class Program {
                 runAnalysis(new ListKaviar());
             } else if (GerpCommand.isListGerp) {
                 runAnalysis(new ListGerp());
+            } else if (TrapCommand.isListTrap) {
+                runAnalysis(new ListTrap());
             } else if (SubRvisCommand.isListSubRvis) {
                 runAnalysis(new ListSubRvis());
             } else if (RvisCommand.isListRvis) {

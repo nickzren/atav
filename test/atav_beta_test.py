@@ -76,9 +76,12 @@ def try_cmp_two_files(f):
     try:
         # print "Worker "+str(os.getpid())+" comparing " + f
         cmp_two_files(f)
+    except SystemExit:
+        print('\nAborting ...')
     except:        
         e = sys.exc_info()
         print "\033[31m"+"Worker exception:\n"+str(e)+"\n\033[m"
+        traceback.print_tb(e[2])
         # print(e)
         # print "\tFile: %s" % f
         
@@ -102,10 +105,32 @@ def cmp_two_files(f):
 
     for index, item in enumerate(old_data_list):
         for old, new in enumerate(new_headers_index):
-            if new_headers[new] == old_headers[old] and item[old] != new_data_list[index][new]:
-                print "\033[31m"+"--> File "+f+" differs at:"
-                print new_file, new_headers[new], item[0], index, item[old], new_data_list[index][new]
-                print "\033[m"
+            try:
+                if new_headers[new] == old_headers[old]:
+                    if new >= len(new_data_list[index]):
+                        if old >= len(item) or item[old].strip() == '':
+                            continue
+                        else:
+                            print "\033[31m"+"--> Missing value for file "+f+" at:"
+                            print "row: "+str(index)+" / column:"+new_headers[new]
+                            print "\033[m"
+                    if item[old] != new_data_list[index][new]:
+                        print "\033[31m"+"--> File "+f+" differs at:"
+                        print new_file, new_headers[new], item[0], index, item[old], new_data_list[index][new]
+                        print "\033[m"
+            except:
+                e = sys.exc_info()
+                print "\033[31m"+"\nException while comparing rows:"
+                print str(e[0])+' '+str(e[1])
+                traceback.print_tb(e[2])
+                print('\033[m')
+                print('\nDebug info:')
+                print('Filename: '+f)
+                print('Old headers not present in new file : '+str(list(set(old_headers) - set(new_headers))))
+                print('New headers not present in old file : '+str(list(set(new_headers) - set(old_headers))))
+                print('Row index: '+str(index))
+                print('Old/new column names: '+str(old_headers[old])+' / '+str(new_headers[new]))
+                exit(-1)
 
     print "File "+f+" OK!"
     return

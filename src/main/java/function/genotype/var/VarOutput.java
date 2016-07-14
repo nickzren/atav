@@ -1,9 +1,6 @@
-package function.genotype.sibling;
+package function.genotype.var;
 
-import function.genotype.base.CalledVariant;
-import function.variant.base.Output;
-import function.genotype.base.Sample;
-import global.Index;
+import function.annotation.base.GeneManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.external.genomes.GenomesManager;
@@ -14,33 +11,19 @@ import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
+import function.genotype.base.CalledVariant;
+import function.variant.base.Output;
+import global.Index;
 import utils.FormatManager;
 
 /**
  *
  * @author nick
  */
-public class CompHetOutput extends Output implements Comparable {
-
-    String geneName = "";
+public class VarOutput extends Output {
 
     public static String getTitle() {
-        return "Family ID,"
-                + "Mother,"
-                + "Father,"
-                + "Flag,"
-                + "Child1,"
-                + "Child1 Trio Comp Het Flag,"
-                + "Child2,"
-                + "Child2 Trio Comp Het Flag,"
-                + "Gene Name,"
-                + "Artifacts in Gene,"
-                + initVarTitleStr("1")
-                + initVarTitleStr("2");
-    }
-
-    private static String initVarTitleStr(String var) {
-        String varTitle = "Variant ID,"
+        return "Variant ID,"
                 + "Variant Type,"
                 + "Rs Number,"
                 + "Ref Allele,"
@@ -49,10 +32,6 @@ public class CompHetOutput extends Output implements Comparable {
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
                 + "Is Minor Ref,"
-                + "Child1 Genotype,"
-                + "Child1 Samtools Raw Coverage,"
-                + "Child2 Genotype,"
-                + "Child2 Samtools Raw Coverage,"
                 + "Major Hom Case,"
                 + "Het Case,"
                 + "Minor Hom Case,"
@@ -67,8 +46,8 @@ public class CompHetOutput extends Output implements Comparable {
                 + "QC Fail Case,"
                 + "Missing Ctrl,"
                 + "QC Fail Ctrl,"
-                + "Case MAF,"
-                + "Ctrl MAF,"
+                + "Case Maf,"
+                + "Ctrl Maf,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,"
                 + EvsManager.getTitle()
@@ -77,6 +56,8 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Polyphen Humvar Score,"
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
@@ -86,23 +67,14 @@ public class CompHetOutput extends Output implements Comparable {
                 + SubRvisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle();
-
-        String[] list = varTitle.split(",");
-
-        varTitle = "";
-
-        for (String s : list) {
-            varTitle += s + " (#" + var + "),";
-        }
-
-        return varTitle;
     }
 
-    public CompHetOutput(CalledVariant c) {
+    public VarOutput(CalledVariant c) {
         super(c);
     }
 
-    public String getString(Sample child1, Sample child2) {
+    @Override
+    public String toString() {
         StringBuilder sb = new StringBuilder();
 
         sb.append(calledVar.getVariantIdStr()).append(",");
@@ -114,10 +86,6 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getGerpScore());
         sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
-        sb.append(getGenoStr(calledVar.getGenotype(child1.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoverage(child1.getIndex()))).append(",");
-        sb.append(getGenoStr(calledVar.getGenotype(child2.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoverage(child2.getIndex()))).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCount[Index.CASE]).append(",");
@@ -142,6 +110,8 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(calledVar.getFunction()).append(",");
+        sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
+        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());
@@ -153,11 +123,5 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getMgi());
 
         return sb.toString();
-    }
-
-    @Override
-    public int compareTo(Object another) throws ClassCastException {
-        CompHetOutput that = (CompHetOutput) another;
-        return this.geneName.compareTo(that.geneName); //small -> large
     }
 }

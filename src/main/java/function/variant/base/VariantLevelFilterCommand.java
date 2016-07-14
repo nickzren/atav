@@ -12,6 +12,7 @@ import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
+import function.external.trap.TrapCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -128,6 +129,11 @@ public class VariantLevelFilterCommand {
                     GerpCommand.minGerpScore = getValidFloat(option);
                     GerpCommand.isIncludeGerp = true;
                     break;
+                case "--min-trap-score":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    TrapCommand.minTrapScore = getValidFloat(option);
+                    TrapCommand.isIncludeTrap = true;
+                    break;
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
                     KaviarCommand.maxKaviarMaf = getValidFloat(option);
@@ -157,6 +163,9 @@ public class VariantLevelFilterCommand {
                 case "--include-gerp":
                     GerpCommand.isIncludeGerp = true;
                     break;
+                case "--include-trap":
+                    TrapCommand.isIncludeTrap = true;
+                    break;
                 case "--include-kaviar":
                     KaviarCommand.isIncludeKaviar = true;
                     break;
@@ -179,6 +188,7 @@ public class VariantLevelFilterCommand {
                     EvsCommand.isIncludeEvs = true;
                     ExacCommand.isIncludeExac = true;
                     GerpCommand.isIncludeGerp = true;
+                    TrapCommand.isIncludeTrap = true;
                     KaviarCommand.isIncludeKaviar = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     RvisCommand.isIncludeRvis = true;

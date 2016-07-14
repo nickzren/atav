@@ -29,7 +29,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     ArrayList<CompHetOutput> outputList = new ArrayList<>();
     ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
     HashSet<String> currentGeneList = new HashSet<>();
-    HashSet<String> uniqueId = new HashSet<>();
     BufferedWriter bwCompHet = null;
     BufferedWriter bwCompHetNoFlag = null;
     final String compHetFilePath = CommonCommand.outputPath + "comphet.csv";
@@ -347,7 +346,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
             CompHetOutput output1, output2;
 
-            String flag, id;
+            String flag;
 
             double[] coFreq;
 
@@ -356,59 +355,51 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                 for (int j = i + 1; j < outputSize; j++) {
                     output2 = geneOutputList.get(j);
 
-                    if (output1.getCalledVariant().getVariantId() != output2.getCalledVariant().getVariantId()
+                    if (output1.getCalledVariant().getVariantIdNegative4Indel()
+                            != output2.getCalledVariant().getVariantIdNegative4Indel()
                             && output1.childName.equals(output2.childName)) {
-                        id = output1.familyId
-                                + output1.getCalledVariant().getVariantId()
-                                + output1.childName
-                                + output2.getCalledVariant().getVariantId();
+                        flag = getCompHetStatus(
+                                output1.cGeno, output1.cSamtoolsRawCoverage,
+                                output1.mGeno, output1.mSamtoolsRawCoverage,
+                                output1.fGeno, output1.fSamtoolsRawCoverage,
+                                output1.isMinorRef(),
+                                output2.cGeno, output2.cSamtoolsRawCoverage,
+                                output2.mGeno, output2.mSamtoolsRawCoverage,
+                                output2.fGeno, output2.fSamtoolsRawCoverage,
+                                output2.isMinorRef());
 
-                        if (!uniqueId.contains(id)) {
-                            uniqueId.add(id);
+                        if (!flag.isEmpty()) {
+                            if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {
+                                checkHasMultiVariants(geneOutputList, output1, output2);
+                            }
 
-                            flag = getCompHetStatus(
-                                    output1.cGeno, output1.cSamtoolsRawCoverage,
-                                    output1.mGeno, output1.mSamtoolsRawCoverage,
-                                    output1.fGeno, output1.fSamtoolsRawCoverage,
-                                    output1.isMinorRef(),
-                                    output2.cGeno, output2.cSamtoolsRawCoverage,
-                                    output2.mGeno, output2.mSamtoolsRawCoverage,
-                                    output2.fGeno, output2.fSamtoolsRawCoverage,
-                                    output2.isMinorRef());
+                            coFreq = getCoOccurrenceFreq(output1, output2);
 
-                            if (!flag.isEmpty()) {
+                            if (TrioCommand.isCombFreqValid(coFreq[Index.CTRL])) {
+                                sb.append(output1.familyId).append(",");
+                                sb.append(output1.childName).append(",");
+                                sb.append(output1.childType).append(",");
+                                sb.append(output1.motherName).append(",");
+                                sb.append(output1.fatherName).append(",");
+                                sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
+                                sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.getCalledVariant().getGeneName()))).append(",");
+                                sb.append(flag).append(",");
+                                sb.append(hasMultiVariants).append(",");
+                                sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
+                                sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
+
+                                sb.append(output1.toString());
+                                sb.append(output2.toString());
+
                                 if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {
-                                    checkHasMultiVariants(geneOutputList, output1, output2);
+                                    bwCompHet.write(sb.toString());
+                                    bwCompHet.newLine();
+                                } else if (TrioCommand.isIncludeNoflag) {
+                                    bwCompHetNoFlag.write(sb.toString());
+                                    bwCompHetNoFlag.newLine();
                                 }
 
-                                coFreq = getCoOccurrenceFreq(output1, output2);
-
-                                if (TrioCommand.isCombFreqValid(coFreq[Index.CTRL])) {
-                                    sb.append(output1.familyId).append(",");
-                                    sb.append(output1.childName).append(",");
-                                    sb.append(output1.childType).append(",");
-                                    sb.append(output1.motherName).append(",");
-                                    sb.append(output1.fatherName).append(",");
-                                    sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
-                                    sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.getCalledVariant().getGeneName()))).append(",");
-                                    sb.append(flag).append(",");
-                                    sb.append(hasMultiVariants).append(",");
-                                    sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
-                                    sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
-
-                                    sb.append(output1.toString());
-                                    sb.append(output2.toString());
-
-                                    if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {
-                                        bwCompHet.write(sb.toString());
-                                        bwCompHet.newLine();
-                                    } else if (TrioCommand.isIncludeNoflag) {
-                                        bwCompHetNoFlag.write(sb.toString());
-                                        bwCompHetNoFlag.newLine();
-                                    }
-
-                                    sb.setLength(0);
-                                }
+                                sb.setLength(0);
                             }
                         }
                     }
@@ -417,8 +408,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-
-        uniqueId.clear();
     }
 
     private void clearList() {
