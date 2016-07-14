@@ -6,114 +6,118 @@ import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import utils.ThirdPartyToolManager;
 
 /**
  *
  * @author nick
  */
 public class ListTrioDenovo extends AnalysisBase4CalledVar {
-
-    BufferedWriter bwDetails = null;
-    BufferedWriter bwDetails_noflag = null;
-    final String flagFilePath = CommonCommand.outputPath + "denovoandhom.csv";
-    final String noFlagFilePath = CommonCommand.outputPath + "denovoandhom_noflag.csv";
-
+    
+    BufferedWriter bwDenovo = null;
+    BufferedWriter bwDenovoNoFlag = null;
+    final String denovoFilePath = CommonCommand.outputPath + "denovoandhom.csv";
+    final String denovoNoFlagFilePath = CommonCommand.outputPath + "denovoandhom_noflag.csv";
+    
     @Override
     public void initOutput() {
         try {
-            bwDetails = new BufferedWriter(new FileWriter(flagFilePath));
-            bwDetails.write(DenovoOutput.getTitle());
-            bwDetails.newLine();
-
+            bwDenovo = new BufferedWriter(new FileWriter(denovoFilePath));
+            bwDenovo.write(DenovoOutput.getTitle());
+            bwDenovo.newLine();
+            
             if (TrioCommand.isIncludeNoflag) {
-                bwDetails_noflag = new BufferedWriter(new FileWriter(noFlagFilePath));
-                bwDetails_noflag.write(DenovoOutput.getTitle());
-                bwDetails_noflag.newLine();
+                bwDenovoNoFlag = new BufferedWriter(new FileWriter(denovoNoFlagFilePath));
+                bwDenovoNoFlag.write(DenovoOutput.getTitle());
+                bwDenovoNoFlag.newLine();
             }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
     }
-
+    
     @Override
     public void doOutput() {
     }
-
+    
     @Override
     public void closeOutput() {
         try {
-            bwDetails.flush();
-            bwDetails.close();
+            bwDenovo.flush();
+            bwDenovo.close();
             
             if (TrioCommand.isIncludeNoflag) {
-                bwDetails_noflag.flush();
-                bwDetails_noflag.close();
+                bwDenovoNoFlag.flush();
+                bwDenovoNoFlag.close();
             }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
     }
-
+    
     @Override
     public void doAfterCloseOutput() {
+        if (TrioCommand.isRunTier) {
+            ThirdPartyToolManager.runTrioDenovoTier(denovoFilePath);
+        }
     }
-
+    
     @Override
     public void beforeProcessDatabaseData() {
         TrioManager.init();
     }
-
+    
     @Override
     public void afterProcessDatabaseData() {
     }
-
+    
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
             DenovoOutput output = new DenovoOutput(calledVar);
-
+            
             output.countSampleGeno();
-
+            
             for (Trio trio : TrioManager.getList()) {
                 output.initTrioFamilyData(trio);
-
+                
                 output.deleteParentGeno(trio);
-
+                
                 output.calculate();
-
+                
                 if (output.isValid()) {
-
+                    
                     int geno = output.getCalledVariant().getGenotype(trio.getChildIndex());
-
+                    
                     if (output.isQualifiedGeno(geno)) {
-
+                        
                         output.initFlag(trio.getChildId());
-
+                        
                         output.initAvgCov();
-
+                        
                         output.initGenoZygo(trio.getChildIndex());
-
+                        
                         doOutput(output, trio);
                     }
                 }
-
+                
                 output.addParentGeno(trio);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-
+    
     private void doOutput(DenovoOutput output, Trio trio) throws Exception {
         if (!output.flag.equals("no flag") && !output.flag.equals("unknown")) {
-            bwDetails.write(output.getString(trio));
-            bwDetails.newLine();
+            bwDenovo.write(output.getString(trio));
+            bwDenovo.newLine();
         } else if (TrioCommand.isIncludeNoflag) {
-            bwDetails_noflag.write(output.getString(trio));
-            bwDetails_noflag.newLine();
+            bwDenovoNoFlag.write(output.getString(trio));
+            bwDenovoNoFlag.newLine();
         }
     }
-
+    
     @Override
     public String toString() {
         return "It is running a list trio denovo function...";

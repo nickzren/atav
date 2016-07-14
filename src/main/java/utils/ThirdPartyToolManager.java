@@ -21,6 +21,8 @@ public class ThirdPartyToolManager {
     private static final String PVALS_QQPLOT_R = "/nfs/goldstein/software/atav_home/lib/pvals_qqplot.R";
     private static final String PERL_SYSTEM_PATH = "perl";
     private static final String FLANKING_SEQ_PERL = "/nfs/goldstein/software/atav_home/lib/flanking_seq.pl";
+    private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/trio_denovo_tier.R";
+    private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/trio_comp_het_tier.R";
 
 
     public static int systemCall(String[] cmd) {
@@ -142,6 +144,22 @@ public class ThirdPartyToolManager {
 
     public static void gzipFile(String path) {
         String cmd = "gzip -9 " + path;
+
+        systemCall(new String[]{cmd});
+    }
+
+    public static void runTrioDenovoTier(String denovoFilePath) {
+        String cmd = R_SCRIPT_SYSTEM_PATH + " "
+                + TRIO_DENOVO_TIER + " "
+                + denovoFilePath;
+
+        systemCall(new String[]{cmd});
+    }
+    
+    public static void runTrioCompHetTier(String compHetFilePath) {
+        String cmd = R_SCRIPT_SYSTEM_PATH + " "
+                + TRIO_COMP_HET_TIER + " "
+                + compHetFilePath;
 
         systemCall(new String[]{cmd});
     }

@@ -1,5 +1,8 @@
 package function.genotype.trio;
 
+import function.external.evs.EvsCommand;
+import function.external.exac.ExacCommand;
+import function.external.knownvar.KnownVarCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
@@ -11,6 +14,8 @@ import utils.CommandOption;
  * @author nick
  */
 public class TrioCommand {
+
+    public static boolean isRunTier = false;
 
     // trio denovo
     public static boolean isTrioDenovo = false;
@@ -25,10 +30,18 @@ public class TrioCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--include-noflag")) {
-                isIncludeNoflag = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--include-noflag":
+                    isIncludeNoflag = true;
+                    break;
+                case "--run-tier":
+                    isRunTier = true;
+                    EvsCommand.isIncludeEvs = true;
+                    ExacCommand.isIncludeExac = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
@@ -49,6 +62,12 @@ public class TrioCommand {
                 case "--include-noflag":
                     isIncludeNoflag = true;
                     break;
+                case "--run-tier":
+                    isRunTier = true;
+                    EvsCommand.isIncludeEvs = true;
+                    ExacCommand.isIncludeExac = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
+                    break;
                 default:
                     continue;
             }
@@ -62,10 +81,6 @@ public class TrioCommand {
             return true;
         }
 
-        if (value <= combFreq) {
-            return true;
-        }
-
-        return false;
+        return value <= combFreq;
     }
 }
