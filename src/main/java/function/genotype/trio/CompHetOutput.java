@@ -11,6 +11,7 @@ import function.external.knownvar.KnownVarManager;
 import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
+import function.external.trap.TrapManager;
 import utils.FormatManager;
 
 /**
@@ -43,6 +44,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
                 + "Alt Allele,"
                 + "CADD Score Phred,"
                 + GerpManager.getTitle()
+                + TrapManager.getTitle()
                 + "Is Minor Ref,"
                 + "Genotype (child),"
                 + "Samtools Raw Coverage (child),"
@@ -129,6 +131,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(calledVar.getGerpScore());
+        sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
         sb.append(cGenotype).append(",");
         sb.append(FormatManager.getDouble(cSamtoolsRawCoverage)).append(",");

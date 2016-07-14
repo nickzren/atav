@@ -22,6 +22,7 @@ public class ThirdPartyToolManager {
     private static final String PERL_SYSTEM_PATH = "perl";
     private static final String FLANKING_SEQ_PERL = "/nfs/goldstein/software/atav_home/lib/flanking_seq.pl";
 
+
     public static int systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start...");
 
@@ -126,7 +127,7 @@ public class ThirdPartyToolManager {
         for (String str : temp) {
             col++;
 
-            if (str.equals(pvalueName)) {
+            if (str.trim().equalsIgnoreCase(pvalueName)) {
                 break;
             }
         }

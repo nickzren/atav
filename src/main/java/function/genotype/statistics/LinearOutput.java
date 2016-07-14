@@ -11,16 +11,14 @@ import function.external.knownvar.KnownVarManager;
 import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
+import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
 import utils.LogManager;
-import org.apache.commons.math3.distribution.TDistribution;
-import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-import utils.MathManager;
 
 /**
  *
@@ -38,6 +36,7 @@ public class LinearOutput extends StatisticOutput {
                 + "Alt Allele,"
                 + "CADD Score Phred,"
                 + GerpManager.getTitle()
+                + TrapManager.getTitle()
                 + "Is Minor Ref,"
                 + "Major Hom Ctrl,"
                 + "Het Ctrl,"
@@ -48,7 +47,7 @@ public class LinearOutput extends StatisticOutput {
                 + "QC Fail Ctrl,"
                 + "Ctrl Maf,"
                 + "Ctrl HWE_P,"
-                + "P value,"
+                + "P Value,"
                 + "Beta1,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
@@ -87,90 +86,11 @@ public class LinearOutput extends StatisticOutput {
         return false;
     }
 
-    public void doMVRegression() { //for genotypic model
-        OLSMultipleLinearRegression mr = new OLSMultipleLinearRegression();
-        mr.setNoIntercept(false);
-
-        int max_size = SampleManager.getListSize();
-        int nvars = 1;
-        int ncols = nvars + 1;
-        double[] data = new double[max_size * ncols];
-        int nobs = 0;
-        SimpleRegression sr = new SimpleRegression(true);
-        for (Sample sample : SampleManager.getList()) {
-            int geno = calledVar.getGenotype(sample.getIndex());
-            if (geno >= 0) {
-                int base = nobs * ncols;
-                double y = sample.getQuantitativeTrait();
-                data[base] = y;
-                if (isMinorRef) {
-                    if (geno == Index.REF) {
-                        sr.addData(2, y);
-                        data[base + 1] = 2; //data[base+2] = 0;
-                    } else if (geno == Index.HET) {
-                        sr.addData(1, y);
-                        data[base + 1] = 1; //data[base+2] = 1;
-                    } else if (geno == Index.HOM) {
-                        sr.addData(0, y);
-                        data[base + 1] = 0; //data[base+2] = 0;
-                    } else if (geno == Index.HOM_MALE) {
-                        sr.addData(0, y);
-                        data[base + 1] = 0; //data[base+2] = 0;
-                    } else if (geno == Index.REF_MALE) {
-                        sr.addData(1, y);
-                        data[base + 1] = 1; //data[base+2] = 0;
-                    }
-                } else if (geno == Index.REF) {
-                    sr.addData(0, y);
-                    data[base + 1] = 0; //data[base+2] = 0;
-                } else if (geno == Index.HET) {
-                    sr.addData(1, y);
-                    data[base + 1] = 1; //data[base+2] = 1;
-                } else if (geno == Index.HOM) {
-                    sr.addData(2, y);
-                    data[base + 1] = 2; //data[base+2] = 0;
-                } else if (geno == Index.HOM_MALE) {
-                    sr.addData(1, y);
-                    data[base + 1] = 1; //data[base+2] = 0;
-                } else if (geno == Index.REF_MALE) {
-                    sr.addData(0, y);
-                    data[base + 1] = 0; //data[base+2] = 0;
-                }
-                nobs++;
-            }
-        }
-        if (nobs > ncols) {
-            mr.newSampleData(data, nobs, nvars);
-            TDistribution td = new TDistribution(nobs - nvars);
-            double[] parameters = mr.estimateRegressionParameters();
-            double[] stds = mr.estimateRegressionParametersStandardErrors();
-
-            beta1 = parameters[1];
-            double t = MathManager.abs(beta1, stds[1]);
-            pValue = 2 * td.cumulativeProbability(t);
-
-        } else {
-            pValue = Data.NA;
-            beta1 = Data.NA;
-        }
-        pValue = sr.getSignificance();
-        if (Double.isNaN(pValue)) {
-            pValue = Data.NA;
-        }
-        beta1 = sr.getSlope();
-        if (Double.isNaN(beta1)) {
-            beta1 = Data.NA;
-        }
-    }
-
     public void doRegression(String model) {
-        //if (model.equals("genotypic")) {
-        //    return;
-        //}
         SimpleRegression sr = new SimpleRegression(true);
         for (Sample sample : SampleManager.getList()) {
             int geno = calledVar.getGenotype(sample.getIndex());
-            if (geno >= 0) {
+            if (geno != Data.NA) {
                 double y = sample.getQuantitativeTrait();
                 if (model.equals("allelic")) {
                     if (isMinorRef) {
@@ -316,6 +236,7 @@ public class LinearOutput extends StatisticOutput {
         sb.append(calledVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(calledVar.getGerpScore());
+        sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCount[Index.CTRL]).append(",");
         sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
@@ -341,6 +262,8 @@ public class LinearOutput extends StatisticOutput {
         sb.append(calledVar.getExacStr());
         sb.append(calledVar.getKaviarStr());
         sb.append(calledVar.getKnownVarStr());
+        sb.append(calledVar.getRvis());
+        sb.append(calledVar.getSubRvis());
         sb.append(calledVar.getRvis());
         sb.append(calledVar.getSubRvis());
         sb.append(calledVar.get1000Genomes());

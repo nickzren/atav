@@ -21,6 +21,8 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
+import function.external.trap.TrapCommand;
+import function.external.trap.TrapManager;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -52,6 +54,7 @@ public class AnnotatedVariant extends Variant {
     Kaviar kaviar;
     Evs evs;
     float gerpScore;
+    float trapScore;
     KnownVarOutput knownVarOutput;
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
@@ -133,16 +136,22 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid & GerpCommand.isIncludeGerp) {
-            gerpScore = GerpManager.getScore(chrStr, startPosition, refAllele, allele);
-
-            isValid = GerpCommand.isGerpScoreValid(gerpScore);
-        }
-
         if (isValid & ExacCommand.isIncludeExac) {
             exac = new Exac(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
+        }
+
+        if (isValid & EvsCommand.isIncludeEvs) {
+            evs = new Evs(chrStr, startPosition, refAllele, allele);
+
+            isValid = evs.isValid();
+        }
+
+        if (isValid & GerpCommand.isIncludeGerp) {
+            gerpScore = GerpManager.getScore(chrStr, startPosition, refAllele, allele);
+
+            isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
         if (isValid & KaviarCommand.isIncludeKaviar) {
@@ -156,18 +165,27 @@ public class AnnotatedVariant extends Variant {
 
             isValid = genomes.isValid();
         }
-
-        if (isValid & EvsCommand.isIncludeEvs) {
-            evs = new Evs(chrStr, startPosition, refAllele, allele);
-
-            isValid = evs.isValid();
-        }
     }
 
     public boolean isValid() {
         return isValid
                 & PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
-                & PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar);
+                & PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
+                & isTrapValid();
+    }
+
+    private boolean isTrapValid() {
+        if (TrapCommand.isIncludeTrap) {
+            if (isIndel()) {
+                trapScore = Data.NA;
+            } else {
+                trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
+            }
+            
+            return TrapCommand.isTrapScoreValid(trapScore);
+        }
+
+        return true;
     }
 
     public String getGeneName() {
@@ -326,6 +344,14 @@ public class AnnotatedVariant extends Variant {
     public String getGerpScore() {
         if (GerpCommand.isIncludeGerp) {
             return FormatManager.getFloat(gerpScore) + ",";
+        } else {
+            return "";
+        }
+    }
+
+    public String getTrapScore() {
+        if (TrapCommand.isIncludeTrap) {
+            return trapScore + ",";
         } else {
             return "";
         }

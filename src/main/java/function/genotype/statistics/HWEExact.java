@@ -49,7 +49,7 @@ public class HWEExact {
 
         double baseP = getBaseP(Naa, Nab, Nbb);
         double p = 0.0;
-        int min = Math.min(Naa, Nbb);
+//        int min = Math.min(Naa, Nbb);
         if (Na % 2 == 0) {
             for (int i = 0; i <= Na; i += 2) {
                 Nab = i;

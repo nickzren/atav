@@ -11,6 +11,7 @@ import function.external.knownvar.KnownVarManager;
 import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
+import function.external.trap.TrapManager;
 import utils.FormatManager;
 
 /**
@@ -29,6 +30,7 @@ public class VarAnnoOutput {
             + "Alt Allele,"
             + "CADD Score Phred,"
             + GerpManager.getTitle()
+            + TrapManager.getTitle()
             + EvsManager.getTitle()
             + "Polyphen Humdiv Score,"
             + "Polyphen Humdiv Prediction,"
@@ -67,6 +69,7 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getAllele()).append(",");
         sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
         sb.append(annotatedVar.getGerpScore());
+        sb.append(annotatedVar.getTrapScore());
         sb.append(annotatedVar.getEvsStr());
         sb.append(annotatedVar.getPolyphenHumdivScore()).append(",");
         sb.append(annotatedVar.getPolyphenHumdivPrediction()).append(",");
