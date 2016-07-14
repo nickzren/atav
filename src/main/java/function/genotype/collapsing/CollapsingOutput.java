@@ -282,8 +282,6 @@ public class CollapsingOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getQual(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
