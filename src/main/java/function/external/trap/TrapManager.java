@@ -19,7 +19,7 @@ public class TrapManager {
         String title = "";
 
         if (TrapCommand.isIncludeTrap) {
-            title = "Trap Score,";
+            title = "TraP Score,";
         }
 
         return title;
