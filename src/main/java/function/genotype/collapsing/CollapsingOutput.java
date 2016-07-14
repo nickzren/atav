@@ -262,6 +262,8 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(looMAF)).append(",");
         sb.append(FormatManager.getDouble(looMhgf)).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
