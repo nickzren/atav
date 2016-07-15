@@ -133,10 +133,12 @@ public class FormatManager {
     }
 
     public static void deleteLastComma(StringBuilder sb) {
-        int lastCommaIndex = sb.lastIndexOf(",");
+        if (sb.length() != 0) {
+            int lastCommaIndex = sb.lastIndexOf(",");
 
-        if (lastCommaIndex == (sb.length() - 1)) {
-            sb.deleteCharAt(lastCommaIndex);
+            if (lastCommaIndex == (sb.length() - 1)) {
+                sb.deleteCharAt(lastCommaIndex);
+            }
         }
     }
 }
