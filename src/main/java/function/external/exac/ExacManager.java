@@ -34,7 +34,7 @@ public class ExacManager {
     }
 
     public static void resetTables() {
-        if (ExacCommand.exacSubset.equalsIgnoreCase("nonpsyc")) {
+        if (ExacCommand.exacSubset.equalsIgnoreCase("nonpsych")) {
             snvTable = "exac.snv_maf_r03_nonpsych";
             indelTable = "exac.indel_maf_r03_nonpsych";
         } else if (ExacCommand.exacSubset.equalsIgnoreCase("nonTCGA")) {
