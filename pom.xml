@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>renjin-script-engine</artifactId>
-            <version>RELEASE</version>
+            <version>0.7.0-RC7</version>
         </dependency>
 
     </dependencies>
