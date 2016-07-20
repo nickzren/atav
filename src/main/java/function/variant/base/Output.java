@@ -221,6 +221,13 @@ public class Output implements Cloneable {
     }
 
     private int getVarPresent() {
+        if (GenotypeLevelFilterCommand.isAllNonRef && isMinorRef) {
+            return majorHomCount[Index.CASE]
+                    + genoCount[Index.HET][Index.CASE]
+                    + majorHomCount[Index.CTRL]
+                    + genoCount[Index.HET][Index.CTRL];
+        }
+
         return minorHomCount[Index.CASE]
                 + genoCount[Index.HET][Index.CASE]
                 + minorHomCount[Index.CTRL]
@@ -228,6 +235,11 @@ public class Output implements Cloneable {
     }
 
     private int getCaseCarrier() {
+        if (GenotypeLevelFilterCommand.isAllNonRef && isMinorRef) {
+            return majorHomCount[Index.CASE]
+                    + genoCount[Index.HET][Index.CASE];
+        }
+
         return minorHomCount[Index.CASE]
                 + genoCount[Index.HET][Index.CASE];
     }
