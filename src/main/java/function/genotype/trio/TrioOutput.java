@@ -1,6 +1,7 @@
 package function.genotype.trio;
 
 import function.genotype.base.CalledVariant;
+import function.genotype.base.Carrier;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
@@ -51,25 +52,28 @@ public class TrioOutput extends Output {
         cGeno = calledVar.getGenotype(trio.getChildIndex());
         cGenotype = getGenoStr(cGeno);
         cSamtoolsRawCoverage = calledVar.getCoverage(trio.getChildIndex());
-        cGatkFilteredCoverage = calledVar.getGatkFilteredCoverage(trio.getChildId());
-        cReadsAlt = calledVar.getReadsAlt(trio.getChildId());
-        cReadsRef = calledVar.getReadsRef(trio.getChildId());
+        Carrier carrier = calledVar.getCarrier(trio.getChildId());
+        cGatkFilteredCoverage = carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA;
+        cReadsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
+        cReadsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
 
         motherName = trio.getMotherName();
         mGeno = calledVar.getGenotype(trio.getMotherIndex());
         mGenotype = getGenoStr(mGeno);
         mSamtoolsRawCoverage = calledVar.getCoverage(trio.getMotherIndex());
-        mGatkFilteredCoverage = calledVar.getGatkFilteredCoverage(trio.getMotherId());
-        mReadsAlt = calledVar.getReadsAlt(trio.getMotherId());
-        mReadsRef = calledVar.getReadsRef(trio.getMotherId());
+        carrier = calledVar.getCarrier(trio.getMotherId());
+        mGatkFilteredCoverage = carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA;
+        mReadsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
+        mReadsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
 
         fatherName = trio.getFatherName();
         fGeno = calledVar.getGenotype(trio.getFatherIndex());
         fGenotype = getGenoStr(fGeno);
         fSamtoolsRawCoverage = calledVar.getCoverage(trio.getFatherIndex());
-        fGatkFilteredCoverage = calledVar.getGatkFilteredCoverage(trio.getFatherId());
-        fReadsAlt = calledVar.getReadsAlt(trio.getFatherId());
-        fReadsRef = calledVar.getReadsRef(trio.getFatherId());
+        carrier = calledVar.getCarrier(trio.getFatherId());
+        fGatkFilteredCoverage = carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA;
+        fReadsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
+        fReadsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
     }
 
     public void deleteParentGeno(Trio trio) {

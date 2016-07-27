@@ -33,7 +33,7 @@ public class MathManager {
             BT = new BinomialTest();
         }
 
-        if (numberOfTrials == Data.NA || numberOfTrials == Data.NA) {
+        if (numberOfTrials == Data.NA || numberOfSuccesses == Data.NA) {
             return Data.NA;
         }
 

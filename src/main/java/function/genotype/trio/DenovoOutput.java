@@ -13,6 +13,7 @@ import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
+import function.genotype.base.Carrier;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
@@ -165,6 +166,8 @@ public class DenovoOutput extends TrioOutput {
     public String getString(Trio trio) {
         StringBuilder sb = new StringBuilder();
 
+        Carrier carrier = calledVar.getCarrier(trio.getChildId());
+
         sb.append(familyId).append(",");
         sb.append(childName).append(",");
         sb.append(motherName).append(",");
@@ -185,12 +188,12 @@ public class DenovoOutput extends TrioOutput {
         sb.append(FormatManager.getDouble(cReadsAlt)).append(",");
         sb.append(FormatManager.getDouble(cReadsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(cReadsAlt, cGatkFilteredCoverage)).append(",");
-        sb.append(calledVar.getPassFailStatus(trio.getChildId())).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getGenotypeQualGQ(trio.getChildId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getQualByDepthQD(trio.getChildId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getHaplotypeScore(trio.getChildId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getRmsMapQualMQ(trio.getChildId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getQual(trio.getChildId()))).append(",");
+        sb.append(carrier != null ? carrier.getPassFailStatus() : "NA").append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGenotypeQualGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQualByDepthQD() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getHaplotypeScore() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getRmsMapQualMQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQual() : Data.NA)).append(",");
         sb.append(mGenotype).append(",");
         sb.append(FormatManager.getDouble(mSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(mGatkFilteredCoverage)).append(",");

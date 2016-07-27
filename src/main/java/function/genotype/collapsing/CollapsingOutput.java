@@ -12,6 +12,7 @@ import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
+import function.genotype.base.Carrier;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
@@ -175,11 +176,7 @@ public class CollapsingOutput extends Output {
             }
         }
 
-        if (isMaxLooMafValid(isRecessive)) {
-            return true;
-        }
-
-        return false;
+        return isMaxLooMafValid(isRecessive);
     }
 
     public boolean isRecessive() {
@@ -234,6 +231,10 @@ public class CollapsingOutput extends Output {
     public String getString(Sample sample) {
         StringBuilder sb = new StringBuilder();
 
+        Carrier carrier = calledVar.getCarrier(sample.getId());
+        int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;;
+        int readsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
+        
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
@@ -267,21 +268,20 @@ public class CollapsingOutput extends Output {
         sb.append(FormatManager.getDouble(looMAF)).append(",");
         sb.append(FormatManager.getDouble(looMhgf)).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadsAlt(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadsRef(sample.getId()))).append(",");
-        sb.append(FormatManager.getPercAltRead(calledVar.getReadsAlt(sample.getId()),
-                calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getVqslod(sample.getId()))).append(",");
-        sb.append(calledVar.getPassFailStatus(sample.getId())).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getGenotypeQualGQ(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getStrandBiasFS(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getHaplotypeScore(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getRmsMapQualMQ(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getQualByDepthQD(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getQual(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(sample.getId()))).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(readsAlt)).append(",");
+        sb.append(FormatManager.getInteger(readsRef)).append(",");
+        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
+        sb.append(carrier != null ? carrier.getPassFailStatus() : "NA").append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGenotypeQualGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getStrandBiasFS() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getHaplotypeScore() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getRmsMapQualMQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQualByDepthQD() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQual() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getMapQualRankSum() : Data.NA)).append(",");
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

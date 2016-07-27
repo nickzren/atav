@@ -13,6 +13,8 @@ import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
+import function.genotype.base.Carrier;
+import global.Data;
 import utils.FormatManager;
 
 /**
@@ -109,6 +111,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
     public String getString(Sample sample) {
         StringBuilder sb = new StringBuilder();
 
+        Carrier carrier = calledVar.getCarrier(sample.getId());
+        
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
@@ -120,11 +124,11 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(isMinorRef).append(",");
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadsAlt(sample.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadsRef(sample.getId()))).append(",");
-        sb.append(FormatManager.getPercAltRead(calledVar.getReadsAlt(sample.getId()),
-                calledVar.getGatkFilteredCoverage(sample.getId()))).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadsAlt() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadsRef() : Data.NA)).append(",");
+        sb.append(FormatManager.getPercAltRead(carrier != null ? carrier.getReadsAlt() : Data.NA, 
+                carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCount[Index.CASE]).append(",");

@@ -1,6 +1,7 @@
 package function.variant.base;
 
 import function.genotype.base.CalledVariant;
+import function.genotype.base.Carrier;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;

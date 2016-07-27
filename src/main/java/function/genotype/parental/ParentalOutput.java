@@ -15,6 +15,7 @@ import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
+import function.genotype.base.Carrier;
 import global.Data;
 import utils.FormatManager;
 import utils.MathManager;
@@ -108,11 +109,12 @@ public class ParentalOutput extends Output {
 
     public boolean isChildValid(Sample child) {
         this.child = child;
+        Carrier carrier = calledVar.getCarrier(child.getId());
 
         return isChildGenoValid()
-                && isChildQdValid()
-                && isChildHetPercentAltReadValid()
-                && isChildBinomialValid();
+                && isChildQdValid(carrier)
+                && isChildHetPercentAltReadValid(carrier)
+                && isChildBinomialValid(carrier);
     }
 
     private boolean isChildGenoValid() {
@@ -121,23 +123,23 @@ public class ParentalOutput extends Output {
         return isQualifiedGeno(childGeno);
     }
 
-    private boolean isChildQdValid() {
+    private boolean isChildQdValid(Carrier carrier) {
         float value = Data.NA;
 
         if (ParentalCommand.childQD != Data.NO_FILTER) {
-            value = calledVar.getQualByDepthQD(child.getId());
+            value = carrier != null ? carrier.getQualByDepthQD() : Data.NA;
         }
 
         return ParentalCommand.isChildQdValid(value);
     }
 
-    private boolean isChildHetPercentAltReadValid() {
+    private boolean isChildHetPercentAltReadValid(Carrier carrier) {
         double percAltRead = Data.NA;
 
         if (ParentalCommand.childHetPercentAltRead != null
                 && childGeno == 1) {
-            int readsAlt = calledVar.getReadsAlt(child.getId());
-            int gatkFilteredCoverage = calledVar.getGatkFilteredCoverage(child.getId());
+            int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
+            int gatkFilteredCoverage = carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA;
 
             percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
         }
@@ -145,9 +147,9 @@ public class ParentalOutput extends Output {
         return ParentalCommand.isChildHetPercentAltReadValid(percAltRead);
     }
 
-    private boolean isChildBinomialValid() {
-        int readsAlt = calledVar.getReadsAlt(child.getId());
-        int readsRef = calledVar.getReadsRef(child.getId());
+    private boolean isChildBinomialValid(Carrier carrier) {
+        int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
+        int readsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
 
         if (readsAlt == Data.NA || readsRef == Data.NA) {
             childBinomial = Data.NA;
@@ -168,8 +170,10 @@ public class ParentalOutput extends Output {
     private boolean isParentBinomialValid() {
         parentBinomial = Data.NA;
 
-        int readsAlt = calledVar.getReadsAlt(parent.getId());
-        int readsRef = calledVar.getReadsRef(parent.getId());
+        Carrier carrier = calledVar.getCarrier(parent.getId());
+
+        int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
+        int readsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
 
         if (readsAlt == Data.NA || readsRef == Data.NA) {
             parentBinomial = Data.NA;
@@ -182,6 +186,10 @@ public class ParentalOutput extends Output {
 
     public String getString() {
         StringBuilder sb = new StringBuilder();
+
+        Carrier carrier = calledVar.getCarrier(child.getId());
+        int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;;
+        int readsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
 
         sb.append(child.getFamilyId()).append(",");
         sb.append(child.getName()).append(",");
@@ -218,21 +226,22 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(child.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getGatkFilteredCoverage(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadsAlt(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadsRef(child.getId()))).append(",");
-        sb.append(FormatManager.getPercAltRead(calledVar.getReadsAlt(child.getId()),
-                calledVar.getGatkFilteredCoverage(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getVqslod(child.getId()))).append(",");
-        sb.append(calledVar.getPassFailStatus(child.getId())).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getGenotypeQualGQ(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getStrandBiasFS(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getHaplotypeScore(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getRmsMapQualMQ(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getQualByDepthQD(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getQual(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getReadPosRankSum(child.getId()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getMapQualRankSum(child.getId()))).append(",");
+
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(readsAlt)).append(",");
+        sb.append(FormatManager.getInteger(readsRef)).append(",");
+        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
+        sb.append(carrier != null ? carrier.getPassFailStatus() : "NA").append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGenotypeQualGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getStrandBiasFS() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getHaplotypeScore() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getRmsMapQualMQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQualByDepthQD() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQual() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getMapQualRankSum() : Data.NA)).append(",");
+
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
