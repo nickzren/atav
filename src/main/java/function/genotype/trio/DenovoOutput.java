@@ -18,6 +18,7 @@ import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -49,6 +50,7 @@ public class DenovoOutput extends TrioOutput {
                 + "Reads Alt (child),"
                 + "Reads Ref (child),"
                 + "Percent Read Alt (child),"
+                + "Percent Alt Read Binomial P (child),"
                 + "Pass Fail Status (child),"
                 + "Genotype Qual GQ (child),"
                 + "Qual By Depth QD (child),"
@@ -188,6 +190,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(FormatManager.getDouble(cReadsAlt)).append(",");
         sb.append(FormatManager.getDouble(cReadsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(cReadsAlt, cGatkFilteredCoverage)).append(",");
+        sb.append(FormatManager.getDouble(MathManager.getBinomial(cReadsAlt + cReadsRef, cReadsAlt, 0.5))).append(",");
         sb.append(carrier != null ? carrier.getPassFailStatus() : "NA").append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGenotypeQualGQ() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getQualByDepthQD() : Data.NA)).append(",");
