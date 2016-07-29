@@ -32,32 +32,15 @@ public class NonCarrier {
     public NonCarrier(ResultSet rs, int posIndex) throws Exception {
         sampleId = rs.getInt("sample_id");
         String min_coverage = rs.getString("min_coverage");
-        CoverageBlockManager.put(sampleId, min_coverage);
-        coverage = parseCoverage(min_coverage, posIndex);
+        
+        int[][] coverageBins = CoverageBlockManager.parseCoverage(min_coverage);
+        CoverageBlockManager.put(sampleId, coverageBins);      
+        coverage = CoverageBlockManager.getCoverage(posIndex, coverageBins);
         if (coverage == Data.NA) {
             genotype = Data.NA;
         } else {
             genotype = 0;
         }
-    }
-
-    private int parseCoverage(String allCov, int pos) {
-        int cov = Data.NA;
-
-        String[] allCovBin = allCov.split(",");
-
-        int covBinPos = 0;
-
-        for (int i = 0; i < allCovBin.length; i++) {
-            covBinPos += Integer.valueOf(allCovBin[i].substring(0, allCovBin[i].length() - 1));
-
-            if (pos <= covBinPos) {
-                cov = CoverageBlockManager.getCoverageByBin(allCovBin[i].charAt(allCovBin[i].length() - 1));
-                break;
-            }
-        }
-
-        return cov;
     }
 
     public int getSampleId() {

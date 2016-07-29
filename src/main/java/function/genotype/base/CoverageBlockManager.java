@@ -12,10 +12,11 @@ public class CoverageBlockManager {
 
     public static final int COVERAGE_BLOCK_SIZE = 1024;
 
-    private static HashMap<Integer, int[][]> currentBlockMap = new HashMap<Integer, int[][]>();
+    private static HashMap<Integer, int[][]> currentBlockMap = new HashMap<>();
+    // try TreeMap<Integer, Integer>
     private static int currentBlockEndPos = Data.NA;
 
-    private static HashMap<Character, Integer> coverageBin = new HashMap<Character, Integer>();
+    private static HashMap<Character, Integer> coverageBin = new HashMap<>();
 
     public static void init() {
         coverageBin.put('a', Data.NA);
@@ -24,9 +25,9 @@ public class CoverageBlockManager {
         coverageBin.put('d', 20);
         coverageBin.put('e', 201);
     }
-
-    public static void put(int sampleId, String coverageStr) {
-        currentBlockMap.put(sampleId, parseCoverage(coverageStr));
+    
+    public static void put(int sampleId,int[][] coverageBins) {
+        currentBlockMap.put(sampleId, coverageBins);
     }
 
     public static void initNonCarrierMap(Variant var,
@@ -56,7 +57,7 @@ public class CoverageBlockManager {
         }
     }
 
-    private static int getCoverage(int posIndex, int[][] allCovBin) {
+    public static int getCoverage(int posIndex, int[][] allCovBin) {
         for (int i = 0; i < allCovBin.length; i++) {
             if (posIndex <= allCovBin[i][0]) {
                 return allCovBin[i][1];
@@ -66,7 +67,7 @@ public class CoverageBlockManager {
         return Data.NA;
     }
 
-    private static int[][] parseCoverage(String allCov) {
+    public static int[][] parseCoverage(String allCov) {
         String[] allCovArray = allCov.split(",");
         int[][] allCovBin = new int[allCovArray.length][2];
         int covBinPos = 0;
