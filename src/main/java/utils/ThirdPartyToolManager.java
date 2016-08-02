@@ -23,7 +23,7 @@ public class ThirdPartyToolManager {
     private static final String FLANKING_SEQ_PERL = "/nfs/goldstein/software/atav_home/lib/flanking_seq.pl";
     private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/trio_comp_het_tier.R";
-
+    private static final String NON_TRIO_TIER = "/nfs/goldstein/software/atav_home/lib/non_trio_tier.R";
 
     public static int systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start...");
@@ -155,11 +155,19 @@ public class ThirdPartyToolManager {
 
         systemCall(new String[]{cmd});
     }
-    
+
     public static void runTrioCompHetTier(String compHetFilePath) {
         String cmd = R_SCRIPT_SYSTEM_PATH + " "
                 + TRIO_COMP_HET_TIER + " "
                 + compHetFilePath;
+
+        systemCall(new String[]{cmd});
+    }
+
+    public static void runNonTrioTier(String variantFilePath) {
+        String cmd = R_SCRIPT_SYSTEM_PATH + " "
+                + NON_TRIO_TIER + " "
+                + variantFilePath;
 
         systemCall(new String[]{cmd});
     }

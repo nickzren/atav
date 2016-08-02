@@ -8,6 +8,7 @@ import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -54,6 +55,9 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
+        if (VarGenoCommand.isRunTier) {
+            ThirdPartyToolManager.runNonTrioTier(genotypesFilePath);
+        }
     }
 
     @Override
@@ -116,7 +120,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             ErrorManager.send(e);
         }
     }
-
+    
     @Override
     public String toString() {
         return "It is running a list variant genotype function...";
