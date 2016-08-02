@@ -31,7 +31,7 @@ write.csv(data.new, file = paste(outputDirect,"/rec_kv_lof.csv", sep=""))
 }
 
 #### Main ######
-rm(list = ls())
+###rm(list = ls())
 args <- commandArgs(T)
 atavOutputFile <- args[1]
 do_non_trio_tier(atavOutputFile)
