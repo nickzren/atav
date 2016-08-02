@@ -3,7 +3,7 @@ do_non_trio_tier <- function(varGenoFile){
 ### Get the non trio script
 source("/nfs/goldstein/software/atav_home/lib/r0.3_filters_nontrio.R")
 outputDirect <- dirname(varGenoFile)
-input.data = read.csv(paste(varGenoFile,na.strings="NA",stringsAsFactors=FALSE)
+input.data = read.csv(varGenoFile,na.strings="NA",stringsAsFactors=FALSE)
 
 #private KV
 data <- Filter.by.Allele.Count(input.data,0)
