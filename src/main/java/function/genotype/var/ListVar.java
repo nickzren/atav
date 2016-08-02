@@ -45,9 +45,6 @@ public class ListVar extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        if (VarGenoCommand.isRunTier) {
-            ThirdPartyToolManager.runNonTrioTier(variantsFilePath);
-        }
     }
 
     @Override
