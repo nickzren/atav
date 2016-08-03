@@ -28,7 +28,7 @@ public class CalledVariant extends AnnotatedVariant {
         if (isValid) {
             SampleManager.initCarrierMap(this, carrierMap);
 
-            CoverageBlockManager.initNonCarrierMap(this, carrierMap, noncarrierMap);
+            CoverageBlockManager.initNonCarrierMap_test(this, carrierMap, noncarrierMap);
 
             initGenoCovArray();
 

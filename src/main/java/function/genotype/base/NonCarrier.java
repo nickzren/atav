@@ -4,7 +4,6 @@ import function.genotype.trio.TrioCommand;
 import function.variant.base.Region;
 import function.genotype.trio.TrioManager;
 import global.Data;
-import java.sql.ResultSet;
 
 /**
  *
@@ -22,20 +21,20 @@ public class NonCarrier {
     public NonCarrier(int sid, int cov) {
         sampleId = sid;
         coverage = cov;
-        if (coverage == Data.NA) {
-            genotype = Data.NA;
-        } else {
-            genotype = 0;
-        }
+
+        initGenotype();
     }
 
-    public NonCarrier(ResultSet rs, int posIndex) throws Exception {
-        sampleId = rs.getInt("sample_id");
-        String min_coverage = rs.getString("min_coverage");
-        
-        int[][] coverageBins = CoverageBlockManager.parseCoverage(min_coverage);
-        CoverageBlockManager.put(sampleId, coverageBins);      
-        coverage = CoverageBlockManager.getCoverage(posIndex, coverageBins);
+    public NonCarrier(int sampleId, String min_coverage, int posIndex) throws Exception {
+        this.sampleId = sampleId;
+        SampleCoverageBin covBin = new SampleCoverageBin(sampleId, min_coverage);
+        CoverageBlockManager.add(covBin);
+        coverage = covBin.getCoverage(posIndex);
+
+        initGenotype();
+    }
+
+    private void initGenotype() {
         if (coverage == Data.NA) {
             genotype = Data.NA;
         } else {
@@ -95,11 +94,9 @@ public class NonCarrier {
                         && !r.isInsideAutosomalOrPseudoautosomalRegions()) {
                     isValid = false;
                 }
-            } else {
-                if (r.getChrNum() == 24 // female chy & outside
-                        && !r.isInsideYPseudoautosomalRegions()) {
-                    isValid = false;
-                }
+            } else if (r.getChrNum() == 24 // female chy & outside
+                    && !r.isInsideYPseudoautosomalRegions()) {
+                isValid = false;
             }
 
             if (!isValid) {
@@ -129,10 +126,6 @@ public class NonCarrier {
     }
 
     public boolean isValid() {
-        if (genotype != Data.NA) {
-            return true;
-        }
-
-        return false;
+        return genotype != Data.NA;
     }
 }
