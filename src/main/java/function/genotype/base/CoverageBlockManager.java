@@ -29,7 +29,7 @@ public class CoverageBlockManager {
         currentBlockList.add(covBin);
     }
 
-    public static void initNonCarrierMap_test(Variant var,
+    public static void initNonCarrierMap(Variant var,
             HashMap<Integer, Carrier> carrierMap,
             HashMap<Integer, NonCarrier> noncarrierMap) {
         int varPosIndex = getVarPosIndex(var);
