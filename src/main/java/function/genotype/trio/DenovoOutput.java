@@ -14,7 +14,6 @@ import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
-import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
@@ -27,7 +26,6 @@ import utils.MathManager;
 public class DenovoOutput extends TrioOutput {
 
     String flag = "";
-    float ctrlAvgCov = 0;
 
     public static String getTitle() {
         return "Family ID,"
@@ -87,7 +85,6 @@ public class DenovoOutput extends TrioOutput {
                 + "Ctrl MAF,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,"
-                + "Average Ctrl Coverage,"
                 + EvsManager.getTitle()
                 + "Polyphen Humdiv Score,"
                 + "Polyphen Humdiv Prediction,"
@@ -139,23 +136,6 @@ public class DenovoOutput extends TrioOutput {
 
         if (fGeno == Data.NA) {
             fGeno = 0;
-        }
-    }
-
-    public void initAvgCov() {
-        int sumCtrl = 0, numCtrl = 0, geno;
-        for (Sample sample : SampleManager.getList()) {
-            geno = calledVar.getGenotype(sample.getIndex());
-            if (geno != Data.NA) {
-                if (!sample.isCase()) { // control
-                    sumCtrl += calledVar.getCoverage(sample.getIndex());
-                    numCtrl++;
-                }
-            }
-        }
-
-        if (numCtrl > 0) {
-            ctrlAvgCov = (float) sumCtrl / numCtrl;
         }
     }
 
@@ -227,7 +207,6 @@ public class DenovoOutput extends TrioOutput {
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(ctrlAvgCov)).append(",");
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

@@ -93,8 +93,6 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
                         
                         output.initFlag(trio.getChildId());
                         
-                        output.initAvgCov();
-                        
                         output.initGenoZygo(trio.getChildIndex());
                         
                         doOutput(output, trio);
