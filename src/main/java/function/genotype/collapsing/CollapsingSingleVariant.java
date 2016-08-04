@@ -99,7 +99,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             for (Sample sample : SampleManager.getList()) {
                 output.calculateLooFreq(sample);
 
-                if (output.isLooFreqValid()) {
+                if (output.isMaxLooMafValid()) {
                     int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                     if (output.isQualifiedGeno(geno)) {

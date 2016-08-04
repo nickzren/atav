@@ -67,6 +67,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + "QC Fail Ctrl,"
                 + "Case MAF,"
                 + "Ctrl MAF,"
+                + "LOO MAF,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,"
                 + EvsManager.getTitle()
@@ -112,7 +113,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         StringBuilder sb = new StringBuilder();
 
         Carrier carrier = calledVar.getCarrier(sample.getId());
-        
+
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
@@ -127,7 +128,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadsAlt() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadsRef() : Data.NA)).append(",");
-        sb.append(FormatManager.getPercAltRead(carrier != null ? carrier.getReadsAlt() : Data.NA, 
+        sb.append(FormatManager.getPercAltRead(carrier != null ? carrier.getReadsAlt() : Data.NA,
                 carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
@@ -145,6 +146,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(looMAF)).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(calledVar.getEvsStr());
@@ -168,21 +170,14 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
 
     public boolean isQualifiedGeno(Sample sample) {
         if (isMinorRef) {
-            if (calledVar.getGenotype(sample.getIndex()) == 0) {
+            if (calledVar.getGenotype(sample.getIndex()) == Index.REF) {
                 return true;
             }
-        } else if (calledVar.getGenotype(sample.getIndex()) == 2) {
+        } else if (calledVar.getGenotype(sample.getIndex()) == Index.HOM) {
             return true;
         }
 
         return false;
-    }
-
-    @Override
-    public boolean isLooFreqValid() {
-        boolean isRecessive = isRecessive();
-
-        return isMaxLooMafValid(isRecessive);
     }
 
     @Override

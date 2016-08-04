@@ -145,7 +145,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                         output1.calculateLooFreq(sample);
 
-                        if (output1.isLooFreqValid()) {
+                        if (output1.isMaxLooMafValid()) {
 
                             if (isOutputValid(output1, sample, summary)) {
                                 continue;
@@ -209,7 +209,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                 output2.calculateLooFreq(sample);
 
-                if (output2.isLooFreqValid()) {
+                if (output2.isMaxLooMafValid()) {
 
                     double[] coFreq = getCoOccurrenceFreq(output1, output2, sample);
 

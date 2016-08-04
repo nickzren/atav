@@ -57,10 +57,9 @@ public class CollapsingOutput extends Output {
                 + "QC Fail Ctrl,"
                 + "Case Maf,"
                 + "Ctrl Maf,"
+                + "LOO MAF,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,"
-                + "Loo Maf,"
-                + "Loo Minor Hom Freq,"
                 + "Samtools Raw Coverage,"
                 + "Gatk Filtered Coverage,"
                 + "Reads Alt,"
@@ -97,7 +96,6 @@ public class CollapsingOutput extends Output {
 
     String geneName = "";
     double looMAF = 0;
-    double looMhgf = 0;
 
     HashSet<String> regionBoundaryNameSet; // for --region-boundary only
 
@@ -123,8 +121,6 @@ public class CollapsingOutput extends Output {
 
             calculateLooMaf();
 
-            calculateLooMhgf();
-
             addSampleGeno(type, pheno);
         }
     }
@@ -149,48 +145,8 @@ public class CollapsingOutput extends Output {
         }
     }
 
-    private void calculateLooMhgf() {
-        int allSample = genoCount[Index.HOM][Index.ALL]
-                + genoCount[Index.HET][Index.ALL]
-                + genoCount[Index.REF][Index.ALL]
-                + genoCount[Index.HOM_MALE][Index.ALL]
-                + genoCount[Index.REF_MALE][Index.ALL];
-
-        looMhgf = MathManager.devide(genoCount[Index.HOM][Index.ALL]
-                + genoCount[Index.HOM_MALE][Index.ALL], allSample); // hom / (hom + het + ref)
-
-        if (isMinorRef) {
-            looMhgf = MathManager.devide(genoCount[Index.REF][Index.ALL]
-                    + genoCount[Index.REF_MALE][Index.ALL], allSample); // ref / (hom + het + ref)
-        }
-    }
-
-    public boolean isLooFreqValid() {
-        boolean isRecessive = false;
-
-        if (CollapsingCommand.isRecessive) {
-            isRecessive = isRecessive();
-
-            if (!isRecessive) {
-                return false;
-            }
-        }
-
-        return isMaxLooMafValid(isRecessive);
-    }
-
-    public boolean isRecessive() {
-        if (isMinorRef) {
-            if (genoCount[Index.REF][Index.ALL]
-                    + genoCount[Index.REF_MALE][Index.ALL] > 0) {
-                return true;
-            }
-        } else if (genoCount[Index.HOM][Index.ALL]
-                + genoCount[Index.HOM_MALE][Index.ALL] > 0) {
-            return true;
-        }
-
-        return false;
+    public boolean isMaxLooMafValid() {
+        return CollapsingCommand.isMaxLooMafValid(looMAF);
     }
 
     /*
@@ -220,21 +176,13 @@ public class CollapsingOutput extends Output {
         return false;
     }
 
-    public boolean isMaxLooMafValid(boolean isRecessive) {
-        if (isRecessive) {
-            return CollapsingCommand.isMaxLooMafRecValid(looMAF);
-        } else {
-            return CollapsingCommand.isMaxLooMafValid(looMAF);
-        }
-    }
-
     public String getString(Sample sample) {
         StringBuilder sb = new StringBuilder();
 
         Carrier carrier = calledVar.getCarrier(sample.getId());
         int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;;
         int readsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
-        
+
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
@@ -263,10 +211,9 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(looMAF)).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(looMAF)).append(",");
-        sb.append(FormatManager.getDouble(looMhgf)).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
