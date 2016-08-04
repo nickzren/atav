@@ -29,8 +29,6 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + "Sample Type,"
                 + "Gene Name,"
                 + "Artifacts in Gene,"
-                + "Var Case Freq #1 & #2 (co-occurance),"
-                + "Var Ctrl Freq #1 & #2 (co-occurance),"
                 + initVarTitleStr("1") + ","
                 + initVarTitleStr("2");
     }
@@ -168,16 +166,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         return sb.toString();
     }
 
-    public boolean isQualifiedGeno(Sample sample) {
-        if (isMinorRef) {
-            if (calledVar.getGenotype(sample.getIndex()) == Index.REF) {
-                return true;
-            }
-        } else if (calledVar.getGenotype(sample.getIndex()) == Index.HOM) {
-            return true;
-        }
-
-        return false;
+    public boolean isHomOrRef(int geno) {
+        return geno == Index.HOM || geno == Index.REF;
     }
 
     @Override

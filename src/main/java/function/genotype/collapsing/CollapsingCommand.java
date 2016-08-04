@@ -20,7 +20,6 @@ public class CollapsingCommand {
     public static boolean isRecessive = false;
     public static String coverageSummaryFile = "";
     public static double maxLooMaf = Data.NO_FILTER;
-    public static double maxLooCombFreq = Data.NO_FILTER;
     public static boolean isCollapsingDoLinear = false;
     public static boolean isCollapsingDoLogistic = false;
     public static String regionBoundaryFile = "";
@@ -76,11 +75,6 @@ public class CollapsingCommand {
                     checkValueValid(0.5, 0, option);
                     maxLooMaf = getValidDouble(option);
                     break;
-                case "--loo-comb-freq":
-                case "--max-loo-comb-freq":
-                    checkValueValid(1, 0, option);
-                    maxLooCombFreq = getValidDouble(option);
-                    break;
                 case "--read-coverage-summary":
                     coverageSummaryFile = getValidPath(option);
                     GeneManager.initCoverageSummary();
@@ -111,13 +105,5 @@ public class CollapsingCommand {
         }
 
         return value <= maxLooMaf;
-    }
-
-    public static boolean isMaxLooCombFreqValid(double value) {
-        if (maxLooCombFreq == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value <= maxLooCombFreq;
     }
 }
