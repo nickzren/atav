@@ -13,7 +13,6 @@ import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
@@ -155,25 +154,11 @@ public class CollapsingOutput extends Output {
      */
     @Override
     public boolean isQualifiedGeno(int geno) {
-        if (CollapsingCommand.isRecessive && geno == 1) { // just for collapsing function now
+        if (CollapsingCommand.isRecessive && geno == 1) {
             return false;
         }
-
-        if (GenotypeLevelFilterCommand.isAllNonRef) {
-            if (geno == 2 || geno == 1) {
-                return true;
-            }
-        }
-
-        if (isMinorRef) {
-            if (geno == 0 || geno == 1) {
-                return true;
-            }
-        } else if (geno == 2 || geno == 1) {
-            return true;
-        }
-
-        return false;
+        
+        return super.isQualifiedGeno(geno);
     }
 
     public String getString(Sample sample) {
