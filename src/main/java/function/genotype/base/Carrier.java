@@ -2,6 +2,7 @@ package function.genotype.base;
 
 import function.variant.base.Region;
 import global.Data;
+import global.Index;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import utils.MathManager;
@@ -27,7 +28,7 @@ public class Carrier extends NonCarrier {
     private String passFailStatus;
 
     public Carrier(ResultSet rs) throws Exception {
-        sampleId = rs.getInt("sample_id");        
+        sampleId = rs.getInt("sample_id");
         coverage = rs.getInt("samtools_raw_coverage");
         genotype = rs.getInt("genotype");
         gatkFilteredCoverage = rs.getInt("gatk_filtered_coverage");
@@ -52,7 +53,7 @@ public class Carrier extends NonCarrier {
 
         return f;
     }
-    
+
     private float getFloat(BigDecimal f) {
         if (f == null) {
             return Data.NA;
@@ -128,15 +129,15 @@ public class Carrier extends NonCarrier {
             }
         }
 
-        if (genotype == 2) { // --hom-percent-alt-read 
+        if (genotype == Index.HOM) { // --hom-percent-alt-read 
             double percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
 
             if (!GenotypeLevelFilterCommand.isHomPercentAltReadValid(percAltRead)) {
                 genotype = Data.NA;
             }
         }
-        
-        if (genotype == 1) { // --het-percent-alt-read 
+
+        if (genotype == Index.HET) { // --het-percent-alt-read 
             double percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
 
             if (!GenotypeLevelFilterCommand.isHetPercentAltReadValid(percAltRead)) {
@@ -148,11 +149,16 @@ public class Carrier extends NonCarrier {
             coverage = Data.NA;
         }
     }
-    
+
     @Override
-    public void applyFilters(Region region){
-        super.applyFilters(region);
-        
+    public void applyFilters(Region region) {
+        // min coverage filter
+        applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
+                GenotypeLevelFilterCommand.minCtrlCoverageCall);
+
+        // default pseudoautosomal region filter
+        checkValidOnXY(region);
+
         applyQualityFilter();
     }
 }

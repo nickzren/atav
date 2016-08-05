@@ -4,6 +4,7 @@ import function.genotype.trio.TrioCommand;
 import function.variant.base.Region;
 import function.genotype.trio.TrioManager;
 import global.Data;
+import global.Index;
 
 /**
  *
@@ -90,7 +91,7 @@ public class NonCarrier {
             Sample sample = SampleManager.getMap().get(sampleId);
 
             if (sample.isMale()) {
-                if (genotype == 1 // male het chr x or y & outside 
+                if (genotype == Index.HET // male het chr x or y & outside 
                         && !r.isInsideAutosomalOrPseudoautosomalRegions()) {
                     isValid = false;
                 }

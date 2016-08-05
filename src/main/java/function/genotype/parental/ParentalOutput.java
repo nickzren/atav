@@ -137,7 +137,7 @@ public class ParentalOutput extends Output {
         double percAltRead = Data.NA;
 
         if (ParentalCommand.childHetPercentAltRead != null
-                && childGeno == 1) {
+                && childGeno == Index.HET) {
             int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
             int gatkFilteredCoverage = carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA;
 
