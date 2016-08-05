@@ -5,6 +5,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.annotation.base.GeneManager;
 import function.genotype.base.SampleManager;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -14,6 +15,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import utils.MathManager;
 
 /**
  *
@@ -209,6 +211,8 @@ public class CollapsingCompHet extends CollapsingBase {
 
                 if (output2.isMaxLooMafValid()) {
 
+                    double[] coFreq = getCoOccurrenceFreq(output1, output2);
+
                     summary.updateSampleVariantCount4CompHet(sample.getIndex());
 
                     updateSummaryVariantCount(output1, summary);
@@ -220,6 +224,8 @@ public class CollapsingCompHet extends CollapsingBase {
                     sb.append(sample.getPhenotype()).append(",");
                     sb.append("'").append(output1.geneName).append("'").append(",");
                     sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
+                    sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
+                    sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
                     sb.append(output1.getString(sample));
                     sb.append(output2.getString(sample));
 
@@ -236,6 +242,49 @@ public class CollapsingCompHet extends CollapsingBase {
                 }
             }
         }
+    }
+
+    /*
+     * The number of people who have BOTH of the variants divided by the total
+     * number of covered people. freq[0] Frequency of Variant #1 & #2
+     * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
+     * (co-occurance) in ctrls
+     */
+    private double[] getCoOccurrenceFreq(CompHetOutput output1, CompHetOutput output2) {
+        double[] freq = new double[2];
+
+        int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
+        int totalCaseCount = 0, totalCtrlCount = 0;
+
+        for (Sample sample : SampleManager.getList()) {
+            boolean isCoQualifiedGeno = isCoQualifiedGeno(output1, output2, sample.getIndex());
+
+            if (sample.isCase()) {
+                totalCaseCount++;
+                if (isCoQualifiedGeno) {
+                    quanlifiedCaseCount++;
+                }
+            } else {
+                totalCtrlCount++;
+                if (isCoQualifiedGeno) {
+                    qualifiedCtrlCount++;
+                }
+            }
+        }
+
+        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
+        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
+
+        return freq;
+    }
+    
+    private boolean isCoQualifiedGeno(CompHetOutput output1,
+            CompHetOutput output2, int index) {
+        int geno1 = output1.getCalledVariant().getGenotype(index);
+        int geno2 = output2.getCalledVariant().getGenotype(index);
+
+        return output1.isQualifiedGeno(geno1)
+                && output2.isQualifiedGeno(geno2);
     }
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {

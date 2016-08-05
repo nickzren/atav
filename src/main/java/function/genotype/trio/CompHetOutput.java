@@ -28,7 +28,6 @@ public class CompHetOutput extends TrioOutput implements Comparable {
                 + "Gene Name,"
                 + "Artifacts in Gene,"
                 + "Flag,"
-                + "Multi qualified var combinations,"
                 + "Var Case Freq #1 & #2 (co-occurance),"
                 + "Var Ctrl Freq #1 & #2 (co-occurance),"
                 + initVarTitleStr("1")

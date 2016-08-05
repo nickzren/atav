@@ -38,7 +38,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         "possibly compound heterozygote", // 1
         "no flag" //2
     };
-    boolean hasMultiVariants;
 
     @Override
     public void initOutput() {
@@ -158,38 +157,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                 geneListVector.add(geneOutputList);
             } else {
                 geneOutputList.add(output);
-            }
-        }
-    }
-
-    private void checkHasMultiVariants(ArrayList<CompHetOutput> geneOutputList,
-            CompHetOutput output1, CompHetOutput output2) {
-        if (!hasMultiVariants) {
-            // check how many qualified variants in the gene
-            int analyzedRecords = 0;
-            int outputSize = geneOutputList.size();
-
-            CompHetOutput output11, output22;
-            int geno11, geno22;
-
-            for (int x = 0; x < outputSize - 1; x++) {
-                output11 = geneOutputList.get(x);
-                for (int y = x + 1; y < outputSize; y++) {
-                    output22 = geneOutputList.get(y);
-
-                    geno11 = output11.getCalledVariant().getGenotype(output1.child.getIndex());
-                    geno22 = output22.getCalledVariant().getGenotype(output2.child.getIndex());
-                    if (output11.isQualifiedGeno(geno11)
-                            && output22.isQualifiedGeno(geno22)) {
-
-                        analyzedRecords++;
-
-                        if (analyzedRecords > 1) {
-                            hasMultiVariants = true;
-                            break;
-                        }
-                    }
-                }
             }
         }
     }
@@ -341,8 +308,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         StringBuilder sb = new StringBuilder();
 
         try {
-            hasMultiVariants = false;
-
             int outputSize = geneOutputList.size();
 
             CompHetOutput output1, output2;
@@ -370,10 +335,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                 output2.isMinorRef());
 
                         if (!flag.isEmpty()) {
-                            if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {
-                                checkHasMultiVariants(geneOutputList, output1, output2);
-                            }
-
                             coFreq = getCoOccurrenceFreq(output1, output2);
 
                             if (TrioCommand.isCombFreqValid(coFreq[Index.CTRL])) {
@@ -384,7 +345,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                 sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
                                 sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.getCalledVariant().getGeneName()))).append(",");
                                 sb.append(flag).append(",");
-                                sb.append(hasMultiVariants).append(",");
                                 sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
                                 sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
 
