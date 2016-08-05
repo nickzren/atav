@@ -87,13 +87,11 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
                 
                 if (output.isValid()) {
                     
-                    int geno = output.getCalledVariant().getGenotype(trio.getChildIndex());
+                    int geno = output.getCalledVariant().getGenotype(trio.getChild().getIndex());
                     
                     if (output.isQualifiedGeno(geno)) {
                         
-                        output.initFlag(trio.getChildId());
-                        
-                        output.initGenoZygo(trio.getChildIndex());
+                        output.initFlag(trio.getChild());
                         
                         doOutput(output, trio);
                     }
@@ -107,7 +105,7 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
     }
     
     private void doOutput(DenovoOutput output, Trio trio) throws Exception {
-        if (!output.flag.equals("no flag") && !output.flag.equals("unknown")) {
+        if (!output.denovoFlag.equals("no flag") && !output.denovoFlag.equals("unknown")) {
             bwDenovo.write(output.getString(trio));
             bwDenovo.newLine();
         } else if (TrioCommand.isIncludeNoflag) {

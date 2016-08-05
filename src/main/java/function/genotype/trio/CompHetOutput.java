@@ -23,7 +23,6 @@ public class CompHetOutput extends TrioOutput implements Comparable {
     public static String getTitle() {
         return "Family ID,"
                 + "Child,"
-                + "Sample Type (Child),"
                 + "Mother,"
                 + "Father,"
                 + "Gene Name,"
@@ -135,19 +134,19 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getGerpScore());
         sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
-        sb.append(cGenotype).append(",");
+        sb.append(getGenoStr(cGeno)).append(",");
         sb.append(FormatManager.getDouble(cSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(cGatkFilteredCoverage)).append(",");
         sb.append(FormatManager.getDouble(cReadsAlt)).append(",");
         sb.append(FormatManager.getDouble(cReadsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(cReadsAlt, cGatkFilteredCoverage)).append(",");
-        sb.append(mGenotype).append(",");
+        sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getDouble(mSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(mGatkFilteredCoverage)).append(",");
         sb.append(FormatManager.getDouble(mReadsAlt)).append(",");
         sb.append(FormatManager.getDouble(mReadsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(mReadsAlt, mGatkFilteredCoverage)).append(",");
-        sb.append(fGenotype).append(",");
+        sb.append(getGenoStr(fGeno)).append(",");
         sb.append(FormatManager.getDouble(fSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(fGatkFilteredCoverage)).append(",");
         sb.append(FormatManager.getDouble(fReadsAlt)).append(",");

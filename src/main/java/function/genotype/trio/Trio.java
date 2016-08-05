@@ -10,10 +10,8 @@ import function.genotype.base.SampleManager;
  */
 public class Trio {
 
-    private String familyId;
-    private int childId;
-    private int childIndex;
-    private String childName;
+    private Sample child;
+
     private int fatherId;
     private int fatherIndex;
     private String fatherName;
@@ -22,17 +20,13 @@ public class Trio {
     private String motherName;
 
     public Trio(Sample sample) {
-        familyId = sample.getFamilyId();
+        child = sample;
 
-        childName = sample.getName();
-        childId = sample.getId();
-        childIndex = sample.getIndex();
-
-        fatherName = sample.getPaternalId();
+        fatherName = child.getPaternalId();
         fatherId = SampleManager.getIdByName(fatherName);
         fatherIndex = SampleManager.getIndexById(fatherId);
 
-        motherName = sample.getMaternalId();
+        motherName = child.getMaternalId();
         motherId = SampleManager.getIdByName(motherName);
         motherIndex = SampleManager.getIndexById(motherId);
     }
@@ -48,20 +42,8 @@ public class Trio {
         return false;
     }
 
-    public String getFamilyId() {
-        return familyId;
-    }
-
-    public int getChildId() {
-        return childId;
-    }
-
-    public int getChildIndex() {
-        return childIndex;
-    }
-
-    public String getChildName() {
-        return childName;
+    public Sample getChild(){
+        return child;
     }
 
     public int getFatherId() {

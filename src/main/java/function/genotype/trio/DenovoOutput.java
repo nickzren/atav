@@ -1,7 +1,6 @@
 package function.genotype.trio;
 
 import function.external.evs.EvsManager;
-import function.genotype.base.SampleManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.GeneManager;
 import function.external.genomes.GenomesManager;
@@ -14,6 +13,7 @@ import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
+import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
@@ -25,7 +25,7 @@ import utils.MathManager;
  */
 public class DenovoOutput extends TrioOutput {
 
-    String flag = "";
+    String denovoFlag = "";
 
     public static String getTitle() {
         return "Family ID,"
@@ -108,19 +108,11 @@ public class DenovoOutput extends TrioOutput {
         super(c);
     }
 
-    public String getFamilyId() {
-        return familyId;
-    }
-
-    public String getFlag() {
-        return flag;
-    }
-
-    public void initFlag(int id) {
+    public void initFlag(Sample child) {
         convertParentGeno();
 
-        flag = TrioManager.getStatus(calledVar.getChrNum(),
-                !isMinorRef, SampleManager.isMale(id),
+        denovoFlag = TrioManager.getStatus(calledVar.getChrNum(),
+                !isMinorRef, child.isMale(),
                 cGeno, cSamtoolsRawCoverage,
                 mGeno, mSamtoolsRawCoverage,
                 fGeno, fSamtoolsRawCoverage);
@@ -131,30 +123,24 @@ public class DenovoOutput extends TrioOutput {
      */
     private void convertParentGeno() {
         if (mGeno == Data.NA) {
-            mGeno = 0;
+            mGeno = Index.REF;
         }
 
         if (fGeno == Data.NA) {
-            fGeno = 0;
+            fGeno = Index.REF;
         }
-    }
-
-    public void initGenoZygo(int childIndex) {
-        cGenotype = getGenoStr(calledVar.getGenotype(childIndex));
-        mGenotype = getGenoStr(mGeno);
-        fGenotype = getGenoStr(fGeno);
     }
 
     public String getString(Trio trio) {
         StringBuilder sb = new StringBuilder();
 
-        Carrier carrier = calledVar.getCarrier(trio.getChildId());
+        Carrier carrier = calledVar.getCarrier(trio.getChild().getId());
 
-        sb.append(familyId).append(",");
-        sb.append(childName).append(",");
+        sb.append(child.getFamilyId()).append(",");
+        sb.append(child.getName()).append(",");
         sb.append(motherName).append(",");
         sb.append(fatherName).append(",");
-        sb.append(flag).append(",");
+        sb.append(denovoFlag).append(",");
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");
@@ -164,7 +150,7 @@ public class DenovoOutput extends TrioOutput {
         sb.append(calledVar.getGerpScore());
         sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
-        sb.append(cGenotype).append(",");
+        sb.append(getGenoStr(cGeno)).append(",");
         sb.append(FormatManager.getDouble(cSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(cGatkFilteredCoverage)).append(",");
         sb.append(FormatManager.getDouble(cReadsAlt)).append(",");
@@ -177,13 +163,13 @@ public class DenovoOutput extends TrioOutput {
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getHaplotypeScore() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getRmsMapQualMQ() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getQual() : Data.NA)).append(",");
-        sb.append(mGenotype).append(",");
+        sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getDouble(mSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(mGatkFilteredCoverage)).append(",");
         sb.append(FormatManager.getDouble(mReadsAlt)).append(",");
         sb.append(FormatManager.getDouble(mReadsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(mReadsAlt, mGatkFilteredCoverage)).append(",");
-        sb.append(fGenotype).append(",");
+        sb.append(getGenoStr(fGeno)).append(",");
         sb.append(FormatManager.getDouble(fSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(fGatkFilteredCoverage)).append(",");
         sb.append(FormatManager.getDouble(fReadsAlt)).append(",");

@@ -254,16 +254,16 @@ public class Output implements Cloneable {
         }
 
         if (GenotypeLevelFilterCommand.isAllNonRef) {
-            if (geno == 2 || geno == 1) {
+            if (geno == Index.HOM || geno == Index.HET) {
                 return true;
             }
         }
 
         if (isMinorRef) {
-            if (geno == 0 || geno == 1) {
+            if (geno == Index.REF || geno == Index.HET) {
                 return true;
             }
-        } else if (geno == 2 || geno == 1) {
+        } else if (geno == Index.HOM || geno == Index.HET) {
             return true;
         }
 

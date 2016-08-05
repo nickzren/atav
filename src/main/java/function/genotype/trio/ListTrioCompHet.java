@@ -111,7 +111,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
                 if (output.isValid()) {
 
-                    int geno = output.getCalledVariant().getGenotype(trio.getChildIndex());
+                    int geno = output.getCalledVariant().getGenotype(trio.getChild().getIndex());
 
                     if (output.isQualifiedGeno(geno)) {
                         outputList.add((CompHetOutput) output.clone());
@@ -177,8 +177,8 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                 for (int y = x + 1; y < outputSize; y++) {
                     output22 = geneOutputList.get(y);
 
-                    geno11 = output11.getCalledVariant().getGenotype(output1.childIndex);
-                    geno22 = output22.getCalledVariant().getGenotype(output2.childIndex);
+                    geno11 = output11.getCalledVariant().getGenotype(output1.child.getIndex());
+                    geno22 = output22.getCalledVariant().getGenotype(output2.child.getIndex());
                     if (output11.isQualifiedGeno(geno11)
                             && output22.isQualifiedGeno(geno22)) {
 
@@ -327,12 +327,13 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
     private static int swapGenotypes(
             int genotype) {
-        if (genotype == 0) {
-            return 2;
-        } else if (genotype == 2) {
-            return 0;
-        } else {
-            return genotype;
+        switch (genotype) {
+            case 0:
+                return 2;
+            case 2:
+                return 0;
+            default:
+                return genotype;
         }
     }
 
@@ -357,7 +358,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
                     if (output1.getCalledVariant().getVariantIdNegative4Indel()
                             != output2.getCalledVariant().getVariantIdNegative4Indel()
-                            && output1.childName.equals(output2.childName)) {
+                            && output1.child.getId() == output2.child.getId()) {
                         flag = getCompHetStatus(
                                 output1.cGeno, output1.cSamtoolsRawCoverage,
                                 output1.mGeno, output1.mSamtoolsRawCoverage,
@@ -376,9 +377,8 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                             coFreq = getCoOccurrenceFreq(output1, output2);
 
                             if (TrioCommand.isCombFreqValid(coFreq[Index.CTRL])) {
-                                sb.append(output1.familyId).append(",");
-                                sb.append(output1.childName).append(",");
-                                sb.append(output1.childType).append(",");
+                                sb.append(output1.child.getFamilyId()).append(",");
+                                sb.append(output1.child.getName()).append(",");
                                 sb.append(output1.motherName).append(",");
                                 sb.append(output1.fatherName).append(",");
                                 sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
