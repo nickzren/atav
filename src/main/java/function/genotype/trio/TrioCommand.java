@@ -15,8 +15,6 @@ import utils.CommandOption;
  */
 public class TrioCommand {
 
-    public static boolean isRunTier = false;
-
     // trio denovo
     public static boolean isTrioDenovo = false;
     public static boolean isIncludeNoflag = false;
@@ -24,6 +22,8 @@ public class TrioCommand {
     // trio comp het
     public static boolean isTrioCompHet = false;
     public static double combFreq = Data.NO_FILTER;
+
+    public static boolean isRunTier = false;
 
     public static void initDenovoOptions(Iterator<CommandOption> iterator) {
         CommandOption option;

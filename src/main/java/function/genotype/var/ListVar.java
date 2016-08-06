@@ -2,10 +2,12 @@ package function.genotype.var;
 
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
+import function.genotype.vargeno.VarGenoCommand;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import utils.CommonCommand;
 import utils.ErrorManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
