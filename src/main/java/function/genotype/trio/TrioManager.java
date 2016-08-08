@@ -14,6 +14,7 @@ import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -23,6 +24,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import utils.MathManager;
 
 /**
  *
@@ -31,6 +33,12 @@ import java.util.HashSet;
 public class TrioManager {
 
     private static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
+
+    public static final String[] COMP_HET_FLAG = {
+        "compound heterozygote", // 0
+        "possibly compound heterozygote", // 1
+        "no flag" //2
+    };
 
     static ArrayList<Trio> trioList = new ArrayList<>();
     static HashSet<Integer> parentIdSet = new HashSet();
@@ -380,5 +388,148 @@ public class TrioManager {
         } else { // no wild cardm so it is a final rule
             denovoRules.put(key, value.toLowerCase());
         }
+    }
+
+    public static String getCompHetStatus(
+            int cGeno1, int cCov1,
+            int mGeno1, int mCov1,
+            int fGeno1, int fCov1,
+            boolean isMinorRef1,
+            int cGeno2, int cCov2,
+            int mGeno2, int mCov2,
+            int fGeno2, int fCov2,
+            boolean isMinorRef2) {
+        int minCov = GenotypeLevelFilterCommand.minCoverage;
+
+        // to limit confusion, we swap genotypes 0<->2 if isMinorRef
+        // i.e. hom ref<->hom variant
+        // that enables us to ignore the isMinorRef aspect thereafter
+        if (isMinorRef1) {
+            cGeno1 = swapGenotypes(cGeno1);
+            fGeno1 = swapGenotypes(fGeno1);
+            mGeno1 = swapGenotypes(mGeno1);
+        }
+        if (isMinorRef2) {
+            cGeno2 = swapGenotypes(cGeno2);
+            fGeno2 = swapGenotypes(fGeno2);
+            mGeno2 = swapGenotypes(mGeno2);
+        }
+        // exclude if the child is missing any call
+        if (cGeno1 == Data.NA || cGeno2 == Data.NA) {
+            return COMP_HET_FLAG[2];
+        }
+        // exclude if the child is homozygous, wild type or variant, for either variant
+        if (((cGeno1 == Index.REF || cGeno1 == Index.HOM) && cCov1 >= minCov)
+                || ((cGeno2 == Index.REF || cGeno2 == Index.HOM) && cCov2 >= minCov)) {
+            return COMP_HET_FLAG[2];
+        }
+        if ((fGeno1 == Data.NA && mGeno1 == Data.NA) || (fGeno2 == Data.NA && mGeno2 == Data.NA)) {
+            // if both parents are missing the same call, exclude this candidate
+            return COMP_HET_FLAG[2];
+        }
+        if ((fGeno1 == Data.NA && fGeno2 == Data.NA) || (mGeno1 == Data.NA && mGeno2 == Data.NA)) {
+            // if one parent is missing both calls, exclude this candidate
+            return COMP_HET_FLAG[2];
+        }
+        // if any parental call is hom at at least minCov depth, exclude
+        if ((fGeno1 == Index.HOM && fCov1 >= minCov) || (fGeno2 == Index.HOM && fCov2 >= minCov)
+                || (mGeno1 == Index.HOM && mCov1 >= minCov) || (mGeno2 == Index.HOM && mCov2 >= minCov)) {
+            return COMP_HET_FLAG[2];
+        }
+        // if either parent has both variants, exclude
+        if (((fGeno1 == Index.HET || fGeno1 == Index.HOM) && (fGeno2 == Index.HET || fGeno2 == Index.HOM))
+                || ((mGeno1 == Index.HET || mGeno1 == Index.HOM) && (mGeno2 == Index.HET || mGeno2 == Index.HOM))) {
+            return COMP_HET_FLAG[2];
+        }
+        // if either parent has neither variant, exclude
+        if ((fGeno1 == Index.REF && fCov1 >= minCov && fGeno2 == Index.REF && fCov2 >= minCov)
+                || (mGeno1 == Index.REF && mCov1 >= minCov && mGeno2 == Index.REF && mCov2 >= minCov)) {
+            return COMP_HET_FLAG[2];
+        }
+        // if both parents are wild type for the same variant, exclude
+        if ((fGeno1 == Index.REF && fCov1 >= minCov && mGeno1 == Index.REF && mCov1 >= minCov)
+                || (fGeno2 == Index.REF && fCov2 >= minCov && mGeno2 == Index.REF && mCov2 >= minCov)) {
+            return COMP_HET_FLAG[2];
+        }
+        // if both parents have the same variant, exclude
+        if (((fGeno1 == Index.HET || fGeno1 == Index.HOM) && (mGeno1 == Index.HET || mGeno1 == Index.HOM))
+                || ((fGeno2 == Index.HET || fGeno2 == Index.HOM) && (mGeno2 == Index.HET || mGeno2 == Index.HOM))) {
+            return COMP_HET_FLAG[2];
+        }
+        // we've excluded all that should be excluded - the possibilities are now that
+        // the compound het is "Shared" or that it's "Possibly Shared", i.e. there's a
+        // possibility the variants don't segregate properly but there wasn't sufficient
+        // cause to exclude entirely
+        if ((fGeno1 == Index.HET && fGeno2 == Index.REF && mGeno1 == Index.REF && mGeno2 == Index.HET)
+                || (fGeno1 == Index.REF && fGeno2 == Index.HET && mGeno1 == Index.HET && mGeno2 == Index.REF)) {
+            if (cGeno1 == Index.HET && cGeno2 == Index.HET) {
+                return COMP_HET_FLAG[0];
+            } else {
+                return COMP_HET_FLAG[1];
+            }
+        } else {
+            return COMP_HET_FLAG[1];
+        }
+    }
+
+    private static int swapGenotypes(
+            int genotype) {
+        switch (genotype) {
+            case Index.REF:
+                return Index.HOM;
+            case Index.HOM:
+                return Index.REF;
+            default:
+                return genotype;
+        }
+    }
+
+    /*
+     * The number of people who have BOTH of the variants divided by the total
+     * number of covered people. freq[0] Frequency of Variant #1 & #2
+     * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
+     * (co-occurance) in ctrls
+     */
+    public static double[] getCoOccurrenceFreq(TrioOutput output1, TrioOutput output2) {
+        double[] freq = new double[2];
+
+        int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
+        int totalCaseCount = 0, totalCtrlCount = 0;
+
+        for (Sample sample : SampleManager.getList()) {
+            if (sample.getName().equals(output1.fatherName)
+                    || sample.getName().equals(output1.motherName)) // ignore parents trio
+            {
+                continue;
+            }
+
+            boolean isCoQualifiedGeno = isCoQualifiedGeno(output1, output2, sample.getIndex());
+
+            if (sample.isCase()) {
+                totalCaseCount++;
+                if (isCoQualifiedGeno) {
+                    quanlifiedCaseCount++;
+                }
+            } else {
+                totalCtrlCount++;
+                if (isCoQualifiedGeno) {
+                    qualifiedCtrlCount++;
+                }
+            }
+        }
+
+        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
+        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
+
+        return freq;
+    }
+
+    private static boolean isCoQualifiedGeno(TrioOutput output1,
+            TrioOutput output2, int index) {
+        int geno1 = output1.getCalledVariant().getGenotype(index);
+        int geno2 = output2.getCalledVariant().getGenotype(index);
+
+        return output1.isQualifiedGeno(geno1)
+                && output2.isQualifiedGeno(geno2);
     }
 }

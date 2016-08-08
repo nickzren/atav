@@ -16,6 +16,8 @@ import utils.MathManager;
  */
 public class TrioOutput extends Output implements Comparable {
 
+    String denovoFlag = "";
+
     // Trio Family data
     Sample child;
     Carrier cCarrier;
@@ -97,6 +99,28 @@ public class TrioOutput extends Output implements Comparable {
 
             genoCount[Index.MISSING][sample.getPheno()]--;
         }
+    }
+
+    public void initDenovoFlag(Sample child) {
+        int mGenotype = convertMissing2HomRef(mGeno);
+        int fGenotype = convertMissing2HomRef(fGeno);
+
+        denovoFlag = TrioManager.getStatus(calledVar.getChrNum(),
+                !isMinorRef, child.isMale(),
+                cGeno, cSamtoolsRawCoverage,
+                mGenotype, mSamtoolsRawCoverage,
+                fGenotype, fSamtoolsRawCoverage);
+    }
+
+    /*
+     * convert all missing genotype to hom ref for parents
+     */
+    private int convertMissing2HomRef(int geno) {
+        if (geno == Data.NA) {
+            return Index.REF;
+        }
+
+        return geno;
     }
 
     @Override

@@ -17,9 +17,7 @@ import utils.ThirdPartyToolManager;
 public class ListTrioDenovo extends AnalysisBase4CalledVar {
 
     BufferedWriter bwDenovo = null;
-    BufferedWriter bwDenovoNoFlag = null;
     final String denovoFilePath = CommonCommand.outputPath + "denovoandhom.csv";
-    final String denovoNoFlagFilePath = CommonCommand.outputPath + "denovoandhom_noflag.csv";
 
     @Override
     public void initOutput() {
@@ -27,12 +25,6 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
             bwDenovo = new BufferedWriter(new FileWriter(denovoFilePath));
             bwDenovo.write(TrioManager.getTitle4Denovo());
             bwDenovo.newLine();
-
-            if (TrioCommand.isIncludeNoFlag) {
-                bwDenovoNoFlag = new BufferedWriter(new FileWriter(denovoNoFlagFilePath));
-                bwDenovoNoFlag.write(TrioManager.getTitle4Denovo());
-                bwDenovoNoFlag.newLine();
-            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -47,11 +39,6 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
         try {
             bwDenovo.flush();
             bwDenovo.close();
-
-            if (TrioCommand.isIncludeNoFlag) {
-                bwDenovoNoFlag.flush();
-                bwDenovoNoFlag.close();
-            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -76,7 +63,7 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
-            DenovoOutput output = new DenovoOutput(calledVar);
+            TrioOutput output = new TrioOutput(calledVar);
 
             output.countSampleGeno();
 
@@ -106,15 +93,13 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
         }
     }
 
-    private void doOutput(DenovoOutput output) throws Exception {
+    private void doOutput(TrioOutput output) throws Exception {
         if (!output.denovoFlag.equals("no flag") && !output.denovoFlag.equals("unknown")) {
             doOutput(bwDenovo, output);
-        } else if (TrioCommand.isIncludeNoFlag) {
-            doOutput(bwDenovoNoFlag, output);
         }
     }
 
-    private void doOutput(BufferedWriter bw, DenovoOutput output) throws Exception {
+    private void doOutput(BufferedWriter bw, TrioOutput output) throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append(output.child.getFamilyId()).append(",");
         sb.append(output.child.getName()).append(",");

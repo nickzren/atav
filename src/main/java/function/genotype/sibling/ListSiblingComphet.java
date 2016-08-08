@@ -5,6 +5,8 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.annotation.base.GeneManager;
 import function.genotype.trio.ListTrioCompHet;
+import function.genotype.trio.TrioManager;
+import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -185,16 +187,16 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     }
 
     private String getFlag(String child1Flag, String child2Flag) {
-        if (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[0])) {
+        if (child1Flag.equals(COMP_HET_FLAG[0]) && child2Flag.equals(COMP_HET_FLAG[0])) {
             return FLAG[0]; // Shared
-        } else if ((child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[0]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))) {
+        } else if ((child1Flag.equals(COMP_HET_FLAG[1]) && child2Flag.equals(COMP_HET_FLAG[0]))
+                || (child1Flag.equals(COMP_HET_FLAG[1]) && child2Flag.equals(COMP_HET_FLAG[1]))
+                || (child1Flag.equals(COMP_HET_FLAG[0]) && child2Flag.equals(COMP_HET_FLAG[1]))) {
             return FLAG[1]; // Possibly shared
-        } else if ((child1Flag.equals(ListTrioCompHet.FLAG[2]) && child2Flag.equals(ListTrioCompHet.FLAG[0]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[2]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[2]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[2]))) {
+        } else if ((child1Flag.equals(COMP_HET_FLAG[2]) && child2Flag.equals(COMP_HET_FLAG[0]))
+                || (child1Flag.equals(COMP_HET_FLAG[2]) && child2Flag.equals(COMP_HET_FLAG[1]))
+                || (child1Flag.equals(COMP_HET_FLAG[1]) && child2Flag.equals(COMP_HET_FLAG[2]))
+                || (child1Flag.equals(COMP_HET_FLAG[0]) && child2Flag.equals(COMP_HET_FLAG[2]))) {
             return FLAG[2]; // Not shared
         }
 
@@ -219,7 +221,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
         int fGeno2 = output2.getCalledVariant().getGenotype(father.getIndex());
         int fCov2 = output2.getCalledVariant().getCoverage(father.getIndex());
 
-        return ListTrioCompHet.getCompHetStatus(
+        return TrioManager.getCompHetStatus(
                 cGeno1, cCov1,
                 mGeno1, mCov1,
                 fGeno1, fCov1,
