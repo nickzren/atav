@@ -239,8 +239,8 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             return FLAG[2];
         }
         // exclude if the child is homozygous, wild type or variant, for either variant
-        if (((cGeno1 == 0 || cGeno1 == 2) && cCov1 >= minCov)
-                || ((cGeno2 == 0 || cGeno2 == 2) && cCov2 >= minCov)) {
+        if (((cGeno1 == Index.REF || cGeno1 == Index.HOM) && cCov1 >= minCov)
+                || ((cGeno2 == Index.REF || cGeno2 == Index.HOM) && cCov2 >= minCov)) {
             return FLAG[2];
         }
         if ((fGeno1 == Data.NA && mGeno1 == Data.NA) || (fGeno2 == Data.NA && mGeno2 == Data.NA)) {
@@ -252,37 +252,37 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             return FLAG[2];
         }
         // if any parental call is hom at at least minCov depth, exclude
-        if ((fGeno1 == 2 && fCov1 >= minCov) || (fGeno2 == 2 && fCov2 >= minCov)
-                || (mGeno1 == 2 && mCov1 >= minCov) || (mGeno2 == 2 && mCov2 >= minCov)) {
+        if ((fGeno1 == Index.HOM && fCov1 >= minCov) || (fGeno2 == Index.HOM && fCov2 >= minCov)
+                || (mGeno1 == Index.HOM && mCov1 >= minCov) || (mGeno2 == Index.HOM && mCov2 >= minCov)) {
             return FLAG[2];
         }
         // if either parent has both variants, exclude
-        if (((fGeno1 == 1 || fGeno1 == 2) && (fGeno2 == 1 || fGeno2 == 2))
-                || ((mGeno1 == 1 || mGeno1 == 2) && (mGeno2 == 1 || mGeno2 == 2))) {
+        if (((fGeno1 == Index.HET || fGeno1 == Index.HOM) && (fGeno2 == Index.HET || fGeno2 == Index.HOM))
+                || ((mGeno1 == Index.HET || mGeno1 == Index.HOM) && (mGeno2 == Index.HET || mGeno2 == Index.HOM))) {
             return FLAG[2];
         }
         // if either parent has neither variant, exclude
-        if ((fGeno1 == 0 && fCov1 >= minCov && fGeno2 == 0 && fCov2 >= minCov)
-                || (mGeno1 == 0 && mCov1 >= minCov && mGeno2 == 0 && mCov2 >= minCov)) {
+        if ((fGeno1 == Index.REF && fCov1 >= minCov && fGeno2 == Index.REF && fCov2 >= minCov)
+                || (mGeno1 == Index.REF && mCov1 >= minCov && mGeno2 == Index.REF && mCov2 >= minCov)) {
             return FLAG[2];
         }
         // if both parents are wild type for the same variant, exclude
-        if ((fGeno1 == 0 && fCov1 >= minCov && mGeno1 == 0 && mCov1 >= minCov)
-                || (fGeno2 == 0 && fCov2 >= minCov && mGeno2 == 0 && mCov2 >= minCov)) {
+        if ((fGeno1 == Index.REF && fCov1 >= minCov && mGeno1 == Index.REF && mCov1 >= minCov)
+                || (fGeno2 == Index.REF && fCov2 >= minCov && mGeno2 == Index.REF && mCov2 >= minCov)) {
             return FLAG[2];
         }
         // if both parents have the same variant, exclude
-        if (((fGeno1 == 1 || fGeno1 == 2) && (mGeno1 == 1 || mGeno1 == 2))
-                || ((fGeno2 == 1 || fGeno2 == 2) && (mGeno2 == 1 || mGeno2 == 2))) {
+        if (((fGeno1 == Index.HET || fGeno1 == Index.HOM) && (mGeno1 == Index.HET || mGeno1 == Index.HOM))
+                || ((fGeno2 == Index.HET || fGeno2 == Index.HOM) && (mGeno2 == Index.HET || mGeno2 == Index.HOM))) {
             return FLAG[2];
         }
         // we've excluded all that should be excluded - the possibilities are now that
         // the compound het is "Shared" or that it's "Possibly Shared", i.e. there's a
         // possibility the variants don't segregate properly but there wasn't sufficient
         // cause to exclude entirely
-        if ((fGeno1 == 1 && fGeno2 == 0 && mGeno1 == 0 && mGeno2 == 1)
-                || (fGeno1 == 0 && fGeno2 == 1 && mGeno1 == 1 && mGeno2 == 0)) {
-            if (cGeno1 == 1 && cGeno2 == 1) {
+        if ((fGeno1 == Index.HET && fGeno2 == Index.REF && mGeno1 == Index.REF && mGeno2 == Index.HET)
+                || (fGeno1 == Index.REF && fGeno2 == Index.HET && mGeno1 == Index.HET && mGeno2 == Index.REF)) {
+            if (cGeno1 == Index.HET && cGeno2 == Index.HET) {
                 return FLAG[0];
             } else {
                 return FLAG[1];
@@ -295,10 +295,10 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     private static int swapGenotypes(
             int genotype) {
         switch (genotype) {
-            case 0:
-                return 2;
-            case 2:
-                return 0;
+            case Index.REF:
+                return Index.HOM;
+            case Index.HOM:
+                return Index.REF;
             default:
                 return genotype;
         }
