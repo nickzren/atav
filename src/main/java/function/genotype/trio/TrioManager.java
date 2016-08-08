@@ -1,5 +1,15 @@
 package function.genotype.trio;
 
+import function.external.evs.EvsManager;
+import function.external.exac.ExacManager;
+import function.external.genomes.GenomesManager;
+import function.external.gerp.GerpManager;
+import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
+import function.external.trap.TrapManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
@@ -26,6 +36,113 @@ public class TrioManager {
     static HashSet<Integer> parentIdSet = new HashSet();
     static HashMap<String, String> denovoRules = new HashMap<>();
 
+    public static String getTitle4Denovo() {
+        return "Family ID,"
+                + "Child,"
+                + "Mother,"
+                + "Father,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Denovo Flag,"
+                + getTitleByVariant();
+    }
+
+    public static String getTitle4CompHet() {
+        return "Family ID,"
+                + "Child,"
+                + "Mother,"
+                + "Father,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "Comp Het Flag,"
+                + "Var Case Freq #1 & #2 (co-occurance),"
+                + "Var Ctrl Freq #1 & #2 (co-occurance),"
+                + initVarTitleStr("1")
+                + initVarTitleStr("2");
+    }
+
+    private static String initVarTitleStr(String var) {
+        String[] columnList = getTitleByVariant().split(",");
+
+        StringBuilder sb = new StringBuilder();
+
+        for (String column : columnList) {
+            sb.append(column).append(" (#").append(var).append(")" + ",");
+        }
+
+        return sb.toString();
+    }
+
+    private static String getTitleByVariant() {
+        return "Variant ID,"
+                + "Variant Type,"
+                + "Rs Number,"
+                + "Ref Allele,"
+                + "Alt Allele,"
+                + "CADD Score Phred,"
+                + GerpManager.getTitle()
+                + TrapManager.getTitle()
+                + "Is Minor Ref,"
+                + "Genotype (child),"
+                + "Samtools Raw Coverage (child),"
+                + "Gatk Filtered Coverage (child),"
+                + "Reads Alt (child),"
+                + "Reads Ref (child),"
+                + "Percent Read Alt (child),"
+                + "Percent Alt Read Binomial P (child),"
+                + "Pass Fail Status (child),"
+                + "Genotype Qual GQ (child),"
+                + "Qual By Depth QD (child),"
+                + "Haplotype Score (child),"
+                + "Rms Map Qual MQ (child),"
+                + "Qual (child),"
+                + "Genotype (mother),"
+                + "Samtools Raw Coverage (mother),"
+                + "Gatk Filtered Coverage (mother),"
+                + "Reads Alt (mother),"
+                + "Reads Ref (mother),"
+                + "Percent Read Alt (mother),"
+                + "Genotype (father),"
+                + "Samtools Raw Coverage (father),"
+                + "Gatk Filtered Coverage (father),"
+                + "Reads Alt (father),"
+                + "Reads Ref (father),"
+                + "Percent Read Alt (father),"
+                + "Major Hom Case,"
+                + "Het Case,"
+                + "Minor Hom Case,"
+                + "Minor Hom Case Freq,"
+                + "Het Case Freq,"
+                + "Major Hom Ctrl,"
+                + "Het Ctrl,"
+                + "Minor Hom Ctrl,"
+                + "Minor Hom Ctrl Freq,"
+                + "Het Ctrl Freq,"
+                + "Missing Case,"
+                + "QC Fail Case,"
+                + "Missing Ctrl,"
+                + "QC Fail Ctrl,"
+                + "Case MAF,"
+                + "Ctrl MAF,"
+                + "Case HWE_P,"
+                + "Ctrl HWE_P,"
+                + EvsManager.getTitle()
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Function,"
+                + "Codon Change,"
+                + "Gene Transcript (AA Change),"
+                + ExacManager.getTitle()
+                + KaviarManager.getTitle()
+                + KnownVarManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GenomesManager.getTitle()
+                + MgiManager.getTitle();
+    }
+
     public static void init() {
         initList();
         initDenovoRules();
@@ -33,7 +150,6 @@ public class TrioManager {
 
     public static void initList() {
         for (Sample sample : SampleManager.getList()) {
-
             if (sample.isCase()
                     && !sample.getPaternalId().equals("0")
                     && !sample.getMaternalId().equals("0")

@@ -26,8 +26,8 @@ import utils.ThirdPartyToolManager;
  */
 public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
-    ArrayList<CompHetOutput> outputList = new ArrayList<>();
-    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
+    ArrayList<TrioOutput> outputList = new ArrayList<>();
+    ArrayList<ArrayList<TrioOutput>> geneListVector = new ArrayList<>();
     HashSet<String> currentGeneList = new HashSet<>();
     BufferedWriter bwCompHet = null;
     BufferedWriter bwCompHetNoFlag = null;
@@ -43,12 +43,12 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwCompHet = new BufferedWriter(new FileWriter(compHetFilePath));
-            bwCompHet.write(CompHetOutput.getTitle());
+            bwCompHet.write(TrioManager.getTitle4CompHet());
             bwCompHet.newLine();
 
-            if (TrioCommand.isIncludeNoflag) {
+            if (TrioCommand.isIncludeNoFlag) {
                 bwCompHetNoFlag = new BufferedWriter(new FileWriter(compHetNoFlagFilePath));
-                bwCompHetNoFlag.write(CompHetOutput.getTitle());
+                bwCompHetNoFlag.write(TrioManager.getTitle4CompHet());
                 bwCompHetNoFlag.newLine();
             }
         } catch (Exception ex) {
@@ -69,7 +69,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             bwCompHet.flush();
             bwCompHet.close();
 
-            if (TrioCommand.isIncludeNoflag) {
+            if (TrioCommand.isIncludeNoFlag) {
                 bwCompHetNoFlag.flush();
                 bwCompHetNoFlag.close();
             }
@@ -97,7 +97,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
-            CompHetOutput output = new CompHetOutput(calledVar);
+            TrioOutput output = new TrioOutput(calledVar);
 
             output.countSampleGeno();
 
@@ -113,7 +113,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                     int geno = output.getCalledVariant().getGenotype(trio.getChild().getIndex());
 
                     if (output.isQualifiedGeno(geno)) {
-                        outputList.add((CompHetOutput) output.clone());
+                        outputList.add((TrioOutput) output.clone());
                     }
                 }
 
@@ -134,7 +134,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         initGeneVariantList();
 
         try {
-            for (ArrayList<CompHetOutput> list : geneListVector) {
+            for (ArrayList<TrioOutput> list : geneListVector) {
                 LogManager.writeAndPrint("Analyzing qualified variants in gene ("
                         + list.get(0).getCalledVariant().getGeneName() + ")");
 
@@ -146,9 +146,9 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     }
 
     private void initGeneVariantList() {
-        ArrayList<CompHetOutput> geneOutputList = null;
+        ArrayList<TrioOutput> geneOutputList = null;
 
-        for (CompHetOutput output : outputList) {
+        for (TrioOutput output : outputList) {
             if (!currentGeneList.contains(output.getCalledVariant().getGeneName())) {
                 currentGeneList.add(output.getCalledVariant().getGeneName());
 
@@ -167,7 +167,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
      * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
      * (co-occurance) in ctrls
      */
-    private double[] getCoOccurrenceFreq(CompHetOutput output1, CompHetOutput output2) {
+    private double[] getCoOccurrenceFreq(TrioOutput output1, TrioOutput output2) {
         double[] freq = new double[2];
 
         int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
@@ -201,8 +201,8 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         return freq;
     }
 
-    private boolean isCoQualifiedGeno(CompHetOutput output1,
-            CompHetOutput output2, int index) {
+    private boolean isCoQualifiedGeno(TrioOutput output1,
+            TrioOutput output2, int index) {
         int geno1 = output1.getCalledVariant().getGenotype(index);
         int geno2 = output2.getCalledVariant().getGenotype(index);
 
@@ -304,13 +304,13 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         }
     }
 
-    private void doOutput(ArrayList<CompHetOutput> geneOutputList) {
+    private void doOutput(ArrayList<TrioOutput> geneOutputList) {
         StringBuilder sb = new StringBuilder();
 
         try {
             int outputSize = geneOutputList.size();
 
-            CompHetOutput output1, output2;
+            TrioOutput output1, output2;
 
             String flag;
 
@@ -354,7 +354,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                                 if (flag.equals(FLAG[0]) || flag.equals(FLAG[1])) {
                                     bwCompHet.write(sb.toString());
                                     bwCompHet.newLine();
-                                } else if (TrioCommand.isIncludeNoflag) {
+                                } else if (TrioCommand.isIncludeNoFlag) {
                                     bwCompHetNoFlag.write(sb.toString());
                                     bwCompHetNoFlag.newLine();
                                 }
