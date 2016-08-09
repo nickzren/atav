@@ -117,7 +117,7 @@ public class NonCarrier {
     }
 
     private void setMissing() {
-        if (TrioCommand.isTrioDenovo
+        if (TrioCommand.isListTrio
                 && TrioManager.isParent(sampleId)) {
             // do nothing
         } else {

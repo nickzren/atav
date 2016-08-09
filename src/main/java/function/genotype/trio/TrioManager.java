@@ -51,7 +51,6 @@ public class TrioManager {
                 + "Father,"
                 + "Gene Name,"
                 + "Artifacts in Gene,"
-                + "Denovo Flag,"
                 + getTitleByVariant();
     }
 
@@ -84,6 +83,7 @@ public class TrioManager {
     private static String getTitleByVariant() {
         return "Variant ID,"
                 + "Variant Type,"
+                + "Denovo Flag,"
                 + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
@@ -152,11 +152,11 @@ public class TrioManager {
     }
 
     public static void init() {
-        initList();
+        initTriosFromInputSamples();
         initDenovoRules();
     }
 
-    public static void initList() {
+    private static void initTriosFromInputSamples() {
         for (Sample sample : SampleManager.getList()) {
             if (sample.isCase()
                     && !sample.getPaternalId().equals("0")
@@ -187,14 +187,10 @@ public class TrioManager {
     }
 
     public static boolean isParent(int id) {
-        if (parentIdSet.isEmpty()) {
-            return false;
-        }
-
         return parentIdSet.contains(id);
     }
 
-    public static void initDenovoRules() {
+    private static void initDenovoRules() {
         String trioRulesPath = DENOVO_RULES_PATH;
 
         if (CommonCommand.isDebug) {

@@ -20,17 +20,25 @@ import utils.ThirdPartyToolManager;
  *
  * @author nick
  */
-public class ListTrioCompHet extends AnalysisBase4CalledVar {
+public class ListTrio extends AnalysisBase4CalledVar {
+
+    BufferedWriter bwDenovo = null;
+    final String denovoFilePath = CommonCommand.outputPath + "denovoandhom.csv";
+
+    BufferedWriter bwCompHet = null;
+    final String compHetFilePath = CommonCommand.outputPath + "comphet.csv";
 
     ArrayList<TrioOutput> outputList = new ArrayList<>();
     ArrayList<ArrayList<TrioOutput>> geneListVector = new ArrayList<>();
     HashSet<String> currentGeneList = new HashSet<>();
-    BufferedWriter bwCompHet = null;
-    final String compHetFilePath = CommonCommand.outputPath + "comphet.csv";
 
     @Override
     public void initOutput() {
         try {
+            bwDenovo = new BufferedWriter(new FileWriter(denovoFilePath));
+            bwDenovo.write(TrioManager.getTitle4Denovo());
+            bwDenovo.newLine();
+
             bwCompHet = new BufferedWriter(new FileWriter(compHetFilePath));
             bwCompHet.write(TrioManager.getTitle4CompHet());
             bwCompHet.newLine();
@@ -49,6 +57,9 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     @Override
     public void closeOutput() {
         try {
+            bwDenovo.flush();
+            bwDenovo.close();
+
             bwCompHet.flush();
             bwCompHet.close();
         } catch (Exception ex) {
@@ -59,13 +70,15 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
     @Override
     public void doAfterCloseOutput() {
         if (TrioCommand.isRunTier) {
+            ThirdPartyToolManager.runTrioDenovoTier(denovoFilePath);
+
             ThirdPartyToolManager.runTrioCompHetTier(compHetFilePath);
         }
     }
 
     @Override
     public void beforeProcessDatabaseData() {
-        TrioManager.initList();
+        TrioManager.init();
     }
 
     @Override
@@ -91,6 +104,10 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                     int geno = output.getCalledVariant().getGenotype(trio.getChild().getIndex());
 
                     if (output.isQualifiedGeno(geno)) {
+                        output.initDenovoFlag(trio.getChild());
+
+                        doDenovoOutput(output);
+
                         outputList.add((TrioOutput) output.clone());
                     }
                 }
@@ -99,6 +116,21 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
             }
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    private void doDenovoOutput(TrioOutput output) throws Exception {
+        if (!output.denovoFlag.equals("no flag") && !output.denovoFlag.equals("unknown")) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(output.child.getFamilyId()).append(",");
+            sb.append(output.child.getName()).append(",");
+            sb.append(output.motherName).append(",");
+            sb.append(output.fatherName).append(",");
+            sb.append("'").append(output.getCalledVariant().getGeneName()).append("'").append(",");
+            sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output.getCalledVariant().getGeneName()))).append(",");
+            sb.append(output.toString());
+            bwDenovo.write(sb.toString());
+            bwDenovo.newLine();
         }
     }
 
@@ -111,15 +143,11 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
         initGeneVariantList();
 
-        try {
-            for (ArrayList<TrioOutput> list : geneListVector) {
-                LogManager.writeAndPrint("Analyzing qualified variants in gene ("
-                        + list.get(0).getCalledVariant().getGeneName() + ")");
+        for (ArrayList<TrioOutput> list : geneListVector) {
+            LogManager.writeAndPrint("Analyzing qualified variants in gene ("
+                    + list.get(0).getCalledVariant().getGeneName() + ")");
 
-                doOutput(list);
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
+            processVariantsByGene(list);
         }
     }
 
@@ -139,7 +167,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
         }
     }
 
-    private void doOutput(ArrayList<TrioOutput> geneVariantList) {
+    private void processVariantsByGene(ArrayList<TrioOutput> geneVariantList) {
         try {
             for (int i = 0; i < geneVariantList.size() - 1; i++) {
                 TrioOutput output1 = geneVariantList.get(i);
@@ -152,7 +180,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                         String compHetFlag = getTrioCompHetFlag(output1, output2);
 
                         if (compHetFlag.equals(COMP_HET_FLAG[0]) || compHetFlag.equals(COMP_HET_FLAG[1])) {
-                            doOutput(bwCompHet, compHetFlag, output1, output2);
+                            doCompHetOutput(bwCompHet, compHetFlag, output1, output2);
                         }
                     }
                 }
@@ -174,7 +202,7 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
                 output2.isMinorRef());
     }
 
-    private void doOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
+    private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
         double[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
 
         StringBuilder sb = new StringBuilder();
@@ -203,6 +231,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "It is running a list trio compound heterozygosity function...";
+        return "It is running a list trio function...";
     }
 }

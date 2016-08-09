@@ -94,19 +94,15 @@ public class CollapsingCompHet extends CollapsingBase {
 
         initGeneVariantList();
 
-        try {
-            for (ArrayList<CompHetOutput> list : geneListVector) {
-                String geneName = list.get(0).geneName;
+        for (ArrayList<CompHetOutput> list : geneListVector) {
+            String geneName = list.get(0).geneName;
 
-                LogManager.writeAndPrint("Analyzing qualified variants in gene ("
-                        + geneName + ")");
+            LogManager.writeAndPrint("Analyzing qualified variants in gene ("
+                    + geneName + ")");
 
-                CollapsingSummary summary = summaryMap.get(geneName);
+            CollapsingSummary summary = summaryMap.get(geneName);
 
-                doOutput(list, summary);
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
+            doOutput(list, summary);
         }
     }
 
@@ -277,7 +273,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
         return freq;
     }
-    
+
     private boolean isCoQualifiedGeno(CompHetOutput output1,
             CompHetOutput output2, int index) {
         int geno1 = output1.getCalledVariant().getGenotype(index);

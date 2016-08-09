@@ -12,31 +12,10 @@ import utils.CommandOption;
  */
 public class TrioCommand {
 
-    public static boolean isTrioDenovo = false;
-    public static boolean isTrioCompHet = false;
+    public static boolean isListTrio = false;
     public static boolean isRunTier = false;
 
-    public static void initDenovoOptions(Iterator<CommandOption> iterator) {
-        CommandOption option;
-
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            switch (option.getName()) {
-                case "--run-tier":
-                    isRunTier = true;
-                    EvsCommand.isIncludeEvs = true;
-                    ExacCommand.isIncludeExac = true;
-                    KnownVarCommand.isIncludeKnownVar = true;
-                    break;
-                default:
-                    continue;
-            }
-
-            iterator.remove();
-        }
-    }
-
-    public static void initCompHetOptions(Iterator<CommandOption> iterator) {
+    public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
 
         while (iterator.hasNext()) {

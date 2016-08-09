@@ -4,7 +4,6 @@ import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.annotation.base.GeneManager;
-import function.genotype.trio.ListTrioCompHet;
 import function.genotype.trio.TrioManager;
 import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
 import utils.CommonCommand;
