@@ -37,7 +37,8 @@ public class TrioManager {
     public static final String[] COMP_HET_FLAG = {
         "compound heterozygote", // 0
         "possibly compound heterozygote", // 1
-        "no flag" //2
+        "no flag", //2
+        "possibly denovo compound heterozygote" // 3
     };
 
     static ArrayList<Trio> trioList = new ArrayList<>();
@@ -386,7 +387,7 @@ public class TrioManager {
         }
     }
 
-    public static String getCompHetStatus(
+    public static String getCompHetFlag(
             int cGeno1, int cCov1,
             int mGeno1, int mCov1,
             int fGeno1, int fCov1,
@@ -466,6 +467,47 @@ public class TrioManager {
         } else {
             return COMP_HET_FLAG[1];
         }
+    }
+
+    public static String getCompHetFlagByDenovo(
+            String compHetFlag,
+            int cGeno1, int mGeno1, int fGeno1, boolean isMinorRef1, String denovoFlag1,
+            int cGeno2, int mGeno2, int fGeno2, boolean isMinorRef2, String denovoFlag2) {
+        if (compHetFlag.equals(COMP_HET_FLAG[2])) {
+            if (isMinorRef1) {
+                cGeno1 = swapGenotypes(cGeno1);
+                fGeno1 = swapGenotypes(fGeno1);
+                mGeno1 = swapGenotypes(mGeno1);
+            }
+
+            if (isMinorRef2) {
+                cGeno2 = swapGenotypes(cGeno2);
+                fGeno2 = swapGenotypes(fGeno2);
+                mGeno2 = swapGenotypes(mGeno2);
+            }
+
+            if ((fGeno1 == Index.HET || fGeno1 == Index.HOM)
+                    && mGeno1 == Index.REF
+                    && cGeno1 == Index.HET
+                    && fGeno2 == Index.REF
+                    && mGeno2 == Index.REF
+                    && cGeno2 == Index.HET
+                    && denovoFlag2.equals("POSSIBLY DE NOVO")) {
+                return COMP_HET_FLAG[3];
+            }
+
+            if ((fGeno2 == Index.HET || fGeno2 == Index.HOM)
+                    && mGeno2 == Index.REF
+                    && cGeno2 == Index.HET
+                    && fGeno1 == Index.REF
+                    && mGeno1 == Index.REF
+                    && cGeno1 == Index.HET
+                    && denovoFlag1.equals("POSSIBLY DE NOVO")) {
+                return COMP_HET_FLAG[3];
+            }
+        }
+
+        return compHetFlag;
     }
 
     private static int swapGenotypes(

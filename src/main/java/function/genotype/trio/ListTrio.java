@@ -192,7 +192,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private String getTrioCompHetFlag(TrioOutput output1, TrioOutput output2) {
-        return TrioManager.getCompHetStatus(
+        String flag = TrioManager.getCompHetFlag(
                 output1.cGeno, output1.cSamtoolsRawCoverage,
                 output1.mGeno, output1.mSamtoolsRawCoverage,
                 output1.fGeno, output1.fSamtoolsRawCoverage,
@@ -201,6 +201,12 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 output2.mGeno, output2.mSamtoolsRawCoverage,
                 output2.fGeno, output2.fSamtoolsRawCoverage,
                 output2.isMinorRef());
+        
+        flag = TrioManager.getCompHetFlagByDenovo(flag, 
+                output1.cGeno, output1.mGeno, output1.fGeno, output1.isMinorRef(), output1.denovoFlag,
+                output2.cGeno, output2.mGeno, output2.fGeno, output2.isMinorRef(), output2.denovoFlag);
+        
+        return flag;
     }
 
     private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {

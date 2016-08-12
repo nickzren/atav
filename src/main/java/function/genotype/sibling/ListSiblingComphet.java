@@ -220,7 +220,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
         int fGeno2 = output2.getCalledVariant().getGenotype(father.getIndex());
         int fCov2 = output2.getCalledVariant().getCoverage(father.getIndex());
 
-        return TrioManager.getCompHetStatus(
+        return TrioManager.getCompHetFlag(
                 cGeno1, cCov1,
                 mGeno1, mCov1,
                 fGeno1, fCov1,
