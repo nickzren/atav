@@ -38,7 +38,7 @@ public class TrioManager {
         "compound heterozygote", // 0
         "possibly compound heterozygote", // 1
         "no flag", //2
-        "possibly denovo compound heterozygote" // 3
+        "denovo with inherited variant" // 3
     };
 
     static ArrayList<Trio> trioList = new ArrayList<>();
@@ -486,26 +486,24 @@ public class TrioManager {
                 mGeno2 = swapGenotypes(mGeno2);
             }
 
-            if ((fGeno1 == Index.HET || fGeno1 == Index.HOM)
-                    && mGeno1 == Index.REF
-                    && cGeno1 == Index.HET
-                    && fGeno2 == Index.REF
-                    && mGeno2 == Index.REF
-                    && cGeno2 == Index.HET
-                    && denovoFlag2.equals("POSSIBLY DE NOVO")) {
-                return COMP_HET_FLAG[3];
-            }
+	    // Only consider situations in which neither parent is homozygous for either variant
+	    if (fGeno1 != Index.HOM && mGeno1 != Index.HOM
+		    && fGeno2 != Index.HOM && mGeno2 != Index.HOM) {
+		    // If the child inherits a heterozygous variant and has a de novo variant,
+		    // it may be a new compound het.
+		    if ((fGeno1 == Index.HET || mGeno1 == Index.HET)
+			    && cGeno1 == Index.HET
+			    && denovoFlag2.equals("POSSIBLY DE NOVO")) {
+			return COMP_HET_FLAG[3];
+		    }
 
-            if ((fGeno2 == Index.HET || fGeno2 == Index.HOM)
-                    && mGeno2 == Index.REF
-                    && cGeno2 == Index.HET
-                    && fGeno1 == Index.REF
-                    && mGeno1 == Index.REF
-                    && cGeno1 == Index.HET
-                    && denovoFlag1.equals("POSSIBLY DE NOVO")) {
-                return COMP_HET_FLAG[3];
+		    if ((fGeno2 == Index.HET || mGeno2 == Index.HET)
+			    && cGeno2 == Index.HET
+			    && denovoFlag1.equals("POSSIBLY DE NOVO")) {
+			return COMP_HET_FLAG[3];
+		    }
             }
-        }
+	}
 
         return compHetFlag;
     }
