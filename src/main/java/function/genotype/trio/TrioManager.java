@@ -39,6 +39,7 @@ public class TrioManager {
         "possibly compound heterozygote", // 1
         "no flag", //2
         "denovo with inherited variant" // 3
+        "possibly denovo with inherited variant" // 4
     };
 
     static ArrayList<Trio> trioList = new ArrayList<>();
@@ -481,7 +482,8 @@ public class TrioManager {
             int fGeno2, int fCov2,
             boolean isMinorRef2,
             String denovoFlag2) {
-        if (compHetFlag.equals(COMP_HET_FLAG[2])) {
+        if (compHetFlag.equals(COMP_HET_FLAG[2])
+		&& cGeno1 != Data.NA && cGeno2 != Data.NA) {
             int minCov = GenotypeLevelFilterCommand.minCoverage;
             
             if (isMinorRef1) {
@@ -496,21 +498,82 @@ public class TrioManager {
                 mGeno2 = swapGenotypes(mGeno2);
             }
 
-            // Only consider situations in which neither parent is homozygous for either variant
-            if (fGeno1 != Index.HOM && mGeno1 != Index.HOM
-                    && fGeno2 != Index.HOM && mGeno2 != Index.HOM) {
-                // If the child inherits a heterozygous variant and has a de novo variant,
-                // it may be a new compound het.
-                if ((fGeno1 == Index.HET || mGeno1 == Index.HET)
-                        && cGeno1 == Index.HET
-                        && denovoFlag2.equals("POSSIBLY DE NOVO")) {
-                    return COMP_HET_FLAG[3];
-                }
-
-                if ((fGeno2 == Index.HET || mGeno2 == Index.HET)
-                        && cGeno2 == Index.HET
-                        && denovoFlag1.equals("POSSIBLY DE NOVO")) {
-                    return COMP_HET_FLAG[3];
+            // Only consider situations in which no one is homozygous for either variant,
+	    // and the child is not homozygous variant or wild-type for either.
+            int minCov = GenotypeLevelFilterCommand.minCoverage;
+            if (!((cGeno1 == Index.HOM || cGeno1 == Index.REF) && cCov1 >= minCov)
+	            && !((cGeno2 == Index.HOM || cGeno2 == Index.REF) && cCov2 >= minCov)
+	            && !(fGeno1 == Index.HOM && fCov1 >= minCov)
+	            && !(mGeno1 == Index.HOM && mCov1 >= minCov)
+	            && !(fGeno2 == Index.HOM && fCov2 >= minCov)
+	            && !(mGeno2 == Index.HOM && mCov2 >= minCov)) {
+		// Only consider situations in which one of the two variants is a de novo.
+		if (denovoFlag1.equals("POSSIBLY DE NOVO")
+		        ^ denovoFlag2.equals("POSSIBLY DE NOVO")) {
+			boolean confidentDenovo;
+			boolean confidentInherited;
+			int cCovDenovo, fCovDenovo, mCovDenovo;
+			int cCovInherited, fCovInherited, mCovInherited;
+			int cGenoDenovo, fGenoDenovo, mGenoDenovo;
+			int cGenoInherited, fGenoInherited, mGenoInherited;
+			if (denovoFlag1.equals("POSSIBLY DE NOVO")) {
+				cCovDenovo = cCov1;
+				cCovInherited = cCov2;
+				cGenoDenovo = cGeno1;
+				cGenoInherited = cGeno2;
+				fCovDenovo = fCov1;
+				fCovInherited = fCov2;
+				fGenoDenovo = fGeno1;
+				fGenoInherited = fGeno2;
+				mCovDenovo = mCov1;
+				mCovInherited = mCov2;
+				mGenoDenovo = mGeno1;
+				mGenoInherited = mGeno2;
+			}
+			else {
+				cCovDenovo = cCov2;
+				cCovInherited = cCov1;
+				cGenoDenovo = cGeno2;
+				cGenoInherited = cGeno1;
+				fCovDenovo = fCov2;
+				fCovInherited = fCov1;
+				fGenoDenovo = fGeno2;
+				fGenoInherited = fGeno1;
+				mCovDenovo = mCov2;
+				mCovInherited = mCov1;
+				mGenoDenovo = mGeno2;
+				mGenoInherited = mGeno1;
+			}
+			// Treat the de novo variant as high confidence if the flag
+			// is "POSSIBLY DE NOVO" and they all meet the coverage threshold
+			if (cCovDenovo >= minCov && fCovDenovo >= minCov
+				&& mCovDenovo >= minCov) {
+				confidentDenovo = true;
+				}
+			else {
+				confidentDenovo = false;
+			}
+			// Treat the inherited variant as high confidence if neither parent
+			// is homozygous or missing a genotype, at least one parent is heterozygous,
+			// and the child is heterozygous
+			if (cGenoInherited == Index.HET
+				&& !(fGenoInherited == Index.HOM || fGenoInherited == Data.NA)
+				&& !(mGenoInherited == Index.HOM || mGenoInherited == Data.NA)
+				&& (fGenoInherited == Index.HET || mGenoInherited == Index.HET)) {
+				confidentInherited = true;
+				}
+			else {
+				confidentInherited = false;
+			}
+			// Both variants are high confidence
+			if (confidentDenovo && confidentInherited) {
+				return COMP_HET_FLAG[3];
+			}
+			// Only one variant is high confidence
+			else if (confidentDenovo ^ confidentInherited) {
+				return COMP_HET_FLAG[4];
+			}
+			// Else, return no flag
                 }
             }
         }
