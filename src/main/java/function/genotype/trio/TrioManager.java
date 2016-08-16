@@ -38,7 +38,7 @@ public class TrioManager {
         "compound heterozygote", // 0
         "possibly compound heterozygote", // 1
         "no flag", //2
-        "denovo with inherited variant" // 3
+        "denovo with inherited variant", // 3
         "possibly denovo with inherited variant" // 4
     };
 
@@ -484,8 +484,6 @@ public class TrioManager {
             String denovoFlag2) {
         if (compHetFlag.equals(COMP_HET_FLAG[2])
 		&& cGeno1 != Data.NA && cGeno2 != Data.NA) {
-            int minCov = GenotypeLevelFilterCommand.minCoverage;
-            
             if (isMinorRef1) {
                 cGeno1 = swapGenotypes(cGeno1);
                 fGeno1 = swapGenotypes(fGeno1);
