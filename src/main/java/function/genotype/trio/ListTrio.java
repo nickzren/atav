@@ -203,8 +203,15 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 output2.isMinorRef());
         
         flag = TrioManager.getCompHetFlagByDenovo(flag, 
-                output1.cGeno, output1.mGeno, output1.fGeno, output1.isMinorRef(), output1.denovoFlag,
-                output2.cGeno, output2.mGeno, output2.fGeno, output2.isMinorRef(), output2.denovoFlag);
+                output1.cGeno, output1.cSamtoolsRawCoverage,
+                output1.mGeno, output1.mSamtoolsRawCoverage,
+                output1.fGeno, output1.fSamtoolsRawCoverage,
+                output1.isMinorRef(), 
+                output1.denovoFlag,
+                output2.cGeno, output2.cSamtoolsRawCoverage,
+                output2.mGeno, output2.mSamtoolsRawCoverage,
+                output2.fGeno, output2.fSamtoolsRawCoverage,
+                output2.isMinorRef(), output2.denovoFlag);
         
         return flag;
     }

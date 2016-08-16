@@ -471,9 +471,19 @@ public class TrioManager {
 
     public static String getCompHetFlagByDenovo(
             String compHetFlag,
-            int cGeno1, int mGeno1, int fGeno1, boolean isMinorRef1, String denovoFlag1,
-            int cGeno2, int mGeno2, int fGeno2, boolean isMinorRef2, String denovoFlag2) {
+            int cGeno1, int cCov1,
+            int mGeno1, int mCov1,
+            int fGeno1, int fCov1,
+            boolean isMinorRef1,
+            String denovoFlag1,
+            int cGeno2, int cCov2,
+            int mGeno2, int mCov2,
+            int fGeno2, int fCov2,
+            boolean isMinorRef2,
+            String denovoFlag2) {
         if (compHetFlag.equals(COMP_HET_FLAG[2])) {
+            int minCov = GenotypeLevelFilterCommand.minCoverage;
+            
             if (isMinorRef1) {
                 cGeno1 = swapGenotypes(cGeno1);
                 fGeno1 = swapGenotypes(fGeno1);
@@ -486,24 +496,24 @@ public class TrioManager {
                 mGeno2 = swapGenotypes(mGeno2);
             }
 
-	    // Only consider situations in which neither parent is homozygous for either variant
-	    if (fGeno1 != Index.HOM && mGeno1 != Index.HOM
-		    && fGeno2 != Index.HOM && mGeno2 != Index.HOM) {
-		    // If the child inherits a heterozygous variant and has a de novo variant,
-		    // it may be a new compound het.
-		    if ((fGeno1 == Index.HET || mGeno1 == Index.HET)
-			    && cGeno1 == Index.HET
-			    && denovoFlag2.equals("POSSIBLY DE NOVO")) {
-			return COMP_HET_FLAG[3];
-		    }
+            // Only consider situations in which neither parent is homozygous for either variant
+            if (fGeno1 != Index.HOM && mGeno1 != Index.HOM
+                    && fGeno2 != Index.HOM && mGeno2 != Index.HOM) {
+                // If the child inherits a heterozygous variant and has a de novo variant,
+                // it may be a new compound het.
+                if ((fGeno1 == Index.HET || mGeno1 == Index.HET)
+                        && cGeno1 == Index.HET
+                        && denovoFlag2.equals("POSSIBLY DE NOVO")) {
+                    return COMP_HET_FLAG[3];
+                }
 
-		    if ((fGeno2 == Index.HET || mGeno2 == Index.HET)
-			    && cGeno2 == Index.HET
-			    && denovoFlag1.equals("POSSIBLY DE NOVO")) {
-			return COMP_HET_FLAG[3];
-		    }
+                if ((fGeno2 == Index.HET || mGeno2 == Index.HET)
+                        && cGeno2 == Index.HET
+                        && denovoFlag1.equals("POSSIBLY DE NOVO")) {
+                    return COMP_HET_FLAG[3];
+                }
             }
-	}
+        }
 
         return compHetFlag;
     }
