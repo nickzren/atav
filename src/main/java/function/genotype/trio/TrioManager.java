@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import utils.MathManager;
 
 /**
@@ -495,90 +496,85 @@ public class TrioManager {
                 fGeno2 = swapGenotypes(fGeno2);
                 mGeno2 = swapGenotypes(mGeno2);
             }
-	    Set<String> deNovoFlags = new HashSet<String>();
-	    // These are the only flags we consider de novo.
-	    deNovoFlags.add("DE NOVO");
-	    deNovoFlags.add("NEWLY HEMIZYGOUS");
-	    deNovoFlags.add("NEWLY HEMIZYGOUS OR POSSIBLY DE NOVO");
-	    if (denovoFlag1.endswith("; IN REF")) {
-		    denovoFlag1 = denovoFlag1.substring(0, denovoFlag1.length() - 8);
-	    }
-	    if (denovoFlag2.endswith("; IN REF")) {
-		    denovoFlag2 = denovoFlag2.substring(0, denovoFlag1.length() - 8);
-	    }
-	    boolean variantOneDeNovo, variantTwoDeNovo;
-	    int variantOneConfidence, variantTwoConfidence;
-	    // Get rid of modifier prefixes.
-	    if (denovoFlag1.startswith("POSSIBLY ")) {
-		    denovoFlag1 = denovoFlag1.substring(9, denovoFlag1.length());
-		    variantOneConfidence = 1;
-	    }
-	    else if (denovoFlag1.startswith("UNLIKELY ")) {
-		    denovoFlag1 = denovoFlag1.substring(9, denovoFlag1.length());
-		    variantOneConfidence = 2;
-	    }
-	    else {
-		    variantOneConfidence = 0;
-	    }
-	    if (denovoFlag2.startswith("POSSIBLY ")) {
-		    denovoFlag2 = denovoFlag2.substring(9, denovoFlag2.length());
-		    variantTwoConfidence = 1;
-	    }
-	    else if (denovoFlag2.startswith("UNLIKELY ")) {
-		    denovoFlag2 = denovoFlag2.substring(9, denovoFlag2.length());
-		    variantTwoConfidence = 2;
-	    }
-	    else {
-		    variantTwoConfidence = 0;
-	    }
-	    variantOneDenovo = deNovoFlags.contains(denovoFlag1)
-	    variantTwoDenovo = deNovoFlags.contains(denovoFlag2)
-
-	    // Only consider cases in which one variant is considered de novo.
-	    if (variantOneDenovo ^ variantTwoDenovo) {
-		    int deNovoConfidence;
-		    if (variantOneDenovo) {
-                        cGenoInherited = cGeno2;
-                        fGenoInherited = fGeno2;
-                        mGenoInherited = mGeno2;
-			deNovoConfidence = variantOneConfidence;
-		    }
-		    else {
-                        cGenoInherited = cGeno1;
-                        fGenoInherited = fGeno1;
-                        mGenoInherited = mGeno1;
-			deNovoConfidence = variantTwoConfidence;
-		    }
-		    // Only consider situations in which no one is homozygous for the inherited variant
-		    // and the child is not homozygous variant or wild-type 
-		    int minCov = GenotypeLevelFilterCommand.minCoverage;
-		    if (!((cGenoInherited == Index.HOM || cGenoInherited == Index.REF) && cCovInherited >= minCov)
+            Set<String> deNovoFlags = new HashSet<String>();
+            // These are the only flags we consider de novo.
+            deNovoFlags.add("DE NOVO");
+            deNovoFlags.add("NEWLY HEMIZYGOUS");
+            deNovoFlags.add("NEWLY HEMIZYGOUS OR POSSIBLY DE NOVO");
+            if (denovoFlag1.endsWith("; IN REF")) {
+                denovoFlag1 = denovoFlag1.substring(0, denovoFlag1.length() - 8);
+            }
+            if (denovoFlag2.endsWith("; IN REF")) {
+                denovoFlag2 = denovoFlag2.substring(0, denovoFlag1.length() - 8);
+            }
+            boolean variantOneDenovo, variantTwoDenovo;
+            int variantOneConfidence, variantTwoConfidence;
+            // Get rid of modifier prefixes.
+            if (denovoFlag1.startsWith("POSSIBLY ")) {
+                denovoFlag1 = denovoFlag1.substring(9, denovoFlag1.length());
+                variantOneConfidence = 1;
+            } else if (denovoFlag1.startsWith("UNLIKELY ")) {
+                denovoFlag1 = denovoFlag1.substring(9, denovoFlag1.length());
+                variantOneConfidence = 2;
+            } else {
+                variantOneConfidence = 0;
+            }
+            if (denovoFlag2.startsWith("POSSIBLY ")) {
+                denovoFlag2 = denovoFlag2.substring(9, denovoFlag2.length());
+                variantTwoConfidence = 1;
+            } else if (denovoFlag2.startsWith("UNLIKELY ")) {
+                denovoFlag2 = denovoFlag2.substring(9, denovoFlag2.length());
+                variantTwoConfidence = 2;
+            } else {
+                variantTwoConfidence = 0;
+            }
+            variantOneDenovo = deNovoFlags.contains(denovoFlag1);
+            variantTwoDenovo = deNovoFlags.contains(denovoFlag2); // Only consider cases in which one variant is considered de novo.
+            if (variantOneDenovo ^ variantTwoDenovo) {
+                int cGenoInherited, cCovInherited, fGenoInherited, fCovInherited, mGenoInherited, mCovInherited, deNovoConfidence;
+                if (variantOneDenovo) {
+                    cGenoInherited = cGeno2;
+                    cCovInherited = cCov2;
+                    fGenoInherited = fGeno2;
+                    fCovInherited = fCov2;
+                    mGenoInherited = mGeno2;
+                    mCovInherited = mCov2;
+                    deNovoConfidence = variantOneConfidence;
+                } else {
+                    cGenoInherited = cGeno1;
+                    cCovInherited = cCov1;
+                    fGenoInherited = fGeno1;
+                    fCovInherited = fCov1;
+                    mGenoInherited = mGeno1;
+                    mCovInherited = mCov1;
+                    deNovoConfidence = variantTwoConfidence;
+                }
+                // Only consider situations in which no one is homozygous for the inherited variant
+                // and the child is not homozygous variant or wild-type 
+                int minCov = GenotypeLevelFilterCommand.minCoverage;
+                if (!((cGenoInherited == Index.HOM || cGenoInherited == Index.REF) && cCovInherited >= minCov)
                         && !(fGenoInherited == Index.HOM && fCovInherited >= minCov)
-			&& !(mGenoInherited == Index.HOM && mCovInherited >= minCov)) {
-			    // Treat the inherited variant as high confidence if neither parent
-			    // is homozygous or missing a genotype, at least one parent is heterozygous,
-			    // and the child is heterozygous
-			    confidentInherited = cGenoInherited == Index.HET
-				    && !(fGenoInherited == Index.HOM || fGenoInherited == Data.NA)
-				    && !(mGenoInherited == Index.HOM || mGenoInherited == Data.NA)
-				    && (fGenoInherited == Index.HET || mGenoInherited == Index.HET);
-			    if (confidentInherited) {
-				    // Both variants are high confidence
-				    if (deNovoConfidence == 0) {
-					    return COMP_HET_FLAG[3];
-				    }
-				    // Not high confidence de novo
-				    return COMP_HET_FLAG[4];
-			    }
-			    else {
-				    // Only return a possible compound het if the de novo is confident.
-				    if (deNovoConfidence == 0) {
-					    return COMP_HET_FLAG[4];
-				    }
-			    }
-			}
-		    }
-		}
+                        && !(mGenoInherited == Index.HOM && mCovInherited >= minCov)) {
+                    // Treat the inherited variant as high confidence if neither parent
+                    // is homozygous or missing a genotype, at least one parent is heterozygous,
+                    // and the child is heterozygous
+                    if (cGenoInherited == Index.HET
+                            && !(fGenoInherited == Index.HOM || fGenoInherited == Data.NA)
+                            && !(mGenoInherited == Index.HOM || mGenoInherited == Data.NA)
+                            && (fGenoInherited == Index.HET || mGenoInherited == Index.HET)) {
+                        // Both variants are high confidence
+                        if (deNovoConfidence == 0) {
+                            return COMP_HET_FLAG[3];
+                        }
+                        // Not high confidence de novo
+                        return COMP_HET_FLAG[4];
+                    } else // Only return a possible compound het if the de novo is confident.
+                     if (deNovoConfidence == 0) {
+                            return COMP_HET_FLAG[4];
+                        }
+                }
+            }
+        }
 
         return compHetFlag;
     }
