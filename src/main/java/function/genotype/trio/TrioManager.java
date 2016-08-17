@@ -558,10 +558,11 @@ public class TrioManager {
     }
 
     private static int getVariantConfidence(String denovoFlag) {
-        if (denovoFlag.contains("DE NOVO") || denovoFlag.startsWith("NEWLY HEMIZYGOUS")) {
-            if (denovoFlag.startsWith("POSSIBLY ")) {
+        if (denovoFlag.contains("DE NOVO") || denovoFlag.contains("NEWLY HEMIZYGOUS")) {
+            if (denovoFlag.startsWith("POSSIBLY")
+                    || denovoFlag.startsWith("NEWLY HEMIZYGOUS")) {
                 return 1;
-            } else if (denovoFlag.startsWith("UNLIKELY ")) {
+            } else if (denovoFlag.startsWith("UNLIKELY")) {
                 return 2;
             } else {
                 return 0;
