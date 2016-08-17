@@ -498,10 +498,14 @@ public class TrioManager {
             boolean isDenovo2 = confidence2 != Data.NA;
 
             if (isDenovo1 ^ isDenovo2) {
-                int cGenoInherited, cCovInherited,
-                        fGenoInherited, fCovInherited,
-                        mGenoInherited, mCovInherited,
-                        denovoConfidence;
+                int cGenoInherited = cGeno1;
+                int cCovInherited = cCov1;
+                int fGenoInherited = fGeno1;
+                int fCovInherited = fCov1;
+                int mGenoInherited = mGeno1;
+                int mCovInherited = mCov1;
+                int denovoConfidence = confidence2;
+
                 if (isDenovo1) {
                     cGenoInherited = cGeno2;
                     cCovInherited = cCov2;
@@ -510,14 +514,6 @@ public class TrioManager {
                     mGenoInherited = mGeno2;
                     mCovInherited = mCov2;
                     denovoConfidence = confidence1;
-                } else {
-                    cGenoInherited = cGeno1;
-                    cCovInherited = cCov1;
-                    fGenoInherited = fGeno1;
-                    fCovInherited = fCov1;
-                    mGenoInherited = mGeno1;
-                    mCovInherited = mCov1;
-                    denovoConfidence = confidence2;
                 }
                 // Only consider situations in which no one is homozygous for the inherited variant
                 // and the child is not homozygous variant or wild-type 
