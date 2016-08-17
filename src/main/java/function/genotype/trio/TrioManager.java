@@ -491,7 +491,7 @@ public class TrioManager {
             }
 
             boolean isDenovo1 = denovoFlag1.startsWith("DE NOVO"); // DE NOVO or DE NOVO; in ref
-            boolean isDenovo2 = denovoFlag1.startsWith("DE NOVO");
+            boolean isDenovo2 = denovoFlag2.startsWith("DE NOVO");
 
             if (isDenovo1 ^ isDenovo2) {
                 int cGenoInherited = cGeno1;
