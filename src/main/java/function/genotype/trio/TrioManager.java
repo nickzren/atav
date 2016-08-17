@@ -24,7 +24,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import utils.MathManager;
 
 /**
@@ -491,11 +490,11 @@ public class TrioManager {
                 mGeno2 = swapGenotypes(mGeno2);
             }
 
-            int confidence1 = getVariantConfidence(denovoFlag1);
-            int confidence2 = getVariantConfidence(denovoFlag2);
+            int denovoConfidence1 = getDenovoConfidence(denovoFlag1);
+            int denovoConfidence2 = getDenovoConfidence(denovoFlag2);
 
-            boolean isDenovo1 = confidence1 != Data.NA;
-            boolean isDenovo2 = confidence2 != Data.NA;
+            boolean isDenovo1 = denovoConfidence1 != Data.NA;
+            boolean isDenovo2 = denovoConfidence2 != Data.NA;
 
             if (isDenovo1 ^ isDenovo2) {
                 int cGenoInherited = cGeno1;
@@ -504,7 +503,7 @@ public class TrioManager {
                 int fCovInherited = fCov1;
                 int mGenoInherited = mGeno1;
                 int mCovInherited = mCov1;
-                int denovoConfidence = confidence2;
+                int denovoConfidence = denovoConfidence2;
 
                 if (isDenovo1) {
                     cGenoInherited = cGeno2;
@@ -513,7 +512,7 @@ public class TrioManager {
                     fCovInherited = fCov2;
                     mGenoInherited = mGeno2;
                     mCovInherited = mCov2;
-                    denovoConfidence = confidence1;
+                    denovoConfidence = denovoConfidence1;
                 }
                 // Only consider situations in which no one is homozygous for the inherited variant
                 // and the child is not homozygous variant or wild-type 
@@ -557,7 +556,7 @@ public class TrioManager {
         }
     }
 
-    private static int getVariantConfidence(String denovoFlag) {
+    private static int getDenovoConfidence(String denovoFlag) {
         if (denovoFlag.contains("DE NOVO") || denovoFlag.contains("NEWLY HEMIZYGOUS")) {
             if (denovoFlag.startsWith("POSSIBLY")
                     || denovoFlag.startsWith("NEWLY HEMIZYGOUS")) {
