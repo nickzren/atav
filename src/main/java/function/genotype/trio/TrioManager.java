@@ -413,10 +413,6 @@ public class TrioManager {
             fGeno2 = swapGenotypes(fGeno2);
             mGeno2 = swapGenotypes(mGeno2);
         }
-        // exclude if the child is missing any call
-        if (cGeno1 == Data.NA || cGeno2 == Data.NA) {
-            return COMP_HET_FLAG[2];
-        }
         // exclude if the child is homozygous, wild type or variant, for either variant
         if (((cGeno1 == Index.REF || cGeno1 == Index.HOM) && cCov1 >= minCov)
                 || ((cGeno2 == Index.REF || cGeno2 == Index.HOM) && cCov2 >= minCov)) {
@@ -483,8 +479,7 @@ public class TrioManager {
             int fGeno2, int fCov2,
             boolean isMinorRef2,
             String denovoFlag2) {
-        if (compHetFlag.equals(COMP_HET_FLAG[2])
-                && cGeno1 != Data.NA && cGeno2 != Data.NA) {
+        if (compHetFlag.equals(COMP_HET_FLAG[2])) {
             if (isMinorRef1) {
                 cGeno1 = swapGenotypes(cGeno1);
                 fGeno1 = swapGenotypes(fGeno1);
