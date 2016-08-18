@@ -55,7 +55,7 @@ public class TrioManager {
                 + "Child,"
                 + "Mother,"
                 + "Father,"
-                + "Flag,"
+                //                + "Flag,"
                 + "Gene Name,"
                 + "Artifacts in Gene,"
                 + getTitleByVariant();
@@ -90,6 +90,7 @@ public class TrioManager {
     private static String getTitleByVariant() {
         return "Variant ID,"
                 + "Variant Type,"
+                + "Denovo Flag,"
                 + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
@@ -238,7 +239,7 @@ public class TrioManager {
     public static String getStatus(int chr, boolean refMajor, boolean isMale, int oGeno,
             int oCov, int mGeno, int mCov, int dGeno, int dCov) {
         String key = getKey(chr, refMajor, isMale, oGeno, oCov, mGeno, mCov, dGeno, dCov);
-        return denovoRules.containsKey(key) ? denovoRules.get(key) : "unknown";
+        return denovoRules.containsKey(key) ? denovoRules.get(key) : "NA";
     }
 
     private static String getKey(int chr, boolean refMajor, boolean isMale, int oGeno,
@@ -387,8 +388,8 @@ public class TrioManager {
                     expand(key.replaceFirst("_", "2"), value);
                     break;
             }
-        } else { // no wild cardm so it is a final rule
-            denovoRules.put(key, value.toLowerCase());
+        } else {
+            denovoRules.put(key, value);
         }
     }
 

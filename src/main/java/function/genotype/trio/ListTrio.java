@@ -120,13 +120,13 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void doDenovoOutput(TrioOutput output) throws Exception {
-        if (!output.denovoFlag.equals("no flag") && !output.denovoFlag.equals("unknown")) {
+        if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals("NA")) {
             StringBuilder sb = new StringBuilder();
             sb.append(output.child.getFamilyId()).append(",");
             sb.append(output.child.getName()).append(",");
             sb.append(output.motherName).append(",");
             sb.append(output.fatherName).append(",");
-            sb.append(output.denovoFlag).append(",");
+//            sb.append(output.denovoFlag).append(",");
             sb.append("'").append(output.getCalledVariant().getGeneName()).append("'").append(",");
             sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output.getCalledVariant().getGeneName()))).append(",");
             sb.append(output.toString());
@@ -211,7 +211,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 output2.cGeno, output2.cSamtoolsRawCoverage,
                 output2.mGeno, output2.mSamtoolsRawCoverage,
                 output2.fGeno, output2.fSamtoolsRawCoverage,
-                output2.isMinorRef(), output2.denovoFlag);
+                output2.isMinorRef(), 
+                output2.denovoFlag);
         
         return flag;
     }
