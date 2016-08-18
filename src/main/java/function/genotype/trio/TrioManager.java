@@ -46,6 +46,10 @@ public class TrioManager {
     static HashSet<Integer> parentIdSet = new HashSet();
     static HashMap<String, String> denovoRules = new HashMap<>();
 
+    private static final int HIGH = 2;
+    private static final int MEDIUM = 1;
+    private static final int LOW = 0;
+
     public static String getTitle4Denovo() {
         return "Family ID,"
                 + "Child,"
@@ -490,8 +494,11 @@ public class TrioManager {
                 mGeno2 = swapGenotypes(mGeno2);
             }
 
-            boolean isDenovo1 = denovoFlag1.startsWith("DE NOVO"); // DE NOVO or DE NOVO; in ref
-            boolean isDenovo2 = denovoFlag2.startsWith("DE NOVO");
+            int denovoConfidence1 = getDenovoConfidence(denovoFlag1);
+            int denovoConfidence2 = getDenovoConfidence(denovoFlag2);
+
+            boolean isDenovo1 = denovoConfidence1 != Data.NA;
+            boolean isDenovo2 = denovoConfidence2 != Data.NA;
 
             if (isDenovo1 ^ isDenovo2) {
                 int cGenoInherited = cGeno1;
@@ -500,7 +507,7 @@ public class TrioManager {
                 int fCovInherited = fCov1;
                 int mGenoInherited = mGeno1;
                 int mCovInherited = mCov1;
-                boolean isDenovo = isDenovo2;
+                int denovoConfidence = denovoConfidence2;
 
                 if (isDenovo1) {
                     cGenoInherited = cGeno2;
@@ -509,7 +516,7 @@ public class TrioManager {
                     fCovInherited = fCov2;
                     mGenoInherited = mGeno2;
                     mCovInherited = mCov2;
-                    isDenovo = isDenovo1;
+                    denovoConfidence = denovoConfidence1;
                 }
                 // Only consider situations in which no one is homozygous for the inherited variant
                 // and the child is not homozygous variant or wild-type 
@@ -524,14 +531,14 @@ public class TrioManager {
                             && !(fGenoInherited == Index.HOM || fGenoInherited == Data.NA)
                             && !(mGenoInherited == Index.HOM || mGenoInherited == Data.NA)
                             && (fGenoInherited == Index.HET || mGenoInherited == Index.HET)) {
-                        // Both variants are high confidence
-                        if (isDenovo) {
+                        if (denovoConfidence == HIGH) {
+                            // Both variants are high confidence
                             return COMP_HET_FLAG[3];
                         }
-                        // Not high confidence de novo
+                        // denovo variant is either medium or low confidence and inherited variant is high confidence
                         return COMP_HET_FLAG[4];
-                    } else if (isDenovo) {
-                        // Only return a possible compound het if the de novo is confident.
+                    } else if (denovoConfidence == HIGH) {
+                        // Only return a possible compound het if the de novo is high confident.
                         return COMP_HET_FLAG[4];
                     }
                 }
@@ -539,6 +546,21 @@ public class TrioManager {
         }
 
         return compHetFlag;
+    }
+
+    private static int getDenovoConfidence(String denovoFlag) {
+        if (denovoFlag.startsWith("DE NOVO")) {
+            return HIGH;
+        } else if (denovoFlag.startsWith("POSSIBLY DE NOVO")
+                || denovoFlag.startsWith("NEWLY HEMIZYGOUS")
+                || denovoFlag.startsWith("POSSIBLY NEWLY HEMIZYGOUS")) {
+            return MEDIUM;
+        } else if (denovoFlag.startsWith("UNLIKELY DE NOVO")
+                || denovoFlag.startsWith("UNLIKELY NEWLY HEMIZYGOUS")) {
+            return LOW;
+        }
+
+        return Data.NA;
     }
 
     private static int swapGenotypes(
