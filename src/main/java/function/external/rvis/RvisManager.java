@@ -1,5 +1,6 @@
 package function.external.rvis;
 
+import function.external.base.DataManager;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -28,6 +29,14 @@ public class RvisManager {
         }
     }
 
+    public static String getVersion() {
+        if (RvisCommand.isIncludeRvis) {
+            return "RVIS: " + DataManager.getVersion(RVIS_PATH) + "\n";
+        } else {
+            return "";
+        }
+    }
+    
     public static void init() {
         if (RvisCommand.isIncludeRvis) {
             initRvisMap();

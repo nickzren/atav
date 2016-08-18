@@ -371,17 +371,17 @@ public class SampleManager {
     private static void printSampleList(String startMessage,
             ArrayList<Sample> sampleList) {
         if (!sampleList.isEmpty()) {
-            LogManager.writeAndPrintWithoutNewLine(startMessage);
+            LogManager.writeAndPrintNoNewLine(startMessage);
             
             for (Sample sample : sampleList) {
-                LogManager.writeAndPrintWithoutNewLine(
+                LogManager.writeAndPrintNoNewLine(
                         FormatManager.getInteger(sample.getPrepId())
                         + "\t" + sample.getName()
                         + "\t" + sample.getType()
                         + "\t" + sample.getCaptureKit());
             }
             
-            LogManager.writeAndPrintWithoutNewLine(""); // hack to add new line
+            LogManager.writeAndPrintNoNewLine(""); // hack to add new line
         }
     }
     

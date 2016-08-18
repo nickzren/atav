@@ -1,5 +1,7 @@
 package function.external.kaviar;
 
+import function.external.base.DataManager;
+
 /**
  *
  * @author nick
@@ -21,6 +23,14 @@ public class KaviarManager {
         return title;
     }
 
+    public static String getVersion() {
+        if (KaviarCommand.isIncludeKaviar) {
+            return "Kaviar: " + DataManager.getVersion(snvTable) + "\n";
+        } else {
+            return "";
+        }
+    }
+    
     public static String getSql(boolean isSnv, String chr,
             int pos, String ref, String alt) {
         String sql = "SELECT allele_frequency, allele_count, allele_number ";

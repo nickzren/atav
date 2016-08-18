@@ -1,5 +1,6 @@
 package function.external.gerp;
 
+import function.external.base.DataManager;
 import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +26,14 @@ public class GerpManager {
         return title;
     }
 
+    public static String getVersion() {
+        if (GerpCommand.isIncludeGerp) {
+            return "Gerp: " + DataManager.getVersion(table) + "\n";
+        } else {
+            return "";
+        }
+    }
+    
     public static float getScore(String chr, int pos, String ref, String alt) {
         if (ref.length() > 1
                 || alt.length() > 1) { // indels

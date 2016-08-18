@@ -1,5 +1,6 @@
 package function.external.trap;
 
+import function.external.base.DataManager;
 import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,6 +24,14 @@ public class TrapManager {
         }
 
         return title;
+    }
+
+    public static String getVersion() {
+        if (TrapCommand.isIncludeTrap) {
+            return "Trap: " + DataManager.getVersion(table) + "\n";
+        } else {
+            return "";
+        }
     }
 
     public static float getScore(String chr, int pos, String alt, String gene) {

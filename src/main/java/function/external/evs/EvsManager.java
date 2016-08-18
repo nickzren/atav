@@ -1,5 +1,7 @@
 package function.external.evs;
 
+import function.external.base.DataManager;
+
 /**
  *
  * @author nick
@@ -27,6 +29,14 @@ public class EvsManager {
                     + "Evs All Maf,"
                     + "Evs All Genotype Count,"
                     + "Evs Filter Status,";
+        } else {
+            return "";
+        }
+    }
+
+    public static String getVersion() {
+        if (EvsCommand.isIncludeEvs) {
+            return "EVS: " + DataManager.getVersion(snvTable) + "\n";
         } else {
             return "";
         }
