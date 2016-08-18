@@ -71,11 +71,6 @@ public class LogManager {
         writeLog(str + "\n");
     }
 
-    public static void writeAndPrintWithoutNewLine(String str) {
-        System.out.println(str);
-        writeLog(str);
-    }
-
     public static void writeAndPrintNoNewLine(String str) {
         System.out.println(str);
         writeLog(str);

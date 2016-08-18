@@ -2,6 +2,7 @@ package function.external.knownvar;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import function.external.base.DataManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -20,21 +21,21 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String clinVarTable = "knownvar.clinvar_2016_06_28";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_06_28";
-    public static final String hgmdTable = "knownvar.hgmd_2016_1_2016_07_06";
-    public static final String omimTable = "knownvar.omim_2016_04_26";
-    public static final String acmgTable = "knownvar.ACMG_2016_04_26";
-    public static final String clinGenTable = "knownvar.ClinGen_2016_04_26";
+    public static final String hgmdTable = "knownvar.hgmd_2016_2";
+    public static final String clinVarTable = "knownvar.clinvar_2016_08_18";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_08_18";
+    public static final String clinGenTable = "knownvar.ClinGen_2016_08_17";
+    public static final String omimTable = "knownvar.omim_2016_08_17";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
+    public static final String acmgTable = "knownvar.ACMG_2016_04_26";
 
+    private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
     private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
     private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<>();
-    private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
-    private static final HashMap<String, String> omimMap = new HashMap<>();
-    private static final HashMap<String, String> acmgMap = new HashMap<>();
     private static final HashMap<String, ClinGen> clinGenMap = new HashMap<>();
+    private static final HashMap<String, String> omimMap = new HashMap<>();
     private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
+    private static final HashMap<String, String> acmgMap = new HashMap<>();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -65,6 +66,20 @@ public class KnownVarManager {
                     + "OMIM Disease,"
                     + "RecessiveCarrier,"
                     + "ACMG,";
+        } else {
+            return "";
+        }
+    }
+
+    public static String getVersion() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            return "HGMD: " + DataManager.getVersion(hgmdTable) + "\n"
+                    + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n"
+                    + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n"
+                    + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
+                    + "OMIM: " + DataManager.getVersion(omimTable) + "\n"
+                    + "RecessiveCarrier: " + DataManager.getVersion(recessiveCarrierTable) + "\n"
+                    + "ACMG: " + DataManager.getVersion(acmgTable) + "\n";
         } else {
             return "";
         }

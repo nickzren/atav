@@ -1,5 +1,6 @@
 package function.external.mgi;
 
+import function.external.base.DataManager;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -28,6 +29,14 @@ public class MgiManager {
         }
     }
 
+    public static String getVersion() {
+        if (MgiCommand.isIncludeMgi) {
+            return "MGI: " + DataManager.getVersion(MGI_PATH) + "\n";
+        } else {
+            return "";
+        }
+    }
+    
     public static void init() {
         if (MgiCommand.isIncludeMgi) {
             initMgiMap();

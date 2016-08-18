@@ -1,5 +1,6 @@
 package function.external.exac;
 
+import function.external.base.DataManager;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -62,6 +63,14 @@ public class ExacManager {
         }
 
         return title;
+    }
+
+    public static String getVersion() {
+        if (ExacCommand.isIncludeExac) {
+            return "ExAC: " + DataManager.getVersion(snvTable) + "\n";
+        } else {
+            return "";
+        }
     }
 
     public static String getSql4Cvg(String chr, int pos) {

@@ -1,5 +1,7 @@
 package function.external.genomes;
 
+import function.external.base.DataManager;
+
 /**
  *
  * @author nick
@@ -21,6 +23,14 @@ public class GenomesManager {
         }
 
         return title;
+    }
+    
+    public static String getVersion() {
+        if (GenomesCommand.isInclude1000Genomes) {
+            return "1000 Genomes: " + DataManager.getVersion(snvTable) + "\n";
+        } else {
+            return "";
+        }
     }
 
     public static String getSql4Maf(boolean isSnv, String chr,

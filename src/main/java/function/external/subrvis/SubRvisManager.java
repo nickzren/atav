@@ -1,5 +1,6 @@
 package function.external.subrvis;
 
+import function.external.base.DataManager;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -30,6 +31,14 @@ public class SubRvisManager {
                     + "subRVIS Exon Name,"
                     + "subRVIS Exon Score Percentile,"
                     + "subRVIS Exon OEratio Percentile,";
+        } else {
+            return "";
+        }
+    }
+    
+    public static String getVersion() {
+        if (SubRvisCommand.isIncludeSubRvis) {
+            return "Sub RVIS: " + DataManager.getVersion(SUBRVIS_EXON_PATH) + "\n";
         } else {
             return "";
         }
