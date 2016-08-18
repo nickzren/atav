@@ -549,10 +549,10 @@ public class TrioManager {
     }
 
     private static int getDenovoConfidence(String denovoFlag) {
-        if (denovoFlag.startsWith("DE NOVO")) {
+        if (denovoFlag.startsWith("DE NOVO")
+                || denovoFlag.startsWith("NEWLY HEMIZYGOUS")) {
             return HIGH;
         } else if (denovoFlag.startsWith("POSSIBLY DE NOVO")
-                || denovoFlag.startsWith("NEWLY HEMIZYGOUS")
                 || denovoFlag.startsWith("POSSIBLY NEWLY HEMIZYGOUS")) {
             return MEDIUM;
         } else if (denovoFlag.startsWith("UNLIKELY DE NOVO")
