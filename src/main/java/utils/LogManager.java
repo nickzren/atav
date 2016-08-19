@@ -111,7 +111,9 @@ public class LogManager {
 
     private static void logUserCommand() {
         try {
-            if (isBioinfoTeam()) {
+            if (isBioinfoTeam()
+                    || Data.version.equals("trunk")
+                    || Data.version.equals("beta")) {
                 return;
             }
 
@@ -169,7 +171,10 @@ public class LogManager {
 
     private static void logSampleFile() {
         try {
-            if (CommonCommand.isNonSampleAnalysis || isBioinfoTeam()) {
+            if (CommonCommand.isNonSampleAnalysis
+                    || isBioinfoTeam()
+                    || Data.version.equals("trunk")
+                    || Data.version.equals("beta")) {
                 return;
             }
 
