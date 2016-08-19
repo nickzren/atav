@@ -41,10 +41,9 @@ public class FamilyManager {
         }
 
         if (familyList.isEmpty()) {
-            ErrorManager.print("There is no sibling in your sample file.");
+            ErrorManager.print("Missing sibling in sample file");
         } else {
-            LogManager.writeAndPrint("There are " + familyList.size()
-                    + " siblings available now.");
+            LogManager.writeAndPrint("Total siblings: " + familyList.size());
         }
     }
 

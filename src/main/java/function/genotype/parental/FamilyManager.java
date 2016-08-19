@@ -40,10 +40,9 @@ public class FamilyManager {
         }
 
         if (familyList.isEmpty()) {
-            ErrorManager.print("There is no family in your sample file.");
+            ErrorManager.print("Missing family in sample file");
         } else {
-            LogManager.writeAndPrint(familyList.size() + " families are "
-                    + "available within your sample file.");
+            LogManager.writeAndPrint("Total families: " + familyList.size());
         }
     }
 

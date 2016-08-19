@@ -48,18 +48,14 @@ public class LogManager {
 
         Data.userName = System.getProperty("user.name");
         try {
-            writeLog("The following job was run on " + date.toString() + ".");
-
-            writeAndPrintNoNewLine("\n");
+            writeAndPrint("Program start: " + date.toString());
             writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
             writeAndPrint("Version: " + Data.version);
 
-            writeLog(Data.userName + " is running ATAV with the following command:");
+            writeLog("ATAV command:");
             writeLog(CommandManager.command + "\n");
-            userLog.close();
-            userLog = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                    CommonCommand.outputPath + "atav.log", true)));
-
+            
+            userLog.flush();
         } catch (Exception e) {
             ErrorManager.print("Error in writing log file: " + e.toString());
         }
