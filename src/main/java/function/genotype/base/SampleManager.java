@@ -353,7 +353,7 @@ public class SampleManager {
     
     private static void outputSampleListSummary() {
         LogManager.writeAndPrint("Total samples: "
-                + sampleList.size() + " (" + caseNum + " cases and " + ctrlNum + " controls).");
+                + sampleList.size() + " (" + caseNum + " cases and " + ctrlNum + " controls)");
         
         printSampleList("Permission denied samples:",
                 restrictedSampleList);
