@@ -40,8 +40,6 @@ public class VarAnnoOutput {
             + "Gene Name,"
             + "Artifacts in Gene,"
             + "Transcript Stable Id,"
-            + "NM #,"
-            + "NP #,"
             + "Codon Change,"
             + "Amino Acid Change,"
             + "Coding Sequence Change,"
@@ -79,7 +77,6 @@ public class VarAnnoOutput {
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(annotatedVar.getGeneName()))).append(",");
         sb.append(annotatedVar.getStableId()).append(",");
-        sb.append(GeneManager.getNmNpValuesByStableId(annotatedVar.getStableId())).append(",");
         sb.append(annotatedVar.getCodonChange()).append(",");
         sb.append(annotatedVar.getAminoAcidChange()).append(",");
         sb.append(annotatedVar.getCodingSequenceChange()).append(",");

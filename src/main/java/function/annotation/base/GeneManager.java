@@ -18,7 +18,6 @@ import function.variant.base.RegionManager;
 public class GeneManager {
 
     private static final String ARTIFACTS_GENE_PATH = "data/artifacts_gene.txt";
-    private static final String GENE_ENSEMBL_PATH = "data/gene_ensembl.txt";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringBuilder> chrAllGeneMap = new HashMap<>();
@@ -30,7 +29,6 @@ public class GeneManager {
 
     private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<>();
     private static HashMap<String, Integer> artifactsGeneMap = new HashMap<>();
-    private static HashMap<String, String> genenStableIdNmNpMap = new HashMap<>();
     private static boolean isUsed = false;
 
     public static void init() throws Exception {
@@ -274,42 +272,6 @@ public class GeneManager {
             return geneCoverageSummaryMap.get(geneName);
         } else {
             return "";
-        }
-    }
-
-    public static void initGeneStableIdNmNpMap() {
-        try {
-            String geneEnsemblFile = GENE_ENSEMBL_PATH;
-
-            if (CommonCommand.isDebug) {
-                geneEnsemblFile = Data.RECOURCE_PATH + geneEnsemblFile;
-            }
-
-            File f = new File(geneEnsemblFile);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    String[] temp = line.split("\t");
-
-                    genenStableIdNmNpMap.put(temp[4], temp[3] + "," + temp[5]);
-                }
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    public static String getNmNpValuesByStableId(String stableId) {
-        String value = genenStableIdNmNpMap.get(stableId);
-
-        if (value == null) {
-            return "NA,NA";
-        } else {
-            return value;
         }
     }
 

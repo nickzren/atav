@@ -1,6 +1,5 @@
 package function.annotation.varanno;
 
-import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.AnalysisBase4AnnotatedVar;
 import utils.CommonCommand;
@@ -44,7 +43,6 @@ public class ListVarAnno extends AnalysisBase4AnnotatedVar {
 
     @Override
     public void beforeProcessDatabaseData() {
-        GeneManager.initGeneStableIdNmNpMap();
     }
 
     @Override

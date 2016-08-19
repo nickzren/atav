@@ -10,7 +10,6 @@ import utils.DBManager;
 import utils.ErrorManager;
 import utils.LogManager;
 import function.AnalysisBase;
-import function.annotation.genedx.GeneDxCommand;
 import function.genotype.collapsing.CollapsingCompHet;
 import function.genotype.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
@@ -24,7 +23,6 @@ import function.genotype.statistics.FisherExactTest;
 import function.genotype.statistics.LinearRegression;
 import function.genotype.trio.ListTrioCompHet;
 import function.genotype.trio.ListTrioDenovo;
-import function.annotation.genedx.ListGeneDx;
 import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
@@ -168,8 +166,6 @@ public class Program {
                 runAnalysis(new PedMapGenerator());
             } else if (VarAnnoCommand.isListVarAnno) { // Variant Annotation Functions
                 runAnalysis(new ListVarAnno());
-            } else if (GeneDxCommand.isListGeneDx) {
-                runAnalysis(new ListGeneDx());
             } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
                 runAnalysis(new CoverageSummary());
             } else if (CoverageCommand.isSiteCoverageSummary) {

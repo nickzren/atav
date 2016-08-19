@@ -2,7 +2,6 @@ package utils;
 
 import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
-import function.annotation.genedx.GeneDxCommand;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.external.evs.EvsCommand;
@@ -327,10 +326,6 @@ public class CommandManager {
                     GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isIncludeMgi = true;
                     break;
-                case "--list-gene-dx":
-                    CommonCommand.isNonSampleAnalysis = true;
-                    GeneDxCommand.isListGeneDx = true;
-                    break;
                     
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -450,8 +445,6 @@ public class CommandManager {
         } else if (PedMapCommand.isPedMap) {
             PedMapCommand.initOptions(optionList.iterator());
         } else if (VarAnnoCommand.isListVarAnno) { // Variant Annotation Functions
-
-        } else if (GeneDxCommand.isListGeneDx) {
 
         } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
             CoverageCommand.initCoverageSummary(optionList.iterator());
