@@ -122,6 +122,6 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
     @Override
     public String toString() {
-        return "It is running site coverage comparison function...";
+        return "Start running site coverage comparison function...";
     }
 }

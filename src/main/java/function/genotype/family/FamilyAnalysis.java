@@ -161,6 +161,6 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "It is running a family analysis function...";
+        return "Start running family analysis function...";
     }
 }

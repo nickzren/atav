@@ -67,6 +67,6 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "It is running a list sub rvis function...";
+        return "Start running list sub rvis function...";
     }
 }

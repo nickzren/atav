@@ -39,7 +39,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
 
     protected static ResultSet getAnnotationList(String varType,
             Region region) throws SQLException {
-        System.out.print("It is collecting " + varType.toUpperCase() + "s..." + "                    \r");
+        System.out.print("Start collecting " + varType.toUpperCase() + "s..." + "                    \r");
 
         String sqlCode = getSQL4AnnotationList(varType, region);
 

@@ -65,6 +65,6 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "It is running a list KnownVar function... \n";
+        return "Start running list KnownVar function... \n";
     }
 }

@@ -64,6 +64,6 @@ public class ListVarAnno extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "It is running a list variant annotation function...";
+        return "Start running list variant annotation function...";
     }
 }

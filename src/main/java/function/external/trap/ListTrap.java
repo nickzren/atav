@@ -72,6 +72,6 @@ public class ListTrap extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running list trap function...";
+        return "Start running list trap function...";
     }
 }

@@ -45,6 +45,6 @@ public class Test extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running a test function...";
+        return "Start running test function...";
     }
 }

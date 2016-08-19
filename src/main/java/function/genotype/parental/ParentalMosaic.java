@@ -94,6 +94,6 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "It is running a parental mosaic function...";
+        return "Start running parental mosaic function...";
     }
 }

@@ -79,7 +79,7 @@ import utils.RunTimeManager;
  * @author nick
  */
 public class Program {
-    
+
     public static void main(String[] args) {
         try {
             RunTimeManager.start();
@@ -92,56 +92,52 @@ public class Program {
 
             // re-check user samples to make sure no changes happened during the analysis
             SampleManager.recheckSampleList();
-            
+
             RunTimeManager.stop();
-            
-            LogManager.logRunTime();
-            
-            LogManager.logUserCommand();
-            
-            LogManager.close();
+
+            LogManager.run();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-    
+
     private static void init(String[] options) {
         try {
             CommandManager.initOptions(options);
-            
+
             DBManager.init();
-            
+
             FunctionManager.init();
-            
+
             SampleManager.init();
-            
+
             RegionManager.init();
-            
+
             GeneManager.init();
-            
+
             TranscriptManager.init();
-            
+
             VariantManager.init();
-            
+
             CoverageBlockManager.init();
-            
+
             KnownVarManager.init();
-            
+
             RvisManager.init();
-            
+
             SubRvisManager.init();
-            
+
             MgiManager.init();
-            
+
             ExacManager.init();
-            
+
             // output external data version
             LogManager.writeAndPrintNoNewLine(DataManager.getVersion());
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-    
+
     private static void startAnalysis() {
         try {
             if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
@@ -211,10 +207,10 @@ public class Program {
             ErrorManager.send(e);
         }
     }
-    
+
     private static void runAnalysis(AnalysisBase analysis) {
         LogManager.writeAndPrint(analysis.toString());
-        
+
         analysis.run();
     }
 }

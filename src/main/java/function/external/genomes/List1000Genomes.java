@@ -78,7 +78,7 @@ public class List1000Genomes extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running list 1000 genomes function...\n\n"
+        return "Start running list 1000 genomes function...\n\n"
                 + "snv table: " + GenomesManager.snvTable + "\n\n"
                 + "indel table: " + GenomesManager.indelTable;
     }

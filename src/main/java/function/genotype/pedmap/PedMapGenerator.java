@@ -284,6 +284,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "It is generating ped/map files...";
+        return "Start generating ped/map files...";
     }
 }

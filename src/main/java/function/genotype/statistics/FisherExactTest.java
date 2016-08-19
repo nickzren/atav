@@ -191,6 +191,6 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "It is running a Fisher's Exact Test function...";
+        return "Start running Fisher's Exact Test function...";
     }
 }

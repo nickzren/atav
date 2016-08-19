@@ -71,6 +71,6 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running site coverage summary function...";
+        return "Start running site coverage summary function...";
     }
 }

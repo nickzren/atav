@@ -116,6 +116,6 @@ public class ListTrioDenovo extends AnalysisBase4CalledVar {
     
     @Override
     public String toString() {
-        return "It is running a list trio denovo function...";
+        return "Start running list trio denovo function...";
     }
 }

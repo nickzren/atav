@@ -67,6 +67,6 @@ public class ListGeneDx extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "It is running a list gene dx function...";
+        return "Start running list gene dx function...";
     }
 }

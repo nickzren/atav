@@ -167,6 +167,6 @@ public class LinearRegression extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "It is running a linear regression function...";
+        return "Start running linear regression function...";
     }
 }

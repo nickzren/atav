@@ -1,6 +1,8 @@
 package utils;
 
 import com.github.lalyos.jfiglet.FigletFont;
+import com.google.common.io.Files;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import java.io.*;
 import java.util.Date;
@@ -20,7 +22,21 @@ public class LogManager {
     public static String runTime;
 
     // users command log file path
-    public static final String USERS_COMMAND_LOG = "/log/users.command.log";
+    public static final String USERS_COMMAND_LOG = "log/users.command.log";
+    // user sample file log path
+    public static final String SAMPLE_DIR_LOG = "log/sample/";
+    // program start date
+    public static final Date date = new Date();
+
+    public static void run() {
+        logRunTime();
+
+        logUserCommand();
+
+        logSampleFile();
+
+        close();
+    }
 
     public static void initPath() {
         try {
@@ -32,9 +48,8 @@ public class LogManager {
 
         Data.userName = System.getProperty("user.name");
         try {
-            Date date = new Date();
-            writeLog("The following job was run on " + date.toString() + ".\n");
-            
+            writeLog("The following job was run on " + date.toString() + ".");
+
             writeAndPrintNoNewLine("\n");
             writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
             writeAndPrint("Version: " + Data.version);
@@ -79,7 +94,7 @@ public class LogManager {
         }
     }
 
-    public static void logRunTime() {
+    private static void logRunTime() {
         long elapsedTime = RunTimeManager.getElapsedTime();
 
         long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime);
@@ -94,7 +109,7 @@ public class LogManager {
                 + runTime + "\n");
     }
 
-    public static void logUserCommand() {
+    private static void logUserCommand() {
         try {
             if (isBioinfoTeam()) {
                 return;
@@ -105,8 +120,6 @@ public class LogManager {
             FileWriter fileWritter = new FileWriter(file, true);
 
             BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-
-            Date date = new Date();
 
             long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
 
@@ -139,11 +152,7 @@ public class LogManager {
 
         String members = prop.getProperty("bioinfo-team");
 
-        if (members.contains(Data.userName)) {
-            return true;
-        }
-
-        return false;
+        return members.contains(Data.userName);
     }
 
     private static long folderSize(File directory) {
@@ -156,5 +165,26 @@ public class LogManager {
             }
         }
         return length;
+    }
+
+    private static void logSampleFile() {
+        try {
+            if (CommonCommand.isNonSampleAnalysis || isBioinfoTeam()) {
+                return;
+            }
+
+            File sampleFile = new File(GenotypeLevelFilterCommand.sampleFile);
+
+            File logSampleFile = new File(
+                    SAMPLE_DIR_LOG
+                    + Data.userName
+                    + "."
+                    + date.toString()
+                    + "."
+                    + sampleFile.getName());
+
+            Files.copy(sampleFile, logSampleFile);
+        } catch (Exception e) {
+        }
     }
 }
