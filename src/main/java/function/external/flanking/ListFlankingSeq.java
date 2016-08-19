@@ -133,6 +133,6 @@ public class ListFlankingSeq extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "Start running list variant flanking sequence function...";
+        return "Start running list variant flanking sequence function";
     }
 }

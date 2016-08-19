@@ -378,6 +378,6 @@ public class ListTrioCompHet extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "Start running list trio compound heterozygosity function...";
+        return "Start running list trio compound heterozygosity function";
     }
 }

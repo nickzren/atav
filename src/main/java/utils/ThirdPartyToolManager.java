@@ -26,7 +26,7 @@ public class ThirdPartyToolManager {
     private static final String NON_TRIO_TIER = "/nfs/goldstein/software/atav_home/lib/non_trio_tier.R";
 
     public static int systemCall(String[] cmd) {
-        LogManager.writeAndPrintNoNewLine("System call start...");
+        LogManager.writeAndPrintNoNewLine("System call start");
 
         int exitValue = Data.NA;
 

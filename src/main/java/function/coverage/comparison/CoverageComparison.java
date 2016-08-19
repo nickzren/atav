@@ -187,6 +187,6 @@ public class CoverageComparison extends CoverageComparisonBase {
 
     @Override
     public String toString() {
-        return "Start running coverage comparison function...";
+        return "Start running coverage comparison function";
     }
 }

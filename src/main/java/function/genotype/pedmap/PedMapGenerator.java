@@ -122,7 +122,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     private void generatePedFile() {
         try {
-            LogManager.writeAndPrint("Output the data to ped file now...");
+            LogManager.writeAndPrint("Output the data to ped file now");
 
             bwTmpPed.flush();
             bwTmpPed.close();
@@ -284,6 +284,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "Start generating ped/map files...";
+        return "Start generating ped/map files";
     }
 }

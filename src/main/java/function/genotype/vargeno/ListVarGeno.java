@@ -123,6 +123,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     
     @Override
     public String toString() {
-        return "Start running list variant genotype function...";
+        return "Start running list variant genotype function";
     }
 }

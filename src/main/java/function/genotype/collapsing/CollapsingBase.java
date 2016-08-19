@@ -145,7 +145,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     public void outputSummary() {
-        LogManager.writeAndPrint("Output the data to matrix & summary file...");
+        LogManager.writeAndPrint("Output the data to matrix & summary file");
 
         try {
             summaryList.addAll(summaryMap.values());

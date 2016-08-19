@@ -73,6 +73,6 @@ public class ListVar extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "Start running list variant function...";
+        return "Start running list variant function";
     }
 }

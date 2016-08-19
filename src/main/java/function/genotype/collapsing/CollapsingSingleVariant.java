@@ -137,6 +137,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
     @Override
     public String toString() {
-        return "Start running collapsing function...";
+        return "Start running collapsing function";
     }
 }

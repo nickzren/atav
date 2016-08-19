@@ -223,7 +223,7 @@ public class LogisticOutput extends StatisticOutput {
             );
         }
         /**
-         * ... and here*
+         *  and here*
          */
 
         //getting qualified indices

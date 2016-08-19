@@ -83,7 +83,7 @@ public class CommandManager {
             if (CommonCommand.isDebug) {
                 initCommand4Debug();
             } else {
-                System.out.println("\nError: without any input parameters to run ATAV. \n\nExit...\n");
+                System.out.println("\nError: without any input parameters to run ATAV. \n\nExit\n");
                 System.exit(0);
             }
         } else // init options from command file or command line
@@ -215,7 +215,7 @@ public class CommandManager {
         }
 
         if (CommonCommand.outputPath.isEmpty()) {
-            System.out.println("\nPlease specify output path: --out $PATH \n\nExit...\n");
+            System.out.println("\nPlease specify output path: --out $PATH \n\nExit\n");
             System.exit(0);
         }
     }
@@ -226,7 +226,7 @@ public class CommandManager {
             if (!dir.exists()) {
                 dir.mkdirs();
             } else if (!dir.canWrite()) {
-                System.out.println("\nYou don't have write permissions into " + path + "! \n\nExit...\n");
+                System.out.println("\nYou don't have write permissions into " + path + "! \n\nExit\n");
                 System.exit(0);
             }
 
@@ -234,7 +234,7 @@ public class CommandManager {
             CommonCommand.outputDirName = dir.getName();
             CommonCommand.outputPath = path + File.separator + dir.getName() + "_";
         } catch (Exception e) {
-            System.out.println("\nError in creating an output folder, caused by " + e.toString() + " \n\nExit...\n");
+            System.out.println("\nError in creating an output folder, caused by " + e.toString() + " \n\nExit\n");
             System.exit(0);
         }
     }
@@ -413,7 +413,7 @@ public class CommandManager {
 
         if (!hasMainFunction) {
             ErrorManager.print("Missing function command: --list-var-geno, --collapsing-dom, --collapsing-rec, "
-                    + "--collapsing-comp-het, --fisher, --linear...");
+                    + "--collapsing-comp-het, --fisher, --linear");
         }
     }
 

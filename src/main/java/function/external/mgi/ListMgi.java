@@ -63,6 +63,6 @@ public class ListMgi extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "Start running list mgi function...";
+        return "Start running list mgi function";
     }
 }

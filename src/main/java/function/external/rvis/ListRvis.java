@@ -63,6 +63,6 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "Start running list rvis function...";
+        return "Start running list rvis function";
     }
 }

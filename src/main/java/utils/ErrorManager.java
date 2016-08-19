@@ -20,7 +20,7 @@ public class ErrorManager {
     }
 
     public static void print(String msg) {
-        LogManager.writeAndPrint(msg + "\n\nExit...\n");
+        LogManager.writeAndPrint(msg + "\n\nExit\n");
         LogManager.close();
         System.exit(0);
     }

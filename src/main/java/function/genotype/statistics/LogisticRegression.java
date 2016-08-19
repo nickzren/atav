@@ -211,6 +211,6 @@ public class LogisticRegression extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "Start running logistic regression function...";
+        return "Start running logistic regression function";
     }
 }

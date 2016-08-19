@@ -202,8 +202,8 @@ public class RegionManager {
     }
 
     public static Region getRegion(int index, String varType) {
-        LogManager.writeAndPrintNoNewLine("Start analysing " + varType.toUpperCase().toUpperCase()
-                + "s in region " + regionList.get(index) + ".");
+        LogManager.writeAndPrint("Start analysing " + varType.toUpperCase().toUpperCase()
+                + "s in region " + regionList.get(index));
 
         return regionList.get(index);
     }

@@ -275,6 +275,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "Start running sibling compound heterozygosity function...";
+        return "Start running sibling compound heterozygosity function";
     }
 }

@@ -78,6 +78,6 @@ public class ListGerp extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "Start running list gerp function...";
+        return "Start running list gerp function";
     }
 }

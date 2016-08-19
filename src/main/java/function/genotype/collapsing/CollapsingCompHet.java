@@ -302,6 +302,6 @@ public class CollapsingCompHet extends CollapsingBase {
 
     @Override
     public String toString() {
-        return "Start running collapsing compound heterozygosity function...";
+        return "Start running collapsing compound heterozygosity function";
     }
 }

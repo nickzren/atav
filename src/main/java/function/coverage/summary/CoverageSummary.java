@@ -86,6 +86,6 @@ public class CoverageSummary extends CoverageAnalysisBase {
 
     @Override
     public String toString() {
-        return "Start running coverage summary function...";
+        return "Start running coverage summary function";
     }
 }
