@@ -59,8 +59,6 @@ public class CommandManager {
         try {
             initCommandOptions(options);
 
-            LogManager.initBasicInfo();
-
             initOptionList();
 
             initOutput();

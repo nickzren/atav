@@ -1,5 +1,6 @@
 package utils;
 
+import com.github.lalyos.jfiglet.FigletFont;
 import global.Data;
 import java.io.*;
 import java.util.Date;
@@ -15,24 +16,11 @@ import java.util.logging.Logger;
 public class LogManager {
 
     private static BufferedWriter userLog = null;
-    private static StringBuilder basicInfo = new StringBuilder();
 
     public static String runTime;
 
     // users command log file path
-    public static final String USERS_COMMAND_LOG = "/nfs/goldstein/software/atav_home/log/users.command.log";
-
-    public static void initBasicInfo() {
-        basicInfo.append("\n\n");
-        basicInfo.append("Software:\t\t" + Data.AppTitle + "\n");
-        basicInfo.append("Version:\t\t" + Data.version + "\n");
-        basicInfo.append("Lead Developer:\t\t" + Data.leadDeveloper + "\n");
-        basicInfo.append("Pipeline Developer:\t" + Data.pipelineDeveloper + "\n");
-        basicInfo.append("Project Manager:\t" + Data.projectManager + "\n");
-        basicInfo.append("Past Developer:\t\t" + Data.pastDeveloper + "\n");
-        basicInfo.append("Year:\t\t\t" + Data.year + "\n");
-        basicInfo.append("Institute:\t\t" + Data.insititue + "\n");
-    }
+    public static final String USERS_COMMAND_LOG = "/log/users.command.log";
 
     public static void initPath() {
         try {
@@ -46,17 +34,13 @@ public class LogManager {
         try {
             Date date = new Date();
             writeLog("The following job was run on " + date.toString() + ".\n");
-            writeAndPrint(basicInfo.toString());
+            
+            writeAndPrintNoNewLine("\n");
+            writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
+            writeAndPrint("Version: " + Data.version);
+
             writeLog(Data.userName + " is running ATAV with the following command:");
             writeLog(CommandManager.command + "\n");
-
-            writeAndPrint("ATAV news: "
-                    + "http://redmine.igm.cumc.columbia.edu/projects/atav/news");
-
-            writeAndPrint("ATAV wiki: "
-                    + "http://redmine.igm.cumc.columbia.edu/projects/atav/wiki");
-
-            // write and reopen
             userLog.close();
             userLog = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
                     CommonCommand.outputPath + "atav.log", true)));
@@ -97,7 +81,7 @@ public class LogManager {
 
     public static void logRunTime() {
         long elapsedTime = RunTimeManager.getElapsedTime();
-        
+
         long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
         long hours = TimeUnit.MILLISECONDS.toHours(elapsedTime);
