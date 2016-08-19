@@ -135,7 +135,7 @@ public class DBManager {
             dbHostIp = dbHostMap.get(dbHostName);
 
             if (dbHostIp == null) {
-                ErrorManager.print("Non existing server: " + dbHostName);
+                ErrorManager.print("Not exist server: " + dbHostName);
             }
 
             minNum = getNumOfATAV(dbHostIp);
@@ -143,13 +143,12 @@ public class DBManager {
             minNum = getMinNumFromServers();
 
             if (minNum > maxATAVJobNum) {
-                ErrorManager.print("All available AnnoDB servers "
+                ErrorManager.print("All AnnoDB servers "
                         + "reached to max concurrent jobs, please submit your ATAV job latter.");
             }
         }
 
-        LogManager.writeAndPrint("Your ATAV Job is quering data from server " + dbHostName + ". "
-                + "(" + minNum + " concurrent ATAV Jobs)");
+        LogManager.writeAndPrint("DB server: " + dbHostName + " " + "(" + minNum + " concurrent jobs)");
     }
 
     private static int getMinNumFromServers() {

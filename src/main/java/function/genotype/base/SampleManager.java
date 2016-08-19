@@ -352,19 +352,19 @@ public class SampleManager {
     }
     
     private static void outputSampleListSummary() {
-        LogManager.writeAndPrint("The total number of samples included in the analysis is "
+        LogManager.writeAndPrint("Total samples: "
                 + sampleList.size() + " (" + caseNum + " cases and " + ctrlNum + " controls).");
         
-        printSampleList("The following samples are not allowed to use:",
+        printSampleList("Permission denied samples:",
                 restrictedSampleList);
         
-        printSampleList("The following samples are labeled as failed in AnnoDB:",
+        printSampleList("Failed samples:",
                 failedSampleList);
         
-        printSampleList("The following samples are in annodb but with a different seqtype or capture kit:",
+        printSampleList("Samples with a different seqtype or capture kit:",
                 diffTypeSampleList);
         
-        printSampleList("The following samples are not exist in AnnoDB:",
+        printSampleList("Not exist samples:",
                 notExistSampleList);
     }
     
