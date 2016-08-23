@@ -53,6 +53,28 @@ public class Evs {
         initMaf();
     }
 
+    public Evs(boolean isIndel, ResultSet rs) {
+        try {
+            chr = rs.getString("chr");
+            pos = rs.getInt("position");
+            ref = rs.getString("ref_allele");
+            alt = rs.getString("alt_allele");
+            eaMaf = rs.getFloat("ea_maf");
+            aaMaf = rs.getFloat("aa_maf");
+            allMaf = rs.getFloat("all_maf");
+            eaGenotypeCount = rs.getString("ea_genotype_count");
+            aaGenotypeCount = rs.getString("aa_genotype_count");
+            allGenotypeCount = rs.getString("all_genotype_count");
+            filterStatus = rs.getString("FilterStatus");
+
+            isSnv = !isIndel;
+
+            initCoverage();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
     private void initCoverage() {
         try {
             String sql = EvsManager.getSql4Cvg(chr, pos);
@@ -141,6 +163,10 @@ public class Evs {
         }
 
         return false;
+    }
+
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
     @Override

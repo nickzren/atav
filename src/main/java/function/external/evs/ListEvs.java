@@ -1,11 +1,15 @@
 package function.external.evs;
 
 import function.AnalysisBase;
+import function.variant.base.Region;
+import function.variant.base.RegionManager;
 import function.variant.base.VariantManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.sql.ResultSet;
+import utils.DBManager;
 
 /**
  *
@@ -52,21 +56,36 @@ public class ListEvs extends AnalysisBase {
     }
 
     @Override
-    public void processDatabaseData() {
-        try {
-            for (String variantId : VariantManager.getIncludeVariantList()) {
-                EvsOutput output = new EvsOutput(variantId);
+    public void processDatabaseData() throws Exception {
+        int totalNumOfRegionList = RegionManager.getRegionSize();
 
-                if (output.isValid()) {
-                    bwEvs.write(variantId + ",");
-                    bwEvs.write(output.toString());
-                    bwEvs.newLine();
+        for (int r = 0; r < totalNumOfRegionList; r++) {
+
+            for (String varType : VariantManager.VARIANT_TYPE) {
+
+                boolean isIndel = varType.equals("indel");
+
+                Region region = RegionManager.getRegion(r, varType);
+
+                String sqlCode = EvsManager.getSql4Maf(isIndel, region);
+
+                ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+
+                while (rset.next()) {
+                    EvsOutput output = new EvsOutput(isIndel, rset);
+
+                    if (VariantManager.isIncluded(output.evs.getVariantId())
+                            && output.isValid()) {
+                        bwEvs.write(output.evs.getVariantId() + ",");
+                        bwEvs.write(output.toString());
+                        bwEvs.newLine();
+                    }
+
+                    countVariant();
                 }
 
-                countVariant();
+                rset.close();
             }
-        } catch (Exception e) {
-            ErrorManager.send(e);
         }
     }
 
@@ -78,9 +97,6 @@ public class ListEvs extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "Start running list evs function\n\n"
-                + "coverage table: " + EvsManager.coverageTable + "\n\n"
-                + "snv table: " + EvsManager.snvTable + "\n\n"
-                + "indel table: " + EvsManager.indelTable;
+        return "Start running list evs function";
     }
 }

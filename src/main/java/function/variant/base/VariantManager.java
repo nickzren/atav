@@ -228,16 +228,20 @@ public class VariantManager {
         return false;
     }
 
+    public static boolean isIncluded(String varId) {
+        if (includeVariantSet.isEmpty()) {
+            return true;
+        } else {
+            return includeVariantSet.contains(varId);
+        }
+    }
+
     public static boolean isIncluded(Variant var) {
         if (includeVariantSet.isEmpty()) {
             return true;
         } else {
-            if (includeVariantSet.contains(var.getVariantIdStr())
-                    || includeVariantSet.contains(var.getRsNumber())) {
-                return true;
-            } else {
-                return false;
-            }
+            return includeVariantSet.contains(var.getVariantIdStr())
+                    || includeVariantSet.contains(var.getRsNumber());
         }
     }
 
@@ -260,11 +264,9 @@ public class VariantManager {
                     return false;
                 }
             } else // indel
-            {
-                if (VariantLevelFilterCommand.isExcludeIndel) {
+             if (VariantLevelFilterCommand.isExcludeIndel) {
                     return false;
                 }
-            }
 
             if (includeVariantTypeList.isEmpty()) {
                 return true;
