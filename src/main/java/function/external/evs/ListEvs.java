@@ -74,7 +74,7 @@ public class ListEvs extends AnalysisBase {
                     while (rset.next()) {
                         EvsOutput output = new EvsOutput(isIndel, rset);
 
-                        if (VariantManager.isIncluded(output.evs.getVariantId())
+                        if (VariantManager.isVariantIdIncluded(output.evs.getVariantId())
                                 && output.isValid()) {
                             bwEvs.write(output.evs.getVariantId() + ",");
                             bwEvs.write(output.toString());

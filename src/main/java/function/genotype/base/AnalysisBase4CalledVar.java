@@ -59,7 +59,7 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
                     printTotalAnnotationCount(varType);
 
-                    clearData();
+                    rset.close();
                 }
             }
 
@@ -69,8 +69,7 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
     private void processVariant() {
         if (calledVar != null
-                && calledVar.isValid()
-                && !VariantManager.isVariantOutput(calledVar.variantId)) {
+                && calledVar.isValid()) {
             calledVar.initExternalData();
 
             processVariant(calledVar);

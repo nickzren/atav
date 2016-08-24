@@ -76,7 +76,7 @@ public class ListExac extends AnalysisBase {
                     while (rset.next()) {
                         ExacOutput output = new ExacOutput(isIndel, rset);
 
-                        if (VariantManager.isIncluded(output.exac.getVariantId())
+                        if (VariantManager.isVariantIdIncluded(output.exac.getVariantId())
                                 && output.isValid()) {
                             bwExac.write(output.exac.getVariantId() + ",");
                             bwExac.write(output.toString());

@@ -228,22 +228,11 @@ public class RegionManager {
         return sqlCode;
     }
 
-    public static void addRegionByVariantId(String variantId) {
-        String[] values = variantId.split("-");
+    public static void addRegionByVariantPos(String varPos) {
+        String[] values = varPos.split("-");
         String chr = values[0];
         int pos = Integer.valueOf(values[1]);
-
-        if (values.length == 3) // variant position format chr-pos-type
-        {
-            VariantManager.addType(values[2]);
-        } else // variant id format chr-pos-ref-alt
-         if (values[2].length() == 1
-                    && values[3].length() == 1) {
-                VariantManager.addType("snv");
-            } else {
-                VariantManager.addType("indel");
-            }
-
+        VariantManager.addType(values[2]);
         regionList.add(new Region(chr, pos, pos));
     }
 

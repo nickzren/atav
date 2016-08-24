@@ -33,10 +33,6 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         System.out.println("\n");
     }
 
-    protected void clearData() throws SQLException {
-        rset.close();
-    }
-
     protected static ResultSet getAnnotationList(String varType,
             Region region) throws SQLException {
         System.out.print("Start collecting " + varType.toUpperCase() + "s" + "                    \r");

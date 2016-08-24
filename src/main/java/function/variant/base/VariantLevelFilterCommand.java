@@ -32,6 +32,7 @@ public class VariantLevelFilterCommand {
 
     // Variant Level Filter Options
     public static String includeVariantId = "";
+    public static String includeRsNumber = "";
     public static String excludeVariantId = "";
     public static boolean isExcludeArtifacts = false;
     public static boolean isExcludeSnv = false;
@@ -51,6 +52,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--variant":
                     includeVariantId = getValidPath(option);
+                    break;
+                case "--rs-number":
+                    includeRsNumber = getValidPath(option);
                     break;
                 case "--exclude-variant":
                     excludeVariantId = getValidPath(option);
