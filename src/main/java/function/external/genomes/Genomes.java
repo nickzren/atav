@@ -2,6 +2,7 @@ package function.external.genomes;
 
 import global.Data;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -37,6 +38,23 @@ public class Genomes {
         initMaf();
     }
 
+    public Genomes(boolean isIndel, ResultSet rs) {
+        try {
+            chr = rs.getString("chr");
+            pos = rs.getInt("pos");
+            ref = rs.getString("ref_allele");
+            alt = rs.getString("alt_allele");
+
+            maf = new float[GenomesManager.GENOMES_POP.length];
+
+            setMaf(rs);
+
+            isSnv = !isIndel;
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
     private void initMaf() {
         maf = new float[GenomesManager.GENOMES_POP.length];
 
@@ -45,20 +63,24 @@ public class Genomes {
 
             ResultSet rs = DBManager.executeQuery(sql);
 
-            if (rs.next()) {
-                for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-                    maf[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_maf");
-                }
-            } else {
-                for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-                    maf[i] = Data.NA;
-                }
-            }
+            setMaf(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-    
+
+    private void setMaf(ResultSet rs) throws SQLException {
+        if (rs.next()) {
+            for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
+                maf[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_maf");
+            }
+        } else {
+            for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
+                maf[i] = Data.NA;
+            }
+        }
+    }
+
     private float getMaxMaf() {
         float value = Data.NA;
 
@@ -71,12 +93,15 @@ public class Genomes {
 
         return value;
     }
-    
+
     public boolean isValid() {
         return GenomesCommand.isMaxGenomesMafValid(getMaxMaf());
     }
 
-    
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

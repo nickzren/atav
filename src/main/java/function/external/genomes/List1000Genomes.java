@@ -1,10 +1,14 @@
 package function.external.genomes;
 
 import function.AnalysisBase;
+import function.variant.base.Region;
+import function.variant.base.RegionManager;
 import function.variant.base.VariantManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.sql.ResultSet;
 import utils.CommonCommand;
+import utils.DBManager;
 import utils.ErrorManager;
 
 /**
@@ -52,21 +56,39 @@ public class List1000Genomes extends AnalysisBase {
     }
 
     @Override
-    public void processDatabaseData() {
-        try {
-            for (String variantId : VariantManager.getIncludeVariantList()) {
-                GenomesOutput output = new GenomesOutput(variantId);
+    public void processDatabaseData() throws Exception {
+        int totalNumOfRegionList = RegionManager.getRegionSize();
 
-                if (output.isValid()) {
-                    bw1000Genomes.write(variantId + ",");
-                    bw1000Genomes.write(output.toString());
-                    bw1000Genomes.newLine();
+        for (int r = 0; r < totalNumOfRegionList; r++) {
+
+            for (String varType : VariantManager.VARIANT_TYPE) {
+
+                if (VariantManager.isVariantTypeValid(r, varType)) {
+
+                    boolean isIndel = varType.equals("indel");
+
+                    Region region = RegionManager.getRegion(r, varType);
+
+                    String sqlCode = GenomesManager.getSql4Maf(isIndel, region);
+
+                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+
+                    while (rset.next()) {
+                        GenomesOutput output = new GenomesOutput(isIndel, rset);
+
+                        if (VariantManager.isVariantIdIncluded(output.genomes.getVariantId())
+                                && output.isValid()) {
+                            bw1000Genomes.write(output.genomes.getVariantId() + ",");
+                            bw1000Genomes.write(output.toString());
+                            bw1000Genomes.newLine();
+                        }
+
+                        countVariant();
+                    }
+
+                    rset.close();
                 }
-
-                countVariant();
             }
-        } catch (Exception e) {
-            ErrorManager.send(e);
         }
     }
 
