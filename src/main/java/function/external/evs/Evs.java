@@ -156,13 +156,9 @@ public class Evs {
     }
 
     public boolean isValid() {
-        if (EvsCommand.isEvsStatusValid(filterStatus)
+        return EvsCommand.isEvsStatusValid(filterStatus)
                 && EvsCommand.isEvsAllCoverageValid(allAverageCoverage)
-                && EvsCommand.isEvsMafValid(getMaxMaf())) {
-            return true;
-        }
-
-        return false;
+                && EvsCommand.isEvsMafValid(getMaxMaf());
     }
 
     public String getVariantId() {

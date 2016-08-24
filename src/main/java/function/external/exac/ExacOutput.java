@@ -1,5 +1,7 @@
 package function.external.exac;
 
+import java.sql.ResultSet;
+
 /**
  *
  * @author nick
@@ -16,6 +18,10 @@ public class ExacOutput {
     public ExacOutput(String id) {
         String[] tmp = id.split("-"); // chr-pos-ref-alt
         exac = new Exac(tmp[0], Integer.parseInt(tmp[1]), tmp[2], tmp[3]);
+    }
+
+    public ExacOutput(boolean isIndel, ResultSet rs) {
+        exac = new Exac(isIndel, rs);
     }
 
     public boolean isValid() {

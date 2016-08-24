@@ -1,6 +1,7 @@
 package function.external.exac;
 
 import function.external.base.DataManager;
+import function.variant.base.Region;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -78,6 +79,31 @@ public class ExacManager {
                 + "FROM " + coverageTable + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos;
+
+        return sql;
+    }
+
+    public static String getSql4Maf(boolean isIndel, Region region) {
+        String result = "chr,pos,ref_allele,alt_allele,";
+
+        for (String str : EXAC_POP) {
+            result += str + "_af,"
+                    + str + "_gts,";
+        }
+
+        result += "vqslod ";
+
+        String sql = "SELECT " + result;
+
+        String table = snvTable;
+
+        if (isIndel) {
+            table = indelTable;
+        }
+
+        sql += "FROM " + table + " "
+                + "WHERE chr = '" + region.getChrStr() + "' "
+                + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
 
         return sql;
     }

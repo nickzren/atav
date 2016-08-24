@@ -43,6 +43,24 @@ public class Exac {
         initMaf();
     }
 
+    public Exac(boolean isIndel, ResultSet rs) {
+        try {
+            chr = rs.getString("chr");
+            pos = rs.getInt("pos");
+            ref = rs.getString("ref_allele");
+            alt = rs.getString("alt_allele");
+            maf = new float[ExacManager.EXAC_POP.length];
+            gts = new String[ExacManager.EXAC_POP.length];
+            setMaf(rs);
+
+            isSnv = !isIndel;
+
+            initCoverage();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
     private void initCoverage() {
         try {
             String sql = ExacManager.getSql4Cvg(chr, pos);
@@ -72,12 +90,10 @@ public class Exac {
 
             if (rs.next()) {
                 setMaf(rs);
+            } else if (meanCoverage > 0) {
+                resetMaf(0);
             } else {
-                if (meanCoverage > 0) {
-                    resetMaf(0);
-                } else {
-                    resetMaf(Data.NA);
-                }
+                resetMaf(Data.NA);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -122,13 +138,13 @@ public class Exac {
     }
 
     public boolean isValid() {
-        if (ExacCommand.isExacMafValid(getMaxMaf())
+        return ExacCommand.isExacMafValid(getMaxMaf())
                 && ExacCommand.isExacVqslodValid(vqslod, isSnv)
-                && ExacCommand.isExacMeanCoverageValid(meanCoverage)) {
-            return true;
-        }
+                && ExacCommand.isExacMeanCoverageValid(meanCoverage);
+    }
 
-        return false;
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
     @Override

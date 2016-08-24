@@ -229,10 +229,17 @@ public class VariantManager {
     }
 
     public static boolean isIncluded(String varId) {
-        if (includeVariantSet.isEmpty()) {
+        if (includeVariantSet.isEmpty()
+                && VariantLevelFilterCommand.includeVariantId.isEmpty()) {
+            // only when --variant option not used, return true
             return true;
         } else {
-            return includeVariantSet.contains(varId);
+            if (includeVariantSet.contains(varId)) {
+                includeVariantSet.remove(varId);
+                return true;
+            }
+
+            return false;
         }
     }
 

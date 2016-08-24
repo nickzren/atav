@@ -62,29 +62,30 @@ public class ListEvs extends AnalysisBase {
         for (int r = 0; r < totalNumOfRegionList; r++) {
 
             for (String varType : VariantManager.VARIANT_TYPE) {
+                if (VariantManager.isVariantTypeValid(r, varType)) {
+                    boolean isIndel = varType.equals("indel");
 
-                boolean isIndel = varType.equals("indel");
+                    Region region = RegionManager.getRegion(r, varType);
 
-                Region region = RegionManager.getRegion(r, varType);
+                    String sqlCode = EvsManager.getSql4Maf(isIndel, region);
 
-                String sqlCode = EvsManager.getSql4Maf(isIndel, region);
+                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 
-                ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+                    while (rset.next()) {
+                        EvsOutput output = new EvsOutput(isIndel, rset);
 
-                while (rset.next()) {
-                    EvsOutput output = new EvsOutput(isIndel, rset);
+                        if (VariantManager.isIncluded(output.evs.getVariantId())
+                                && output.isValid()) {
+                            bwEvs.write(output.evs.getVariantId() + ",");
+                            bwEvs.write(output.toString());
+                            bwEvs.newLine();
+                        }
 
-                    if (VariantManager.isIncluded(output.evs.getVariantId())
-                            && output.isValid()) {
-                        bwEvs.write(output.evs.getVariantId() + ",");
-                        bwEvs.write(output.toString());
-                        bwEvs.newLine();
+                        countVariant();
                     }
 
-                    countVariant();
+                    rset.close();
                 }
-
-                rset.close();
             }
         }
     }
