@@ -29,7 +29,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
 
     public int[] sampleCoverageCount = new int[SampleManager.getListSize()];
-    public double[][] geneSampleCoverage = new double[GeneManager.getGeneBoundaryList().size()][SampleManager.getListSize()];
+    public int[][] geneSampleCoverage = new int[GeneManager.getGeneBoundaryList().size()][SampleManager.getListSize()];
 
     @Override
     public void initOutput() {
@@ -115,8 +115,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     public void accumulateCoverage(int geneIndex, HashMap<Integer, Integer> sampleCoveredLengthMap) {
         sampleCoveredLengthMap.keySet().stream().forEach((sampleId) -> {
             int sampleIndex = SampleManager.getIndexById(sampleId);
-            geneSampleCoverage[geneIndex][sampleIndex]
-                    = geneSampleCoverage[geneIndex][sampleIndex] + sampleCoveredLengthMap.get(sampleId);
+            geneSampleCoverage[geneIndex][sampleIndex] += sampleCoveredLengthMap.get(sampleId);
         });
     }
 
@@ -128,7 +127,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 sb.append(gene.getName()).append(",");
                 sb.append(gene.getChr()).append(",");
                 sb.append(gene.getLength()).append(",");
-                sb.append((int) geneSampleCoverage[gene.getIndex()][sample.getIndex()]).append(",");
+                sb.append(geneSampleCoverage[gene.getIndex()][sample.getIndex()]).append(",");
 
                 double ratio = MathManager.devide(geneSampleCoverage[gene.getIndex()][sample.getIndex()], gene.getLength());
                 sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
@@ -173,7 +172,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     private int getSampleCoverageByIndex(int sampleIndex) {
         int cov = 0;
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
-            cov = cov + (int) geneSampleCoverage[gene.getIndex()][sampleIndex];
+            cov = cov + geneSampleCoverage[gene.getIndex()][sampleIndex];
         }
         return cov;
     }
