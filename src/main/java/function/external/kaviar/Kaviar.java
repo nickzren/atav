@@ -2,6 +2,7 @@ package function.external.kaviar;
 
 import global.Data;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -37,7 +38,29 @@ public class Kaviar {
 
         initKaviarValue();
     }
-    
+
+    public Kaviar(boolean isIndel, ResultSet rs) {
+        try {
+            chr = rs.getString("chr");
+            pos = rs.getInt("pos");
+            ref = rs.getString("ref");
+            alt = rs.getString("alt");
+
+            isSnv = !isIndel;
+
+            maf = rs.getFloat("allele_frequency");
+
+            if (maf > 0.5) {
+                maf = 1 - maf;
+            }
+
+            alleleCount = rs.getInt("allele_count");
+            alleleNumber = rs.getInt("allele_number");
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
     private void initKaviarValue() {
         try {
             String sql = KaviarManager.getSql(isSnv, chr, pos, ref, alt);
@@ -82,6 +105,10 @@ public class Kaviar {
         }
 
         return false;
+    }
+
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
     @Override

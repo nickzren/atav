@@ -1,6 +1,7 @@
 package function.external.kaviar;
 
 import function.external.base.DataManager;
+import function.variant.base.Region;
 
 /**
  *
@@ -30,7 +31,7 @@ public class KaviarManager {
             return "";
         }
     }
-    
+
     public static String getSql(boolean isSnv, String chr,
             int pos, String ref, String alt) {
         String sql = "SELECT allele_frequency, allele_count, allele_number ";
@@ -47,6 +48,20 @@ public class KaviarManager {
                     + "AND ref = '" + ref + "' "
                     + "AND alt = '" + alt + "'";
         }
+
+        return sql;
+    }
+
+    public static String getSql(boolean isIndel, Region region) {
+        String table = snvTable;
+
+        if (isIndel) {
+            table = indelTable;
+        }
+
+        String sql = "SELECT * FROM " + table + " "
+                + "WHERE chr = '" + region.getChrStr() + "' "
+                + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
 
         return sql;
     }
