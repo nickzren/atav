@@ -2,7 +2,6 @@ package function.external.kaviar;
 
 import global.Data;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;

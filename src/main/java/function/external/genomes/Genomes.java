@@ -47,7 +47,9 @@ public class Genomes {
 
             maf = new float[GenomesManager.GENOMES_POP.length];
 
-            setMaf(rs);
+            for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
+                maf[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_maf");
+            }
 
             isSnv = !isIndel;
         } catch (Exception e) {
@@ -63,21 +65,17 @@ public class Genomes {
 
             ResultSet rs = DBManager.executeQuery(sql);
 
-            setMaf(rs);
+            if (rs.next()) {
+                for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
+                    maf[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_maf");
+                }
+            } else {
+                for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
+                    maf[i] = Data.NA;
+                }
+            }
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    private void setMaf(ResultSet rs) throws SQLException {
-        if (rs.next()) {
-            for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-                maf[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_maf");
-            }
-        } else {
-            for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-                maf[i] = Data.NA;
-            }
         }
     }
 
