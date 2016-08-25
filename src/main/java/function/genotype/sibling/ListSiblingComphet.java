@@ -119,8 +119,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
             for (ArrayList<CompHetOutput> list : geneListVector) {
                 String geneName = list.get(0).geneName;
 
-                LogManager.writeAndPrint("Analyzing qualified variants in gene ("
-                        + geneName + ")");
+                LogManager.writeAndPrint("Analyzing qualified variants in ("+ geneName);
 
                 doOutput(list);
             }

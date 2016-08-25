@@ -145,8 +145,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
         initGeneVariantList();
 
         for (ArrayList<TrioOutput> list : geneListVector) {
-            LogManager.writeAndPrint("Analyzing qualified variants in gene ("
-                    + list.get(0).getCalledVariant().getGeneName() + ")");
+            LogManager.writeAndPrint("Analyzing qualified variants in gene "
+                    + list.get(0).getCalledVariant().getGeneName());
 
             processVariantsByGene(list);
         }
@@ -180,7 +180,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                             != output2.getCalledVariant().getVariantIdNegative4Indel()) {
                         String compHetFlag = getTrioCompHetFlag(output1, output2);
 
-                        if (compHetFlag.equals(COMP_HET_FLAG[0]) || compHetFlag.equals(COMP_HET_FLAG[1])) {
+                        if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
                             doCompHetOutput(bwCompHet, compHetFlag, output1, output2);
                         }
                     }
