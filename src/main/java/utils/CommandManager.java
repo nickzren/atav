@@ -153,10 +153,10 @@ public class CommandManager {
     }
 
     private static void initCommand4Log() {
-        String version = Data.version;
+        String version = Data.VERSION;
 
-        if (Data.version.contains(" ")) {
-            version = Data.version.substring(Data.version.indexOf(" ") + 1);
+        if (Data.VERSION.contains(" ")) {
+            version = Data.VERSION.substring(Data.VERSION.indexOf(" ") + 1);
         }
 
         command = "atav_" + version + ".sh";

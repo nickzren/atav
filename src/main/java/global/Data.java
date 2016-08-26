@@ -7,8 +7,8 @@ package global;
 public class Data {
 
     // software info
-    public static final String AppTitle = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String version = "trunk";
+    public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
+    public static String VERSION = "trunk";
     public static String userName = "UnspecifiedUser";
 
     // system config file path

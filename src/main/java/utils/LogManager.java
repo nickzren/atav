@@ -50,7 +50,7 @@ public class LogManager {
         try {
             writeAndPrint("Program start: " + date.toString());
             writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
-            writeAndPrint("Version: " + Data.version);
+            writeAndPrint("Version: " + Data.VERSION);
 
             writeLog("ATAV command:");
             writeLog(CommandManager.command + "\n");
@@ -108,8 +108,8 @@ public class LogManager {
     private static void logUserCommand() {
         try {
             if (isBioinfoTeam()
-                    || Data.version.equals("trunk")
-                    || Data.version.equals("beta")) {
+                    || Data.VERSION.equals("trunk")
+                    || Data.VERSION.equals("beta")) {
                 return;
             }
 
@@ -169,8 +169,8 @@ public class LogManager {
         try {
             if (CommonCommand.isNonSampleAnalysis
                     || isBioinfoTeam()
-                    || Data.version.equals("trunk")
-                    || Data.version.equals("beta")) {
+                    || Data.VERSION.equals("trunk")
+                    || Data.VERSION.equals("beta")) {
                 return;
             }
 
