@@ -1,6 +1,8 @@
 package function.genotype.collapsing;
 
 import function.annotation.base.GeneManager;
+import function.external.rvis.RvisCommand;
+import function.external.rvis.RvisManager;
 import utils.CommonCommand;
 import utils.FormatManager;
 import utils.ThirdPartyToolManager;
@@ -35,7 +37,8 @@ public class CollapsingGeneSummary extends CollapsingSummary {
                 + "Fet P,"
                 + "Linear P,"
                 + "Logistic P,"
-                + GeneManager.getCoverageSummary("title");
+                + GeneManager.getCoverageSummary("title")
+                + RvisManager.getTitle();
     }
 
     String coverageSummaryLine;
@@ -88,6 +91,14 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         }
     }
 
+    public String getRvis() {
+        if (RvisCommand.isIncludeRvis) {
+            return RvisManager.getLine(name);
+        } else {
+            return "";
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -108,6 +119,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         sb.append(FormatManager.getDouble(linearP)).append(",");
         sb.append(FormatManager.getDouble(logisticP)).append(",");
         sb.append(GeneManager.getCoverageSummary(name));
+        sb.append(getRvis());
 
         return sb.toString();
     }
