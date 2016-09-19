@@ -99,11 +99,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     private boolean isCaseOnlyValid(Sample sample) {
         if (VarGenoCommand.isCaseOnly) {
-            if (sample.isCase()) {
-                return true;
-            } else {
-                return false;
-            }
+            return sample.isCase();
         } else {
             return true;
         }

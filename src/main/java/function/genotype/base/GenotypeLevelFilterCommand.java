@@ -217,11 +217,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value >= minVarPresent) {
-            return true;
-        }
-
-        return false;
+        return value >= minVarPresent;
     }
 
     public static boolean isMinCaseCarrierValid(int value) {
