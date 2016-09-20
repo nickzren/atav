@@ -1,5 +1,6 @@
 package function.genotype.trio;
 
+import function.annotation.base.TranscriptManager;
 import function.genotype.base.CalledVariant;
 import global.Index;
 import function.external.evs.EvsManager;
@@ -86,6 +87,8 @@ public class CompHetOutput extends TrioOutput implements Comparable {
                 + "Polyphen Humvar Score,"
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
+                + "Transcript Stable Id,"
+                + "Is CCDS Transcript,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
@@ -110,7 +113,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
                 varTitle += "," + s + " (#" + var + ")";
             }
         }
-        
+
         varTitle += ",";
 
         return varTitle;
@@ -175,6 +178,8 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(calledVar.getFunction()).append(",");
+        sb.append(calledVar.getStableId()).append(",");
+        sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());
@@ -184,7 +189,7 @@ public class CompHetOutput extends TrioOutput implements Comparable {
         sb.append(calledVar.getSubRvis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
-        
+
         return sb.toString();
     }
 

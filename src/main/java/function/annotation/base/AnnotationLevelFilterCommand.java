@@ -44,11 +44,9 @@ public class AnnotationLevelFilterCommand {
                     break;
                 case "--ccds-only":
                     isCcdsOnly = true;
-                    TranscriptManager.initCCDSTranscriptPath();
                     break;
                 case "--canonical-only":
                     isCanonicalOnly = true;
-                    TranscriptManager.initCanonicalTranscriptPath();
                     break;
                 case "--polyphen":
                 case "--polyphen-humdiv":

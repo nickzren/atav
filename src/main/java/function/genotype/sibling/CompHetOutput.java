@@ -1,5 +1,6 @@
 package function.genotype.sibling;
 
+import function.annotation.base.TranscriptManager;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
@@ -77,6 +78,8 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Polyphen Humvar Score,"
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
+                + "Transcript Stable Id,"
+                + "Is CCDS Transcript,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
@@ -142,6 +145,8 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(calledVar.getFunction()).append(",");
+        sb.append(calledVar.getStableId()).append(",");
+        sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());

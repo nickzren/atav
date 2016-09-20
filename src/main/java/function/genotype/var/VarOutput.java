@@ -1,6 +1,7 @@
 package function.genotype.var;
 
 import function.annotation.base.GeneManager;
+import function.annotation.base.TranscriptManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.external.genomes.GenomesManager;
@@ -58,6 +59,8 @@ public class VarOutput extends Output {
                 + "Function,"
                 + "Gene Name,"
                 + "Artifacts in Gene,"
+                + "Transcript Stable Id,"
+                + "Is CCDS Transcript,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
@@ -112,6 +115,8 @@ public class VarOutput extends Output {
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
+        sb.append(calledVar.getStableId()).append(",");
+        sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());

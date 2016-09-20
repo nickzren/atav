@@ -181,7 +181,7 @@ public class AnnotatedVariant extends Variant {
             } else {
                 trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
             }
-            
+
             return TrapCommand.isTrapScoreValid(trapScore);
         }
 
