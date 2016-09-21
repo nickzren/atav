@@ -55,7 +55,7 @@ public class TrioManager {
                 + "Child,"
                 + "Mother,"
                 + "Father,"
-                //                + "Flag,"
+                + "Flag,"
                 + "Gene Name,"
                 + "Artifacts in Gene,"
                 + getTitleByVariant();
@@ -90,7 +90,6 @@ public class TrioManager {
     private static String getTitleByVariant() {
         return "Variant ID,"
                 + "Variant Type,"
-                + "Denovo Flag,"
                 + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
