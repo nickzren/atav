@@ -21,8 +21,7 @@ import function.genotype.pedmap.PedMapGenerator;
 import function.genotype.sibling.ListSiblingComphet;
 import function.genotype.statistics.FisherExactTest;
 import function.genotype.statistics.LinearRegression;
-import function.genotype.trio.ListTrioCompHet;
-import function.genotype.trio.ListTrioDenovo;
+import function.genotype.trio.ListTrio;
 import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
@@ -156,10 +155,8 @@ public class Program {
                 runAnalysis(new FamilyAnalysis());
             } else if (SiblingCommand.isSiblingCompHet) {
                 runAnalysis(new ListSiblingComphet());
-            } else if (TrioCommand.isTrioDenovo) {
-                runAnalysis(new ListTrioDenovo());
-            } else if (TrioCommand.isTrioCompHet) {
-                runAnalysis(new ListTrioCompHet());
+            } else if (TrioCommand.isListTrio) {
+                runAnalysis(new ListTrio());
             } else if (ParentalCommand.isParentalMosaic) {
                 runAnalysis(new ParentalMosaic());
             } else if (PedMapCommand.isPedMap) {

@@ -363,27 +363,4 @@ public class VariantManager {
         includeVariantTypeList.clear();
         includeChrList.clear();
     }
-
-    public static boolean isAnnoDBVar(boolean isSnv, String chr,
-            int pos, String ref, String alt) throws SQLException {
-        String sql;
-        int regionId = RegionManager.getIdByChr(chr);
-
-        if (isSnv) {
-            sql = "SELECT snv_id From snv "
-                    + "WHERE seq_region_id=" + regionId + " "
-                    + "AND seq_region_pos=" + pos + " "
-                    + "AND allele='" + alt + "'";
-        } else {
-            sql = "SELECT indel_id From indel "
-                    + "WHERE seq_region_id=" + regionId + " "
-                    + "AND seq_region_pos=" + pos + " "
-                    + "AND ref_allele='" + ref + "'"
-                    + "AND allele='" + alt + "'";
-        }
-
-        ResultSet rs = DBManager.executeQuery(sql);
-
-        return rs.next();
-    }
 }

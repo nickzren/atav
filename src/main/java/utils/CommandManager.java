@@ -87,13 +87,11 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-        {
-            if (isCommandFileIncluded(options)) {
+         if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
-        }
 
         cleanUpOddSymbol();
 
@@ -298,11 +296,8 @@ public class CommandManager {
                 case "--list-sibling-comp-het":
                     SiblingCommand.isSiblingCompHet = true;
                     break;
-                case "--list-trio-denovo":
-                    TrioCommand.isTrioDenovo = true;
-                    break;
-                case "--list-trio-comp-het":
-                    TrioCommand.isTrioCompHet = true;
+                case "--list-trio":
+                    TrioCommand.isListTrio = true;
                     break;
                 case "--list-parental-mosaic":
                     ParentalCommand.isParentalMosaic = true;
@@ -326,7 +321,6 @@ public class CommandManager {
                     GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isIncludeMgi = true;
                     break;
-                    
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
                     CoverageCommand.isCoverageSummary = true;
@@ -340,7 +334,7 @@ public class CommandManager {
                 case "--site-coverage-comparison":
                     CoverageCommand.isSiteCoverageComparison = true;
                     break;
-                    
+
                 // External Datasets Functions    
                 case "--list-evs":
                     CommonCommand.isNonSampleAnalysis = true;
@@ -375,7 +369,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     TrapCommand.isListTrap = true;
                     TrapCommand.isIncludeTrap = true;
-                    break;    
+                    break;
                 case "--list-sub-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
                     SubRvisCommand.isListSubRvis = true;
@@ -436,10 +430,8 @@ public class CommandManager {
             FamilyCommand.initOptions(optionList.iterator());
         } else if (SiblingCommand.isSiblingCompHet) {
 
-        } else if (TrioCommand.isTrioDenovo) {
-            TrioCommand.initDenovoOptions(optionList.iterator());
-        } else if (TrioCommand.isTrioCompHet) {
-            TrioCommand.initCompHetOptions(optionList.iterator());
+        } else if (TrioCommand.isListTrio) {
+            TrioCommand.initOptions(optionList.iterator());
         } else if (ParentalCommand.isParentalMosaic) {
             ParentalCommand.initOptions(optionList.iterator());
         } else if (PedMapCommand.isPedMap) {
