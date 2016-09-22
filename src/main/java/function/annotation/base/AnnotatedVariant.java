@@ -182,7 +182,12 @@ public class AnnotatedVariant extends Variant {
                 trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
             }
 
-            return TrapCommand.isTrapScoreValid(trapScore);
+            if (function.equals("SYNONYMOUS_CODING")
+                    || function.equals("INTRON_EXON_BOUNDARY")
+                    || function.equals("INTRON")) { 
+                // filter only apply to SYNONYMOUS_CODING, INTRON_EXON_BOUNDARY and INTRONIC variants
+                return TrapCommand.isTrapScoreValid(trapScore);
+            }
         }
 
         return true;
