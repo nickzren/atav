@@ -21,8 +21,8 @@ public class ThirdPartyToolManager {
     private static final String PVALS_QQPLOT_R = "/nfs/goldstein/software/atav_home/lib/pvals_qqplot.R";
     private static final String PERL_SYSTEM_PATH = "perl";
     private static final String FLANKING_SEQ_PERL = "/nfs/goldstein/software/atav_home/lib/flanking_seq.pl";
-    private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/trio_denovo_tier.R";
-    private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/trio_comp_het_tier.R";
+    private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_denovo_tier.R";
+    private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = "/nfs/goldstein/software/atav_home/lib/non_trio_tier.R";
 
     public static int systemCall(String[] cmd) {

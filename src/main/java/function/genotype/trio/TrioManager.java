@@ -35,11 +35,11 @@ public class TrioManager {
     private static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
 
     public static final String[] COMP_HET_FLAG = {
-        "compound heterozygote", // 0
-        "possibly compound heterozygote", // 1
-        "no flag", //2
-        "denovo with inherited variant", // 3
-        "possibly denovo with inherited variant" // 4
+        "COMPOUND HETEROZYGOTE", // 0
+        "POSSIBLY COMPOUND HETEROZYGOTE", // 1
+        "NO FLAG", //2
+        "DENOVO WITH INHERITED VARIANT", // 3
+        "POSSIBLY DENOVO WITH INHERITED VARIANT" // 4
     };
 
     static ArrayList<Trio> trioList = new ArrayList<>();
@@ -55,7 +55,6 @@ public class TrioManager {
                 + "Child,"
                 + "Mother,"
                 + "Father,"
-                + "Flag,"
                 + "Gene Name,"
                 + "Artifacts in Gene,"
                 + getTitleByVariant();
@@ -66,7 +65,7 @@ public class TrioManager {
                 + "Child,"
                 + "Mother,"
                 + "Father,"
-                + "Flag,"
+                + "Comp Het Flag,"
                 + "Gene Name,"
                 + "Artifacts in Gene,"
                 + "Var Case Freq #1 & #2 (co-occurance),"
@@ -88,7 +87,8 @@ public class TrioManager {
     }
 
     private static String getTitleByVariant() {
-        return "Variant ID,"
+        return "Denovo Flag,"
+                + "Variant ID,"
                 + "Variant Type,"
                 + "Rs Number,"
                 + "Ref Allele,"

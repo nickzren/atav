@@ -18,7 +18,7 @@ public class TrioOutput extends Output implements Comparable {
 
     String denovoFlag = "";
     String geneName = "";
-    
+
     // Trio Family data
     Sample child;
     Carrier cCarrier;
@@ -131,6 +131,7 @@ public class TrioOutput extends Output implements Comparable {
         int cReadsAlt = cCarrier != null ? cCarrier.getReadsAlt() : Data.NA;
         int cReadsRef = cCarrier != null ? cCarrier.getReadsRef() : Data.NA;
 
+        sb.append(denovoFlag).append(",");
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRsNumber()).append(",");

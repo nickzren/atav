@@ -1,22 +1,33 @@
 #Script:	IGM Sequencing Clinic Tier 2 Philosopy post-ATAV Script
 #Version:	0.3
-#Designed:	Slavé Petrovski, David B. Goldstein
-#Developed:	Slavé Petrovski, Quanli Wang
+#Designed:	Slavï¿½ Petrovski, David B. Goldstein
+#Developed:	Slavï¿½ Petrovski, Quanli Wang
 #Last Update:	2016-07-01
 #Institute:	IGM (Institute for Genomic Medicine)
 
 
-
-Filter.by.Flag <- function(data, type, strict = FALSE) {
+Filter.by.DenovoFlag <- function(data, type, strict = FALSE) {
   #check for column name
-  stopifnot(length(which(colnames(data) == "Flag"))>0)
+  stopifnot(length(which(colnames(data) == "Denovo.Flag"))>0)
   if (strict) {
-    result <- data[data["Flag"] == type,]
+    result <- data[data["Denovo.Flag"] == type,]
   } else {
-    result <- data[grep(type, data$"Flag") ,]
+    result <- data[grep(type, data$"Denovo.Flag") ,] 
   }
   # put NA rows back if any
-  result = rbind(result,data[data["Flag"] == "NA",])
+  result = rbind(result,data[data["Denovo.Flag"] == "NA",])
+}
+
+Filter.by.CompHetFlag <- function(data, type, strict = FALSE) {
+  #check for column name
+  stopifnot(length(which(colnames(data) == "Comp.Het.Flag"))>0)
+  if (strict) {
+    result <- data[data["Comp.Het.Flag"] == type,]
+  } else {
+    result <- data[grep(type, data$"Comp.Het.Flag") ,] 
+  }
+  # put NA rows back if any
+  result = rbind(result,data[data["Comp.Het.Flag"] == "NA",])
 }
 
 normalized.name <- function(names) {
@@ -665,6 +676,8 @@ Filter.by.Function <- function(x) {
 }
 
 Filter.by.HemiHomo.Count <- function(data,threshold,is.comphet = FALSE) {
+  if (dim(data)[1] ==0) { return(data)}
+
   #Get IGM genotype count
   if (is.comphet) {
     stopifnot(length(which(colnames(data) == normalized.name("Major Hom Ctrl (#1)")))>0)

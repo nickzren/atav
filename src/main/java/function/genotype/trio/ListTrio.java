@@ -126,7 +126,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
             sb.append(output.child.getName()).append(",");
             sb.append(output.motherName).append(",");
             sb.append(output.fatherName).append(",");
-            sb.append(output.denovoFlag).append(",");
             sb.append("'").append(output.getCalledVariant().getGeneName()).append("'").append(",");
             sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output.getCalledVariant().getGeneName()))).append(",");
             sb.append(output.toString());
