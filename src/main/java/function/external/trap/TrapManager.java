@@ -28,7 +28,7 @@ public class TrapManager {
 
     public static String getVersion() {
         if (TrapCommand.isIncludeTrap) {
-            return "Trap: " + DataManager.getVersion(table) + "\n";
+            return "TraP: " + DataManager.getVersion(table) + "\n";
         } else {
             return "";
         }
