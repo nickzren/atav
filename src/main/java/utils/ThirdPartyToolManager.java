@@ -1,6 +1,7 @@
 package utils;
 
 import function.external.flanking.FlankingCommand;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
 import function.variant.base.VariantLevelFilterCommand;
@@ -19,6 +20,7 @@ public class ThirdPartyToolManager {
     private static final String R_SCRIPT_SYSTEM_PATH = "/nfs/goldstein/software/R-3.0.1/bin/Rscript";
     private static final String COLLAPSED_REGRESSION_R = "/nfs/goldstein/software/atav_home/lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = "/nfs/goldstein/software/atav_home/lib/pvals_qqplot.R";
+    private static final String QQPLOT_FOR_COLLAPSING_R = "/nfs/goldstein/software/atav_home/lib/qqplot_for_collapsing.R";
     private static final String PERL_SYSTEM_PATH = "perl";
     private static final String FLANKING_SEQ_PERL = "/nfs/goldstein/software/atav_home/lib/flanking_seq.pl";
     private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_denovo_tier.R";
@@ -113,9 +115,6 @@ public class ThirdPartyToolManager {
         int exitValue = systemCall(new String[]{cmd});
 
         if (exitValue != 0) {
-            LogManager.writeAndPrint("\nwarning: the application failed to run p value "
-                    + "qq plot script. \n");
-
             deleteFile(outputPath);
         }
     }
@@ -135,6 +134,22 @@ public class ThirdPartyToolManager {
         }
 
         callPvalueQQPlot(pvalueFile, col, outputPath);
+    }
+
+    public static void generateQQPlot4CollapsingFetP(String matrixFilePath, String outputPath) {
+        String cmd = R_SCRIPT_SYSTEM_PATH + " "
+                + QQPLOT_FOR_COLLAPSING_R + " "
+                + GenotypeLevelFilterCommand.sampleFile + " "
+                + matrixFilePath + " "
+                + "1000 " // permutation#
+                + outputPath; // output path
+
+        int exitValue = systemCall(new String[]{cmd});
+
+        if (exitValue != 0) {
+            deleteFile(outputPath);
+        }
+
     }
 
     private static void deleteFile(String filePath) {
