@@ -26,7 +26,7 @@ qq = function(pvector, ...) {
   # Returns:
   #   NULL.
   if (!is.numeric(pvector)) stop("P value vector is not numeric.")
-  pvector <- pvector[!is.na(pvector) & pvector<=1 & pvector>0]
+  pvector <- pvector[!is.na(pvector) & pvector<=1 & pvector>=0]
   o = -log10(sort(pvector,decreasing=F))
   e = -log10( ppoints(length(pvector) ))
   plot(e,o,pch=20,cex=1, xlab=expression(Expected~~-log[10](italic(p))),
