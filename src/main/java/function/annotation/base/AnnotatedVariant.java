@@ -356,7 +356,7 @@ public class AnnotatedVariant extends Variant {
 
     public String getTrapScore() {
         if (TrapCommand.isIncludeTrap) {
-            return trapScore + ",";
+            return FormatManager.getFloat(trapScore) + ",";
         } else {
             return "";
         }

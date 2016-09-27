@@ -31,7 +31,9 @@ public class TranscriptManager {
         // init ccds transcript
         TranscriptManager.initCCDSTranscriptPath();
         initFromTranscriptFile(ccdsTranscriptFile, ccdsTranscriptSet);
-        resetTranscriptSet(ccdsTranscriptSet);
+        if (AnnotationLevelFilterCommand.isCcdsOnly) {
+            resetTranscriptSet(ccdsTranscriptSet);
+        }
 
         // init canonical transcript
         if (AnnotationLevelFilterCommand.isCanonicalOnly) {
