@@ -59,6 +59,22 @@ public class MathManager {
         }
     }
 
+    public static float devide(float a, float b) {
+        if (b == 0 || b == Data.NA || a == Data.NA) {
+            return Data.NA;
+        } else {
+            return a / b;
+        }
+    }
+
+    public static float abs(float a, float b) {
+        if (b == Data.NA || a == Data.NA) {
+            return Data.NA;
+        } else {
+            return Math.abs(a - b);
+        }
+    }
+
     //    public static double roundToDecimals(double d, double c) {
 //        int t = (int) (d * c + 0.5);
 //

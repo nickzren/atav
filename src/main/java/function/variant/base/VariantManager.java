@@ -4,6 +4,7 @@ import function.annotation.base.GeneManager;
 import function.external.knownvar.ClinVar;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
+import function.genotype.trio.TrioCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -29,9 +30,14 @@ public class VariantManager {
     private static ArrayList<String> includeVariantTypeList = new ArrayList<>();
     private static ArrayList<String> includeChrList = new ArrayList<>();
 
-    private static final int maxIncludeNum = 10000000;
+    private static int maxIncludeNum = 10000000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
+        if (TrioCommand.isListTrio) {
+            // disable process region as variant by varaint way
+            maxIncludeNum = 0;
+        }
+
         initByVariantId(VariantLevelFilterCommand.includeVariantId, includeVariantSet, true);
 
         initByRsNumber(VariantLevelFilterCommand.includeRsNumber, includeRsNumberSet, true);
