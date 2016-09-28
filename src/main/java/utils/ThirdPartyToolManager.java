@@ -17,7 +17,7 @@ import java.util.Vector;
  */
 public class ThirdPartyToolManager {
 
-    private static final String R_SCRIPT_SYSTEM_PATH = "/nfs/goldstein/software/R-3.0.1/bin/Rscript";
+    private static final String R_SCRIPT_SYSTEM_PATH = "/nfs/goldstein/software/R-3.2.5/bin/Rscript";
     private static final String COLLAPSED_REGRESSION_R = "/nfs/goldstein/software/atav_home/lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = "/nfs/goldstein/software/atav_home/lib/pvals_qqplot.R";
     private static final String QQPLOT_FOR_COLLAPSING_R = "/nfs/goldstein/software/atav_home/lib/qqplot_for_collapsing.R";
