@@ -25,7 +25,7 @@ public class RegionCleanLinear {
     ArrayList<SortedRegionLinear> regionList = new ArrayList<>();
     HashMap<String, SortedRegionLinear> cleanedRegionMap = new HashMap<>();
 
-    public void addExon(String name, double caseAvg, double ctrlAvg, double absDiff, int regionSize,
+    public void addExon(String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize,
             double p, double r2, double variance) {
         regionList.add(new SortedRegionLinear(name, caseAvg, ctrlAvg, absDiff, regionSize,
                 p, r2, variance));

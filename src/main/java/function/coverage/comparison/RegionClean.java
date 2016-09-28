@@ -20,12 +20,12 @@ public class RegionClean {
 
     int totalBases = 0;
     int totalCleanedBases = 0;
-    double caseCoverage = 0;
-    double ctrlCoverage = 0;
+    float caseCoverage = 0;
+    float ctrlCoverage = 0;
     ArrayList<SortedRegion> regionList = new ArrayList<>();
     HashMap<String, SortedRegion> cleanedRegionMap = new HashMap<>();
 
-    public void addExon(String name, double caseAvg, double ctrlAvg, double absDiff, int regionSize) {
+    public void addExon(String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize) {
         regionList.add(new SortedRegion(name, caseAvg, ctrlAvg, absDiff, regionSize));
         totalBases += regionSize;
     }
@@ -39,9 +39,9 @@ public class RegionClean {
         Collections.sort(regionList);
 
         int i;
-        double cutoff;
-        double[] data = new double[regionList.size()];
-        double meandata = 0.0;
+        float cutoff;
+        float[] data = new float[regionList.size()];
+        float meandata = 0;
         //calculate mean data
         for (i = 0; i < data.length; i++) {
             data[i] = regionList.get(i).getCovDiff();
@@ -49,7 +49,7 @@ public class RegionClean {
         }
         meandata /= data.length;
 
-        double total_variation = 0.0;
+        float total_variation = 0;
         for (i = 0; i < data.length; i++) {
             data[i] = (data[i] - meandata) * (data[i] - meandata);
             total_variation += data[i];
@@ -61,7 +61,7 @@ public class RegionClean {
         }
 
         for (i = 0; i < data.length; i++) {
-            data[i] = data[i] - (double) (i + 1) / (double) data.length;
+            data[i] = data[i] - (float) (i + 1) / (float) data.length;
         }
 
         int index = 0;
@@ -75,7 +75,7 @@ public class RegionClean {
 
         cutoff = regionList.get(index).getCovDiff();
 
-        LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for sites is " + Double.toString(cutoff));
+        LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for sites is " + Float.toString(cutoff));
 
         if (CoverageCommand.siteCleanCutoff != Data.NO_FILTER) {
             cutoff = CoverageCommand.siteCleanCutoff;

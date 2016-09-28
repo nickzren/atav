@@ -7,12 +7,12 @@ package function.coverage.comparison;
 public class SortedRegion implements Comparable {
 
     private String name;
-    private double caseAvg;
-    private double ctrlAvg;
-    private double covDiff;
+    private float caseAvg;
+    private float ctrlAvg;
+    private float covDiff;
     private int length;
 
-    public SortedRegion(String name, double caseAvg, double ctrlAvg, double covDiff, int regionSize) {
+    public SortedRegion(String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize) {
         this.name = name;
         this.covDiff = covDiff;
         this.caseAvg = caseAvg;
@@ -24,15 +24,15 @@ public class SortedRegion implements Comparable {
         return name;
     }
 
-    public double getCaseAvg() {
+    public float getCaseAvg() {
         return caseAvg;
     }
 
-    public double getCtrlAvg() {
+    public float getCtrlAvg() {
         return ctrlAvg;
     }
 
-    public double getCovDiff() {
+    public float getCovDiff() {
         return covDiff;
     }
 
@@ -47,6 +47,6 @@ public class SortedRegion implements Comparable {
     @Override
     public int compareTo(Object other) {
         SortedRegion that = (SortedRegion) other;
-        return Double.compare(that.covDiff, this.covDiff); // large -> small
+        return Float.compare(that.covDiff, this.covDiff); // large -> small
     }
 }

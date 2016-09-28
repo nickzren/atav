@@ -10,7 +10,7 @@ public class SortedRegionLinear extends SortedRegion {
     private double r2;
     private double variance;
 
-    public SortedRegionLinear(String name, double caseAvg, double ctrlAvg, double covDiff, int regionSize,
+    public SortedRegionLinear(String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize,
             double p, double r2, double variance) {
         super(name, caseAvg, ctrlAvg, covDiff, regionSize);
 

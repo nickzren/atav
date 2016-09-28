@@ -5,7 +5,6 @@ import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
-import function.coverage.base.CoverageCommand;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -99,9 +98,9 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 sb.setLength(0);
 
                 String name = gene.getName() + "_" + gene.getChr() + "_" + start;
-                double caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
-                double ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
-                double absDiff = MathManager.abs(caseAvg, ctrlAvg);
+                float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
+                float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
+                float absDiff = MathManager.abs(caseAvg, ctrlAvg);
                 regionClean.addExon(name, caseAvg, ctrlAvg, absDiff, 1);
             }
         } catch (Exception e) {

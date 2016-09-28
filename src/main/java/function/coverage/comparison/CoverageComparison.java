@@ -82,8 +82,8 @@ public class CoverageComparison extends CoverageComparisonBase {
             SimpleRegression sr = new SimpleRegression(true);
             SummaryStatistics lss = new SummaryStatistics();
 
-            double caseAvg = 0;
-            double ctrlAvg = 0;
+            float caseAvg = 0;
+            float ctrlAvg = 0;
             for (Sample sample : SampleManager.getList()) {
                 Integer coveredLength = sampleCoveredLengthMap.get(sample.getId());
                 if (coveredLength != null) {
@@ -110,7 +110,7 @@ public class CoverageComparison extends CoverageComparisonBase {
             sb.append(gene.getChr()).append(",");
             sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
             sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
-            double absDiff = MathManager.abs(caseAvg, ctrlAvg);
+            float absDiff = MathManager.abs(caseAvg, ctrlAvg);
             sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
             sb.append(exon.getLength());
 
@@ -132,7 +132,7 @@ public class CoverageComparison extends CoverageComparisonBase {
         }
     }
 
-    private void addExon(StringBuilder sb, String name, double caseAvg, double ctrlAvg, double absDiff, int regionSize,
+    private void addExon(StringBuilder sb, String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize,
             SimpleRegression sr, SummaryStatistics lss) {
         if (CoverageCommand.isLinear) {
             double r2 = sr.getRSquare();
