@@ -170,9 +170,7 @@ public class VariantManager {
 
     private static void addVariantToList(String str, HashSet<String> variantSet,
             boolean isInclude) throws SQLException {
-        if (str.contains("_")) {
-            ErrorManager.print("warning: old variant id format is no longer support.");
-        } else if (str.startsWith("rs")) {
+        if (str.startsWith("rs")) {
             ErrorManager.print("warning: rs number is no longer support in --variant option, "
                     + "please use --rs-number instead.");
         }
