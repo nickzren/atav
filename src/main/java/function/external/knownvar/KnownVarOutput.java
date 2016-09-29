@@ -8,13 +8,14 @@ import function.annotation.base.AnnotatedVariant;
  */
 public class KnownVarOutput {
 
+    private HGMDOutput hgmdOutput;
     private ClinVarOutput clinVarOutput;
     private ClinVarPathoratio clinVarPathoratio;
-    private HGMDOutput hgmdOutput;
-    private String omimDiseaseName;
-    private String acmg;
     private ClinGen clinGen;
+    private String omimDiseaseName;
     private int recessiveCarrier;
+    private String acmg;
+    private DBDSMOutput dbDSMOutput;
 
     public static String getTitle() {
         return "Variant ID,"
@@ -24,13 +25,14 @@ public class KnownVarOutput {
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
         String geneName = annotatedVar.getGeneName().toUpperCase();
+        hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
         clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
         clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
-        hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
-        omimDiseaseName = KnownVarManager.getOMIM(geneName);
-        acmg = KnownVarManager.getACMG(geneName);
         clinGen = KnownVarManager.getClinGen(geneName);
+        omimDiseaseName = KnownVarManager.getOMIM(geneName);
         recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
+        acmg = KnownVarManager.getACMG(geneName);
+        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
     }
 
     @Override
@@ -44,6 +46,7 @@ public class KnownVarOutput {
         sb.append(omimDiseaseName).append(",");
         sb.append(recessiveCarrier).append(",");
         sb.append(acmg).append(",");
+        sb.append(dbDSMOutput.toString());
 
         return sb.toString();
     }

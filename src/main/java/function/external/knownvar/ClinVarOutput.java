@@ -45,7 +45,7 @@ public class ClinVarOutput {
                 "NA",
                 "NA");
 
-        boolean isFirstSiteClinvar = true;
+        boolean isFirstSite = true;
 
         for (ClinVar tmpClinvar : collection) {
             String idStr = var.getVariantIdStr().replaceAll("XY", "X");
@@ -58,8 +58,8 @@ public class ClinVarOutput {
                 continue;
             }
 
-            if (isFirstSiteClinvar) {
-                isFirstSiteClinvar = false;
+            if (isFirstSite) {
+                isFirstSite = false;
                 clinvar.setDiseaseName("?Site - " + tmpClinvar.getDiseaseName());
                 clinvar.setClinicalSignificance(tmpClinvar.getClinicalSignificance());
                 clinvar.setPubmedID(tmpClinvar.getPubmedID());

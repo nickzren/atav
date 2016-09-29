@@ -2,6 +2,7 @@ package function.variant.base;
 
 import function.annotation.base.GeneManager;
 import function.external.knownvar.ClinVar;
+import function.external.knownvar.DBDSM;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
 import function.genotype.trio.TrioCommand;
@@ -157,6 +158,11 @@ public class VariantManager {
         // init HGMD variants set
         for (HGMD hgmd : KnownVarManager.getHGMDMultiMap().values()) {
             addVariantToList(hgmd.getVariantId(), includeVariantSet, true);
+        }
+
+        // init DBDSM variants set
+        for (DBDSM dbDSM : KnownVarManager.getDBDSMMultiMap().values()) {
+            addVariantToList(dbDSM.getVariantId(), includeVariantSet, true);
         }
 
         resetRegionList();
@@ -336,11 +342,9 @@ public class VariantManager {
                     return false;
                 }
             } else // indel
-            {
-                if (VariantLevelFilterCommand.isExcludeIndel) {
+             if (VariantLevelFilterCommand.isExcludeIndel) {
                     return false;
                 }
-            }
 
             if (includeVariantTypeList.isEmpty()) {
                 return true;

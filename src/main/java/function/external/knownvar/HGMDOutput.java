@@ -52,7 +52,7 @@ public class HGMDOutput {
                 "NA",
                 "NA");
 
-        boolean isFirstSiteHgmd = true;
+        boolean isFirstSite = true;
 
         for (HGMD tmpHgmd : collection) {
             String idStr = var.getVariantIdStr().replaceAll("XY", "X");
@@ -65,8 +65,8 @@ public class HGMDOutput {
                 continue;
             }
 
-            if (isFirstSiteHgmd) {
-                isFirstSiteHgmd = false;
+            if (isFirstSite) {
+                isFirstSite = false;
                 hgmd.setDiseaseName("?Site - " + tmpHgmd.getDiseaseName());
                 hgmd.setPmid(tmpHgmd.getPmid());
                 hgmd.setVariantClass(tmpHgmd.getVariantClass());

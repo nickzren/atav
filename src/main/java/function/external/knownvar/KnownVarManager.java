@@ -28,6 +28,7 @@ public class KnownVarManager {
     public static final String omimTable = "knownvar.omim_2016_08_17";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
     public static final String acmgTable = "knownvar.ACMG_2016_04_26";
+    public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
 
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
     private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
@@ -36,6 +37,7 @@ public class KnownVarManager {
     private static final HashMap<String, String> omimMap = new HashMap<>();
     private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
     private static final HashMap<String, String> acmgMap = new HashMap<>();
+    private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -65,7 +67,10 @@ public class KnownVarManager {
                     + "ClinGen TriplosensitivityDesc,"
                     + "OMIM Disease,"
                     + "RecessiveCarrier,"
-                    + "ACMG,";
+                    + "ACMG,"
+                    + "dbDSM Disease,"
+                    + "dbDSM Classification,"
+                    + "dbDSM PubmedID,";
         } else {
             return "";
         }
@@ -79,7 +84,8 @@ public class KnownVarManager {
                     + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
                     + "OMIM: " + DataManager.getVersion(omimTable) + "\n"
                     + "RecessiveCarrier: " + DataManager.getVersion(recessiveCarrierTable) + "\n"
-                    + "ACMG: " + DataManager.getVersion(acmgTable) + "\n";
+                    + "ACMG: " + DataManager.getVersion(acmgTable) + "\n"
+                    + "dbDSM: " + DataManager.getVersion(dbDSMTable) + "\n";
         } else {
             return "";
         }
@@ -87,23 +93,54 @@ public class KnownVarManager {
 
     public static void init() throws SQLException {
         if (KnownVarCommand.isIncludeKnownVar) {
+            initHGMDMap();
+
             initClinVarMap();
 
             initClinVarPathoratioMap();
 
-            initHGMDMap();
+            initClinGenMap();
 
             initOMIMMap();
 
+            initRecessiveCarrierMap();
+
             initACMGMap();
 
-            initClinGenMap();
-
-            initRecessiveCarrierMap();
+            initDBDSMMap();
 
             if (KnownVarCommand.isKnownVarOnly) {
                 VariantManager.reset2KnownVarSet();
             }
+        }
+    }
+
+    private static void initHGMDMap() {
+        try {
+            String sql = "SELECT * From " + hgmdTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String chr = rs.getString("chr");
+                int pos = rs.getInt("pos");
+                String ref = rs.getString("ref");
+                String alt = rs.getString("alt");
+                String variantClass = FormatManager.getString(rs.getString("variantClass"));
+                String pmid = FormatManager.getString(rs.getString("pmid"));
+                String diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
+
+                String id = chr + "-" + pos + "-" + ref + "-" + alt;
+
+                HGMD hgmd = new HGMD(chr, pos, ref, alt,
+                        variantClass, pmid, diseaseName);
+
+                hgmdMultiMap.put(hgmd.getSiteId(), hgmd);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
     }
 
@@ -165,27 +202,20 @@ public class KnownVarManager {
         }
     }
 
-    private static void initHGMDMap() {
+    private static void initClinGenMap() {
         try {
-            String sql = "SELECT * From " + hgmdTable;
+            String sql = "SELECT * From " + clinGenTable;
 
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
-                String chr = rs.getString("chr");
-                int pos = rs.getInt("pos");
-                String ref = rs.getString("ref");
-                String alt = rs.getString("alt");
-                String variantClass = FormatManager.getString(rs.getString("variantClass"));
-                String pmid = FormatManager.getString(rs.getString("pmid"));
-                String diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
+                String geneName = rs.getString("geneName").toUpperCase();
+                String haploinsufficiencyDesc = rs.getString("HaploinsufficiencyDesc");
+                String triplosensitivityDesc = rs.getString("TriplosensitivityDesc");
 
-                String id = chr + "-" + pos + "-" + ref + "-" + alt;
+                ClinGen clinGen = new ClinGen(haploinsufficiencyDesc, triplosensitivityDesc);
 
-                HGMD hgmd = new HGMD(chr, pos, ref, alt,
-                        variantClass, pmid, diseaseName);
-
-                hgmdMultiMap.put(hgmd.getSiteId(), hgmd);
+                clinGenMap.put(geneName, clinGen);
             }
 
             rs.close();
@@ -212,46 +242,6 @@ public class KnownVarManager {
         }
     }
 
-    private static void initACMGMap() {
-        try {
-            String sql = "SELECT * From " + acmgTable;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-                String acmg = rs.getString("ACMG");
-                acmgMap.put(geneName, acmg);
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    private static void initClinGenMap() {
-        try {
-            String sql = "SELECT * From " + clinGenTable;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-                String haploinsufficiencyDesc = rs.getString("HaploinsufficiencyDesc");
-                String triplosensitivityDesc = rs.getString("TriplosensitivityDesc");
-
-                ClinGen clinGen = new ClinGen(haploinsufficiencyDesc, triplosensitivityDesc);
-
-                clinGenMap.put(geneName, clinGen);
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
     private static void initRecessiveCarrierMap() {
         try {
             String sql = "SELECT * From " + recessiveCarrierTable;
@@ -270,26 +260,49 @@ public class KnownVarManager {
         }
     }
 
-    public static ClinVarOutput getClinVarOutput(Variant var) {
-        Collection<ClinVar> collection = clinVarMultiMap.get(var.getSiteId());
+    private static void initACMGMap() {
+        try {
+            String sql = "SELECT * From " + acmgTable;
 
-        ClinVarOutput output = new ClinVarOutput(var, collection);
+            ResultSet rs = DBManager.executeQuery(sql);
 
-        return output;
-    }
+            while (rs.next()) {
+                String geneName = rs.getString("geneName").toUpperCase();
+                String acmg = rs.getString("ACMG");
+                acmgMap.put(geneName, acmg);
+            }
 
-    public static Multimap<String, ClinVar> getClinVarMultiMap() {
-        return clinVarMultiMap;
-    }
-
-    public static ClinGen getClinGen(String geneName) {
-        ClinGen clinGen = clinGenMap.get(geneName);
-
-        if (clinGen == null) {
-            clinGen = new ClinGen("NA", "NA");
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
+    }
 
-        return clinGen;
+    private static void initDBDSMMap() {
+        try {
+            String sql = "SELECT * From " + dbDSMTable;
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                String chr = rs.getString("chr");
+                int pos = rs.getInt("pos");
+                String ref = rs.getString("ref");
+                String alt = rs.getString("alt");
+                String disease = FormatManager.getString(rs.getString("Disease"));
+                String classification = FormatManager.getString(rs.getString("Classification"));
+                String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
+
+                DBDSM dbDSM = new DBDSM(chr, pos, ref, alt,
+                        disease, classification, pubmedID);
+
+                dbDSMMultiMap.put(dbDSM.getSiteId(), dbDSM);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
     }
 
     public static Multimap<String, HGMD> getHGMDMultiMap() {
@@ -302,81 +315,6 @@ public class KnownVarManager {
         HGMDOutput output = new HGMDOutput(var, collection);
 
         return output;
-    }
-
-    public static String getOMIM(String geneName) {
-        return FormatManager.getString(omimMap.get(geneName));
-    }
-
-    public static String getACMG(String geneName) {
-        return FormatManager.getString(acmgMap.get(geneName));
-    }
-
-    public static ClinVarPathoratio getClinPathoratio(String geneName) {
-        ClinVarPathoratio clinVarPathoratio = clinVarPathoratioMap.get(geneName);
-
-        if (clinVarPathoratio == null) {
-            clinVarPathoratio = new ClinVarPathoratio(Data.NA, Data.NA, Data.NA, Data.NA, Data.NA);
-        }
-
-        return clinVarPathoratio;
-    }
-
-    public static int getRecessiveCarrier(String geneName) {
-        if (recessiveCarrierSet.contains(geneName)) {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    public static int getClinVarPathogenicIndelFlankingCount(Variant var) {
-        try {
-            int width = 9;
-
-            String sql = "SELECT count(*) as count "
-                    + "From " + clinVarTable + " "
-                    + "WHERE chr='" + var.getChrStr() + "' "
-                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
-                    + "AND ClinicalSignificance like '%pathogenic%' "
-                    + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            if (rs.next()) {
-                return rs.getInt("count");
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
-        return Data.NA;
-    }
-
-    public static int getClinVarAllIndelFlankingCount(Variant var) {
-        try {
-            int width = 9;
-
-            String sql = "SELECT count(*) as count "
-                    + "From " + clinVarTable + " "
-                    + "WHERE chr='" + var.getChrStr() + "' "
-                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
-                    + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            if (rs.next()) {
-                return rs.getInt("count");
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
-        return Data.NA;
     }
 
     public static int getHGMDIndelFlankingCount(Variant var) {
@@ -444,5 +382,114 @@ public class KnownVarManager {
         }
 
         return "NA";
+    }
+
+    public static Multimap<String, ClinVar> getClinVarMultiMap() {
+        return clinVarMultiMap;
+    }
+
+    public static ClinVarOutput getClinVarOutput(Variant var) {
+        Collection<ClinVar> collection = clinVarMultiMap.get(var.getSiteId());
+
+        ClinVarOutput output = new ClinVarOutput(var, collection);
+
+        return output;
+    }
+
+    public static int getClinVarPathogenicIndelFlankingCount(Variant var) {
+        try {
+            int width = 9;
+
+            String sql = "SELECT count(*) as count "
+                    + "From " + clinVarTable + " "
+                    + "WHERE chr='" + var.getChrStr() + "' "
+                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
+                    + "AND ClinicalSignificance like '%pathogenic%' "
+                    + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        return Data.NA;
+    }
+
+    public static int getClinVarAllIndelFlankingCount(Variant var) {
+        try {
+            int width = 9;
+
+            String sql = "SELECT count(*) as count "
+                    + "From " + clinVarTable + " "
+                    + "WHERE chr='" + var.getChrStr() + "' "
+                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
+                    + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
+
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        return Data.NA;
+    }
+
+    public static ClinVarPathoratio getClinPathoratio(String geneName) {
+        ClinVarPathoratio clinVarPathoratio = clinVarPathoratioMap.get(geneName);
+
+        if (clinVarPathoratio == null) {
+            clinVarPathoratio = new ClinVarPathoratio(Data.NA, Data.NA, Data.NA, Data.NA, Data.NA);
+        }
+
+        return clinVarPathoratio;
+    }
+
+    public static ClinGen getClinGen(String geneName) {
+        ClinGen clinGen = clinGenMap.get(geneName);
+
+        if (clinGen == null) {
+            clinGen = new ClinGen("NA", "NA");
+        }
+
+        return clinGen;
+    }
+
+    public static String getOMIM(String geneName) {
+        return FormatManager.getString(omimMap.get(geneName));
+    }
+
+    public static int getRecessiveCarrier(String geneName) {
+        if (recessiveCarrierSet.contains(geneName)) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public static String getACMG(String geneName) {
+        return FormatManager.getString(acmgMap.get(geneName));
+    }
+
+    public static Multimap<String, DBDSM> getDBDSMMultiMap() {
+        return dbDSMMultiMap;
+    }
+
+    public static DBDSMOutput getDBDSMOutput(Variant var) {
+        Collection<DBDSM> collection = dbDSMMultiMap.get(var.getSiteId());
+
+        DBDSMOutput output = new DBDSMOutput(var, collection);
+
+        return output;
     }
 }
