@@ -11,9 +11,9 @@ public class DBDSMOutput {
 
     private Variant var;
 
-    private DbDSM dbDSM;
+    private DBDSM_test dbDSM;
 
-    public DBDSMOutput(Variant var, Collection<DbDSM> collection) {
+    public DBDSMOutput(Variant var, Collection<DBDSM_test> collection) {
         this.var = var;
 
         dbDSM = getDBDSM(collection);
@@ -23,8 +23,8 @@ public class DBDSMOutput {
      1. get DBDSM by matching chr-pos-ref-alt
      2. or return site accumulated DBDSM
      */
-    private DbDSM getDBDSM(Collection<DbDSM> collection) {
-        DbDSM dbDSM = new DbDSM(
+    private DBDSM_test getDBDSM(Collection<DBDSM_test> collection) {
+        DBDSM_test dbDSM = new DBDSM_test(
                 var.getChrStr(),
                 var.getStartPosition(),
                 var.getRefAllele(),
@@ -35,7 +35,7 @@ public class DBDSMOutput {
 
         boolean isFirstSite = true;
 
-        for (DbDSM tmpDBDSM : collection) {
+        for (DBDSM_test tmpDBDSM : collection) {
             String idStr = var.getVariantIdStr().replaceAll("XY", "X");
 
             if (idStr.equals(tmpDBDSM.getVariantId())) {

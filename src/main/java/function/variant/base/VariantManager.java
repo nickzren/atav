@@ -2,7 +2,7 @@ package function.variant.base;
 
 import function.annotation.base.GeneManager;
 import function.external.knownvar.ClinVar;
-import function.external.knownvar.DbDSM;
+import function.external.knownvar.DBDSM_test;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
 import function.genotype.trio.TrioCommand;
@@ -161,7 +161,7 @@ public class VariantManager {
         }
 
         // init DBDSM variants set
-        for (DbDSM dbDSM : KnownVarManager.getDBDSMMultiMap().values()) {
+        for (DBDSM_test dbDSM : KnownVarManager.getDBDSMMultiMap().values()) {
             addVariantToList(dbDSM.getVariantId(), includeVariantSet, true);
         }
 
