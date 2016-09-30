@@ -37,7 +37,7 @@ public class KnownVarManager {
     private static final HashMap<String, String> omimMap = new HashMap<>();
     private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
     private static final HashMap<String, String> acmgMap = new HashMap<>();
-    private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
+    private static final Multimap<String, DbDSM> dbDSMMultiMap = ArrayListMultimap.create();
 
     public static String getTitle() {
         if (KnownVarCommand.isIncludeKnownVar) {
@@ -293,7 +293,7 @@ public class KnownVarManager {
                 String classification = FormatManager.getString(rs.getString("Classification"));
                 String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
 
-                DBDSM dbDSM = new DBDSM(chr, pos, ref, alt,
+                DbDSM dbDSM = new DbDSM(chr, pos, ref, alt,
                         disease, classification, pubmedID);
 
                 dbDSMMultiMap.put(dbDSM.getSiteId(), dbDSM);
@@ -481,12 +481,12 @@ public class KnownVarManager {
         return FormatManager.getString(acmgMap.get(geneName));
     }
 
-    public static Multimap<String, DBDSM> getDBDSMMultiMap() {
+    public static Multimap<String, DbDSM> getDBDSMMultiMap() {
         return dbDSMMultiMap;
     }
 
     public static DBDSMOutput getDBDSMOutput(Variant var) {
-        Collection<DBDSM> collection = dbDSMMultiMap.get(var.getSiteId());
+        Collection<DbDSM> collection = dbDSMMultiMap.get(var.getSiteId());
 
         DBDSMOutput output = new DBDSMOutput(var, collection);
 
