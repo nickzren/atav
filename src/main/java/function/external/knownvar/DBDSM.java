@@ -4,7 +4,7 @@ package function.external.knownvar;
  *
  * @author nick
  */
-public class DBDSM_test {
+public class DBDSM {
 
     private String chr;
     private int pos;
@@ -15,7 +15,7 @@ public class DBDSM_test {
     private String classification;
     private String pubmedID;
 
-    public DBDSM_test(String chr, int pos, String ref, String alt,
+    public DBDSM(String chr, int pos, String ref, String alt,
             String diseaseName, String classification, String pubmedID) {
         this.chr = chr;
         this.pos = pos;
