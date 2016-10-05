@@ -26,7 +26,6 @@ import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.coverage.comparison.SiteCoverageComparison;
-import function.external.base.DataManager;
 import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
@@ -129,7 +128,7 @@ public class Program {
             ExacManager.init();
 
             // output external data version
-            LogManager.writeAndPrintNoNewLine(DataManager.getVersion());
+            LogManager.logExternalDataVersion();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

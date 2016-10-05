@@ -28,8 +28,8 @@ public class CoverageComparison extends CoverageComparisonBase {
     final String coverageSummaryByExon = CommonCommand.outputPath + "coverage.summary.by.exon.csv";
     final String cleanedExonList = CommonCommand.outputPath + "exon.clean.txt";
 
-    RegionClean regionClean = new RegionClean();
-    RegionCleanLinear exonCleanLinear = new RegionCleanLinear();
+    ExonClean regionClean = new ExonClean();
+    ExonCleanLinear exonCleanLinear = new ExonCleanLinear();
 
     @Override
     public void initOutput() {

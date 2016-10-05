@@ -26,7 +26,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
     final String cleanedSiteList = CommonCommand.outputPath + "site.clean.txt";
 
-    RegionClean regionClean = new RegionClean();
+    SiteClean siteClean = new SiteClean();
 
     @Override
     public void initOutput() {
@@ -34,7 +34,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             super.initOutput();
 
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
-            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,Site Coverage Case, Site Coverage Control");
+            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,Site Coverage Case,Site Coverage Control");
             bwSiteSummary.newLine();
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
@@ -69,7 +69,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     @Override
     public void afterProcessDatabaseData() {
         try {
-            outputCleanedExonData();
+            outputCleanedSiteData();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -101,21 +101,21 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
                 float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
                 float absDiff = MathManager.abs(caseAvg, ctrlAvg);
-                regionClean.addExon(name, caseAvg, ctrlAvg, absDiff, 1);
+                siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, absDiff);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    public void outputCleanedExonData() throws Exception {
-        regionClean.initCleanedRegionMap();
-        regionClean.outputLog();
+    public void outputCleanedSiteData() throws Exception {
+        siteClean.initCleanedSiteMap();
+        siteClean.outputLog();
 
         for (Gene gene : GeneManager.getGeneBoundaryList()) {
-            writeToFile(regionClean.getCleanedGeneStrBySite(gene), bwSiteClean);
+            writeToFile(siteClean.getCleanedGeneStrBySite(gene), bwSiteClean);
 
-            writeToFile(regionClean.getCleanedGeneSummaryStrBySite(gene), bwGeneSummaryClean);
+            writeToFile(siteClean.getCleanedGeneSummaryStrBySite(gene), bwGeneSummaryClean);
         }
     }
 

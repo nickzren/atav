@@ -2,6 +2,7 @@ package utils;
 
 import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Files;
+import function.external.base.DataManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import java.io.*;
@@ -54,7 +55,7 @@ public class LogManager {
 
             writeLog("ATAV command:");
             writeLog(CommandManager.command + "\n");
-            
+
             userLog.flush();
         } catch (Exception e) {
             ErrorManager.print("Error in writing log file: " + e.toString());
@@ -186,6 +187,15 @@ public class LogManager {
 
             Files.copy(sampleFile, logSampleFile);
         } catch (Exception e) {
+        }
+    }
+
+    public static void logExternalDataVersion() {
+        String externalDataVersion = DataManager.getVersion();
+
+        if (!externalDataVersion.isEmpty()) {
+            writeAndPrint("External data version:");
+            writeAndPrintNoNewLine(externalDataVersion);
         }
     }
 }
