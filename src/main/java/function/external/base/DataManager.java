@@ -23,7 +23,6 @@ public class DataManager {
     public static String getVersion() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("External data version:\n");
         sb.append(EvsManager.getVersion());
         sb.append(ExacManager.getVersion());
         sb.append(KnownVarManager.getVersion());

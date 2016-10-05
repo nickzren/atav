@@ -194,7 +194,7 @@ public class LogManager {
         String externalDataVersion = DataManager.getVersion();
 
         if (!externalDataVersion.isEmpty()) {
-            writeAndPrint("External data version:");
+            writeAndPrintNoNewLine("External data version:");
             writeAndPrintNoNewLine(externalDataVersion);
         }
     }
