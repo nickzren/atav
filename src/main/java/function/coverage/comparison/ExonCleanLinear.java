@@ -16,18 +16,18 @@ import utils.MathManager;
  *
  * @author qwang, nick
  */
-public class RegionCleanLinear {
+public class ExonCleanLinear {
 
     int totalBases = 0;
     int totalCleanedBases = 0;
     double caseCoverage = 0;
     double ctrlCoverage = 0;
-    ArrayList<SortedRegionLinear> regionList = new ArrayList<>();
-    HashMap<String, SortedRegionLinear> cleanedRegionMap = new HashMap<>();
+    ArrayList<SortedExonLinear> regionList = new ArrayList<>();
+    HashMap<String, SortedExonLinear> cleanedRegionMap = new HashMap<>();
 
     public void addExon(String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize,
             double p, double r2, double variance) {
-        regionList.add(new SortedRegionLinear(name, caseAvg, ctrlAvg, absDiff, regionSize,
+        regionList.add(new SortedExonLinear(name, caseAvg, ctrlAvg, absDiff, regionSize,
                 p, r2, variance));
 
         totalBases += regionSize;
@@ -84,7 +84,7 @@ public class RegionCleanLinear {
     public void initCleanedRegionMap() {
         double cutoff = getCutoff();
 
-        for (SortedRegionLinear sortedRegion : regionList) {
+        for (SortedExonLinear sortedRegion : regionList) {
             if (sortedRegion.getCutoff() < cutoff) {
                 totalCleanedBases += sortedRegion.getLength();
                 ctrlCoverage += sortedRegion.getCtrlAvg() * sortedRegion.getLength();
@@ -132,7 +132,7 @@ public class RegionCleanLinear {
         for (Exon exon : gene.getExonList()) {
             String regionId = gene.getName() + "_" + exon.getIdStr();
 
-            SortedRegionLinear sortedExon = cleanedRegionMap.get(regionId);
+            SortedExonLinear sortedExon = cleanedRegionMap.get(regionId);
             if (sortedExon != null) {
                 geneSize += sortedExon.getLength();
                 avgCase += (double) sortedExon.getLength() * sortedExon.getCaseAvg();

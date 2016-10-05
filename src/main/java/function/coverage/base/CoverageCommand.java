@@ -19,8 +19,8 @@ public class CoverageCommand {
     public static boolean isCoverageSummary = false;
     public static boolean isSiteCoverageSummary = false;
     public static double minPercentRegionCovered = 0; //so all is output by default
-    public static double exonCleanCutoff = Data.NO_FILTER;
-    public static double geneCleanCutoff = 1.0;
+    public static float exonCleanCutoff = Data.NO_FILTER;
+    public static float geneCleanCutoff = 1;
     public static float siteCleanCutoff = Data.NO_FILTER;
 
     // coverage comparison 
@@ -38,11 +38,11 @@ public class CoverageCommand {
             switch (option.getName()) {
                 case "--exon-max-percent-cov-difference":
                     checkValueValid(1, 0, option);
-                    exonCleanCutoff = getValidDouble(option);
+                    exonCleanCutoff = getValidFloat(option);
                     break;
                 case "--gene-max-percent-cov-difference":
                     checkValueValid(1, 0, option);
-                    geneCleanCutoff = getValidDouble(option);
+                    geneCleanCutoff = getValidFloat(option);
                     break;
             /*else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
             checkValueValid(1, 0, option);
@@ -90,7 +90,7 @@ public class CoverageCommand {
                     break;
                 case "--gene-max-percent-cov-difference":
                     checkValueValid(1, 0, option);
-                    geneCleanCutoff = getValidDouble(option);
+                    geneCleanCutoff = getValidFloat(option);
                     break;
                 default:
                     continue;

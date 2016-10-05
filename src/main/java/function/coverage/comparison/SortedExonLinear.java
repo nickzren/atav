@@ -1,16 +1,18 @@
 package function.coverage.comparison;
 
+import global.Data;
+
 /**
  *
  * @author quanli, nick
  */
-public class SortedRegionLinear extends SortedRegion {
+public class SortedExonLinear extends SortedExon {
 
     private double pValue;
     private double r2;
     private double variance;
 
-    public SortedRegionLinear(String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize,
+    public SortedExonLinear(String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize,
             double p, double r2, double variance) {
         super(name, caseAvg, ctrlAvg, covDiff, regionSize);
 
@@ -38,7 +40,7 @@ public class SortedRegionLinear extends SortedRegion {
 
     @Override
     public int compareTo(Object other) {
-        SortedRegionLinear that = (SortedRegionLinear) other;
+        SortedExonLinear that = (SortedExonLinear) other;
         return Double.compare(that.variance, this.variance); // large -> small
     }
 }

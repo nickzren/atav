@@ -1,33 +1,33 @@
 package function.coverage.comparison;
 
-import function.annotation.base.Gene;
 import function.annotation.base.Exon;
+import function.annotation.base.Gene;
 import function.coverage.base.CoverageCommand;
 import function.genotype.base.SampleManager;
 import global.Data;
-import utils.LogManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import utils.FormatManager;
+import utils.LogManager;
 import utils.MathManager;
 
 /**
  *
- * @author qwang, nick
+ * @author nick
  */
-public class RegionClean {
+public class SiteClean {
 
     int totalBases = 0;
     int totalCleanedBases = 0;
     float caseCoverage = 0;
     float ctrlCoverage = 0;
-    ArrayList<SortedRegion> regionList = new ArrayList<>();
-    HashMap<String, SortedRegion> cleanedRegionMap = new HashMap<>();
+    ArrayList<SortedSite> siteList = new ArrayList<>();
+    HashMap<String, HashMap<Integer, SortedSite>> cleanedSiteMap = new HashMap<>();
 
-    public void addExon(String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize) {
-        regionList.add(new SortedRegion(name, caseAvg, ctrlAvg, absDiff, regionSize));
-        totalBases += regionSize;
+    public void addSite(String chr, int pos, float caseAvg, float ctrlAvg, float absDiff) {
+        siteList.add(new SortedSite(chr, pos, caseAvg, ctrlAvg, absDiff));
+        totalBases++;
     }
 
     private double getAllCoverage() {
@@ -36,15 +36,15 @@ public class RegionClean {
 
     protected double getCutoff() {
         //make sure the list has included all data and sortd.
-        Collections.sort(regionList);
+        Collections.sort(siteList);
 
         int i;
         float cutoff;
-        float[] data = new float[regionList.size()];
+        float[] data = new float[siteList.size()];
         float meandata = 0;
         //calculate mean data
         for (i = 0; i < data.length; i++) {
-            data[i] = regionList.get(i).getCovDiff();
+            data[i] = siteList.get(i).getCovDiff();
             meandata += data[i];
         }
         meandata /= data.length;
@@ -73,35 +73,44 @@ public class RegionClean {
             }
         }
 
-        cutoff = regionList.get(index).getCovDiff();
+        cutoff = siteList.get(index).getCovDiff();
 
         LogManager.writeAndPrint("\nThe automated cutoff value for absolute mean coverage difference for sites is " + Float.toString(cutoff));
 
         if (CoverageCommand.siteCleanCutoff != Data.NO_FILTER) {
             cutoff = CoverageCommand.siteCleanCutoff;
-            LogManager.writeAndPrint("User specified cutoff value " + FormatManager.getSixDegitDouble(cutoff) + " is applied instead.");
+            LogManager.writeAndPrint("User specified cutoff value " + FormatManager.getFloat(cutoff) + " is applied instead.");
         }
 
         return cutoff;
 
     }
 
-    public void initCleanedRegionMap() {
+    public void initCleanedSiteMap() {
         double cutoff = getCutoff();
 
-        for (SortedRegion sortedRegion : regionList) {
-            if (sortedRegion.getCutoff() < cutoff
-                    && sortedRegion.getCaseAvg() + sortedRegion.getCtrlAvg() > 0) {
-                totalCleanedBases += sortedRegion.getLength();
-                ctrlCoverage += sortedRegion.getCtrlAvg() * sortedRegion.getLength();
-                caseCoverage += sortedRegion.getCaseAvg() * sortedRegion.getLength();
+        for (SortedSite sortedSite : siteList) {
+            if (sortedSite.getCutoff() < cutoff
+                    && sortedSite.getCaseAvg() + sortedSite.getCtrlAvg() > 0) {
+                totalCleanedBases++;
+                ctrlCoverage += sortedSite.getCtrlAvg();
+                caseCoverage += sortedSite.getCaseAvg();
 
-                cleanedRegionMap.put(sortedRegion.getName(), sortedRegion);
+                HashMap<Integer, SortedSite> map = cleanedSiteMap.get(sortedSite.getChr());
+
+                if (map == null) {
+                    map = new HashMap<>();
+                    cleanedSiteMap.put(sortedSite.getChr(), map);
+                }
+
+                map.put(sortedSite.getPos(), sortedSite);
             }
         }
 
         caseCoverage = MathManager.devide(caseCoverage, totalBases);
         ctrlCoverage = MathManager.devide(ctrlCoverage, totalBases);
+
+        siteList.clear(); // free memory
     }
 
     public String getCleanedGeneStrBySite(Gene gene) {
@@ -117,16 +126,18 @@ public class RegionClean {
             int previouStartPosition = Data.NA;
             int previousEndPosition = Data.NA;
             for (int currentPosition = start; currentPosition <= end; currentPosition++) {
-                String regionIdStr = gene.getName() + "_" + gene.getChr() + "_" + currentPosition;
-                if (cleanedRegionMap.containsKey(regionIdStr)) {
+                HashMap<Integer, SortedSite> map = cleanedSiteMap.get(gene.getChr());
+
+                if (map != null
+                        && map.containsKey(currentPosition)) {
                     if (previouStartPosition == Data.NA) {
                         previouStartPosition = currentPosition;
                     }
                     size += 1;
                     previousEndPosition = currentPosition;
-                } else { //there are gaps within the exon, so record the previos discovered region if any
-                    //need to record the new discovered region
-                    if (previouStartPosition != Data.NA) {
+                } else //there are gaps within the exon, so record the previos discovered region if any
+                //need to record the new discovered region
+                 if (previouStartPosition != Data.NA) {
                         if (isFirst) {
                             isFirst = false;
                         } else {
@@ -138,7 +149,6 @@ public class RegionClean {
                         previouStartPosition = Data.NA;
                         previousEndPosition = Data.NA;
                     }
-                }
             }
             //repeat the recoring for last potential region
             //make sure this code is consistent with the code in previous section
@@ -160,33 +170,6 @@ public class RegionClean {
         }
     }
 
-    public String getCleanedGeneStrByExon(Gene gene) {
-        StringBuilder sb = new StringBuilder();
-        int size = 0;
-        sb.append(gene.getName());
-        sb.append(" ").append(gene.getChr()).append(" (");
-        boolean isFirst = true;
-        for (Exon exon : gene.getExonList()) {
-            String exonIdStr = gene.getName() + "_" + exon.getIdStr();
-            if (cleanedRegionMap.containsKey(exonIdStr)) {
-                size += exon.getLength();
-                if (isFirst) {
-                    isFirst = false;
-                } else {
-                    sb.append(",");
-                }
-                sb.append(exon.getStartPosition());
-                sb.append("..").append(exon.getEndPosition());
-            }
-        }
-        sb.append(") ").append(size);
-        if (size > 0 && !gene.getChr().isEmpty()) {
-            return sb.toString();
-        } else {
-            return "";
-        }
-    }
-
     public String getCleanedGeneSummaryStrBySite(Gene gene) {
         int geneSize = 0;
         double caseAvg = 0;
@@ -195,30 +178,12 @@ public class RegionClean {
             int start = exon.getStartPosition();
             int end = exon.getEndPosition();
             for (int currentPosition = start; currentPosition <= end; currentPosition++) {
-                String regionIdStr = gene.getName() + "_" + gene.getChr() + "_" + currentPosition;
-                SortedRegion sortedExon = cleanedRegionMap.get(regionIdStr);
-                if (sortedExon != null) {
+                SortedSite sortedSite = cleanedSiteMap.get(gene.getChr()).get(currentPosition);
+                if (sortedSite != null) {
                     geneSize++;
-                    caseAvg += sortedExon.getCaseAvg();
-                    ctrlAvg += sortedExon.getCtrlAvg();
+                    caseAvg += sortedSite.getCaseAvg();
+                    ctrlAvg += sortedSite.getCtrlAvg();
                 }
-            }
-        }
-
-        return getGeneStr(gene, geneSize, caseAvg, ctrlAvg);
-    }
-
-    public String getCleanedGeneSummaryStrByExon(Gene gene) {
-        int geneSize = 0;
-        double caseAvg = 0;
-        double ctrlAvg = 0;
-        for (Exon exon : gene.getExonList()) {
-            String regionIdStr = gene.getName() + "_" + exon.getIdStr();
-            SortedRegion sortedExon = cleanedRegionMap.get(regionIdStr);
-            if (sortedExon != null) {
-                geneSize += sortedExon.getLength();
-                caseAvg += (double) sortedExon.getLength() * sortedExon.getCaseAvg();
-                ctrlAvg += (double) sortedExon.getLength() * sortedExon.getCtrlAvg();
             }
         }
 
@@ -243,22 +208,13 @@ public class RegionClean {
     }
 
     public void outputLog() {
-        int numExonsTotal = regionList.size();
-        int numExonsPruned = numExonsTotal - cleanedRegionMap.size();
-        LogManager.writeAndPrint("The number of exons before pruning is " + numExonsTotal);
-        LogManager.writeAndPrint("The number of exons after pruning is " + cleanedRegionMap.size());
-        LogManager.writeAndPrint("The number of exons pruned is " + numExonsPruned);
-        double percentExonsPruned = (double) numExonsPruned / (double) numExonsTotal * 100;
-        LogManager.writeAndPrint("The % of exons pruned is "
-                + FormatManager.getSixDegitDouble(percentExonsPruned) + "%");
-
         LogManager.writeAndPrint("The total number of bases before pruning is "
                 + FormatManager.getSixDegitDouble((double) totalBases / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases after pruning is "
                 + FormatManager.getSixDegitDouble((double) totalCleanedBases / 1000000.0) + " MB");
         LogManager.writeAndPrint("The % of bases pruned is "
                 + FormatManager.getSixDegitDouble(100.0 - (double) totalCleanedBases / (double) totalBases * 100) + "%");
-        
+
         LogManager.writeAndPrint("The average coverage rate for all samples after pruning is "
                 + FormatManager.getSixDegitDouble(getAllCoverage() * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is "
