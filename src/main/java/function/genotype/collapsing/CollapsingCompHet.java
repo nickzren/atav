@@ -3,9 +3,9 @@ package function.genotype.collapsing;
 import function.genotype.vargeno.SampleVariantCount;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
-import global.Index;
 import function.annotation.base.GeneManager;
 import function.genotype.base.SampleManager;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import utils.MathManager;
 
 /**
  *
@@ -22,10 +23,10 @@ import java.util.HashSet;
  */
 public class CollapsingCompHet extends CollapsingBase {
 
-    ArrayList<CompHetOutput> outputList = new ArrayList<CompHetOutput>();
-    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<ArrayList<CompHetOutput>>();
-    HashSet<Integer> variantIdSet = new HashSet<Integer>();
-    HashSet<String> currentGeneList = new HashSet<String>();
+    ArrayList<CompHetOutput> outputList = new ArrayList<>();
+    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
+    HashSet<Integer> variantIdSet = new HashSet<>();
+    HashSet<String> currentGeneList = new HashSet<>();
     BufferedWriter bwCompHet = null;
     final String comphetFilePath = CommonCommand.outputPath + "comphet.csv";
 
@@ -35,7 +36,7 @@ public class CollapsingCompHet extends CollapsingBase {
             super.initOutput();
 
             bwCompHet = new BufferedWriter(new FileWriter(comphetFilePath));
-            bwCompHet.write(CompHetOutput.title);
+            bwCompHet.write(CompHetOutput.getTitle());
             bwCompHet.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -66,7 +67,7 @@ public class CollapsingCompHet extends CollapsingBase {
         try {
             CompHetOutput output = new CompHetOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             output.calculate();
 
@@ -93,19 +94,14 @@ public class CollapsingCompHet extends CollapsingBase {
 
         initGeneVariantList();
 
-        try {
-            for (ArrayList<CompHetOutput> list : geneListVector) {
-                String geneName = list.get(0).geneName;
+        for (ArrayList<CompHetOutput> list : geneListVector) {
+            String geneName = list.get(0).geneName;
 
-                LogManager.writeAndPrint("Analyzing qualified variants in gene ("
-                        + geneName + ")");
+            LogManager.writeAndPrint("Analyzing qualified variants in gene " + geneName);
 
-                CollapsingSummary summary = summaryMap.get(geneName);
+            CollapsingSummary summary = summaryMap.get(geneName);
 
-                doOutput(list, summary);
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
+            doOutput(list, summary);
         }
     }
 
@@ -117,7 +113,7 @@ public class CollapsingCompHet extends CollapsingBase {
                 currentGeneList.add(output.geneName);
                 updateGeneSummaryMap(output.geneName);
 
-                geneOutputList = new ArrayList<CompHetOutput>();
+                geneOutputList = new ArrayList<>();
                 geneOutputList.add(output);
                 geneListVector.add(geneOutputList);
             } else {
@@ -144,9 +140,9 @@ public class CollapsingCompHet extends CollapsingBase {
 
                         output1.calculateLooFreq(sample);
 
-                        if (output1.isLooFreqValid()) {
+                        if (output1.isMaxLooMafValid()) {
 
-                            if (isOutputValid(output1, sample, summary)) {
+                            if (isOutputValid(output1, geno1, sample, summary)) {
                                 continue;
                             }
 
@@ -167,9 +163,9 @@ public class CollapsingCompHet extends CollapsingBase {
         }
     }
 
-    private boolean isOutputValid(CompHetOutput output1,
+    private boolean isOutputValid(CompHetOutput output1, int geno,
             Sample sample, CollapsingSummary summary) throws Exception {
-        if (output1.isQualifiedGeno(sample)) {
+        if (output1.isHomOrRef(geno)) {
             summary.updateSampleVariantCount4CompHet(sample.getIndex());
 
             updateSummaryVariantCount(output1, summary);
@@ -199,8 +195,8 @@ public class CollapsingCompHet extends CollapsingBase {
 
     private void checkOutputValid(CompHetOutput output1, CompHetOutput output2,
             Sample sample, CollapsingSummary summary) throws Exception {
-        if (!output1.getCalledVariant().getVariantIdStr().equals(
-                output2.getCalledVariant().getVariantIdStr())) {
+        if (output1.getCalledVariant().getVariantIdNegative4Indel()
+                != output2.getCalledVariant().getVariantIdNegative4Indel()) {
 
             int geno2 = output2.getCalledVariant().getGenotype(sample.getIndex());
 
@@ -208,39 +204,36 @@ public class CollapsingCompHet extends CollapsingBase {
 
                 output2.calculateLooFreq(sample);
 
-                if (output2.isLooFreqValid()) {
+                if (output2.isMaxLooMafValid()) {
 
-                    double[] coFreq = getCoOccurrenceFreq(output1, output2, sample);
+                    double[] coFreq = getCoOccurrenceFreq(output1, output2);
 
-                    if (CollapsingCommand.isMaxLooCombFreqValid(coFreq[Index.CTRL])) {
+                    summary.updateSampleVariantCount4CompHet(sample.getIndex());
 
-                        summary.updateSampleVariantCount4CompHet(sample.getIndex());
+                    updateSummaryVariantCount(output1, summary);
+                    updateSummaryVariantCount(output2, summary);
 
-                        updateSummaryVariantCount(output1, summary);
-                        updateSummaryVariantCount(output2, summary);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(sample.getFamilyId()).append(",");
+                    sb.append(sample.getName()).append(",");
+                    sb.append(sample.getPhenotype()).append(",");
+                    sb.append("'").append(output1.geneName).append("'").append(",");
+                    sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
+                    sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
+                    sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
+                    sb.append(output1.getString(sample));
+                    sb.append(output2.getString(sample));
 
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(sample.getFamilyId()).append(",");
-                        sb.append(sample.getName()).append(",");
-                        sb.append(sample.getPhenotype()).append(",");
-                        sb.append("'").append(output1.geneName).append("'").append(",");
-                        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
-                        sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
-                        sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
-                        sb.append(output1.getString(sample));
-                        sb.append(output2.getString(sample));
+                    SampleVariantCount.update(output1.getCalledVariant().isSnv(),
+                            output1.getCalledVariant().getGenotype(sample.getIndex()),
+                            sample.getIndex());
 
-                        SampleVariantCount.update(output1.getCalledVariant().isSnv(),
-                                output1.getCalledVariant().getGenotype(sample.getIndex()),
-                                sample.getIndex());
+                    SampleVariantCount.update(output2.getCalledVariant().isSnv(),
+                            output2.getCalledVariant().getGenotype(sample.getIndex()),
+                            sample.getIndex());
 
-                        SampleVariantCount.update(output2.getCalledVariant().isSnv(),
-                                output2.getCalledVariant().getGenotype(sample.getIndex()),
-                                sample.getIndex());
-
-                        bwCompHet.write(sb.toString());
-                        bwCompHet.newLine();
-                    }
+                    bwCompHet.write(sb.toString());
+                    bwCompHet.newLine();
                 }
             }
         }
@@ -252,22 +245,13 @@ public class CollapsingCompHet extends CollapsingBase {
      * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
      * (co-occurance) in ctrls
      */
-    private double[] getCoOccurrenceFreq(CompHetOutput output1,
-            CompHetOutput output2, Sample observedSample) {
+    private double[] getCoOccurrenceFreq(CompHetOutput output1, CompHetOutput output2) {
         double[] freq = new double[2];
 
         int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
         int totalCaseCount = 0, totalCtrlCount = 0;
 
         for (Sample sample : SampleManager.getList()) {
-            if (sample.equals(observedSample)) // ignore the sample where the variant was observed
-            {
-                continue;
-            }
-
-            output1.calculateLooFreq(sample); // is minor ref for sample level
-            output2.calculateLooFreq(sample);
-
             boolean isCoQualifiedGeno = isCoQualifiedGeno(output1, output2, sample.getIndex());
 
             if (sample.isCase()) {
@@ -283,11 +267,8 @@ public class CollapsingCompHet extends CollapsingBase {
             }
         }
 
-        freq[Index.CTRL] = FormatManager.devide(qualifiedCtrlCount, totalCtrlCount);
-        freq[Index.CASE] = FormatManager.devide(quanlifiedCaseCount, totalCaseCount);
-
-        output1.calculateLooFreq(observedSample); // update 'is maf ref' back for observed sample value
-        output2.calculateLooFreq(observedSample);
+        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
+        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
 
         return freq;
     }
@@ -297,18 +278,14 @@ public class CollapsingCompHet extends CollapsingBase {
         int geno1 = output1.getCalledVariant().getGenotype(index);
         int geno2 = output2.getCalledVariant().getGenotype(index);
 
-        if (output1.isQualifiedGeno(geno1)
-                && output2.isQualifiedGeno(geno2)) {
-            return true;
-        } else {
-            return false;
-        }
+        return output1.isQualifiedGeno(geno1)
+                && output2.isQualifiedGeno(geno2);
     }
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {
-        if (!variantIdSet.contains(output.getCalledVariant().getVariantId())) {
+        if (!variantIdSet.contains(output.getCalledVariant().getVariantIdNegative4Indel())) {
             summary.updateVariantCount(output);
-            variantIdSet.add(output.getCalledVariant().getVariantId());
+            variantIdSet.add(output.getCalledVariant().getVariantIdNegative4Indel());
         }
     }
 
@@ -320,6 +297,6 @@ public class CollapsingCompHet extends CollapsingBase {
 
     @Override
     public String toString() {
-        return "It is running a collapsing compound heterozygosity function...";
+        return "Start running collapsing compound heterozygosity function";
     }
 }

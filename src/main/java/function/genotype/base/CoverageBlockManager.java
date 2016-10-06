@@ -2,20 +2,20 @@ package function.genotype.base;
 
 import function.variant.base.Variant;
 import global.Data;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 /**
- * @author qwang, nick
+ * @author nick, qwang
  */
 public class CoverageBlockManager {
 
     public static final int COVERAGE_BLOCK_SIZE = 1024;
 
-    private static HashMap<Integer, int[][]> currentBlockMap = new HashMap<Integer, int[][]>();
+    private static ArrayList<SampleCoverageBin> currentBlockList = new ArrayList<>();
     private static int currentBlockEndPos = Data.NA;
 
-    private static HashMap<Character, Integer> coverageBin = new HashMap<Character, Integer>();
+    private static HashMap<Character, Integer> coverageBin = new HashMap<>();
 
     public static void init() {
         coverageBin.put('a', Data.NA);
@@ -24,9 +24,9 @@ public class CoverageBlockManager {
         coverageBin.put('d', 20);
         coverageBin.put('e', 201);
     }
-
-    public static void put(int sampleId, String coverageStr) {
-        currentBlockMap.put(sampleId, parseCoverage(coverageStr));
+    
+    public static void add(SampleCoverageBin covBin) {
+        currentBlockList.add(covBin);
     }
 
     public static void initNonCarrierMap(Variant var,
@@ -37,12 +37,12 @@ public class CoverageBlockManager {
 
         if (blockEndPos == currentBlockEndPos
                 && currentBlockEndPos != Data.NA) {
-            for (Entry<Integer, int[][]> entry : currentBlockMap.entrySet()) { // sampleId, allCovBin                
-                if (!carrierMap.containsKey(entry.getKey())) {
-                    NonCarrier noncarrier = new NonCarrier(entry.getKey(), getCoverage(varPosIndex, entry.getValue()));
-                    
-                    noncarrier.applyFilters(var.getRegion());
-                    
+            for (SampleCoverageBin covBin : currentBlockList) {
+                if (!carrierMap.containsKey(covBin.getSampleId())) {
+                    NonCarrier noncarrier = new NonCarrier(covBin.getSampleId(), covBin.getCoverage(varPosIndex));
+
+                    noncarrier.applyFilters(var);
+
                     if (noncarrier.isValid()) {
                         noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
                     }
@@ -50,43 +50,22 @@ public class CoverageBlockManager {
             }
         } else {
             currentBlockEndPos = blockEndPos;
-            currentBlockMap.clear();
+            currentBlockList.clear();
 
             SampleManager.initNonCarrierMap(var, carrierMap, noncarrierMap);
         }
-    }
-
-    private static int getCoverage(int posIndex, int[][] allCovBin) {
-        for (int i = 0; i < allCovBin.length; i++) {
-            if (posIndex <= allCovBin[i][0]) {
-                return allCovBin[i][1];
-            }
-        }
-
-        return Data.NA;
-    }
-
-    private static int[][] parseCoverage(String allCov) {
-        String[] allCovArray = allCov.split(",");
-        int[][] allCovBin = new int[allCovArray.length][2];
-        int covBinPos = 0;
-
-        for (int i = 0; i < allCovArray.length; i++) {
-            int covBinLength = allCovArray[i].length();
-            covBinPos += Integer.valueOf(allCovArray[i].substring(0, covBinLength - 1));
-            allCovBin[i][0] = covBinPos;
-            allCovBin[i][1] = getCoverageByBin(allCovArray[i].charAt(covBinLength - 1));
-        }
-
-        return allCovBin;
     }
 
     public static int getCoverageByBin(Character bin) {
         return coverageBin.get(bin);
     }
 
+    public static HashMap<Character, Integer> getCoverageBin() {
+        return coverageBin;
+    }
+
     protected static int getVarPosIndex(Variant var) {
-        int posIndex = var.getRegion().getStartPosition() % COVERAGE_BLOCK_SIZE;
+        int posIndex = var.getStartPosition() % COVERAGE_BLOCK_SIZE;
 
         if (posIndex == 0) {
             posIndex = COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
@@ -96,6 +75,6 @@ public class CoverageBlockManager {
     }
 
     protected static int getBlockEndPos(Variant var, int varPosIndex) {
-        return var.getRegion().getStartPosition() - varPosIndex + COVERAGE_BLOCK_SIZE;
+        return var.getStartPosition() - varPosIndex + COVERAGE_BLOCK_SIZE;
     }
 }

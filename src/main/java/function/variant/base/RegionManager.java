@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.annotation.base.GeneManager;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.CommonCommand;
@@ -17,9 +18,9 @@ import java.util.HashMap;
  */
 public class RegionManager {
 
-    private static ArrayList<Region> regionList = new ArrayList<Region>();
-    private static HashMap<Integer, String> idChrMap = new HashMap<Integer, String>();
-    private static HashMap<String, Integer> chrIdMap = new HashMap<String, Integer>();
+    private static ArrayList<Region> regionList = new ArrayList<>();
+    private static HashMap<Integer, String> idChrMap = new HashMap<>();
+    private static HashMap<String, Integer> chrIdMap = new HashMap<>();
     private static boolean isUsed = false;
 
     public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
@@ -115,7 +116,7 @@ public class RegionManager {
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-            ArrayList<String> chrList = new ArrayList<String>();
+            ArrayList<String> chrList = new ArrayList<>();
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -126,7 +127,7 @@ public class RegionManager {
 
                 lineStr = lineStr.replaceAll("( )+", "").toLowerCase();
 
-                if (lineStr.indexOf(":") == -1) {
+                if (!lineStr.contains(":")) {
                     String[] values = lineStr.split("\t");
                     if (values.length > 1) {
                         lineStr = values[0] + ":" + values[1] + "-" + values[2];
@@ -201,14 +202,16 @@ public class RegionManager {
     }
 
     public static Region getRegion(int index, String varType) {
-        LogManager.writeAndPrintNoNewLine("It is analysing " + varType.toUpperCase().toUpperCase()
-                + "s in region " + regionList.get(index) + ".");
+        LogManager.writeAndPrint("Start analysing " + varType.toUpperCase().toUpperCase()
+                + "s in region " + regionList.get(index));
 
         return regionList.get(index);
     }
 
     public static String addRegionToSQL(Region region, String sqlCode, boolean isIndel) {
-        sqlCode += " WHERE v.seq_region_id = " + region.getRegionId() + " ";
+        int regionId = RegionManager.getIdByChr(region.getChrStr());
+
+        sqlCode += " WHERE v.seq_region_id = " + regionId + " ";
 
         if (region.getStartPosition() > 0) {
             sqlCode += "AND v.seq_region_pos >= " + region.getStartPosition() + " ";
@@ -218,26 +221,18 @@ public class RegionManager {
             sqlCode += "AND v.seq_region_pos <= " + region.getEndPosition() + " ";
         }
 
+        if (GeneManager.isUsed()) {
+            sqlCode += "AND g.gene_name in " + GeneManager.getAllGeneByChr(region.getChrStr()) + " ";
+        }
+
         return sqlCode;
     }
 
-    public static void addRegionByVariantId(String variantId) {
-        String[] values = variantId.split("-");
+    public static void addRegionByVariantPos(String varPos) {
+        String[] values = varPos.split("-");
         String chr = values[0];
         int pos = Integer.valueOf(values[1]);
-
-        if (values.length == 3) // variant position format chr-pos-type
-        {
-            VariantManager.addType(values[2]);
-        } else { // variant id format chr-pos-ref-alt
-            if (values[2].length() == 1
-                    && values[3].length() == 1) {
-                VariantManager.addType("snv");
-            } else {
-                VariantManager.addType("indel");
-            }
-        }
-
+        VariantManager.addType(values[2]);
         regionList.add(new Region(chr, pos, pos));
     }
 

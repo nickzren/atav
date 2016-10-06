@@ -9,15 +9,9 @@ import java.io.File;
 public class Data {
 
     // software info
-    public static final String AppTitle = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String version = "pgm";
-    public static final String year = "2016";
-    public static final String leadDeveloper = "Nick Ren";
-    public static final String pipelineDeveloper = "Joshua Bridgers, Brett Copeland, Raghavendra Padmanabhan";
-    public static final String projectManager = "Sitharthan Kamalakaran, David Goldstein";
-    public static final String pastDeveloper = "Quanli Wang, Min He";
-    public static final String insititue = "IGM (Institute for Genomic Medicine)";
-    public static String userName = "UnspecifiedUser";
+    public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
+    public static String VERSION = "pgm_beta";
+    public static String userName = "NA";
 
     // system config file path
     public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.pgm.system.config.properties";

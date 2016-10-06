@@ -9,26 +9,20 @@ import utils.FormatManager;
  */
 public class Region implements Comparable {
 
-    public int regionId;
-    public String chrStr;
-    public int chrNum;
-    public int startPosition;
-    public int endPosition;
-    public int length;
+    protected String chrStr;
+    protected int chrNum;
+    protected int startPosition;
+    protected int endPosition;
+    protected int length;
 
-    public Region(int id, String chr, int start, int end) {
-        init(chr, start, end);
-
-        regionId = id;
+    public Region() {
     }
 
     public Region(String chr, int start, int end) {
-        init(chr, start, end);
-
-        regionId = RegionManager.getIdByChr(chrStr);
+        initRegion(chr, start, end);
     }
 
-    public void init(String chr, int start, int end) {
+    public void initRegion(String chr, int start, int end) {
         chrStr = chr;
 
         chrNum = intChr();
@@ -52,10 +46,6 @@ public class Region implements Comparable {
         } else {
             return Data.NA;
         }
-    }
-
-    public int getRegionId() {
-        return regionId;
     }
 
     public String getChrStr() {
@@ -90,20 +80,20 @@ public class Region implements Comparable {
         return length;
     }
 
+    public boolean isAutosome() {
+        return chrNum < 23 || chrNum == 26;
+    }
+
     /*
      * inside Pseudoautosomal Region will be same as autosome
      */
     public boolean isInsideAutosomalOrPseudoautosomalRegions() {
-        if (chrNum < 23 || chrNum == 26) {
+        if (isAutosome()) {
             return true;
         }
 
-        if (isInsideXPseudoautosomalRegions()
-                || isInsideYPseudoautosomalRegions()) {
-            return true;
-        }
-
-        return false;
+        return isInsideXPseudoautosomalRegions()
+                || isInsideYPseudoautosomalRegions();
     }
 
     /*
@@ -115,13 +105,9 @@ public class Region implements Comparable {
         int startX1 = 60001, endX1 = 2699520;
         int startX2 = 154931044, endX2 = 155260560;
 
-        if (chrNum == 23
+        return chrNum == 23
                 && ((startPosition >= startX1 && endPosition <= endX1)
-                || (startPosition >= startX2 && endPosition <= endX2))) {
-            return true;
-        }
-
-        return false;
+                || (startPosition >= startX2 && endPosition <= endX2));
     }
 
     /*
@@ -131,13 +117,34 @@ public class Region implements Comparable {
         int startY1 = 10001, endY1 = 2649520;
         int startY2 = 59034050, endY2 = 59363566;
 
-        if (chrNum == 24
+        return chrNum == 24
                 && ((startPosition >= startY1 && endPosition <= endY1)
-                || (startPosition >= startY2 && endPosition <= endY2))) {
-            return true;
-        }
+                || (startPosition >= startY2 && endPosition <= endY2));
+    }
 
-        return false;
+    public boolean contains(Region r) {
+        return r.getChrStr().equalsIgnoreCase(chrStr)
+                && r.getStartPosition() >= startPosition
+                && r.getStartPosition() <= endPosition;
+    }
+
+    public Region intersect(int start, int end) {
+        if (end >= startPosition && start <= endPosition) {
+            int newstart = Math.max(startPosition, start);
+            int newend = Math.min(endPosition, end);
+            return new Region(chrStr, newstart, newend);
+        }
+        return null;
+    }
+
+    public int intersectLength(int region_start, int region_end) {
+        if (region_end >= startPosition && region_start <= endPosition) {
+            int start = Math.max(startPosition, region_start);
+            int end = Math.min(endPosition, region_end);
+            return end - start + 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -152,6 +159,7 @@ public class Region implements Comparable {
         return chr;
     }
 
+    @Override
     public int compareTo(Object another) throws ClassCastException {
         Region that = (Region) another;
         return Double.compare(this.chrNum, that.chrNum); //small -> large

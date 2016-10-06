@@ -20,15 +20,11 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     public void initOutput() {
         try {
             bwKnownVar = new BufferedWriter(new FileWriter(knownVarFilePath));
-            bwKnownVar.write(KnownVarOutput.title);
+            bwKnownVar.write(KnownVarOutput.getTitle());
             bwKnownVar.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-    }
-
-    @Override
-    public void doOutput() {
     }
 
     @Override
@@ -58,7 +54,7 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
         try {
             KnownVarOutput knownVarOutput = new KnownVarOutput(annotatedVar);
 
-            bwKnownVar.write(annotatedVar.variantIdStr + ",");
+            bwKnownVar.write(annotatedVar.getVariantIdStr() + ",");
             bwKnownVar.write(annotatedVar.getGeneName() + ",");
             bwKnownVar.write(knownVarOutput.toString());
             bwKnownVar.newLine();
@@ -69,16 +65,6 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "It is running a list KnownVar function... \n\n"
-                + "KnownVar database tables: \n"
-                + KnownVarManager.clinVarTable + "\n"
-                + KnownVarManager.clinVarPathoratioTable + "\n"
-                + KnownVarManager.hgmdTable + "\n"
-                + KnownVarManager.omimTable + "\n"
-                + KnownVarManager.acmgTable + "\n"
-                + KnownVarManager.adultOnsetTable + "\n"
-                + KnownVarManager.clinGenTable + "\n"
-                + KnownVarManager.pgxTable + "\n"
-                + KnownVarManager.recessiveCarrierTable;
+        return "Start running list KnownVar function";
     }
 }

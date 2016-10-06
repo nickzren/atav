@@ -1,5 +1,9 @@
 package utils;
 
+import com.github.lalyos.jfiglet.FigletFont;
+import com.google.common.io.Files;
+import function.external.base.DataManager;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import java.io.*;
 import java.util.Date;
@@ -15,23 +19,24 @@ import java.util.logging.Logger;
 public class LogManager {
 
     private static BufferedWriter userLog = null;
-    private static StringBuilder basicInfo = new StringBuilder();
 
     public static String runTime;
 
     // users command log file path
-    public static final String USERS_COMMAND_LOG = "/nfs/goldstein/software/atav_home/log/users.command.log";
+    public static final String USERS_COMMAND_LOG = "log/users.command.log";
+    // user sample file log path
+    public static final String SAMPLE_DIR_LOG = "log/sample/";
+    // program start date
+    public static final Date date = new Date();
 
-    public static void initBasicInfo() {
-        basicInfo.append("\n\n");
-        basicInfo.append("Software:\t\t" + Data.AppTitle + "\n");
-        basicInfo.append("Version:\t\t" + Data.version + "\n");
-        basicInfo.append("Lead Developer:\t\t" + Data.leadDeveloper + "\n");
-        basicInfo.append("Pipeline Developer:\t" + Data.pipelineDeveloper + "\n");
-        basicInfo.append("Project Manager:\t" + Data.projectManager + "\n");
-        basicInfo.append("Past Developer:\t\t" + Data.pastDeveloper + "\n");
-        basicInfo.append("Year:\t\t\t" + Data.year + "\n");
-        basicInfo.append("Institute:\t\t" + Data.insititue + "\n");
+    public static void run() {
+        logRunTime();
+
+        logUserCommand();
+
+        logSampleFile();
+
+        close();
     }
 
     public static void initPath() {
@@ -44,23 +49,14 @@ public class LogManager {
 
         Data.userName = System.getProperty("user.name");
         try {
-            Date date = new Date();
-            writeLog("The following job was run on " + date.toString() + ".\n");
-            writeAndPrint(basicInfo.toString());
-            writeLog(Data.userName + " is running ATAV with the following command:");
+            writeAndPrint("Program start: " + date.toString());
+            writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
+            writeAndPrint("Version: " + Data.VERSION);
+
+            writeLog("ATAV command:");
             writeLog(CommandManager.command + "\n");
 
-            writeAndPrint("ATAV news: "
-                    + "http://redmine.igm.cumc.columbia.edu/projects/atav/news");
-
-            writeAndPrint("ATAV wiki: "
-                    + "http://redmine.igm.cumc.columbia.edu/projects/atav/wiki");
-
-            // write and reopen
-            userLog.close();
-            userLog = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                    CommonCommand.outputPath + "atav.log", true)));
-
+            userLog.flush();
         } catch (Exception e) {
             ErrorManager.print("Error in writing log file: " + e.toString());
         }
@@ -69,11 +65,6 @@ public class LogManager {
     public static void writeAndPrint(String str) {
         System.out.println(str + "\n");
         writeLog(str + "\n");
-    }
-
-    public static void writeAndPrintWithoutNewLine(String str) {
-        System.out.println(str);
-        writeLog(str);
     }
 
     public static void writeAndPrintNoNewLine(String str) {
@@ -100,9 +91,9 @@ public class LogManager {
         }
     }
 
-    public static void logRunTime() {
+    private static void logRunTime() {
         long elapsedTime = RunTimeManager.getElapsedTime();
-        
+
         long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
         long hours = TimeUnit.MILLISECONDS.toHours(elapsedTime);
@@ -115,9 +106,11 @@ public class LogManager {
                 + runTime + "\n");
     }
 
-    public static void logUserCommand() {
+    private static void logUserCommand() {
         try {
-            if (isBioinfoTeam()) {
+            if (isBioinfoTeam()
+                    || Data.VERSION.equals("trunk")
+                    || Data.VERSION.equals("beta")) {
                 return;
             }
 
@@ -126,8 +119,6 @@ public class LogManager {
             FileWriter fileWritter = new FileWriter(file, true);
 
             BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-
-            Date date = new Date();
 
             long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
 
@@ -154,11 +145,7 @@ public class LogManager {
 
         String members = prop.getProperty("bioinfo-team");
 
-        if (members.contains(Data.userName)) {
-            return true;
-        }
-
-        return false;
+        return members.contains(Data.userName);
     }
 
     private static long folderSize(File directory) {
@@ -171,5 +158,38 @@ public class LogManager {
             }
         }
         return length;
+    }
+
+    private static void logSampleFile() {
+        try {
+            if (CommonCommand.isNonSampleAnalysis
+                    || isBioinfoTeam()
+                    || Data.VERSION.equals("trunk")
+                    || Data.VERSION.contains("beta")) {
+                return;
+            }
+
+            File sampleFile = new File(GenotypeLevelFilterCommand.sampleFile);
+
+            File logSampleFile = new File(
+                    SAMPLE_DIR_LOG
+                    + Data.userName
+                    + "."
+                    + date.toString()
+                    + "."
+                    + sampleFile.getName());
+
+            Files.copy(sampleFile, logSampleFile);
+        } catch (Exception e) {
+        }
+    }
+
+    public static void logExternalDataVersion() {
+        String externalDataVersion = DataManager.getVersion();
+
+        if (!externalDataVersion.isEmpty()) {
+            writeAndPrintNoNewLine("External data version:");
+            writeAndPrintNoNewLine(externalDataVersion);
+        }
     }
 }

@@ -32,19 +32,19 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwShared = new BufferedWriter(new FileWriter(sharedFilePath));
-            bwShared.write(FamilyOutput.title);
+            bwShared.write(FamilyOutput.getTitle());
             bwShared.newLine();
 
             bwNotShared = new BufferedWriter(new FileWriter(notSharedFilePath));
-            bwNotShared.write(FamilyOutput.title);
+            bwNotShared.write(FamilyOutput.getTitle());
             bwNotShared.newLine();
 
             bwSummaryShared = new BufferedWriter(new FileWriter(summarySharedFilePath));
-            bwSummaryShared.write(FamilySummary.title);
+            bwSummaryShared.write(FamilySummary.getTitle());
             bwSummaryShared.newLine();
 
             bwSummaryAll = new BufferedWriter(new FileWriter(summaryAllFilePath));
-            bwSummaryAll.write(FamilySummary.title);
+            bwSummaryAll.write(FamilySummary.getTitle());
             bwSummaryAll.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -90,7 +90,7 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
         try {
             FamilyOutput output = new FamilyOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             output.calculate();
 
@@ -161,6 +161,6 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "It is running a family analysis function...";
+        return "Start running family analysis function";
     }
 }

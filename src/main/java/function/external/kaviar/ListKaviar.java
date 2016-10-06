@@ -1,10 +1,15 @@
 package function.external.kaviar;
 
 import function.AnalysisBase;
+import function.variant.base.Region;
+import function.variant.base.RegionManager;
 import function.variant.base.VariantManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import utils.CommonCommand;
+import utils.DBManager;
 import utils.ErrorManager;
 
 /**
@@ -22,15 +27,11 @@ public class ListKaviar extends AnalysisBase {
     public void initOutput() {
         try {
             bwKaviar = new BufferedWriter(new FileWriter(kaviarFilePath));
-            bwKaviar.write(KaviarOutput.title);
+            bwKaviar.write(KaviarOutput.getTitle());
             bwKaviar.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-    }
-
-    @Override
-    public void doOutput() {
     }
 
     @Override
@@ -56,21 +57,39 @@ public class ListKaviar extends AnalysisBase {
     }
 
     @Override
-    public void processDatabaseData() {
-        try {
-            for (String variantId : VariantManager.getIncludeVariantList()) {
-                KaviarOutput output = new KaviarOutput(variantId);
+    public void processDatabaseData() throws Exception {
+        int totalNumOfRegionList = RegionManager.getRegionSize();
 
-                if (output.isValid()) {
-                    bwKaviar.write(variantId + ",");
-                    bwKaviar.write(output.toString());
-                    bwKaviar.newLine();
+        for (int r = 0; r < totalNumOfRegionList; r++) {
+
+            for (String varType : VariantManager.VARIANT_TYPE) {
+
+                if (VariantManager.isVariantTypeValid(r, varType)) {
+
+                    boolean isIndel = varType.equals("indel");
+
+                    Region region = RegionManager.getRegion(r, varType);
+             
+                    String sqlCode = KaviarManager.getSql(isIndel, region);
+                    
+                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+
+                    while (rset.next()) {
+                        KaviarOutput output = new KaviarOutput(isIndel, rset);
+
+                        if (VariantManager.isVariantIdIncluded(output.kaviar.getVariantId())
+                                && output.isValid()) {
+                            bwKaviar.write(output.kaviar.getVariantId() + ",");
+                            bwKaviar.write(output.toString());
+                            bwKaviar.newLine();
+                        }
+
+                        countVariant();
+                    }
+
+                    rset.close();
                 }
-
-                countVariant();
             }
-        } catch (Exception e) {
-            ErrorManager.send(e);
         }
     }
 
@@ -82,8 +101,6 @@ public class ListKaviar extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running list kaviar function...\n\n"
-                + "snv table: " + KaviarManager.snvTable + "\n\n"
-                + "indel table: " + KaviarManager.indelTable;
+        return "Start running list kaviar function";
     }
 }

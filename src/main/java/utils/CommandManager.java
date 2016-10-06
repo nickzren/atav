@@ -2,7 +2,6 @@ package utils;
 
 import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
-import function.annotation.genedx.GeneDxCommand;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.external.evs.EvsCommand;
@@ -12,8 +11,10 @@ import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.mgi.MgiCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
+import function.external.trap.TrapCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
@@ -22,6 +23,7 @@ import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
 import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
+import function.genotype.var.VarCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
@@ -31,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -41,7 +44,7 @@ import java.util.Iterator;
 public class CommandManager {
 
     private static String[] optionArray;
-    private static ArrayList<CommandOption> optionList = new ArrayList<CommandOption>();
+    private static ArrayList<CommandOption> optionList = new ArrayList<>();
     public static String command = "";
     private static String commandFile = "";
 
@@ -54,8 +57,6 @@ public class CommandManager {
     public static void initOptions(String[] options) {
         try {
             initCommandOptions(options);
-
-            LogManager.initBasicInfo();
 
             initOptionList();
 
@@ -82,19 +83,28 @@ public class CommandManager {
             if (CommonCommand.isDebug) {
                 initCommand4Debug();
             } else {
-                System.out.println("\nError: without any input parameters to run ATAV. \n\nExit...\n");
+                System.out.println("\nError: without any input parameters to run ATAV. \n\nExit\n");
                 System.exit(0);
             }
-        } else {
-            // init options from command file or command line
-            if (isCommandFileIncluded(options)) {
+        } else // init options from command file or command line
+         if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
-        }
+
+        cleanUpOddSymbol();
 
         initCommand4Log();
+    }
+
+    private static void cleanUpOddSymbol() {
+        for (int i = 0; i < optionArray.length; i++) {
+            // below solve situation: dash hyphen or dash only
+            optionArray[i] = optionArray[i].replaceAll("\\u2013", "--"); // en dash --> hyphen
+            optionArray[i] = optionArray[i].replaceAll("\\u2014", "--"); // em dash --> hyphen
+            optionArray[i] = optionArray[i].replace("---", "--");
+        }
     }
 
     private static boolean isCommandFileIncluded(String[] options) {
@@ -141,10 +151,10 @@ public class CommandManager {
     }
 
     private static void initCommand4Log() {
-        String version = Data.version;
+        String version = Data.VERSION;
 
-        if (Data.version.contains(" ")) {
-            version = Data.version.substring(Data.version.indexOf(" ") + 1);
+        if (Data.VERSION.contains(" ")) {
+            version = Data.VERSION.substring(Data.VERSION.indexOf(" ") + 1);
         }
 
         command = "atav_" + version + ".sh";
@@ -203,7 +213,7 @@ public class CommandManager {
         }
 
         if (CommonCommand.outputPath.isEmpty()) {
-            System.out.println("\nPlease specify output path: --out $PATH \n\nExit...\n");
+            System.out.println("\nPlease specify output path: --out $PATH \n\nExit\n");
             System.exit(0);
         }
     }
@@ -213,18 +223,16 @@ public class CommandManager {
             File dir = new File(path);
             if (!dir.exists()) {
                 dir.mkdirs();
-            } else {
-                if (!dir.canWrite()) {
-                    System.out.println("\nYou don't have write permissions into " + path + "! \n\nExit...\n");
-                    System.exit(0);
-                }
+            } else if (!dir.canWrite()) {
+                System.out.println("\nYou don't have write permissions into " + path + "! \n\nExit\n");
+                System.exit(0);
             }
 
             CommonCommand.realOutputPath = path;
             CommonCommand.outputDirName = dir.getName();
             CommonCommand.outputPath = path + File.separator + dir.getName() + "_";
         } catch (Exception e) {
-            System.out.println("\nError in creating an output folder, caused by " + e.toString() + " \n\nExit...\n");
+            System.out.println("\nError in creating an output folder, caused by " + e.toString() + " \n\nExit\n");
             System.exit(0);
         }
     }
@@ -255,106 +263,141 @@ public class CommandManager {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
 
-            if (option.getName().equals("--list-var-geno")) { // Genotype Analysis Functions
-                VarGenoCommand.isListVarGeno = true;
-            } else if (option.getName().equals("--collapsing-dom")) {
-                CollapsingCommand.isCollapsingSingleVariant = true;
-            } else if (option.getName().equals("--collapsing-rec")) {
-                CollapsingCommand.isCollapsingSingleVariant = true;
-                CollapsingCommand.isRecessive = true;
-            } else if (option.getName().equals("--collapsing-comp-het")) {
-                CollapsingCommand.isCollapsingCompHet = true;
-            } else if (option.getName().equals("--fisher")) {
-                StatisticsCommand.isFisher = true;
-                StatisticsCommand.models = new String[4];
-                StatisticsCommand.models[0] = "allelic";
-                StatisticsCommand.models[1] = "dominant";
-                StatisticsCommand.models[2] = "recessive";
-                StatisticsCommand.models[3] = "genotypic";
-            } else if (option.getName().equals("--linear")) {
-                StatisticsCommand.isLinear = true;
-                StatisticsCommand.models = new String[4];
-                StatisticsCommand.models[0] = "allelic";
-                StatisticsCommand.models[1] = "dominant";
-                StatisticsCommand.models[2] = "recessive";
-                StatisticsCommand.models[3] = "additive";
-            } else if (option.getName().equals("--family-analysis")) {
-                FamilyCommand.isFamilyAnalysis = true;
-            } else if (option.getName().equals("--list-sibling-comp-het")) {
-                SiblingCommand.isSiblingCompHet = true;
-            } else if (option.getName().equals("--list-trio-denovo")) {
-                TrioCommand.isTrioDenovo = true;
-            } else if (option.getName().equals("--list-trio-comp-het")) {
-                TrioCommand.isTrioCompHet = true;
-            } else if (option.getName().equals("--list-parental-mosaic")) {
-                ParentalCommand.isParentalMosaic = true;
-            } else if (option.getName().equals("--ped-map")) {
-                PedMapCommand.isPedMap = true;
-            } else if (option.getName().equals("--list-var-anno")) { // Variant Annotation Functions
-                CommonCommand.isNonSampleAnalysis = true;
-                VarAnnoCommand.isListVarAnno = true;
-                EvsCommand.isIncludeEvs = true;
-                ExacCommand.isIncludeExac = true;
-                GerpCommand.isIncludeGerp = true;
-                KaviarCommand.isIncludeKaviar = true;
-                KnownVarCommand.isIncludeKnownVar = true;
-                RvisCommand.isIncludeRvis = true;
-                SubRvisCommand.isIncludeSubRvis = true;
-                GenomesCommand.isInclude1000Genomes = true;
-            } else if (option.getName().equals("--list-gene-dx")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                GeneDxCommand.isListGeneDx = true;
-            } else if (option.getName().equals("--coverage-summary")) { // Coverage Analysis Functions
-                CoverageCommand.isCoverageSummary = true;
-            } else if (option.getName().equals("--site-coverage-summary")) {
-                CoverageCommand.isSiteCoverageSummary = true;
-            } else if (option.getName().equals("--coverage-comparison")) {
-                CoverageCommand.isCoverageComparison = true;
-            } else if (option.getName().equals("--site-coverage-comparison")) {
-                CoverageCommand.isSiteCoverageComparison = true;
-            } else if (option.getName().equals("--coverage-summary-pipeline")) {
-                CoverageCommand.isCoverageSummaryPipeline = true;
-            } else if (option.getName().equals("--list-evs")) { // External Datasets Functions
-                CommonCommand.isNonSampleAnalysis = true;
-                EvsCommand.isListEvs = true;
-                EvsCommand.isIncludeEvs = true;
-            } else if (option.getName().equals("--list-exac")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                ExacCommand.isListExac = true;
-                ExacCommand.isIncludeExac = true;
-            } else if (option.getName().equals("--list-known-var")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                KnownVarCommand.isListKnownVar = true;
-                KnownVarCommand.isIncludeKnownVar = true;
-            } else if (option.getName().equals("--list-flanking-seq")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                FlankingCommand.isListFlankingSeq = true;
-            } else if (option.getName().equals("--list-kaviar")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                KaviarCommand.isListKaviar = true;
-                KaviarCommand.isIncludeKaviar = true;
-            } else if (option.getName().equals("--list-gerp")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                GerpCommand.isListGerp = true;
-                GerpCommand.isIncludeGerp = true;
-            } else if (option.getName().equals("--list-sub-rvis")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                SubRvisCommand.isListSubRvis = true;
-                SubRvisCommand.isIncludeSubRvis = true;
-            } else if (option.getName().equals("--list-rvis")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                RvisCommand.isListRvis = true;
-                RvisCommand.isIncludeRvis = true;
-            } else if (option.getName().equals("--list-1000-genomes")) {
-                CommonCommand.isNonSampleAnalysis = true;
-                GenomesCommand.isList1000Genomes = true;
-                GenomesCommand.isInclude1000Genomes = true;
-            } else if (option.getName().equals("--test")) { // Test Functions
+            switch (option.getName()) {
+                // Genotype Analysis Functions
+                case "--list-var-geno":
+                    VarGenoCommand.isListVarGeno = true;
+                    break;
+                case "--list-var":
+                    VarCommand.isListVar = true;
+                    break;
+                case "--collapsing-dom":
+                    CollapsingCommand.isCollapsingSingleVariant = true;
+                    break;
+                case "--collapsing-rec":
+                    CollapsingCommand.isCollapsingSingleVariant = true;
+                    CollapsingCommand.isRecessive = true;
+                    break;
+                case "--collapsing-comp-het":
+                    CollapsingCommand.isCollapsingCompHet = true;
+                    break;
+                case "--fisher":
+                    StatisticsCommand.isFisher = true;
+                    break;
+                case "--linear":
+                    StatisticsCommand.isLinear = true;
+                    break;
+                case "--logistic":
+                    StatisticsCommand.isLogistic = true;
+                    break;
+                case "--family-analysis":
+                    FamilyCommand.isFamilyAnalysis = true;
+                    break;
+                case "--list-sibling-comp-het":
+                    SiblingCommand.isSiblingCompHet = true;
+                    break;
+                case "--list-trio":
+                    TrioCommand.isListTrio = true;
+                    break;
+                case "--list-parental-mosaic":
+                    ParentalCommand.isParentalMosaic = true;
+                    break;
+                case "--ped-map":
+                    PedMapCommand.isPedMap = true;
+                    break;
+
+                // Variant Annotation Functions
+                case "--list-var-anno":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    VarAnnoCommand.isListVarAnno = true;
+                    EvsCommand.isIncludeEvs = true;
+                    ExacCommand.isIncludeExac = true;
+                    GerpCommand.isIncludeGerp = true;
+                    TrapCommand.isIncludeTrap = true;
+                    KaviarCommand.isIncludeKaviar = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
+                    RvisCommand.isIncludeRvis = true;
+                    SubRvisCommand.isIncludeSubRvis = true;
+                    GenomesCommand.isInclude1000Genomes = true;
+                    MgiCommand.isIncludeMgi = true;
+                    break;
+                // Coverage Analysis Functions    
+                case "--coverage-summary":
+                    CoverageCommand.isCoverageSummary = true;
+                    break;
+                case "--site-coverage-summary":
+                    CoverageCommand.isSiteCoverageSummary = true;
+                    break;
+                case "--coverage-comparison":
+                    CoverageCommand.isCoverageComparison = true;
+                    break;
+                case "--site-coverage-comparison":
+                    CoverageCommand.isSiteCoverageComparison = true;
+                    break;
+
+                // External Datasets Functions    
+                case "--list-evs":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    EvsCommand.isListEvs = true;
+                    EvsCommand.isIncludeEvs = true;
+                    break;
+                case "--list-exac":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    ExacCommand.isListExac = true;
+                    ExacCommand.isIncludeExac = true;
+                    break;
+                case "--list-known-var":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    KnownVarCommand.isListKnownVar = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
+                    break;
+                case "--list-flanking-seq":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    FlankingCommand.isListFlankingSeq = true;
+                    break;
+                case "--list-kaviar":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    KaviarCommand.isListKaviar = true;
+                    KaviarCommand.isIncludeKaviar = true;
+                    break;
+                case "--list-gerp":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    GerpCommand.isListGerp = true;
+                    GerpCommand.isIncludeGerp = true;
+                    break;
+                case "--list-trap":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    TrapCommand.isListTrap = true;
+                    TrapCommand.isIncludeTrap = true;
+                    break;
+                case "--list-sub-rvis":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    SubRvisCommand.isListSubRvis = true;
+                    SubRvisCommand.isIncludeSubRvis = true;
+                    break;
+                case "--list-rvis":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    RvisCommand.isListRvis = true;
+                    RvisCommand.isIncludeRvis = true;
+                    break;
+                case "--list-1000-genomes":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    GenomesCommand.isList1000Genomes = true;
+                    GenomesCommand.isInclude1000Genomes = true;
+                    break;
+                case "--list-mgi":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    MgiCommand.isListMgi = true;
+                    MgiCommand.isIncludeMgi = true;
+                    break;
+                case "--test":
+                    // Test Functions
 //                CommonCommand.isNonDBAnalysis = true;
-                CommonCommand.isNonSampleAnalysis = true;
-                TestCommand.isTest = true;
-            } else {
-                continue;
+//                    CommonCommand.isNonSampleAnalysis = true;
+                    TestCommand.isTest = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
@@ -364,13 +407,15 @@ public class CommandManager {
 
         if (!hasMainFunction) {
             ErrorManager.print("Missing function command: --list-var-geno, --collapsing-dom, --collapsing-rec, "
-                    + "--collapsing-comp-het, --fisher, --linear...");
+                    + "--collapsing-comp-het, --fisher, --linear");
         }
     }
 
     private static void initSubOptions() throws Exception {
         if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
+        } else if (VarCommand.isListVar) {
+
         } else if (CollapsingCommand.isCollapsingSingleVariant) {
             CollapsingCommand.initSingleVarOptions(optionList.iterator());
         } else if (CollapsingCommand.isCollapsingCompHet) {
@@ -379,38 +424,34 @@ public class CommandManager {
             StatisticsCommand.initFisherOptions(optionList.iterator());
         } else if (StatisticsCommand.isLinear) {
             StatisticsCommand.initLinearOptions(optionList.iterator());
+        } else if (StatisticsCommand.isLogistic) {
+            StatisticsCommand.initLogisticOptions(optionList.iterator());
         } else if (FamilyCommand.isFamilyAnalysis) {
             FamilyCommand.initOptions(optionList.iterator());
         } else if (SiblingCommand.isSiblingCompHet) {
 
-        } else if (TrioCommand.isTrioDenovo) {
-            TrioCommand.initDenovoOptions(optionList.iterator());
-        } else if (TrioCommand.isTrioCompHet) {
-            TrioCommand.initCompHetOptions(optionList.iterator());
+        } else if (TrioCommand.isListTrio) {
+            TrioCommand.initOptions(optionList.iterator());
         } else if (ParentalCommand.isParentalMosaic) {
             ParentalCommand.initOptions(optionList.iterator());
         } else if (PedMapCommand.isPedMap) {
             PedMapCommand.initOptions(optionList.iterator());
         } else if (VarAnnoCommand.isListVarAnno) { // Variant Annotation Functions
 
-        } else if (GeneDxCommand.isListGeneDx) {
-
         } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
             CoverageCommand.initCoverageSummary(optionList.iterator());
         } else if (CoverageCommand.isSiteCoverageSummary) {
-            CoverageCommand.initSiteCoverageSummary(optionList.iterator());
+
         } else if (CoverageCommand.isCoverageComparison) {
             CoverageCommand.initCoverageComparison(optionList.iterator());
         } else if (CoverageCommand.isSiteCoverageComparison) {
             CoverageCommand.initCoverageComparisonSite(optionList.iterator());
-        } else if (CoverageCommand.isCoverageSummaryPipeline) {
-            CoverageCommand.initCoverageComparison(optionList.iterator());
         } else if (EvsCommand.isListEvs) { // External Datasets Functions
 
         } else if (ExacCommand.isListExac) {
 
         } else if (KnownVarCommand.isListKnownVar) {
-            KnownVarCommand.initOptions(optionList.iterator());
+
         } else if (FlankingCommand.isListFlankingSeq) {
             FlankingCommand.initOptions(optionList.iterator());
         } else if (TestCommand.isTest) { // Test Functions
@@ -480,11 +521,9 @@ public class CommandManager {
      * output invalid option & value if value is not in strList ATAV stop
      */
     public static void checkValuesValid(String[] array, CommandOption option) {
-        HashSet<String> set = new HashSet<String>();
+        HashSet<String> set = new HashSet<>();
 
-        for (String str : array) {
-            set.add(str);
-        }
+        set.addAll(Arrays.asList(array));
 
         String[] values = option.getValue().split(",");
 

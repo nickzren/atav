@@ -4,8 +4,9 @@ import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
+import function.external.genomes.Genomes;
 import function.external.genomes.GenomesCommand;
-import function.external.genomes.GenomesOutput;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.variant.base.Variant;
@@ -14,10 +15,14 @@ import function.external.kaviar.Kaviar;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
+import function.external.mgi.MgiCommand;
+import function.external.mgi.MgiManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
+import function.external.trap.TrapCommand;
+import function.external.trap.TrapManager;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -25,6 +30,7 @@ import java.sql.ResultSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import utils.MathManager;
 
 /**
  *
@@ -38,8 +44,8 @@ public class AnnotatedVariant extends Variant {
     String codonChange;
     String aminoAcidChange;
     String stableId;
-    HashSet<String> geneSet = new HashSet<String>();
-    HashSet<String> transcriptSet = new HashSet<String>();
+    HashSet<String> geneSet = new HashSet<>();
+    HashSet<String> transcriptSet = new HashSet<>();
     double polyphenHumdiv;
     double polyphenHumvar;
 
@@ -48,10 +54,12 @@ public class AnnotatedVariant extends Variant {
     Kaviar kaviar;
     Evs evs;
     float gerpScore;
+    float trapScore;
     KnownVarOutput knownVarOutput;
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
-    GenomesOutput genomesOutput;
+    Genomes genomes;
+    private String mgiStr;
 
     public boolean isValid = true;
 
@@ -62,8 +70,8 @@ public class AnnotatedVariant extends Variant {
             polyphenHumdiv = Data.NA;
             polyphenHumvar = Data.NA;
         } else {
-            polyphenHumdiv = FormatManager.devide(rset.getInt("polyphen_humdiv"), 1000);
-            polyphenHumvar = FormatManager.devide(rset.getInt("polyphen_humvar"), 1000);
+            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
+            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
         }
 
         function = "";
@@ -85,32 +93,14 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (SubRvisCommand.isIncludeSubRvis) {
-            subRvisOutput = new SubRvisOutput(getGeneName(),
-                    getRegion().getChrStr(),
-                    getRegion().getStartPosition());
+            subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
+        }
+
+        if (MgiCommand.isIncludeMgi) {
+            mgiStr = MgiManager.getLine(getGeneName());
         }
     }
 
-    // update code below for unit testing
-//    
-//    public AnnotatedVariant(int v_id, boolean isIndel,
-//            String alt, String ref, String rs,
-//            int pos, String chr) throws Exception {
-//        super(v_id, isIndel, alt, ref, rs, pos, chr);
-//    }
-//    
-//    public static void main(String[] args) throws Exception {
-//        System.out.println("test");
-//
-//        AnnotatedVariant variant = new AnnotatedVariant(0, false, "C", "T", "", 78082311, "17");
-//
-//        variant.aminoAcidChange = "N570K";
-//        variant.codonChange = "aaC/aaG";
-//
-//        String result = variant.getCodingSequenceChange();
-//
-//        System.out.println(result);
-//    }
     public void update(Annotation annotation) {
         if (isValid) {
             geneSet.add(annotation.geneName);
@@ -146,41 +136,61 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid & GerpCommand.isIncludeGerp) {
-            gerpScore = GerpManager.getScore(variantIdStr);
-
-            isValid = GerpCommand.isGerpScoreValid(gerpScore);
-        }
-
         if (isValid & ExacCommand.isIncludeExac) {
-            exac = new Exac(variantIdStr);
+            exac = new Exac(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
         }
 
+        if (isValid & EvsCommand.isIncludeEvs) {
+            evs = new Evs(chrStr, startPosition, refAllele, allele);
+
+            isValid = evs.isValid();
+        }
+
+        if (isValid & GerpCommand.isIncludeGerp) {
+            gerpScore = GerpManager.getScore(chrStr, startPosition, refAllele, allele);
+
+            isValid = GerpCommand.isGerpScoreValid(gerpScore);
+        }
+
         if (isValid & KaviarCommand.isIncludeKaviar) {
-            kaviar = new Kaviar(variantIdStr);
+            kaviar = new Kaviar(chrStr, startPosition, refAllele, allele);
 
             isValid = kaviar.isValid();
         }
 
         if (isValid & GenomesCommand.isInclude1000Genomes) {
-            genomesOutput = new GenomesOutput(variantIdStr);
-            
-            isValid = genomesOutput.isValid();
-        }
+            genomes = new Genomes(chrStr, startPosition, refAllele, allele);
 
-        if (isValid & EvsCommand.isIncludeEvs) {
-            evs = new Evs(variantIdStr);
-
-            isValid = evs.isValid();
+            isValid = genomes.isValid();
         }
     }
 
     public boolean isValid() {
         return isValid
                 & PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
-                & PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar);
+                & PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
+                & isTrapValid();
+    }
+
+    private boolean isTrapValid() {
+        if (TrapCommand.isIncludeTrap) {
+            if (isIndel()) {
+                trapScore = Data.NA;
+            } else {
+                trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
+            }
+
+            if (function.equals("SYNONYMOUS_CODING")
+                    || function.equals("INTRON_EXON_BOUNDARY")
+                    || function.equals("INTRON")) { 
+                // filter only apply to SYNONYMOUS_CODING, INTRON_EXON_BOUNDARY and INTRONIC variants
+                return TrapCommand.isTrapScoreValid(trapScore);
+            }
+        }
+
+        return true;
     }
 
     public String getGeneName() {
@@ -306,7 +316,7 @@ public class AnnotatedVariant extends Variant {
 
     public String getExacStr() {
         if (ExacCommand.isIncludeExac) {
-            return exac.toString();
+            return exac.toString() + ExacManager.getGeneDamagingCountsLine(geneName);
         } else {
             return "";
         }
@@ -344,6 +354,14 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
+    public String getTrapScore() {
+        if (TrapCommand.isIncludeTrap) {
+            return FormatManager.getFloat(trapScore) + ",";
+        } else {
+            return "";
+        }
+    }
+
     public String getRvis() {
         if (RvisCommand.isIncludeRvis) {
             return rvisStr;
@@ -362,7 +380,15 @@ public class AnnotatedVariant extends Variant {
 
     public String get1000Genomes() {
         if (GenomesCommand.isInclude1000Genomes) {
-            return genomesOutput.toString();
+            return genomes.toString();
+        } else {
+            return "";
+        }
+    }
+
+    public String getMgi() {
+        if (MgiCommand.isIncludeMgi) {
+            return mgiStr;
         } else {
             return "";
         }

@@ -6,6 +6,7 @@ import function.variant.base.RegionManager;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import utils.MathManager;
 
 /**
  *
@@ -29,8 +30,8 @@ public class Annotation {
             polyphenHumdiv = Data.NA;
             polyphenHumvar = Data.NA;
         } else {
-            polyphenHumdiv = FormatManager.devide(rset.getInt("polyphen_humdiv"), 1000);
-            polyphenHumvar = FormatManager.devide(rset.getInt("polyphen_humvar"), 1000);
+            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
+            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
         }
 
         geneName = FormatManager.getString(rset.getString("gene_name"));
@@ -49,18 +50,14 @@ public class Annotation {
             region.setEndPosition(region.getStartPosition() + len - 1);
         }
 
-        region.init(chrStr, position, position + len - 1);
+        region.initRegion(chrStr, position, position + len - 1);
     }
 
     public boolean isValid() {
-        if (PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
+        return PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
                 && PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
                 && GeneManager.isValid(this)
                 && TranscriptManager.isValid(stableId)
-                && !function.isEmpty()) {
-            return true;
-        }
-
-        return false;
+                && !function.isEmpty();
     }
 }

@@ -25,7 +25,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             super.initOutput();
 
             bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
-            bwGenotypes.write(CollapsingOutput.title);
+            bwGenotypes.write(CollapsingOutput.getTitle());
             bwGenotypes.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -53,12 +53,12 @@ public class CollapsingSingleVariant extends CollapsingBase {
         try {
             CollapsingOutput output = new CollapsingOutput(calledVar);
 
-            ArrayList<CollapsingSummary> summaryList = new ArrayList<CollapsingSummary>();
+            ArrayList<CollapsingSummary> summaryList = new ArrayList<>();
 
             initSummaryList(output, summaryList);
 
             if (!summaryList.isEmpty()) {
-                output.countSampleGenoCov();
+                output.countSampleGeno();
 
                 output.calculate();
 
@@ -99,7 +99,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             for (Sample sample : SampleManager.getList()) {
                 output.calculateLooFreq(sample);
 
-                if (output.isLooFreqValid()) {
+                if (output.isMaxLooMafValid()) {
                     int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                     if (output.isQualifiedGeno(geno)) {
@@ -137,6 +137,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
     @Override
     public String toString() {
-        return "It is running a collapsing function...";
+        return "Start running collapsing function";
     }
 }

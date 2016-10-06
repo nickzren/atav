@@ -1,6 +1,7 @@
 package utils;
 
 import function.external.flanking.FlankingCommand;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
 import function.variant.base.VariantLevelFilterCommand;
@@ -16,14 +17,19 @@ import java.util.Vector;
  */
 public class ThirdPartyToolManager {
 
-    private static final String R_SCRIPT_SYSTEM_PATH = "/nfs/goldstein/software/R-3.0.1/bin/Rscript";
+    private static final String R_301_SCRIPT_SYSTEM_PATH = "/nfs/goldstein/software/R-3.0.1/bin/Rscript";
+    private static final String R_325_SCRIPT_SYSTEM_PATH = "/nfs/goldstein/software/R-3.2.5/bin/Rscript";
     private static final String COLLAPSED_REGRESSION_R = "/nfs/goldstein/software/atav_home/lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = "/nfs/goldstein/software/atav_home/lib/pvals_qqplot.R";
+    private static final String QQPLOT_FOR_COLLAPSING_R = "/nfs/goldstein/software/atav_home/lib/qqplot_for_collapsing.R";
     private static final String PERL_SYSTEM_PATH = "perl";
     private static final String FLANKING_SEQ_PERL = "/nfs/goldstein/software/atav_home/lib/flanking_seq.pl";
+    private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_denovo_tier.R";
+    private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_comp_het_tier.R";
+    private static final String NON_TRIO_TIER = "/nfs/goldstein/software/atav_home/lib/non_trio_tier.R";
 
     public static int systemCall(String[] cmd) {
-        LogManager.writeAndPrintNoNewLine("System call start...");
+        LogManager.writeAndPrintNoNewLine("System call start");
 
         int exitValue = Data.NA;
 
@@ -43,7 +49,7 @@ public class ThirdPartyToolManager {
 
             String line;
 
-            Vector<String> result = new Vector<String>();
+            Vector<String> result = new Vector<>();
             while ((line = br.readLine()) != null) {
                 result.add(line);
             }
@@ -65,7 +71,7 @@ public class ThirdPartyToolManager {
     public static void callCollapsedRegression(String outputFile,
             String geneSampleMatrixFilePath,
             String method) {
-        String cmd = R_SCRIPT_SYSTEM_PATH + " "
+        String cmd = R_301_SCRIPT_SYSTEM_PATH + " "
                 + COLLAPSED_REGRESSION_R + " "
                 + "--samples " + SampleManager.getTempCovarPath() + " "
                 + "--clps " + geneSampleMatrixFilePath + " "
@@ -101,7 +107,7 @@ public class ThirdPartyToolManager {
     }
 
     public static void callPvalueQQPlot(String pvalueFile, int col, String outputPath) {
-        String cmd = R_SCRIPT_SYSTEM_PATH + " "
+        String cmd = R_301_SCRIPT_SYSTEM_PATH + " "
                 + PVALS_QQPLOT_R + " "
                 + pvalueFile + " "
                 + col + " "
@@ -110,9 +116,6 @@ public class ThirdPartyToolManager {
         int exitValue = systemCall(new String[]{cmd});
 
         if (exitValue != 0) {
-            LogManager.writeAndPrint("\nwarning: the application failed to run p value "
-                    + "qq plot script. \n");
-
             deleteFile(outputPath);
         }
     }
@@ -126,12 +129,28 @@ public class ThirdPartyToolManager {
         for (String str : temp) {
             col++;
 
-            if (str.equals(pvalueName)) {
+            if (str.trim().equalsIgnoreCase(pvalueName)) {
                 break;
             }
         }
 
         callPvalueQQPlot(pvalueFile, col, outputPath);
+    }
+
+    public static void generateQQPlot4CollapsingFetP(String matrixFilePath, String outputPath) {
+        String cmd = R_301_SCRIPT_SYSTEM_PATH + " "
+                + QQPLOT_FOR_COLLAPSING_R + " "
+                + GenotypeLevelFilterCommand.sampleFile + " "
+                + matrixFilePath + " "
+                + "1000 " // permutation#
+                + outputPath; // output path
+
+        int exitValue = systemCall(new String[]{cmd});
+
+        if (exitValue != 0) {
+            deleteFile(outputPath);
+        }
+
     }
 
     private static void deleteFile(String filePath) {
@@ -141,6 +160,30 @@ public class ThirdPartyToolManager {
 
     public static void gzipFile(String path) {
         String cmd = "gzip -9 " + path;
+
+        systemCall(new String[]{cmd});
+    }
+
+    public static void runTrioDenovoTier(String denovoFilePath) {
+        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
+                + TRIO_DENOVO_TIER + " "
+                + denovoFilePath;
+
+        systemCall(new String[]{cmd});
+    }
+
+    public static void runTrioCompHetTier(String compHetFilePath) {
+        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
+                + TRIO_COMP_HET_TIER + " "
+                + compHetFilePath;
+
+        systemCall(new String[]{cmd});
+    }
+
+    public static void runNonTrioTier(String variantFilePath) {
+        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
+                + NON_TRIO_TIER + " "
+                + variantFilePath;
 
         systemCall(new String[]{cmd});
     }

@@ -2,11 +2,12 @@ package function.annotation.base;
 
 import global.Data;
 import utils.CommonCommand;
-import utils.ErrorManager;
-import utils.LogManager;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  *
@@ -17,64 +18,46 @@ public class TranscriptManager {
     private static final String CCDS_TRANSCRIPT_PATH = "data/ccds_transcript.txt";
     private static final String CANONICAL_TRANSCRIPT_PATH = "data/canonical_transcript.txt";
 
-    private static HashSet<String> currentTranscriptSet = new HashSet<String>();
-    private static HashSet<String> ccdsTranscriptSet = new HashSet<String>();
-    private static HashSet<String> canonicalTranscriptSet = new HashSet<String>();
+    private static HashSet<String> currentTranscriptSet = new HashSet<>();
+    private static HashSet<String> ccdsTranscriptSet = new HashSet<>();
+    private static HashSet<String> canonicalTranscriptSet = new HashSet<>();
     private static String ccdsTranscriptFile = "";
     private static String canonicalTranscriptFile = "";
 
     public static void init() {
-        init(AnnotationLevelFilterCommand.transcriptFile, currentTranscriptSet);
+        // init transcript set from --transcript input file
+        initFromTranscriptFile(AnnotationLevelFilterCommand.transcriptFile, currentTranscriptSet);
 
+        // init ccds transcript
+        TranscriptManager.initCCDSTranscriptPath();
+        initFromTranscriptFile(ccdsTranscriptFile, ccdsTranscriptSet);
         if (AnnotationLevelFilterCommand.isCcdsOnly) {
-            init(ccdsTranscriptFile, ccdsTranscriptSet);
-
             resetTranscriptSet(ccdsTranscriptSet);
         }
 
+        // init canonical transcript
         if (AnnotationLevelFilterCommand.isCanonicalOnly) {
-            init(canonicalTranscriptFile, canonicalTranscriptSet);
-
+            initCanonicalTranscriptPath();
+            initFromTranscriptFile(canonicalTranscriptFile, canonicalTranscriptSet);
             resetTranscriptSet(canonicalTranscriptSet);
         }
 
-        clear();
+        canonicalTranscriptSet.clear(); // free memory
     }
 
-    public static void init(String path, HashSet<String> set) {
-        String lineStr = "";
-        int lineNum = 0;
+    public static void initFromTranscriptFile(String path, HashSet<String> set) {
+        if (path.isEmpty()) {
+            return;
+        }
 
-        try {
-            if (path.isEmpty()) {
-                return;
-            }
-
-            File f = new File(path);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            while ((lineStr = br.readLine()) != null) {
-                lineNum++;
-
-                lineStr = lineStr.replaceAll("( )+", "");
-
-                if (lineStr.isEmpty()) {
-                    continue;
-                }
-
-                if (set.contains(lineStr)) {
-                    continue;
-                }
-
-                set.add(lineStr);
-            }
-        } catch (Exception e) {
-            LogManager.writeAndPrintNoNewLine("\nError line ("
-                    + lineNum + ") in transcript file: " + lineStr);
-
-            ErrorManager.send(e);
+        try (Stream<String> stream = Files.lines(Paths.get(path))) {
+            stream.map(line -> line.replaceAll("( )+", ""))
+                    .filter(line -> !line.isEmpty())
+                    .filter(line -> !set.contains(line))
+                    .map(line -> set.add(line))
+                    .count(); // to trigger stream operation
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -86,11 +69,11 @@ public class TranscriptManager {
         }
     }
 
-    public static int getSize() {
-        return currentTranscriptSet.size();
+    public static boolean isCCDSTranscript(String id) {
+        return ccdsTranscriptSet.contains(id);
     }
 
-    public static void initCCDSTranscriptPath() {
+    private static void initCCDSTranscriptPath() {
         ccdsTranscriptFile = CCDS_TRANSCRIPT_PATH;
 
         if (CommonCommand.isDebug) {
@@ -98,7 +81,7 @@ public class TranscriptManager {
         }
     }
 
-    public static void initCanonicalTranscriptPath() {
+    private static void initCanonicalTranscriptPath() {
         canonicalTranscriptFile = CANONICAL_TRANSCRIPT_PATH;
 
         if (CommonCommand.isDebug) {
@@ -118,10 +101,5 @@ public class TranscriptManager {
                 }
             }
         }
-    }
-
-    public static void clear() {
-        ccdsTranscriptSet.clear();
-        canonicalTranscriptSet.clear();
     }
 }

@@ -36,10 +36,6 @@ public class ListFlankingSeq extends AnalysisBase {
     }
 
     @Override
-    public void doOutput() {
-    }
-
-    @Override
     public void closeOutput() {
         try {
             bwUpdateFlankingSeq.flush();
@@ -137,6 +133,6 @@ public class ListFlankingSeq extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running a list variant flanking sequence function...";
+        return "Start running list variant flanking sequence function";
     }
 }

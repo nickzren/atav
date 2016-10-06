@@ -12,8 +12,8 @@ import java.util.HashMap;
  */
 public class CalledVariant extends AnnotatedVariant {
 
-    private HashMap<Integer, Carrier> carrierMap = new HashMap<Integer, Carrier>();
-    private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<Integer, NonCarrier>();
+    private HashMap<Integer, Carrier> carrierMap = new HashMap<>();
+    private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<>();
     private int[] genotype = new int[SampleManager.getListSize()];
     private int[] coverage = new int[SampleManager.getListSize()];
     private int[] qcFailSample = new int[2];
@@ -89,134 +89,8 @@ public class CalledVariant extends AnnotatedVariant {
         return genotype[index];
     }
 
-    public int getGatkFilteredCoverage(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getGatkFilteredCoverage();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public int getReadsRef(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getReadsRef();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public int getReadsAlt(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getReadsAlt();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getVqslod(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getVqslod();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getGenotypeQualGQ(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getGenotypeQualGQ();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getStrandBiasFS(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getStrandBiasFS();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getHaplotypeScore(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getHaplotypeScore();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getRmsMapQualMQ(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getRmsMapQualMQ();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getQualByDepthQD(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getQualByDepthQD();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getQual(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getQual();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getReadPosRankSum(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getReadPosRankSum();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public float getMapQualRankSum(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getMapQualRankSum();
-        } else {
-            return Data.NA;
-        }
-    }
-
-    public String getPassFailStatus(int sampleId) {
-        Carrier carrier = carrierMap.get(sampleId);
-        
-        if (carrier != null) {
-            return carrier.getPassFailStatus();
-        } else {
-            return "NA";
-        }
+    public Carrier getCarrier(int sampleId) {
+        return carrierMap.get(sampleId);
     }
 
     public int getQcFailSample(int pheno) {

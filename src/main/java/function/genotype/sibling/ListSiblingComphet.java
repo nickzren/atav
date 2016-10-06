@@ -4,7 +4,8 @@ import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.annotation.base.GeneManager;
-import function.genotype.trio.ListTrioCompHet;
+import function.genotype.trio.TrioManager;
+import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -40,10 +41,10 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             compHetSharedBw = new BufferedWriter(new FileWriter(comphetSharedFilePath));
-            compHetSharedBw.write(CompHetOutput.title);
+            compHetSharedBw.write(CompHetOutput.getTitle());
             compHetSharedBw.newLine();
             compHetNotSharedBw = new BufferedWriter(new FileWriter(comphetNotSharedFilePath));
-            compHetNotSharedBw.write(CompHetOutput.title);
+            compHetNotSharedBw.write(CompHetOutput.getTitle());
             compHetNotSharedBw.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -87,7 +88,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
         try {
             CompHetOutput output = new CompHetOutput(calledVar);
 
-            output.countSampleGenoCov();
+            output.countSampleGeno();
 
             output.calculate();
 
@@ -118,8 +119,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
             for (ArrayList<CompHetOutput> list : geneListVector) {
                 String geneName = list.get(0).geneName;
 
-                LogManager.writeAndPrint("Analyzing qualified variants in gene ("
-                        + geneName + ")");
+                LogManager.writeAndPrint("Analyzing qualified variants in ("+ geneName);
 
                 doOutput(list);
             }
@@ -185,16 +185,16 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     }
 
     private String getFlag(String child1Flag, String child2Flag) {
-        if (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[0])) {
+        if (child1Flag.equals(COMP_HET_FLAG[0]) && child2Flag.equals(COMP_HET_FLAG[0])) {
             return FLAG[0]; // Shared
-        } else if ((child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[0]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))) {
+        } else if ((child1Flag.equals(COMP_HET_FLAG[1]) && child2Flag.equals(COMP_HET_FLAG[0]))
+                || (child1Flag.equals(COMP_HET_FLAG[1]) && child2Flag.equals(COMP_HET_FLAG[1]))
+                || (child1Flag.equals(COMP_HET_FLAG[0]) && child2Flag.equals(COMP_HET_FLAG[1]))) {
             return FLAG[1]; // Possibly shared
-        } else if ((child1Flag.equals(ListTrioCompHet.FLAG[2]) && child2Flag.equals(ListTrioCompHet.FLAG[0]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[2]) && child2Flag.equals(ListTrioCompHet.FLAG[1]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[1]) && child2Flag.equals(ListTrioCompHet.FLAG[2]))
-                || (child1Flag.equals(ListTrioCompHet.FLAG[0]) && child2Flag.equals(ListTrioCompHet.FLAG[2]))) {
+        } else if ((child1Flag.equals(COMP_HET_FLAG[2]) && child2Flag.equals(COMP_HET_FLAG[0]))
+                || (child1Flag.equals(COMP_HET_FLAG[2]) && child2Flag.equals(COMP_HET_FLAG[1]))
+                || (child1Flag.equals(COMP_HET_FLAG[1]) && child2Flag.equals(COMP_HET_FLAG[2]))
+                || (child1Flag.equals(COMP_HET_FLAG[0]) && child2Flag.equals(COMP_HET_FLAG[2]))) {
             return FLAG[2]; // Not shared
         }
 
@@ -219,15 +219,15 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
         int fGeno2 = output2.getCalledVariant().getGenotype(father.getIndex());
         int fCov2 = output2.getCalledVariant().getCoverage(father.getIndex());
 
-        return ListTrioCompHet.getCompHetStatus(
+        return TrioManager.getCompHetFlag(
                 cGeno1, cCov1,
                 mGeno1, mCov1,
                 fGeno1, fCov1,
-                output1.isMinorRef,
+                output1.isMinorRef(),
                 cGeno2, cCov2,
                 mGeno2, mCov2,
                 fGeno2, fCov2,
-                output2.isMinorRef);
+                output2.isMinorRef());
     }
 
     private void doOutput(StringBuilder sb,
@@ -275,6 +275,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "It is running a sibling compound heterozygosity function...";
+        return "Start running sibling compound heterozygosity function";
     }
 }

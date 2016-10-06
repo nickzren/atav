@@ -25,26 +25,39 @@ public class Exac {
     private String[] gts;
     private float vqslod;
 
-    public Exac(String id) {
-        initBasic(id);
-
-        initCoverage();
-
-        initMaf();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public Exac(String chr, int pos, String ref, String alt) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
 
         if (ref.length() > 1
                 || alt.length() > 1) {
             isSnv = false;
+        }
+
+        initCoverage();
+
+        initMaf();
+    }
+
+    public Exac(boolean isIndel, ResultSet rs) {
+        try {
+            chr = rs.getString("chr");
+            pos = rs.getInt("pos");
+            ref = rs.getString("ref_allele");
+            alt = rs.getString("alt_allele");
+            maf = new float[ExacManager.EXAC_POP.length];
+            gts = new String[ExacManager.EXAC_POP.length];
+            setMaf(rs);
+
+            isSnv = !isIndel;
+
+            initCoverage();
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
     }
 
@@ -77,12 +90,10 @@ public class Exac {
 
             if (rs.next()) {
                 setMaf(rs);
+            } else if (meanCoverage > 0) {
+                resetMaf(0);
             } else {
-                if (meanCoverage > 0) {
-                    resetMaf(0);
-                } else {
-                    resetMaf(Data.NA);
-                }
+                resetMaf(Data.NA);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -127,13 +138,13 @@ public class Exac {
     }
 
     public boolean isValid() {
-        if (ExacCommand.isExacMafValid(getMaxMaf())
+        return ExacCommand.isExacMafValid(getMaxMaf())
                 && ExacCommand.isExacVqslodValid(vqslod, isSnv)
-                && ExacCommand.isExacMeanCoverageValid(meanCoverage)) {
-            return true;
-        }
+                && ExacCommand.isExacMeanCoverageValid(meanCoverage);
+    }
 
-        return false;
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
     @Override

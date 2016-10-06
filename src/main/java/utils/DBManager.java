@@ -12,12 +12,13 @@ import java.util.Properties;
  */
 public class DBManager {
 
+    private static int maxATAVJobNum; // using this to control max connections to AnnoDB server
+
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_PORT = "3306";
 
     // init from config
     private static String annodbName;
-    public static String homoSapiensCoreName;
     private static String dbUser;
     private static String dbPassword;
     private static HashMap<String, String> dbHostMap = new HashMap<String, String>();
@@ -65,9 +66,9 @@ public class DBManager {
             initServers(prop.getProperty("servers"));
 
             annodbName = prop.getProperty("annodb");
-            homoSapiensCoreName = prop.getProperty("homo_sapiens_core");
             dbUser = prop.getProperty("dbuser");
             dbPassword = prop.getProperty("dbpassword");
+            maxATAVJobNum = Integer.parseInt(prop.getProperty("max-atav-job"));
         } catch (IOException e) {
             ErrorManager.send(e);
         }
@@ -128,28 +129,20 @@ public class DBManager {
             dbHostIp = dbHostMap.get(dbHostName);
 
             if (dbHostIp == null) {
-                ErrorManager.print("Non existing server: " + dbHostName);
+                ErrorManager.print("Not exist server: " + dbHostName);
             }
 
             minNum = getNumOfATAV(dbHostIp);
         } else {
-            while (true) {
-                minNum = getMinNumFromServers();
+            minNum = getMinNumFromServers();
 
-                if (minNum <= 10) {
-                    break;
-                } else {
-                    LogManager.writeAndPrint("All available AnnoDB servers are "
-                            + "reached to max concurrent jobs(10), your job "
-                            + "will wait for 30 minutes then auto restart.");
-
-                    Thread.sleep(1800000);
-                }
+            if (minNum > maxATAVJobNum) {
+                ErrorManager.print("All AnnoDB servers "
+                        + "reached to max concurrent jobs, please submit your ATAV job latter.");
             }
         }
 
-        LogManager.writeAndPrint("Your ATAV Job is quering data from server " + dbHostName + ". "
-                + "(" + minNum + " concurrent ATAV Jobs)");
+        LogManager.writeAndPrint("DB server: " + dbHostName + " " + "(" + minNum + " concurrent jobs)");
     }
 
     private static int getMinNumFromServers() {

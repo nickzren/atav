@@ -4,7 +4,7 @@ import function.genotype.trio.TrioCommand;
 import function.variant.base.Region;
 import function.genotype.trio.TrioManager;
 import global.Data;
-import java.sql.ResultSet;
+import global.Index;
 
 /**
  *
@@ -22,42 +22,25 @@ public class NonCarrier {
     public NonCarrier(int sid, int cov) {
         sampleId = sid;
         coverage = cov;
+
+        initGenotype();
+    }
+
+    public NonCarrier(int sampleId, String min_coverage, int posIndex) throws Exception {
+        this.sampleId = sampleId;
+        SampleCoverageBin covBin = new SampleCoverageBin(sampleId, min_coverage);
+        CoverageBlockManager.add(covBin);
+        coverage = covBin.getCoverage(posIndex);
+
+        initGenotype();
+    }
+
+    private void initGenotype() {
         if (coverage == Data.NA) {
             genotype = Data.NA;
         } else {
             genotype = 0;
         }
-    }
-
-    public NonCarrier(ResultSet rs, int posIndex) throws Exception {
-        sampleId = rs.getInt("sample_id");
-        String min_coverage = rs.getString("min_coverage");
-        CoverageBlockManager.put(sampleId, min_coverage);
-        coverage = parseCoverage(min_coverage, posIndex);
-        if (coverage == Data.NA) {
-            genotype = Data.NA;
-        } else {
-            genotype = 0;
-        }
-    }
-
-    private int parseCoverage(String allCov, int pos) {
-        int cov = Data.NA;
-
-        String[] allCovBin = allCov.split(",");
-
-        int covBinPos = 0;
-
-        for (int i = 0; i < allCovBin.length; i++) {
-            covBinPos += Integer.valueOf(allCovBin[i].substring(0, allCovBin[i].length() - 1));
-
-            if (pos <= covBinPos) {
-                cov = CoverageBlockManager.getCoverageByBin(allCovBin[i].charAt(allCovBin[i].length() - 1));
-                break;
-            }
-        }
-
-        return cov;
     }
 
     public int getSampleId() {
@@ -108,15 +91,13 @@ public class NonCarrier {
             Sample sample = SampleManager.getMap().get(sampleId);
 
             if (sample.isMale()) {
-                if (genotype == 1 // male het chr x or y & outside 
+                if (genotype == Index.HET // male het chr x or y & outside 
                         && !r.isInsideAutosomalOrPseudoautosomalRegions()) {
                     isValid = false;
                 }
-            } else {
-                if (r.getChrNum() == 24 // female chy & outside
-                        && !r.isInsideYPseudoautosomalRegions()) {
-                    isValid = false;
-                }
+            } else if (r.getChrNum() == 24 // female chy & outside
+                    && !r.isInsideYPseudoautosomalRegions()) {
+                isValid = false;
             }
 
             if (!isValid) {
@@ -136,7 +117,7 @@ public class NonCarrier {
     }
 
     private void setMissing() {
-        if (TrioCommand.isTrioDenovo
+        if (TrioCommand.isListTrio
                 && TrioManager.isParent(sampleId)) {
             // do nothing
         } else {
@@ -146,10 +127,6 @@ public class NonCarrier {
     }
 
     public boolean isValid() {
-        if (genotype != Data.NA) {
-            return true;
-        }
-
-        return false;
+        return genotype != Data.NA;
     }
 }

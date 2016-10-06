@@ -14,12 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FamilyManager {
 
-    static ConcurrentHashMap<String, Family> allFamilyMap = new ConcurrentHashMap<String, Family>();
-    static HashSet<String> userFamilyIdSet = new HashSet<String>();
-    static HashMap<String, FamilySummary> summaryOnlySharedMap = new HashMap<String, FamilySummary>();
-    static HashMap<String, FamilySummary> summaryAllSharedMap = new HashMap<String, FamilySummary>();
-    static ArrayList<FamilySummary> summaryOnlySharedList = new ArrayList<FamilySummary>();
-    static ArrayList<FamilySummary> summaryAllSharedList = new ArrayList<FamilySummary>();
+    static ConcurrentHashMap<String, Family> allFamilyMap = new ConcurrentHashMap<>();
+    static HashSet<String> userFamilyIdSet = new HashSet<>();
+    static HashMap<String, FamilySummary> summaryOnlySharedMap = new HashMap<>();
+    static HashMap<String, FamilySummary> summaryAllSharedMap = new HashMap<>();
+    static ArrayList<FamilySummary> summaryOnlySharedList = new ArrayList<>();
+    static ArrayList<FamilySummary> summaryAllSharedList = new ArrayList<>();
 
     public static void init() {
         initAllFamilyMap();
@@ -70,10 +70,9 @@ public class FamilyManager {
 
     private static void printFamilyNum() {
         if (allFamilyMap.isEmpty()) {
-            ErrorManager.print("There is no family in your sample file.");
+            ErrorManager.print("Missing family in sample file");
         } else {
-            LogManager.writeAndPrint("Analyzing " + userFamilyIdSet.size() + " families "
-                    + "and " + allFamilyMap.size() + " families are available now from your sample file.");
+            LogManager.writeAndPrint("Total families: " + allFamilyMap.size());
         }
     }
 

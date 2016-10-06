@@ -15,10 +15,6 @@ public class Test extends AnalysisBase {
     }
 
     @Override
-    public void doOutput() {
-    }
-
-    @Override
     public void closeOutput() {
     }
 
@@ -38,7 +34,7 @@ public class Test extends AnalysisBase {
     public void processDatabaseData() {
         try {
 //            CreateVDSDB.run();
-            
+
 //            OutputSubsetSample.run();
 //            
 //            LoadSubsetSample.run();
@@ -49,6 +45,6 @@ public class Test extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running a test function...";
+        return "Start running test function";
     }
 }

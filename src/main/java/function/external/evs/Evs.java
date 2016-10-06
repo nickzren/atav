@@ -35,26 +35,43 @@ public class Evs {
     private String allGenotypeCount;
     private String filterStatus;
 
-    public Evs(String id) {
-        initBasic(id);
-
-        initCoverage();
-
-        initMaf();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public Evs(String chr, int pos, String ref, String alt) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
 
         if (ref.length() > 1
                 || alt.length() > 1) {
             isSnv = false;
+        }
+
+        initCoverage();
+
+        initMaf();
+    }
+
+    public Evs(boolean isIndel, ResultSet rs) {
+        try {
+            chr = rs.getString("chr");
+            pos = rs.getInt("position");
+            ref = rs.getString("ref_allele");
+            alt = rs.getString("alt_allele");
+            eaMaf = rs.getFloat("ea_maf");
+            aaMaf = rs.getFloat("aa_maf");
+            allMaf = rs.getFloat("all_maf");
+            eaGenotypeCount = rs.getString("ea_genotype_count");
+            aaGenotypeCount = rs.getString("aa_genotype_count");
+            allGenotypeCount = rs.getString("all_genotype_count");
+            filterStatus = rs.getString("FilterStatus");
+
+            isSnv = !isIndel;
+
+            initCoverage();
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
     }
 
@@ -132,20 +149,20 @@ public class Evs {
 
         if (EvsCommand.evsPop.contains("all")
                 && allMaf != Data.NA) {
-            maf = Math.max(allMaf, maf);   
+            maf = Math.max(allMaf, maf);
         }
-        
+
         return maf;
     }
 
     public boolean isValid() {
-        if (EvsCommand.isEvsStatusValid(filterStatus)
+        return EvsCommand.isEvsStatusValid(filterStatus)
                 && EvsCommand.isEvsAllCoverageValid(allAverageCoverage)
-                && EvsCommand.isEvsMafValid(getMaxMaf())) {
-            return true;
-        }
+                && EvsCommand.isEvsMafValid(getMaxMaf());
+    }
 
-        return false;
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
     @Override

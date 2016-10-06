@@ -8,6 +8,7 @@ import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -15,7 +16,7 @@ import java.io.FileWriter;
  */
 public class ListVarGeno extends AnalysisBase4CalledVar {
 
-    BufferedWriter bwDetails = null;
+    BufferedWriter bwGenotypes = null;
     BufferedWriter bwSampleVariantCount = null;
 
     final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
@@ -24,12 +25,12 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     @Override
     public void initOutput() {
         try {
-            bwDetails = new BufferedWriter(new FileWriter(genotypesFilePath));
-            bwDetails.write(VarGenoOutput.title);
-            bwDetails.newLine();
+            bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
+            bwGenotypes.write(VarGenoOutput.getTitle());
+            bwGenotypes.newLine();
             //bwDirty = new BufferedWriter(new FileWriter(dirtyFilePath));
             bwSampleVariantCount = new BufferedWriter(new FileWriter(sampleVariantCountFilePath));
-            bwSampleVariantCount.write(SampleVariantCount.title);
+            bwSampleVariantCount.write(SampleVariantCount.getTitle());
             bwSampleVariantCount.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -43,8 +44,8 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     @Override
     public void closeOutput() {
         try {
-            bwDetails.flush();
-            bwDetails.close();
+            bwGenotypes.flush();
+            bwGenotypes.close();
             bwSampleVariantCount.flush();
             bwSampleVariantCount.close();
         } catch (Exception ex) {
@@ -54,6 +55,9 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
+        if (VarGenoCommand.isRunTier) {
+            ThirdPartyToolManager.runNonTrioTier(genotypesFilePath);
+        }
     }
 
     @Override
@@ -70,7 +74,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             VarGenoOutput output = new VarGenoOutput(calledVar);
-            output.countSampleGenoCov();
+            output.countSampleGeno();
             output.calculate();
 
             if (output.isValid()) {
@@ -79,8 +83,8 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
                         int geno = output.getCalledVariant().getGenotype(sample.getIndex());
 
                         if (output.isQualifiedGeno(geno)) {
-                            bwDetails.write(output.getString(sample));
-                            bwDetails.newLine();
+                            bwGenotypes.write(output.getString(sample));
+                            bwGenotypes.newLine();
 
                             SampleVariantCount.update(output.getCalledVariant().isSnv(), 
                                     geno, sample.getIndex());
@@ -95,11 +99,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     private boolean isCaseOnlyValid(Sample sample) {
         if (VarGenoCommand.isCaseOnly) {
-            if (sample.isCase()) {
-                return true;
-            } else {
-                return false;
-            }
+            return sample.isCase();
         } else {
             return true;
         }
@@ -116,9 +116,9 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             ErrorManager.send(e);
         }
     }
-
+    
     @Override
     public String toString() {
-        return "It is running a list variant genotype function...";
+        return "Start running list variant genotype function";
     }
 }

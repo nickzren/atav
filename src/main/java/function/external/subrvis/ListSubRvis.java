@@ -20,10 +20,10 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
             SubRvisOutput subRvisOutput = new SubRvisOutput(annotatedVar.getGeneName(),
-                    annotatedVar.getRegion().getChrStr(),
-                    annotatedVar.getRegion().getStartPosition());
+                    annotatedVar.getChrStr(),
+                    annotatedVar.getStartPosition());
 
-            bwSubRvis.write(annotatedVar.variantIdStr + ",");
+            bwSubRvis.write(annotatedVar.getVariantIdStr() + ",");
             bwSubRvis.write(annotatedVar.getGeneName() + ",");
             bwSubRvis.write(subRvisOutput.toString());
             bwSubRvis.newLine();
@@ -36,15 +36,11 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
     public void initOutput() {
         try {
             bwSubRvis = new BufferedWriter(new FileWriter(subRvisFilePath));
-            bwSubRvis.write(SubRvisOutput.title);
+            bwSubRvis.write(SubRvisOutput.getTitle());
             bwSubRvis.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-    }
-
-    @Override
-    public void doOutput() {
     }
 
     @Override
@@ -71,6 +67,6 @@ public class ListSubRvis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "It is running a list sub rvis function...";
+        return "Start running list sub rvis function";
     }
 }

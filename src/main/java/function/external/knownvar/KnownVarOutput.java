@@ -1,9 +1,6 @@
 package function.external.knownvar;
 
 import function.annotation.base.AnnotatedVariant;
-import function.external.genomes.GenomesManager;
-import function.external.rvis.RvisManager;
-import function.external.subrvis.SubRvisManager;
 
 /**
  *
@@ -11,50 +8,45 @@ import function.external.subrvis.SubRvisManager;
  */
 public class KnownVarOutput {
 
+    private HGMDOutput hgmdOutput;
     private ClinVarOutput clinVarOutput;
     private ClinVarPathoratio clinVarPathoratio;
-    private HGMD hgmd;
-    private String omimDiseaseName;
-    private String acmg;
-    private String adultOnset;
     private ClinGen clinGen;
-    private String pgx;
+    private String omimDiseaseName;
     private int recessiveCarrier;
+    private String acmg;
+    private DBDSMOutput dbDSMOutput;
 
-    public static final String title
-            = "Variant ID,"
-            + "Gene Name,"
-            + KnownVarManager.getTitle()
-            + RvisManager.getTitle()
-            + SubRvisManager.getTitle()
-            + GenomesManager.getTitle();
+    public static String getTitle() {
+        return "Variant ID,"
+                + "Gene Name,"
+                + KnownVarManager.getTitle();
+    }
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
-            String geneName = annotatedVar.getGeneName().toUpperCase();
-            clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
-            clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
-            hgmd = KnownVarManager.getHGMD(annotatedVar);
-            omimDiseaseName = KnownVarManager.getOMIM(geneName);
-            acmg = KnownVarManager.getACMG(geneName);
-            adultOnset = KnownVarManager.getAdultOnset(geneName);
-            clinGen = KnownVarManager.getClinGen(geneName);
-            pgx = KnownVarManager.getPGx(geneName);
-            recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
+        String geneName = annotatedVar.getGeneName().toUpperCase();
+        hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
+        clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
+        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
+        clinGen = KnownVarManager.getClinGen(geneName);
+        omimDiseaseName = KnownVarManager.getOMIM(geneName);
+        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
+        acmg = KnownVarManager.getACMG(geneName);
+        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
+        sb.append(hgmdOutput.toString());
         sb.append(clinVarOutput.toString());
         sb.append(clinVarPathoratio.toString());
-        sb.append(hgmd.toString());
-        sb.append(omimDiseaseName).append(",");
-        sb.append(acmg).append(",");
-        sb.append(adultOnset).append(",");
         sb.append(clinGen.toString());
-        sb.append(pgx).append(",");
+        sb.append(omimDiseaseName).append(",");
         sb.append(recessiveCarrier).append(",");
+        sb.append(acmg).append(",");
+        sb.append(dbDSMOutput.toString());
 
         return sb.toString();
     }

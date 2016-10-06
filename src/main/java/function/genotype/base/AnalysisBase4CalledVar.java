@@ -14,6 +14,9 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
     public abstract void processVariant(CalledVariant calledVar);
 
+    // only comphet function support it
+    public abstract void doOutput();
+
     @Override
     public void processDatabaseData() throws Exception {
         totalNumOfRegionList = RegionManager.getRegionSize();
@@ -56,7 +59,7 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
                     printTotalAnnotationCount(varType);
 
-                    clearData();
+                    rset.close();
                 }
             }
 
@@ -66,10 +69,9 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
     private void processVariant() {
         if (calledVar != null
-                && calledVar.isValid()
-                && !VariantManager.isVariantOutput(calledVar.variantId)) {
+                && calledVar.isValid()) {
             calledVar.initExternalData();
-            
+
             processVariant(calledVar);
 
             countVariant();

@@ -21,24 +21,38 @@ public class Genomes {
 
     private float[] maf;
 
-    public Genomes(String id) {
-        initBasic(id);
-
-        initMaf();
-    }
-
-    private void initBasic(String id) {
-        String[] tmp = id.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
+    public Genomes(String chr, int pos, String ref, String alt) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref;
+        this.alt = alt;
 
         isSnv = true;
 
         if (ref.length() > 1
                 || alt.length() > 1) {
             isSnv = false;
+        }
+
+        initMaf();
+    }
+
+    public Genomes(boolean isIndel, ResultSet rs) {
+        try {
+            chr = rs.getString("chr");
+            pos = rs.getInt("pos");
+            ref = rs.getString("ref_allele");
+            alt = rs.getString("alt_allele");
+
+            maf = new float[GenomesManager.GENOMES_POP.length];
+
+            for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
+                maf[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_maf");
+            }
+
+            isSnv = !isIndel;
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
     }
 
@@ -63,7 +77,7 @@ public class Genomes {
             ErrorManager.send(e);
         }
     }
-    
+
     private float getMaxMaf() {
         float value = Data.NA;
 
@@ -76,12 +90,15 @@ public class Genomes {
 
         return value;
     }
-    
+
     public boolean isValid() {
         return GenomesCommand.isMaxGenomesMafValid(getMaxMaf());
     }
 
-    
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

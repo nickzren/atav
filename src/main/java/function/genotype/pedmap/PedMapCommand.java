@@ -12,6 +12,7 @@ public class PedMapCommand {
     public static boolean isPedMap = false;
     public static boolean isVariantIdOnly = false;
     public static boolean isEigenstrat = false;
+    public static boolean isEigenstratFixed = false;
     public static String pedMapPath = "";
 
     public static void initOptions(Iterator<CommandOption> iterator) {
@@ -19,12 +20,18 @@ public class PedMapCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--variant-id-only")) {
-                isVariantIdOnly = true;
-            } else if (option.getName().equals("--eigenstrat")) {
-                isEigenstrat = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--variant-id-only":
+                    isVariantIdOnly = true;
+                    break;
+                case "--eigenstrat":
+                    isEigenstrat = true;
+                    break;
+                case "--eigenstrat-fixed":
+                    isEigenstratFixed = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();

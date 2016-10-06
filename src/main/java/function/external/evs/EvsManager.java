@@ -1,5 +1,8 @@
 package function.external.evs;
 
+import function.external.base.DataManager;
+import function.variant.base.Region;
+
 /**
  *
  * @author nick
@@ -30,6 +33,27 @@ public class EvsManager {
         } else {
             return "";
         }
+    }
+
+    public static String getVersion() {
+        if (EvsCommand.isIncludeEvs) {
+            return "EVS: " + DataManager.getVersion(snvTable) + "\n";
+        } else {
+            return "";
+        }
+    }
+
+    public static String getSql4Maf(boolean isSnv, Region region) {
+        String table = snvTable;
+
+        if (!isSnv) {
+            table = indelTable;
+        }
+
+        return "SELECT * "
+                + "FROM " + table + " "
+                + "WHERE chr = '" + region.getChrStr() + "' "
+                + "AND position BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
     }
 
     public static String getSql4Maf(boolean isSnv, String chr,

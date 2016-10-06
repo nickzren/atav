@@ -19,7 +19,7 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
     @Override
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
-            bwRvis.write(annotatedVar.variantIdStr + ",");
+            bwRvis.write(annotatedVar.getVariantIdStr() + ",");
             bwRvis.write(annotatedVar.getGeneName() + ",");
             bwRvis.write(RvisManager.getLine(annotatedVar.getGeneName()));
             bwRvis.newLine();
@@ -37,10 +37,6 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-    }
-
-    @Override
-    public void doOutput() {
     }
 
     @Override
@@ -67,6 +63,6 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "It is running a list rvis function...";
+        return "Start running list rvis function";
     }
 }

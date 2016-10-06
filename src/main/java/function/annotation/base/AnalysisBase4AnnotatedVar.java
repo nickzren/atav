@@ -56,18 +56,15 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
 
                     printTotalAnnotationCount(varType);
 
-                    clearData();
+                    rset.close();
                 }
             }
-
-            doOutput(); // only comphet function support it
         }
     }
 
     private void processVariant() {
         if (annotatedVar != null
-                && annotatedVar.isValid()
-                && !VariantManager.isVariantOutput(annotatedVar.variantId)) {
+                && annotatedVar.isValid()) {
             annotatedVar.initExternalData();
             
             processVariant(annotatedVar);

@@ -1,9 +1,9 @@
 package function.genotype.trio;
 
-import global.Data;
+import function.external.evs.EvsCommand;
+import function.external.exac.ExacCommand;
+import function.external.knownvar.KnownVarCommand;
 import java.util.Iterator;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.getValidDouble;
 import utils.CommandOption;
 
 /**
@@ -12,57 +12,26 @@ import utils.CommandOption;
  */
 public class TrioCommand {
 
-    // trio denovo
-    public static boolean isTrioDenovo = false;
-    public static boolean isIncludeNoflag = false;
+    public static boolean isListTrio = false;
+    public static boolean isRunTier = false;
 
-    // trio comp het
-    public static boolean isTrioCompHet = false;
-    public static double combFreq = Data.NO_FILTER;
-
-    public static void initDenovoOptions(Iterator<CommandOption> iterator) {
+    public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--include-noflag")) {
-                isIncludeNoflag = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--run-tier":
+                    isRunTier = true;
+                    EvsCommand.isIncludeEvs = true;
+                    ExacCommand.isIncludeExac = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
         }
-    }
-
-    public static void initCompHetOptions(Iterator<CommandOption> iterator) {
-        CommandOption option;
-
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            if (option.getName().equals("--combfreq")
-                    || option.getName().equals("--comb-freq")) {
-                checkValueValid(1, 0, option);
-                combFreq = getValidDouble(option);
-            } else if (option.getName().equals("--include-noflag")) {
-                isIncludeNoflag = true;
-            } else {
-                continue;
-            }
-
-            iterator.remove();
-        }
-    }
-
-    public static boolean isCombFreqValid(double value) {
-        if (combFreq == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value <= combFreq) {
-            return true;
-        }
-
-        return false;
     }
 }

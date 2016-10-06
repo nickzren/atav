@@ -22,15 +22,11 @@ public class ListGerp extends AnalysisBase {
     public void initOutput() {
         try {
             bwGerp = new BufferedWriter(new FileWriter(gerpFilePath));
-            bwGerp.write(GerpOutput.title);
+            bwGerp.write(GerpOutput.getTitle());
             bwGerp.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
-    }
-
-    @Override
-    public void doOutput() {
     }
 
     @Override
@@ -82,6 +78,6 @@ public class ListGerp extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "It is running list gerp function...";
+        return "Start running list gerp function";
     }
 }

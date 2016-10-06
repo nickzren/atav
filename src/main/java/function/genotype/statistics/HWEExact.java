@@ -1,6 +1,6 @@
 package function.genotype.statistics;
 
-import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -40,7 +40,7 @@ public class HWEExact {
                 - (func[Naa] + func[Nab] + func[Nbb] + func[2 * N]);
  
 //       return Math.exp(p);       
-        return Math.exp(FormatManager.roundToDecimals(p));
+        return Math.exp(MathManager.roundToDecimals(p));
     }
 
     public static double getP(int Naa, int Nab, int Nbb) {
@@ -49,7 +49,7 @@ public class HWEExact {
 
         double baseP = getBaseP(Naa, Nab, Nbb);
         double p = 0.0;
-        int min = Math.min(Naa, Nbb);
+//        int min = Math.min(Naa, Nbb);
         if (Na % 2 == 0) {
             for (int i = 0; i <= Na; i += 2) {
                 Nab = i;
