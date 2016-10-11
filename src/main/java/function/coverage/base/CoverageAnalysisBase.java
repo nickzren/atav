@@ -40,8 +40,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
             bwSampleSummary.newLine();
 
             bwCoverageDetails = new BufferedWriter(new FileWriter(coverageDetailsFilePath));
-            bwCoverageDetails.write("Sample,Gene/Transcript/Region,Chr,Length,"
-                    + "Covered_Base,%Bases_Covered,Coverage_Status");
+            bwCoverageDetails.write("Sample,Gene,Chr,Length,Covered_Base,%Bases_Covered,Coverage_Status");
             bwCoverageDetails.newLine();
 
         } catch (Exception ex) {

@@ -29,7 +29,7 @@ public class CoverageSummary extends CoverageAnalysisBase {
             super.initOutput();
 
             bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
-            bwCoverageDetailsByExon.write("Sample,Gene,Chr,Exon,Start_Position, Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
+            bwCoverageDetailsByExon.write("Sample,Gene,Chr,Exon,Start_Position,Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
             bwCoverageDetailsByExon.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
