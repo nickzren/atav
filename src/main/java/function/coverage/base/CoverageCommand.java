@@ -27,8 +27,6 @@ public class CoverageCommand {
     public static boolean isCoverageComparison = false;
     public static boolean isSiteCoverageComparison = false;
     public static boolean isLinear = false;
-    //public static double ExonMaxCovDiffPValue = 0.0;
-    //public static double ExonMaxPercentVarExplained = 100.0;
 
     public static void initCoverageComparison(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -40,17 +38,6 @@ public class CoverageCommand {
                     checkValueValid(1, 0, option);
                     exonCleanCutoff = getValidFloat(option);
                     break;
-                case "--gene-max-percent-cov-difference":
-                    checkValueValid(1, 0, option);
-                    geneCleanCutoff = getValidFloat(option);
-                    break;
-            /*else if (option.getName().equals("--exon-max-cov-diff-p-value")) {
-            checkValueValid(1, 0, option);
-            ExonMaxCovDiffPValue = getValidDouble(option);
-            } else if (option.getName().equals("--exon-max-percent-var-explained")) {
-            checkValueValid(100, 0, option);
-            ExonMaxPercentVarExplained = getValidDouble(option);
-            } */
                 case "--quantitative":
                     isLinear = true;
                     StatisticsCommand.quantitativeFile = getValidPath(option);
@@ -88,27 +75,10 @@ public class CoverageCommand {
                 case "--percent-region-covered":
                     minPercentRegionCovered = getValidDouble(option);
                     break;
-                case "--gene-max-percent-cov-difference":
-                    checkValueValid(1, 0, option);
-                    geneCleanCutoff = getValidFloat(option);
-                    break;
                 default:
                     continue;
             }
             iterator.remove();
-        }
-    }
-
-    public static String checkGeneCleanCutoff(double absDiff, double caseAvg, double ctrlAvg) {
-        if (absDiff != Data.NA
-                && absDiff > geneCleanCutoff) {
-            if (caseAvg < ctrlAvg) {
-                return "bias against discovery";
-            } else {
-                return "bias for discovery";
-            }
-        } else {
-            return "none";
         }
     }
 }

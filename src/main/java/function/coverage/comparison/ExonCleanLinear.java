@@ -155,8 +155,7 @@ public class ExonCleanLinear {
         sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
         double absDiff = MathManager.abs(caseAvg, ctrlAvg);
         sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
-        sb.append(geneSize).append(",");
-        sb.append(CoverageCommand.checkGeneCleanCutoff(absDiff, caseAvg, ctrlAvg));
+        sb.append(geneSize);
         return sb.toString();
     }
 

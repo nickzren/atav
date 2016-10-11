@@ -30,11 +30,11 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             super.initOutput();
 
             bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
-            bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length,CoverageImbalanceWarning");
+            bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
             bwCoverageSummaryByGene.newLine();
 
             bwGeneSummaryClean = new BufferedWriter(new FileWriter(cleanedGeneSummaryList));
-            bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength,CoverageImbalanceWarning");
+            bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength");
             bwGeneSummaryClean.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -95,8 +95,7 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
             double absDiff = MathManager.abs(caseAvg, ctrlAvg);
             sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
-            sb.append(gene.getLength()).append(",");
-            sb.append(CoverageCommand.checkGeneCleanCutoff(absDiff, caseAvg, ctrlAvg));           
+            sb.append(gene.getLength());         
             writeToFile(sb.toString(), bwCoverageSummaryByGene);
         } catch (Exception ex) {
             ErrorManager.send(ex);
