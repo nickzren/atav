@@ -5,6 +5,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Properties;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  *
@@ -121,7 +122,7 @@ public class DBManager {
 
     //executeUpdate
     public static void executeUpdate(String sqlQuery) throws SQLException {
-        stmt.executeUpdate(sqlQuery);
+        stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
     }
 
     public static void setDBHost(String hostName) {

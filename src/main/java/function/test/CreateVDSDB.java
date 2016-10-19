@@ -24,21 +24,21 @@ public class CreateVDSDB {
         loadData();
     }
 
-    private static void createTable() throws SQLException {
-        for (String chr : RegionManager.ALL_CHR) {
-            String sql = "CREATE TABLE snv_score_chr" + chr + " ("
-                    + "  pos int(11) NOT NULL,"
-                    + "  ref varchar(1) NOT NULL,"
-                    + "  alt varchar(1) NOT NULL,"
-                    + "  ensg_gene varchar(64) NOT NULL,"
-                    + "  score float NOT NULL,"
-                    + "  PRIMARY KEY (pos,alt,ensg_gene)"
-                    + ") ENGINE=TokuDB;";
-
-            LogManager.writeAndPrint(sql);
-            DBManager.executeUpdate(sql);
-        }
-    }
+//    private static void createTable() throws SQLException {
+//        for (String chr : RegionManager.ALL_CHR) {
+//            String sql = "CREATE TABLE snv_score_chr" + chr + " ("
+//                    + "  pos int(11) NOT NULL,"
+//                    + "  ref varchar(1) NOT NULL,"
+//                    + "  alt varchar(1) NOT NULL,"
+//                    + "  ensg_gene varchar(64) NOT NULL,"
+//                    + "  score float NOT NULL,"
+//                    + "  PRIMARY KEY (pos,alt,ensg_gene)"
+//                    + ") ENGINE=TokuDB;";
+//
+//            LogManager.writeAndPrint(sql);
+//            DBManager.executeUpdate(sql);
+//        }
+//    }
 
     private static void loadData() throws SQLException, Exception {
         File dir = new File("/nfs/goldstein/goldsteinlab/sahar/workspace/SpliceScore/runs/allGenome/varScore/VDSdb");

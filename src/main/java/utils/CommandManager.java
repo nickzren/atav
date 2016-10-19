@@ -232,7 +232,7 @@ public class CommandManager {
             CommonCommand.outputDirName = dir.getName();
             CommonCommand.outputPath = path + File.separator + dir.getName() + "_";
         } catch (Exception e) {
-            System.out.println("\nError in creating an output folder, caused by " + e.toString() + " \n\nExit\n");
+            System.out.println("\nError in creating an output directory. \n\nExit\n");
             System.exit(0);
         }
     }

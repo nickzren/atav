@@ -44,7 +44,7 @@ public class LogManager {
             userLog = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
                     CommonCommand.outputPath + "atav.log")));
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(LogManager.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
         Data.userName = System.getProperty("user.name");

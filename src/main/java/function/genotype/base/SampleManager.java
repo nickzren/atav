@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import org.apache.commons.lang.StringEscapeUtils;
+
 import utils.FormatManager;
 
 /**
@@ -651,7 +654,7 @@ public class SampleManager {
                     + sqlTable
                     + "(id int, PRIMARY KEY (id)) ENGINE=TokuDB";
             
-            stmt.executeUpdate(sqlQuery);
+            stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
         } catch (Exception e) {
             ErrorManager.send(e);
         }
