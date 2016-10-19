@@ -4,3 +4,9 @@ nbactions.xml
 atav.iml
 .DS_Store
 spark-warehouse
+
+.classpath
+
+.project
+
+*.prefs
