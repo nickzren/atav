@@ -12,7 +12,7 @@ public class Data {
     public static String userName = "NA";
 
     // system config file path
-    public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.system.config.properties";
+    public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.dragen.system.config.properties";
     public static final String SYSTEM_CONFIG_FOR_DEBUG = "/nfs/goldstein/software/config/atav.debug.system.config.properties";
     
     // recource path for server-side debug
