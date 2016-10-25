@@ -57,37 +57,35 @@ public class List1000Genomes extends AnalysisBase {
 
     @Override
     public void processDatabaseData() throws Exception {
-        int totalNumOfRegionList = RegionManager.getRegionSize();
-
-        for (int r = 0; r < totalNumOfRegionList; r++) {
+        for (int r = 0; r < RegionManager.getRegionSize(); r++) {
 
             for (String varType : VariantManager.VARIANT_TYPE) {
 
-                if (VariantManager.isVariantTypeValid(r, varType)) {
-
-                    boolean isIndel = varType.equals("indel");
-
-                    Region region = RegionManager.getRegion(r, varType);
-
-                    String sqlCode = GenomesManager.getSql4Maf(isIndel, region);
-
-                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
-
-                    while (rset.next()) {
-                        GenomesOutput output = new GenomesOutput(isIndel, rset);
-
-                        if (VariantManager.isVariantIdIncluded(output.genomes.getVariantId())
-                                && output.isValid()) {
-                            bw1000Genomes.write(output.genomes.getVariantId() + ",");
-                            bw1000Genomes.write(output.toString());
-                            bw1000Genomes.newLine();
-                        }
-
-                        countVariant();
-                    }
-
-                    rset.close();
-                }
+//                if (VariantManager.isVariantTypeValid(r, varType)) {
+//
+//                    boolean isIndel = varType.equals("indel");
+//
+//                    Region region = RegionManager.getRegion(r, varType);
+//
+//                    String sqlCode = GenomesManager.getSql4Maf(isIndel, region);
+//
+//                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+//
+//                    while (rset.next()) {
+//                        GenomesOutput output = new GenomesOutput(isIndel, rset);
+//
+//                        if (VariantManager.isVariantIdIncluded(output.genomes.getVariantId())
+//                                && output.isValid()) {
+//                            bw1000Genomes.write(output.genomes.getVariantId() + ",");
+//                            bw1000Genomes.write(output.toString());
+//                            bw1000Genomes.newLine();
+//                        }
+//
+//                        countVariant();
+//                    }
+//
+//                    rset.close();
+//                }
             }
         }
     }

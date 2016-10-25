@@ -26,32 +26,30 @@ public class VarAnnoOutput {
     public static final String annotationFileTitle
             = "Variant ID,"
             + "Variant Type,"
-            + "Rs Number,"
             + "Ref Allele,"
             + "Alt Allele,"
-            + "CADD Score Phred,"
-            + GerpManager.getTitle()
-            + TrapManager.getTitle()
-            + EvsManager.getTitle()
+            + "Rs Number,"
+            + "Transcript Stable Id,"
+            + "Is CCDS Transcript,"
+            + "Effect,"
+            + "HGVS_c,"
+            + "HGVS_p,"
             + "Polyphen Humdiv Score,"
             + "Polyphen Humdiv Prediction,"
             + "Polyphen Humvar Score,"
             + "Polyphen Humvar Prediction,"
-            + "Function,"
             + "Gene Name,"
             + "Artifacts in Gene,"
-            + "Transcript Stable Id,"
-            + "Is CCDS Transcript,"
-            + "Codon Change,"
-            + "Amino Acid Change,"
-            + "Coding Sequence Change,"
-            + "Gene Transcript (AA Change),"
+            + "All Effect Gene Transcript HGVS_p,"
+            + EvsManager.getTitle()
             + ExacManager.getTitle()
-            + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
+            + KaviarManager.getTitle()
+            + GenomesManager.getTitle()
             + RvisManager.getTitle()
             + SubRvisManager.getTitle()
-            + GenomesManager.getTitle()
+            + GerpManager.getTitle()
+            + TrapManager.getTitle()
             + MgiManager.getTitle();
 
     public VarAnnoOutput(AnnotatedVariant var) {
@@ -64,32 +62,30 @@ public class VarAnnoOutput {
 
         sb.append(annotatedVar.getVariantIdStr()).append(",");
         sb.append(annotatedVar.getType()).append(",");
-        sb.append(annotatedVar.getRsNumber()).append(",");
         sb.append(annotatedVar.getRefAllele()).append(",");
         sb.append(annotatedVar.getAllele()).append(",");
-        sb.append(FormatManager.getDouble(annotatedVar.getCscore())).append(",");
-        sb.append(annotatedVar.getGerpScore());
-        sb.append(annotatedVar.getTrapScore());
-        sb.append(annotatedVar.getEvsStr());
+        sb.append(annotatedVar.getRsNumber()).append(",");
+        sb.append(annotatedVar.getStableId()).append(",");
+        sb.append(TranscriptManager.isCCDSTranscript((annotatedVar.getStableId()))).append(",");
+        sb.append(annotatedVar.getEffect()).append(",");
+        sb.append(annotatedVar.getHGVS_c()).append(",");
+        sb.append(annotatedVar.getHGVS_p()).append(",");
         sb.append(annotatedVar.getPolyphenHumdivScore()).append(",");
         sb.append(annotatedVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(annotatedVar.getPolyphenHumvarScore()).append(",");
         sb.append(annotatedVar.getPolyphenHumvarPrediction()).append(",");
-        sb.append(annotatedVar.getFunction()).append(",");
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(annotatedVar.getGeneName()))).append(",");
-        sb.append(annotatedVar.getStableId()).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript((annotatedVar.getStableId()))).append(",");
-        sb.append(annotatedVar.getCodonChange()).append(",");
-        sb.append(annotatedVar.getAminoAcidChange()).append(",");
-        sb.append(annotatedVar.getCodingSequenceChange()).append(",");
-        sb.append(annotatedVar.getTranscriptSet()).append(",");
+        sb.append(annotatedVar.getAllGeneTranscript()).append(",");
+        sb.append(annotatedVar.getEvsStr());
         sb.append(annotatedVar.getExacStr());
-        sb.append(annotatedVar.getKaviarStr());
         sb.append(annotatedVar.getKnownVarStr());
+        sb.append(annotatedVar.getKaviarStr());
+        sb.append(annotatedVar.get1000Genomes());
         sb.append(annotatedVar.getRvis());
         sb.append(annotatedVar.getSubRvis());
-        sb.append(annotatedVar.get1000Genomes());
+        sb.append(annotatedVar.getGerpScore());
+        sb.append(annotatedVar.getTrapScore());
         sb.append(annotatedVar.getMgi());
 
         return sb.toString();

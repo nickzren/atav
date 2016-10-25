@@ -18,8 +18,8 @@ public class CalledVariant extends AnnotatedVariant {
     private int[] coverage = new int[SampleManager.getListSize()];
     private int[] qcFailSample = new int[2];
 
-    public CalledVariant(int variantId, boolean isIndel, ResultSet rset) throws Exception {
-        super(variantId, isIndel, rset);
+    public CalledVariant(String chr, int variantId, boolean isIndel, ResultSet rset) throws Exception {
+        super(chr, variantId, rset);
 
         init();
     }

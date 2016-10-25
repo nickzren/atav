@@ -1,7 +1,6 @@
 package function.external.flanking;
 
 import function.AnalysisBase;
-import function.variant.base.RegionManager;
 import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -104,15 +103,12 @@ public class ListFlankingSeq extends AnalysisBase {
     }
 
     private String generateSql(String chr, int pos) {
-        int regionId = RegionManager.getIdByChr(chr);
-
         int seqStart = pos - FlankingCommand.width;
         int seqEnd = pos + FlankingCommand.width;
 
-        String sql = "SELECT DISTINCT seq_region_pos"
-                + " FROM snv"
-                + " WHERE seq_region_id = " + regionId
-                + " AND seq_region_pos BETWEEN " + seqStart
+        String sql = "SELECT DISTINCT pos"
+                + " FROM variant_chr" + chr + " "
+                + " WHERE pos BETWEEN " + seqStart
                 + " AND " + seqEnd;
 
         return sql;

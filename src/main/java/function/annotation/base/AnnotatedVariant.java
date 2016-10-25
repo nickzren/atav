@@ -23,13 +23,10 @@ import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
-import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 import utils.MathManager;
 
 /**
@@ -38,16 +35,18 @@ import utils.MathManager;
  */
 public class AnnotatedVariant extends Variant {
 
-    // AnnoDB annotations
-    String function;
+    // AnnoDB annotations / most damaging effect annotations
+    int stableId;
+    String stableIdStr;
+    String effect;
+    String HGVS_c;
+    String HGVS_p;
+    float polyphenHumdiv;
+    float polyphenHumvar;
     String geneName;
-    String codonChange;
-    String aminoAcidChange;
-    String stableId;
+
     HashSet<String> geneSet = new HashSet<>();
-    HashSet<String> transcriptSet = new HashSet<>();
-    double polyphenHumdiv;
-    double polyphenHumvar;
+    StringBuilder allGeneTranscriptSB = new StringBuilder();
 
     // external db annotations
     Exac exac;
@@ -63,75 +62,16 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid = true;
 
-    public AnnotatedVariant(int variantId, boolean isIndel, ResultSet rset) throws Exception {
-        super(variantId, isIndel, rset);
+    public AnnotatedVariant(String chr, int variantId, ResultSet rset) throws Exception {
+        super(chr, variantId, rset);
 
-        if (isIndel) {
-            polyphenHumdiv = Data.NA;
-            polyphenHumvar = Data.NA;
-        } else {
-            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
-            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
-        }
-
-        function = "";
-        geneName = "";
-        codonChange = "";
-        aminoAcidChange = "";
-        stableId = "";
+        polyphenHumdiv = MathManager.devide(FormatManager.getInt(rset, "polyphen_humdiv"), 1000);
+        polyphenHumdiv = MathManager.devide(FormatManager.getInt(rset, "polyphen_humvar"), 1000);
 
         checkValid();
     }
 
-    public void initExternalData() {
-        if (KnownVarCommand.isIncludeKnownVar) {
-            knownVarOutput = new KnownVarOutput(this);
-        }
-
-        if (RvisCommand.isIncludeRvis) {
-            rvisStr = RvisManager.getLine(getGeneName());
-        }
-
-        if (SubRvisCommand.isIncludeSubRvis) {
-            subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
-        }
-
-        if (MgiCommand.isIncludeMgi) {
-            mgiStr = MgiManager.getLine(getGeneName());
-        }
-    }
-
-    public void update(Annotation annotation) {
-        if (isValid) {
-            geneSet.add(annotation.geneName);
-
-            if (function.isEmpty()
-                    || FunctionManager.isMoreDamage(annotation.function, function)) {
-                function = annotation.function;
-                geneName = annotation.geneName;
-                codonChange = annotation.codonChange;
-                aminoAcidChange = annotation.aminoAcidChange;
-                stableId = annotation.stableId;
-            }
-
-            transcriptSet.add(annotation.function + "|"
-                    + annotation.geneName + "|"
-                    + annotation.stableId
-                    + "(" + annotation.aminoAcidChange + ")");
-
-            if (polyphenHumdiv < annotation.polyphenHumdiv) {
-                polyphenHumdiv = annotation.polyphenHumdiv;
-            }
-
-            if (polyphenHumvar < annotation.polyphenHumvar) {
-                polyphenHumvar = annotation.polyphenHumvar;
-            }
-        }
-    }
-
     private void checkValid() throws Exception {
-        isValid = VariantLevelFilterCommand.isCscoreValid(cscorePhred);
-
         if (isValid) {
             isValid = VariantManager.isValid(this);
         }
@@ -167,11 +107,61 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
+    public void update(Annotation annotation) {
+        if (isValid) {
+            if (effect == null) { // init most damaging effect annotations
+                stableId = annotation.stableId;
+                stableIdStr = annotation.getStableId();
+                effect = annotation.effect;
+                HGVS_c = annotation.HGVS_c;
+                HGVS_p = annotation.HGVS_p;
+                geneName = annotation.geneName;
+            } else {
+                allGeneTranscriptSB.append(";");
+            }
+
+            allGeneTranscriptSB
+                    .append(annotation.effect).append("|")
+                    .append(annotation.geneName).append("|")
+                    .append(annotation.getStableId()).append("|")
+                    .append(annotation.HGVS_p);
+
+            if (polyphenHumdiv < annotation.polyphenHumdiv) {
+                polyphenHumdiv = annotation.polyphenHumdiv;
+            }
+
+            if (polyphenHumvar < annotation.polyphenHumvar) {
+                polyphenHumvar = annotation.polyphenHumvar;
+            }
+
+            geneSet.add(annotation.geneName);
+
+        }
+    }
+
+    public void initExternalData() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
+
+        if (RvisCommand.isIncludeRvis) {
+            rvisStr = RvisManager.getLine(getGeneName());
+        }
+
+        if (SubRvisCommand.isIncludeSubRvis) {
+            subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
+        }
+
+        if (MgiCommand.isIncludeMgi) {
+            mgiStr = MgiManager.getLine(getGeneName());
+        }
+    }
+
     public boolean isValid() {
         return isValid
-                & PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
-                & PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
-                & isTrapValid();
+                & PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
+                & PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar);
+//                & isTrapValid();
     }
 
     private boolean isTrapValid() {
@@ -182,9 +172,9 @@ public class AnnotatedVariant extends Variant {
                 trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
             }
 
-            if (function.equals("SYNONYMOUS_CODING")
-                    || function.equals("INTRON_EXON_BOUNDARY")
-                    || function.equals("INTRON")) { 
+            if (effect.equals("SYNONYMOUS_CODING")
+                    || effect.equals("INTRON_EXON_BOUNDARY")
+                    || effect.equals("INTRON")) {
                 // filter only apply to SYNONYMOUS_CODING, INTRON_EXON_BOUNDARY and INTRONIC variants
                 return TrapCommand.isTrapScoreValid(trapScore);
             }
@@ -193,125 +183,48 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
-    public String getGeneName() {
-        if (geneName.isEmpty()) {
-            return "NA";
-        }
-
-        return geneName;
-    }
-
-    public String getFunction() {
-        return function;
-    }
-
-    public String getCodonChange() {
-        if (codonChange.isEmpty()) {
-            return "NA";
-        }
-
-        return codonChange;
-    }
-
     public String getStableId() {
-        if (stableId.isEmpty()) {
-            return "NA";
-        }
-
-        return stableId;
+        return stableIdStr;
     }
 
-    public String getAminoAcidChange() {
-        if (aminoAcidChange.isEmpty()) {
-            return "NA";
-        }
-
-        return aminoAcidChange;
+    public String getEffect() {
+        return effect;
     }
 
-    public String getCodingSequenceChange() {
-        if (aminoAcidChange.isEmpty()
-                || aminoAcidChange.equals("NA")
-                || isIndel()) {
-            return "NA";
-        }
-
-        String posStr = "";
-
-        for (int i = 0; i < aminoAcidChange.length(); i++) {
-            char c = aminoAcidChange.charAt(i);
-
-            if (Character.isDigit(c)) {
-                posStr += c;
-            }
-        }
-
-        int aminoAcidPos = Integer.valueOf(posStr);
-
-        String leftStr = codonChange.split("/")[0];
-        String rightStr = codonChange.split("/")[1];
-
-        int codingPos = Data.NA;
-        int changeIndex = Data.NA;
-        int[] codonOffBase = {2, 1, 0}; // aminoAcidPos * 3 is the last position of codon
-
-        for (int i = 0; i < leftStr.length(); i++) {
-            if (leftStr.charAt(i) != rightStr.charAt(i)) {
-                codingPos = aminoAcidPos * 3 - codonOffBase[i];
-                changeIndex = i;
-            }
-        }
-
-        return "c." + codingPos + leftStr.charAt(changeIndex)
-                + ">" + rightStr.charAt(changeIndex);
+    public String getHGVS_c() {
+        return HGVS_c;
     }
 
-    public String getTranscriptSet() {
-        if (transcriptSet.size() > 0) {
-            Set set = new TreeSet(transcriptSet);
-            return set.toString().replaceAll(", ", ";").replace("[", "").replace("]", "");
-        }
+    public String getHGVS_p() {
+        return HGVS_p;
+    }
 
-        return "NA";
+    public String getPolyphenHumdivScore() {
+        return FormatManager.getFloat(polyphenHumdiv);
+    }
+
+    public String getPolyphenHumvarScore() {
+        return FormatManager.getFloat(polyphenHumvar);
+    }
+
+    public String getPolyphenHumdivPrediction() {
+        return PolyphenManager.getPrediction(polyphenHumdiv, effect);
+    }
+
+    public String getPolyphenHumvarPrediction() {
+        return PolyphenManager.getPrediction(polyphenHumvar, effect);
+    }
+
+    public String getGeneName() {
+        return geneName;
     }
 
     public HashSet<String> getGeneSet() {
         return geneSet;
     }
 
-    public String getPolyphenHumdivScore() {
-        if (!function.startsWith("NON_SYNONYMOUS")
-                || polyphenHumdiv < 0) {
-            polyphenHumdiv = Data.NA;
-        }
-
-        return FormatManager.getDouble(polyphenHumdiv);
-    }
-
-    public String getPolyphenHumvarScore() {
-        if (!function.startsWith("NON_SYNONYMOUS")
-                || polyphenHumvar < 0) {
-            polyphenHumvar = Data.NA;
-        }
-
-        return FormatManager.getDouble(polyphenHumvar);
-    }
-
-    public String getPolyphenHumdivPrediction() {
-        return getPredictionByScore(polyphenHumdiv);
-    }
-
-    public String getPolyphenHumvarPrediction() {
-        return getPredictionByScore(polyphenHumvar);
-    }
-
-    private String getPredictionByScore(double score) {
-        String prediction = PolyphenManager.getPrediction(score, function);
-
-        prediction = prediction.replaceAll("probably", "probably_damaging");
-        prediction = prediction.replaceAll("possibly", "possibly_damaging");
-
-        return prediction;
+    public String getAllGeneTranscript() {
+        return allGeneTranscriptSB.toString();
     }
 
     public String getExacStr() {

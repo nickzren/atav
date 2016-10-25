@@ -1,14 +1,17 @@
 package function.annotation.base;
 
+import global.Data;
+
 /**
  *
  * @author nick
  */
 public class PolyphenManager {
 
-    public static String getPrediction(double score, String function) {
-        if (score < 0) {
-            if (function.startsWith("NON_SYNONYMOUS")) {
+    public static String getPrediction(float score, String effect) {
+        if (score == Data.NA) {
+            if (effect.equals("missense_variant")
+                    || effect.equals("splice_region_variant")) {
                 return "unknown";
             } else {
                 return "NA";
@@ -26,12 +29,12 @@ public class PolyphenManager {
         return "probably";
     }
 
-    public static boolean isValid(double score, String function, 
-            String prediction) {
-        String polyphenPrediction = getPrediction(score, function);
+    public static boolean isValid(float score, String effect, String inputPrediction) {
+        String prediction = getPrediction(score, effect);
 
-        if (function.startsWith("NON_SYNONYMOUS")) {
-            return prediction.contains(polyphenPrediction);
+        if (effect.equals("missense_variant")
+                || effect.equals("splice_region_variant")) {
+            return inputPrediction.contains(prediction);
         } else {
             return true;
         }

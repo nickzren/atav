@@ -58,37 +58,35 @@ public class ListKaviar extends AnalysisBase {
 
     @Override
     public void processDatabaseData() throws Exception {
-        int totalNumOfRegionList = RegionManager.getRegionSize();
-
-        for (int r = 0; r < totalNumOfRegionList; r++) {
+        for (int r = 0; r < RegionManager.getRegionSize(); r++) {
 
             for (String varType : VariantManager.VARIANT_TYPE) {
 
-                if (VariantManager.isVariantTypeValid(r, varType)) {
-
-                    boolean isIndel = varType.equals("indel");
-
-                    Region region = RegionManager.getRegion(r, varType);
-             
-                    String sqlCode = KaviarManager.getSql(isIndel, region);
-                    
-                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
-
-                    while (rset.next()) {
-                        KaviarOutput output = new KaviarOutput(isIndel, rset);
-
-                        if (VariantManager.isVariantIdIncluded(output.kaviar.getVariantId())
-                                && output.isValid()) {
-                            bwKaviar.write(output.kaviar.getVariantId() + ",");
-                            bwKaviar.write(output.toString());
-                            bwKaviar.newLine();
-                        }
-
-                        countVariant();
-                    }
-
-                    rset.close();
-                }
+//                if (VariantManager.isVariantTypeValid(r, varType)) {
+//
+//                    boolean isIndel = varType.equals("indel");
+//
+//                    Region region = RegionManager.getRegion(r, varType);
+//             
+//                    String sqlCode = KaviarManager.getSql(isIndel, region);
+//                    
+//                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+//
+//                    while (rset.next()) {
+//                        KaviarOutput output = new KaviarOutput(isIndel, rset);
+//
+//                        if (VariantManager.isVariantIdIncluded(output.kaviar.getVariantId())
+//                                && output.isValid()) {
+//                            bwKaviar.write(output.kaviar.getVariantId() + ",");
+//                            bwKaviar.write(output.toString());
+//                            bwKaviar.newLine();
+//                        }
+//
+//                        countVariant();
+//                    }
+//
+//                    rset.close();
+//                }
             }
         }
     }

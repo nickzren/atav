@@ -310,16 +310,16 @@ public class CommandManager {
                 case "--list-var-anno":
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isListVarAnno = true;
-                    EvsCommand.isIncludeEvs = true;
-                    ExacCommand.isIncludeExac = true;
-                    GerpCommand.isIncludeGerp = true;
-                    TrapCommand.isIncludeTrap = true;
-                    KaviarCommand.isIncludeKaviar = true;
-                    KnownVarCommand.isIncludeKnownVar = true;
-                    RvisCommand.isIncludeRvis = true;
-                    SubRvisCommand.isIncludeSubRvis = true;
-                    GenomesCommand.isInclude1000Genomes = true;
-                    MgiCommand.isIncludeMgi = true;
+//                    EvsCommand.isIncludeEvs = true;
+//                    ExacCommand.isIncludeExac = true;
+//                    GerpCommand.isIncludeGerp = true;
+//                    TrapCommand.isIncludeTrap = true;
+//                    KaviarCommand.isIncludeKaviar = true;
+//                    KnownVarCommand.isIncludeKnownVar = true;
+//                    RvisCommand.isIncludeRvis = true;
+//                    SubRvisCommand.isIncludeSubRvis = true;
+//                    GenomesCommand.isInclude1000Genomes = true;
+//                    MgiCommand.isIncludeMgi = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -619,19 +619,18 @@ public class CommandManager {
         return path;
     }
 
-    private static boolean isFileExist(String path) {
-        if (path.isEmpty()) {
-            return false;
-        }
+    public static boolean isFileExist(String path) {
+        File file = new File(path);
 
-        if (path.contains(File.separator)) {
-            File file = new File(path);
-            if (!file.isFile()) {
+        if (file.exists()) {
+            if (file.isFile()) {
+                return true;
+            } else if (file.isDirectory()) {
                 return false;
             }
         }
 
-        return true;
+        return false;
     }
 
     public static void outputInvalidOptionValue(CommandOption option) {

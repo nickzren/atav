@@ -40,7 +40,6 @@ public class LogisticOutput extends StatisticOutput {
                 + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
-                + "CADD Score Phred,"
                 + GerpManager.getTitle()
                 + "Is Minor Ref,"
                 + "Major Hom Case,"
@@ -75,7 +74,6 @@ public class LogisticOutput extends StatisticOutput {
                 + "Transcript Stable Id,"
                 + "Is CCDS Transcript,"
                 + "Codon Change,"
-                + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()
@@ -276,7 +274,6 @@ public class LogisticOutput extends StatisticOutput {
         sb.append(calledVar.getRsNumber()).append(",");
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(calledVar.getGerpScore());
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
@@ -305,13 +302,12 @@ public class LogisticOutput extends StatisticOutput {
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-        sb.append(calledVar.getFunction()).append(",");
+        sb.append(calledVar.getEffect()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
-        sb.append(calledVar.getCodonChange()).append(",");
-        sb.append(calledVar.getTranscriptSet()).append(",");
+        sb.append(calledVar.getHGVS_c()).append(",");
         sb.append(calledVar.getExacStr());
         sb.append(calledVar.getKaviarStr());
         sb.append(calledVar.getKnownVarStr());

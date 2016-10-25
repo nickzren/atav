@@ -46,7 +46,6 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
-                + "CADD Score Phred,"
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
                 + "Is Minor Ref,"
@@ -81,7 +80,6 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Transcript Stable Id,"
                 + "Is CCDS Transcript,"
                 + "Codon Change,"
-                + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()
@@ -113,7 +111,6 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getRsNumber()).append(",");
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(calledVar.getGerpScore());
         sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
@@ -144,11 +141,10 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-        sb.append(calledVar.getFunction()).append(",");
+        sb.append(calledVar.getEffect()).append(",");
         sb.append(calledVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
-        sb.append(calledVar.getCodonChange()).append(",");
-        sb.append(calledVar.getTranscriptSet()).append(",");
+        sb.append(calledVar.getHGVS_c()).append(",");
         sb.append(calledVar.getExacStr());
         sb.append(calledVar.getKaviarStr());
         sb.append(calledVar.getKnownVarStr());

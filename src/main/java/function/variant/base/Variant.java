@@ -14,38 +14,22 @@ public class Variant extends Region {
     public String allele;
     public String refAllele;
     public String rsNumber;
-    public float cscorePhred;
     //Indel attributes
-    public String indelType;
     private boolean isIndel;
 
-    public Variant(int v_id, boolean isIndel, ResultSet rset) throws Exception {
+    public Variant(String chr, int v_id, ResultSet rset) throws Exception {
         variantId = v_id;
 
-        allele = rset.getString("allele");
-        refAllele = rset.getString("ref_allele");
+        int pos = rset.getInt("POS");
+        allele = rset.getString("ALT");
+        refAllele = rset.getString("REF");
         rsNumber = FormatManager.getString(rset.getString("rs_number"));
-        cscorePhred = FormatManager.getFloat(rset.getString("cscore_phred"));
 
-        if (isIndel) {
-            indelType = rset.getString("indel_type").substring(0, 3).toUpperCase();
-        }
+        isIndel = rset.getInt("indel") == 1;
 
-        this.isIndel = isIndel;
+        initRegion(chr, pos, pos);
 
-        int position = rset.getInt("seq_region_pos");
-
-        int id = rset.getInt("seq_region_id");
-
-        initRegion(RegionManager.getChrById(id), position, position);
-
-        String chrStr = getChrStr();
-
-        if (isInsideXPseudoautosomalRegions()) {
-            chrStr = "XY";
-        }
-
-        variantIdStr = chrStr + "-" + position + "-" + refAllele + "-" + allele;
+        variantIdStr = chrStr + "-" + pos + "-" + refAllele + "-" + allele;
     }
 
     public int getVariantId() {
@@ -85,10 +69,6 @@ public class Variant extends Region {
 
     public String getRsNumber() {
         return rsNumber;
-    }
-
-    public float getCscore() {
-        return cscorePhred;
     }
 
     public boolean isSnv() {

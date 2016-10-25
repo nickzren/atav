@@ -11,7 +11,7 @@ import utils.CommandOption;
  */
 public class AnnotationLevelFilterCommand {
 
-    public static String functionInput = "";
+    public static String effectInput = "";
     public static String geneInput = "";
     public static String geneBoundaryFile = "";
     public static String transcriptFile = "";
@@ -19,7 +19,7 @@ public class AnnotationLevelFilterCommand {
     public static boolean isCanonicalOnly = false;
     public static String polyphenHumdiv = "probably,possibly,unknown,benign";
     public static String polyphenHumvar = "probably,possibly,unknown,benign";
-    
+
     public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
 
     public static void initOptions(Iterator<CommandOption> iterator)
@@ -30,7 +30,8 @@ public class AnnotationLevelFilterCommand {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--function":
-                    functionInput = getValidPath(option);
+                case "--effect":
+                    effectInput = option.getValue();
                     break;
                 case "--gene":
                     geneInput = getValidPath(option);

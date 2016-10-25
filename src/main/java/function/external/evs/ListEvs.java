@@ -57,36 +57,30 @@ public class ListEvs extends AnalysisBase {
 
     @Override
     public void processDatabaseData() throws Exception {
-        int totalNumOfRegionList = RegionManager.getRegionSize();
+        for (int r = 0; r < RegionManager.getRegionSize(); r++) {
 
-        for (int r = 0; r < totalNumOfRegionList; r++) {
+//                    boolean isIndel = varType.equals("indel");
 
-            for (String varType : VariantManager.VARIANT_TYPE) {
-                if (VariantManager.isVariantTypeValid(r, varType)) {
-                    boolean isIndel = varType.equals("indel");
+//                    Region region = RegionManager.getRegion(r, varType);
 
-                    Region region = RegionManager.getRegion(r, varType);
+//                    String sqlCode = EvsManager.getSql4Maf(isIndel, region);
 
-                    String sqlCode = EvsManager.getSql4Maf(isIndel, region);
+//                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 
-                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
-
-                    while (rset.next()) {
-                        EvsOutput output = new EvsOutput(isIndel, rset);
-
-                        if (VariantManager.isVariantIdIncluded(output.evs.getVariantId())
-                                && output.isValid()) {
-                            bwEvs.write(output.evs.getVariantId() + ",");
-                            bwEvs.write(output.toString());
-                            bwEvs.newLine();
-                        }
-
-                        countVariant();
-                    }
-
-                    rset.close();
-                }
-            }
+//                    while (rset.next()) {
+//                        EvsOutput output = new EvsOutput(isIndel, rset);
+//
+//                        if (VariantManager.isVariantIdIncluded(output.evs.getVariantId())
+//                                && output.isValid()) {
+//                            bwEvs.write(output.evs.getVariantId() + ",");
+//                            bwEvs.write(output.toString());
+//                            bwEvs.newLine();
+//                        }
+//
+//                        countVariant();
+//                    }
+//
+//                    rset.close();
         }
     }
 

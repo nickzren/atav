@@ -35,7 +35,6 @@ public class CollapsingOutput extends Output {
                 + "Is Minor Ref,"
                 + "Ref Allele,"
                 + "Alt Allele,"
-                + "CADD Score Phred,"
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
                 + "Genotype,"
@@ -86,7 +85,6 @@ public class CollapsingOutput extends Output {
                 + "Transcript Stable Id,"
                 + "Is CCDS Transcript,"
                 + "Codon Change,"
-                + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()
@@ -177,7 +175,6 @@ public class CollapsingOutput extends Output {
         sb.append(isMinorRef).append(",");
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCscore())).append(",");
         sb.append(calledVar.getGerpScore());
         sb.append(calledVar.getTrapScore());
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
@@ -222,13 +219,12 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-        sb.append(calledVar.getFunction()).append(",");
+        sb.append(calledVar.getEffect()).append(",");
         sb.append("'").append(geneName).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(geneName))).append(",");
         sb.append(calledVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
-        sb.append(calledVar.getCodonChange()).append(",");
-        sb.append(calledVar.getTranscriptSet()).append(",");
+        sb.append(calledVar.getHGVS_c()).append(",");
         sb.append(calledVar.getExacStr());
         sb.append(calledVar.getKaviarStr());
         sb.append(calledVar.getKnownVarStr());

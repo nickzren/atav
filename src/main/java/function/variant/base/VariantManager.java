@@ -9,11 +9,9 @@ import function.genotype.trio.TrioCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import utils.DBManager;
 
 /**
  *
@@ -28,7 +26,6 @@ public class VariantManager {
     private static HashSet<String> includeRsNumberSet = new HashSet<>();
     private static HashSet<String> excludeVariantSet = new HashSet<>();
     private static ArrayList<String> includeVariantPosList = new ArrayList<>();
-    private static ArrayList<String> includeVariantTypeList = new ArrayList<>();
     private static ArrayList<String> includeChrList = new ArrayList<>();
 
     private static int maxIncludeNum = 10000000;
@@ -185,12 +182,6 @@ public class VariantManager {
             if (isInclude) {
                 String[] values = str.split("-");
                 String varPos = values[0] + "-" + values[1];
-                if (values[2].length() == 1
-                        && values[3].length() == 1) {
-                    varPos += "-snv";
-                } else {
-                    varPos += "-indel";
-                }
 
                 add2IncludeVariantPosSet(varPos);
             }
@@ -229,20 +220,20 @@ public class VariantManager {
     }
 
     private static String getVariantPositionByRS(String rs, String type) throws SQLException {
-        String sql = "select name, seq_region_pos from " + type + " v, seq_region s "
-                + "where rs_number = '" + rs + "' and "
-                + "coord_system_id = 2 and "
-                + "v.seq_region_id = s.seq_region_id";
-
-        ResultSet rset = DBManager.executeQuery(sql);
-
-        String chr = "";
-        int pos = 0;
-        if (rset.next()) {
-            chr = rset.getString("name");
-            pos = rset.getInt("seq_region_pos");
-            return chr + "-" + pos + "-" + type;
-        }
+//        String sql = "select name, seq_region_pos from " + type + " v, seq_region s "
+//                + "where rs_number = '" + rs + "' and "
+//                + "coord_system_id = 2 and "
+//                + "v.seq_region_id = s.seq_region_id";
+//
+//        ResultSet rset = DBManager.executeQuery(sql);
+//
+//        String chr = "";
+//        int pos = 0;
+//        if (rset.next()) {
+//            chr = rset.getString("name");
+//            pos = rset.getInt("seq_region_pos");
+//            return chr + "-" + pos + "-" + type;
+//        }
 
         return "";
     }
@@ -289,7 +280,6 @@ public class VariantManager {
                     RegionManager.addRegionByVariantPos(varPos);
                 }
             } else {
-                includeVariantTypeList.clear();
                 RegionManager.initChrRegionList(includeChrList.toArray(new String[includeChrList.size()]));
                 RegionManager.sortRegionList();
             }
@@ -330,36 +320,6 @@ public class VariantManager {
         return excludeVariantSet.contains(varId);
     }
 
-    public static boolean isVariantTypeValid(int index, String type) {
-        boolean check = false;
-
-        try {
-            if (type.equals(VARIANT_TYPE[0])) // snv
-            {
-                if (VariantLevelFilterCommand.isExcludeSnv) {
-                    return false;
-                }
-            } else // indel
-             if (VariantLevelFilterCommand.isExcludeIndel) {
-                    return false;
-                }
-
-            if (includeVariantTypeList.isEmpty()) {
-                return true;
-            }
-
-            check = includeVariantTypeList.get(index).equalsIgnoreCase(type);
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
-        return check;
-    }
-
-    public static void addType(String type) {
-        includeVariantTypeList.add(type);
-    }
-
     public static ArrayList<String> getIncludeVariantList() {
         return includeVariantPosList;
     }
@@ -368,7 +328,6 @@ public class VariantManager {
         includeVariantSet.clear();
         includeRsNumberSet.clear();
         includeVariantPosList.clear();
-        includeVariantTypeList.clear();
         includeChrList.clear();
     }
 }

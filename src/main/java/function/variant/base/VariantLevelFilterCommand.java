@@ -38,8 +38,6 @@ public class VariantLevelFilterCommand {
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
 
-    public static double minCscore = Data.NO_FILTER;
-
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
         CommandOption option;
@@ -123,11 +121,6 @@ public class VariantLevelFilterCommand {
                     KnownVarCommand.isKnownVarOnly = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     break;
-                case "--min-c-score":
-                case "--min-cadd-score":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    minCscore = getValidDouble(option);
-                    break;
                 case "--min-gerp-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     GerpCommand.minGerpScore = getValidFloat(option);
@@ -206,14 +199,5 @@ public class VariantLevelFilterCommand {
 
             iterator.remove();
         }
-    }
-
-    public static boolean isCscoreValid(float value) {
-        if (value == Data.NA
-                || minCscore == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value >= minCscore;
     }
 }

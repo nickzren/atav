@@ -24,6 +24,8 @@ public class TranscriptManager {
     private static String ccdsTranscriptFile = "";
     private static String canonicalTranscriptFile = "";
 
+    public static final int TRANSCRIPT_LENGTH = 15;
+
     public static void init() {
         // init transcript set from --transcript input file
         initFromTranscriptFile(AnnotationLevelFilterCommand.transcriptFile, currentTranscriptSet);

@@ -2,7 +2,6 @@ package function.annotation.base;
 
 import function.variant.base.AnalysisBase4Variant;
 import function.variant.base.RegionManager;
-import function.variant.base.VariantManager;
 
 /**
  *
@@ -16,49 +15,37 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
 
     @Override
     public void processDatabaseData() throws Exception {
-        totalNumOfRegionList = RegionManager.getRegionSize();
+        for (int r = 0; r < RegionManager.getRegionSize(); r++) {
 
-        for (int r = 0; r < totalNumOfRegionList; r++) {
+            annotatedVar = null;
 
-            for (String varType : VariantManager.VARIANT_TYPE) {
+            analyzedRecords = 0;
 
-                if (VariantManager.isVariantTypeValid(r, varType)) {
+            region = RegionManager.getRegion(r);
 
-                    isIndel = varType.equals("indel");
+            rset = getAnnotationList(region);
 
-                    annotatedVar = null;
+            while (rset.next()) {
+                annotation.init(rset, region.getChrStr());
 
-                    analyzedRecords = 0;
+                if (annotation.isValid()) {
 
-                    region = RegionManager.getRegion(r, varType);
+                    nextVariantId = rset.getInt("variant_id");
 
-                    rset = getAnnotationList(varType, region);
+                    if (annotatedVar == null
+                            || nextVariantId != annotatedVar.getVariantId()) {
+                        processVariant();
 
-                    while (rset.next()) {
-                        annotation.init(rset, isIndel);
+                        annotatedVar = new AnnotatedVariant(region.getChrStr(), nextVariantId, rset);
+                    } // end of new one
 
-                        if (annotation.isValid()) {
-
-                            nextVariantId = rset.getInt(varType + "_id");
-
-                            if (annotatedVar == null
-                                    || nextVariantId != annotatedVar.getVariantId()) {
-                                processVariant();
-
-                                annotatedVar = new AnnotatedVariant(nextVariantId, isIndel, rset);
-                            } // end of new one
-
-                            annotatedVar.update(annotation);
-                        }
-                    }
-
-                    processVariant(); // only for the last qualified variant
-
-                    printTotalAnnotationCount(varType);
-
-                    rset.close();
+                    annotatedVar.update(annotation);
                 }
             }
+
+            processVariant(); // only for the last qualified variant
+
+            rset.close();
         }
     }
 
@@ -66,7 +53,7 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
         if (annotatedVar != null
                 && annotatedVar.isValid()) {
             annotatedVar.initExternalData();
-            
+
             processVariant(annotatedVar);
 
             countVariant();

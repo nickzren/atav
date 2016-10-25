@@ -93,7 +93,6 @@ public class TrioManager {
                 + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
-                + "CADD Score Phred,"
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
                 + "Is Minor Ref,"
@@ -147,7 +146,6 @@ public class TrioManager {
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
                 + "Codon Change,"
-                + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()

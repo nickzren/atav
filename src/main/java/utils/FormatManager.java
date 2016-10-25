@@ -1,6 +1,8 @@
 package utils;
 
 import global.Data;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -41,6 +43,11 @@ public class FormatManager {
         }
 
         return String.valueOf(value);
+    }
+
+    public static int getInt(ResultSet rs, String strColName) throws SQLException {
+        int nValue = rs.getInt(strColName);
+        return rs.wasNull() ? Data.NA : nValue;
     }
 
     public static String getString(String str) {

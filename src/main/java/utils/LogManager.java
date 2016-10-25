@@ -9,8 +9,6 @@ import java.io.*;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -102,8 +100,7 @@ public class LogManager {
                 + "(aka " + minutes + " minutes or "
                 + hours + " hours)";
 
-        writeAndPrint("\nTotal runtime: "
-                + runTime + "\n");
+        writeAndPrint("\n\nTotal runtime: " + runTime + "\n");
     }
 
     private static void logUserCommand() {

@@ -287,7 +287,7 @@ public class GeneManager {
         return allGeneBoundaryLength;
     }
 
-    public static boolean isValid(Annotation annotation) {
+    public static boolean isValid(Annotation annotation, String chr, int pos) {
         if (geneMap.isEmpty()) {
             return true;
         }
@@ -299,7 +299,7 @@ public class GeneManager {
                 return true;
             } else {
                 for (Gene gene : set) {
-                    if (gene.contains(annotation.region)) {
+                    if (gene.contains(chr, pos)) {
                         annotation.geneName = gene.getName();
                         return true;
                     }

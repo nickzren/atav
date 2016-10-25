@@ -1,7 +1,7 @@
 
 import function.genotype.base.SampleManager;
 import function.variant.base.RegionManager;
-import function.annotation.base.FunctionManager;
+import function.annotation.base.EffectManager;
 import function.variant.base.VariantManager;
 import function.annotation.base.TranscriptManager;
 import function.annotation.base.GeneManager;
@@ -103,7 +103,7 @@ public class Program {
 
             DBManager.init();
 
-            FunctionManager.init();
+            EffectManager.init();
 
             SampleManager.init();
 

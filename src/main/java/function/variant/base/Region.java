@@ -128,6 +128,12 @@ public class Region implements Comparable {
                 && r.getStartPosition() <= endPosition;
     }
 
+    public boolean contains(String chr, int pos) {
+        return chr.equalsIgnoreCase(chrStr)
+                && pos >= startPosition
+                && pos <= endPosition;
+    }
+
     public Region intersect(int start, int end) {
         if (end >= startPosition && start <= endPosition) {
             int newstart = Math.max(startPosition, start);
@@ -162,6 +168,6 @@ public class Region implements Comparable {
     @Override
     public int compareTo(Object another) throws ClassCastException {
         Region that = (Region) another;
-        return Double.compare(this.chrNum, that.chrNum); //small -> large
+        return Integer.compare(this.chrNum, that.chrNum); //small -> large
     }
 }

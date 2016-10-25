@@ -1,16 +1,13 @@
 package function.variant.base;
 
 import function.annotation.base.GeneManager;
-import utils.DBManager;
 import utils.ErrorManager;
 import utils.CommonCommand;
 import utils.LogManager;
 import global.Data;
 import java.io.*;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  *
@@ -19,8 +16,6 @@ import java.util.HashMap;
 public class RegionManager {
 
     private static ArrayList<Region> regionList = new ArrayList<>();
-    private static HashMap<Integer, String> idChrMap = new HashMap<>();
-    private static HashMap<String, Integer> chrIdMap = new HashMap<>();
     private static boolean isUsed = false;
 
     public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
@@ -30,8 +25,6 @@ public class RegionManager {
         if (CommonCommand.isNonDBAnalysis) {
             return;
         }
-
-        initIdChrMap();
 
         if (CommonCommand.regionInput.isEmpty()) {
             initChrRegionList(ALL_CHR);
@@ -201,74 +194,16 @@ public class RegionManager {
         }
     }
 
-    public static Region getRegion(int index, String varType) {
-        LogManager.writeAndPrint("Start analysing " + varType.toUpperCase().toUpperCase()
-                + "s in region " + regionList.get(index));
-
+    public static Region getRegion(int index) {
+        System.out.println("Analysing variants in region " + regionList.get(index) + "\n");
+        
         return regionList.get(index);
-    }
-
-    public static String addRegionToSQL(Region region, String sqlCode, boolean isIndel) {
-        int regionId = RegionManager.getIdByChr(region.getChrStr());
-
-        sqlCode += " WHERE v.seq_region_id = " + regionId + " ";
-
-        if (region.getStartPosition() > 0) {
-            sqlCode += "AND v.seq_region_pos >= " + region.getStartPosition() + " ";
-        }
-
-        if (region.getEndPosition() > 0) {
-            sqlCode += "AND v.seq_region_pos <= " + region.getEndPosition() + " ";
-        }
-
-        if (GeneManager.isUsed()) {
-            sqlCode += "AND g.gene_name in " + GeneManager.getAllGeneByChr(region.getChrStr()) + " ";
-        }
-
-        return sqlCode;
     }
 
     public static void addRegionByVariantPos(String varPos) {
         String[] values = varPos.split("-");
         String chr = values[0];
         int pos = Integer.valueOf(values[1]);
-        VariantManager.addType(values[2]);
         regionList.add(new Region(chr, pos, pos));
-    }
-
-    private static void initIdChrMap() {
-        try {
-            for (String chr : ALL_CHR) {
-                String sql = "SELECT seq_region_id FROM seq_region where coord_system_id = 2 "
-                        + "AND name = '" + chr + "'";
-                ResultSet rs = DBManager.executeQuery(sql);
-
-                if (rs.next()) {
-                    int id = rs.getInt("seq_region_id");
-                    idChrMap.put(id, chr);
-                    chrIdMap.put(chr, id);
-                }
-            }
-
-            chrIdMap.put("XY", chrIdMap.get("X"));
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    public static String getChrById(int id) {
-        if (idChrMap.containsKey(id)) {
-            return idChrMap.get(id);
-        }
-
-        return "NA";
-    }
-
-    public static int getIdByChr(String chr) {
-        if (chrIdMap.containsKey(chr)) {
-            return chrIdMap.get(chr);
-        }
-
-        return Data.NA;
     }
 }

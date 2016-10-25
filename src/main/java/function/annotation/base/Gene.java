@@ -78,8 +78,8 @@ public class Gene {
         return name;
     }
     
-    public boolean contains(Region r) {
-        return exonList.stream().anyMatch((exon) -> (exon.contains(r)));
+    public boolean contains(String chr, int pos) {
+        return exonList.stream().anyMatch((exon) -> (exon.contains(chr, pos)));
     }
     
     public void initExonList() {
