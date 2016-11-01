@@ -2,7 +2,6 @@ package function.genotype.base;
 
 import function.variant.base.AnalysisBase4Variant;
 import function.variant.base.RegionManager;
-import function.variant.base.VariantManager;
 
 /**
  *
@@ -19,50 +18,40 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
     @Override
     public void processDatabaseData() throws Exception {
-//        for (int r = 0; r < RegionManager.getRegionSize(); r++) {
-//
-//            for (String varType : VariantManager.VARIANT_TYPE) {
-//
-//                if (VariantManager.isVariantTypeValid(r, varType)) {
-//
-//                    isIndel = varType.equals("indel");
-//
-//                    calledVar = null;
-//
-//                    analyzedRecords = 0;
-//
-//                    region = RegionManager.getRegion(r, varType);
-//
-//                    rset = getAnnotationList(varType, region);
-//
-//                    while (rset.next()) {
-//                        annotation.init(rset, isIndel);
-//
-//                        if (annotation.isValid()) {
-//
-//                            nextVariantId = rset.getInt(varType + "_id");
-//
-//                            if (calledVar == null
-//                                    || nextVariantId != calledVar.getVariantId()) {
-//                                processVariant();
-//
-//                                calledVar = new CalledVariant(nextVariantId, isIndel, rset);
-//                            } // end of new one
-//
-//                            calledVar.update(annotation);
-//                        }
-//                    }
-//
-//                    processVariant(); // only for the last qualified variant
-//
-//                    printTotalAnnotationCount(varType);
-//
-//                    rset.close();
-//                }
-//            }
-//
-//            doOutput(); // only comphet function support it
-//        }
+        for (int r = 0; r < RegionManager.getRegionSize(); r++) {
+
+            calledVar = null;
+
+            analyzedRecords = 0;
+
+            region = RegionManager.getRegion(r);
+
+            rset = getAnnotationList(region);
+            
+            while (rset.next()) {
+                annotation.init(rset, region.getChrStr());
+                
+                if (annotation.isValid()) {
+
+                    nextVariantId = rset.getInt("variant_id");
+
+                    if (calledVar == null
+                            || nextVariantId != calledVar.getVariantId()) {
+                        processVariant();
+
+                        calledVar = new CalledVariant(region.getChrStr(), nextVariantId, rset);
+                    } // end of new one
+                    
+                    calledVar.update(annotation);
+                }
+            }
+            
+            processVariant(); // only for the last qualified variant
+
+            rset.close();
+            
+            doOutput(); // only comphet function support it
+        }
     }
 
     private void processVariant() {

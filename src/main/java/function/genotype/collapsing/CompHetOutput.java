@@ -122,11 +122,11 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(isMinorRef).append(",");
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadsAlt() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadsRef() : Data.NA)).append(",");
-        sb.append(FormatManager.getPercAltRead(carrier != null ? carrier.getReadsAlt() : Data.NA,
-                carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getDP() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getAdAlt() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getADRef() : Data.NA)).append(",");
+        sb.append(FormatManager.getPercAltRead(carrier != null ? carrier.getAdAlt() : Data.NA,
+                carrier != null ? carrier.getDP() : Data.NA)).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCount[Index.CASE]).append(",");

@@ -5,7 +5,6 @@ import function.annotation.base.Annotation;
 import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
 import utils.DBManager;
-import utils.LogManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -46,7 +45,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         if (GeneManager.isUsed()) {
             sql += "AND g.gene in " + GeneManager.getAllGeneByChr(region.getChrStr()) + " ";
         }
-
+        
         return DBManager.executeReadOnlyQuery(sql);
     }
 }

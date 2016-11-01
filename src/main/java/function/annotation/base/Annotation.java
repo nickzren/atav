@@ -51,7 +51,7 @@ public class Annotation {
         for (int i = 0; i < zeroStringLength; i++) {
             idSB.insert(0, 0);
         }
-        
+
         idSB.insert(0, "ENST");
 
         return idSB.toString();

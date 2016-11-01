@@ -1,10 +1,9 @@
 package function.genotype.base;
 
-import function.variant.base.Region;
 import global.Data;
 import global.Index;
-import java.math.BigDecimal;
 import java.sql.ResultSet;
+import utils.FormatManager;
 import utils.MathManager;
 
 /**
@@ -13,89 +12,60 @@ import utils.MathManager;
  */
 public class Carrier extends NonCarrier {
 
-    private int gatkFilteredCoverage;
-    private int readsRef;
-    private int readsAlt;
-    private float vqslod;
-    private float genotypeQualGQ;
-    private float strandBiasFS;
-    private float haplotypeScore;
-    private float rmsMapQualMQ;
-    private float qualByDepthQD;
+    private int dp;
+    private int adRef;
+    private int adAlt;
+    private float gq;
+    private float fs;
+    private float mq;
+    private float qd;
     private float qual;
     private float readPosRankSum;
-    private float mapQualRankSum;
+    private float mqRankSum;
     private String passFailStatus;
 
     public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");
-        coverage = rs.getInt("samtools_raw_coverage");
-        genotype = rs.getInt("genotype");
-        gatkFilteredCoverage = rs.getInt("gatk_filtered_coverage");
-        readsRef = rs.getInt("reads_ref");
-        readsAlt = rs.getInt("reads_alt");
-        vqslod = getFloat((Float) rs.getObject("vqslod"));
-        genotypeQualGQ = getFloat(rs.getBigDecimal("genotype_qual_GQ"));
-        strandBiasFS = getFloat(rs.getBigDecimal("strand_bias_FS"));
-        haplotypeScore = getFloat(rs.getBigDecimal("haplotype_score"));
-        rmsMapQualMQ = getFloat(rs.getBigDecimal("rms_map_qual_MQ"));
-        qualByDepthQD = getFloat(rs.getBigDecimal("qual_by_depth_QD"));
-        qual = getFloat(rs.getBigDecimal("qual"));
-        readPosRankSum = getFloat(rs.getBigDecimal("read_pos_rank_sum"));
-        mapQualRankSum = getFloat(rs.getBigDecimal("map_qual_rank_sum"));
-        passFailStatus = rs.getString("pass_fail_status");
+        gt = rs.getInt("GT");
+        dp = rs.getInt("DP");
+        adRef = rs.getInt("AD_REF");
+        adAlt = rs.getInt("AD_ALT");
+        gq = FormatManager.getFloat(rs, "GQ");
+        fs = FormatManager.getFloat(rs, "FS");
+        mq = FormatManager.getFloat(rs, "MQ");
+        qd = FormatManager.getFloat(rs, "QD");
+        qual = FormatManager.getFloat(rs, "QUAL");
+        readPosRankSum = FormatManager.getFloat(rs, "ReadPosRankSum");
+        mqRankSum = FormatManager.getFloat(rs, "MQRankSum");
+        passFailStatus = rs.getString("FILTER");
     }
 
-    private float getFloat(Float f) {
-        if (f == null) {
-            return Data.NA;
-        }
-
-        return f;
+    public int getDP() {
+        return dp;
     }
 
-    private float getFloat(BigDecimal f) {
-        if (f == null) {
-            return Data.NA;
-        }
-
-        return f.floatValue();
+    public int getADRef() {
+        return adRef;
     }
 
-    public int getGatkFilteredCoverage() {
-        return gatkFilteredCoverage;
+    public int getAdAlt() {
+        return adAlt;
     }
 
-    public int getReadsRef() {
-        return readsRef;
+    public float getGQ() {
+        return gq;
     }
 
-    public int getReadsAlt() {
-        return readsAlt;
+    public float getFS() {
+        return fs;
     }
 
-    public float getVqslod() {
-        return vqslod;
+    public float getMQ() {
+        return mq;
     }
 
-    public float getGenotypeQualGQ() {
-        return genotypeQualGQ;
-    }
-
-    public float getStrandBiasFS() {
-        return strandBiasFS;
-    }
-
-    public float getHaplotypeScore() {
-        return haplotypeScore;
-    }
-
-    public float getRmsMapQualMQ() {
-        return rmsMapQualMQ;
-    }
-
-    public float getQualByDepthQD() {
-        return qualByDepthQD;
+    public float getQD() {
+        return qd;
     }
 
     public float getQual() {
@@ -106,59 +76,46 @@ public class Carrier extends NonCarrier {
         return readPosRankSum;
     }
 
-    public float getMapQualRankSum() {
-        return mapQualRankSum;
+    public float getMQRankSum() {
+        return mqRankSum;
     }
 
     public String getPassFailStatus() {
         return passFailStatus;
     }
 
-    private void applyQualityFilter() {
-        if (genotype != Data.NA) {
+    public void applyQualityFilter() {
+        if (gt != Data.NA) {
             if (!GenotypeLevelFilterCommand.isVarStatusValid(passFailStatus)
-                    || !GenotypeLevelFilterCommand.isGqValid(genotypeQualGQ)
-                    || !GenotypeLevelFilterCommand.isFsValid(strandBiasFS)
-                    || !GenotypeLevelFilterCommand.isHapScoreValid(haplotypeScore)
-                    || !GenotypeLevelFilterCommand.isMqValid(rmsMapQualMQ)
-                    || !GenotypeLevelFilterCommand.isQdValid(qualByDepthQD)
+                    || !GenotypeLevelFilterCommand.isGqValid(gq)
+                    || !GenotypeLevelFilterCommand.isFsValid(fs)
+                    || !GenotypeLevelFilterCommand.isMqValid(mq)
+                    || !GenotypeLevelFilterCommand.isQdValid(qd)
                     || !GenotypeLevelFilterCommand.isQualValid(qual)
                     || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum)
-                    || !GenotypeLevelFilterCommand.isMqrsValid(mapQualRankSum)) {
-                genotype = Data.NA;
+                    || !GenotypeLevelFilterCommand.isMqrsValid(mqRankSum)) {
+                gt = Data.NA;
             }
         }
 
-        if (genotype == Index.HOM) { // --hom-percent-alt-read 
-            double percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
+        if (gt == Index.HOM) { // --hom-percent-alt-read 
+            double percAltRead = MathManager.devide(adAlt, dp);
 
             if (!GenotypeLevelFilterCommand.isHomPercentAltReadValid(percAltRead)) {
-                genotype = Data.NA;
+                gt = Data.NA;
             }
         }
 
-        if (genotype == Index.HET) { // --het-percent-alt-read 
-            double percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
+        if (gt == Index.HET) { // --het-percent-alt-read 
+            double percAltRead = MathManager.devide(adAlt, dp);
 
             if (!GenotypeLevelFilterCommand.isHetPercentAltReadValid(percAltRead)) {
-                genotype = Data.NA;
+                gt = Data.NA;
             }
         }
 
-        if (genotype == Data.NA) {
-            coverage = Data.NA;
+        if (gt == Data.NA) {
+            dpBin = Data.NA;
         }
-    }
-
-    @Override
-    public void applyFilters(Region region) {
-        // min coverage filter
-        applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
-                GenotypeLevelFilterCommand.minCtrlCoverageCall);
-
-        // default pseudoautosomal region filter
-        checkValidOnXY(region);
-
-        applyQualityFilter();
     }
 }

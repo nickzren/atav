@@ -149,7 +149,7 @@ public class DBManager {
             }
         }
 
-        LogManager.writeAndPrint("DB server: " + dbHostName + " " + "(" + minNum + " concurrent jobs)");
+        LogManager.writeAndPrint("DB server: " + dbHostName + " " + "(" + minNum + " running jobs)");
     }
 
     private static int getMinNumFromServers() {

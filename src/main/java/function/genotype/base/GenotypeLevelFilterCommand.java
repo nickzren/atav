@@ -34,7 +34,6 @@ public class GenotypeLevelFilterCommand {
     public static double[] homPercentAltRead = null;
     public static double genotypeQualGQ = Data.NO_FILTER;
     public static double strandBiasFS = Data.NO_FILTER;
-    public static double haplotypeScore = Data.NO_FILTER;
     public static double rmsMapQualMQ = Data.NO_FILTER;
     public static double qualByDepthQD = Data.NO_FILTER;
     public static double qual = Data.NO_FILTER;
@@ -126,10 +125,6 @@ public class GenotypeLevelFilterCommand {
                 case "--fs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     strandBiasFS = getValidDouble(option);
-                    break;
-                case "--hap-score":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    haplotypeScore = getValidDouble(option);
                     break;
                 case "--mq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
@@ -277,24 +272,6 @@ public class GenotypeLevelFilterCommand {
             }
         } else {
             if (value <= strandBiasFS) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean isHapScoreValid(float value) {
-        if (haplotypeScore == Data.NO_FILTER) {
-            return true;
-        }
-
-        if (value == Data.NA) {
-            if (isQcMissingIncluded) {
-                return true;
-            }
-        } else {
-            if (value <= haplotypeScore) {
                 return true;
             }
         }

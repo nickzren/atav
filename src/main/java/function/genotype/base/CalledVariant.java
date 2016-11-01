@@ -18,7 +18,7 @@ public class CalledVariant extends AnnotatedVariant {
     private int[] coverage = new int[SampleManager.getListSize()];
     private int[] qcFailSample = new int[2];
 
-    public CalledVariant(String chr, int variantId, boolean isIndel, ResultSet rset) throws Exception {
+    public CalledVariant(String chr, int variantId, ResultSet rset) throws Exception {
         super(chr, variantId, rset);
 
         init();
@@ -26,9 +26,16 @@ public class CalledVariant extends AnnotatedVariant {
 
     private void init() throws Exception {
         if (isValid) {
-            SampleManager.initCarrierMap(this, carrierMap);
+            CarrierBlockManager.init(this);
 
-            CoverageBlockManager.initNonCarrierMap(this, carrierMap, noncarrierMap);
+            carrierMap = CarrierBlockManager.getVarCarrierMap(variantId);
+
+            if (carrierMap == null) {
+                isValid = false;
+                return;
+            }
+
+            DPBinBlockManager.initCarrierAndNonCarrierByDPBin(this, carrierMap, noncarrierMap);
 
             initGenoCovArray();
 
@@ -53,7 +60,7 @@ public class CalledVariant extends AnnotatedVariant {
             NonCarrier noncarrier = noncarrierMap.get(sample.getId());
 
             if (carrier != null) {
-                setGenoCov(carrier.getGenotype(), carrier.getCoverage(), s);
+                setGenoCov(carrier.getGenotype(), carrier.getDPBin(), s);
 
                 if (carrier.getGenotype() == Data.NA) {
                     // have to remove it for init Non-carrier map
@@ -61,7 +68,7 @@ public class CalledVariant extends AnnotatedVariant {
                     carrierMap.remove(sample.getId());
                 }
             } else if (noncarrier != null) {
-                setGenoCov(noncarrier.getGenotype(), noncarrier.getCoverage(), s);
+                setGenoCov(noncarrier.getGenotype(), noncarrier.getDPBin(), s);
             } else {
                 setGenoCov(Data.NA, Data.NA, s);
             }

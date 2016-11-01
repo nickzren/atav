@@ -1,6 +1,6 @@
 package function.coverage.base;
 
-import function.genotype.base.CoverageBlockManager;
+import function.genotype.base.DPBinBlockManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import function.variant.base.Region;
@@ -55,11 +55,11 @@ public class CoverageManager {
     }
 
     private static int getPosition(int pos) { //optimize it later
-        int posIndex = pos % CoverageBlockManager.COVERAGE_BLOCK_SIZE; // coverage data block size is 1024
+        int posIndex = pos % DPBinBlockManager.DP_BIN_BLOCK_SIZE; // coverage data block size is 1024
         if (posIndex == 0) {
-            posIndex = CoverageBlockManager.COVERAGE_BLOCK_SIZE; // block boundary is ( ] 
+            posIndex = DPBinBlockManager.DP_BIN_BLOCK_SIZE; // block boundary is ( ] 
         }
-        return pos - posIndex + CoverageBlockManager.COVERAGE_BLOCK_SIZE;
+        return pos - posIndex + DPBinBlockManager.DP_BIN_BLOCK_SIZE;
     }
 
     private static String getPositionString(Region region) {
@@ -69,7 +69,7 @@ public class CoverageManager {
             return Integer.toString(firstIndex);
         } else {
             StringBuilder sb = new StringBuilder();
-            for (int index = firstIndex; index < lastIndex; index += CoverageBlockManager.COVERAGE_BLOCK_SIZE) {
+            for (int index = firstIndex; index < lastIndex; index += DPBinBlockManager.DP_BIN_BLOCK_SIZE) {
                 sb.append(index).append(",");
             }
             sb.append(lastIndex);
@@ -146,7 +146,7 @@ public class CoverageManager {
             int startIndex = endIndex + 1;
             endIndex += Integer.valueOf(oneCovBinLength);
             char covStr = oneCovBinStr.charAt(oneCovBinStr.length() - 1);
-            int cov = CoverageBlockManager.getCoverageByBin(covStr);
+            int cov = DPBinBlockManager.getCoverageByBin(covStr);
             if (cov >= GenotypeLevelFilterCommand.minCoverage) {
                 list.add(new CoverageInterval(sampleBlockPos, startIndex, endIndex));
             }

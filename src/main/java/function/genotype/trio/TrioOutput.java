@@ -51,17 +51,17 @@ public class TrioOutput extends Output implements Comparable {
         mGeno = calledVar.getGenotype(trio.getMotherIndex());
         mSamtoolsRawCoverage = calledVar.getCoverage(trio.getMotherIndex());
         Carrier carrier = calledVar.getCarrier(trio.getMotherId());
-        mGatkFilteredCoverage = carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA;
-        mReadsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
-        mReadsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
+        mGatkFilteredCoverage = carrier != null ? carrier.getDP() : Data.NA;
+        mReadsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
+        mReadsRef = carrier != null ? carrier.getADRef() : Data.NA;
 
         fatherName = trio.getFatherName();
         fGeno = calledVar.getGenotype(trio.getFatherIndex());
         fSamtoolsRawCoverage = calledVar.getCoverage(trio.getFatherIndex());
         carrier = calledVar.getCarrier(trio.getFatherId());
-        fGatkFilteredCoverage = carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA;
-        fReadsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;
-        fReadsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
+        fGatkFilteredCoverage = carrier != null ? carrier.getDP() : Data.NA;
+        fReadsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
+        fReadsRef = carrier != null ? carrier.getADRef() : Data.NA;
     }
 
     public void deleteParentGeno(Trio trio) {
@@ -128,8 +128,8 @@ public class TrioOutput extends Output implements Comparable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        int cReadsAlt = cCarrier != null ? cCarrier.getReadsAlt() : Data.NA;
-        int cReadsRef = cCarrier != null ? cCarrier.getReadsRef() : Data.NA;
+        int cReadsAlt = cCarrier != null ? cCarrier.getAdAlt() : Data.NA;
+        int cReadsRef = cCarrier != null ? cCarrier.getADRef() : Data.NA;
 
         sb.append(denovoFlag).append(",");
         sb.append(calledVar.getVariantIdStr()).append(",");
@@ -142,16 +142,15 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(isMinorRef).append(",");
         sb.append(getGenoStr(cGeno)).append(",");
         sb.append(FormatManager.getDouble(cSamtoolsRawCoverage)).append(",");
-        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getInteger(cReadsAlt)).append(",");
         sb.append(FormatManager.getInteger(cReadsRef)).append(",");
-        sb.append(FormatManager.getPercAltRead(cReadsAlt, cCarrier != null ? cCarrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getPercAltRead(cReadsAlt, cCarrier != null ? cCarrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(cReadsAlt + cReadsRef, cReadsAlt, 0.5))).append(",");
         sb.append(cCarrier != null ? cCarrier.getPassFailStatus() : "NA").append(",");
-        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getGenotypeQualGQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getQualByDepthQD() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getHaplotypeScore() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getRmsMapQualMQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getQD() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getMQ() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getQual() : Data.NA)).append(",");
         sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getDouble(mSamtoolsRawCoverage)).append(",");

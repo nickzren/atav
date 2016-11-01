@@ -54,7 +54,7 @@ import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.ListTrap;
 import function.external.trap.TrapCommand;
-import function.genotype.base.CoverageBlockManager;
+import function.genotype.base.DPBinBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.family.FamilyCommand;
 import function.genotype.parental.ParentalCommand;
@@ -115,7 +115,7 @@ public class Program {
 
             VariantManager.init();
 
-            CoverageBlockManager.init();
+            DPBinBlockManager.init();
 
             KnownVarManager.init();
 

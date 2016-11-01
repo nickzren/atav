@@ -37,13 +37,13 @@ public class AnnotatedVariant extends Variant {
 
     // AnnoDB annotations / most damaging effect annotations
     int stableId;
-    String stableIdStr;
-    String effect;
-    String HGVS_c;
-    String HGVS_p;
+    String stableIdStr = "";
+    String effect = "";
+    String HGVS_c = "";
+    String HGVS_p = "";
     float polyphenHumdiv;
     float polyphenHumvar;
-    String geneName;
+    String geneName = "";
 
     HashSet<String> geneSet = new HashSet<>();
     StringBuilder allGeneTranscriptSB = new StringBuilder();

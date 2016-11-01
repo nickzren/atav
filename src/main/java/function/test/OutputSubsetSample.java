@@ -1,6 +1,6 @@
 package function.test;
 
-import function.genotype.base.CoverageBlockManager;
+import function.genotype.base.DPBinBlockManager;
 import function.genotype.base.SampleManager;
 import function.variant.base.RegionManager;
 import java.sql.SQLException;
@@ -49,11 +49,11 @@ public class OutputSubsetSample {
             for (String chr : RegionManager.ALL_CHR) {
                 String nonCarrierSql = "SELECT * "
                         + "FROM " + SampleManager.SAMPLE_TYPE[i]
-                        + "_read_coverage_" + CoverageBlockManager.COVERAGE_BLOCK_SIZE + "_chr" + chr + " c,"
+                        + "_read_coverage_" + DPBinBlockManager.DP_BIN_BLOCK_SIZE + "_chr" + chr + " c,"
                         + SampleManager.SAMPLE_TYPE[i] + "_sample_id t "
                         + "WHERE c.sample_id = t.id "
                         + "INTO OUTFILE '" + OUTPUT_PATH + SampleManager.SAMPLE_TYPE[i]
-                        + "_read_coverage_" + CoverageBlockManager.COVERAGE_BLOCK_SIZE + "_chr" + chr + ".txt'";
+                        + "_read_coverage_" + DPBinBlockManager.DP_BIN_BLOCK_SIZE + "_chr" + chr + ".txt'";
 
                 LogManager.writeAndPrint(nonCarrierSql);
                 DBManager.executeQuery(nonCarrierSql);

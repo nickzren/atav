@@ -13,33 +13,33 @@ import global.Index;
 public class NonCarrier {
 
     public int sampleId;
-    public int genotype;
-    public int coverage;
+    public int gt;
+    public int dpBin;
 
     public NonCarrier() {
     }
 
-    public NonCarrier(int sid, int cov) {
-        sampleId = sid;
-        coverage = cov;
+    public NonCarrier(int sampleId, int dpBin) {
+        this.sampleId = sampleId;
+        this.dpBin = dpBin;
 
         initGenotype();
     }
 
-    public NonCarrier(int sampleId, String min_coverage, int posIndex) throws Exception {
+    public NonCarrier(int sampleId, String minDPBin, int posIndex) throws Exception {
         this.sampleId = sampleId;
-        SampleCoverageBin covBin = new SampleCoverageBin(sampleId, min_coverage);
-        CoverageBlockManager.add(covBin);
-        coverage = covBin.getCoverage(posIndex);
+        SampleDPBin sampleDPBin = new SampleDPBin(sampleId, minDPBin);
+        DPBinBlockManager.add(sampleDPBin);
+        dpBin = sampleDPBin.getDPBin(posIndex);
 
         initGenotype();
     }
 
     private void initGenotype() {
-        if (coverage == Data.NA) {
-            genotype = Data.NA;
+        if (dpBin == Data.NA) {
+            gt = Data.NA;
         } else {
-            genotype = 0;
+            gt = 0;
         }
     }
 
@@ -48,27 +48,29 @@ public class NonCarrier {
     }
 
     public int getGenotype() {
-        return genotype;
+        return gt;
     }
 
-    public int getCoverage() {
-        return coverage;
+    public void setDPBin(int value) {
+        dpBin = value;
     }
 
-    protected void applyCoverageFilter(int minCaseCov, int minCtrlCov) {
+    public int getDPBin() {
+        return dpBin;
+    }
+
+    public void applyCoverageFilter(int minCaseCov, int minCtrlCov) {
         Sample sample = SampleManager.getMap().get(sampleId);
 
         if (sample.isCase()) // --min-case-coverage-call or --min-case-coverage-no-call
         {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(coverage, minCaseCov)) {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCaseCov)) {
                 setMissing();
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(coverage, minCtrlCov)) {
+         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 setMissing();
             }
-        }
     }
 
     /*
@@ -84,14 +86,14 @@ public class NonCarrier {
      *
      * Inside of pseudoautosomal region which are treated like autosomes.
      */
-    protected void checkValidOnXY(Region r) {
-        if (genotype != Data.NA) {
+    public void checkValidOnXY(Region r) {
+        if (gt != Data.NA) {
             boolean isValid = true;
 
             Sample sample = SampleManager.getMap().get(sampleId);
 
             if (sample.isMale()) {
-                if (genotype == Index.HET // male het chr x or y & outside 
+                if (gt == Index.HET // male het chr x or y & outside 
                         && !r.isInsideAutosomalOrPseudoautosomalRegions()) {
                     isValid = false;
                 }
@@ -101,19 +103,10 @@ public class NonCarrier {
             }
 
             if (!isValid) {
-                genotype = Data.NA;
-                coverage = Data.NA;
+                gt = Data.NA;
+                dpBin = Data.NA;
             }
         }
-    }
-
-    public void applyFilters(Region region) {
-        // min coverage filter
-        applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
-                GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
-
-        // default pseudoautosomal region filter
-        checkValidOnXY(region);
     }
 
     private void setMissing() {
@@ -121,12 +114,12 @@ public class NonCarrier {
                 && TrioManager.isParent(sampleId)) {
             // do nothing
         } else {
-            genotype = Data.NA;
-            coverage = Data.NA;
+            gt = Data.NA;
+            dpBin = Data.NA;
         }
     }
 
     public boolean isValid() {
-        return genotype != Data.NA;
+        return gt != Data.NA;
     }
 }

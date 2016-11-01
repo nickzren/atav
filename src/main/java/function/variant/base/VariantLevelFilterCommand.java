@@ -49,13 +49,13 @@ public class VariantLevelFilterCommand {
                     CommonCommand.regionInput = option.getValue();
                     break;
                 case "--variant":
-                    includeVariantId = getValidPath(option);
+                    includeVariantId = option.getValue();
                     break;
                 case "--rs-number":
-                    includeRsNumber = getValidPath(option);
+                    includeRsNumber = option.getValue();
                     break;
                 case "--exclude-variant":
-                    excludeVariantId = getValidPath(option);
+                    excludeVariantId = option.getValue();
                     break;
                 case "--exclude-artifacts":
                     isExcludeArtifacts = true;

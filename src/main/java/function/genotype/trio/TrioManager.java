@@ -106,7 +106,6 @@ public class TrioManager {
                 + "Pass Fail Status (child),"
                 + "Genotype Qual GQ (child),"
                 + "Qual By Depth QD (child),"
-                + "Haplotype Score (child),"
                 + "Rms Map Qual MQ (child),"
                 + "Qual (child),"
                 + "Genotype (mother),"

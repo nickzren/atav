@@ -1,6 +1,6 @@
 package function.coverage.base;
 
-import function.genotype.base.CoverageBlockManager;
+import function.genotype.base.DPBinBlockManager;
 
 /**
  *
@@ -12,7 +12,7 @@ public class CoverageInterval {
     private int endPos;
 
     public CoverageInterval(int sampleBlockPos, int startIndex, int endIndex) {
-        int sampleStartPos = sampleBlockPos - CoverageBlockManager.COVERAGE_BLOCK_SIZE;
+        int sampleStartPos = sampleBlockPos - DPBinBlockManager.DP_BIN_BLOCK_SIZE;
 
         startPos = sampleStartPos + startIndex;
         endPos = sampleStartPos + endIndex;

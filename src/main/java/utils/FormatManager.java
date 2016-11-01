@@ -78,6 +78,11 @@ public class FormatManager {
         return Float.valueOf(str);
     }
 
+    public static float getFloat(ResultSet rs, String strColName) throws SQLException {
+        float nValue = rs.getFloat(strColName);
+        return rs.wasNull() ? Data.NA : nValue;
+    }
+
     public static String getFunction(String str) {
         if (str == null) {
             str = "INTERGENIC";

@@ -1,7 +1,7 @@
 package function.test;
 
-import function.genotype.base.CoverageBlockManager;
-import static function.genotype.base.CoverageBlockManager.getCoverageByBin;
+import function.genotype.base.DPBinBlockManager;
+import static function.genotype.base.DPBinBlockManager.getCoverageByBin;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -21,7 +21,7 @@ import utils.LogManager;
 public class CoverageBlockTester {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        CoverageBlockManager.init();
+        DPBinBlockManager.init();
 
         long start = System.currentTimeMillis();
         test("/Users/zr2180/Desktop/exome_binned_v1", "commabase");
