@@ -87,11 +87,13 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-         if (isCommandFileIncluded(options)) {
+        {
+            if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
+        }
 
         cleanUpOddSymbol();
 
@@ -537,26 +539,51 @@ public class CommandManager {
     /*
      * output invalid option & value if value is not a valid range
      */
-    public static void checkRangeValid(String range, CommandOption option) {
+    public static void checkRangeValid(String range, CommandOption option, String value) {
         boolean isValid = false;
 
         String[] pos = range.split("-");
         double minStart = Double.valueOf(pos[0]);
         double maxEnd = Double.valueOf(pos[1]);
 
-        if (option.getValue().contains("-")) {
-            pos = option.getValue().split("-");
-            double start = Double.valueOf(pos[0]);
-            double end = Double.valueOf(pos[1]);
+        try {
+            if (value.contains("-")) {
+                pos = value.split("-");
+                double start = Double.valueOf(pos[0]);
+                double end = Double.valueOf(pos[1]);
 
-            if (start >= minStart && end <= maxEnd) {
-                isValid = true;
+                if (start >= minStart && end <= maxEnd) {
+                    isValid = true;
+                }
             }
+        } catch (Exception e) {
+            isValid = false;
         }
-
         if (!isValid) {
             outputInvalidOptionValue(option);
         }
+    }
+
+    public static void checkRangeListValid(String range, CommandOption option) {
+        for (String str : option.getValue().split(",")) {
+            checkRangeValid(range, option, str);
+        }
+    }
+
+    public static ArrayList<double[]> getValidRangeList(CommandOption option) {
+        ArrayList<double[]> rangeList = new ArrayList<>();
+
+        for (String str : option.getValue().split(",")) {
+            String[] pos = str.split("-");
+            double start = Double.valueOf(pos[0]);
+            double end = Double.valueOf(pos[1]);
+
+            double[] range = {start, end};
+
+            rangeList.add(range);
+        }
+
+        return rangeList;
     }
 
     public static double[] getValidRange(CommandOption option) {

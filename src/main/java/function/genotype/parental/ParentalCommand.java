@@ -30,7 +30,7 @@ public class ParentalCommand {
                     childQD = getValidDouble(option);
                     break;
                 case "--child-het-percent-alt-read":
-                    checkRangeValid("0-1", option);
+                    checkRangeValid("0-1", option, option.getValue());
                     childHetPercentAltRead = getValidRange(option);
                     break;
                 case "--min-child-binomial":

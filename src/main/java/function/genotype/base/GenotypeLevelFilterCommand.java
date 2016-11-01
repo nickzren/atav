@@ -1,13 +1,16 @@
 package function.genotype.base;
 
 import global.Data;
+import java.util.ArrayList;
 import java.util.Iterator;
+import static utils.CommandManager.checkRangeListValid;
 import static utils.CommandManager.checkRangeValid;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import static utils.CommandManager.getValidRange;
+import static utils.CommandManager.getValidRangeList;
 import utils.CommandOption;
 
 /**
@@ -29,8 +32,8 @@ public class GenotypeLevelFilterCommand {
     public static int minCtrlCoverageNoCall = Data.NO_FILTER;
     public static int minVarPresent = 1; // special case
     public static int minCaseCarrier = Data.NO_FILTER;
-    public static String[] varStatus; // null: no filer or all    
-    public static double[] hetPercentAltRead = null; // {min, max}
+    public static String[] varStatus; // null: no filer or all
+    public static ArrayList<double[]> hetPercentAltReadList = null;
     public static double[] homPercentAltRead = null;
     public static double genotypeQualGQ = Data.NO_FILTER;
     public static double strandBiasFS = Data.NO_FILTER;
@@ -42,8 +45,8 @@ public class GenotypeLevelFilterCommand {
     public static double mapQualRankSum = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
-    
-     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
+
+    public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -110,13 +113,14 @@ public class GenotypeLevelFilterCommand {
                         varStatus = null;
                     } else {
                         varStatus = str.split(",");
-                    }   break;
+                    }
+                    break;
                 case "--het-percent-alt-read":
-                    checkRangeValid("0-1", option);
-                    hetPercentAltRead = getValidRange(option);
+                    checkRangeListValid("0-1", option);
+                    hetPercentAltReadList = getValidRangeList(option);
                     break;
                 case "--hom-percent-alt-read":
-                    checkRangeValid("0-1", option);
+                    checkRangeValid("0-1", option, option.getValue());
                     homPercentAltRead = getValidRange(option);
                     break;
                 case "--gq":
@@ -187,12 +191,12 @@ public class GenotypeLevelFilterCommand {
             }
         }
     }
-    
+
     public static boolean isMaxCtrlMafValid(double value) {
         if (maxCtrlMaf == Data.NO_FILTER) {
             return true;
         }
-        
+
         return value <= maxCtrlMaf;
     }
 
@@ -257,10 +261,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= genotypeQualGQ) {
-                return true;
-            }
+        } else if (value >= genotypeQualGQ) {
+            return true;
         }
 
         return false;
@@ -275,10 +277,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value <= strandBiasFS) {
-                return true;
-            }
+        } else if (value <= strandBiasFS) {
+            return true;
         }
 
         return false;
@@ -293,10 +293,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value <= haplotypeScore) {
-                return true;
-            }
+        } else if (value <= haplotypeScore) {
+            return true;
         }
 
         return false;
@@ -311,10 +309,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= rmsMapQualMQ) {
-                return true;
-            }
+        } else if (value >= rmsMapQualMQ) {
+            return true;
         }
 
         return false;
@@ -329,10 +325,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= qualByDepthQD) {
-                return true;
-            }
+        } else if (value >= qualByDepthQD) {
+            return true;
         }
 
         return false;
@@ -347,10 +341,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= qual) {
-                return true;
-            }
+        } else if (value >= qual) {
+            return true;
         }
 
         return false;
@@ -365,10 +357,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= readPosRankSum) {
-                return true;
-            }
+        } else if (value >= readPosRankSum) {
+            return true;
         }
 
         return false;
@@ -383,24 +373,24 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= mapQualRankSum) {
-                return true;
-            }
+        } else if (value >= mapQualRankSum) {
+            return true;
         }
 
         return false;
     }
 
     public static boolean isHetPercentAltReadValid(double value) {
-        if (hetPercentAltRead == null) {
+        if (hetPercentAltReadList == null) {
             return true;
         }
 
         if (value != Data.NA) {
-            if (value >= hetPercentAltRead[0]
-                    && value <= hetPercentAltRead[1]) {
-                return true;
+            for (double[] range : hetPercentAltReadList) {
+                if (value >= range[0]
+                        && value <= range[1]) {
+                    return true;
+                }
             }
         }
 
