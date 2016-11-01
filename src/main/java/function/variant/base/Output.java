@@ -40,7 +40,7 @@ public class Output implements Cloneable {
         int geno;
 
         for (Sample sample : SampleManager.getList()) {
-            geno = calledVar.getGenotype(sample.getIndex());
+            geno = calledVar.getGT(sample.getIndex());
             geno = getGenoType(geno, sample);
 
             addSampleGeno(geno, sample.getPheno());

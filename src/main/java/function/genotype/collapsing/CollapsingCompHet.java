@@ -134,7 +134,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                     output1 = geneOutputList.get(i);
 
-                    int geno1 = output1.getCalledVariant().getGenotype(sample.getIndex());
+                    int geno1 = output1.getCalledVariant().getGT(sample.getIndex());
 
                     if (output1.isQualifiedGeno(geno1)) {
 
@@ -184,7 +184,7 @@ public class CollapsingCompHet extends CollapsingBase {
             bwCompHet.newLine();
 
             SampleVariantCount.update(output1.getCalledVariant().isSnv(),
-                    output1.getCalledVariant().getGenotype(sample.getIndex()),
+                    output1.getCalledVariant().getGT(sample.getIndex()),
                     sample.getIndex());
 
             return true;
@@ -198,7 +198,7 @@ public class CollapsingCompHet extends CollapsingBase {
         if (output1.getCalledVariant().getVariantIdNegative4Indel()
                 != output2.getCalledVariant().getVariantIdNegative4Indel()) {
 
-            int geno2 = output2.getCalledVariant().getGenotype(sample.getIndex());
+            int geno2 = output2.getCalledVariant().getGT(sample.getIndex());
 
             if (output2.isQualifiedGeno(geno2)) {
 
@@ -225,11 +225,11 @@ public class CollapsingCompHet extends CollapsingBase {
                     sb.append(output2.getString(sample));
 
                     SampleVariantCount.update(output1.getCalledVariant().isSnv(),
-                            output1.getCalledVariant().getGenotype(sample.getIndex()),
+                            output1.getCalledVariant().getGT(sample.getIndex()),
                             sample.getIndex());
 
                     SampleVariantCount.update(output2.getCalledVariant().isSnv(),
-                            output2.getCalledVariant().getGenotype(sample.getIndex()),
+                            output2.getCalledVariant().getGT(sample.getIndex()),
                             sample.getIndex());
 
                     bwCompHet.write(sb.toString());
@@ -275,8 +275,8 @@ public class CollapsingCompHet extends CollapsingBase {
 
     private boolean isCoQualifiedGeno(CompHetOutput output1,
             CompHetOutput output2, int index) {
-        int geno1 = output1.getCalledVariant().getGenotype(index);
-        int geno2 = output2.getCalledVariant().getGenotype(index);
+        int geno1 = output1.getCalledVariant().getGT(index);
+        int geno2 = output2.getCalledVariant().getGT(index);
 
         return output1.isQualifiedGeno(geno1)
                 && output2.isQualifiedGeno(geno2);

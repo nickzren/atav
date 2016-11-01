@@ -118,7 +118,7 @@ public class ParentalOutput extends Output {
     }
 
     private boolean isChildGenoValid() {
-        childGeno = calledVar.getGenotype(child.getIndex());
+        childGeno = calledVar.getGT(child.getIndex());
 
         return isQualifiedGeno(childGeno);
     }
@@ -162,7 +162,7 @@ public class ParentalOutput extends Output {
 
     public boolean isParentValid(Sample parent) {
         this.parent = parent;
-        parentGeno = calledVar.getGenotype(parent.getIndex());
+        parentGeno = calledVar.getGT(parent.getIndex());
 
         return isParentBinomialValid();
     }
@@ -224,13 +224,13 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoverage(child.getIndex()))).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getDPBin(child.getIndex()))).append(",");
 
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.NA)).append(",");
-        sb.append(carrier != null ? carrier.getPassFailStatus() : "NA").append(",");
+        sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getFS() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getMQ() : Data.NA)).append(",");

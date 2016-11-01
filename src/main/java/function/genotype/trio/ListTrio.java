@@ -101,7 +101,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
                 if (output.isValid()) {
 
-                    int geno = output.getCalledVariant().getGenotype(trio.getChild().getIndex());
+                    int geno = output.getCalledVariant().getGT(trio.getChild().getIndex());
 
                     if (output.isQualifiedGeno(geno)) {
                         output.initDenovoFlag(trio.getChild());

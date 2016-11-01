@@ -29,6 +29,7 @@ public class VarAnnoOutput {
             + "Ref Allele,"
             + "Alt Allele,"
             + "Rs Number,"
+            // annotation data
             + "Transcript Stable Id,"
             + "Is CCDS Transcript,"
             + "Effect,"
@@ -41,6 +42,7 @@ public class VarAnnoOutput {
             + "Gene Name,"
             + "Artifacts in Gene,"
             + "All Effect Gene Transcript HGVS_p,"
+            // external data
             + EvsManager.getTitle()
             + ExacManager.getTitle()
             + KnownVarManager.getTitle()
@@ -59,12 +61,13 @@ public class VarAnnoOutput {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
+        
         sb.append(annotatedVar.getVariantIdStr()).append(",");
         sb.append(annotatedVar.getType()).append(",");
         sb.append(annotatedVar.getRefAllele()).append(",");
         sb.append(annotatedVar.getAllele()).append(",");
         sb.append(annotatedVar.getRsNumber()).append(",");
+        // annotation data
         sb.append(annotatedVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((annotatedVar.getStableId()))).append(",");
         sb.append(annotatedVar.getEffect()).append(",");
@@ -77,6 +80,7 @@ public class VarAnnoOutput {
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
         sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(annotatedVar.getGeneName()))).append(",");
         sb.append(annotatedVar.getAllGeneTranscript()).append(",");
+        // external data
         sb.append(annotatedVar.getEvsStr());
         sb.append(annotatedVar.getExacStr());
         sb.append(annotatedVar.getKnownVarStr());

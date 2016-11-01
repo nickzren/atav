@@ -80,7 +80,7 @@ public class Carrier extends NonCarrier {
         return mqRankSum;
     }
 
-    public String getPassFailStatus() {
+    public String getFILTER() {
         return passFailStatus;
     }
 

@@ -243,12 +243,12 @@ public class LogisticOutput extends StatisticOutput {
                  * penalty for parallel stream *
                  */
                 //   .parallel() // !! Switching to parallel !!
-                .filter(sample -> calledVar.getGenotype(sample.getIndex()) != Data.NA)
+                .filter(sample -> calledVar.getGT(sample.getIndex()) != Data.NA)
                 .collect(Collectors.toList());
 
         qualifiedGeno = qualifiedSamples
                 .stream()
-                .mapToInt(sample -> calledVar.getGenotype(sample.getIndex()))
+                .mapToInt(sample -> calledVar.getGT(sample.getIndex()))
                 .toArray();
     }
 

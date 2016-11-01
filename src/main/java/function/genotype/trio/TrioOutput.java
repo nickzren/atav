@@ -43,21 +43,21 @@ public class TrioOutput extends Output implements Comparable {
 
     public void initTrioFamilyData(Trio trio) {
         child = trio.getChild();
-        cGeno = calledVar.getGenotype(child.getIndex());
-        cSamtoolsRawCoverage = calledVar.getCoverage(child.getIndex());
+        cGeno = calledVar.getGT(child.getIndex());
+        cSamtoolsRawCoverage = calledVar.getDPBin(child.getIndex());
         cCarrier = calledVar.getCarrier(trio.getChild().getId());
 
         motherName = trio.getMotherName();
-        mGeno = calledVar.getGenotype(trio.getMotherIndex());
-        mSamtoolsRawCoverage = calledVar.getCoverage(trio.getMotherIndex());
+        mGeno = calledVar.getGT(trio.getMotherIndex());
+        mSamtoolsRawCoverage = calledVar.getDPBin(trio.getMotherIndex());
         Carrier carrier = calledVar.getCarrier(trio.getMotherId());
         mGatkFilteredCoverage = carrier != null ? carrier.getDP() : Data.NA;
         mReadsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
         mReadsRef = carrier != null ? carrier.getADRef() : Data.NA;
 
         fatherName = trio.getFatherName();
-        fGeno = calledVar.getGenotype(trio.getFatherIndex());
-        fSamtoolsRawCoverage = calledVar.getCoverage(trio.getFatherIndex());
+        fGeno = calledVar.getGT(trio.getFatherIndex());
+        fSamtoolsRawCoverage = calledVar.getDPBin(trio.getFatherIndex());
         carrier = calledVar.getCarrier(trio.getFatherId());
         fGatkFilteredCoverage = carrier != null ? carrier.getDP() : Data.NA;
         fReadsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
@@ -74,7 +74,7 @@ public class TrioOutput extends Output implements Comparable {
         if (id != Data.NA) {
             Sample sample = SampleManager.getMap().get(id);
 
-            int geno = calledVar.getGenotype(sample.getIndex());
+            int geno = calledVar.getGT(sample.getIndex());
             int type = getGenoType(geno, sample);
 
             deleteSampleGeno(type, sample.getPheno());
@@ -93,7 +93,7 @@ public class TrioOutput extends Output implements Comparable {
         if (id != Data.NA) {
             Sample sample = SampleManager.getMap().get(id);
 
-            int geno = calledVar.getGenotype(sample.getIndex());
+            int geno = calledVar.getGT(sample.getIndex());
             int type = getGenoType(geno, sample);
 
             addSampleGeno(type, sample.getPheno());
@@ -147,7 +147,7 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(FormatManager.getInteger(cReadsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(cReadsAlt, cCarrier != null ? cCarrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(cReadsAlt + cReadsRef, cReadsAlt, 0.5))).append(",");
-        sb.append(cCarrier != null ? cCarrier.getPassFailStatus() : "NA").append(",");
+        sb.append(cCarrier != null ? cCarrier.getFILTER() : "NA").append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getGQ() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getQD() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getMQ() : Data.NA)).append(",");

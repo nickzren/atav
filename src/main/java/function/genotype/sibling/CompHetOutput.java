@@ -114,10 +114,10 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getGerpScore());
         sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
-        sb.append(getGenoStr(calledVar.getGenotype(child1.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoverage(child1.getIndex()))).append(",");
-        sb.append(getGenoStr(calledVar.getGenotype(child2.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoverage(child2.getIndex()))).append(",");
+        sb.append(getGenoStr(calledVar.getGT(child1.getIndex()))).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getDPBin(child1.getIndex()))).append(",");
+        sb.append(getGenoStr(calledVar.getGT(child2.getIndex()))).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getDPBin(child2.getIndex()))).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCount[Index.CASE]).append(",");

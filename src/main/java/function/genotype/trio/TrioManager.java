@@ -613,8 +613,8 @@ public class TrioManager {
 
     private static boolean isCoQualifiedGeno(TrioOutput output1,
             TrioOutput output2, int index) {
-        int geno1 = output1.getCalledVariant().getGenotype(index);
-        int geno2 = output2.getCalledVariant().getGenotype(index);
+        int geno1 = output1.getCalledVariant().getGT(index);
+        int geno2 = output2.getCalledVariant().getGT(index);
 
         return output1.isQualifiedGeno(geno1)
                 && output2.isQualifiedGeno(geno2);

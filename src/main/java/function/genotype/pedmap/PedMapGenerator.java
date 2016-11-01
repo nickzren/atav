@@ -169,7 +169,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     private void outputTempGeno(CalledVariant calledVar) throws Exception {
         for (Sample sample : SampleManager.getList()) {
-            int geno = calledVar.getGenotype(sample.getIndex());
+            int geno = calledVar.getGT(sample.getIndex());
             switch (geno) {
                 case Index.HOM:
                     if (calledVar.isSnv()) {

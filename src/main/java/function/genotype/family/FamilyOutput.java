@@ -136,7 +136,7 @@ public class FamilyOutput extends Output {
 
         for (Sample sample : SampleManager.getList()) {
             if (familyId.equals(sample.getFamilyId())) {
-                geno = calledVar.getGenotype(sample.getIndex());
+                geno = calledVar.getGT(sample.getIndex());
                 pheno = (int) sample.getPheno();
                 type = getGenoType(geno, sample);
 

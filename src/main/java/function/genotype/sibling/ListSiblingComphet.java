@@ -203,21 +203,21 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
     private String getTrioCompHetFlag(CompHetOutput output1, CompHetOutput output2,
             Sample child, Sample mother, Sample father) {
-        int cGeno1 = output1.getCalledVariant().getGenotype(child.getIndex());
+        int cGeno1 = output1.getCalledVariant().getGT(child.getIndex());
 
-        int cCov1 = output1.getCalledVariant().getCoverage(child.getIndex());
-        int mGeno1 = output1.getCalledVariant().getGenotype(mother.getIndex());
-        int mCov1 = output1.getCalledVariant().getCoverage(mother.getIndex());
-        int fGeno1 = output1.getCalledVariant().getGenotype(father.getIndex());
-        int fCov1 = output1.getCalledVariant().getCoverage(father.getIndex());
+        int cCov1 = output1.getCalledVariant().getDPBin(child.getIndex());
+        int mGeno1 = output1.getCalledVariant().getGT(mother.getIndex());
+        int mCov1 = output1.getCalledVariant().getDPBin(mother.getIndex());
+        int fGeno1 = output1.getCalledVariant().getGT(father.getIndex());
+        int fCov1 = output1.getCalledVariant().getDPBin(father.getIndex());
 
-        int cGeno2 = output2.getCalledVariant().getGenotype(child.getIndex());
+        int cGeno2 = output2.getCalledVariant().getGT(child.getIndex());
 
-        int cCov2 = output2.getCalledVariant().getCoverage(child.getIndex());
-        int mGeno2 = output2.getCalledVariant().getGenotype(mother.getIndex());
-        int mCov2 = output2.getCalledVariant().getCoverage(mother.getIndex());
-        int fGeno2 = output2.getCalledVariant().getGenotype(father.getIndex());
-        int fCov2 = output2.getCalledVariant().getCoverage(father.getIndex());
+        int cCov2 = output2.getCalledVariant().getDPBin(child.getIndex());
+        int mGeno2 = output2.getCalledVariant().getGT(mother.getIndex());
+        int mCov2 = output2.getCalledVariant().getDPBin(mother.getIndex());
+        int fGeno2 = output2.getCalledVariant().getGT(father.getIndex());
+        int fCov2 = output2.getCalledVariant().getDPBin(father.getIndex());
 
         return TrioManager.getCompHetFlag(
                 cGeno1, cCov1,

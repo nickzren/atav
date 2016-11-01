@@ -111,7 +111,7 @@ public class CollapsingOutput extends Output {
 
     public void calculateLooFreq(Sample sample) {
         if (sample.getId() != Data.NA) {
-            int geno = calledVar.getGenotype(sample.getIndex());
+            int geno = calledVar.getGT(sample.getIndex());
             int pheno = (int) sample.getPheno();
             int type = getGenoType(geno, sample);
 
@@ -175,7 +175,7 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getAllele()).append(",");
         sb.append(calledVar.getGerpScore());
         sb.append(calledVar.getTrapScore());
-        sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
+        sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
         sb.append(sample.getName()).append(",");
         sb.append(sample.getPhenotype()).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
@@ -197,12 +197,12 @@ public class CollapsingOutput extends Output {
         sb.append(FormatManager.getDouble(looMAF)).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getDPBin(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.NA)).append(",");
-        sb.append(carrier != null ? carrier.getPassFailStatus() : "NA").append(",");
+        sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getFS() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getMQ() : Data.NA)).append(",");

@@ -120,8 +120,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getGerpScore());
         sb.append(calledVar.getTrapScore());
         sb.append(isMinorRef).append(",");
-        sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
+        sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getDPBin(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getAdAlt() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getADRef() : Data.NA)).append(",");

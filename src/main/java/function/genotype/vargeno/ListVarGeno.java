@@ -28,7 +28,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
             bwGenotypes.write(VarGenoOutput.getTitle());
             bwGenotypes.newLine();
-            //bwDirty = new BufferedWriter(new FileWriter(dirtyFilePath));
             bwSampleVariantCount = new BufferedWriter(new FileWriter(sampleVariantCountFilePath));
             bwSampleVariantCount.write(SampleVariantCount.getTitle());
             bwSampleVariantCount.newLine();
@@ -80,7 +79,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             if (output.isValid()) {
                 for (Sample sample : SampleManager.getList()) {
                     if (isCaseOnlyValid(sample)) {
-                        int geno = output.getCalledVariant().getGenotype(sample.getIndex());
+                        int geno = output.getCalledVariant().getGT(sample.getIndex());
 
                         if (output.isQualifiedGeno(geno)) {
                             bwGenotypes.write(output.getString(sample));

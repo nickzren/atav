@@ -14,8 +14,8 @@ public class CalledVariant extends AnnotatedVariant {
 
     private HashMap<Integer, Carrier> carrierMap = new HashMap<>();
     private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<>();
-    private int[] genotype = new int[SampleManager.getListSize()];
-    private int[] coverage = new int[SampleManager.getListSize()];
+    private int[] gt = new int[SampleManager.getListSize()];
+    private int[] dpBin = new int[SampleManager.getListSize()];
     private int[] qcFailSample = new int[2];
 
     public CalledVariant(String chr, int variantId, ResultSet rset) throws Exception {
@@ -51,7 +51,7 @@ public class CalledVariant extends AnnotatedVariant {
         isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(value);
     }
 
-    // initialize genotype & coverage array for better compute performance use
+    // initialize genotype & dpBin array for better compute performance use
     private void initGenoCovArray() {
         for (int s = 0; s < SampleManager.getListSize(); s++) {
             Sample sample = SampleManager.getList().get(s);
@@ -60,7 +60,7 @@ public class CalledVariant extends AnnotatedVariant {
             NonCarrier noncarrier = noncarrierMap.get(sample.getId());
 
             if (carrier != null) {
-                setGenoCov(carrier.getGenotype(), carrier.getDPBin(), s);
+                setGenoDPBin(carrier.getGenotype(), carrier.getDPBin(), s);
 
                 if (carrier.getGenotype() == Data.NA) {
                     // have to remove it for init Non-carrier map
@@ -68,32 +68,32 @@ public class CalledVariant extends AnnotatedVariant {
                     carrierMap.remove(sample.getId());
                 }
             } else if (noncarrier != null) {
-                setGenoCov(noncarrier.getGenotype(), noncarrier.getDPBin(), s);
+                setGenoDPBin(noncarrier.getGenotype(), noncarrier.getDPBin(), s);
             } else {
-                setGenoCov(Data.NA, Data.NA, s);
+                setGenoDPBin(Data.NA, Data.NA, s);
             }
         }
     }
 
-    private void setGenoCov(int geno, int cov, int s) {
-        genotype[s] = geno;
-        coverage[s] = cov;
+    private void setGenoDPBin(int geno, int bin, int s) {
+        gt[s] = geno;
+        dpBin[s] = bin;
     }
 
-    public int getCoverage(int index) {
+    public int getDPBin(int index) {
         if (index == Data.NA) {
             return Data.NA;
         }
 
-        return coverage[index];
+        return dpBin[index];
     }
 
-    public int getGenotype(int index) {
+    public int getGT(int index) {
         if (index == Data.NA) {
             return Data.NA;
         }
 
-        return genotype[index];
+        return gt[index];
     }
 
     public Carrier getCarrier(int sampleId) {

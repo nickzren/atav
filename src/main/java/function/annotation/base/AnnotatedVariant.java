@@ -109,7 +109,7 @@ public class AnnotatedVariant extends Variant {
 
     public void update(Annotation annotation) {
         if (isValid) {
-            if (effect == null) { // init most damaging effect annotations
+            if (effect.isEmpty()) { // init most damaging effect annotations
                 stableId = annotation.stableId;
                 stableIdStr = annotation.getStableId();
                 effect = annotation.effect;
