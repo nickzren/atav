@@ -28,10 +28,12 @@ public class SampleDPBin {
     }
 
     public int getDPBin(int varPosIndex) {
-        if (varPosIndex < endPos) {
-            return dpBin;
-        } else if (endPos != 0) {
-            dpBinCursor = dpBinPos + 1; // move cursor for new variant
+        if (endPos != 0) {
+            if (varPosIndex < endPos) {
+                return dpBin;
+            } else {
+                dpBinCursor = dpBinPos + 1; // move cursor for new variant
+            }
         }
 
         StringBuilder sb = new StringBuilder();

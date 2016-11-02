@@ -80,8 +80,8 @@ public class DPBinBlockManager {
             int posIndex,
             int blockId) {
         try {
-            String sql = "SELECT sample_id, DP_string FROM DP_bins_chr" + var.getChrStr() + " d," + ALL_SAMPLE_ID_TABLE + " t "
-                    + "WHERE d.block_id = " + blockId + " AND d.sample_id = t.id";
+            String sql = "SELECT sample_id, DP_string FROM DP_bins_chr" + var.getChrStr() + "," + ALL_SAMPLE_ID_TABLE
+                    + " WHERE block_id = " + blockId + " AND sample_id = id";
 
             ResultSet rs = DBManager.executeQuery(sql);
             while (rs.next()) {
