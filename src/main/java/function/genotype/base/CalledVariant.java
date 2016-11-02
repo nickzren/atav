@@ -26,15 +26,19 @@ public class CalledVariant extends AnnotatedVariant {
 
     private void init() throws Exception {
         if (isValid) {
-            CarrierBlockManager.init(this);
+            CarrierBlockManager.initCarrierMap(carrierMap, this);
 
-            carrierMap = CarrierBlockManager.getVarCarrierMap(variantId);
-//
-            if (carrierMap == null) {
+            if (carrierMap.isEmpty()) {
                 isValid = false;
                 return;
             }
-//
+
+//            CarrierBlockManager.init(this);
+//            if (carrierMap == null) {
+//                isValid = false;
+//                return;
+//            }
+
             DPBinBlockManager.initCarrierAndNonCarrierByDPBin(this, carrierMap, noncarrierMap);
 
             initGenoCovArray();

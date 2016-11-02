@@ -83,6 +83,33 @@ public class CarrierBlockManager {
         }
     }
 
+    public static void initCarrierMap(HashMap<Integer, Carrier> carrierMap, Variant var) {
+        String sql = "SELECT * FROM called_variant_chr" + var.getChrStr() + " ,"
+                + SampleManager.ALL_SAMPLE_ID_TABLE
+                + " WHERE block_id = " + currentBlockId
+                + " AND highest_impact+0 <= " + EffectManager.getLowestImpact()
+                + " AND sample_id = id"
+                + " AND variant_id =" + var.getVariantId();
+
+        try {
+            ResultSet rs = DBManager.executeQuery(sql);
+
+            while (rs.next()) {
+                Carrier carrier = new Carrier(rs);
+
+                carrier.checkValidOnXY(var);
+
+                carrier.applyQualityFilter();
+
+                carrierMap.put(carrier.getSampleId(), carrier);
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
     public static HashMap<Integer, Carrier> getVarCarrierMap(int variantId) {
         return blockCarrierMap.get(variantId);
     }
