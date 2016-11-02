@@ -26,6 +26,7 @@ public class CalledVariant extends AnnotatedVariant {
 
     private void init() throws Exception {
         if (isValid) {
+            // single variant carriers data process
             CarrierBlockManager.initCarrierMap(carrierMap, this);
 
             if (carrierMap.isEmpty()) {
@@ -33,7 +34,11 @@ public class CalledVariant extends AnnotatedVariant {
                 return;
             }
 
+            // block variants carriers data process
 //            CarrierBlockManager.init(this);
+//            
+//            carrierMap = CarrierBlockManager.getVarCarrierMap(variantId);
+//            
 //            if (carrierMap == null) {
 //                isValid = false;
 //                return;

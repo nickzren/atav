@@ -84,9 +84,11 @@ public class CarrierBlockManager {
     }
 
     public static void initCarrierMap(HashMap<Integer, Carrier> carrierMap, Variant var) {
+        int blockId = Math.floorDiv(var.getStartPosition(), CARRIER_BLOCK_SIZE);
+        
         String sql = "SELECT * FROM called_variant_chr" + var.getChrStr() + " ,"
                 + SampleManager.ALL_SAMPLE_ID_TABLE
-                + " WHERE block_id = " + currentBlockId
+                + " WHERE block_id = " + blockId
                 + " AND highest_impact+0 <= " + EffectManager.getLowestImpact()
                 + " AND sample_id = id"
                 + " AND variant_id =" + var.getVariantId();
