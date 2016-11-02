@@ -36,6 +36,7 @@ public class CarrierBlockManager {
     private static void initBlockCarrierMap(Variant var) {
         String sql = "SELECT * FROM called_variant_chr" + var.getChrStr() + " ,"
                 + SampleManager.ALL_SAMPLE_ID_TABLE
+                + " FORCE INDEX(PRIMARY)"
                 + " WHERE block_id = " + currentBlockId
                 + " AND highest_impact+0 <= " + EffectManager.getLowestImpact()
                 + " AND sample_id = id ";
@@ -88,6 +89,7 @@ public class CarrierBlockManager {
         
         String sql = "SELECT * FROM called_variant_chr" + var.getChrStr() + " ,"
                 + SampleManager.ALL_SAMPLE_ID_TABLE
+                + " FORCE INDEX(PRIMARY)"
                 + " WHERE block_id = " + blockId
                 + " AND highest_impact+0 <= " + EffectManager.getLowestImpact()
                 + " AND sample_id = id"
