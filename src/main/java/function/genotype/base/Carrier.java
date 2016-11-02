@@ -28,6 +28,7 @@ public class Carrier extends NonCarrier {
         sampleId = rs.getInt("sample_id");
         gt = rs.getInt("GT");
         dp = rs.getInt("DP");
+        dpBin = Data.NA;
         adRef = rs.getInt("AD_REF");
         adAlt = rs.getInt("AD_ALT");
         gq = FormatManager.getFloat(rs, "GQ");
