@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import utils.CommandManager;
@@ -29,7 +28,7 @@ public class EffectManager {
     // user input values
     private static HashSet<String> inputEffectSet = new HashSet<>();
     private static HashSet<Integer> inputIdSet = new HashSet<>();
-    private static StringJoiner inputImpactSJ = new StringJoiner(",");
+    private static int lowestImpact = Impact.HIGH.getValue(); // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
 
     private static boolean isUsed = false;
 
@@ -93,9 +92,11 @@ public class EffectManager {
         if (!inputEffectSet.isEmpty()) {
             isUsed = true;
 
-            inputImpactSet.stream().forEach((impact) -> {
-                inputImpactSJ.add(String.valueOf(impact));
-            });
+            for (int impact : inputImpactSet) {
+                if (lowestImpact < impact) {
+                    lowestImpact = impact;
+                }
+            }
         }
     }
 
@@ -124,11 +125,11 @@ public class EffectManager {
         return id2EffectMap.get(id);
     }
 
-    public static String getImpactStr() {
+    public static int getLowestImpact() {
         if (!inputEffectSet.isEmpty()) {
-            return inputImpactSJ.toString();
+            return lowestImpact;
         } else {
-            return "1,2,3,4"; // HIGH(1), MODERATE(2), LOW(3), MODIFIER(4);
+            return 4; // MODIFIER(4)
         }
     }
 

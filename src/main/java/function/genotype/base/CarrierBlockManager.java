@@ -37,7 +37,7 @@ public class CarrierBlockManager {
         String sql = "SELECT * FROM called_variant_chr" + var.getChrStr() + " ,"
                 + SampleManager.ALL_SAMPLE_ID_TABLE
                 + " WHERE block_id = " + currentBlockId
-                + " AND highest_impact+0 IN (" + EffectManager.getImpactStr() + ")"
+                + " AND highest_impact+0 <= " + EffectManager.getLowestImpact()
                 + " AND sample_id = id ";
 
         try {
