@@ -23,12 +23,19 @@ public class EffectManager {
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
     private static HashMap<String, Integer> effect2IdMap = new HashMap<>();
-    private static HashMap<String, Integer> effect2ImpactMap = new HashMap<>();
+    private static HashMap<String, Impact> effect2ImpactMap = new HashMap<>();
 
     // user input values
     private static HashSet<String> inputEffectSet = new HashSet<>();
     private static HashSet<Integer> inputIdSet = new HashSet<>();
-    private static int lowestImpact = Impact.HIGH.getValue(); // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
+    private static HashSet<Impact> inputImpactSet = new HashSet<>();
+
+    private static Impact lowestInputImpact = Impact.HIGH; // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
+    private static final String HIGH_IMPACT = "('HIGH')";
+    private static final String MODERATE_IMPACT = "('HIGH','MODERATE')";
+    private static final String LOW_IMPACT = "('HIGH','MODERATE','LOW')";
+    private static final String MODIFIER_IMPACT = "('HIGH','MODERATE','LOW','MODIFIER')";
+    private static String impactList4SQL = MODIFIER_IMPACT; // default included all
 
     private static boolean isUsed = false;
 
@@ -51,7 +58,7 @@ public class EffectManager {
 
                 id2EffectMap.put(id, effect);
                 effect2IdMap.put(effect, id);
-                effect2ImpactMap.put(effect, impact.getValue());
+                effect2ImpactMap.put(effect, impact);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -66,18 +73,28 @@ public class EffectManager {
         }
 
         if (CommandManager.isFileExist(inputEffect)) {
-            String effectFilePath = inputEffect;
-
-            try (Stream<String> stream = Files.lines(Paths.get(effectFilePath))) {
-                inputEffect = stream.map(line -> line.replaceAll("( )+", ""))
-                        .collect(Collectors.joining(","));
-            } catch (IOException e) {
-                ErrorManager.send(e);
-            }
+            inputEffect = initEffectFromFile(inputEffect);
         }
 
-        HashSet<Integer> inputImpactSet = new HashSet<>();
+        initEffectSet(inputEffect);
 
+        initLowestImpact();
+    }
+
+    private static String initEffectFromFile(String inputEffect) {
+        String effectFilePath = inputEffect;
+
+        try (Stream<String> stream = Files.lines(Paths.get(effectFilePath))) {
+            inputEffect = stream.map(line -> line.replaceAll("( )+", ""))
+                    .collect(Collectors.joining(","));
+        } catch (IOException e) {
+            ErrorManager.send(e);
+        }
+
+        return inputEffect;
+    }
+
+    private static void initEffectSet(String inputEffect) {
         for (String effect : inputEffect.split(",")) {
             if (!effect2IdMap.containsKey(effect)) {
                 LogManager.writeAndPrint("Invalid effect: " + effect);
@@ -88,14 +105,33 @@ public class EffectManager {
             inputIdSet.add(effect2IdMap.get(effect));
             inputImpactSet.add(effect2ImpactMap.get(effect));
         }
+    }
 
+    private static void initLowestImpact() {
         if (!inputEffectSet.isEmpty()) {
             isUsed = true;
 
-            for (int impact : inputImpactSet) {
-                if (lowestImpact < impact) {
-                    lowestImpact = impact;
+            for (Impact impact : inputImpactSet) {
+                if (lowestInputImpact.getValue() < impact.getValue()) {
+                    lowestInputImpact = impact;
                 }
+            }
+
+            switch (lowestInputImpact) {
+                case HIGH:
+                    impactList4SQL = HIGH_IMPACT;
+                    break;
+                case MODERATE:
+                    impactList4SQL = MODERATE_IMPACT;
+                    break;
+                case LOW:
+                    impactList4SQL = LOW_IMPACT;
+                    break;
+                case MODIFIER:
+                    impactList4SQL = MODIFIER_IMPACT;
+                    break;
+                default:
+                    ErrorManager.print("Unknown impact: " + lowestInputImpact);
             }
         }
     }
@@ -125,12 +161,8 @@ public class EffectManager {
         return id2EffectMap.get(id);
     }
 
-    public static int getLowestImpact() {
-        if (!inputEffectSet.isEmpty()) {
-            return lowestImpact;
-        } else {
-            return 4; // MODIFIER(4)
-        }
+    public static String getImpactList4SQL() {
+        return impactList4SQL;
     }
 
     public static boolean isUsed() {

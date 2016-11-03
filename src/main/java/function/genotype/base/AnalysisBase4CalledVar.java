@@ -28,7 +28,7 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
             rset = getAnnotationList(region);
             
-            while (rset.next()) {
+            while (rset.next()) {                
                 annotation.init(rset, region.getChrStr());
                 
                 if (annotation.isValid()) {
