@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import utils.FormatManager;
 import utils.MathManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -46,6 +47,13 @@ public class CoverageSummary extends CoverageAnalysisBase {
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
+    }
+
+    @Override
+    public void doAfterCloseOutput() {
+        super.doAfterCloseOutput();
+
+        ThirdPartyToolManager.gzipFile(coverageDetailsByExonFilePath);
     }
 
     @Override
