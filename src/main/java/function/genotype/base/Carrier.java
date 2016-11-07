@@ -22,7 +22,7 @@ public class Carrier extends NonCarrier {
     private float qual;
     private float readPosRankSum;
     private float mqRankSum;
-    private String passFailStatus;
+    private int filterValue; // PASS(1), LIKELY(2), INTERMEDIATE(3), FAIL(4)
 
     public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");
@@ -38,7 +38,7 @@ public class Carrier extends NonCarrier {
         qual = FormatManager.getFloat(rs, "QUAL");
         readPosRankSum = FormatManager.getFloat(rs, "ReadPosRankSum");
         mqRankSum = FormatManager.getFloat(rs, "MQRankSum");
-        passFailStatus = rs.getString("FILTER");
+        filterValue = rs.getInt("FILTER+0");
     }
 
     public int getDP() {
@@ -82,12 +82,12 @@ public class Carrier extends NonCarrier {
     }
 
     public String getFILTER() {
-        return passFailStatus;
+        return GenotypeLevelFilterCommand.VCF_FILTER[filterValue - 1];
     }
 
     public void applyQualityFilter() {
         if (gt != Data.NA) {
-            if (!GenotypeLevelFilterCommand.isVarStatusValid(passFailStatus)
+            if (!GenotypeLevelFilterCommand.isVcfFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isGqValid(gq)
                     || !GenotypeLevelFilterCommand.isFsValid(fs)
                     || !GenotypeLevelFilterCommand.isMqValid(mq)

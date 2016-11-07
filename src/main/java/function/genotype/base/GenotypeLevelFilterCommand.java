@@ -3,12 +3,13 @@ package function.genotype.base;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkRangeValid;
-import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import static utils.CommandManager.getValidRange;
 import utils.CommandOption;
+import static utils.CommandManager.checkValuesValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -29,7 +30,7 @@ public class GenotypeLevelFilterCommand {
     public static int minCtrlCoverageNoCall = Data.NO_FILTER;
     public static int minVarPresent = 1; // special case
     public static int minCaseCarrier = Data.NO_FILTER;
-    public static String[] varStatus; // null: no filer or all    
+    public static int[] vcfFilter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
     public static double[] homPercentAltRead = null;
     public static double genotypeQualGQ = Data.NO_FILTER;
@@ -41,8 +42,8 @@ public class GenotypeLevelFilterCommand {
     public static double mapQualRankSum = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
-    
-     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
+
+    public static final String[] VCF_FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -103,13 +104,16 @@ public class GenotypeLevelFilterCommand {
                     minCaseCarrier = getValidInteger(option);
                     break;
                 case "--var-status":
-                    checkValueValid(VARIANT_STATUS, option);
-                    String str = option.getValue().replace("+", ",");
-                    if (str.contains("all")) {
-                        varStatus = null;
-                    } else {
-                        varStatus = str.split(",");
-                    }   break;
+                case "--vcf-filter":
+                    checkValuesValid(VCF_FILTER, option);
+                    String[] tmp = option.getValue().split(",");
+
+                    vcfFilter = new int[tmp.length];
+
+                    for (int i = 0; i < tmp.length; i++) {
+                        vcfFilter[i] = Enum.FILTER.valueOf(tmp[i]).getValue();
+                    }
+                    break;
                 case "--het-percent-alt-read":
                     checkRangeValid("0-1", option);
                     hetPercentAltRead = getValidRange(option);
@@ -182,12 +186,12 @@ public class GenotypeLevelFilterCommand {
             }
         }
     }
-    
+
     public static boolean isMaxCtrlMafValid(double value) {
         if (maxCtrlMaf == Data.NO_FILTER) {
             return true;
         }
-        
+
         return value <= maxCtrlMaf;
     }
 
@@ -223,20 +227,14 @@ public class GenotypeLevelFilterCommand {
         return value >= minCaseCarrier;
     }
 
-    public static boolean isVarStatusValid(String value) {
-        if (varStatus == null) { // no filter or all
+    public static boolean isVcfFilterValid(int value) {
+        if (vcfFilter == null) { // no filter
             return true;
         }
 
-        if (value == null) {
-            if (isQcMissingIncluded) {
+        for (int tmp : vcfFilter) {
+            if (value == tmp) {
                 return true;
-            }
-        } else {
-            for (String str : varStatus) {
-                if (value.equals(str)) {
-                    return true;
-                }
             }
         }
 
@@ -252,10 +250,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= genotypeQualGQ) {
-                return true;
-            }
+        } else if (value >= genotypeQualGQ) {
+            return true;
         }
 
         return false;
@@ -270,10 +266,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value <= strandBiasFS) {
-                return true;
-            }
+        } else if (value <= strandBiasFS) {
+            return true;
         }
 
         return false;
@@ -288,10 +282,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= rmsMapQualMQ) {
-                return true;
-            }
+        } else if (value >= rmsMapQualMQ) {
+            return true;
         }
 
         return false;
@@ -306,10 +298,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= qualByDepthQD) {
-                return true;
-            }
+        } else if (value >= qualByDepthQD) {
+            return true;
         }
 
         return false;
@@ -324,10 +314,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= qual) {
-                return true;
-            }
+        } else if (value >= qual) {
+            return true;
         }
 
         return false;
@@ -342,10 +330,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= readPosRankSum) {
-                return true;
-            }
+        } else if (value >= readPosRankSum) {
+            return true;
         }
 
         return false;
@@ -360,10 +346,8 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else {
-            if (value >= mapQualRankSum) {
-                return true;
-            }
+        } else if (value >= mapQualRankSum) {
+            return true;
         }
 
         return false;
