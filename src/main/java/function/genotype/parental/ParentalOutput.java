@@ -200,7 +200,7 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(parentBinomial)).append(",");
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
-        sb.append(calledVar.getRsNumber()).append(",");
+        sb.append(calledVar.getRsNumberStr()).append(",");
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(calledVar.getGerpScore());

@@ -66,7 +66,7 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getType()).append(",");
         sb.append(annotatedVar.getRefAllele()).append(",");
         sb.append(annotatedVar.getAllele()).append(",");
-        sb.append(annotatedVar.getRsNumber()).append(",");
+        sb.append(annotatedVar.getRsNumberStr()).append(",");
         // annotation data
         sb.append(annotatedVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((annotatedVar.getStableId()))).append(",");

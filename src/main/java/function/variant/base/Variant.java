@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
 
@@ -13,7 +14,7 @@ public class Variant extends Region {
     public String variantIdStr;
     public String allele;
     public String refAllele;
-    public String rsNumber;
+    public int rsNumber;
     //Indel attributes
     private boolean isIndel;
 
@@ -23,7 +24,7 @@ public class Variant extends Region {
         int pos = rset.getInt("POS");
         allele = rset.getString("ALT");
         refAllele = rset.getString("REF");
-        rsNumber = FormatManager.getString(rset.getString("rs_number"));
+        rsNumber = FormatManager.getInt(rset, "rs_number");
 
         isIndel = rset.getInt("indel") == 1;
 
@@ -67,8 +68,16 @@ public class Variant extends Region {
         return refAllele;
     }
 
-    public String getRsNumber() {
+    public int getRsNumber() {
         return rsNumber;
+    }
+    
+    public String getRsNumberStr() {
+        if (rsNumber == Data.NA) {
+            return "NA";
+        }
+
+        return "rs" + rsNumber;
     }
 
     public boolean isSnv() {

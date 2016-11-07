@@ -9,9 +9,11 @@ import function.genotype.trio.TrioCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import utils.DBManager;
 
 /**
  *
@@ -23,7 +25,7 @@ public class VariantManager {
     public static final String[] VARIANT_TYPE = {"snv", "indel"};
 
     private static HashSet<String> includeVariantSet = new HashSet<>();
-    private static HashSet<String> includeRsNumberSet = new HashSet<>();
+    private static HashSet<Integer> includeRsNumberSet = new HashSet<>();
     private static HashSet<String> excludeVariantSet = new HashSet<>();
     private static ArrayList<String> includeVariantPosList = new ArrayList<>();
     private static ArrayList<String> includeChrList = new ArrayList<>();
@@ -71,7 +73,7 @@ public class VariantManager {
         }
     }
 
-    public static void initByRsNumber(String input, HashSet<String> rsNumberSet, boolean isInclude)
+    public static void initByRsNumber(String input, HashSet<Integer> rsNumberSet, boolean isInclude)
             throws Exception {
         if (input.isEmpty()) {
             return;
@@ -118,7 +120,7 @@ public class VariantManager {
     }
 
     private static void initFromRsNumberFile(File f,
-            HashSet<String> rsNumberSet, boolean isInclude) {
+            HashSet<Integer> rsNumberSet, boolean isInclude) {
         String lineStr = "";
         int lineNum = 0;
 
@@ -192,48 +194,34 @@ public class VariantManager {
         }
     }
 
-    private static void addRsNumberToList(String str, HashSet<String> rsNumberSet,
+    private static void addRsNumberToList(String str, HashSet<Integer> rsNumberSet,
             boolean isInclude) throws SQLException {
-        str = str.replaceAll("( )+", "");
+        int value = Integer.valueOf(str.replaceAll("( )+", "").replace("rs", ""));
 
-        if (!rsNumberSet.contains(str)) {
-            String varPos = VariantManager.getVariantPositionByRS(str);
+        if (!rsNumberSet.contains(value)) {
+            String varPos = VariantManager.getVariantPositionByRS(value);
 
             if (!varPos.isEmpty()) {
                 if (isInclude) {
                     add2IncludeVariantPosSet(varPos);
                 }
 
-                rsNumberSet.add(str);
+                rsNumberSet.add(value);
             }
         }
     }
 
-    private static String getVariantPositionByRS(String rs) throws SQLException {
-        String varPos = getVariantPositionByRS(rs, "snv");
+    private static String getVariantPositionByRS(int rs) throws SQLException {
+       String sql = "select chrom, POS from rs_number "
+                + "where rs_number = " + rs;
 
-        if (varPos.isEmpty()) {
-            varPos = getVariantPositionByRS(rs, "indel");
+        ResultSet rset = DBManager.executeQuery(sql);
+
+        if (rset.next()) {
+            String chr = rset.getString("chrom");
+            int pos = rset.getInt("POS");
+            return chr + "-" + pos;
         }
-
-        return varPos;
-    }
-
-    private static String getVariantPositionByRS(String rs, String type) throws SQLException {
-//        String sql = "select name, seq_region_pos from " + type + " v, seq_region s "
-//                + "where rs_number = '" + rs + "' and "
-//                + "coord_system_id = 2 and "
-//                + "v.seq_region_id = s.seq_region_id";
-//
-//        ResultSet rset = DBManager.executeQuery(sql);
-//
-//        String chr = "";
-//        int pos = 0;
-//        if (rset.next()) {
-//            chr = rset.getString("name");
-//            pos = rset.getInt("seq_region_pos");
-//            return chr + "-" + pos + "-" + type;
-//        }
 
         return "";
     }
@@ -307,7 +295,7 @@ public class VariantManager {
         }
     }
 
-    private static boolean isRsNumberIncluded(String rs) {
+    private static boolean isRsNumberIncluded(int rs) {
         if (includeRsNumberSet.isEmpty()) {
             // only when --rs-number option not used, return true
             return true;

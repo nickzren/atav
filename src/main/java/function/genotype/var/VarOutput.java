@@ -87,7 +87,7 @@ public class VarOutput extends Output {
         sb.append(calledVar.getType()).append(",");
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
-        sb.append(calledVar.getRsNumber()).append(",");
+        sb.append(calledVar.getRsNumberStr()).append(",");
         // annotation data
         sb.append(calledVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");

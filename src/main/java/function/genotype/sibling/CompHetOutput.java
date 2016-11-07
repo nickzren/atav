@@ -108,7 +108,7 @@ public class CompHetOutput extends Output implements Comparable {
 
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
-        sb.append(calledVar.getRsNumber()).append(",");
+        sb.append(calledVar.getRsNumberStr()).append(",");
         sb.append(calledVar.getRefAllele()).append(",");
         sb.append(calledVar.getAllele()).append(",");
         sb.append(calledVar.getGerpScore());
