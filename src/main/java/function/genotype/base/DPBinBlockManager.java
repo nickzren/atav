@@ -28,6 +28,15 @@ public class DPBinBlockManager {
         dpBin.put('d', 20);
         dpBin.put('e', 201);
     }
+    
+    // for GQ bin
+//    public static void init() {
+//        dpBin.put('a', Data.NA);
+//        dpBin.put('b', 5);
+//        dpBin.put('c', 15);
+//        dpBin.put('d', 20);
+//        dpBin.put('e', 60);
+//    }
 
     public static void add(SampleDPBin sampleDPBin) {
         currentBlockList.add(sampleDPBin);

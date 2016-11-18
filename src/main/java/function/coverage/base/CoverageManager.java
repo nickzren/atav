@@ -4,10 +4,10 @@ import function.genotype.base.DPBinBlockManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import function.variant.base.Region;
-import global.Index;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
 
@@ -20,11 +20,8 @@ public class CoverageManager {
     public static HashMap<Integer, Integer> getSampleCoveredLengthMap(Region region) {
         HashMap<Integer, Integer> sampleCoveredLengthMap = new HashMap<>();
 
-        String strQuery = getCoverageString(Index.GENOME, region);
-        CoverageManager.initSampleCoveredLengthMap(strQuery, region, sampleCoveredLengthMap);
-
-        strQuery = getCoverageString(Index.EXOME, region);
-        CoverageManager.initSampleCoveredLengthMap(strQuery, region, sampleCoveredLengthMap);
+        String sql = getDPBinsSQLStr(region);
+        CoverageManager.initSampleCoveredLengthMap(sql, region, sampleCoveredLengthMap);
 
         return sampleCoveredLengthMap;
     }
@@ -32,48 +29,32 @@ public class CoverageManager {
     public static SiteCoverage getSiteCoverage(Region region) {
         SiteCoverage siteCoverage = new SiteCoverage(region.getLength());
 
-        String strQuery = getCoverageString(Index.GENOME, region);
-        CoverageManager.initSiteCoverage(strQuery, region, siteCoverage);
-
-        strQuery = getCoverageString(Index.EXOME, region);
-        CoverageManager.initSiteCoverage(strQuery, region, siteCoverage);
+        String sql = getDPBinsSQLStr(region);
+        CoverageManager.initSiteCoverage(sql, region, siteCoverage);
 
         return siteCoverage;
     }
 
-    public static String getCoverageString(int sampleTypeIndex, Region region) {
-        String str = "SELECT sample_id, position, min_coverage FROM "
-                + "_SAMPLE_TYPE__read_coverage_1024_chr_CHROM_ c ,"
-                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
-                + "WHERE position in (_POSITIONS_) "
-                + "AND c.sample_id = t.id ";
+    public static String getDPBinsSQLStr(Region region) {
+        String str = "SELECT * FROM DP_bins_chr" + region.getChrStr() + ","
+                + SampleManager.ALL_SAMPLE_ID_TABLE
+                + " WHERE block_id in (" + getBlockIdStr(region) + ")"
+                + " AND sample_id = id ";
 
-        str = str.replaceAll("_SAMPLE_TYPE_", SampleManager.SAMPLE_TYPE[sampleTypeIndex]);
-        str = str.replaceAll("_CHROM_", region.getChrStr());
-        str = str.replaceAll("_POSITIONS_", getPositionString(region));
         return str;
     }
 
-    private static int getPosition(int pos) { //optimize it later
-        int posIndex = pos % DPBinBlockManager.DP_BIN_BLOCK_SIZE; // coverage data block size is 1024
-        if (posIndex == 0) {
-            posIndex = DPBinBlockManager.DP_BIN_BLOCK_SIZE; // block boundary is ( ] 
-        }
-        return pos - posIndex + DPBinBlockManager.DP_BIN_BLOCK_SIZE;
-    }
-
-    private static String getPositionString(Region region) {
-        int firstIndex = getPosition(region.getStartPosition());
-        int lastIndex = getPosition(region.getEndPosition());
-        if (firstIndex == lastIndex) {
-            return Integer.toString(firstIndex);
+    private static String getBlockIdStr(Region region) {
+        int startPosBlockId = Math.floorDiv(region.getStartPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
+        int endPosBlockId = Math.floorDiv(region.getEndPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
+        if (startPosBlockId == endPosBlockId) {
+            return Integer.toString(startPosBlockId);
         } else {
-            StringBuilder sb = new StringBuilder();
-            for (int index = firstIndex; index < lastIndex; index += DPBinBlockManager.DP_BIN_BLOCK_SIZE) {
-                sb.append(index).append(",");
+            StringJoiner sj = new StringJoiner(",");
+            for (int blockId = startPosBlockId; blockId <= endPosBlockId; blockId++) {
+                sj.add(Integer.toString(blockId));
             }
-            sb.append(lastIndex);
-            return sb.toString();
+            return sj.toString();
         }
     }
 
@@ -82,9 +63,9 @@ public class CoverageManager {
         try {
             ResultSet rs = DBManager.executeQuery(strQuery);
             while (rs.next()) {
-                String strCoverage = rs.getString("min_coverage");
-                int position = rs.getInt("position");
-                ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(position, strCoverage);
+                int blockId = rs.getInt("block_id");
+                String dpStr = rs.getString("DP_string");
+                ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(blockId, dpStr);
 
                 for (CoverageInterval ci : cilist) {
                     int overlap = region.intersectLength(ci.getStartPos(), ci.getEndPos());
@@ -107,21 +88,20 @@ public class CoverageManager {
         return sampleCoveredLengthMap;
     }
 
-    private static void initSiteCoverage(String strQuery, Region region, 
+    private static void initSiteCoverage(String strQuery, Region region,
             SiteCoverage siteCoverage) {
         try {
             ResultSet rs = DBManager.executeQuery(strQuery);
             while (rs.next()) {
-                String strCoverage = rs.getString("min_coverage");
-                int position = rs.getInt("position");
-                int sampleid = rs.getInt("sample_id");
-                ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(position, strCoverage);
+                String dpStr = rs.getString("DP_string");
+                int blockId = rs.getInt("block_id");
+                int sampleId = rs.getInt("sample_id");
+                ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(blockId, dpStr);
                 for (CoverageInterval ci : cilist) {
                     Region cr = region.intersect(ci.getStartPos(), ci.getEndPos());
                     if (cr != null) {
                         for (int i = cr.getStartPosition(); i <= cr.getEndPosition(); i++) {
-                            siteCoverage.addValue(
-                                    SampleManager.getMap().get(sampleid).isCase(),
+                            siteCoverage.addValue(SampleManager.getMap().get(sampleId).isCase(),
                                     i - region.getStartPosition());
                         }
                     }
@@ -134,21 +114,30 @@ public class CoverageManager {
     }
 
     private static ArrayList<CoverageInterval> getCoverageIntervalListByMinCoverage(
-            int sampleBlockPos, String sampleCovBinStr) {
-        String[] allCovBinArray = sampleCovBinStr.split(",");
+            int blockId, String dpBinStr) {
+
+        StringBuilder sb = new StringBuilder();
 
         ArrayList<CoverageInterval> list = new ArrayList<>();
 
         int endIndex = 0;
 
-        for (String oneCovBinStr : allCovBinArray) {
-            String oneCovBinLength = oneCovBinStr.substring(0, oneCovBinStr.length() - 1);
-            int startIndex = endIndex + 1;
-            endIndex += Integer.valueOf(oneCovBinLength);
-            char covStr = oneCovBinStr.charAt(oneCovBinStr.length() - 1);
-            int cov = DPBinBlockManager.getCoverageByBin(covStr);
-            if (cov >= GenotypeLevelFilterCommand.minCoverage) {
-                list.add(new CoverageInterval(sampleBlockPos, startIndex, endIndex));
+        for (int pos = 0; pos < dpBinStr.length(); pos++) {
+            char c = dpBinStr.charAt(pos);
+
+            if (!DPBinBlockManager.getCoverageBin().containsKey(c)) {
+                sb.append(c);
+            } else {
+                int startIndex = endIndex + 1;
+                endIndex += Integer.parseInt(sb.toString(), 36);
+
+                int dpBin = DPBinBlockManager.getCoverageByBin(c);
+
+                if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
+                    list.add(new CoverageInterval(blockId, startIndex, endIndex));
+                }
+
+                sb.setLength(0);
             }
         }
 

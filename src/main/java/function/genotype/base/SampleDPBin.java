@@ -47,7 +47,7 @@ public class SampleDPBin {
                 endPos += Integer.parseInt(sb.toString(), 36); // add cov bin inteval
                 sb.setLength(0); // clear StringBuilder
 
-                if (varPosIndex < endPos) {
+                if (varPosIndex <= endPos) {
                     dpBin = DPBinBlockManager.getCoverageByBin(bin);
                     return dpBin;
                 } else {

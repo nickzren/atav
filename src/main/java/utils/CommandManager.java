@@ -87,11 +87,13 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-         if (isCommandFileIncluded(options)) {
+        {
+            if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
+        }
 
         cleanUpOddSymbol();
 
@@ -392,8 +394,8 @@ public class CommandManager {
                     break;
                 case "--test":
                     // Test Functions
-//                CommonCommand.isNonDBAnalysis = true;
-//                    CommonCommand.isNonSampleAnalysis = true;
+//                    CommonCommand.isNonDBAnalysis = true;
+                    CommonCommand.isNonSampleAnalysis = true;
                     TestCommand.isTest = true;
                     break;
                 default:

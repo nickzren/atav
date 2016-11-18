@@ -11,11 +11,11 @@ public class CoverageInterval {
     private int startPos;
     private int endPos;
 
-    public CoverageInterval(int sampleBlockPos, int startIndex, int endIndex) {
-        int sampleStartPos = sampleBlockPos - DPBinBlockManager.DP_BIN_BLOCK_SIZE;
+    public CoverageInterval(int blockId, int startIndex, int endIndex) {
+        int blockStartPos = blockId * DPBinBlockManager.DP_BIN_BLOCK_SIZE;
 
-        startPos = sampleStartPos + startIndex;
-        endPos = sampleStartPos + endIndex;
+        startPos = blockStartPos + startIndex;
+        endPos = blockStartPos + endIndex;
     }
 
     public int getStartPos() {
