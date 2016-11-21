@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class Gene {
 
     String name;
-    String boundary;
     String chr;
     ArrayList<Exon> exonList = new ArrayList<>();
 
@@ -21,12 +20,11 @@ public class Gene {
     public Gene(String name) {
         this.name = name.trim();
 
-        if (name.contains("(")) {
-            boundary = this.name;
-            this.name = boundary.substring(0, boundary.indexOf(" "));
+        if (name.contains("(")) { // input gene boundary
+            initExonList(this.name);
+        } else { // input gene
+            initChr();
         }
-
-        initChr();
     }
 
     private void initChr() {
@@ -37,7 +35,7 @@ public class Gene {
 
             if (rset.next()) {
                 chr = rset.getString("chrom");
-            }else{
+            } else {
                 ErrorManager.print("Invalid gene: " + this.name);
             }
 
@@ -59,7 +57,7 @@ public class Gene {
         return exonList.stream().anyMatch((exon) -> (exon.contains(chr, pos)));
     }
 
-    public void initExonList() {
+    private void initExonList(String boundary) {
         String[] fields = boundary.trim().replace("(", "").replace(")", "").split("( )+");
         name = fields[0];
         chr = fields[1];
