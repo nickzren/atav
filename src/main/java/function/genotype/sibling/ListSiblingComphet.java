@@ -3,12 +3,10 @@ package function.genotype.sibling;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
-import function.annotation.base.GeneManager;
 import function.genotype.trio.TrioManager;
 import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
 import utils.CommonCommand;
 import utils.ErrorManager;
-import utils.FormatManager;
 import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -247,7 +245,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 sb.append(child2Flag).append(",");
 
                 sb.append("'").append(output1.geneName).append("'").append(",");
-                sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
 
                 sb.append(output1.getString(child1, child2));
                 sb.append(output2.getString(child2, child2));

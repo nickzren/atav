@@ -20,7 +20,6 @@ public class FamilySummary implements Comparable {
 
     public static String getTitle() {
         return "Gene Name,"
-                + "Artifacts in Gene,"
                 + "Total Shared Variant Family,"
                 + "Total Shared Het Family,"
                 + "Total Shared Hom Family,"

@@ -2,7 +2,6 @@ package function.genotype.family;
 
 import function.genotype.base.CalledVariant;
 import function.genotype.base.AnalysisBase4CalledVar;
-import function.annotation.base.GeneManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -130,7 +129,6 @@ public class FamilyAnalysis extends AnalysisBase4CalledVar {
             for (FamilySummary summary : list) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("'").append(summary.getGeneName()).append("'").append(",");
-                sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(summary.getGeneName()))).append(",");
                 sb.append(summary.getTotalSharedFamilyNum()).append(",");
                 sb.append(summary.getTotalSharedHetFamilyNum()).append(",");
                 sb.append(summary.getTotalSharedHomFamilyNum()).append(",");

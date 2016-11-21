@@ -17,8 +17,6 @@ import function.variant.base.RegionManager;
  */
 public class GeneManager {
 
-    private static final String ARTIFACTS_GENE_PATH = "data/artifacts_gene.txt";
-
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringBuilder> chrAllGeneMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
@@ -28,7 +26,6 @@ public class GeneManager {
     private static int allGeneBoundaryLength;
 
     private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<>();
-    private static HashMap<String, Integer> artifactsGeneMap = new HashMap<>();
     private static boolean isUsed = false;
 
     public static void init() throws Exception {
@@ -39,8 +36,6 @@ public class GeneManager {
         initGeneMap();
 
         resetRegionList();
-
-        initArtifactsGeneMap();
     }
 
     private static void initGeneName() throws Exception {
@@ -200,38 +195,6 @@ public class GeneManager {
 
     public static String getAllGeneByChr(String chr) {
         return "(" + chrAllGeneMap.get(chr) + ")";
-    }
-
-    private static void initArtifactsGeneMap() throws Exception {
-        String artifactsGeneFile = ARTIFACTS_GENE_PATH;
-
-        if (CommonCommand.isDebug) {
-            artifactsGeneFile = Data.RECOURCE_PATH + artifactsGeneFile;
-        }
-
-        File f = new File(artifactsGeneFile);
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line;
-
-        while ((line = br.readLine()) != null) {
-            if (!line.isEmpty()) {
-                String[] temp = line.split("\t");
-
-                artifactsGeneMap.put(temp[0], Integer.valueOf(temp[1]));
-            }
-        }
-    }
-
-    public static Integer getGeneArtifacts(String geneName) {
-        Integer temp = artifactsGeneMap.get(geneName);
-
-        if (temp != null) {
-            return temp;
-        }
-
-        return Data.NA;
     }
 
     public static void initCoverageSummary() throws Exception {

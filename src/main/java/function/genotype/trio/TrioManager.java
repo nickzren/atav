@@ -67,7 +67,6 @@ public class TrioManager {
                 + "Father,"
                 + "Comp Het Flag,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "Var Case Freq #1 & #2 (co-occurance),"
                 + "Var Ctrl Freq #1 & #2 (co-occurance),"
                 + initVarTitleStr("1")

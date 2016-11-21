@@ -1,6 +1,5 @@
 package function.annotation.varanno;
 
-import function.annotation.base.GeneManager;
 import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.TranscriptManager;
 import function.external.evs.EvsManager;
@@ -39,7 +38,6 @@ public class VarAnnoOutput {
             + "Polyphen Humvar Prediction,"
             + "Function,"
             + "Gene Name,"
-            + "Artifacts in Gene,"
             + "Transcript Stable Id,"
             + "Is CCDS Transcript,"
             + "Codon Change,"
@@ -77,7 +75,6 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(annotatedVar.getFunction()).append(",");
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(annotatedVar.getGeneName()))).append(",");
         sb.append(annotatedVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((annotatedVar.getStableId()))).append(",");
         sb.append(annotatedVar.getCodonChange()).append(",");

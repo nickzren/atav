@@ -58,7 +58,6 @@ public class VarOutput extends Output {
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "Transcript Stable Id,"
                 + "Is CCDS Transcript,"
                 + "Codon Change,"
@@ -114,7 +113,6 @@ public class VarOutput extends Output {
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");

@@ -3,7 +3,6 @@ package function.genotype.trio;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.AnalysisBase4CalledVar;
 import global.Index;
-import function.annotation.base.GeneManager;
 import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -127,7 +126,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
             sb.append(output.motherName).append(",");
             sb.append(output.fatherName).append(",");
             sb.append("'").append(output.getCalledVariant().getGeneName()).append("'").append(",");
-            sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output.getCalledVariant().getGeneName()))).append(",");
             sb.append(output.toString());
             bwDenovo.write(sb.toString());
             bwDenovo.newLine();
@@ -226,7 +224,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sb.append(output1.fatherName).append(",");
         sb.append(flag).append(",");
         sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.getCalledVariant().getGeneName()))).append(",");
         sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
 

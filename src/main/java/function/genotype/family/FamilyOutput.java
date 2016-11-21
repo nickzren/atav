@@ -3,7 +3,6 @@ package function.genotype.family;
 import function.external.evs.EvsManager;
 import function.genotype.base.SampleManager;
 import function.external.exac.ExacManager;
-import function.annotation.base.GeneManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
@@ -72,7 +71,6 @@ public class FamilyOutput extends Output {
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
@@ -260,7 +258,6 @@ public class FamilyOutput extends Output {
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());
