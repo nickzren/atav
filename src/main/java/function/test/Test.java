@@ -33,11 +33,7 @@ public class Test extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-//            CreateVDSDB.run();
-
-//            OutputSubsetSample.run();
-//            
-//            LoadSubsetSample.run();
+            SearchSample.run();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

@@ -6,7 +6,6 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
-import function.annotation.base.GeneManager;
 import function.annotation.base.TranscriptManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
