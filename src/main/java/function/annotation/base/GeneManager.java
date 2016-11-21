@@ -116,7 +116,6 @@ public class GeneManager {
                 line = line.replaceAll("\"", "").replaceAll("\t", " ");
 
                 Gene gene = new Gene(line);
-                gene.initExonList();
 
                 HashSet<Gene> set = new HashSet<>();
                 set.add(gene);
