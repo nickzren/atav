@@ -20,8 +20,8 @@ public class SiteClean {
 
     int totalBases = 0;
     int totalCleanedBases = 0;
-    float caseCoverage = 0;
-    float ctrlCoverage = 0;
+    double caseCoverage = 0;
+    double ctrlCoverage = 0;
     ArrayList<SortedSite> siteList = new ArrayList<>();
     HashMap<String, HashMap<Integer, SortedSite>> cleanedSiteMap = new HashMap<>();
 
