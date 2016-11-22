@@ -11,20 +11,21 @@ public class ClinVar {
     private String ref;
     private String alt;
 
+    private String rsNumber;
     private String clinicalSignificance;
-    private String otherIds;
     private String diseaseName;
     private String pubmedID;
 
-    public ClinVar(String chr, int pos, String ref, String alt, String clinicalSignificance,
-            String otherIds, String diseaseName, String pubmedID) {
+    public ClinVar(String chr, int pos, String ref, String alt,
+            String rsNumber, String clinicalSignificance,
+            String diseaseName, String pubmedID) {
         this.chr = chr;
         this.pos = pos;
         this.ref = ref;
         this.alt = alt;
 
+        this.rsNumber = rsNumber;
         this.clinicalSignificance = clinicalSignificance;
-        this.otherIds = otherIds;
         this.diseaseName = diseaseName;
         this.pubmedID = pubmedID;
     }
@@ -37,20 +38,20 @@ public class ClinVar {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
+    public String getRsNumber() {
+        return rsNumber;
+    }
+
+    public void setRsNumber(String rsNumber) {
+        this.rsNumber = rsNumber;
+    }
+
     public String getClinicalSignificance() {
         return clinicalSignificance;
     }
 
     public void setClinicalSignificance(String clinicalSignificance) {
         this.clinicalSignificance = clinicalSignificance;
-    }
-
-    public String getOtherIds() {
-        return otherIds;
-    }
-
-    public void setOtherIds(String otherIds) {
-        this.otherIds = otherIds;
     }
 
     public String getDiseaseName() {
@@ -69,9 +70,9 @@ public class ClinVar {
         this.pubmedID = pubmedID;
     }
 
-    public void append(String clinicalSignificance, String otherIds, String diseaseName, String pubmedID) {
+    public void append(String rsNumber, String clinicalSignificance, String diseaseName, String pubmedID) {
+        this.rsNumber += " | " + rsNumber;
         this.clinicalSignificance += " | " + clinicalSignificance;
-        this.otherIds += " | " + otherIds;
         this.diseaseName += " | " + diseaseName;
         this.pubmedID += " | " + pubmedID;
     }
