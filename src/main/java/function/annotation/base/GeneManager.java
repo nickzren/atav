@@ -1,8 +1,6 @@
 package function.annotation.base;
 
 import function.genotype.collapsing.CollapsingCommand;
-import global.Data;
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -162,31 +160,31 @@ public class GeneManager {
 
     private static void resetRegionList() throws Exception {
         if (isUsed) {
+
+            ArrayList<String> chrList = new ArrayList<>();
+
+            for (String chr : RegionManager.ALL_CHR) {
+                chrAllGeneMap.put(chr, new StringBuilder());
+            }
+
+            geneMap.entrySet().stream().forEach((entry) -> {
+                Gene gene = entry.getValue().iterator().next();
+                if (!gene.getChr().isEmpty()) {
+                    if (!chrList.contains(gene.getChr())) {
+                        chrList.add(gene.getChr());
+                    }
+
+                    StringBuilder sb = chrAllGeneMap.get(gene.getChr());
+                    if (sb.length() == 0) {
+                        sb.append("'").append(entry.getKey()).append("'");
+                    } else {
+                        sb.append(",'").append(entry.getKey()).append("'");
+                    }
+                }
+            });
+
             if (!RegionManager.isUsed()) {
                 RegionManager.clear();
-
-                ArrayList<String> chrList = new ArrayList<>();
-
-                for (String chr : RegionManager.ALL_CHR) {
-                    chrAllGeneMap.put(chr, new StringBuilder());
-                }
-
-                geneMap.entrySet().stream().forEach((entry) -> {
-                    Gene gene = entry.getValue().iterator().next();
-                    if (!gene.getChr().isEmpty()) {
-                        if (!chrList.contains(gene.getChr())) {
-                            chrList.add(gene.getChr());
-                        }
-
-                        StringBuilder sb = chrAllGeneMap.get(gene.getChr());
-                        if (sb.length() == 0) {
-                            sb.append("'").append(entry.getKey()).append("'");
-                        } else {
-                            sb.append(",'").append(entry.getKey()).append("'");
-                        }
-                    }
-                });
-
                 RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
                 RegionManager.sortRegionList();
             }
