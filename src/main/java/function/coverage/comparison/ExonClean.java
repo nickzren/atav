@@ -20,8 +20,8 @@ public class ExonClean {
 
     int totalBases = 0;
     int totalCleanedBases = 0;
-    float caseCoverage = 0;
-    float ctrlCoverage = 0;
+    double caseCoverage = 0;
+    double ctrlCoverage = 0;
     ArrayList<SortedExon> exonList = new ArrayList<>();
     HashMap<String, SortedExon> cleanedExonMap = new HashMap<>();
 
