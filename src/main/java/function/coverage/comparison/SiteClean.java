@@ -20,8 +20,8 @@ public class SiteClean {
 
     int totalBases = 0;
     int totalCleanedBases = 0;
-    float caseCoverage = 0;
-    float ctrlCoverage = 0;
+    double caseCoverage = 0;
+    double ctrlCoverage = 0;
     ArrayList<SortedSite> siteList = new ArrayList<>();
     HashMap<String, HashMap<Integer, SortedSite>> cleanedSiteMap = new HashMap<>();
 
@@ -137,18 +137,18 @@ public class SiteClean {
                     previousEndPosition = currentPosition;
                 } else //there are gaps within the exon, so record the previos discovered region if any
                 //need to record the new discovered region
-                 if (previouStartPosition != Data.NA) {
-                        if (isFirst) {
-                            isFirst = false;
-                        } else {
-                            sb.append(",");
-                        }
-                        sb.append(previouStartPosition);
-                        sb.append("..").append(previousEndPosition);
-                        //reset to no region
-                        previouStartPosition = Data.NA;
-                        previousEndPosition = Data.NA;
+                if (previouStartPosition != Data.NA) {
+                    if (isFirst) {
+                        isFirst = false;
+                    } else {
+                        sb.append(",");
                     }
+                    sb.append(previouStartPosition);
+                    sb.append("..").append(previousEndPosition);
+                    //reset to no region
+                    previouStartPosition = Data.NA;
+                    previousEndPosition = Data.NA;
+                }
             }
             //repeat the recoring for last potential region
             //make sure this code is consistent with the code in previous section
