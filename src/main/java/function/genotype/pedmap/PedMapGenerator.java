@@ -26,23 +26,14 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     BufferedWriter bwMap = null;
     BufferedWriter bwTmpPed = null;
 
-    private static final String PLINK_HOME = "/nfs/goldstein/goldsteinlab/software/sh/plink";
-    private static final String CHIP2PCA2_HOME = "/nfs/goldstein/goldsteinlab/software/sh/chip2pca2";
-    private static final String EXAMPLE_OPT_PATH = "lib/example.opt";
-
     final String pedFile = CommonCommand.outputPath + "output.ped";
     final String mapFile = CommonCommand.outputPath + "output.map";
     final String tmpPedFile = CommonCommand.outputPath + "output_tmp.ped";
 
-    final String chip2pcaDir = CommonCommand.realOutputPath
-            + File.separator + "chip2pca";
-    final String crDir = chip2pcaDir + File.separator
-            + CommonCommand.outputDirName + "-cr";
-
-    final String outputOpt = chip2pcaDir + File.separator
-            + CommonCommand.outputDirName + ".opt";
-
     int qualifiedVariants = 0;
+    
+    // --eigenstrat
+    private static final String RUN_EIGENSTRAT_PATH = "/nfs/goldstein/software/atav_home/lib/run_eigenstrat.py";
 
     @Override
     public void initOutput() {
@@ -75,8 +66,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     public void doAfterCloseOutput() {
         if (PedMapCommand.isEigenstrat) {
             doEigesntrat();
-        } else if (PedMapCommand.isEigenstratFixed) {
-            doEigesntratFixed();
         }
     }
 
@@ -211,75 +200,20 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     }
 
     public void doEigesntrat() {
-        initDir(chip2pcaDir);
-
-        File dir = initDir(crDir);
-
-        String cmd = "cp " + EXAMPLE_OPT_PATH + " " + outputOpt;
-
-        ThirdPartyToolManager.systemCall(new String[]{cmd});
-
-        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --recode12 "
-                + "--out " + crDir + File.separator + dir.getName();
-
-        ThirdPartyToolManager.systemCall((new String[]{cmd}));
-
-        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --make-bed "
-                + "--out " + crDir + File.separator + dir.getName();
-
-        ThirdPartyToolManager.systemCall((new String[]{cmd}));
-
-        cmd = "cd " + chip2pcaDir + "; "
-                + CHIP2PCA2_HOME + " " + CommonCommand.outputDirName + " snppca";
+        String cmd = ThirdPartyToolManager.PYTHON
+                + " " + RUN_EIGENSTRAT_PATH
+                + " --genotypefile " + pedFile
+                + " --snpfile " + mapFile
+                + " --indivfile " + pedFile
+                + " --outlieroutname eigenstrat_outlier_removed.txt "
+                + " --evecoutname eigenstrat_outlier_removed.evec "
+                + " --evaloutname eigenstrat_outlier_removed.eval "
+                + " --numoutevec 10 "
+                + " --numoutlieriter 5 "
+                + " --logfile eigenstrat_outlier_removed.log "
+                + " --outputdir " + CommonCommand.realOutputPath;
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
-    }
-
-    public void doEigesntratFixed() {
-        initDir(chip2pcaDir);
-
-        File dir = initDir(crDir);
-
-        String cmd = "cp " + EXAMPLE_OPT_PATH + " " + outputOpt;
-
-        ThirdPartyToolManager.systemCall(new String[]{cmd});
-
-        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --recode12 "
-                + "--out " + crDir + File.separator + dir.getName();
-
-        ThirdPartyToolManager.systemCall((new String[]{cmd}));
-
-        cmd = PLINK_HOME + " --file " + CommonCommand.outputPath + "output --make-bed "
-                + "--out " + crDir + File.separator + dir.getName();
-
-        ThirdPartyToolManager.systemCall((new String[]{cmd}));
-
-        cmd = "cd " + chip2pcaDir + "; "
-                + CHIP2PCA2_HOME + " " + CommonCommand.outputDirName + " snppca.phenotype_fixed.pl";
-
-        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
-    }
-
-    private File initDir(String path) {
-        File dir = new File(path);
-
-        if (dir.exists()) {
-            purgeDirectory(dir);
-        } else {
-            dir.mkdir();
-        }
-
-        return dir;
-    }
-
-    private void purgeDirectory(File dir) {
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                purgeDirectory(file);
-            }
-
-            file.delete();
-        }
     }
 
     @Override
