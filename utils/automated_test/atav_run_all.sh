@@ -5,8 +5,6 @@ rm -rf $ATAV_OUTPUT_PATH/old/*
 
 ./atav_run_geno.sh
 
-exit 1
-
 ./atav_run_fisher.sh
 
 ./atav_run_linear.sh
@@ -17,9 +15,7 @@ exit 1
 
 ./atav_run_collapsing_comphet.sh
 
-./atav_run_trio_denovo.sh
-
-./atav_run_trio_comphet.sh
+./atav_run_list_trio.sh
 
 ./atav_run_pedmap.sh
 
