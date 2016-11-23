@@ -6,7 +6,6 @@ import global.Index;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
-import utils.FormatManager;
 import utils.MathManager;
 
 /**
@@ -49,8 +48,11 @@ public class Carrier extends NonCarrier {
         mapQualRankSum = getFloat(rs.getBigDecimal("map_qual_rank_sum"));
         passFailStatus = rs.getString("pass_fail_status");
 
-        hetBinomialP = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 0.5, AlternativeHypothesis.LESS_THAN);
-        homBinomialP = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 0.01, AlternativeHypothesis.GREATER_THAN);
+        hetBinomialP = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 
+                GenotypeLevelFilterCommand.hetBinomialProbability, AlternativeHypothesis.LESS_THAN);
+        
+        homBinomialP = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 
+                GenotypeLevelFilterCommand.homBinomialProbability, AlternativeHypothesis.GREATER_THAN);
     }
 
     private float getFloat(Float f) {

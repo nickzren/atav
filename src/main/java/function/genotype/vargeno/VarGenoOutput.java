@@ -18,7 +18,6 @@ import function.external.trap.TrapManager;
 import function.genotype.base.Carrier;
 import global.Data;
 import utils.FormatManager;
-import utils.MathManager;
 
 /**
  *

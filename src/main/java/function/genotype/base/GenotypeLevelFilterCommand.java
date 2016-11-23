@@ -46,7 +46,9 @@ public class GenotypeLevelFilterCommand {
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
     public static double maxHetBinomialP = Data.NO_FILTER;
+    public static double hetBinomialProbability = 0.5;
     public static double maxHomBinomialP = Data.NO_FILTER;
+    public static double homBinomialProbability = 0.01;
 
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 
@@ -168,9 +170,17 @@ public class GenotypeLevelFilterCommand {
                     checkValueValid(1, 0, option);
                     maxHetBinomialP = getValidDouble(option);
                     break;
+                case "--het-binomial-probability":
+                    checkValueValid(1, 0, option);
+                    hetBinomialProbability = getValidDouble(option);
+                    break;
                 case "--max-hom-binomial-p":
                     checkValueValid(1, 0, option);
                     maxHomBinomialP = getValidDouble(option);
+                    break;
+                case "--hom-binomial-probability":
+                    checkValueValid(1, 0, option);
+                    homBinomialProbability = getValidDouble(option);
                     break;
                 default:
                     continue;
