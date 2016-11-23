@@ -32,7 +32,7 @@ import utils.MathManager;
  */
 public class TrioManager {
 
-    private static final String DENOVO_RULES_PATH = "data/trio_rule_6.5.1.txt";
+    private static final String DENOVO_RULES_PATH = "data/trio_rule_112216.txt";
 
     public static final String[] COMP_HET_FLAG = {
         "COMPOUND HETEROZYGOTE", // 0
