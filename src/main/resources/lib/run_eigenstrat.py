@@ -119,7 +119,7 @@ def plot_eigenvals_pcs(args,suffix):
     pc = []
     eigenval = []
     ## Parse the log file to get the values
-    with open(args.log,'r') as LOG:
+    with open(os.path.join(args.outputdir,args.log),'r') as LOG:
         for line in LOG:
             line = line.strip('\n').strip(' ')
             if found == 1 and i < 100:
