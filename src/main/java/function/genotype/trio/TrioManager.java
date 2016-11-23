@@ -56,7 +56,6 @@ public class TrioManager {
                 + "Mother,"
                 + "Father,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + getTitleByVariant();
     }
 
