@@ -31,7 +31,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     final String tmpPedFile = CommonCommand.outputPath + "output_tmp.ped";
 
     int qualifiedVariants = 0;
-    
+
     // --eigenstrat
     private static final String RUN_EIGENSTRAT_PATH = "/nfs/goldstein/software/atav_home/lib/run_eigenstrat.py";
 
@@ -205,12 +205,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 + " --genotypefile " + pedFile
                 + " --snpfile " + mapFile
                 + " --indivfile " + pedFile
-                + " --outlieroutname eigenstrat_outlier_removed.txt "
-                + " --evecoutname eigenstrat_outlier_removed.evec "
-                + " --evaloutname eigenstrat_outlier_removed.eval "
                 + " --numoutevec 10 "
                 + " --numoutlieriter 5 "
-                + " --logfile eigenstrat_outlier_removed.log "
                 + " --outputdir " + CommonCommand.realOutputPath;
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
