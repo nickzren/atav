@@ -46,6 +46,10 @@ public class GenotypeLevelFilterCommand {
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
 
+    // --max—percent-alt-read-binomial-p
+    public static double maxPercentAltReadBinomialP = Data.NO_FILTER;
+    public static double minPercentAltReadBinomialP = Data.NO_FILTER;
+
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 
     public static void initOptions(Iterator<CommandOption> iterator)
@@ -161,6 +165,14 @@ public class GenotypeLevelFilterCommand {
                 case "--max-qc-fail-sample":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     maxQcFailSample = getValidInteger(option);
+                    break;
+                case "--max—percent-alt-read-binomial-p":
+                    checkValueValid(1, 0, option);
+                    maxPercentAltReadBinomialP = getValidDouble(option);
+                    break;
+                case "--min—percent-alt-read-binomial-p":
+                    checkValueValid(1, 0, option);
+                    minPercentAltReadBinomialP = getValidDouble(option);
                     break;
                 default:
                     continue;
