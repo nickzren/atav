@@ -34,6 +34,8 @@ public class ThirdPartyToolManager {
 
         int exitValue = Data.NA;
 
+        Vector<String> output = new Vector<>();
+
         try {
             Process myProc;
 
@@ -50,9 +52,8 @@ public class ThirdPartyToolManager {
 
             String line;
 
-            Vector<String> result = new Vector<>();
             while ((line = br.readLine()) != null) {
-                result.add(line);
+                output.add(line);
             }
 
             exitValue = myProc.waitFor();
@@ -62,6 +63,9 @@ public class ThirdPartyToolManager {
 
         if (exitValue != 0) {
             LogManager.writeAndPrint("System call failed.");
+            for (String str : output) {
+                LogManager.writeAndPrint(str);
+            }
         } else {
             LogManager.writeAndPrint("System call complete.");
         }
