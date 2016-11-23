@@ -45,10 +45,8 @@ public class GenotypeLevelFilterCommand {
     public static double mapQualRankSum = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
-
-    // --max—percent-alt-read-binomial-p
-    public static double maxPercentAltReadBinomialP = Data.NO_FILTER;
-    public static double minPercentAltReadBinomialP = Data.NO_FILTER;
+    public static double maxHetBinomialP = Data.NO_FILTER;
+    public static double maxHomBinomialP = Data.NO_FILTER;
 
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
 
@@ -166,13 +164,13 @@ public class GenotypeLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     maxQcFailSample = getValidInteger(option);
                     break;
-                case "--max—percent-alt-read-binomial-p":
+                case "--max—het-binomial-p":
                     checkValueValid(1, 0, option);
-                    maxPercentAltReadBinomialP = getValidDouble(option);
+                    maxHetBinomialP = getValidDouble(option);
                     break;
-                case "--min—percent-alt-read-binomial-p":
+                case "--max-het-binomial-p":
                     checkValueValid(1, 0, option);
-                    minPercentAltReadBinomialP = getValidDouble(option);
+                    maxHomBinomialP = getValidDouble(option);
                     break;
                 default:
                     continue;
@@ -430,5 +428,21 @@ public class GenotypeLevelFilterCommand {
         }
 
         return value <= maxQcFailSample;
+    }
+
+    public static boolean isMaxHetBinomialPValid(double value) {
+        if (maxHetBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxHetBinomialP;
+    }
+
+    public static boolean isMaxHomBinomialPValid(double value) {
+        if (maxHomBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxHomBinomialP;
     }
 }

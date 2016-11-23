@@ -5,6 +5,8 @@ import global.Data;
 import global.Index;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
+import utils.FormatManager;
 import utils.MathManager;
 
 /**
@@ -26,6 +28,8 @@ public class Carrier extends NonCarrier {
     private float readPosRankSum;
     private float mapQualRankSum;
     private String passFailStatus;
+    private double hetBinomialP;
+    private double homBinomialP;
 
     public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");
@@ -44,6 +48,9 @@ public class Carrier extends NonCarrier {
         readPosRankSum = getFloat(rs.getBigDecimal("read_pos_rank_sum"));
         mapQualRankSum = getFloat(rs.getBigDecimal("map_qual_rank_sum"));
         passFailStatus = rs.getString("pass_fail_status");
+
+        hetBinomialP = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 0.5, AlternativeHypothesis.LESS_THAN);
+        homBinomialP = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 0.01, AlternativeHypothesis.GREATER_THAN);
     }
 
     private float getFloat(Float f) {
@@ -114,6 +121,14 @@ public class Carrier extends NonCarrier {
         return passFailStatus;
     }
 
+    public double getHetBinomialP() {
+        return hetBinomialP;
+    }
+    
+    public double getHomBinomialP() {
+        return homBinomialP;
+    }
+
     private void applyQualityFilter() {
         if (genotype != Data.NA) {
             if (!GenotypeLevelFilterCommand.isVarStatusValid(passFailStatus)
@@ -124,7 +139,9 @@ public class Carrier extends NonCarrier {
                     || !GenotypeLevelFilterCommand.isQdValid(qualByDepthQD)
                     || !GenotypeLevelFilterCommand.isQualValid(qual)
                     || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum)
-                    || !GenotypeLevelFilterCommand.isMqrsValid(mapQualRankSum)) {
+                    || !GenotypeLevelFilterCommand.isMqrsValid(mapQualRankSum)
+                    || !GenotypeLevelFilterCommand.isMaxHetBinomialPValid(hetBinomialP)
+                    || !GenotypeLevelFilterCommand.isMaxHomBinomialPValid(homBinomialP)) {
                 genotype = Data.NA;
             }
         }

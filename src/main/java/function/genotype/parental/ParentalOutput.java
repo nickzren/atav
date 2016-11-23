@@ -17,6 +17,7 @@ import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.Carrier;
 import global.Data;
+import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -155,7 +156,7 @@ public class ParentalOutput extends Output {
         if (readsAlt == Data.NA || readsRef == Data.NA) {
             childBinomial = Data.NA;
         } else {
-            childBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
+            childBinomial = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 0.5, AlternativeHypothesis.LESS_THAN);
         }
 
         return ParentalCommand.isChildBinomialValid(childBinomial);
@@ -179,7 +180,7 @@ public class ParentalOutput extends Output {
         if (readsAlt == Data.NA || readsRef == Data.NA) {
             parentBinomial = Data.NA;
         } else {
-            parentBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
+            parentBinomial = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 0.5, AlternativeHypothesis.LESS_THAN);
         }
 
         return ParentalCommand.isParentBinomialValid(parentBinomial);

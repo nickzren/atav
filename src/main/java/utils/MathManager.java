@@ -28,7 +28,11 @@ public class MathManager {
         return renjinEngine;
     }
 
-    public static double getBinomial(int numberOfTrials, int numberOfSuccesses, double probability) {
+    public static double getBinomialP(
+            int numberOfTrials, 
+            int numberOfSuccesses, 
+            double probability,
+            AlternativeHypothesis alternativeHypothesis) {
         if (BT == null) {
             BT = new BinomialTest();
         }
@@ -40,7 +44,7 @@ public class MathManager {
         return BT.binomialTest(numberOfTrials,
                 numberOfSuccesses,
                 probability,
-                AlternativeHypothesis.LESS_THAN);
+                alternativeHypothesis);
     }
 
     public static double devide(double a, double b) {

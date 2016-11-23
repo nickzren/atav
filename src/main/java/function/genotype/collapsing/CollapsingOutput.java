@@ -64,6 +64,8 @@ public class CollapsingOutput extends Output {
                 + "Reads Alt,"
                 + "Reads Ref,"
                 + "Percent Alt Read,"
+                + "Het Binomial P,"
+                + "Hom Binomial P,"
                 + "Vqslod,"
                 + "Pass Fail Status,"
                 + "Genotype Qual GQ,"
@@ -205,6 +207,8 @@ public class CollapsingOutput extends Output {
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getHetBinomialP() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(carrier != null ? carrier.getHomBinomialP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
         sb.append(carrier != null ? carrier.getPassFailStatus() : "NA").append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGenotypeQualGQ() : Data.NA)).append(",");

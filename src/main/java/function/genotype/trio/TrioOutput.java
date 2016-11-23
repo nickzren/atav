@@ -8,7 +8,6 @@ import global.Data;
 import global.Index;
 import function.genotype.base.SampleManager;
 import utils.FormatManager;
-import utils.MathManager;
 
 /**
  *
@@ -147,7 +146,8 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(FormatManager.getInteger(cReadsAlt)).append(",");
         sb.append(FormatManager.getInteger(cReadsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(cReadsAlt, cCarrier != null ? cCarrier.getGatkFilteredCoverage() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(MathManager.getBinomial(cReadsAlt + cReadsRef, cReadsAlt, 0.5))).append(",");
+        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getHetBinomialP() : Data.NA)).append(",");
+        sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getHomBinomialP() : Data.NA)).append(",");
         sb.append(cCarrier != null ? cCarrier.getPassFailStatus() : "NA").append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getGenotypeQualGQ() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getQualByDepthQD() : Data.NA)).append(",");
