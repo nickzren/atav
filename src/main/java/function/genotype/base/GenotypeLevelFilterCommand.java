@@ -164,11 +164,11 @@ public class GenotypeLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     maxQcFailSample = getValidInteger(option);
                     break;
-                case "--max—het-binomial-p":
+                case "--max-het-binomial-p":
                     checkValueValid(1, 0, option);
                     maxHetBinomialP = getValidDouble(option);
                     break;
-                case "--max-het-binomial-p":
+                case "--max-hom-binomial-p":
                     checkValueValid(1, 0, option);
                     maxHomBinomialP = getValidDouble(option);
                     break;
