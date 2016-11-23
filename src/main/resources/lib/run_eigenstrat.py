@@ -41,6 +41,7 @@ def run_smartpca(parfile,logfile):
     """
 
     smartpca_loc = "/nfs/seqscratch11/rp2801/eigenstrat_stuff/EIG-6.1.4/bin/smartpca"
+    logfile = add_outputprefix(args.outputdir,logfile)
     cmd = "{0} -p {1} > {2}".format(smartpca_loc,parfile,logfile)
     proc = subprocess.Popen(cmd,shell=True)
     proc.wait()
@@ -169,19 +170,19 @@ def main(args):
     plot_eigenvals_pcs(args,'eigenstrat_outlier_included')
     
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Wrapper for calling Eigenstrat",description="Creates a parameter file and calls Eigenstrat")
-    parser.add_argument("-genotypefile","--genotypefile",dest="genofile",help="A a ped file is sufficient here",required=True)
+    parser = argparse.ArgumentParser("Wrapper for calling Eigenstrat",description="Creates a parameter file and calls Eigenstrat twice, once with outlier removal iterations set to 5(default) and once without any outlier removal iterations")
+    parser.add_argument("-genotypefile","--genotypefile",dest="genofile",help="A ped file is sufficient here",required=True)
     parser.add_argument("-snpfile","--snpfile",dest="snpfile",help="A map file is sufficient here",required=True)
     parser.add_argument("-indivfile","--indivfile",dest="indivfile",help="A ped file is sufficient here",required=True)
-    parser.add_argument("-evecoutname","--evecoutname",dest="evecout",help="The output file with the eigenvectors",required=True)
-    parser.add_argument("-evaloutname","--evaloutname",dest="evalout",help="The output file with the eigenvalues",required=True)
-    parser.add_argument("-outlieroutname","--outlieroutname",dest="outlierout",help="The output file with the outliers which were removed",required=True)
+    parser.add_argument("-evecoutname","--evecoutname",dest="evecout",help="The output file with the eigenvectors",required=False,default="eigenstrat_outlier_excluded.evec")
+    parser.add_argument("-evaloutname","--evaloutname",dest="evalout",help="The output file with the eigenvalues",required=False,default="eigenstrat_outlier_excluded.eval")
+    parser.add_argument("-outlieroutname","--outlieroutname",dest="outlierout",help="The output file containing the outliers which were removed",required=False,default="eigenstrat_outlier_excluded.txt")
     parser.add_argument("-numoutevec","--numoutevec",dest="numevec",help="The number of eigenvectors to output",default=10,type=int)
     parser.add_argument("-numoutlieriter","--numoutlieriter",dest="numiter",help="The number of outlier removal iterations",default=5,type=int)
     parser.add_argument("-outliersigmathresh","--outliersigmathresh",dest="sigma",help="The number of standard deviations which an individual must exceed along a principal component to be removed as an outlier",default=6,type=int)
     parser.add_argument("-usenorm","--usenorm",dest="usenorm",help="Whether to normalize each SNP by a quanitity related to allele freq. , set to NO for microsatellite data, default is YES",default="YES")    
     parser.add_argument('-outputdir','--outputdir',dest="outputdir",help="Directory to save the output files(will be created if it does not exist)",required=True)
-    parser.add_argument('-logfile','--logfile',dest="log",help="File to store smartpca output",required=True)
+    parser.add_argument('-logfile','--logfile',dest="log",help="File to store smartpca output",required=False,default="eigenstrat_outlier_excluded.log")
     args = parser.parse_args()
     
     main(args)
