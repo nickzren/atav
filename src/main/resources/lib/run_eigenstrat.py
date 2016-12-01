@@ -161,7 +161,7 @@ def main(args):
     args.evalout = 'eigenstrat_outlier_included.eval'
     args.log = 'eigenstrat_outlier_included.log'
     args.outlierout = 'eigenstrat_outlier_included.txt'
-    parfile = 'eigenstrat_outlier_included.smartpca.par'
+    parfile = os.path.join(args.outputdir,'eigenstrat_outlier_included.smartpca.par')
     create_parfile(parfile,args)
     ## Run smartpca
     run_smartpca(parfile,args.log)
