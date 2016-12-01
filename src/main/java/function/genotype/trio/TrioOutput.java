@@ -8,6 +8,7 @@ import global.Data;
 import global.Index;
 import function.genotype.base.SampleManager;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -143,9 +144,9 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(getGenoStr(cGeno)).append(",");
         sb.append(FormatManager.getDouble(cSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getGatkFilteredCoverage() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(cReadsAlt)).append(",");
-        sb.append(FormatManager.getInteger(cReadsRef)).append(",");
-        sb.append(FormatManager.getPercAltRead(cReadsAlt, cCarrier != null ? cCarrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getReadsAlt() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getReadsRef() : Data.NA)).append(",");
+        sb.append(cCarrier != null ? cCarrier.getPercAltRead() : "NA").append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getHetBinomialP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(cCarrier != null ? cCarrier.getHomBinomialP() : Data.NA)).append(",");
         sb.append(cCarrier != null ? cCarrier.getPassFailStatus() : "NA").append(",");
@@ -159,13 +160,13 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(FormatManager.getDouble(mGatkFilteredCoverage)).append(",");
         sb.append(FormatManager.getDouble(mReadsAlt)).append(",");
         sb.append(FormatManager.getDouble(mReadsRef)).append(",");
-        sb.append(FormatManager.getPercAltRead(mReadsAlt, mGatkFilteredCoverage)).append(",");
+        sb.append(FormatManager.getFloat(MathManager.devide(mReadsAlt, mGatkFilteredCoverage))).append(",");
         sb.append(getGenoStr(fGeno)).append(",");
         sb.append(FormatManager.getDouble(fSamtoolsRawCoverage)).append(",");
         sb.append(FormatManager.getDouble(fGatkFilteredCoverage)).append(",");
         sb.append(FormatManager.getDouble(fReadsAlt)).append(",");
-        sb.append(FormatManager.getDouble(fReadsRef)).append(",");
-        sb.append(FormatManager.getPercAltRead(fReadsAlt, fGatkFilteredCoverage)).append(",");
+        sb.append(FormatManager.getDouble(fReadsRef)).append(",");        
+        sb.append(FormatManager.getFloat(MathManager.devide(fReadsAlt, fGatkFilteredCoverage))).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
         sb.append(minorHomCount[Index.CASE]).append(",");

@@ -79,15 +79,6 @@ public class FormatManager {
         return str;
     }
 
-    public static String getPercAltRead(double alt, int gatkFilteredCoverage) {
-        if (gatkFilteredCoverage == 0
-                || gatkFilteredCoverage == Data.NA) {
-            return "NA";
-        } else {
-            return getDouble(alt / gatkFilteredCoverage);
-        }
-    }
-
     public static boolean isDouble(String input) {
         try {
             Double.parseDouble(input);

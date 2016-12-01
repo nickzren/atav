@@ -190,8 +190,6 @@ public class ParentalOutput extends Output {
         StringBuilder sb = new StringBuilder();
 
         Carrier carrier = calledVar.getCarrier(child.getId());
-        int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;;
-        int readsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
 
         sb.append(child.getFamilyId()).append(",");
         sb.append(child.getName()).append(",");
@@ -230,9 +228,9 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getDouble(calledVar.getCoverage(child.getIndex()))).append(",");
 
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(readsAlt)).append(",");
-        sb.append(FormatManager.getInteger(readsRef)).append(",");
-        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getReadsAlt() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getReadsRef() : Data.NA)).append(",");
+        sb.append(carrier != null ? carrier.getPercAltRead() : "NA").append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
         sb.append(carrier != null ? carrier.getPassFailStatus() : "NA").append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGenotypeQualGQ() : Data.NA)).append(",");

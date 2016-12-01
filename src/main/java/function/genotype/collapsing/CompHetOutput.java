@@ -114,8 +114,6 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         StringBuilder sb = new StringBuilder();
 
         Carrier carrier = calledVar.getCarrier(sample.getId());
-        int readsAlt = carrier != null ? carrier.getReadsAlt() : Data.NA;;
-        int readsRef = carrier != null ? carrier.getReadsRef() : Data.NA;
 
         sb.append(calledVar.getVariantIdStr()).append(",");
         sb.append(calledVar.getType()).append(",");
@@ -129,9 +127,9 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(getGenoStr(calledVar.getGenotype(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(readsAlt)).append(",");
-        sb.append(FormatManager.getInteger(readsRef)).append(",");
-        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getGatkFilteredCoverage() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getReadsAlt() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getReadsRef() : Data.NA)).append(",");
+        sb.append(carrier != null ? carrier.getPercAltRead() : "NA").append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getHetBinomialP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(carrier != null ? carrier.getHomBinomialP() : Data.NA)).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
