@@ -125,10 +125,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
                 String name = sample.getName();
 
-                if (PedMapCommand.isEigenstrat) {
-                    name = String.valueOf(sample.getPrepId());
-                }
-
                 int pheno = (int) sample.getPheno() + 1;
 
                 bwPed.write(sample.getFamilyId() + " "

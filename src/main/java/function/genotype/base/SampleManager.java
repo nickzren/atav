@@ -54,9 +54,6 @@ public class SampleManager {
     private static ArrayList<Sample> diffTypeSampleList = new ArrayList<>();
     private static ArrayList<Sample> notExistSampleList = new ArrayList<>();
     
-    private static ArrayList<Sample> deletedSampleList = new ArrayList<>();
-    private static ArrayList<Sample> replacedSampleList = new ArrayList<>();
-    
     private static ArrayList<Sample> restrictedSampleList = new ArrayList<>();
     
     private static String tempCovarFile;
@@ -378,8 +375,7 @@ public class SampleManager {
             
             for (Sample sample : sampleList) {
                 LogManager.writeAndPrintNoNewLine(
-                        FormatManager.getInteger(sample.getPrepId())
-                        + "\t" + sample.getName()
+                        sample.getName()
                         + "\t" + sample.getType()
                         + "\t" + sample.getCaptureKit());
             }
@@ -567,51 +563,6 @@ public class SampleManager {
         return null;
     }
     
-    public static void recheckSampleList() {
-        initDeletedAndReplacedSampleList();
-        
-        outputOutofDateSampleList(deletedSampleList, "Deleted");
-        
-        outputOutofDateSampleList(replacedSampleList, "Replaced");
-        
-        if (!deletedSampleList.isEmpty() || !replacedSampleList.isEmpty()) {
-            LogManager.writeAndPrint("\nAlert: the data for the deleted/replaced "
-                    + "sample used in the analysis is BAD data.");
-        }
-    }
-    
-    private static void initDeletedAndReplacedSampleList() {
-        try {
-            for (Sample sample : sampleList) {
-                if (!sample.getName().startsWith("evs")) {
-                    String time = getSampleFinishTime(sample.getId());
-                    
-                    if (time.isEmpty()) {
-                        deletedSampleList.add(sample);
-                    } else if (!time.equals(sample.getFinishTime())) {
-                        replacedSampleList.add(sample);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-    
-    private static void outputOutofDateSampleList(ArrayList<Sample> list, String name) {
-        if (!list.isEmpty()) {
-            LogManager.writeAndPrintNoNewLine("\n" + name
-                    + " sample list from Annotation database during the analysis:\n");
-            
-            for (Sample sample : list) {
-                LogManager.writeAndPrintNoNewLine(
-                        sample.getName() + "\t"
-                        + sample.getType() + "\t"
-                        + sample.getCaptureKit());
-            }
-        }
-    }
-    
     private static void countSampleNum(Sample sample) {
         if (sample.isCase()) {
             caseNum++;
@@ -725,46 +676,6 @@ public class SampleManager {
         }
         
         return sampleId;
-    }
-    
-    public static int getSamplePrepId(int sampleId) {
-        int prepId = Data.NA;
-        
-        try {
-            String sqlCode = "SELECT prep_id FROM sample WHERE sample_id = " + sampleId;
-            
-            ResultSet rs = DBManager.executeReadOnlyQuery(sqlCode);
-            if (rs.next()) {
-                prepId = rs.getInt("prep_id");
-            }
-            
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-        
-        return prepId;
-    }
-    
-    public static String getSampleFinishTime(int sampleId) {
-        String time = "";
-        
-        try {
-            String sqlCode = "SELECT exec_finish_time FROM sample_pipeline_step "
-                    + "WHERE pipeline_step_id = 10 AND step_status = 'completed' "
-                    + "AND sample_id = " + sampleId;
-            
-            ResultSet rs = DBManager.executeReadOnlyQuery(sqlCode);
-            if (rs.next()) {
-                time = rs.getString("exec_finish_time");
-            }
-            
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-        
-        return time;
     }
     
     public static int getIdByName(String sampleName) {
