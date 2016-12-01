@@ -86,9 +86,6 @@ public class Program {
             // start one analysis function
             startAnalysis();
 
-            // re-check user samples to make sure no changes happened during the analysis
-            SampleManager.recheckSampleList();
-
             RunTimeManager.stop();
 
             LogManager.run();

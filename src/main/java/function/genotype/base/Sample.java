@@ -11,7 +11,6 @@ public class Sample {
 
     // database info
     private int id;
-    private int prepId;
     // sample info
     private String familyId; // sample or family name
     private String name; // sample name
@@ -23,7 +22,7 @@ public class Sample {
     private double quantitativeTrait;
     private String type;
     private String captureKit;
-    private String finishTime; // in annoDB
+    
     // covariate
     private ArrayList<Double> covariateList = new ArrayList<>();
     // sample file order
@@ -49,18 +48,11 @@ public class Sample {
             phenotype = "case";
         }
 
-        prepId = SampleManager.getSamplePrepId(id);
-        finishTime = SampleManager.getSampleFinishTime(id);
-
         quantitativeTrait = Data.NA;
     }
 
     public int getId() {
         return id;
-    }
-
-    public int getPrepId() {
-        return prepId;
     }
 
     public void setIndex(int value) {
@@ -117,10 +109,6 @@ public class Sample {
 
     public double getQuantitativeTrait() {
         return quantitativeTrait;
-    }
-
-    public String getFinishTime() {
-        return finishTime;
     }
 
     public boolean isMale() {

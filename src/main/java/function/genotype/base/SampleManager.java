@@ -53,9 +53,6 @@ public class SampleManager {
     private static ArrayList<Sample> diffTypeSampleList = new ArrayList<>();
     private static ArrayList<Sample> notExistSampleList = new ArrayList<>();
 
-    private static ArrayList<Sample> deletedSampleList = new ArrayList<>();
-    private static ArrayList<Sample> replacedSampleList = new ArrayList<>();
-
     private static ArrayList<Sample> restrictedSampleList = new ArrayList<>();
 
     private static String tempCovarFile;
@@ -172,10 +169,7 @@ public class SampleManager {
     }
 
     private static void initAllSampleFromAnnoDB() {
-        String sqlCode = "SELECT * FROM sample s, sample_pipeline_step p "
-                + "WHERE s.sample_id = p.sample_id "
-                + "AND p.pipeline_step_id = 1 "
-                + "AND p.finished = 1";
+        String sqlCode = "SELECT * FROM sample WHERE sample_finished = 1 and sample_failure = 0";
 
         initSampleFromAnnoDB(sqlCode);
     }
@@ -319,8 +313,7 @@ public class SampleManager {
                     + "WHERE sample_name = '" + sample.getName() + "' "
                     + "AND sample_type = '" + sample.getType() + "' "
                     + "AND capture_kit = '" + sample.getCaptureKit() + "' "
-                    + "AND sample_id IN (SELECT sample_id FROM sample_pipeline_step AS b "
-                    + "WHERE pipeline_step_id = 1 AND finished = 0)";
+                    + "AND sample_failure = 1 ";
 
             ResultSet rs = DBManager.executeQuery(sqlCode);
             if (rs.next()) {
@@ -328,8 +321,7 @@ public class SampleManager {
             } else {
                 sqlCode = "SELECT * FROM sample "
                         + "WHERE sample_name = '" + sample.getName() + "' "
-                        + "AND sample_id IN (SELECT sample_id FROM sample_pipeline_step AS b "
-                        + "WHERE pipeline_step_id = 1 AND finished = 1)";
+                        + "AND sample_finished = 1)";
 
                 rs = DBManager.executeQuery(sqlCode);
 
@@ -370,8 +362,7 @@ public class SampleManager {
 
             for (Sample sample : sampleList) {
                 LogManager.writeAndPrintNoNewLine(
-                        FormatManager.getInteger(sample.getPrepId())
-                        + "\t" + sample.getName()
+                        sample.getName()
                         + "\t" + sample.getType()
                         + "\t" + sample.getCaptureKit());
             }
@@ -559,51 +550,6 @@ public class SampleManager {
         return null;
     }
 
-    public static void recheckSampleList() {
-        initDeletedAndReplacedSampleList();
-
-        outputOutofDateSampleList(deletedSampleList, "Deleted");
-
-        outputOutofDateSampleList(replacedSampleList, "Replaced");
-
-        if (!deletedSampleList.isEmpty() || !replacedSampleList.isEmpty()) {
-            LogManager.writeAndPrint("\nAlert: the data for the deleted/replaced "
-                    + "sample used in the analysis is BAD data.");
-        }
-    }
-
-    private static void initDeletedAndReplacedSampleList() {
-        try {
-            for (Sample sample : sampleList) {
-                if (!sample.getName().startsWith("evs")) {
-                    String time = getSampleFinishTime(sample.getId());
-
-                    if (time.isEmpty()) {
-                        deletedSampleList.add(sample);
-                    } else if (!time.equals(sample.getFinishTime())) {
-                        replacedSampleList.add(sample);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    private static void outputOutofDateSampleList(ArrayList<Sample> list, String name) {
-        if (!list.isEmpty()) {
-            LogManager.writeAndPrintNoNewLine("\n" + name
-                    + " sample list from Annotation database during the analysis:\n");
-
-            for (Sample sample : list) {
-                LogManager.writeAndPrintNoNewLine(
-                        sample.getName() + "\t"
-                        + sample.getType() + "\t"
-                        + sample.getCaptureKit());
-            }
-        }
-    }
-
     private static void countSampleNum(Sample sample) {
         if (sample.isCase()) {
             caseNum++;
@@ -703,8 +649,8 @@ public class SampleManager {
                     + "WHERE sample_name = '" + sampleName + "' "
                     + "AND sample_type = '" + sampleType + "' "
                     + "AND capture_kit = '" + captureKit + "' "
-                    + "AND sample_id IN (SELECT sample_id FROM sample_pipeline_step AS b "
-                    + "WHERE pipeline_step_id = 1 AND finished = 1)";
+                    + "AND sample_finished = 1 "
+                    + "AND sample_failure = 0";
 
             ResultSet rs = DBManager.executeQuery(sqlCode);
             if (rs.next()) {
@@ -736,27 +682,6 @@ public class SampleManager {
         }
 
         return prepId;
-    }
-
-    public static String getSampleFinishTime(int sampleId) {
-        String time = "";
-
-        try {
-            String sqlCode = "SELECT finish_time FROM sample_pipeline_step "
-                    + "WHERE pipeline_step_id = 1 AND finished = 1 "
-                    + "AND sample_id = " + sampleId;
-
-            ResultSet rs = DBManager.executeReadOnlyQuery(sqlCode);
-            if (rs.next()) {
-                time = rs.getString("finish_time");
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
-        return time;
     }
 
     public static int getIdByName(String sampleName) {
