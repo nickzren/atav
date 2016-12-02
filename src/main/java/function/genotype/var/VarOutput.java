@@ -1,6 +1,5 @@
 package function.genotype.var;
 
-import function.annotation.base.GeneManager;
 import function.annotation.base.TranscriptManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
@@ -40,7 +39,6 @@ public class VarOutput extends Output {
                 + "Polyphen Humvar Score,"
                 + "Polyphen Humvar Prediction,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "All Effect Gene Transcript HGVS_p,"
                 // external data
                 + EvsManager.getTitle()
@@ -99,7 +97,6 @@ public class VarOutput extends Output {
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getAllGeneTranscript()).append(",");
         // external data
         sb.append(calledVar.getEvsStr());

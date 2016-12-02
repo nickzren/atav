@@ -79,7 +79,6 @@ public class CollapsingOutput extends Output {
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "Transcript Stable Id,"
                 + "Is CCDS Transcript,"
                 + "Codon Change,"
@@ -217,7 +216,6 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(calledVar.getEffect()).append(",");
         sb.append("'").append(geneName).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(geneName))).append(",");
         sb.append(calledVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
         sb.append(calledVar.getHGVS_c()).append(",");

@@ -23,7 +23,6 @@ public class CollapsingGeneSummary extends CollapsingSummary {
     public static String getTitle() {
         return "Rank,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "Total Variant,"
                 + "Total SNV,"
                 + "Total Indel,"
@@ -104,7 +103,6 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         StringBuilder sb = new StringBuilder();
 
         sb.append("'").append(name).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(name))).append(",");
         sb.append(totalVariant).append(",");
         sb.append(totalSnv).append(",");
         sb.append(totalIndel).append(",");

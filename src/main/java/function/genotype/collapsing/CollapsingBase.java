@@ -1,6 +1,5 @@
 package function.genotype.collapsing;
 
-import function.genotype.vargeno.SampleVariantCount;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
@@ -24,11 +23,9 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     BufferedWriter bwSampleMatrix = null;
     BufferedWriter bwSummary = null;
-    BufferedWriter bwSampleVariantCount = null;
 
     final String matrixFilePath = CommonCommand.outputPath + "matrix.txt";
     final String summaryFilePath = CommonCommand.outputPath + "summary.csv";
-    final String sampleVariantCountFilePath = CommonCommand.outputPath + "sample.variant.count.csv";
     final String geneFetPQQPlotPath = CommonCommand.outputPath + "summary.fet.p.qq.plot.pdf";
     final String geneLinearPQQPlotPath = CommonCommand.outputPath + "summary.linear.p.qq.plot.pdf";
     final String geneLogisticPQQPlotPath = CommonCommand.outputPath + "summary.logistic.p.qq.plot.pdf";
@@ -55,10 +52,6 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
                 bwSampleMatrix.write(sample.getName() + "\t");
             }
             bwSampleMatrix.newLine();
-
-            bwSampleVariantCount = new BufferedWriter(new FileWriter(sampleVariantCountFilePath));
-            bwSampleVariantCount.write(SampleVariantCount.getTitle());
-            bwSampleVariantCount.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -73,8 +66,6 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
         try {
             bwSummary.flush();
             bwSummary.close();
-            bwSampleVariantCount.flush();
-            bwSampleVariantCount.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -94,15 +85,11 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
         initSummaryMap();
 
         SampleManager.generateCovariateFile();
-
-        SampleVariantCount.init();
     }
 
     @Override
     public void afterProcessDatabaseData() {
         outputSummary();
-
-        outputSampleVariantCount();
     }
 
     @Override
@@ -186,18 +173,6 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
         bwSampleMatrix.flush();
         bwSampleMatrix.close();
-    }
-
-    public void outputSampleVariantCount() {
-        try {
-            for (Sample sample : SampleManager.getList()) {
-                bwSampleVariantCount.write(sample.getName() + ",");
-                bwSampleVariantCount.write(SampleVariantCount.getString(sample.getIndex()));
-                bwSampleVariantCount.newLine();
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
     }
 
     private void generatePvaluesQQPlot() {

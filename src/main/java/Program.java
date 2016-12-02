@@ -15,7 +15,6 @@ import function.genotype.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
 import function.coverage.summary.CoverageSummary;
 import function.coverage.summary.SiteCoverageSummary;
-import function.genotype.family.FamilyAnalysis;
 import function.genotype.parental.ParentalMosaic;
 import function.genotype.pedmap.PedMapGenerator;
 import function.genotype.sibling.ListSiblingComphet;
@@ -56,7 +55,6 @@ import function.external.trap.ListTrap;
 import function.external.trap.TrapCommand;
 import function.genotype.base.DPBinBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
-import function.genotype.family.FamilyCommand;
 import function.genotype.parental.ParentalCommand;
 import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
@@ -147,8 +145,6 @@ public class Program {
                 runAnalysis(new LinearRegression());
             } else if (StatisticsCommand.isLogistic) {
                 runAnalysis(new LogisticRegression());
-            } else if (FamilyCommand.isFamilyAnalysis) {
-                runAnalysis(new FamilyAnalysis());
             } else if (SiblingCommand.isSiblingCompHet) {
                 runAnalysis(new ListSiblingComphet());
             } else if (TrioCommand.isListTrio) {

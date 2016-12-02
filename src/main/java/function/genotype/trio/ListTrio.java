@@ -3,7 +3,6 @@ package function.genotype.trio;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.AnalysisBase4CalledVar;
 import global.Index;
-import function.annotation.base.GeneManager;
 import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -127,7 +126,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
             sb.append(output.motherName).append(",");
             sb.append(output.fatherName).append(",");
             sb.append("'").append(output.getCalledVariant().getGeneName()).append("'").append(",");
-            sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output.getCalledVariant().getGeneName()))).append(",");
             sb.append(output.toString());
             bwDenovo.write(sb.toString());
             bwDenovo.newLine();
@@ -191,25 +189,24 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private String getTrioCompHetFlag(TrioOutput output1, TrioOutput output2) {
-        String flag = TrioManager.getCompHetFlag(
-                output1.cGeno, output1.cSamtoolsRawCoverage,
-                output1.mGeno, output1.mSamtoolsRawCoverage,
-                output1.fGeno, output1.fSamtoolsRawCoverage,
+        String flag = TrioManager.getCompHetFlag(output1.cGeno, output1.cDPBin,
+                output1.mGeno, output1.mDPBin,
+                output1.fGeno, output1.fDPBin,
                 output1.isMinorRef(),
-                output2.cGeno, output2.cSamtoolsRawCoverage,
-                output2.mGeno, output2.mSamtoolsRawCoverage,
-                output2.fGeno, output2.fSamtoolsRawCoverage,
+                output2.cGeno, output2.cDPBin,
+                output2.mGeno, output2.mDPBin,
+                output2.fGeno, output2.fDPBin,
                 output2.isMinorRef());
         
         flag = TrioManager.getCompHetFlagByDenovo(flag, 
-                output1.cGeno, output1.cSamtoolsRawCoverage,
-                output1.mGeno, output1.mSamtoolsRawCoverage,
-                output1.fGeno, output1.fSamtoolsRawCoverage,
+                output1.cGeno, output1.cDPBin,
+                output1.mGeno, output1.mDPBin,
+                output1.fGeno, output1.fDPBin,
                 output1.isMinorRef(), 
                 output1.denovoFlag,
-                output2.cGeno, output2.cSamtoolsRawCoverage,
-                output2.mGeno, output2.mSamtoolsRawCoverage,
-                output2.fGeno, output2.fSamtoolsRawCoverage,
+                output2.cGeno, output2.cDPBin,
+                output2.mGeno, output2.mDPBin,
+                output2.fGeno, output2.fDPBin,
                 output2.isMinorRef(), 
                 output2.denovoFlag);
         
@@ -226,7 +223,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sb.append(output1.fatherName).append(",");
         sb.append(flag).append(",");
         sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.getCalledVariant().getGeneName()))).append(",");
         sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
 

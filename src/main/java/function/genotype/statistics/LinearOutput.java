@@ -3,7 +3,6 @@ package function.genotype.statistics;
 import function.external.evs.EvsManager;
 import function.genotype.base.SampleManager;
 import function.external.exac.ExacManager;
-import function.annotation.base.GeneManager;
 import function.annotation.base.TranscriptManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
@@ -56,7 +55,6 @@ public class LinearOutput extends StatisticOutput {
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "Transcript Stable Id,"
                 + "Is CCDS Transcript,"
                 + "Codon Change,"
@@ -256,7 +254,6 @@ public class LinearOutput extends StatisticOutput {
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(calledVar.getEffect()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getStableId()).append(",");
         sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
         sb.append(calledVar.getHGVS_c()).append(",");

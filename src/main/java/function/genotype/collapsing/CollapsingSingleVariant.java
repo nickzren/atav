@@ -1,6 +1,5 @@
 package function.genotype.collapsing;
 
-import function.genotype.vargeno.SampleVariantCount;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
@@ -129,10 +128,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
             Sample sample) throws Exception {
         bwGenotypes.write(output.getString(sample));
         bwGenotypes.newLine();
-
-        SampleVariantCount.update(output.getCalledVariant().isSnv(),
-                output.getCalledVariant().getGT(sample.getIndex()),
-                sample.getIndex());
     }
 
     @Override

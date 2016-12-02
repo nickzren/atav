@@ -1,9 +1,7 @@
 package function.genotype.collapsing;
 
-import function.genotype.vargeno.SampleVariantCount;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
-import function.annotation.base.GeneManager;
 import function.genotype.base.SampleManager;
 import global.Index;
 import utils.CommonCommand;
@@ -175,17 +173,12 @@ public class CollapsingCompHet extends CollapsingBase {
             sb.append(sample.getName()).append(",");
             sb.append(sample.getPhenotype()).append(",");
             sb.append("'").append(output1.geneName).append("'").append(",");
-            sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
             sb.append("NA,"); // Var Case Freq #1 & #2 (co-occurance)
             sb.append("NA,"); // Var Ctrl Freq #1 & #2 (co-occurance)
             sb.append(output1.getString(sample));
 
             bwCompHet.write(sb.toString());
             bwCompHet.newLine();
-
-            SampleVariantCount.update(output1.getCalledVariant().isSnv(),
-                    output1.getCalledVariant().getGT(sample.getIndex()),
-                    sample.getIndex());
 
             return true;
         }
@@ -218,19 +211,10 @@ public class CollapsingCompHet extends CollapsingBase {
                     sb.append(sample.getName()).append(",");
                     sb.append(sample.getPhenotype()).append(",");
                     sb.append("'").append(output1.geneName).append("'").append(",");
-                    sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(output1.geneName))).append(",");
                     sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
                     sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
                     sb.append(output1.getString(sample));
                     sb.append(output2.getString(sample));
-
-                    SampleVariantCount.update(output1.getCalledVariant().isSnv(),
-                            output1.getCalledVariant().getGT(sample.getIndex()),
-                            sample.getIndex());
-
-                    SampleVariantCount.update(output2.getCalledVariant().isSnv(),
-                            output2.getCalledVariant().getGT(sample.getIndex()),
-                            sample.getIndex());
 
                     bwCompHet.write(sb.toString());
                     bwCompHet.newLine();

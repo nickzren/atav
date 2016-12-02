@@ -17,7 +17,6 @@ import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
-import function.genotype.family.FamilyCommand;
 import function.genotype.parental.ParentalCommand;
 import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
@@ -292,9 +291,6 @@ public class CommandManager {
                 case "--logistic":
                     StatisticsCommand.isLogistic = true;
                     break;
-                case "--family-analysis":
-                    FamilyCommand.isFamilyAnalysis = true;
-                    break;
                 case "--list-sibling-comp-het":
                     SiblingCommand.isSiblingCompHet = true;
                     break;
@@ -428,8 +424,6 @@ public class CommandManager {
             StatisticsCommand.initLinearOptions(optionList.iterator());
         } else if (StatisticsCommand.isLogistic) {
             StatisticsCommand.initLogisticOptions(optionList.iterator());
-        } else if (FamilyCommand.isFamilyAnalysis) {
-            FamilyCommand.initOptions(optionList.iterator());
         } else if (SiblingCommand.isSiblingCompHet) {
 
         } else if (TrioCommand.isListTrio) {

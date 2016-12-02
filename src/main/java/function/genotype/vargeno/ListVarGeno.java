@@ -17,10 +17,7 @@ import utils.ThirdPartyToolManager;
 public class ListVarGeno extends AnalysisBase4CalledVar {
 
     BufferedWriter bwGenotypes = null;
-    BufferedWriter bwSampleVariantCount = null;
-
     final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
-    final String sampleVariantCountFilePath = CommonCommand.outputPath + "sample.variant.count.csv";
 
     @Override
     public void initOutput() {
@@ -28,9 +25,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
             bwGenotypes.write(VarGenoOutput.getTitle());
             bwGenotypes.newLine();
-            bwSampleVariantCount = new BufferedWriter(new FileWriter(sampleVariantCountFilePath));
-            bwSampleVariantCount.write(SampleVariantCount.getTitle());
-            bwSampleVariantCount.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -45,8 +39,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         try {
             bwGenotypes.flush();
             bwGenotypes.close();
-            bwSampleVariantCount.flush();
-            bwSampleVariantCount.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -61,12 +53,10 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
-        SampleVariantCount.init();
     }
 
     @Override
     public void afterProcessDatabaseData() {
-        outputSampleVariantCount();
     }
 
     @Override
@@ -84,9 +74,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
                         if (output.isQualifiedGeno(geno)) {
                             bwGenotypes.write(output.getString(sample));
                             bwGenotypes.newLine();
-
-                            SampleVariantCount.update(output.getCalledVariant().isSnv(), 
-                                    geno, sample.getIndex());
                         }
                     }
                 }
@@ -104,18 +91,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         }
     }
 
-    public void outputSampleVariantCount() {
-        try {
-            for (Sample sample : SampleManager.getList()) {
-                bwSampleVariantCount.write(sample.getName() + ",");
-                bwSampleVariantCount.write(SampleVariantCount.getString(sample.getIndex()));
-                bwSampleVariantCount.newLine();
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-    
     @Override
     public String toString() {
         return "Start running list variant genotype function";

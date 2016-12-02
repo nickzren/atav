@@ -35,7 +35,6 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Child2,"
                 + "Child2 Trio Comp Het Flag,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + initVarTitleStr("1")
                 + initVarTitleStr("2");
     }

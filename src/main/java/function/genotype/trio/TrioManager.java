@@ -55,8 +55,6 @@ public class TrioManager {
                 + "Child,"
                 + "Mother,"
                 + "Father,"
-                + "Gene Name,"
-                + "Artifacts in Gene,"
                 + getTitleByVariant();
     }
 
@@ -66,8 +64,6 @@ public class TrioManager {
                 + "Mother,"
                 + "Father,"
                 + "Comp Het Flag,"
-                + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "Var Case Freq #1 & #2 (co-occurance),"
                 + "Var Ctrl Freq #1 & #2 (co-occurance),"
                 + initVarTitleStr("1")
@@ -90,36 +86,54 @@ public class TrioManager {
         return "Denovo Flag,"
                 + "Variant ID,"
                 + "Variant Type,"
-                + "Rs Number,"
                 + "Ref Allele,"
                 + "Alt Allele,"
+                + "Rs Number,"
+                // annotation data
+                + "Transcript Stable Id,"
+                + "Is CCDS Transcript,"
+                + "Effect,"
+                + "HGVS_c,"
+                + "HGVS_p,"
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Gene Name,"
+                + "Artifacts in Gene,"
+                + "All Effect Gene Transcript HGVS_p,"
+                // external data
+                + EvsManager.getTitle()
+                + ExacManager.getTitle()
+                + KnownVarManager.getTitle()
+                + KaviarManager.getTitle()
+                + GenomesManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
-                + "Is Minor Ref,"
-                + "Genotype (child),"
-                + "Samtools Raw Coverage (child),"
-                + "Gatk Filtered Coverage (child),"
-                + "Reads Alt (child),"
-                + "Reads Ref (child),"
-                + "Percent Read Alt (child),"
+                + MgiManager.getTitle()
+                // genotype data
+                + "GT (mother),"
+                + "DP Bin (mother),"
+                + "GT (father),"
+                + "DP Bin (father),"
+                + "GT (child),"
+                + "DP (child),"
+                + "DP Bin (child),"
+                + "AD_REF (child),"
+                + "AD_ALT (child),"
+                + "Percent Alt Read (child),"
                 + "Percent Alt Read Binomial P (child),"
-                + "Pass Fail Status (child),"
-                + "Genotype Qual GQ (child),"
-                + "Qual By Depth QD (child),"
-                + "Rms Map Qual MQ (child),"
+                + "GQ (child),"
+                + "FS (child),"
+                + "MQ (child),"
+                + "QD (child),"
                 + "Qual (child),"
-                + "Genotype (mother),"
-                + "Samtools Raw Coverage (mother),"
-                + "Gatk Filtered Coverage (mother),"
-                + "Reads Alt (mother),"
-                + "Reads Ref (mother),"
-                + "Percent Read Alt (mother),"
-                + "Genotype (father),"
-                + "Samtools Raw Coverage (father),"
-                + "Gatk Filtered Coverage (father),"
-                + "Reads Alt (father),"
-                + "Reads Ref (father),"
-                + "Percent Read Alt (father),"
+                + "Read Pos Rank Sum (child),"
+                + "MQ Rank Sum (child),"
+                + "FILTER (child),"
+                + "Is Minor Ref,"
                 + "Major Hom Case,"
                 + "Het Case,"
                 + "Minor Hom Case,"
@@ -134,24 +148,10 @@ public class TrioManager {
                 + "QC Fail Case,"
                 + "Missing Ctrl,"
                 + "QC Fail Ctrl,"
-                + "Case MAF,"
-                + "Ctrl MAF,"
+                + "Case Maf,"
+                + "Ctrl Maf,"
                 + "Case HWE_P,"
-                + "Ctrl HWE_P,"
-                + EvsManager.getTitle()
-                + "Polyphen Humdiv Score,"
-                + "Polyphen Humdiv Prediction,"
-                + "Polyphen Humvar Score,"
-                + "Polyphen Humvar Prediction,"
-                + "Function,"
-                + "Codon Change,"
-                + ExacManager.getTitle()
-                + KaviarManager.getTitle()
-                + KnownVarManager.getTitle()
-                + RvisManager.getTitle()
-                + SubRvisManager.getTitle()
-                + GenomesManager.getTitle()
-                + MgiManager.getTitle();
+                + "Ctrl HWE_P,";
     }
 
     public static void init() {

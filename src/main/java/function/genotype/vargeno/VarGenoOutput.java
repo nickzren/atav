@@ -6,7 +6,6 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
-import function.annotation.base.GeneManager;
 import function.annotation.base.TranscriptManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
@@ -27,8 +26,6 @@ import utils.MathManager;
  */
 public class VarGenoOutput extends Output {
 
-    private double percentAltReadBinomialP = Data.NA;
-
     public static String getTitle() {
         return "Variant ID,"
                 + "Variant Type,"
@@ -46,7 +43,6 @@ public class VarGenoOutput extends Output {
                 + "Polyphen Humvar Score,"
                 + "Polyphen Humvar Prediction,"
                 + "Gene Name,"
-                + "Artifacts in Gene,"
                 + "All Effect Gene Transcript HGVS_p,"
                 // external data
                 + EvsManager.getTitle()
@@ -125,7 +121,6 @@ public class VarGenoOutput extends Output {
         sb.append(calledVar.getPolyphenHumvarScore()).append(",");
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getInteger(GeneManager.getGeneArtifacts(calledVar.getGeneName()))).append(",");
         sb.append(calledVar.getAllGeneTranscript()).append(",");
         // external data
         sb.append(calledVar.getEvsStr());
@@ -142,19 +137,19 @@ public class VarGenoOutput extends Output {
         sb.append(sample.getName()).append(",");
         sb.append(sample.getType()).append(",");
         sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getDP() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getDPBin(sample.getIndex()))).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(calledVar.getDPBin(sample.getIndex()))).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5))).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getFS() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getMQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQD() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQual() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");        
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getQD() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getQual() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");        
         sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
