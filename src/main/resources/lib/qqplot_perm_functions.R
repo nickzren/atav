@@ -62,7 +62,9 @@ QQ.permutation <-function(sample.file, matrix.file,n.permutations = 1000, filter
   #pre-compute all possible contingency.table for perofrmance
   #this will create a look up table
   contingency.table = matrix(0,2,2)
-  Fisher.precompute <- matrix(0, n.cases + 1, max(rowSums(matrix)) + 1)
+  max_cases= min(max(rowSums(matrix)), n.cases)
+  max_ctrls = min(max(rowSums(matrix)), n.controls)
+  Fisher.precompute <- matrix(0, max_cases + 1, max_ctrls + 1)
   for (i in 1: dim(Fisher.precompute)[1]) {
     for (j in 1:dim(Fisher.precompute)[2]) {
       contingency.table[1,1] <- i-1
