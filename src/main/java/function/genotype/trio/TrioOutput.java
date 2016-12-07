@@ -159,11 +159,12 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(FormatManager.getInteger(cReadsAlt)).append(",");
         sb.append(FormatManager.getPercAltRead(cReadsAlt, cCarrier != null ? cCarrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(cReadsAlt + cReadsRef, cReadsAlt, 0.5))).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getVqslod() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getFS() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getMQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getQD() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getQual() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getMQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getQD() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getQual() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getReadPosRankSum() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getMQRankSum() : Data.NA)).append(",");
         sb.append(cCarrier != null ? cCarrier.getFILTER() : "NA").append(",");

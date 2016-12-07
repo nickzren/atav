@@ -66,6 +66,7 @@ public class CollapsingOutput extends Output {
                 + "Percent Alt Read,"
                 + "Pass Fail Status,"
                 + "Genotype Qual GQ,"
+                + "VQSLOD,"
                 + "Strand Bias FS,"
                 + "Rms Map Qual MQ,"
                 + "Qual By Depth QD,"
@@ -202,13 +203,14 @@ public class CollapsingOutput extends Output {
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.NA)).append(",");
         sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getFS() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getMQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQD() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getQual() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getMQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQD() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");
         sb.append(calledVar.getEvsStr());
         sb.append(calledVar.getPolyphenHumdivScore()).append(",");
         sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");

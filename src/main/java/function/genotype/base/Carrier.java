@@ -15,11 +15,12 @@ public class Carrier extends NonCarrier {
     private int dp;
     private int adRef;
     private int adAlt;
-    private float gq;
+    private int gq;
+    private float vqslod;
     private float fs;
-    private float mq;
-    private float qd;
-    private float qual;
+    private int mq;
+    private int qd;
+    private int qual;
     private float readPosRankSum;
     private float mqRankSum;
     private int filterValue; // PASS(1), LIKELY(2), INTERMEDIATE(3), FAIL(4)
@@ -31,11 +32,12 @@ public class Carrier extends NonCarrier {
         dpBin = Data.NA;
         adRef = rs.getInt("AD_REF");
         adAlt = rs.getInt("AD_ALT");
-        gq = FormatManager.getFloat(rs, "GQ");
+        gq = FormatManager.getInt(rs, "GQ");
+        vqslod = FormatManager.getFloat(rs, "VQSLOD");
         fs = FormatManager.getFloat(rs, "FS");
-        mq = FormatManager.getFloat(rs, "MQ");
-        qd = FormatManager.getFloat(rs, "QD");
-        qual = FormatManager.getFloat(rs, "QUAL");
+        mq = FormatManager.getInt(rs, "MQ");
+        qd = FormatManager.getInt(rs, "QD");
+        qual = FormatManager.getInt(rs, "QUAL");
         readPosRankSum = FormatManager.getFloat(rs, "ReadPosRankSum");
         mqRankSum = FormatManager.getFloat(rs, "MQRankSum");
         filterValue = rs.getInt("FILTER+0");
@@ -53,23 +55,27 @@ public class Carrier extends NonCarrier {
         return adAlt;
     }
 
-    public float getGQ() {
+    public int getGQ() {
         return gq;
+    }
+
+    public float getVqslod() {
+        return vqslod;
     }
 
     public float getFS() {
         return fs;
     }
 
-    public float getMQ() {
+    public int getMQ() {
         return mq;
     }
 
-    public float getQD() {
+    public int getQD() {
         return qd;
     }
 
-    public float getQual() {
+    public int getQual() {
         return qual;
     }
 

@@ -66,6 +66,7 @@ public class VarGenoOutput extends Output {
                 + "Percent Alt Read,"
                 + "Percent Alt Read Binomial P,"
                 + "GQ,"
+                + "VQSLOD,"
                 + "FS,"
                 + "MQ,"
                 + "QD,"
@@ -143,11 +144,12 @@ public class VarGenoOutput extends Output {
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.NA)).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5))).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getQD() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getQual() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getMQ() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQD() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");        
         sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
