@@ -10,6 +10,7 @@ import static utils.CommandManager.getValidRange;
 import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.getValidFloat;
 
 /**
  *
@@ -33,13 +34,13 @@ public class GenotypeLevelFilterCommand {
     public static int[] vcfFilter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
     public static double[] homPercentAltRead = null;
-    public static double genotypeQualGQ = Data.NO_FILTER;
-    public static double strandBiasFS = Data.NO_FILTER;
-    public static double rmsMapQualMQ = Data.NO_FILTER;
-    public static double qualByDepthQD = Data.NO_FILTER;
-    public static double qual = Data.NO_FILTER;
-    public static double readPosRankSum = Data.NO_FILTER;
-    public static double mapQualRankSum = Data.NO_FILTER;
+    public static int genotypeQualGQ = Data.NO_FILTER;
+    public static float strandBiasFS = Data.NO_FILTER;
+    public static int rmsMapQualMQ = Data.NO_FILTER;
+    public static int qualByDepthQD = Data.NO_FILTER;
+    public static int qual = Data.NO_FILTER;
+    public static float readPosRankSum = Data.NO_FILTER;
+    public static float mapQualRankSum = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
 
@@ -124,31 +125,31 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--gq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    genotypeQualGQ = getValidDouble(option);
+                    genotypeQualGQ = getValidInteger(option);
                     break;
                 case "--fs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    strandBiasFS = getValidDouble(option);
+                    strandBiasFS = getValidFloat(option);
                     break;
                 case "--mq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    rmsMapQualMQ = getValidDouble(option);
+                    rmsMapQualMQ = getValidInteger(option);
                     break;
                 case "--qd":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    qualByDepthQD = getValidDouble(option);
+                    qualByDepthQD = getValidInteger(option);
                     break;
                 case "--qual":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    qual = getValidDouble(option);
+                    qual = getValidInteger(option);
                     break;
                 case "--rprs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    readPosRankSum = getValidDouble(option);
+                    readPosRankSum = getValidFloat(option);
                     break;
                 case "--mqrs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    mapQualRankSum = getValidDouble(option);
+                    mapQualRankSum = getValidFloat(option);
                     break;
                 case "--include-qc-missing":
                     isQcMissingIncluded = true;
@@ -241,7 +242,7 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isGqValid(float value) {
+    public static boolean isGqValid(int value) {
         if (genotypeQualGQ == Data.NO_FILTER) {
             return true;
         }
@@ -273,7 +274,7 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isMqValid(float value) {
+    public static boolean isMqValid(int value) {
         if (rmsMapQualMQ == Data.NO_FILTER) {
             return true;
         }
@@ -289,7 +290,7 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isQdValid(float value) {
+    public static boolean isQdValid(int value) {
         if (qualByDepthQD == Data.NO_FILTER) {
             return true;
         }
@@ -305,7 +306,7 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isQualValid(float value) {
+    public static boolean isQualValid(int value) {
         if (qual == Data.NO_FILTER) {
             return true;
         }
