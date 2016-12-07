@@ -1,6 +1,5 @@
 package function.variant.base;
 
-import function.annotation.base.GeneManager;
 import utils.ErrorManager;
 import utils.CommonCommand;
 import utils.LogManager;
