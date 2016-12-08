@@ -78,7 +78,7 @@ public class TrioManager {
                 + Output.getVariantDataTitle()
                 + Output.getAnnotationDataTitle()
                 + Output.getExternalDataTitle()
-                // genotype data
+                + Output.getGenotypeDataTitle()
                 + "GT (mother),"
                 + "DP Bin (mother),"
                 + "GT (father),"
@@ -86,8 +86,8 @@ public class TrioManager {
                 + "GT (child),"
                 + "DP (child),"
                 + "DP Bin (child),"
-                + "AD_REF (child),"
-                + "AD_ALT (child),"
+                + "AD REF (child),"
+                + "AD ALT (child),"
                 + "Percent Alt Read (child),"
                 + "Percent Alt Read Binomial P (child),"
                 + "GQ (child),"
@@ -97,8 +97,7 @@ public class TrioManager {
                 + "Qual (child),"
                 + "Read Pos Rank Sum (child),"
                 + "MQ Rank Sum (child),"
-                + "FILTER (child),"
-                + Output.getGenotypeDataTitle();
+                + "FILTER (child),";
     }
 
     public static void init() {

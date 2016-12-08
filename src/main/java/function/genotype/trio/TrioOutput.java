@@ -113,13 +113,13 @@ public class TrioOutput extends Output implements Comparable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        int cReadsAlt = cCarrier != null ? cCarrier.getAdAlt() : Data.NA;
-        int cReadsRef = cCarrier != null ? cCarrier.getADRef() : Data.NA;
-
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
         calledVar.getExternalData(sb);
-        // genotype data
+        getGenotypeData(sb);
+
+        int cReadsAlt = cCarrier != null ? cCarrier.getAdAlt() : Data.NA;
+        int cReadsRef = cCarrier != null ? cCarrier.getADRef() : Data.NA;
         sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getDouble(mDPBin)).append(",");
         sb.append(getGenoStr(fGeno)).append(",");
@@ -140,7 +140,6 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getReadPosRankSum() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getMQRankSum() : Data.NA)).append(",");
         sb.append(cCarrier != null ? cCarrier.getFILTER() : "NA").append(",");
-        getGenotypeData(sb);
 
         return sb.toString();
     }

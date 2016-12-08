@@ -18,7 +18,7 @@ public class VarGenoOutput extends Output {
         return getVariantDataTitle()
                 + getAnnotationDataTitle()
                 + getExternalDataTitle()
-                // genotype data
+                + getGenotypeDataTitle()
                 + "Sample Name,"
                 + "Sample Type,"
                 + "GT,"
@@ -36,8 +36,7 @@ public class VarGenoOutput extends Output {
                 + "Qual,"
                 + "Read Pos Rank Sum,"
                 + "MQ Rank Sum,"
-                + "FILTER,"
-                + getGenotypeDataTitle();
+                + "FILTER,";
     }
 
     public VarGenoOutput(CalledVariant c) {
@@ -47,14 +46,14 @@ public class VarGenoOutput extends Output {
     public String getString(Sample sample) {
         StringBuilder sb = new StringBuilder();
 
-        Carrier carrier = calledVar.getCarrier(sample.getId());
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.NA;
-        
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
         calledVar.getExternalData(sb);
-        // genotype data
+        getGenotypeData(sb);
+
+        Carrier carrier = calledVar.getCarrier(sample.getId());
+        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
+        int readsRef = carrier != null ? carrier.getADRef() : Data.NA;
         sb.append(sample.getName()).append(",");
         sb.append(sample.getType()).append(",");
         sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
@@ -73,7 +72,6 @@ public class VarGenoOutput extends Output {
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");
         sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
-        getGenotypeData(sb);
 
         return sb.toString();
     }
