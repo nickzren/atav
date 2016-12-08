@@ -27,6 +27,7 @@ public class ThirdPartyToolManager {
     private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = "/nfs/goldstein/software/atav_home/lib/non_trio_tier.R";
+    public static final String PYTHON = "/nfs/goldstein/software/python2.7.7/bin/python";
 
     public static int systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start");
