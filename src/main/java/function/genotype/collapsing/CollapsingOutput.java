@@ -1,17 +1,5 @@
 package function.genotype.collapsing;
 
-import function.external.evs.EvsManager;
-import function.external.exac.ExacManager;
-import function.annotation.base.GeneManager;
-import function.annotation.base.TranscriptManager;
-import function.external.genomes.GenomesManager;
-import function.external.gerp.GerpManager;
-import function.external.kaviar.KaviarManager;
-import function.external.knownvar.KnownVarManager;
-import function.external.mgi.MgiManager;
-import function.external.rvis.RvisManager;
-import function.external.subrvis.SubRvisManager;
-import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
 import function.variant.base.Output;
@@ -29,67 +17,29 @@ import utils.MathManager;
 public class CollapsingOutput extends Output {
 
     public static String getTitle() {
-        return "Variant ID,"
-                + "Variant Type,"
-                + "Rs Number,"
-                + "Is Minor Ref,"
-                + "Ref Allele,"
-                + "Alt Allele,"
-                + GerpManager.getTitle()
-                + TrapManager.getTitle()
-                + "Genotype,"
+        return getVariantDataTitle()
+                + getAnnotationDataTitle()
+                + getExternalDataTitle()
+                + getGenotypeDataTitle()
                 + "Sample Name,"
                 + "Sample Type,"
-                + "Major Hom Case,"
-                + "Het Case,"
-                + "Minor Hom Case,"
-                + "Minor Hom Case Freq,"
-                + "Het Case Freq,"
-                + "Major Hom Ctrl,"
-                + "Het Ctrl,"
-                + "Minor Hom Ctrl,"
-                + "Minor Hom Ctrl Freq,"
-                + "Het Ctrl Freq,"
-                + "Missing Case,"
-                + "QC Fail Case,"
-                + "Missing Ctrl,"
-                + "QC Fail Ctrl,"
-                + "Case Maf,"
-                + "Ctrl Maf,"
-                + "LOO MAF,"
-                + "Case HWE_P,"
-                + "Ctrl HWE_P,"
-                + "Samtools Raw Coverage,"
-                + "Gatk Filtered Coverage,"
-                + "Reads Alt,"
-                + "Reads Ref,"
+                + "GT,"
+                + "DP,"
+                + "DP Bin,"
+                + "AD REF,"
+                + "AD ALT,"
                 + "Percent Alt Read,"
-                + "Pass Fail Status,"
-                + "Genotype Qual GQ,"
+                + "Percent Alt Read Binomial P,"
+                + "GQ,"
                 + "VQSLOD,"
-                + "Strand Bias FS,"
-                + "Rms Map Qual MQ,"
-                + "Qual By Depth QD,"
+                + "FS,"
+                + "MQ,"
+                + "QD,"
                 + "Qual,"
                 + "Read Pos Rank Sum,"
-                + "Map Qual Rank Sum,"
-                + EvsManager.getTitle()
-                + "Polyphen Humdiv Score,"
-                + "Polyphen Humdiv Prediction,"
-                + "Polyphen Humvar Score,"
-                + "Polyphen Humvar Prediction,"
-                + "Function,"
-                + "Gene Name,"
-                + "Transcript Stable Id,"
-                + "Is CCDS Transcript,"
-                + "Codon Change,"
-                + ExacManager.getTitle()
-                + KaviarManager.getTitle()
-                + KnownVarManager.getTitle()
-                + RvisManager.getTitle()
-                + SubRvisManager.getTitle()
-                + GenomesManager.getTitle()
-                + MgiManager.getTitle();
+                + "MQ Rank Sum,"
+                + "FILTER,"
+                + "LOO MAF,";
     }
 
     String geneName = "";
@@ -163,46 +113,23 @@ public class CollapsingOutput extends Output {
     public String getString(Sample sample) {
         StringBuilder sb = new StringBuilder();
 
-        Carrier carrier = calledVar.getCarrier(sample.getId());
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.NA;
+        calledVar.getVariantData(sb);
+        calledVar.getAnnotationData(sb);
+        calledVar.getExternalData(sb);
+        getGenotypeData(sb);
 
-        sb.append(calledVar.getVariantIdStr()).append(",");
-        sb.append(calledVar.getType()).append(",");
-        sb.append(calledVar.getRsNumberStr()).append(",");
-        sb.append(isMinorRef).append(",");
-        sb.append(calledVar.getRefAllele()).append(",");
-        sb.append(calledVar.getAllele()).append(",");
-        sb.append(calledVar.getGerpScore());
-        sb.append(calledVar.getTrapScore());
-        sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
+        Carrier carrier = calledVar.getCarrier(sample.getId());
+        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
+        int readsRef = carrier != null ? carrier.getADRef() : Data.NA;
         sb.append(sample.getName()).append(",");
-        sb.append(sample.getPhenotype()).append(",");
-        sb.append(majorHomCount[Index.CASE]).append(",");
-        sb.append(genoCount[Index.HET][Index.CASE]).append(",");
-        sb.append(minorHomCount[Index.CASE]).append(",");
-        sb.append(FormatManager.getDouble(minorHomFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(hetFreq[Index.CASE])).append(",");
-        sb.append(majorHomCount[Index.CTRL]).append(",");
-        sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(minorHomCount[Index.CTRL]).append(",");
-        sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
-        sb.append(genoCount[Index.MISSING][Index.CASE]).append(",");
-        sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
-        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
-        sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(looMAF)).append(",");
-        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getDPBin(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(carrier != null ? carrier.getDP() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(readsAlt)).append(",");
+        sb.append(sample.getType()).append(",");
+        sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(calledVar.getDPBin(sample.getIndex()))).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
+        sb.append(FormatManager.getInteger(readsAlt)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.NA)).append(",");
-        sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
+        sb.append(FormatManager.getDouble(MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5))).append(",");
         sb.append(FormatManager.getInteger(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.NA)).append(",");
@@ -211,23 +138,9 @@ public class CollapsingOutput extends Output {
         sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");
-        sb.append(calledVar.getEvsStr());
-        sb.append(calledVar.getPolyphenHumdivScore()).append(",");
-        sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
-        sb.append(calledVar.getPolyphenHumvarScore()).append(",");
-        sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-        sb.append(calledVar.getEffect()).append(",");
-        sb.append("'").append(geneName).append("'").append(",");
-        sb.append(calledVar.getStableId()).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
-        sb.append(calledVar.getHGVS_c()).append(",");
-        sb.append(calledVar.getExacStr());
-        sb.append(calledVar.getKaviarStr());
-        sb.append(calledVar.getKnownVarStr());
-        sb.append(calledVar.getRvis());
-        sb.append(calledVar.getSubRvis());
-        sb.append(calledVar.get1000Genomes());
-        sb.append(calledVar.getMgi());
+        sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
+
+        sb.append(FormatManager.getDouble(looMAF)).append(",");
 
         return sb.toString();
     }
