@@ -321,7 +321,7 @@ public class SampleManager {
             } else {
                 sqlCode = "SELECT * FROM sample "
                         + "WHERE sample_name = '" + sample.getName() + "' "
-                        + "AND sample_finished = 1)";
+                        + "AND sample_finished = 1";
 
                 rs = DBManager.executeQuery(sqlCode);
 

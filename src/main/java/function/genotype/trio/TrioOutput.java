@@ -1,6 +1,5 @@
 package function.genotype.trio;
 
-import function.annotation.base.TranscriptManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
 import function.variant.base.Output;
@@ -18,7 +17,6 @@ import utils.MathManager;
 public class TrioOutput extends Output implements Comparable {
 
     String denovoFlag = "";
-    String geneName = "";
 
     // Trio Family data
     Sample child;
@@ -45,7 +43,7 @@ public class TrioOutput extends Output implements Comparable {
         motherName = trio.getMotherName();
         mGeno = calledVar.getGT(trio.getMotherIndex());
         mDPBin = calledVar.getDPBin(trio.getMotherIndex());
-        
+
         fatherName = trio.getFatherName();
         fGeno = calledVar.getGT(trio.getFatherIndex());
         fDPBin = calledVar.getDPBin(trio.getFatherIndex());
@@ -118,35 +116,9 @@ public class TrioOutput extends Output implements Comparable {
         int cReadsAlt = cCarrier != null ? cCarrier.getAdAlt() : Data.NA;
         int cReadsRef = cCarrier != null ? cCarrier.getADRef() : Data.NA;
 
-        sb.append(denovoFlag).append(",");
-        sb.append(calledVar.getVariantIdStr()).append(",");
-        sb.append(calledVar.getType()).append(",");
-        sb.append(calledVar.getRefAllele()).append(",");
-        sb.append(calledVar.getAllele()).append(",");
-        sb.append(calledVar.getRsNumberStr()).append(",");
-        // annotation data
-        sb.append(calledVar.getStableId()).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
-        sb.append(calledVar.getEffect()).append(",");
-        sb.append(calledVar.getHGVS_c()).append(",");
-        sb.append(calledVar.getHGVS_p()).append(",");
-        sb.append(calledVar.getPolyphenHumdivScore()).append(",");
-        sb.append(calledVar.getPolyphenHumdivPrediction()).append(",");
-        sb.append(calledVar.getPolyphenHumvarScore()).append(",");
-        sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
-        sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
-        sb.append(calledVar.getAllGeneTranscript()).append(",");
-        // external data
-        sb.append(calledVar.getEvsStr());
-        sb.append(calledVar.getExacStr());
-        sb.append(calledVar.getKnownVarStr());
-        sb.append(calledVar.getKaviarStr());
-        sb.append(calledVar.get1000Genomes());
-        sb.append(calledVar.getRvis());
-        sb.append(calledVar.getSubRvis());
-        sb.append(calledVar.getGerpScore());
-        sb.append(calledVar.getTrapScore());
-        sb.append(calledVar.getMgi());
+        calledVar.getVariantData(sb);
+        calledVar.getAnnotationData(sb);
+        calledVar.getExternalData(sb);
         // genotype data
         sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getDouble(mDPBin)).append(",");
@@ -168,25 +140,7 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getReadPosRankSum() : Data.NA)).append(",");
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getMQRankSum() : Data.NA)).append(",");
         sb.append(cCarrier != null ? cCarrier.getFILTER() : "NA").append(",");
-        sb.append(isMinorRef).append(",");
-        sb.append(majorHomCount[Index.CASE]).append(",");
-        sb.append(genoCount[Index.HET][Index.CASE]).append(",");
-        sb.append(minorHomCount[Index.CASE]).append(",");
-        sb.append(FormatManager.getDouble(minorHomFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(hetFreq[Index.CASE])).append(",");
-        sb.append(majorHomCount[Index.CTRL]).append(",");
-        sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(minorHomCount[Index.CTRL]).append(",");
-        sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
-        sb.append(genoCount[Index.MISSING][Index.CASE]).append(",");
-        sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
-        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
-        sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
+        getGenotypeData(sb);
 
         return sb.toString();
     }

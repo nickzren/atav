@@ -71,7 +71,7 @@ public class Variant extends Region {
     public int getRsNumber() {
         return rsNumber;
     }
-    
+
     public String getRsNumberStr() {
         if (rsNumber == Data.NA) {
             return "NA";
@@ -94,5 +94,13 @@ public class Variant extends Region {
 
     public String getSiteId() {
         return getChrStr() + "-" + getStartPosition();
+    }
+
+    public void getVariantData(StringBuilder sb) {
+        sb.append(variantIdStr).append(",");
+        sb.append(getType()).append(",");
+        sb.append(refAllele).append(",");
+        sb.append(allele).append(",");
+        sb.append(getRsNumberStr()).append(",");
     }
 }

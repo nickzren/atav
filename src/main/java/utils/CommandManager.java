@@ -288,9 +288,6 @@ public class CommandManager {
                 case "--linear":
                     StatisticsCommand.isLinear = true;
                     break;
-                case "--logistic":
-                    StatisticsCommand.isLogistic = true;
-                    break;
                 case "--list-sibling-comp-het":
                     SiblingCommand.isSiblingCompHet = true;
                     break;
@@ -422,8 +419,6 @@ public class CommandManager {
             StatisticsCommand.initFisherOptions(optionList.iterator());
         } else if (StatisticsCommand.isLinear) {
             StatisticsCommand.initLinearOptions(optionList.iterator());
-        } else if (StatisticsCommand.isLogistic) {
-            StatisticsCommand.initLogisticOptions(optionList.iterator());
         } else if (SiblingCommand.isSiblingCompHet) {
 
         } else if (TrioCommand.isListTrio) {

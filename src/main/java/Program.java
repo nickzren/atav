@@ -58,7 +58,6 @@ import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.parental.ParentalCommand;
 import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
-import function.genotype.statistics.LogisticRegression;
 import function.genotype.statistics.StatisticsCommand;
 import function.genotype.trio.TrioCommand;
 import function.genotype.var.ListVar;
@@ -143,8 +142,6 @@ public class Program {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {
                 runAnalysis(new LinearRegression());
-            } else if (StatisticsCommand.isLogistic) {
-                runAnalysis(new LogisticRegression());
             } else if (SiblingCommand.isSiblingCompHet) {
                 runAnalysis(new ListSiblingComphet());
             } else if (TrioCommand.isListTrio) {

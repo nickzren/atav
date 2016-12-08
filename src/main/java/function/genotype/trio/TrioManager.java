@@ -1,19 +1,10 @@
 package function.genotype.trio;
 
-import function.external.evs.EvsManager;
-import function.external.exac.ExacManager;
-import function.external.genomes.GenomesManager;
-import function.external.gerp.GerpManager;
-import function.external.kaviar.KaviarManager;
-import function.external.knownvar.KnownVarManager;
-import function.external.mgi.MgiManager;
-import function.external.rvis.RvisManager;
-import function.external.subrvis.SubRvisManager;
-import function.external.trap.TrapManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
+import function.variant.base.Output;
 import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -84,35 +75,9 @@ public class TrioManager {
 
     private static String getTitleByVariant() {
         return "Denovo Flag,"
-                + "Variant ID,"
-                + "Variant Type,"
-                + "Ref Allele,"
-                + "Alt Allele,"
-                + "Rs Number,"
-                // annotation data
-                + "Transcript Stable Id,"
-                + "Is CCDS Transcript,"
-                + "Effect,"
-                + "HGVS_c,"
-                + "HGVS_p,"
-                + "Polyphen Humdiv Score,"
-                + "Polyphen Humdiv Prediction,"
-                + "Polyphen Humvar Score,"
-                + "Polyphen Humvar Prediction,"
-                + "Gene Name,"
-                + "Artifacts in Gene,"
-                + "All Effect Gene Transcript HGVS_p,"
-                // external data
-                + EvsManager.getTitle()
-                + ExacManager.getTitle()
-                + KnownVarManager.getTitle()
-                + KaviarManager.getTitle()
-                + GenomesManager.getTitle()
-                + RvisManager.getTitle()
-                + SubRvisManager.getTitle()
-                + GerpManager.getTitle()
-                + TrapManager.getTitle()
-                + MgiManager.getTitle()
+                + Output.getVariantDataTitle()
+                + Output.getAnnotationDataTitle()
+                + Output.getExternalDataTitle()
                 // genotype data
                 + "GT (mother),"
                 + "DP Bin (mother),"
@@ -133,25 +98,7 @@ public class TrioManager {
                 + "Read Pos Rank Sum (child),"
                 + "MQ Rank Sum (child),"
                 + "FILTER (child),"
-                + "Is Minor Ref,"
-                + "Major Hom Case,"
-                + "Het Case,"
-                + "Minor Hom Case,"
-                + "Minor Hom Case Freq,"
-                + "Het Case Freq,"
-                + "Major Hom Ctrl,"
-                + "Het Ctrl,"
-                + "Minor Hom Ctrl,"
-                + "Minor Hom Ctrl Freq,"
-                + "Het Ctrl Freq,"
-                + "Missing Case,"
-                + "QC Fail Case,"
-                + "Missing Ctrl,"
-                + "QC Fail Ctrl,"
-                + "Case Maf,"
-                + "Ctrl Maf,"
-                + "Case HWE_P,"
-                + "Ctrl HWE_P,";
+                + Output.getGenotypeDataTitle();
     }
 
     public static void init() {

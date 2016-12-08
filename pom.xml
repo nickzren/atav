@@ -31,11 +31,6 @@
             <version>19.0</version>
         </dependency>
         <dependency>
-            <groupId>org.renjin</groupId>
-            <artifactId>renjin-script-engine</artifactId>
-            <version>0.8.1582</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.lalyos</groupId>
             <artifactId>jfiglet</artifactId>
             <version>0.0.3</version>

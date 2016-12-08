@@ -1,5 +1,15 @@
 package function.variant.base;
 
+import function.external.evs.EvsManager;
+import function.external.exac.ExacManager;
+import function.external.genomes.GenomesManager;
+import function.external.gerp.GerpManager;
+import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
+import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisManager;
+import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
@@ -15,6 +25,63 @@ import utils.MathManager;
  * @author nick
  */
 public class Output implements Cloneable {
+
+    public static String getVariantDataTitle() {
+        return "Variant ID,"
+                + "Variant Type,"
+                + "Ref Allele,"
+                + "Alt Allele,"
+                + "Rs Number,";
+    }
+
+    public static String getAnnotationDataTitle() {
+        return "Transcript Stable Id,"
+                + "Is CCDS Transcript,"
+                + "Effect,"
+                + "HGVS_c,"
+                + "HGVS_p,"
+                + "Polyphen Humdiv Score,"
+                + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humvar Score,"
+                + "Polyphen Humvar Prediction,"
+                + "Gene Name,"
+                + "All Effect Gene Transcript HGVS_p,";
+    }
+
+    public static String getExternalDataTitle() {
+        return EvsManager.getTitle()
+                + ExacManager.getTitle()
+                + KnownVarManager.getTitle()
+                + KaviarManager.getTitle()
+                + GenomesManager.getTitle()
+                + RvisManager.getTitle()
+                + SubRvisManager.getTitle()
+                + GerpManager.getTitle()
+                + TrapManager.getTitle()
+                + MgiManager.getTitle();
+    }
+
+    public static String getGenotypeDataTitle() {
+        return "Is Minor Ref,"
+                + "Major Hom Case,"
+                + "Het Case,"
+                + "Minor Hom Case,"
+                + "Minor Hom Case Freq,"
+                + "Het Case Freq,"
+                + "Major Hom Ctrl,"
+                + "Het Ctrl,"
+                + "Minor Hom Ctrl,"
+                + "Minor Hom Ctrl Freq,"
+                + "Het Ctrl Freq,"
+                + "Missing Case,"
+                + "QC Fail Case,"
+                + "Missing Ctrl,"
+                + "QC Fail Ctrl,"
+                + "Case Maf,"
+                + "Ctrl Maf,"
+                + "Case HWE_P,"
+                + "Ctrl HWE_P,";
+    }
 
     protected CalledVariant calledVar;
 
@@ -272,6 +339,28 @@ public class Output implements Cloneable {
 
     public boolean isMinorRef() {
         return isMinorRef;
+    }
+
+    public void getGenotypeData(StringBuilder sb) {
+        sb.append(isMinorRef).append(",");
+        sb.append(majorHomCount[Index.CASE]).append(",");
+        sb.append(genoCount[Index.HET][Index.CASE]).append(",");
+        sb.append(minorHomCount[Index.CASE]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CASE])).append(",");
+        sb.append(majorHomCount[Index.CTRL]).append(",");
+        sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
+        sb.append(minorHomCount[Index.CTRL]).append(",");
+        sb.append(FormatManager.getDouble(minorHomFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hetFreq[Index.CTRL])).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CASE]).append(",");
+        sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
+        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
+        sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
     }
 
     @Override

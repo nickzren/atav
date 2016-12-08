@@ -183,6 +183,20 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
+    public void getAnnotationData(StringBuilder sb) {
+        sb.append(stableIdStr).append(",");
+        sb.append(TranscriptManager.isCCDSTranscript(stableIdStr)).append(",");
+        sb.append(effect).append(",");
+        sb.append(HGVS_c).append(",");
+        sb.append(HGVS_p).append(",");
+        sb.append(FormatManager.getFloat(polyphenHumdiv)).append(",");
+        sb.append(PolyphenManager.getPrediction(polyphenHumdiv, effect)).append(",");
+        sb.append(FormatManager.getFloat(polyphenHumvar)).append(",");
+        sb.append(PolyphenManager.getPrediction(polyphenHumvar, effect)).append(",");
+        sb.append("'").append(geneName).append("'").append(",");
+        sb.append(allGeneTranscriptSB.toString()).append(",");
+    }
+
     public String getStableId() {
         return stableIdStr;
     }
@@ -225,6 +239,19 @@ public class AnnotatedVariant extends Variant {
 
     public String getAllGeneTranscript() {
         return allGeneTranscriptSB.toString();
+    }
+
+    public void getExternalData(StringBuilder sb) {
+        sb.append(getEvsStr());
+        sb.append(getExacStr());
+        sb.append(getKnownVarStr());
+        sb.append(getKaviarStr());
+        sb.append(get1000Genomes());
+        sb.append(getRvis());
+        sb.append(getSubRvis());
+        sb.append(getGerpScore());
+        sb.append(getTrapScore());
+        sb.append(getMgi());
     }
 
     public String getExacStr() {
