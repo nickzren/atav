@@ -85,12 +85,8 @@ public class ParentalCommand {
             return true;
         }
 
-        if (value != Data.NA
-                && value >= minChildBinomial) {
-            return true;
-        }
-
-        return false;
+        return value != Data.NA
+                && value >= minChildBinomial;
     }
 
     public static boolean isParentBinomialValid(double value) {
@@ -98,11 +94,7 @@ public class ParentalCommand {
             return true;
         }
 
-        if (value != Data.NA
-                && value < maxParentBinomial) {
-            return true;
-        }
-
-        return false;
+        return value != Data.NA
+                && value < maxParentBinomial;
     }
 }

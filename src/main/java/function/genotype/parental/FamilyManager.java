@@ -13,14 +13,14 @@ import java.util.HashMap;
  */
 public class FamilyManager {
 
-    private static ArrayList<Family> familyList = new ArrayList<Family>();
+    private static ArrayList<Family> familyList = new ArrayList<>();
 
     public static void init() {
         initList();
     }
 
     private static void initList() {
-        HashMap<String, Family> familyMap = new HashMap<String, Family>();
+        HashMap<String, Family> familyMap = new HashMap<>();
 
         for (Sample sample : SampleManager.getList()) {
             if (!sample.getPaternalId().equals("0")
