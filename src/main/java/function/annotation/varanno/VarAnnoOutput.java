@@ -1,17 +1,7 @@
 package function.annotation.varanno;
 
 import function.annotation.base.AnnotatedVariant;
-import function.annotation.base.TranscriptManager;
-import function.external.evs.EvsManager;
-import function.external.exac.ExacManager;
-import function.external.genomes.GenomesManager;
-import function.external.gerp.GerpManager;
-import function.external.kaviar.KaviarManager;
-import function.external.knownvar.KnownVarManager;
-import function.external.mgi.MgiManager;
-import function.external.rvis.RvisManager;
-import function.external.subrvis.SubRvisManager;
-import function.external.trap.TrapManager;
+import function.variant.base.Output;
 
 /**
  *
@@ -22,34 +12,9 @@ public class VarAnnoOutput {
     AnnotatedVariant annotatedVar;
 
     public static String getTitle() {
-        return "Variant ID,"
-                + "Variant Type,"
-                + "Ref Allele,"
-                + "Alt Allele,"
-                + "Rs Number,"
-                // annotation data
-                + "Transcript Stable Id,"
-                + "Is CCDS Transcript,"
-                + "Effect,"
-                + "HGVS_c,"
-                + "HGVS_p,"
-                + "Polyphen Humdiv Score,"
-                + "Polyphen Humdiv Prediction,"
-                + "Polyphen Humvar Score,"
-                + "Polyphen Humvar Prediction,"
-                + "Gene Name,"
-                + "All Effect Gene Transcript HGVS_p,"
-                // external data
-                + EvsManager.getTitle()
-                + ExacManager.getTitle()
-                + KnownVarManager.getTitle()
-                + KaviarManager.getTitle()
-                + GenomesManager.getTitle()
-                + RvisManager.getTitle()
-                + SubRvisManager.getTitle()
-                + GerpManager.getTitle()
-                + TrapManager.getTitle()
-                + MgiManager.getTitle();
+        return Output.getVariantDataTitle()
+                + Output.getAnnotationDataTitle()
+                + Output.getExternalDataTitle();
     }
 
     public VarAnnoOutput(AnnotatedVariant var) {
@@ -60,34 +25,9 @@ public class VarAnnoOutput {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(annotatedVar.getVariantIdStr()).append(",");
-        sb.append(annotatedVar.getType()).append(",");
-        sb.append(annotatedVar.getRefAllele()).append(",");
-        sb.append(annotatedVar.getAllele()).append(",");
-        sb.append(annotatedVar.getRsNumberStr()).append(",");
-        // annotation data
-        sb.append(annotatedVar.getStableId()).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript((annotatedVar.getStableId()))).append(",");
-        sb.append(annotatedVar.getEffect()).append(",");
-        sb.append(annotatedVar.getHGVS_c()).append(",");
-        sb.append(annotatedVar.getHGVS_p()).append(",");
-        sb.append(annotatedVar.getPolyphenHumdivScore()).append(",");
-        sb.append(annotatedVar.getPolyphenHumdivPrediction()).append(",");
-        sb.append(annotatedVar.getPolyphenHumvarScore()).append(",");
-        sb.append(annotatedVar.getPolyphenHumvarPrediction()).append(",");
-        sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
-        sb.append(annotatedVar.getAllGeneTranscript()).append(",");
-        // external data
-        sb.append(annotatedVar.getEvsStr());
-        sb.append(annotatedVar.getExacStr());
-        sb.append(annotatedVar.getKnownVarStr());
-        sb.append(annotatedVar.getKaviarStr());
-        sb.append(annotatedVar.get1000Genomes());
-        sb.append(annotatedVar.getRvis());
-        sb.append(annotatedVar.getSubRvis());
-        sb.append(annotatedVar.getGerpScore());
-        sb.append(annotatedVar.getTrapScore());
-        sb.append(annotatedVar.getMgi());
+        annotatedVar.getVariantData(sb);
+        annotatedVar.getAnnotationData(sb);
+        annotatedVar.getExternalData(sb);
 
         return sb.toString();
     }
