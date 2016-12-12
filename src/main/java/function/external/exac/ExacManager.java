@@ -20,8 +20,7 @@ public class ExacManager {
     public static final String[] EXAC_SUBSET = {"nonpsych", "nonTCGA"};
 
     static final String coverageTable = "exac.coverage_03";
-    static String snvTable = "exac.snv_maf_r03_2015_09_16";
-    static String indelTable = "exac.indel_maf_r03_2015_09_16";
+    static String variantTable = "exac.variant_r03_2015_09_16";
 
     private static final String GENE_DAMAGING_COUNTS_PATH = "data/exac/ExAC.r0.3.damagingCounts.csv";
     private static final HashMap<String, String> geneDamagingCountsMap = new HashMap<>();
@@ -32,16 +31,6 @@ public class ExacManager {
             if (!ExacCommand.isListExac) { // hack here , list exac function cannot support gene level output
                 initGeneDamagingCountsMap();
             }
-        }
-    }
-
-    public static void resetTables() {
-        if (ExacCommand.exacSubset.equalsIgnoreCase("nonpsych")) {
-            snvTable = "exac.snv_maf_r03_nonpsych";
-            indelTable = "exac.indel_maf_r03_nonpsych";
-        } else if (ExacCommand.exacSubset.equalsIgnoreCase("nonTCGA")) {
-            snvTable = "exac.snv_maf_r03_nonTCGA";
-            indelTable = "exac.indel_maf_r03_nonTCGA";
         }
     }
 
@@ -68,7 +57,7 @@ public class ExacManager {
 
     public static String getVersion() {
         if (ExacCommand.isIncludeExac) {
-            return "ExAC: " + DataManager.getVersion(snvTable) + "\n";
+            return "ExAC: " + DataManager.getVersion(variantTable) + "\n";
         } else {
             return "";
         }
@@ -83,7 +72,7 @@ public class ExacManager {
         return sql;
     }
 
-    public static String getSql4Maf(boolean isIndel, Region region) {
+    public static String getSqlByRegion(Region region) {
         String result = "chr,pos,ref_allele,alt_allele,";
 
         for (String str : EXAC_POP) {
@@ -93,22 +82,15 @@ public class ExacManager {
 
         result += "vqslod ";
 
-        String sql = "SELECT " + result;
-
-        String table = snvTable;
-
-        if (isIndel) {
-            table = indelTable;
-        }
-
-        sql += "FROM " + table + " "
+        String sql = "SELECT " + result
+                + "FROM " + variantTable + " "
                 + "WHERE chr = '" + region.getChrStr() + "' "
                 + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
 
         return sql;
     }
 
-    public static String getSql4Maf(boolean isSnv, String chr,
+    public static String getSqlByVariant(String chr,
             int pos, String ref, String alt) {
         String result = "";
 
@@ -119,22 +101,12 @@ public class ExacManager {
 
         result += "vqslod ";
 
-        String sql = "SELECT " + result;
-
-        if (isSnv) {
-            sql += "FROM " + snvTable + " "
-                    + "WHERE chr = '" + chr + "' "
-                    + "AND pos = " + pos + " "
-                    + "AND alt_allele = '" + alt + "'";
-        } else {
-            sql += "FROM " + indelTable + " "
-                    + "WHERE chr = '" + chr + "' "
-                    + "AND pos = " + pos + " "
-                    + "AND ref_allele = '" + ref + "' "
-                    + "AND alt_allele = '" + alt + "'";
-        }
-
-        return sql;
+        return "SELECT " + result
+                + "FROM " + variantTable + " "
+                + "WHERE chr = '" + chr + "' "
+                + "AND pos = " + pos + " "
+                + "AND ref_allele = '" + ref + "' "
+                + "AND alt_allele = '" + alt + "'";
     }
 
     private static void initGeneDamagingCountsMap() {

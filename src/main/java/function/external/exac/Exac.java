@@ -31,19 +31,14 @@ public class Exac {
         this.ref = ref;
         this.alt = alt;
 
-        isSnv = true;
-
-        if (ref.length() > 1
-                || alt.length() > 1) {
-            isSnv = false;
-        }
+        initType();
 
         initCoverage();
 
         initMaf();
     }
 
-    public Exac(boolean isIndel, ResultSet rs) {
+    public Exac(ResultSet rs) {
         try {
             chr = rs.getString("chr");
             pos = rs.getInt("pos");
@@ -51,13 +46,23 @@ public class Exac {
             alt = rs.getString("alt_allele");
             maf = new float[ExacManager.EXAC_POP.length];
             gts = new String[ExacManager.EXAC_POP.length];
-            setMaf(rs);
-
-            isSnv = !isIndel;
+            
+            initType();
 
             initCoverage();
+            
+            setMaf(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    private void initType() {
+        isSnv = true;
+
+        if (ref.length() > 1
+                || alt.length() > 1) {
+            isSnv = false;
         }
     }
 
@@ -84,7 +89,7 @@ public class Exac {
         gts = new String[ExacManager.EXAC_POP.length];
 
         try {
-            String sql = ExacManager.getSql4Maf(isSnv, chr, pos, ref, alt);
+            String sql = ExacManager.getSqlByVariant(chr, pos, ref, alt);
 
             ResultSet rs = DBManager.executeQuery(sql);
 

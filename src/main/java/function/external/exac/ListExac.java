@@ -59,41 +59,32 @@ public class ListExac extends AnalysisBase {
     public void processDatabaseData() throws Exception {
         for (int r = 0; r < RegionManager.getRegionSize(); r++) {
 
-            for (String varType : VariantManager.VARIANT_TYPE) {
+            Region region = RegionManager.getRegion(r);
 
-//                if (VariantManager.isVariantTypeValid(r, varType)) {
-//
-//                    boolean isIndel = varType.equals("indel");
-//
-//                    Region region = RegionManager.getRegion(r, varType);
-//
-//                    String sqlCode = ExacManager.getSql4Maf(isIndel, region);
-//
-//                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
-//
-//                    while (rset.next()) {
-//                        ExacOutput output = new ExacOutput(isIndel, rset);
-//
-//                        if (VariantManager.isVariantIdIncluded(output.exac.getVariantId())
-//                                && output.isValid()) {
-//                            bwExac.write(output.exac.getVariantId() + ",");
-//                            bwExac.write(output.toString());
-//                            bwExac.newLine();
-//                        }
-//
-//                        countVariant();
-//                    }
-//
-//                    rset.close();
-//                }
+            String sqlCode = ExacManager.getSqlByRegion(region);
+
+            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+
+            while (rset.next()) {
+                ExacOutput output = new ExacOutput(rset);
+
+                if (VariantManager.isVariantIdIncluded(output.exac.getVariantId())
+                        && output.isValid()) {
+                    bwExac.write(output.exac.getVariantId() + ",");
+                    bwExac.write(output.toString());
+                    bwExac.newLine();
+                }
+
+                countVariant();
             }
+
+            rset.close();
         }
     }
 
-    protected void countVariant() {
-        analyzedRecords++;
+    private void countVariant() {
         System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
+                + ++analyzedRecords + "                     \r");
     }
 
     @Override

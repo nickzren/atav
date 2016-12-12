@@ -16,7 +16,6 @@ public class ExacCommand {
     public static float exacVqslodSnv = Data.NO_FILTER;
     public static float exacVqslodIndel = Data.NO_FILTER;
     public static float exacMeanCoverage = Data.NO_FILTER;
-    public static String exacSubset = "";
 
     public static boolean isExacMafValid(float value) {
         if (exacMaf == Data.NO_FILTER) {
