@@ -15,14 +15,13 @@ import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
 import global.Data;
 import java.util.Iterator;
-import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
-import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 import utils.CommonCommand;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -109,12 +108,6 @@ public class VariantLevelFilterCommand {
                 case "--min-exac-mean-coverage":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     ExacCommand.exacMeanCoverage = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
-                    break;
-                case "--exac-subset":
-                    checkValuesValid(ExacManager.EXAC_SUBSET, option);
-                    ExacCommand.exacSubset = option.getValue();
-                    ExacManager.resetTables();
                     ExacCommand.isIncludeExac = true;
                     break;
                 case "--known-var-only":
