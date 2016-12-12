@@ -21,13 +21,13 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2016_2";
-    public static final String clinVarTable = "knownvar.clinvar_2016_08_18";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_08_18";
-    public static final String clinGenTable = "knownvar.ClinGen_2016_08_17";
-    public static final String omimTable = "knownvar.omim_2016_08_17";
+    public static final String hgmdTable = "knownvar.hgmd_2016_3";
+    public static final String clinVarTable = "knownvar.clinvar_2016_11_09";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2016_11_09";
+    public static final String clinGenTable = "knownvar.ClinGen_2016_10_25";
+    public static final String omimTable = "knownvar.omim_2016_10_25";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
-    public static final String acmgTable = "knownvar.ACMG_2016_04_26";
+    public static final String acmgTable = "knownvar.ACMG_2016_11_19";
     public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
 
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
@@ -51,10 +51,10 @@ public class KnownVarManager {
                     + "HGMDp2site,"
                     + "HGMD indel 9bpflanks,"
                     + "ClinVar,"
+                    + "ClinVar RS Number,"
                     + "ClinVar Disease,"
                     + "ClinVar Clinical Significance,"
                     + "ClinVar PMID,"
-                    + "ClinVar Other Ids,"
                     + "ClinVar pathogenic indels,"
                     + "ClinVar all indels,"
                     + "ClinVar Pathogenic Indel Count,"
@@ -155,13 +155,13 @@ public class KnownVarManager {
                 int pos = rs.getInt("pos");
                 String ref = rs.getString("ref");
                 String alt = rs.getString("alt");
-                String clinicalSignificance = FormatManager.getString(rs.getString("ClinicalSignificance"));
-                String otherIds = FormatManager.getString(rs.getString("OtherIds"));
+                String rsNumber = FormatManager.getString(rs.getString("rsID"));
+                String clinicalSignificance = FormatManager.getString(rs.getString("ClinSig"));
                 String diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
                 String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
 
                 ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
-                        clinicalSignificance, otherIds, diseaseName, pubmedID);
+                        rsNumber, clinicalSignificance, diseaseName, pubmedID);
 
                 clinVarMultiMap.put(clinVar.getSiteId(), clinVar);
             }
@@ -404,7 +404,7 @@ public class KnownVarManager {
                     + "From " + clinVarTable + " "
                     + "WHERE chr='" + var.getChrStr() + "' "
                     + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
-                    + "AND ClinicalSignificance like '%pathogenic%' "
+                    + "AND ClinSig like '%pathogenic%' "
                     + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
 
             ResultSet rs = DBManager.executeQuery(sql);
