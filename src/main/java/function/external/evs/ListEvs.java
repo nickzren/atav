@@ -59,28 +59,26 @@ public class ListEvs extends AnalysisBase {
     public void processDatabaseData() throws Exception {
         for (int r = 0; r < RegionManager.getRegionSize(); r++) {
 
-//                    boolean isIndel = varType.equals("indel");
+            Region region = RegionManager.getRegion(r);
 
-//                    Region region = RegionManager.getRegion(r, varType);
+            String sqlCode = EvsManager.getSqlByRegion(region);
 
-//                    String sqlCode = EvsManager.getSql4Maf(isIndel, region);
+            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 
-//                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            while (rset.next()) {
+                EvsOutput output = new EvsOutput(rset);
 
-//                    while (rset.next()) {
-//                        EvsOutput output = new EvsOutput(isIndel, rset);
-//
-//                        if (VariantManager.isVariantIdIncluded(output.evs.getVariantId())
-//                                && output.isValid()) {
-//                            bwEvs.write(output.evs.getVariantId() + ",");
-//                            bwEvs.write(output.toString());
-//                            bwEvs.newLine();
-//                        }
-//
-//                        countVariant();
-//                    }
-//
-//                    rset.close();
+                if (VariantManager.isVariantIdIncluded(output.evs.getVariantId())
+                        && output.isValid()) {
+                    bwEvs.write(output.evs.getVariantId() + ",");
+                    bwEvs.write(output.toString());
+                    bwEvs.newLine();
+                }
+            }
+
+            countVariant();
+
+            rset.close();
         }
     }
 

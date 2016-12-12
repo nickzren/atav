@@ -12,8 +12,7 @@ public class EvsManager {
     public static final String[] EVS_POP = {"ea", "aa", "all"};
 
     static final String coverageTable = "evs.coverage";
-    static final String snvTable = "evs.snv_maf_2015_09_16";
-    static final String indelTable = "evs.indel_maf_2015_09_16";
+    static final String variantTable = "evs.variant_2015_09_16";
 
     public static String getTitle() {
         if (EvsCommand.isIncludeEvs) {
@@ -37,37 +36,25 @@ public class EvsManager {
 
     public static String getVersion() {
         if (EvsCommand.isIncludeEvs) {
-            return "EVS: " + DataManager.getVersion(snvTable) + "\n";
+            return "EVS: " + DataManager.getVersion(variantTable) + "\n";
         } else {
             return "";
         }
     }
 
-    public static String getSql4Maf(boolean isSnv, Region region) {
-        String table = snvTable;
-
-        if (!isSnv) {
-            table = indelTable;
-        }
-
+    public static String getSqlByRegion(Region region) {
         return "SELECT * "
-                + "FROM " + table + " "
+                + "FROM " + variantTable + " "
                 + "WHERE chr = '" + region.getChrStr() + "' "
                 + "AND position BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
     }
 
-    public static String getSql4Maf(boolean isSnv, String chr,
+    public static String getSqlByVariant(String chr,
             int pos, String ref, String alt) {
-        String table = snvTable;
-
-        if (!isSnv) {
-            table = indelTable;
-        }
-
         return "SELECT all_maf, ea_maf, aa_maf,"
                 + "all_genotype_count, ea_genotype_count, aa_genotype_count,"
                 + "FilterStatus "
-                + "FROM " + table + " "
+                + "FROM " + variantTable + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND position = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "

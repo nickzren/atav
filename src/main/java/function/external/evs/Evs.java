@@ -16,7 +16,6 @@ public class Evs {
     private int pos;
     private String ref;
     private String alt;
-    private boolean isSnv;
 
     // from coverage table
     private int eaCoveredSamples;
@@ -41,19 +40,12 @@ public class Evs {
         this.ref = ref;
         this.alt = alt;
 
-        isSnv = true;
-
-        if (ref.length() > 1
-                || alt.length() > 1) {
-            isSnv = false;
-        }
-
         initCoverage();
 
         initMaf();
     }
 
-    public Evs(boolean isIndel, ResultSet rs) {
+    public Evs(ResultSet rs) {
         try {
             chr = rs.getString("chr");
             pos = rs.getInt("position");
@@ -66,9 +58,7 @@ public class Evs {
             aaGenotypeCount = rs.getString("aa_genotype_count");
             allGenotypeCount = rs.getString("all_genotype_count");
             filterStatus = rs.getString("FilterStatus");
-
-            isSnv = !isIndel;
-
+            
             initCoverage();
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -96,7 +86,7 @@ public class Evs {
 
     private void initMaf() {
         try {
-            String sql = EvsManager.getSql4Maf(isSnv, chr, pos, ref, alt);
+            String sql = EvsManager.getSqlByVariant(chr, pos, ref, alt);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
