@@ -26,14 +26,6 @@ public class ExacManager {
     private static final HashMap<String, String> geneDamagingCountsMap = new HashMap<>();
     private static String geneDamagingCountsNA = "";
 
-    public static void init() {
-        if (ExacCommand.isIncludeExac) {
-            if (!ExacCommand.isListExac) { // hack here , list exac function cannot support gene level output
-                initGeneDamagingCountsMap();
-            }
-        }
-    }
-
     public static String getTitle() {
         String title = "";
 
@@ -46,13 +38,15 @@ public class ExacManager {
             title += "ExAC vqslod,"
                     + "ExAC Mean Coverage,"
                     + "ExAC Sample Covered 10x,";
-
-            if (!ExacCommand.isListExac) { // hack here , list exac function cannot support gene level output
-                title += geneDamagingCountsMap.get("title");
-            }
         }
 
         return title;
+    }
+
+    public static void init() {
+        if (ExacCommand.isListExacCount) {
+            initGeneDamagingCountsMap();
+        }
     }
 
     public static String getVersion() {
@@ -149,5 +143,9 @@ public class ExacManager {
         }
 
         return line;
+    }
+
+    public static String getCountByGene(String gene) {
+        return geneDamagingCountsMap.get(gene);
     }
 }

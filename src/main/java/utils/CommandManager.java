@@ -341,6 +341,10 @@ public class CommandManager {
                     ExacCommand.isListExac = true;
                     ExacCommand.isIncludeExac = true;
                     break;
+                case "--list-exac-count":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    ExacCommand.isListExacCount = true;
+                    break;
                 case "--list-known-var":
                     CommonCommand.isNonSampleAnalysis = true;
                     KnownVarCommand.isListKnownVar = true;

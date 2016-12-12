@@ -1,4 +1,4 @@
-package function.external.rvis;
+package function.external.exac;
 
 import function.annotation.base.AnalysisBase4AnnotatedVar;
 import function.annotation.base.AnnotatedVariant;
@@ -11,18 +11,18 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class ListRvis extends AnalysisBase4AnnotatedVar {
+public class ListExacCount extends AnalysisBase4AnnotatedVar {
 
-    private BufferedWriter bwRvis = null;
-    private final String rvisFilePath = CommonCommand.outputPath + "rvis.csv";
+    private BufferedWriter bwExacCount = null;
+    private final String exacCountFilePath = CommonCommand.outputPath + "exac_count.csv";
 
     @Override
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
-            bwRvis.write(annotatedVar.getVariantIdStr() + ",");
-            bwRvis.write("'" + annotatedVar.getGeneName() + "',");
-            bwRvis.write(RvisManager.getLine(annotatedVar.getGeneName()));
-            bwRvis.newLine();
+            bwExacCount.write(annotatedVar.getVariantIdStr() + ",");
+            bwExacCount.write("'" + annotatedVar.getGeneName() + "',");
+            bwExacCount.write(ExacManager.getGeneDamagingCountsLine(annotatedVar.getGeneName()));
+            bwExacCount.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -31,9 +31,9 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
     @Override
     public void initOutput() {
         try {
-            bwRvis = new BufferedWriter(new FileWriter(rvisFilePath));
-            bwRvis.write("Variant ID,Gene," + RvisManager.getTitle());
-            bwRvis.newLine();
+            bwExacCount = new BufferedWriter(new FileWriter(exacCountFilePath));
+            bwExacCount.write("Variant ID,Gene," + ExacManager.getCountByGene("title"));
+            bwExacCount.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -42,8 +42,8 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
     @Override
     public void closeOutput() {
         try {
-            bwRvis.flush();
-            bwRvis.close();
+            bwExacCount.flush();
+            bwExacCount.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -63,6 +63,6 @@ public class ListRvis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "Start running list rvis function";
+        return "Start running list exac count function";
     }
 }
