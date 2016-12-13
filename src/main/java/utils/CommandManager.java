@@ -86,13 +86,11 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-        {
-            if (isCommandFileIncluded(options)) {
+         if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
-        }
 
         cleanUpOddSymbol();
 
@@ -305,16 +303,16 @@ public class CommandManager {
                 case "--list-var-anno":
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isListVarAnno = true;
-//                    EvsCommand.isIncludeEvs = true;
-//                    ExacCommand.isIncludeExac = true;
+                    EvsCommand.isIncludeEvs = true;
+                    ExacCommand.isIncludeExac = true;
 //                    GerpCommand.isIncludeGerp = true;
 //                    TrapCommand.isIncludeTrap = true;
 //                    KaviarCommand.isIncludeKaviar = true;
-//                    KnownVarCommand.isIncludeKnownVar = true;
-//                    RvisCommand.isIncludeRvis = true;
-//                    SubRvisCommand.isIncludeSubRvis = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
+                    RvisCommand.isIncludeRvis = true;
+                    SubRvisCommand.isIncludeSubRvis = true;
 //                    GenomesCommand.isInclude1000Genomes = true;
-//                    MgiCommand.isIncludeMgi = true;
+                    MgiCommand.isIncludeMgi = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
