@@ -28,8 +28,8 @@ public class Carrier extends NonCarrier {
     public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");
         gt = rs.getInt("GT");
-        dp = rs.getInt("DP");
-        dpBin = Data.NA;
+        dp = rs.getInt("DP");        
+        dpBin = Data.INTEGER_NA;
         adRef = rs.getInt("AD_REF");
         adAlt = rs.getInt("AD_ALT");
         gq = FormatManager.getInt(rs, "GQ");
@@ -92,7 +92,7 @@ public class Carrier extends NonCarrier {
     }
 
     public void applyQualityFilter() {
-        if (gt != Data.NA) {
+        if (gt != Data.INTEGER_NA) {
             if (!GenotypeLevelFilterCommand.isVcfFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isGqValid(gq)
                     || !GenotypeLevelFilterCommand.isFsValid(fs)
@@ -101,28 +101,28 @@ public class Carrier extends NonCarrier {
                     || !GenotypeLevelFilterCommand.isQualValid(qual)
                     || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum)
                     || !GenotypeLevelFilterCommand.isMqrsValid(mqRankSum)) {
-                gt = Data.NA;
+                gt = Data.INTEGER_NA;
             }
         }
 
         if (gt == Index.HOM) { // --hom-percent-alt-read 
-            double percAltRead = MathManager.devide(adAlt, dp);
+            float percAltRead = MathManager.devide(adAlt, dp);
 
             if (!GenotypeLevelFilterCommand.isHomPercentAltReadValid(percAltRead)) {
-                gt = Data.NA;
+                gt = Data.INTEGER_NA;
             }
         }
 
         if (gt == Index.HET) { // --het-percent-alt-read 
-            double percAltRead = MathManager.devide(adAlt, dp);
+            float percAltRead = MathManager.devide(adAlt, dp);
 
             if (!GenotypeLevelFilterCommand.isHetPercentAltReadValid(percAltRead)) {
-                gt = Data.NA;
+                gt = Data.INTEGER_NA;
             }
         }
 
-        if (gt == Data.NA) {
-            dpBin = Data.NA;
+        if (gt == Data.INTEGER_NA) {
+            dpBin = Data.INTEGER_NA;
         }
     }
 }

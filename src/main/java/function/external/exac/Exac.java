@@ -76,8 +76,8 @@ public class Exac {
                 meanCoverage = rs.getFloat("mean_cvg");
                 sampleCovered10x = rs.getInt("covered_10x");
             } else {
-                meanCoverage = Data.NA;
-                sampleCovered10x = Data.NA;
+                meanCoverage = Data.FLOAT_NA;
+                sampleCovered10x = Data.INTEGER_NA;
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -98,7 +98,7 @@ public class Exac {
             } else if (meanCoverage > 0) {
                 resetMaf(0);
             } else {
-                resetMaf(Data.NA);
+                resetMaf(Data.FLOAT_NA);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -120,20 +120,20 @@ public class Exac {
         vqslod = rs.getFloat("vqslod");
     }
 
-    private void resetMaf(int value) {
+    private void resetMaf(float value) {
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
             maf[i] = value;
-            gts[i] = "NA";
+            gts[i] = Data.STRING_NA;
         }
 
-        vqslod = Data.NA;
+        vqslod = Data.FLOAT_NA;
     }
 
     private float getMaxMaf() {
-        float value = Data.NA;
+        float value = Data.FLOAT_NA;
 
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            if (maf[i] != Data.NA
+            if (maf[i] != Data.FLOAT_NA
                     && ExacCommand.exacPop.contains(ExacManager.EXAC_POP[i])) {
                 value = Math.max(value, maf[i]);
             }
@@ -159,7 +159,7 @@ public class Exac {
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
             sb.append(FormatManager.getDouble(maf[i])).append(",");
 
-            if (gts[i].equals("NA")) {
+            if (gts[i].equals(Data.STRING_NA)) {
                 sb.append(gts[i]).append(",");
             } else {
                 sb.append("'").append(gts[i]).append("',");

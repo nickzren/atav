@@ -14,7 +14,7 @@ public class TrapCommand {
     public static float minTrapScore = Data.NO_FILTER;
 
     public static boolean isTrapScoreValid(float value) {
-        if (value == Data.NA
+        if (value == Data.FLOAT_NA
                 || minTrapScore == Data.NO_FILTER) {
             return true;
         }

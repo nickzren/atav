@@ -19,7 +19,7 @@ public class KaviarCommand {
         }
 
         return value <= maxKaviarMaf
-                || value == Data.NA;
+                || value == Data.FLOAT_NA;
     }
 
     public static boolean isMaxAlleleCountValid(int value) {
@@ -28,6 +28,6 @@ public class KaviarCommand {
         }
 
         return value <= maxKaviarAlleleCount
-                || value == Data.NA;
+                || value == Data.INTEGER_NA;
     }
 }

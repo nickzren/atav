@@ -115,7 +115,7 @@ public class Output implements Cloneable {
     }
 
     public void addSampleGeno(int geno, int pheno) {
-        if (geno == Data.NA) {
+        if (geno == Data.INTEGER_NA) {
             geno = Index.MISSING;
         }
 
@@ -124,7 +124,7 @@ public class Output implements Cloneable {
     }
 
     public void deleteSampleGeno(int geno, int pheno) {
-        if (geno == Data.NA) {
+        if (geno == Data.INTEGER_NA) {
             geno = Index.MISSING;
         }
 
@@ -273,8 +273,8 @@ public class Output implements Cloneable {
                 return "het";
             case 0:
                 return "hom ref";
-            case Data.NA:
-                return "NA";
+            case Data.INTEGER_NA:
+                return Data.STRING_NA;
         }
 
         return "";

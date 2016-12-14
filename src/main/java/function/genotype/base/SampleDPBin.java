@@ -20,7 +20,7 @@ public class SampleDPBin {
         dpBinCursor = 0;
         endPos = 0;
         this.dpBinStr = covBinStr;
-        dpBin = Data.NA;
+        dpBin = Data.INTEGER_NA;
     }
 
     public int getSampleId() {
@@ -56,6 +56,6 @@ public class SampleDPBin {
             }
         }
 
-        return Data.NA;
+        return Data.INTEGER_NA;
     }
 }

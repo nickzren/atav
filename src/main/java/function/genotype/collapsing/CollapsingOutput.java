@@ -60,7 +60,7 @@ public class CollapsingOutput extends Output {
     }
 
     public void calculateLooFreq(Sample sample) {
-        if (sample.getId() != Data.NA) {
+        if (sample.getId() != Data.INTEGER_NA) {
             int geno = calledVar.getGT(sample.getIndex());
             int pheno = (int) sample.getPheno();
             int type = getGenoType(geno, sample);
@@ -119,26 +119,26 @@ public class CollapsingOutput extends Output {
         getGenotypeData(sb);
 
         Carrier carrier = calledVar.getCarrier(sample.getId());
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.NA;
+        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
+        int readsRef = carrier != null ? carrier.getADRef() : Data.INTEGER_NA;
         sb.append(sample.getName()).append(",");
         sb.append(sample.getType()).append(",");
         sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");
         sb.append(FormatManager.getInteger(calledVar.getDPBin(sample.getIndex()))).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
-        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.NA)).append(",");
+        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5))).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getMQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQD() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");
-        sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getGQ() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getMQ() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQD() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA)).append(",");
+        sb.append(carrier != null ? carrier.getFILTER() : Data.STRING_NA).append(",");
 
         sb.append(FormatManager.getDouble(looMAF)).append(",");
 

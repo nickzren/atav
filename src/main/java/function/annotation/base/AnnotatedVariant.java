@@ -167,7 +167,7 @@ public class AnnotatedVariant extends Variant {
     private boolean isTrapValid() {
         if (TrapCommand.isIncludeTrap) {
             if (isIndel()) {
-                trapScore = Data.NA;
+                trapScore = Data.FLOAT_NA;
             } else {
                 trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
             }

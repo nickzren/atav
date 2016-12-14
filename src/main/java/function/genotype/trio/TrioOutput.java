@@ -56,7 +56,7 @@ public class TrioOutput extends Output implements Comparable {
     }
 
     public void deleteSampleGeno(int id) {
-        if (id != Data.NA) {
+        if (id != Data.INTEGER_NA) {
             Sample sample = SampleManager.getMap().get(id);
 
             int geno = calledVar.getGT(sample.getIndex());
@@ -75,7 +75,7 @@ public class TrioOutput extends Output implements Comparable {
     }
 
     public void addSampleGeno(int id) {
-        if (id != Data.NA) {
+        if (id != Data.INTEGER_NA) {
             Sample sample = SampleManager.getMap().get(id);
 
             int geno = calledVar.getGT(sample.getIndex());
@@ -102,7 +102,7 @@ public class TrioOutput extends Output implements Comparable {
      * convert all missing genotype to hom ref for parents
      */
     private int convertMissing2HomRef(int geno) {
-        if (geno == Data.NA) {
+        if (geno == Data.INTEGER_NA) {
             return Index.REF;
         }
 
@@ -118,28 +118,28 @@ public class TrioOutput extends Output implements Comparable {
         calledVar.getExternalData(sb);
         getGenotypeData(sb);
 
-        int cReadsAlt = cCarrier != null ? cCarrier.getAdAlt() : Data.NA;
-        int cReadsRef = cCarrier != null ? cCarrier.getADRef() : Data.NA;
+        int cReadsAlt = cCarrier != null ? cCarrier.getAdAlt() : Data.INTEGER_NA;
+        int cReadsRef = cCarrier != null ? cCarrier.getADRef() : Data.INTEGER_NA;
         sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getDouble(mDPBin)).append(",");
         sb.append(getGenoStr(fGeno)).append(",");
         sb.append(FormatManager.getDouble(fDPBin)).append(",");
         sb.append(getGenoStr(cGeno)).append(",");
-        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getDP() : Data.NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getDP() : Data.INTEGER_NA)).append(",");
         sb.append(FormatManager.getInteger(cDPBin)).append(",");
         sb.append(FormatManager.getInteger(cReadsRef)).append(",");
         sb.append(FormatManager.getInteger(cReadsAlt)).append(",");
-        sb.append(FormatManager.getPercAltRead(cReadsAlt, cCarrier != null ? cCarrier.getDP() : Data.NA)).append(",");
+        sb.append(FormatManager.getPercAltRead(cReadsAlt, cCarrier != null ? cCarrier.getDP() : Data.INTEGER_NA)).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(cReadsAlt + cReadsRef, cReadsAlt, 0.5))).append(",");
-        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getGQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getVqslod() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getFS() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getMQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getQD() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getQual() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getReadPosRankSum() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getMQRankSum() : Data.NA)).append(",");
-        sb.append(cCarrier != null ? cCarrier.getFILTER() : "NA").append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getGQ() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getVqslod() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getFS() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getMQ() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getQD() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getQual() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getMQRankSum() : Data.FLOAT_NA)).append(",");
+        sb.append(cCarrier != null ? cCarrier.getFILTER() : Data.STRING_NA).append(",");
 
         return sb.toString();
     }

@@ -24,7 +24,7 @@ public class ExacCommand {
         }
 
         return value <= exacMaf
-                || value == Data.NA;
+                || value == Data.FLOAT_NA;
     }
 
     public static boolean isExacVqslodValid(float value, boolean isSnv) {
@@ -41,7 +41,7 @@ public class ExacCommand {
         }
 
         return value >= exacVqslodSnv
-                || value == Data.NA;
+                || value == Data.FLOAT_NA;
     }
 
     private static boolean isExacVqslodIndelValid(float value) {
@@ -50,7 +50,7 @@ public class ExacCommand {
         }
 
         return value >= exacVqslodIndel
-                || value == Data.NA;
+                || value == Data.FLOAT_NA;
     }
 
     public static boolean isExacMeanCoverageValid(float value) {

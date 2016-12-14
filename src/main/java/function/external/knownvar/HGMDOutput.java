@@ -33,9 +33,9 @@ public class HGMDOutput {
         p1Site = KnownVarManager.getHGMDBySite(var, 1);
         p2Site = KnownVarManager.getHGMDBySite(var, 2);
 
-        siteCount = var.isSnv() ? collection.size() : Data.NA; // only for SNVs
+        siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
-        indel9bpflanks = var.isIndel() ? KnownVarManager.getHGMDIndelFlankingCount(var) : Data.NA; // only for INDELs
+        indel9bpflanks = var.isIndel() ? KnownVarManager.getHGMDIndelFlankingCount(var) : Data.INTEGER_NA; // only for INDELs
     }
 
     /*
@@ -48,9 +48,9 @@ public class HGMDOutput {
                 var.getStartPosition(),
                 var.getRefAllele(),
                 var.getAllele(),
-                "NA",
-                "NA",
-                "NA");
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA);
 
         boolean isFirstSite = true;
 

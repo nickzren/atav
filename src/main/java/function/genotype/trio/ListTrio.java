@@ -4,6 +4,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.AnalysisBase4CalledVar;
 import global.Index;
 import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -119,7 +120,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void doDenovoOutput(TrioOutput output) throws Exception {
-        if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals("NA")) {
+        if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
             StringBuilder sb = new StringBuilder();
             sb.append(output.child.getFamilyId()).append(",");
             sb.append(output.child.getName()).append(",");

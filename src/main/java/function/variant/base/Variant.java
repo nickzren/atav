@@ -73,8 +73,8 @@ public class Variant extends Region {
     }
 
     public String getRsNumberStr() {
-        if (rsNumber == Data.NA) {
-            return "NA";
+        if (rsNumber == Data.INTEGER_NA) {
+            return Data.STRING_NA;
         }
 
         return "rs" + rsNumber;

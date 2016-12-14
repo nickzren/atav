@@ -5,6 +5,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.trio.TrioManager;
 import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -93,7 +94,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
             if (output.isValid()) {
 
                 for (String geneName : calledVar.getGeneSet()) {
-                    if (!geneName.equals("NA")) {
+                    if (!geneName.equals(Data.STRING_NA)) {
                         output.geneName = geneName;
                         outputList.add((CompHetOutput) output.clone());
                     }

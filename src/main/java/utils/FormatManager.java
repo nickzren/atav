@@ -18,8 +18,8 @@ public class FormatManager {
     private static NumberFormat pformat3 = new DecimalFormat("0.######");
 
     public static String getDouble(double value) {
-        if (value == Data.NA) {
-            return "NA";
+        if (value == Data.DOUBLE_NA) {
+            return Data.STRING_NA;
         }
 
         if (value < 0.001 && value > 0) {
@@ -30,16 +30,16 @@ public class FormatManager {
     }
 
     public static String getSixDegitDouble(double value) {
-        if (value == Data.NA) {
-            return "NA";
+        if (value == Data.DOUBLE_NA) {
+            return Data.STRING_NA;
         }
 
         return pformat3.format(value);
     }
 
     public static String getInteger(int value) {
-        if (value == Data.NA) {
-            return "NA";
+        if (value == Data.INTEGER_NA) {
+            return Data.STRING_NA;
         }
 
         return String.valueOf(value);
@@ -47,20 +47,20 @@ public class FormatManager {
 
     public static int getInt(ResultSet rs, String strColName) throws SQLException {
         int nValue = rs.getInt(strColName);
-        return rs.wasNull() ? Data.NA : nValue;
+        return rs.wasNull() ? Data.INTEGER_NA : nValue;
     }
 
     public static String getString(String str) {
         if (str == null || str.equals("-") || str.equals("")) {
-            str = "NA";
+            str = Data.STRING_NA;
         }
 
         return str;
     }
 
     public static String getFloat(float value) {
-        if (value == Data.NA) {
-            return "NA";
+        if (value == Data.FLOAT_NA) {
+            return Data.STRING_NA;
         }
 
         if (value == 0.0f) {
@@ -71,8 +71,8 @@ public class FormatManager {
     }
 
     public static float getFloat(String str) {
-        if (str == null || str.equals("NA")) {
-            return Data.NA;
+        if (str == null || str.equals(Data.STRING_NA)) {
+            return Data.FLOAT_NA;
         }
 
         return Float.valueOf(str);
@@ -80,7 +80,7 @@ public class FormatManager {
 
     public static float getFloat(ResultSet rs, String strColName) throws SQLException {
         float nValue = rs.getFloat(strColName);
-        return rs.wasNull() ? Data.NA : nValue;
+        return rs.wasNull() ? Data.FLOAT_NA : nValue;
     }
 
     public static String getFunction(String str) {
@@ -91,10 +91,10 @@ public class FormatManager {
         return str;
     }
 
-    public static String getPercAltRead(double alt, int gatkFilteredCoverage) {
+    public static String getPercAltRead(int alt, int gatkFilteredCoverage) {
         if (gatkFilteredCoverage == 0
-                || gatkFilteredCoverage == Data.NA) {
-            return "NA";
+                || gatkFilteredCoverage == Data.INTEGER_NA) {
+            return Data.STRING_NA;
         } else {
             return getDouble(alt / gatkFilteredCoverage);
         }

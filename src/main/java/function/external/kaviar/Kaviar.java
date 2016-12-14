@@ -76,9 +76,9 @@ public class Kaviar {
                 alleleCount = rs.getInt("allele_count");
                 alleleNumber = rs.getInt("allele_number");
             } else {
-                maf = Data.NA;
-                alleleCount = Data.NA;
-                alleleNumber = Data.NA;
+                maf = Data.FLOAT_NA;
+                alleleCount = Data.INTEGER_NA;
+                alleleNumber = Data.INTEGER_NA;
             }
         } catch (Exception e) {
             ErrorManager.send(e);

@@ -19,7 +19,7 @@ public class Sample {
     private int sex;
     private int pheno; // ctrl 0 , case 1
     private String phenotype; // case or ctrl
-    private double quantitativeTrait;
+    private float quantitativeTrait;
     private String type;
     private String captureKit;
     
@@ -48,7 +48,7 @@ public class Sample {
             phenotype = "case";
         }
 
-        quantitativeTrait = Data.NA;
+        quantitativeTrait = Data.FLOAT_NA;
     }
 
     public int getId() {
@@ -103,11 +103,11 @@ public class Sample {
         return phenotype;
     }
 
-    public void setQuantitativeTrait(double value) {
+    public void setQuantitativeTrait(float value) {
         quantitativeTrait = value;
     }
 
-    public double getQuantitativeTrait() {
+    public float getQuantitativeTrait() {
         return quantitativeTrait;
     }
 

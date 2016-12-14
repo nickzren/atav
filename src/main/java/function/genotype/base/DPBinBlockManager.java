@@ -17,12 +17,12 @@ public class DPBinBlockManager {
     public static final int DP_BIN_BLOCK_SIZE = 10000;
 
     private static ArrayList<SampleDPBin> currentBlockList = new ArrayList<>();
-    private static int currentBlockId = Data.NA;
+    private static int currentBlockId = Data.INTEGER_NA;
 
     private static HashMap<Character, Integer> dpBin = new HashMap<>();
 
     public static void init() {
-        dpBin.put('a', Data.NA);
+        dpBin.put('a', Data.INTEGER_NA);
         dpBin.put('b', 3);
         dpBin.put('c', 10);
         dpBin.put('d', 20);

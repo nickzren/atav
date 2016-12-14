@@ -181,7 +181,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                         bwTmpPed.write("DD");
                     }
                     break;
-                case Data.NA:
+                case Data.INTEGER_NA:
                     bwTmpPed.write("00");
                     break;
                 default:

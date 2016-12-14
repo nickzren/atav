@@ -32,7 +32,7 @@ public class ThirdPartyToolManager {
     public static int systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start");
 
-        int exitValue = Data.NA;
+        int exitValue = Data.INTEGER_NA;
 
         try {
             Process myProc;

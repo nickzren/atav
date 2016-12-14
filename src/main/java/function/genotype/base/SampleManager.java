@@ -57,7 +57,7 @@ public class SampleManager {
 
     private static String tempCovarFile;
     private static String covariateFileTitle = "";
-    private static int covariateNum = Data.NA;
+    private static int covariateNum = Data.INTEGER_NA;
 
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
@@ -233,7 +233,7 @@ public class SampleManager {
                     continue;
                 }
 
-                if (sampleId == Data.NA) {
+                if (sampleId == Data.INTEGER_NA) {
                     checkSampleList(sample);
                     continue;
                 }
@@ -406,7 +406,7 @@ public class SampleManager {
                 if (sample != null) {
                     sample.initCovariate(values);
 
-                    if (covariateNum == Data.NA) {
+                    if (covariateNum == Data.INTEGER_NA) {
                         covariateNum = sample.getCovariateList().size();
                     }
                 }
@@ -460,7 +460,7 @@ public class SampleManager {
                 lineStr = lineStr.toLowerCase();
                 String[] values = lineStr.split("\t");
                 String name = values[0];
-                double value = Double.valueOf(values[1]);
+                float value = Float.valueOf(values[1]);
 
                 Sample sample = getSampleByName(name);
 
@@ -484,7 +484,7 @@ public class SampleManager {
         Iterator<Sample> it = sampleList.iterator();
         while (it.hasNext()) {
             Sample sample = it.next();
-            if (sample.getQuantitativeTrait() == Data.NA) {
+            if (sample.getQuantitativeTrait() == Data.FLOAT_NA) {
                 it.remove();
                 sampleMap.remove(sample.getId());
             }
@@ -642,7 +642,7 @@ public class SampleManager {
 
     private static int getSampleId(String sampleName, String sampleType,
             String captureKit) throws Exception {
-        int sampleId = Data.NA;
+        int sampleId = Data.INTEGER_NA;
 
         try {
             String sqlCode = "SELECT sample_id FROM sample "
@@ -666,7 +666,7 @@ public class SampleManager {
     }
 
     public static int getSamplePrepId(int sampleId) {
-        int prepId = Data.NA;
+        int prepId = Data.INTEGER_NA;
 
         try {
             String sqlCode = "SELECT prep_id FROM sample WHERE sample_id = " + sampleId;
@@ -691,7 +691,7 @@ public class SampleManager {
             }
         }
 
-        return Data.NA;
+        return Data.INTEGER_NA;
     }
 
     public static int getIndexById(int sampleId) {
@@ -700,7 +700,7 @@ public class SampleManager {
         if (sample != null) {
             return sample.getIndex();
         } else {
-            return Data.NA;
+            return Data.INTEGER_NA;
         }
     }
 

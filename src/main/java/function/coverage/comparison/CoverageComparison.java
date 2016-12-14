@@ -125,8 +125,8 @@ public class CoverageComparison extends CoverageComparisonBase {
 
     private void addRegressionData(SimpleRegression sr, SummaryStatistics lss, Sample sample, int coveredLength, int exonLength) {
         if (CoverageCommand.isLinear) {
-            double x = sample.getQuantitativeTrait();
-            double y = MathManager.devide(coveredLength, exonLength);
+            float x = sample.getQuantitativeTrait();
+            float y = MathManager.devide(coveredLength, exonLength);
             sr.addData(x, y);
             lss.addValue(y);
         }

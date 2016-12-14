@@ -99,25 +99,25 @@ public class Evs {
                 allGenotypeCount = rs.getString("all_genotype_count");
                 filterStatus = rs.getString("FilterStatus");
             } else {
-                eaMaf = Data.NA;
+                eaMaf = Data.FLOAT_NA;
                 if (eaCoveredSamples > 0) {
                     eaMaf = 0;
                 }
 
-                aaMaf = Data.NA;
+                aaMaf = Data.FLOAT_NA;
                 if (aaCoveredSamples > 0) {
                     aaMaf = 0;
                 }
 
-                allMaf = Data.NA;
+                allMaf = Data.FLOAT_NA;
                 if (allCoveredSamples > 0) {
                     allMaf = 0;
                 }
 
-                eaGenotypeCount = "NA";
-                aaGenotypeCount = "NA";
-                allGenotypeCount = "NA";
-                filterStatus = "NA";
+                eaGenotypeCount = Data.STRING_NA;
+                aaGenotypeCount = Data.STRING_NA;
+                allGenotypeCount = Data.STRING_NA;
+                filterStatus = Data.STRING_NA;
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -125,20 +125,20 @@ public class Evs {
     }
 
     private float getMaxMaf() {
-        float maf = Data.NA;
+        float maf = Data.FLOAT_NA;
 
         if (EvsCommand.evsPop.contains("ea")
-                && eaMaf != Data.NA) {
+                && eaMaf != Data.FLOAT_NA) {
             maf = Math.max(eaMaf, maf);
         }
 
         if (EvsCommand.evsPop.contains("aa")
-                && aaMaf != Data.NA) {
+                && aaMaf != Data.FLOAT_NA) {
             maf = Math.max(aaMaf, maf);
         }
 
         if (EvsCommand.evsPop.contains("all")
-                && allMaf != Data.NA) {
+                && allMaf != Data.FLOAT_NA) {
             maf = Math.max(allMaf, maf);
         }
 

@@ -14,7 +14,7 @@ public class GerpCommand {
     public static float minGerpScore = Data.NO_FILTER;
 
     public static boolean isGerpScoreValid(float value) {
-        if (value == Data.NA
+        if (value == Data.FLOAT_NA
                 || minGerpScore == Data.NO_FILTER) {
             return true;
         }

@@ -44,7 +44,7 @@ public class Region implements Comparable {
         } else if (FormatManager.isInteger(chrStr)) {
             return Integer.parseInt(chrStr);
         } else {
-            return Data.NA;
+            return Data.INTEGER_NA;
         }
     }
 
@@ -156,7 +156,7 @@ public class Region implements Comparable {
     @Override
     public String toString() {
         String chr = "chr" + chrStr;
-        if (startPosition == Data.NA && endPosition == Data.NA) {
+        if (startPosition == Data.INTEGER_NA && endPosition == Data.INTEGER_NA) {
             return chr;
         }
 

@@ -37,11 +37,11 @@ public class GerpManager {
     public static float getScore(String chr, int pos, String ref, String alt) {
         if (ref.length() > 1
                 || alt.length() > 1) { // indels
-            return Data.NA;
+            return Data.FLOAT_NA;
         }
 
         if (chr.equalsIgnoreCase("MT")) { // not support MT regions
-            return Data.NA;
+            return Data.FLOAT_NA;
         }
 
         if (!gerp.isSameSite(chr, pos)) {
@@ -52,7 +52,7 @@ public class GerpManager {
 
                 ResultSet rs = DBManager.executeQuery(sql);
 
-                float score = Data.NA;
+                float score = Data.FLOAT_NA;
 
                 if (rs.next()) {
                     score = rs.getFloat("gerp_rs");

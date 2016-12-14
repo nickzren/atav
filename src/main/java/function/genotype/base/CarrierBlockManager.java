@@ -17,7 +17,7 @@ public class CarrierBlockManager {
 
     public static final int CARRIER_BLOCK_SIZE = 10000;
 
-    private static int currentBlockId = Data.NA;
+    private static int currentBlockId = Data.INTEGER_NA;
 
     private static HashMap<Integer, HashMap<Integer, Carrier>> blockCarrierMap = new HashMap<>(); // variantId <SampleId, CarrierMap> 
 

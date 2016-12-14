@@ -36,8 +36,8 @@ public class NonCarrier {
     }
 
     private void initGenotype() {
-        if (dpBin == Data.NA) {
-            gt = Data.NA;
+        if (dpBin == Data.INTEGER_NA) {
+            gt = Data.INTEGER_NA;
         } else {
             gt = 0;
         }
@@ -87,7 +87,7 @@ public class NonCarrier {
      * Inside of pseudoautosomal region which are treated like autosomes.
      */
     public void checkValidOnXY(Region r) {
-        if (gt != Data.NA) {
+        if (gt != Data.INTEGER_NA) {
             boolean isValid = true;
 
             Sample sample = SampleManager.getMap().get(sampleId);
@@ -103,8 +103,8 @@ public class NonCarrier {
             }
 
             if (!isValid) {
-                gt = Data.NA;
-                dpBin = Data.NA;
+                gt = Data.INTEGER_NA;
+                dpBin = Data.INTEGER_NA;
             }
         }
     }
@@ -114,12 +114,12 @@ public class NonCarrier {
                 && TrioManager.isParent(sampleId)) {
             // do nothing
         } else {
-            gt = Data.NA;
-            dpBin = Data.NA;
+            gt = Data.INTEGER_NA;
+            dpBin = Data.INTEGER_NA;
         }
     }
 
     public boolean isValid() {
-        return gt != Data.NA;
+        return gt != Data.INTEGER_NA;
     }
 }

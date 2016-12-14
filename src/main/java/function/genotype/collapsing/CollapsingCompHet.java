@@ -3,6 +3,7 @@ package function.genotype.collapsing;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Data;
 import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -72,7 +73,7 @@ public class CollapsingCompHet extends CollapsingBase {
             if (output.isValid()) {
 
                 for (String geneName : calledVar.getGeneSet()) {
-                    if (!geneName.equals("NA")) {
+                    if (!geneName.equals(Data.STRING_NA)) {
                         output.geneName = geneName;
                         outputList.add((CompHetOutput) output.clone());
                     }

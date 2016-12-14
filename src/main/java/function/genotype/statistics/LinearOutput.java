@@ -48,8 +48,8 @@ public class LinearOutput extends StatisticOutput {
         SimpleRegression sr = new SimpleRegression(true);
         for (Sample sample : SampleManager.getList()) {
             int geno = calledVar.getGT(sample.getIndex());
-            if (geno != Data.NA) {
-                double y = sample.getQuantitativeTrait();
+            if (geno != Data.INTEGER_NA) {
+                float y = sample.getQuantitativeTrait();
                 if (model.equals("allelic")) {
                     if (isMinorRef) {
                         if (geno == Index.REF) {
@@ -175,11 +175,11 @@ public class LinearOutput extends StatisticOutput {
         }
         pValue = sr.getSignificance();
         if (Double.isNaN(pValue)) {
-            pValue = Data.NA;
+            pValue = Data.DOUBLE_NA;
         }
         beta1 = sr.getSlope();
         if (Double.isNaN(beta1)) {
-            beta1 = Data.NA;
+            beta1 = Data.DOUBLE_NA;
         }
     }
 

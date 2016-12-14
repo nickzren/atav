@@ -51,7 +51,7 @@ public class TrapManager {
             ErrorManager.send(ex);
         }
 
-        return Data.NA;
+        return Data.FLOAT_NA;
     }
 
     public static ArrayList<Trap> getTrapList(String chr, int pos, String alt) {

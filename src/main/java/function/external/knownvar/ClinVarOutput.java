@@ -24,10 +24,10 @@ public class ClinVarOutput {
         
         clinvar = getClinVar(collection);
         
-        siteCount = var.isSnv() ? collection.size() : Data.NA; // only for SNVs
+        siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
-        pathogenicIndelsCount = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var) : Data.NA; // only for INDELs
-        allIndelsCount = var.isIndel() ? KnownVarManager.getClinVarAllIndelFlankingCount(var) : Data.NA; // only for INDELs
+        pathogenicIndelsCount = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var) : Data.INTEGER_NA; // only for INDELs
+        allIndelsCount = var.isIndel() ? KnownVarManager.getClinVarAllIndelFlankingCount(var) : Data.INTEGER_NA; // only for INDELs
     }
 
     /*
@@ -40,10 +40,10 @@ public class ClinVarOutput {
                 var.getStartPosition(),
                 var.getRefAllele(),
                 var.getAllele(),
-                "NA",
-                "NA",
-                "NA",
-                "NA");
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA);
         
         boolean isFirstSite = true;
         

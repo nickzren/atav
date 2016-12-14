@@ -247,7 +247,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value == Data.NA) {
+        if (value == Data.INTEGER_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -263,7 +263,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value == Data.NA) {
+        if (value == Data.FLOAT_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -279,7 +279,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value == Data.NA) {
+        if (value == Data.INTEGER_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -295,7 +295,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value == Data.NA) {
+        if (value == Data.INTEGER_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -311,7 +311,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value == Data.NA) {
+        if (value == Data.INTEGER_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -327,7 +327,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value == Data.NA) {
+        if (value == Data.FLOAT_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -343,7 +343,7 @@ public class GenotypeLevelFilterCommand {
             return true;
         }
 
-        if (value == Data.NA) {
+        if (value == Data.FLOAT_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -354,12 +354,12 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isHetPercentAltReadValid(double value) {
+    public static boolean isHetPercentAltReadValid(float value) {
         if (hetPercentAltRead == null) {
             return true;
         }
 
-        if (value != Data.NA) {
+        if (value != Data.FLOAT_NA) {
             if (value >= hetPercentAltRead[0]
                     && value <= hetPercentAltRead[1]) {
                 return true;
@@ -369,12 +369,12 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isHomPercentAltReadValid(double value) {
+    public static boolean isHomPercentAltReadValid(float value) {
         if (homPercentAltRead == null) {
             return true;
         }
 
-        if (value != Data.NA) {
+        if (value != Data.FLOAT_NA) {
             if (value >= homPercentAltRead[0]
                     && value <= homPercentAltRead[1]) {
                 return true;

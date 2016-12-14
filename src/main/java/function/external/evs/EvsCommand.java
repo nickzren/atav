@@ -18,13 +18,13 @@ public class EvsCommand {
     public static int evsAllAverageCoverage = Data.NO_FILTER;
     public static boolean isExcludeEvsQcFailed = false;
 
-    public static boolean isEvsMafValid(double value) {
+    public static boolean isEvsMafValid(float value) {
         if (evsMaf == Data.NO_FILTER) {
             return true;
         }
 
         return value <= evsMaf
-                || value == Data.NA;
+                || value == Data.FLOAT_NA;
     }
 
     public static boolean isEvsAllCoverageValid(int value) {
@@ -37,7 +37,7 @@ public class EvsCommand {
 
     public static boolean isEvsStatusValid(String status) {
         if (isExcludeEvsQcFailed) {
-            return status.equalsIgnoreCase("NA")
+            return status.equalsIgnoreCase(Data.STRING_NA)
                     || status.equalsIgnoreCase("pass");
         } else {
             return true;

@@ -123,21 +123,21 @@ public class SiteClean {
             int start = exon.getStartPosition();
             int end = exon.getEndPosition();
 
-            int previouStartPosition = Data.NA;
-            int previousEndPosition = Data.NA;
+            int previouStartPosition = Data.INTEGER_NA;
+            int previousEndPosition = Data.INTEGER_NA;
             for (int currentPosition = start; currentPosition <= end; currentPosition++) {
                 HashMap<Integer, SortedSite> map = cleanedSiteMap.get(gene.getChr());
 
                 if (map != null
                         && map.containsKey(currentPosition)) {
-                    if (previouStartPosition == Data.NA) {
+                    if (previouStartPosition == Data.INTEGER_NA) {
                         previouStartPosition = currentPosition;
                     }
                     size += 1;
                     previousEndPosition = currentPosition;
                 } else //there are gaps within the exon, so record the previos discovered region if any
                 //need to record the new discovered region
-                 if (previouStartPosition != Data.NA) {
+                 if (previouStartPosition != Data.INTEGER_NA) {
                         if (isFirst) {
                             isFirst = false;
                         } else {
@@ -146,13 +146,13 @@ public class SiteClean {
                         sb.append(previouStartPosition);
                         sb.append("..").append(previousEndPosition);
                         //reset to no region
-                        previouStartPosition = Data.NA;
-                        previousEndPosition = Data.NA;
+                        previouStartPosition = Data.INTEGER_NA;
+                        previousEndPosition = Data.INTEGER_NA;
                     }
             }
             //repeat the recoring for last potential region
             //make sure this code is consistent with the code in previous section
-            if (previouStartPosition != Data.NA) {
+            if (previouStartPosition != Data.INTEGER_NA) {
                 if (isFirst) {
                     isFirst = false;
                 } else {

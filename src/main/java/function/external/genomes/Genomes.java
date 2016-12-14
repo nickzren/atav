@@ -70,7 +70,7 @@ public class Genomes {
                 }
             } else {
                 for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-                    maf[i] = Data.NA;
+                    maf[i] = Data.FLOAT_NA;
                 }
             }
         } catch (Exception e) {
@@ -79,10 +79,10 @@ public class Genomes {
     }
 
     private float getMaxMaf() {
-        float value = Data.NA;
+        float value = Data.FLOAT_NA;
 
         for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-            if (maf[i] != Data.NA
+            if (maf[i] != Data.FLOAT_NA
                     && GenomesCommand.genomesPop.contains(GenomesManager.GENOMES_POP[i])) {
                 value = Math.max(value, maf[i]);
             }

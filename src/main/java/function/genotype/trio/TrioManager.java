@@ -180,7 +180,7 @@ public class TrioManager {
     public static String getStatus(int chr, boolean refMajor, boolean isMale, int oGeno,
             int oCov, int mGeno, int mCov, int dGeno, int dCov) {
         String key = getKey(chr, refMajor, isMale, oGeno, oCov, mGeno, mCov, dGeno, dCov);
-        return denovoRules.containsKey(key) ? denovoRules.get(key) : "NA";
+        return denovoRules.containsKey(key) ? denovoRules.get(key) : Data.STRING_NA;
     }
 
     private static String getKey(int chr, boolean refMajor, boolean isMale, int oGeno,
@@ -227,7 +227,7 @@ public class TrioManager {
                 break;
         }
 
-        if (Geno == Data.NA) { //missing
+        if (Geno == Data.INTEGER_NA) { //missing
             sKey.append('0');
         } else if (Cov >= GenotypeLevelFilterCommand.minCoverage
                 || GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
@@ -283,7 +283,7 @@ public class TrioManager {
                     sKey.append('1');
                 } else if (field.equalsIgnoreCase("HOM-VAR")) {
                     sKey.append('2');
-                } else if (field.equalsIgnoreCase("NA") || field.equalsIgnoreCase("ANY")) {
+                } else if (field.equalsIgnoreCase(Data.STRING_NA) || field.equalsIgnoreCase("ANY")) {
                     sKey.append('_');
                 } else {
                     sKey.append('?');
@@ -296,7 +296,7 @@ public class TrioManager {
                     sKey.append('1');
                 } else if (field.equalsIgnoreCase("<10")) {
                     sKey.append('2');
-                } else if (field.equalsIgnoreCase("NA") || field.equalsIgnoreCase("ANY")) {
+                } else if (field.equalsIgnoreCase(Data.STRING_NA) || field.equalsIgnoreCase("ANY")) {
                     sKey.append('_');
                 } else {
                     sKey.append('?');
@@ -363,11 +363,13 @@ public class TrioManager {
                 || ((cGeno2 == Index.REF || cGeno2 == Index.HOM) && cCov2 >= minCov)) {
             return COMP_HET_FLAG[2];
         }
-        if ((fGeno1 == Data.NA && mGeno1 == Data.NA) || (fGeno2 == Data.NA && mGeno2 == Data.NA)) {
+        if ((fGeno1 == Data.INTEGER_NA && mGeno1 == Data.INTEGER_NA)
+                || (fGeno2 == Data.INTEGER_NA && mGeno2 == Data.INTEGER_NA)) {
             // if both parents are missing the same call, exclude this candidate
             return COMP_HET_FLAG[2];
         }
-        if ((fGeno1 == Data.NA && fGeno2 == Data.NA) || (mGeno1 == Data.NA && mGeno2 == Data.NA)) {
+        if ((fGeno1 == Data.INTEGER_NA && fGeno2 == Data.INTEGER_NA)
+                || (mGeno1 == Data.INTEGER_NA && mGeno2 == Data.INTEGER_NA)) {
             // if one parent is missing both calls, exclude this candidate
             return COMP_HET_FLAG[2];
         }
@@ -439,8 +441,8 @@ public class TrioManager {
             int denovoConfidence1 = getDenovoConfidence(denovoFlag1);
             int denovoConfidence2 = getDenovoConfidence(denovoFlag2);
 
-            boolean isDenovo1 = denovoConfidence1 != Data.NA;
-            boolean isDenovo2 = denovoConfidence2 != Data.NA;
+            boolean isDenovo1 = denovoConfidence1 != Data.INTEGER_NA;
+            boolean isDenovo2 = denovoConfidence2 != Data.INTEGER_NA;
 
             if (isDenovo1 ^ isDenovo2) {
                 int cGenoInherited = cGeno1;
@@ -470,8 +472,8 @@ public class TrioManager {
                     // is homozygous or missing a genotype, at least one parent is heterozygous,
                     // and the child is heterozygous
                     if (cGenoInherited == Index.HET
-                            && !(fGenoInherited == Index.HOM || fGenoInherited == Data.NA)
-                            && !(mGenoInherited == Index.HOM || mGenoInherited == Data.NA)
+                            && !(fGenoInherited == Index.HOM || fGenoInherited == Data.INTEGER_NA)
+                            && !(mGenoInherited == Index.HOM || mGenoInherited == Data.INTEGER_NA)
                             && (fGenoInherited == Index.HET || mGenoInherited == Index.HET)) {
                         if (denovoConfidence == HIGH) {
                             // Both variants are high confidence
@@ -502,7 +504,7 @@ public class TrioManager {
             return LOW;
         }
 
-        return Data.NA;
+        return Data.INTEGER_NA;
     }
 
     private static int swapGenotypes(

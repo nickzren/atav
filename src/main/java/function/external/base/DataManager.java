@@ -10,6 +10,7 @@ import function.external.mgi.MgiManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
+import global.Data;
 import java.sql.ResultSet;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -55,6 +56,6 @@ public class DataManager {
             ErrorManager.send(e);
         }
 
-        return "NA";
+        return Data.STRING_NA;
     }
 }

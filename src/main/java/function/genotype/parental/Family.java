@@ -28,7 +28,7 @@ public class Family {
     private void addParentByName(String name) {
         int id = SampleManager.getIdByName(name);
 
-        if (id != Data.NA) {
+        if (id != Data.INTEGER_NA) {
             Sample parent = SampleManager.getMap().get(id);
 
             parentList.add(parent);

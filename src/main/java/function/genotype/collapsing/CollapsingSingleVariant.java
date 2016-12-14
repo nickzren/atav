@@ -3,6 +3,7 @@ package function.genotype.collapsing;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -74,7 +75,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
             // gene summary
             for (String geneName : output.getCalledVariant().getGeneSet()) {
-                if (!geneName.equals("NA")) {
+                if (!geneName.equals(Data.STRING_NA)) {
                     updateGeneSummaryMap(geneName);
                     summaryList.add(summaryMap.get(geneName));
                 }

@@ -1,5 +1,6 @@
 package function.external.trap;
 
+import global.Data;
 import java.util.ArrayList;
 
 /**
@@ -39,8 +40,8 @@ public class TrapOutput {
 
         if (sb.length() == 0) {
             sb.append(variantId).append(",");
-            sb.append("NA").append(",");
-            sb.append("NA").append("\n");
+            sb.append(Data.STRING_NA).append(",");
+            sb.append(Data.STRING_NA).append("\n");
         }
 
         return sb.toString();

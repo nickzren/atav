@@ -150,7 +150,7 @@ public class RegionManager {
 
         String chr = getChr(tmp[0]);
 
-        int start = Data.NA, end = Data.NA;
+        int start = Data.INTEGER_NA, end = Data.INTEGER_NA;
 
         try {
             if (tmp.length == 2) {

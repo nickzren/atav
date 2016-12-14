@@ -24,12 +24,12 @@ public class CollapsingSummary implements Comparable {
     int unqualifiedCase = 0; // b
     int qualifiedCtrl = 0;   // c
     int unqualifiedCtrl = 0; // d 
-    double qualifiedCaseFreq = Data.NA;
-    double qualifiedCtrlFreq = Data.NA;
-    String enrichedDirection = "NA";
-    double fetP = Data.NA;
-    double logisticP = Data.NA;
-    double linearP = Data.NA;
+    double qualifiedCaseFreq = Data.DOUBLE_NA;
+    double qualifiedCtrlFreq = Data.DOUBLE_NA;
+    String enrichedDirection = Data.STRING_NA;
+    double fetP = Data.DOUBLE_NA;
+    double logisticP = Data.DOUBLE_NA;
+    double linearP = Data.DOUBLE_NA;
 
     // no output
     static final int totalCase = SampleManager.getCaseNum();
@@ -99,7 +99,7 @@ public class CollapsingSummary implements Comparable {
 
         if (qualifiedCaseFreq == 0
                 && qualifiedCtrlFreq == 0) {
-            enrichedDirection = "NA";
+            enrichedDirection = Data.STRING_NA;
         } else if (qualifiedCaseFreq == qualifiedCtrlFreq) {
             enrichedDirection = "none";
         } else if (qualifiedCaseFreq < qualifiedCtrlFreq) {

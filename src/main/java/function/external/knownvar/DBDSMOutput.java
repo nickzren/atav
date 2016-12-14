@@ -1,6 +1,7 @@
 package function.external.knownvar;
 
 import function.variant.base.Variant;
+import global.Data;
 import java.util.Collection;
 
 /**
@@ -29,9 +30,9 @@ public class DBDSMOutput {
                 var.getStartPosition(),
                 var.getRefAllele(),
                 var.getAllele(),
-                "NA",
-                "NA",
-                "NA");
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA);
 
         boolean isFirstSite = true;
 

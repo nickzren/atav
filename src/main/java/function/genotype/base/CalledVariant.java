@@ -71,7 +71,7 @@ public class CalledVariant extends AnnotatedVariant {
             if (carrier != null) {
                 setGenoDPBin(carrier.getGenotype(), carrier.getDPBin(), s);
 
-                if (carrier.getGenotype() == Data.NA) {
+                if (carrier.getGenotype() == Data.INTEGER_NA) {
                     // have to remove it for init Non-carrier map
                     qcFailSample[(int) sample.getPheno()]++;
                     carrierMap.remove(sample.getId());
@@ -79,7 +79,7 @@ public class CalledVariant extends AnnotatedVariant {
             } else if (noncarrier != null) {
                 setGenoDPBin(noncarrier.getGenotype(), noncarrier.getDPBin(), s);
             } else {
-                setGenoDPBin(Data.NA, Data.NA, s);
+                setGenoDPBin(Data.INTEGER_NA, Data.INTEGER_NA, s);
             }
         }
     }
@@ -90,16 +90,16 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     public int getDPBin(int index) {
-        if (index == Data.NA) {
-            return Data.NA;
+        if (index == Data.INTEGER_NA) {
+            return Data.INTEGER_NA;
         }
 
         return dpBin[index];
     }
 
     public int getGT(int index) {
-        if (index == Data.NA) {
-            return Data.NA;
+        if (index == Data.INTEGER_NA) {
+            return Data.INTEGER_NA;
         }
 
         return gt[index];

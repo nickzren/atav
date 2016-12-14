@@ -47,12 +47,12 @@ public class ParentalCommand {
         }
     }
 
-    public static boolean isChildQdValid(float value) {
+    public static boolean isChildQdValid(int value) {
         if (childQD == Data.NO_FILTER) {
             return true;
         }
 
-        if (value == Data.NA) {
+        if (value == Data.INTEGER_NA) {
             if (GenotypeLevelFilterCommand.isQcMissingIncluded) {
                 return true;
             }
@@ -70,7 +70,7 @@ public class ParentalCommand {
             return true;
         }
 
-        if (value != Data.NA) {
+        if (value != Data.DOUBLE_NA) {
             if (value >= childHetPercentAltRead[0]
                     && value <= childHetPercentAltRead[1]) {
                 return true;
@@ -85,7 +85,7 @@ public class ParentalCommand {
             return true;
         }
 
-        return value != Data.NA
+        return value != Data.DOUBLE_NA
                 && value >= minChildBinomial;
     }
 
@@ -94,7 +94,7 @@ public class ParentalCommand {
             return true;
         }
 
-        return value != Data.NA
+        return value != Data.DOUBLE_NA
                 && value < maxParentBinomial;
     }
 }

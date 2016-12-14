@@ -28,7 +28,7 @@ public class Annotation {
         stableId = FormatManager.getInt(rset, "transcript_stable_id");
 
         if (stableId < 0) {
-            stableId = Data.NA;
+            stableId = Data.INTEGER_NA;
         }
 
         effect = EffectManager.getEffectById(rset.getInt("effect_id"));
@@ -40,8 +40,8 @@ public class Annotation {
     }
 
     public String getStableId() {
-        if (stableId == Data.NA) {
-            return "NA";
+        if (stableId == Data.INTEGER_NA) {
+            return Data.STRING_NA;
         }
 
         StringBuilder idSB = new StringBuilder(String.valueOf(stableId));

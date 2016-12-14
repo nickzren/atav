@@ -19,6 +19,6 @@ public class GenomesCommand {
         }
 
         return value <= maxGenomesMaf
-                || value == Data.NA;
+                || value == Data.FLOAT_NA;
     }
 }

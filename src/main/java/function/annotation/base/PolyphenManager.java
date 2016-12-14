@@ -9,12 +9,12 @@ import global.Data;
 public class PolyphenManager {
 
     public static String getPrediction(float score, String effect) {        
-        if (score == Data.NA) {
+        if (score == Data.FLOAT_NA) {
             if (effect.equals("missense_variant")
                     || effect.equals("splice_region_variant")) {
                 return "unknown";
             } else {
-                return "NA";
+                return Data.STRING_NA;
             }
         }
 

@@ -338,7 +338,7 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
 
-        return Data.NA;
+        return Data.INTEGER_NA;
     }
 
     public static String getHGMDBySite(Variant var, int distance) {
@@ -381,7 +381,7 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
 
-        return "NA";
+        return Data.STRING_NA;
     }
 
     public static Multimap<String, ClinVar> getClinVarMultiMap() {
@@ -418,7 +418,7 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
 
-        return Data.NA;
+        return Data.INTEGER_NA;
     }
 
     public static int getClinVarAllIndelFlankingCount(Variant var) {
@@ -442,14 +442,15 @@ public class KnownVarManager {
             ErrorManager.send(e);
         }
 
-        return Data.NA;
+        return Data.INTEGER_NA;
     }
 
     public static ClinVarPathoratio getClinPathoratio(String geneName) {
         ClinVarPathoratio clinVarPathoratio = clinVarPathoratioMap.get(geneName);
 
         if (clinVarPathoratio == null) {
-            clinVarPathoratio = new ClinVarPathoratio(Data.NA, Data.NA, Data.NA, Data.NA, Data.NA);
+            clinVarPathoratio = new ClinVarPathoratio(Data.INTEGER_NA, Data.INTEGER_NA,
+                    Data.INTEGER_NA, Data.INTEGER_NA, Data.INTEGER_NA);
         }
 
         return clinVarPathoratio;
@@ -459,7 +460,7 @@ public class KnownVarManager {
         ClinGen clinGen = clinGenMap.get(geneName);
 
         if (clinGen == null) {
-            clinGen = new ClinGen("NA", "NA");
+            clinGen = new ClinGen(Data.STRING_NA, Data.STRING_NA);
         }
 
         return clinGen;

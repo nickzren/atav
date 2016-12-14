@@ -13,9 +13,9 @@ public class Gerp {
     private float score;
 
     public Gerp() {
-        chr = "NA";
-        pos = Data.NA;
-        score = Data.NA;
+        chr = Data.STRING_NA;
+        pos = Data.INTEGER_NA;
+        score = Data.FLOAT_NA;
     }
 
     public void setValues(String chr, int pos, float score) {

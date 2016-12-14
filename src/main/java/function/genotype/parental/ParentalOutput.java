@@ -72,22 +72,22 @@ public class ParentalOutput extends Output {
     }
 
     private boolean isChildQdValid(Carrier carrier) {
-        float value = Data.NA;
+        int value = Data.INTEGER_NA;
 
         if (ParentalCommand.childQD != Data.NO_FILTER) {
-            value = carrier != null ? carrier.getQD() : Data.NA;
+            value = carrier != null ? carrier.getQD() : Data.INTEGER_NA;
         }
 
         return ParentalCommand.isChildQdValid(value);
     }
 
     private boolean isChildHetPercentAltReadValid(Carrier carrier) {
-        double percAltRead = Data.NA;
+        double percAltRead = Data.DOUBLE_NA;
 
         if (ParentalCommand.childHetPercentAltRead != null
                 && childGeno == Index.HET) {
-            int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
-            int gatkFilteredCoverage = carrier != null ? carrier.getDP() : Data.NA;
+            int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
+            int gatkFilteredCoverage = carrier != null ? carrier.getDP() : Data.INTEGER_NA;
 
             percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
         }
@@ -96,11 +96,11 @@ public class ParentalOutput extends Output {
     }
 
     private boolean isChildBinomialValid(Carrier carrier) {
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.NA;
+        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
+        int readsRef = carrier != null ? carrier.getADRef() : Data.INTEGER_NA;
 
-        if (readsAlt == Data.NA || readsRef == Data.NA) {
-            childBinomial = Data.NA;
+        if (readsAlt == Data.INTEGER_NA || readsRef == Data.INTEGER_NA) {
+            childBinomial = Data.DOUBLE_NA;
         } else {
             childBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
         }
@@ -116,15 +116,15 @@ public class ParentalOutput extends Output {
     }
 
     private boolean isParentBinomialValid() {
-        parentBinomial = Data.NA;
+        parentBinomial = Data.DOUBLE_NA;
 
         Carrier carrier = calledVar.getCarrier(parent.getId());
 
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.NA;
+        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
+        int readsRef = carrier != null ? carrier.getADRef() : Data.INTEGER_NA;
 
-        if (readsAlt == Data.NA || readsRef == Data.NA) {
-            parentBinomial = Data.NA;
+        if (readsAlt == Data.INTEGER_NA || readsRef == Data.INTEGER_NA) {
+            parentBinomial = Data.DOUBLE_NA;
         } else {
             parentBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
         }
@@ -149,22 +149,22 @@ public class ParentalOutput extends Output {
         getGenotypeData(sb);
 
         Carrier carrier = calledVar.getCarrier(child.getId());
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.NA;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.NA;
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.NA)).append(",");
+        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
+        int readsRef = carrier != null ? carrier.getADRef() : Data.INTEGER_NA;
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");
         sb.append(FormatManager.getInteger(calledVar.getDPBin(child.getIndex()))).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
-        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getGQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getMQ() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQD() : Data.NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.NA)).append(",");
-        sb.append(carrier != null ? carrier.getFILTER() : "NA").append(",");
+        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getGQ() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getMQ() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQD() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA)).append(",");
+        sb.append(carrier != null ? carrier.getFILTER() : Data.STRING_NA).append(",");
 
         return sb.toString();
     }

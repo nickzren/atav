@@ -15,12 +15,12 @@ public class SubRvisOutput {
                 + SubRvisManager.getTitle();
     }
 
-    private String domainName = "NA";
-    private float domainScore = Data.NA;
-    private float domainOEratio = Data.NA;
-    private String exonName = "NA";
-    private float exonScore = Data.NA;
-    private float exonOEratio = Data.NA;
+    private String domainName = Data.STRING_NA;
+    private float domainScore = Data.FLOAT_NA;
+    private float domainOEratio = Data.FLOAT_NA;
+    private String exonName = Data.STRING_NA;
+    private float exonScore = Data.FLOAT_NA;
+    private float exonOEratio = Data.FLOAT_NA;
 
     public SubRvisOutput(String geneName, String chr, int pos) {
         SubRvisGene geneDomain = SubRvisManager.getGeneDomain(geneName, chr, pos);

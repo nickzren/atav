@@ -1,8 +1,6 @@
 package utils;
 
 import global.Data;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.math.BigDecimal;
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import org.apache.commons.math3.stat.inference.BinomialTest;
@@ -14,27 +12,14 @@ import org.apache.commons.math3.stat.inference.BinomialTest;
 public class MathManager {
 
     private static BinomialTest BT;
-    private static ScriptEngine renjinEngine;
-
-    public static ScriptEngine getRenjinEngine() {
-        if (renjinEngine == null) {
-            renjinEngine = new ScriptEngineManager().getEngineByName("Renjin");
-
-            if (renjinEngine == null) {
-                ErrorManager.print("Renjin Script Engine not found on the classpath.");
-            }
-        }
-
-        return renjinEngine;
-    }
 
     public static double getBinomial(int numberOfTrials, int numberOfSuccesses, double probability) {
         if (BT == null) {
             BT = new BinomialTest();
         }
 
-        if (numberOfTrials == Data.NA || numberOfSuccesses == Data.NA) {
-            return Data.NA;
+        if (numberOfTrials == Data.INTEGER_NA || numberOfSuccesses == Data.INTEGER_NA) {
+            return Data.DOUBLE_NA;
         }
 
         return BT.binomialTest(numberOfTrials,
@@ -44,32 +29,36 @@ public class MathManager {
     }
 
     public static double devide(double a, double b) {
-        if (b == 0 || b == Data.NA || a == Data.NA) {
-            return Data.NA;
+        if (b == 0 || b == Data.DOUBLE_NA || b == Data.INTEGER_NA
+                || a == Data.DOUBLE_NA || a == Data.INTEGER_NA) {
+            return Data.DOUBLE_NA;
+        } else {
+            return a / b;
+        }
+    }
+
+    public static float devide(float a, float b) {
+        if (b == 0 || b == Data.FLOAT_NA || b == Data.INTEGER_NA
+                || a == Data.FLOAT_NA || a == Data.INTEGER_NA) {
+            return Data.FLOAT_NA;
         } else {
             return a / b;
         }
     }
 
     public static double abs(double a, double b) {
-        if (b == Data.NA || a == Data.NA) {
-            return Data.NA;
+        if (b == Data.DOUBLE_NA || b == Data.INTEGER_NA
+                || a == Data.DOUBLE_NA || a == Data.INTEGER_NA) {
+            return Data.DOUBLE_NA;
         } else {
             return Math.abs(a - b);
         }
     }
 
-    public static float devide(float a, float b) {
-        if (b == 0 || b == Data.NA || a == Data.NA) {
-            return Data.NA;
-        } else {
-            return a / b;
-        }
-    }
-
     public static float abs(float a, float b) {
-        if (b == Data.NA || a == Data.NA) {
-            return Data.NA;
+        if (b == Data.FLOAT_NA || b == Data.INTEGER_NA
+                || a == Data.FLOAT_NA || a == Data.INTEGER_NA) {
+            return Data.FLOAT_NA;
         } else {
             return Math.abs(a - b);
         }

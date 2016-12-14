@@ -88,13 +88,13 @@ public class FisherOutput extends StatisticOutput {
                     countList.get(2), countList.get(3),
                     countList.get(4), countList.get(5));
 
-            oddsRatio = Data.NA; // genotypic do not support oddsRatio
+            oddsRatio = Data.DOUBLE_NA; // genotypic do not support oddsRatio
         }
     }
 
     private double getOddsRatio(double a, double b, double c, double d) {
         if (b * c == 0) {
-            return Data.NA;
+            return Data.DOUBLE_NA;
         }
 
         return (a / b) / (c / d);
