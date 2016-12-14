@@ -108,7 +108,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         return sb.toString();
     }
 
-    public boolean isHomOrRef(int geno) {
+    public boolean isHomOrRef(byte geno) {
         return geno == Index.HOM || geno == Index.REF;
     }
 

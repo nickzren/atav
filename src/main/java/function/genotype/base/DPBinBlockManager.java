@@ -26,7 +26,20 @@ public class DPBinBlockManager {
         dpBin.put('b', 3);
         dpBin.put('c', 10);
         dpBin.put('d', 20);
-        dpBin.put('e', 201);
+        dpBin.put('e', 30);
+        dpBin.put('f', 40);
+        dpBin.put('g', 50);
+        dpBin.put('h', 60);
+        dpBin.put('i', 80);
+        dpBin.put('j', 100);
+        dpBin.put('k', 150);
+        dpBin.put('i', 200);
+        dpBin.put('m', 250);
+        dpBin.put('n', 300);
+        dpBin.put('o', 500);
+        dpBin.put('p', 600);
+        dpBin.put('q', 800);
+        dpBin.put('r', 1000);
     }
     
     // for GQ bin

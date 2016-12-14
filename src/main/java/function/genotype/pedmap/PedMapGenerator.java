@@ -154,7 +154,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     private void outputTempGeno(CalledVariant calledVar) throws Exception {
         for (Sample sample : SampleManager.getList()) {
-            int geno = calledVar.getGT(sample.getIndex());
+            byte geno = calledVar.getGT(sample.getIndex());
             switch (geno) {
                 case Index.HOM:
                     if (calledVar.isSnv()) {
@@ -181,7 +181,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                         bwTmpPed.write("DD");
                     }
                     break;
-                case Data.INTEGER_NA:
+                case Data.BYTE_NA:
                     bwTmpPed.write("00");
                     break;
                 default:

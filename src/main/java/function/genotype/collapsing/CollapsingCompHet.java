@@ -133,7 +133,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                     output1 = geneOutputList.get(i);
 
-                    int geno1 = output1.getCalledVariant().getGT(sample.getIndex());
+                    byte geno1 = output1.getCalledVariant().getGT(sample.getIndex());
 
                     if (output1.isQualifiedGeno(geno1)) {
 
@@ -162,7 +162,7 @@ public class CollapsingCompHet extends CollapsingBase {
         }
     }
 
-    private boolean isOutputValid(CompHetOutput output1, int geno,
+    private boolean isOutputValid(CompHetOutput output1, byte geno,
             Sample sample, CollapsingSummary summary) throws Exception {
         if (output1.isHomOrRef(geno)) {
             summary.updateSampleVariantCount4CompHet(sample.getIndex());
@@ -192,7 +192,7 @@ public class CollapsingCompHet extends CollapsingBase {
         if (output1.getCalledVariant().getVariantIdNegative4Indel()
                 != output2.getCalledVariant().getVariantIdNegative4Indel()) {
 
-            int geno2 = output2.getCalledVariant().getGT(sample.getIndex());
+            byte geno2 = output2.getCalledVariant().getGT(sample.getIndex());
 
             if (output2.isQualifiedGeno(geno2)) {
 
@@ -260,8 +260,8 @@ public class CollapsingCompHet extends CollapsingBase {
 
     private boolean isCoQualifiedGeno(CompHetOutput output1,
             CompHetOutput output2, int index) {
-        int geno1 = output1.getCalledVariant().getGT(index);
-        int geno2 = output2.getCalledVariant().getGT(index);
+        byte geno1 = output1.getCalledVariant().getGT(index);
+        byte geno2 = output2.getCalledVariant().getGT(index);
 
         return output1.isQualifiedGeno(geno1)
                 && output2.isQualifiedGeno(geno2);

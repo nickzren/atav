@@ -12,7 +12,7 @@ import utils.MathManager;
  */
 public class Carrier extends NonCarrier {
 
-    private int dp;
+    private short dp;
     private int adRef;
     private int adAlt;
     private int gq;
@@ -27,8 +27,8 @@ public class Carrier extends NonCarrier {
 
     public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");
-        gt = rs.getInt("GT");
-        dp = rs.getInt("DP");        
+        gt = rs.getByte("GT");
+        dp = rs.getShort("DP");        
         dpBin = Data.INTEGER_NA;
         adRef = rs.getInt("AD_REF");
         adAlt = rs.getInt("AD_ALT");
@@ -43,7 +43,7 @@ public class Carrier extends NonCarrier {
         filterValue = rs.getInt("FILTER+0");
     }
 
-    public int getDP() {
+    public short getDP() {
         return dp;
     }
 
@@ -92,7 +92,7 @@ public class Carrier extends NonCarrier {
     }
 
     public void applyQualityFilter() {
-        if (gt != Data.INTEGER_NA) {
+        if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isVcfFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isGqValid(gq)
                     || !GenotypeLevelFilterCommand.isFsValid(fs)
@@ -101,7 +101,7 @@ public class Carrier extends NonCarrier {
                     || !GenotypeLevelFilterCommand.isQualValid(qual)
                     || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum)
                     || !GenotypeLevelFilterCommand.isMqrsValid(mqRankSum)) {
-                gt = Data.INTEGER_NA;
+                gt = Data.BYTE_NA;
             }
         }
 
@@ -109,7 +109,7 @@ public class Carrier extends NonCarrier {
             float percAltRead = MathManager.devide(adAlt, dp);
 
             if (!GenotypeLevelFilterCommand.isHomPercentAltReadValid(percAltRead)) {
-                gt = Data.INTEGER_NA;
+                gt = Data.BYTE_NA;
             }
         }
 
@@ -117,11 +117,11 @@ public class Carrier extends NonCarrier {
             float percAltRead = MathManager.devide(adAlt, dp);
 
             if (!GenotypeLevelFilterCommand.isHetPercentAltReadValid(percAltRead)) {
-                gt = Data.INTEGER_NA;
+                gt = Data.BYTE_NA;
             }
         }
 
-        if (gt == Data.INTEGER_NA) {
+        if (gt == Data.BYTE_NA) {
             dpBin = Data.INTEGER_NA;
         }
     }

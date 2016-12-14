@@ -1,6 +1,7 @@
 package function.genotype.base;
 
 import function.annotation.base.AnnotatedVariant;
+import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ public class CalledVariant extends AnnotatedVariant {
 
     private HashMap<Integer, Carrier> carrierMap = new HashMap<>();
     private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<>();
-    private int[] gt = new int[SampleManager.getListSize()];
+    private byte[] gt = new byte[SampleManager.getListSize()];
     private int[] dpBin = new int[SampleManager.getListSize()];
     private int[] qcFailSample = new int[2];
 
@@ -26,22 +27,24 @@ public class CalledVariant extends AnnotatedVariant {
 
     private void init() throws Exception {
         if (isValid) {
-            // single variant carriers data process
-//            CarrierBlockManager.initCarrierMap(carrierMap, this);
-//
-//            if (carrierMap.isEmpty()) {
-//                isValid = false;
-//                return;
-//            }
+            if (VariantManager.isUsed()) { // when --variant or --rs-number applied
+                // single variant carriers data process
+                CarrierBlockManager.initCarrierMap(carrierMap, this);
 
-            // block variants carriers data process
-            CarrierBlockManager.init(this);
-            
-            carrierMap = CarrierBlockManager.getVarCarrierMap(variantId);
-            
-            if (carrierMap == null) {
-                isValid = false;
-                return;
+                if (carrierMap.isEmpty()) {
+                    isValid = false;
+                    return;
+                }
+            } else {
+                // block variants carriers data process
+                CarrierBlockManager.init(this);
+
+                carrierMap = CarrierBlockManager.getVarCarrierMap(variantId);
+
+                if (carrierMap == null) {
+                    isValid = false;
+                    return;
+                }
             }
 
             DPBinBlockManager.initCarrierAndNonCarrierByDPBin(this, carrierMap, noncarrierMap);
@@ -69,22 +72,22 @@ public class CalledVariant extends AnnotatedVariant {
             NonCarrier noncarrier = noncarrierMap.get(sample.getId());
 
             if (carrier != null) {
-                setGenoDPBin(carrier.getGenotype(), carrier.getDPBin(), s);
+                setGenoDPBin(carrier.getGT(), carrier.getDPBin(), s);
 
-                if (carrier.getGenotype() == Data.INTEGER_NA) {
+                if (carrier.getGT() == Data.BYTE_NA) {
                     // have to remove it for init Non-carrier map
                     qcFailSample[(int) sample.getPheno()]++;
                     carrierMap.remove(sample.getId());
                 }
             } else if (noncarrier != null) {
-                setGenoDPBin(noncarrier.getGenotype(), noncarrier.getDPBin(), s);
+                setGenoDPBin(noncarrier.getGT(), noncarrier.getDPBin(), s);
             } else {
-                setGenoDPBin(Data.INTEGER_NA, Data.INTEGER_NA, s);
+                setGenoDPBin(Data.BYTE_NA, Data.INTEGER_NA, s);
             }
         }
     }
 
-    private void setGenoDPBin(int geno, int bin, int s) {
+    private void setGenoDPBin(byte geno, int bin, int s) {
         gt[s] = geno;
         dpBin[s] = bin;
     }
@@ -97,9 +100,9 @@ public class CalledVariant extends AnnotatedVariant {
         return dpBin[index];
     }
 
-    public int getGT(int index) {
+    public byte getGT(int index) {
         if (index == Data.INTEGER_NA) {
-            return Data.INTEGER_NA;
+            return Data.BYTE_NA;
         }
 
         return gt[index];

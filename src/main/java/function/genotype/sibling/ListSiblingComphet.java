@@ -25,9 +25,9 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     final String comphetNotSharedFilePath = CommonCommand.outputPath + "comphet.notshared.csv";
     BufferedWriter compHetSharedBw = null;
     BufferedWriter compHetNotSharedBw = null;
-    ArrayList<CompHetOutput> outputList = new ArrayList<CompHetOutput>();
-    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<ArrayList<CompHetOutput>>();
-    HashSet<String> currentGeneList = new HashSet<String>();
+    ArrayList<CompHetOutput> outputList = new ArrayList<>();
+    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
+    HashSet<String> currentGeneList = new HashSet<>();
 
     String[] FLAG = {
         "Shared", // 0
@@ -134,7 +134,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
             if (!currentGeneList.contains(output.geneName)) {
                 currentGeneList.add(output.geneName);
 
-                geneOutputList = new ArrayList<CompHetOutput>();
+                geneOutputList = new ArrayList<>();
                 geneOutputList.add(output);
                 geneListVector.add(geneOutputList);
             } else {
@@ -202,20 +202,20 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
     private String getTrioCompHetFlag(CompHetOutput output1, CompHetOutput output2,
             Sample child, Sample mother, Sample father) {
-        int cGeno1 = output1.getCalledVariant().getGT(child.getIndex());
+        byte cGeno1 = output1.getCalledVariant().getGT(child.getIndex());
 
         int cCov1 = output1.getCalledVariant().getDPBin(child.getIndex());
-        int mGeno1 = output1.getCalledVariant().getGT(mother.getIndex());
+        byte mGeno1 = output1.getCalledVariant().getGT(mother.getIndex());
         int mCov1 = output1.getCalledVariant().getDPBin(mother.getIndex());
-        int fGeno1 = output1.getCalledVariant().getGT(father.getIndex());
+        byte fGeno1 = output1.getCalledVariant().getGT(father.getIndex());
         int fCov1 = output1.getCalledVariant().getDPBin(father.getIndex());
 
-        int cGeno2 = output2.getCalledVariant().getGT(child.getIndex());
+        byte cGeno2 = output2.getCalledVariant().getGT(child.getIndex());
 
         int cCov2 = output2.getCalledVariant().getDPBin(child.getIndex());
-        int mGeno2 = output2.getCalledVariant().getGT(mother.getIndex());
+        byte mGeno2 = output2.getCalledVariant().getGT(mother.getIndex());
         int mCov2 = output2.getCalledVariant().getDPBin(mother.getIndex());
-        int fGeno2 = output2.getCalledVariant().getGT(father.getIndex());
+        byte fGeno2 = output2.getCalledVariant().getGT(father.getIndex());
         int fCov2 = output2.getCalledVariant().getDPBin(father.getIndex());
 
         return TrioManager.getCompHetFlag(

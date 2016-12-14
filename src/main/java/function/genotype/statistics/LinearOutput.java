@@ -47,7 +47,7 @@ public class LinearOutput extends StatisticOutput {
     public void doRegression(String model) {
         SimpleRegression sr = new SimpleRegression(true);
         for (Sample sample : SampleManager.getList()) {
-            int geno = calledVar.getGT(sample.getIndex());
+            byte geno = calledVar.getGT(sample.getIndex());
             if (geno != Data.INTEGER_NA) {
                 float y = sample.getQuantitativeTrait();
                 if (model.equals("allelic")) {

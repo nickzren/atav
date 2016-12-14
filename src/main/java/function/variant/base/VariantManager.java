@@ -30,6 +30,8 @@ public class VariantManager {
     private static ArrayList<String> includeVariantPosList = new ArrayList<>();
     private static ArrayList<String> includeChrList = new ArrayList<>();
 
+    private static boolean isUsed = false;
+
     private static int maxIncludeNum = 10000000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
@@ -50,6 +52,8 @@ public class VariantManager {
 
         if (!VariantLevelFilterCommand.includeVariantId.isEmpty()
                 || !VariantLevelFilterCommand.includeRsNumber.isEmpty()) {
+            isUsed = true;
+
             resetRegionList();
         }
     }
@@ -212,7 +216,7 @@ public class VariantManager {
     }
 
     private static String getVariantPositionByRS(int rs) throws SQLException {
-       String sql = "select chrom, POS from rs_number "
+        String sql = "select chrom, POS from rs_number "
                 + "where rs_number = " + rs;
 
         ResultSet rset = DBManager.executeQuery(sql);
@@ -317,5 +321,9 @@ public class VariantManager {
         includeRsNumberSet.clear();
         includeVariantPosList.clear();
         includeChrList.clear();
+    }
+
+    public static boolean isUsed() {
+        return isUsed;
     }
 }

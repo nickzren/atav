@@ -16,11 +16,11 @@ import utils.MathManager;
 public class ParentalOutput extends Output {
 
     Sample child;
-    int childGeno;
+    byte childGeno;
     double childBinomial;
 
     Sample parent;
-    int parentGeno;
+    byte parentGeno;
     double parentBinomial;
 
     public static String getTitle() {

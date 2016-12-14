@@ -21,13 +21,13 @@ public class TrioOutput extends Output implements Comparable {
     // Trio Family data
     Sample child;
     Carrier cCarrier;
-    int cGeno;
+    byte cGeno;
     int cDPBin;
     String motherName;
-    int mGeno;
+    byte mGeno;
     int mDPBin;
     String fatherName;
-    int fGeno;
+    byte fGeno;
     int fDPBin;
 
     public TrioOutput(CalledVariant c) {
@@ -59,10 +59,10 @@ public class TrioOutput extends Output implements Comparable {
         if (id != Data.INTEGER_NA) {
             Sample sample = SampleManager.getMap().get(id);
 
-            int geno = calledVar.getGT(sample.getIndex());
-            int type = getGenoType(geno, sample);
+            byte geno = calledVar.getGT(sample.getIndex());
+            geno = getGenoType(geno, sample);
 
-            deleteSampleGeno(type, sample.getPheno());
+            deleteSampleGeno(geno, sample.getPheno());
 
             genoCount[Index.MISSING][sample.getPheno()]++;
         }
@@ -78,8 +78,8 @@ public class TrioOutput extends Output implements Comparable {
         if (id != Data.INTEGER_NA) {
             Sample sample = SampleManager.getMap().get(id);
 
-            int geno = calledVar.getGT(sample.getIndex());
-            int type = getGenoType(geno, sample);
+            byte geno = calledVar.getGT(sample.getIndex());
+            byte type = getGenoType(geno, sample);
 
             addSampleGeno(type, sample.getPheno());
 
@@ -88,8 +88,8 @@ public class TrioOutput extends Output implements Comparable {
     }
 
     public void initDenovoFlag(Sample child) {
-        int mGenotype = convertMissing2HomRef(mGeno);
-        int fGenotype = convertMissing2HomRef(fGeno);
+        byte mGenotype = convertMissing2HomRef(mGeno);
+        byte fGenotype = convertMissing2HomRef(fGeno);
 
         denovoFlag = TrioManager.getStatus(calledVar.getChrNum(),
                 !isMinorRef, child.isMale(),
@@ -101,8 +101,8 @@ public class TrioOutput extends Output implements Comparable {
     /*
      * convert all missing genotype to hom ref for parents
      */
-    private int convertMissing2HomRef(int geno) {
-        if (geno == Data.INTEGER_NA) {
+    private byte convertMissing2HomRef(byte geno) {
+        if (geno == Data.BYTE_NA) {
             return Index.REF;
         }
 

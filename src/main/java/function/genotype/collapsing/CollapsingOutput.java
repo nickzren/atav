@@ -61,15 +61,15 @@ public class CollapsingOutput extends Output {
 
     public void calculateLooFreq(Sample sample) {
         if (sample.getId() != Data.INTEGER_NA) {
-            int geno = calledVar.getGT(sample.getIndex());
+            byte geno = calledVar.getGT(sample.getIndex());
+            geno = getGenoType(geno, sample);
             int pheno = (int) sample.getPheno();
-            int type = getGenoType(geno, sample);
 
-            deleteSampleGeno(type, pheno);
+            deleteSampleGeno(geno, pheno);
 
             calculateLooMaf();
 
-            addSampleGeno(type, pheno);
+            addSampleGeno(geno, pheno);
         }
     }
 
@@ -102,8 +102,8 @@ public class CollapsingOutput extends Output {
      * major then only hom & het are qualified samples.
      */
     @Override
-    public boolean isQualifiedGeno(int geno) {
-        if (CollapsingCommand.isRecessive && geno == 1) {
+    public boolean isQualifiedGeno(byte geno) {
+        if (CollapsingCommand.isRecessive && geno == Index.HET) {
             return false;
         }
 

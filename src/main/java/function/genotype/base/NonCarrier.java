@@ -13,7 +13,7 @@ import global.Index;
 public class NonCarrier {
 
     public int sampleId;
-    public int gt;
+    public byte gt;
     public int dpBin;
 
     public NonCarrier() {
@@ -37,9 +37,9 @@ public class NonCarrier {
 
     private void initGenotype() {
         if (dpBin == Data.INTEGER_NA) {
-            gt = Data.INTEGER_NA;
+            gt = Data.BYTE_NA;
         } else {
-            gt = 0;
+            gt = Index.REF;
         }
     }
 
@@ -47,7 +47,7 @@ public class NonCarrier {
         return sampleId;
     }
 
-    public int getGenotype() {
+    public byte getGT() {
         return gt;
     }
 
@@ -68,9 +68,11 @@ public class NonCarrier {
                 setMissing();
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+        {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 setMissing();
             }
+        }
     }
 
     /*
@@ -87,7 +89,7 @@ public class NonCarrier {
      * Inside of pseudoautosomal region which are treated like autosomes.
      */
     public void checkValidOnXY(Region r) {
-        if (gt != Data.INTEGER_NA) {
+        if (gt != Data.BYTE_NA) {
             boolean isValid = true;
 
             Sample sample = SampleManager.getMap().get(sampleId);
@@ -103,7 +105,7 @@ public class NonCarrier {
             }
 
             if (!isValid) {
-                gt = Data.INTEGER_NA;
+                gt = Data.BYTE_NA;
                 dpBin = Data.INTEGER_NA;
             }
         }
@@ -114,12 +116,12 @@ public class NonCarrier {
                 && TrioManager.isParent(sampleId)) {
             // do nothing
         } else {
-            gt = Data.INTEGER_NA;
+            gt = Data.BYTE_NA;
             dpBin = Data.INTEGER_NA;
         }
     }
 
     public boolean isValid() {
-        return gt != Data.INTEGER_NA;
+        return gt != Data.BYTE_NA;
     }
 }

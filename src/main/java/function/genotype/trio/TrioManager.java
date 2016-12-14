@@ -37,9 +37,9 @@ public class TrioManager {
     static HashSet<Integer> parentIdSet = new HashSet();
     static HashMap<String, String> denovoRules = new HashMap<>();
 
-    private static final int HIGH = 2;
-    private static final int MEDIUM = 1;
-    private static final int LOW = 0;
+    private static final byte HIGH = 2;
+    private static final byte MEDIUM = 1;
+    private static final byte LOW = 0;
 
     public static String getTitle4Denovo() {
         return "Family ID,"
@@ -177,14 +177,14 @@ public class TrioManager {
         }
     }
 
-    public static String getStatus(int chr, boolean refMajor, boolean isMale, int oGeno,
-            int oCov, int mGeno, int mCov, int dGeno, int dCov) {
+    public static String getStatus(int chr, boolean refMajor, boolean isMale, byte oGeno,
+            int oCov, byte mGeno, int mCov, byte dGeno, int dCov) {
         String key = getKey(chr, refMajor, isMale, oGeno, oCov, mGeno, mCov, dGeno, dCov);
         return denovoRules.containsKey(key) ? denovoRules.get(key) : Data.STRING_NA;
     }
 
-    private static String getKey(int chr, boolean refMajor, boolean isMale, int oGeno,
-            int oCov, int mGeno, int mCov, int dGeno, int dCov) {
+    private static String getKey(int chr, boolean refMajor, boolean isMale, byte oGeno,
+            int oCov, byte mGeno, int mCov, byte dGeno, int dCov) {
         StringBuilder sKey = new StringBuilder();
         if (chr < 23) {
             sKey.append('A');
@@ -211,15 +211,15 @@ public class TrioManager {
         return sKey.toString();
     }
 
-    private static void getKeyPartGenotypeAndCoverage(StringBuilder sKey, int Geno, int Cov) {
-        switch (Geno) {
-            case 0: //HOM REF
+    private static void getKeyPartGenotypeAndCoverage(StringBuilder sKey, byte geno, int Cov) {
+        switch (geno) {
+            case Index.REF: //HOM REF
                 sKey.append('0');
                 break;
-            case 1:
+            case Index.HET:
                 sKey.append('1');
                 break;
-            case 2:
+            case Index.HOM:
                 sKey.append('2');
                 break;
             default:
@@ -227,7 +227,7 @@ public class TrioManager {
                 break;
         }
 
-        if (Geno == Data.INTEGER_NA) { //missing
+        if (geno == Data.BYTE_NA) { //missing
             sKey.append('0');
         } else if (Cov >= GenotypeLevelFilterCommand.minCoverage
                 || GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
@@ -335,13 +335,13 @@ public class TrioManager {
     }
 
     public static String getCompHetFlag(
-            int cGeno1, int cCov1,
-            int mGeno1, int mCov1,
-            int fGeno1, int fCov1,
+            byte cGeno1, int cCov1,
+            byte mGeno1, int mCov1,
+            byte fGeno1, int fCov1,
             boolean isMinorRef1,
-            int cGeno2, int cCov2,
-            int mGeno2, int mCov2,
-            int fGeno2, int fCov2,
+            byte cGeno2, int cCov2,
+            byte mGeno2, int mCov2,
+            byte fGeno2, int fCov2,
             boolean isMinorRef2) {
         int minCov = GenotypeLevelFilterCommand.minCoverage;
 
@@ -363,13 +363,13 @@ public class TrioManager {
                 || ((cGeno2 == Index.REF || cGeno2 == Index.HOM) && cCov2 >= minCov)) {
             return COMP_HET_FLAG[2];
         }
-        if ((fGeno1 == Data.INTEGER_NA && mGeno1 == Data.INTEGER_NA)
-                || (fGeno2 == Data.INTEGER_NA && mGeno2 == Data.INTEGER_NA)) {
+        if ((fGeno1 == Data.BYTE_NA && mGeno1 == Data.BYTE_NA)
+                || (fGeno2 == Data.BYTE_NA && mGeno2 == Data.BYTE_NA)) {
             // if both parents are missing the same call, exclude this candidate
             return COMP_HET_FLAG[2];
         }
-        if ((fGeno1 == Data.INTEGER_NA && fGeno2 == Data.INTEGER_NA)
-                || (mGeno1 == Data.INTEGER_NA && mGeno2 == Data.INTEGER_NA)) {
+        if ((fGeno1 == Data.BYTE_NA && fGeno2 == Data.BYTE_NA)
+                || (mGeno1 == Data.BYTE_NA && mGeno2 == Data.BYTE_NA)) {
             // if one parent is missing both calls, exclude this candidate
             return COMP_HET_FLAG[2];
         }
@@ -416,14 +416,14 @@ public class TrioManager {
 
     public static String getCompHetFlagByDenovo(
             String compHetFlag,
-            int cGeno1, int cCov1,
-            int mGeno1, int mCov1,
-            int fGeno1, int fCov1,
+            byte cGeno1, int cCov1,
+            byte mGeno1, int mCov1,
+            byte fGeno1, int fCov1,
             boolean isMinorRef1,
             String denovoFlag1,
-            int cGeno2, int cCov2,
-            int mGeno2, int mCov2,
-            int fGeno2, int fCov2,
+            byte cGeno2, int cCov2,
+            byte mGeno2, int mCov2,
+            byte fGeno2, int fCov2,
             boolean isMinorRef2,
             String denovoFlag2) {
         if (compHetFlag.equals(COMP_HET_FLAG[2])) {
@@ -438,11 +438,11 @@ public class TrioManager {
                 mGeno2 = swapGenotypes(mGeno2);
             }
 
-            int denovoConfidence1 = getDenovoConfidence(denovoFlag1);
-            int denovoConfidence2 = getDenovoConfidence(denovoFlag2);
+            byte denovoConfidence1 = getDenovoConfidence(denovoFlag1);
+            byte denovoConfidence2 = getDenovoConfidence(denovoFlag2);
 
-            boolean isDenovo1 = denovoConfidence1 != Data.INTEGER_NA;
-            boolean isDenovo2 = denovoConfidence2 != Data.INTEGER_NA;
+            boolean isDenovo1 = denovoConfidence1 != Data.BYTE_NA;
+            boolean isDenovo2 = denovoConfidence2 != Data.BYTE_NA;
 
             if (isDenovo1 ^ isDenovo2) {
                 int cGenoInherited = cGeno1;
@@ -472,8 +472,8 @@ public class TrioManager {
                     // is homozygous or missing a genotype, at least one parent is heterozygous,
                     // and the child is heterozygous
                     if (cGenoInherited == Index.HET
-                            && !(fGenoInherited == Index.HOM || fGenoInherited == Data.INTEGER_NA)
-                            && !(mGenoInherited == Index.HOM || mGenoInherited == Data.INTEGER_NA)
+                            && !(fGenoInherited == Index.HOM || fGenoInherited == Data.BYTE_NA)
+                            && !(mGenoInherited == Index.HOM || mGenoInherited == Data.BYTE_NA)
                             && (fGenoInherited == Index.HET || mGenoInherited == Index.HET)) {
                         if (denovoConfidence == HIGH) {
                             // Both variants are high confidence
@@ -492,7 +492,7 @@ public class TrioManager {
         return compHetFlag;
     }
 
-    private static int getDenovoConfidence(String denovoFlag) {
+    private static byte getDenovoConfidence(String denovoFlag) {
         if (denovoFlag.startsWith("DE NOVO")
                 || denovoFlag.startsWith("NEWLY HEMIZYGOUS")) {
             return HIGH;
@@ -504,11 +504,11 @@ public class TrioManager {
             return LOW;
         }
 
-        return Data.INTEGER_NA;
+        return Data.BYTE_NA;
     }
 
-    private static int swapGenotypes(
-            int genotype) {
+    private static byte swapGenotypes(
+            byte genotype) {
         switch (genotype) {
             case Index.REF:
                 return Index.HOM;
@@ -561,8 +561,8 @@ public class TrioManager {
 
     private static boolean isCoQualifiedGeno(TrioOutput output1,
             TrioOutput output2, int index) {
-        int geno1 = output1.getCalledVariant().getGT(index);
-        int geno2 = output2.getCalledVariant().getGT(index);
+        byte geno1 = output1.getCalledVariant().getGT(index);
+        byte geno2 = output2.getCalledVariant().getGT(index);
 
         return output1.isQualifiedGeno(geno1)
                 && output2.isQualifiedGeno(geno2);

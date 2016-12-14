@@ -104,7 +104,7 @@ public class Output implements Cloneable {
     }
 
     public void countSampleGeno() {
-        int geno;
+        byte geno;
 
         for (Sample sample : SampleManager.getList()) {
             geno = calledVar.getGT(sample.getIndex());
@@ -114,8 +114,8 @@ public class Output implements Cloneable {
         }
     }
 
-    public void addSampleGeno(int geno, int pheno) {
-        if (geno == Data.INTEGER_NA) {
+    public void addSampleGeno(byte geno, int pheno) {
+        if (geno == Data.BYTE_NA) {
             geno = Index.MISSING;
         }
 
@@ -123,7 +123,7 @@ public class Output implements Cloneable {
         genoCount[geno][pheno]++;
     }
 
-    public void deleteSampleGeno(int geno, int pheno) {
+    public void deleteSampleGeno(byte geno, int pheno) {
         if (geno == Data.INTEGER_NA) {
             geno = Index.MISSING;
         }
@@ -251,7 +251,7 @@ public class Output implements Cloneable {
         }
     }
 
-    public int getGenoType(int geno, Sample sample) {
+    public byte getGenoType(byte geno, Sample sample) {
         if (sample.isMale()
                 && !calledVar.isInsideAutosomalOrPseudoautosomalRegions()) {
 
@@ -265,15 +265,15 @@ public class Output implements Cloneable {
         return geno;
     }
 
-    public String getGenoStr(int geno) {
+    public String getGenoStr(byte geno) {
         switch (geno) {
-            case 2:
+            case Index.HOM:
                 return "hom";
-            case 1:
+            case Index.HET:
                 return "het";
-            case 0:
+            case Index.REF:
                 return "hom ref";
-            case Data.INTEGER_NA:
+            case Data.BYTE_NA:
                 return Data.STRING_NA;
         }
 
@@ -315,7 +315,7 @@ public class Output implements Cloneable {
      * if ref is minor then only het & ref are qualified samples. If ref is
      * major then only hom & het are qualified samples.
      */
-    public boolean isQualifiedGeno(int geno) {
+    public boolean isQualifiedGeno(byte geno) {
         if (GenotypeLevelFilterCommand.isAllGeno) {
             return true;
         }
