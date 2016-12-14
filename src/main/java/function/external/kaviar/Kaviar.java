@@ -114,7 +114,7 @@ public class Kaviar {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(FormatManager.getDouble(maf)).append(",");
+        sb.append(FormatManager.getFloat(maf)).append(",");
         sb.append(FormatManager.getInteger(alleleCount)).append(",");
         sb.append(FormatManager.getInteger(alleleNumber)).append(",");
 

@@ -215,7 +215,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
-        double[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
+        float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
 
         StringBuilder sb = new StringBuilder();
         sb.append(output1.child.getFamilyId()).append(",");
@@ -224,8 +224,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sb.append(output1.fatherName).append(",");
         sb.append(flag).append(",");
         sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
-        sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
+        sb.append(FormatManager.getFloat(coFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getFloat(coFreq[Index.CTRL])).append(",");
 
         sb.append(output1.toString());
         sb.append(output2.toString());

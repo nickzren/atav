@@ -129,7 +129,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 sb.append(geneSampleCoverage[gene.getIndex()][sample.getIndex()]).append(",");
 
                 double ratio = MathManager.devide(geneSampleCoverage[gene.getIndex()][sample.getIndex()], gene.getLength());
-                sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
+                sb.append(FormatManager.getDouble(ratio)).append(",");
 
                 int pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
                 sb.append(pass);
@@ -154,12 +154,12 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 int totalSampleCov = getSampleCoverageByIndex(sample.getIndex());
                 sb.append(totalSampleCov).append(",");
                 double ratio = MathManager.devide(totalSampleCov, GeneManager.getAllGeneBoundaryLength());
-                sb.append(FormatManager.getSixDegitDouble(ratio)).append(",");
+                sb.append(FormatManager.getDouble(ratio)).append(",");
                 sb.append(GeneManager.getGeneBoundaryList().size()).append(",");
                 int totalSampleRegionCovered = sampleCoverageCount[sample.getIndex()];
                 sb.append(totalSampleRegionCovered).append(",");
                 ratio = MathManager.devide(totalSampleRegionCovered, GeneManager.getGeneBoundaryList().size());
-                sb.append(FormatManager.getSixDegitDouble(ratio));
+                sb.append(FormatManager.getDouble(ratio));
                 writeToFile(sb.toString(), bwSampleSummary);
                 sb.setLength(0);
             }

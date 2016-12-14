@@ -15,7 +15,6 @@ public class FormatManager {
 
     private static NumberFormat pformat1 = new DecimalFormat("0.####");
     private static NumberFormat pformat2 = new DecimalFormat("0.###E000");
-    private static NumberFormat pformat3 = new DecimalFormat("0.######");
 
     public static String getDouble(double value) {
         if (value == Data.DOUBLE_NA) {
@@ -27,14 +26,6 @@ public class FormatManager {
         } else {
             return pformat1.format(value);
         }
-    }
-
-    public static String getSixDegitDouble(double value) {
-        if (value == Data.DOUBLE_NA) {
-            return Data.STRING_NA;
-        }
-
-        return pformat3.format(value);
     }
 
     public static String getByte(byte value) {
@@ -60,6 +51,11 @@ public class FormatManager {
 
         return String.valueOf(value);
     }
+    
+    public static byte getByte(ResultSet rs, String strColName) throws SQLException {
+        byte nValue = rs.getByte(strColName);
+        return rs.wasNull() ? Data.BYTE_NA : nValue;
+    }
 
     public static int getInt(ResultSet rs, String strColName) throws SQLException {
         int nValue = rs.getInt(strColName);
@@ -83,7 +79,11 @@ public class FormatManager {
             return "0";
         }
 
-        return pformat3.format(value);
+        if (value < 0.001 && value > 0) {
+            return pformat2.format(value);
+        } else {
+            return pformat1.format(value);
+        }
     }
 
     public static float getFloat(String str) {
@@ -107,15 +107,6 @@ public class FormatManager {
         return str;
     }
 
-    public static String getPercAltRead(int alt, int gatkFilteredCoverage) {
-        if (gatkFilteredCoverage == 0
-                || gatkFilteredCoverage == Data.INTEGER_NA) {
-            return Data.STRING_NA;
-        } else {
-            return getDouble(alt / gatkFilteredCoverage);
-        }
-    }
-
     public static boolean isDouble(String input) {
         try {
             Double.parseDouble(input);
@@ -134,7 +125,7 @@ public class FormatManager {
         }
     }
 
-    public static int[][] deepCopyIntArray(int[][] original) {
+    public static int[][] deepCopyArray(int[][] original) {
         final int[][] result = new int[original.length][];
         for (int i = 0; i < original.length; i++) {
             result[i] = Arrays.copyOf(original[i], original[i].length);
@@ -143,12 +134,12 @@ public class FormatManager {
         return result;
     }
 
-    public static int[] deepCopyIntArray(int[] original) {
+    public static int[] deepCopyArray(int[] original) {
         return Arrays.copyOf(original, original.length);
     }
 
-    public static double[][] deepCopyDoubleArray(double[][] original) {
-        final double[][] result = new double[original.length][];
+    public static float[][] deepCopyArray(float[][] original) {
+        final float[][] result = new float[original.length][];
         for (int i = 0; i < original.length; i++) {
             result[i] = Arrays.copyOf(original[i], original[i].length);
         }
@@ -156,7 +147,11 @@ public class FormatManager {
         return result;
     }
 
-    public static double[] deepCopyDoubleArray(double[] original) {
+    public static float[] deepCopyArray(float[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    public static double[] deepCopyArray(double[] original) {
         return Arrays.copyOf(original, original.length);
     }
 

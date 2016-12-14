@@ -108,10 +108,10 @@ public class CoverageComparison extends CoverageComparisonBase {
             String name = gene.getName() + "_" + exon.getIdStr();
             sb.append(name).append(",");
             sb.append(gene.getChr()).append(",");
-            sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
-            sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
+            sb.append(FormatManager.getFloat(caseAvg)).append(",");
+            sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
             float absDiff = MathManager.abs(caseAvg, ctrlAvg);
-            sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
+            sb.append(FormatManager.getFloat(absDiff)).append(",");
             sb.append(exon.getLength());
 
             addExon(sb, name, caseAvg, ctrlAvg, absDiff, exon.getLength(), sr, lss);

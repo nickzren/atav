@@ -80,7 +80,7 @@ public class ExonClean {
         if (CoverageCommand.exonCleanCutoff != Data.NO_FILTER) {
             cutoff = CoverageCommand.exonCleanCutoff;
             LogManager.writeAndPrint("User specified cutoff value "
-                    + FormatManager.getSixDegitDouble(cutoff) + " is applied instead.");
+                    + FormatManager.getFloat(cutoff) + " is applied instead.");
         }
 
         return cutoff;
@@ -134,22 +134,22 @@ public class ExonClean {
 
     public String getCleanedGeneSummaryStrByExon(Gene gene) {
         int geneSize = 0;
-        double caseAvg = 0;
-        double ctrlAvg = 0;
+        float caseAvg = 0;
+        float ctrlAvg = 0;
         for (Exon exon : gene.getExonList()) {
             String regionIdStr = gene.getName() + "_" + exon.getIdStr();
             SortedExon sortedExon = cleanedExonMap.get(regionIdStr);
             if (sortedExon != null) {
                 geneSize += sortedExon.getLength();
-                caseAvg += (double) sortedExon.getLength() * sortedExon.getCaseAvg();
-                ctrlAvg += (double) sortedExon.getLength() * sortedExon.getCtrlAvg();
+                caseAvg += (float) sortedExon.getLength() * sortedExon.getCaseAvg();
+                ctrlAvg += (float) sortedExon.getLength() * sortedExon.getCtrlAvg();
             }
         }
 
         return getGeneStr(gene, geneSize, caseAvg, ctrlAvg);
     }
 
-    private String getGeneStr(Gene gene, int geneSize, double caseAvg, double ctrlAvg) {
+    private String getGeneStr(Gene gene, int geneSize, float caseAvg, float ctrlAvg) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(gene.getName()).append(",");
@@ -157,10 +157,10 @@ public class ExonClean {
         sb.append(gene.getLength()).append(",");
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
-        sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
-        sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
-        double absDiff = MathManager.abs(caseAvg, ctrlAvg);
-        sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
+        sb.append(FormatManager.getFloat(caseAvg)).append(",");
+        sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+        float absDiff = MathManager.abs(caseAvg, ctrlAvg);
+        sb.append(FormatManager.getDouble(absDiff)).append(",");
         sb.append(geneSize);
         return sb.toString();
     }
@@ -173,28 +173,28 @@ public class ExonClean {
         LogManager.writeAndPrint("The number of exons pruned is " + numExonsPruned);
         double percentExonsPruned = (double) numExonsPruned / (double) numExonsTotal * 100;
         LogManager.writeAndPrint("The % of exons pruned is "
-                + FormatManager.getSixDegitDouble(percentExonsPruned) + "%");
+                + FormatManager.getDouble(percentExonsPruned) + "%");
 
         LogManager.writeAndPrint("The total number of bases before pruning is "
-                + FormatManager.getSixDegitDouble((double) totalBases / 1000000.0) + " MB");
+                + FormatManager.getDouble((double) totalBases / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases after pruning is "
-                + FormatManager.getSixDegitDouble((double) totalCleanedBases / 1000000.0) + " MB");
+                + FormatManager.getDouble((double) totalCleanedBases / 1000000.0) + " MB");
         LogManager.writeAndPrint("The % of bases pruned is "
-                + FormatManager.getSixDegitDouble(100.0 - (double) totalCleanedBases / (double) totalBases * 100) + "%");
+                + FormatManager.getDouble(100.0 - (double) totalCleanedBases / (double) totalBases * 100) + "%");
 
         LogManager.writeAndPrint("The average coverage rate for all samples after pruning is "
-                + FormatManager.getSixDegitDouble(getAllCoverage() * 100) + "%");
+                + FormatManager.getDouble(getAllCoverage() * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is "
-                + FormatManager.getSixDegitDouble(getAllCoverage() * totalBases / 1000000.0) + " MB");
+                + FormatManager.getDouble(getAllCoverage() * totalBases / 1000000.0) + " MB");
 
         LogManager.writeAndPrint("The average coverage rate for cases after pruning is  "
-                + FormatManager.getSixDegitDouble(caseCoverage * 100) + "%");
+                + FormatManager.getDouble(caseCoverage * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for cases after pruning is "
-                + FormatManager.getSixDegitDouble(caseCoverage * totalBases / 1000000.0) + " MB");
+                + FormatManager.getDouble(caseCoverage * totalBases / 1000000.0) + " MB");
 
         LogManager.writeAndPrint("The average coverage rate for controls after pruning is  "
-                + FormatManager.getSixDegitDouble(ctrlCoverage * 100) + "%");
+                + FormatManager.getDouble(ctrlCoverage * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is "
-                + FormatManager.getSixDegitDouble(ctrlCoverage * totalBases / 1000000.0) + " MB");
+                + FormatManager.getDouble(ctrlCoverage * totalBases / 1000000.0) + " MB");
     }
 }

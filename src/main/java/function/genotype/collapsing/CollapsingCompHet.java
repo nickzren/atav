@@ -200,7 +200,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                 if (output2.isMaxLooMafValid()) {
 
-                    double[] coFreq = getCoOccurrenceFreq(output1, output2);
+                    float[] coFreq = getCoOccurrenceFreq(output1, output2);
 
                     summary.updateSampleVariantCount4CompHet(sample.getIndex());
 
@@ -212,8 +212,8 @@ public class CollapsingCompHet extends CollapsingBase {
                     sb.append(sample.getName()).append(",");
                     sb.append(sample.getPhenotype()).append(",");
                     sb.append("'").append(output1.geneName).append("'").append(",");
-                    sb.append(FormatManager.getDouble(coFreq[Index.CASE])).append(",");
-                    sb.append(FormatManager.getDouble(coFreq[Index.CTRL])).append(",");
+                    sb.append(FormatManager.getFloat(coFreq[Index.CASE])).append(",");
+                    sb.append(FormatManager.getFloat(coFreq[Index.CTRL])).append(",");
                     sb.append(output1.getString(sample));
                     sb.append(output2.getString(sample));
 
@@ -230,8 +230,8 @@ public class CollapsingCompHet extends CollapsingBase {
      * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
      * (co-occurance) in ctrls
      */
-    private double[] getCoOccurrenceFreq(CompHetOutput output1, CompHetOutput output2) {
-        double[] freq = new double[2];
+    private float[] getCoOccurrenceFreq(CompHetOutput output1, CompHetOutput output2) {
+        float[] freq = new float[2];
 
         int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
         int totalCaseCount = 0, totalCtrlCount = 0;

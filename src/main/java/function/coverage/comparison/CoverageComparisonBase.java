@@ -74,7 +74,7 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
 
     private void outputGeneSummary(Gene gene) {
         try {
-            double caseAvg = 0, ctrlAvg = 0;
+            float caseAvg = 0, ctrlAvg = 0;
             for (Sample sample : SampleManager.getList()) {
                 if (sample.isCase()) {
                     caseAvg += geneSampleCoverage[gene.getIndex()][sample.getIndex()];
@@ -91,10 +91,10 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             StringBuilder sb = new StringBuilder();
             sb.append(gene.getName()).append(",");
             sb.append(gene.getChr()).append(",");
-            sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
-            sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
-            double absDiff = MathManager.abs(caseAvg, ctrlAvg);
-            sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
+            sb.append(FormatManager.getFloat(caseAvg)).append(",");
+            sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+            float absDiff = MathManager.abs(caseAvg, ctrlAvg);
+            sb.append(FormatManager.getFloat(absDiff)).append(",");
             sb.append(gene.getLength());         
             writeToFile(sb.toString(), bwCoverageSummaryByGene);
         } catch (Exception ex) {

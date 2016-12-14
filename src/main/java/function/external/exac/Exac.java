@@ -157,7 +157,7 @@ public class Exac {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            sb.append(FormatManager.getDouble(maf[i])).append(",");
+            sb.append(FormatManager.getFloat(maf[i])).append(",");
 
             if (gts[i].equals(Data.STRING_NA)) {
                 sb.append(gts[i]).append(",");
@@ -166,8 +166,8 @@ public class Exac {
             }
         }
 
-        sb.append(FormatManager.getDouble(vqslod)).append(",");
-        sb.append(FormatManager.getDouble(meanCoverage)).append(",");
+        sb.append(FormatManager.getFloat(vqslod)).append(",");
+        sb.append(FormatManager.getFloat(meanCoverage)).append(",");
         sb.append(FormatManager.getInteger(sampleCovered10x)).append(",");
 
         return sb.toString();

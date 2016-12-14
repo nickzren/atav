@@ -104,7 +104,7 @@ public class Genomes {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-            sb.append(FormatManager.getDouble(maf[i])).append(",");
+            sb.append(FormatManager.getFloat(maf[i])).append(",");
         }
 
         return sb.toString();

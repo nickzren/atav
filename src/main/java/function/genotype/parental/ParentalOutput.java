@@ -96,10 +96,10 @@ public class ParentalOutput extends Output {
     }
 
     private boolean isChildBinomialValid(Carrier carrier) {
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.INTEGER_NA;
+        short readsAlt = carrier != null ? carrier.getAdAlt() : Data.SHORT_NA;
+        short readsRef = carrier != null ? carrier.getADRef() : Data.SHORT_NA;
 
-        if (readsAlt == Data.INTEGER_NA || readsRef == Data.INTEGER_NA) {
+        if (readsAlt == Data.SHORT_NA || readsRef == Data.SHORT_NA) {
             childBinomial = Data.DOUBLE_NA;
         } else {
             childBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
@@ -120,10 +120,10 @@ public class ParentalOutput extends Output {
 
         Carrier carrier = calledVar.getCarrier(parent.getId());
 
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.INTEGER_NA;
+        short readsAlt = carrier != null ? carrier.getAdAlt() : Data.SHORT_NA;
+        short readsRef = carrier != null ? carrier.getADRef() : Data.SHORT_NA;
 
-        if (readsAlt == Data.INTEGER_NA || readsRef == Data.INTEGER_NA) {
+        if (readsAlt == Data.SHORT_NA || readsRef == Data.SHORT_NA) {
             parentBinomial = Data.DOUBLE_NA;
         } else {
             parentBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
@@ -149,18 +149,18 @@ public class ParentalOutput extends Output {
         getGenotypeData(sb);
 
         Carrier carrier = calledVar.getCarrier(child.getId());
-        int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
-        int readsRef = carrier != null ? carrier.getADRef() : Data.INTEGER_NA;
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");
+        short adAlt = carrier != null ? carrier.getAdAlt() : Data.SHORT_NA;
+        short adRef = carrier != null ? carrier.getADRef() : Data.SHORT_NA;
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA)).append(",");
         sb.append(FormatManager.getShort(calledVar.getDPBin(child.getIndex()))).append(",");
-        sb.append(FormatManager.getInteger(readsRef)).append(",");
-        sb.append(FormatManager.getInteger(readsAlt)).append(",");
-        sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getGQ() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getShort(adRef)).append(",");
+        sb.append(FormatManager.getShort(adAlt)).append(",");
+        sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
+        sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getMQ() : Data.INTEGER_NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQD() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");
+        sb.append(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA)).append(",");

@@ -228,7 +228,7 @@ public class GenotypeLevelFilterCommand {
         return value >= minCaseCarrier;
     }
 
-    public static boolean isVcfFilterValid(int value) {
+    public static boolean isVcfFilterValid(byte value) {
         if (vcfFilter == null) { // no filter
             return true;
         }
@@ -242,12 +242,12 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isGqValid(int value) {
+    public static boolean isGqValid(byte value) {
         if (genotypeQualGQ == Data.NO_FILTER) {
             return true;
         }
 
-        if (value == Data.INTEGER_NA) {
+        if (value == Data.BYTE_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -274,12 +274,12 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isMqValid(int value) {
+    public static boolean isMqValid(byte value) {
         if (rmsMapQualMQ == Data.NO_FILTER) {
             return true;
         }
 
-        if (value == Data.INTEGER_NA) {
+        if (value == Data.BYTE_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -290,12 +290,12 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isQdValid(int value) {
+    public static boolean isQdValid(byte value) {
         if (qualByDepthQD == Data.NO_FILTER) {
             return true;
         }
 
-        if (value == Data.INTEGER_NA) {
+        if (value == Data.BYTE_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }

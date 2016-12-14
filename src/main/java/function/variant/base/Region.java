@@ -72,10 +72,6 @@ public class Region implements Comparable {
         return endPosition;
     }
 
-    public void setLength(int len) {
-        length = len;
-    }
-
     public int getLength() {
         return length;
     }

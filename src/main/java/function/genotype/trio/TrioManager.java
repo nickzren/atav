@@ -525,8 +525,8 @@ public class TrioManager {
      * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
      * (co-occurance) in ctrls
      */
-    public static double[] getCoOccurrenceFreq(TrioOutput output1, TrioOutput output2) {
-        double[] freq = new double[2];
+    public static float[] getCoOccurrenceFreq(TrioOutput output1, TrioOutput output2) {
+        float[] freq = new float[2];
 
         int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
         int totalCaseCount = 0, totalCtrlCount = 0;

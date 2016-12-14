@@ -24,8 +24,8 @@ public class CollapsingSummary implements Comparable {
     int unqualifiedCase = 0; // b
     int qualifiedCtrl = 0;   // c
     int unqualifiedCtrl = 0; // d 
-    double qualifiedCaseFreq = Data.DOUBLE_NA;
-    double qualifiedCtrlFreq = Data.DOUBLE_NA;
+    float qualifiedCaseFreq = Data.FLOAT_NA;
+    float qualifiedCtrlFreq = Data.FLOAT_NA;
     String enrichedDirection = Data.STRING_NA;
     double fetP = Data.DOUBLE_NA;
     double logisticP = Data.DOUBLE_NA;

@@ -38,10 +38,10 @@ public class CollapsingRegionSummary extends CollapsingSummary {
         sb.append(totalIndel).append(",");
         sb.append(qualifiedCase).append(",");
         sb.append(unqualifiedCase).append(",");
-        sb.append(FormatManager.getDouble(qualifiedCaseFreq)).append(",");
+        sb.append(FormatManager.getFloat(qualifiedCaseFreq)).append(",");
         sb.append(qualifiedCtrl).append(",");
         sb.append(unqualifiedCtrl).append(",");
-        sb.append(FormatManager.getDouble(qualifiedCtrlFreq)).append(",");
+        sb.append(FormatManager.getFloat(qualifiedCtrlFreq)).append(",");
         sb.append(enrichedDirection).append(",");
         sb.append(FormatManager.getDouble(fetP));
 
