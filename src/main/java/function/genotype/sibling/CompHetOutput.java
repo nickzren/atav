@@ -60,9 +60,9 @@ public class CompHetOutput extends Output implements Comparable {
         getGenotypeData(sb);
 
         sb.append(getGenoStr(calledVar.getGT(child1.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getDPBin(child1.getIndex()))).append(",");
+        sb.append(FormatManager.getShort(calledVar.getDPBin(child1.getIndex()))).append(",");
         sb.append(getGenoStr(calledVar.getGT(child2.getIndex()))).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getDPBin(child2.getIndex()))).append(",");
+        sb.append(FormatManager.getShort(calledVar.getDPBin(child2.getIndex()))).append(",");
 
         return sb.toString();
     }

@@ -22,13 +22,13 @@ public class TrioOutput extends Output implements Comparable {
     Sample child;
     Carrier cCarrier;
     byte cGeno;
-    int cDPBin;
+    short cDPBin;
     String motherName;
     byte mGeno;
-    int mDPBin;
+    short mDPBin;
     String fatherName;
     byte fGeno;
-    int fDPBin;
+    short fDPBin;
 
     public TrioOutput(CalledVariant c) {
         super(c);

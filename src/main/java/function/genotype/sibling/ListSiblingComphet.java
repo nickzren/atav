@@ -204,19 +204,19 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
             Sample child, Sample mother, Sample father) {
         byte cGeno1 = output1.getCalledVariant().getGT(child.getIndex());
 
-        int cCov1 = output1.getCalledVariant().getDPBin(child.getIndex());
+        short cCov1 = output1.getCalledVariant().getDPBin(child.getIndex());
         byte mGeno1 = output1.getCalledVariant().getGT(mother.getIndex());
-        int mCov1 = output1.getCalledVariant().getDPBin(mother.getIndex());
+        short mCov1 = output1.getCalledVariant().getDPBin(mother.getIndex());
         byte fGeno1 = output1.getCalledVariant().getGT(father.getIndex());
-        int fCov1 = output1.getCalledVariant().getDPBin(father.getIndex());
+        short fCov1 = output1.getCalledVariant().getDPBin(father.getIndex());
 
         byte cGeno2 = output2.getCalledVariant().getGT(child.getIndex());
 
-        int cCov2 = output2.getCalledVariant().getDPBin(child.getIndex());
+        short cCov2 = output2.getCalledVariant().getDPBin(child.getIndex());
         byte mGeno2 = output2.getCalledVariant().getGT(mother.getIndex());
-        int mCov2 = output2.getCalledVariant().getDPBin(mother.getIndex());
+        short mCov2 = output2.getCalledVariant().getDPBin(mother.getIndex());
         byte fGeno2 = output2.getCalledVariant().getGT(father.getIndex());
-        int fCov2 = output2.getCalledVariant().getDPBin(father.getIndex());
+        short fCov2 = output2.getCalledVariant().getDPBin(father.getIndex());
 
         return TrioManager.getCompHetFlag(
                 cGeno1, cCov1,

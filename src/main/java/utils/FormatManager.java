@@ -37,6 +37,22 @@ public class FormatManager {
         return pformat3.format(value);
     }
 
+    public static String getByte(byte value) {
+        if (value == Data.BYTE_NA) {
+            return Data.STRING_NA;
+        }
+
+        return String.valueOf(value);
+    }
+
+    public static String getShort(short value) {
+        if (value == Data.SHORT_NA) {
+            return Data.STRING_NA;
+        }
+
+        return String.valueOf(value);
+    }
+
     public static String getInteger(int value) {
         if (value == Data.INTEGER_NA) {
             return Data.STRING_NA;

@@ -28,8 +28,8 @@ public class Carrier extends NonCarrier {
     public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");
         gt = rs.getByte("GT");
-        dp = rs.getShort("DP");        
-        dpBin = Data.INTEGER_NA;
+        dp = rs.getShort("DP");
+        dpBin = Data.SHORT_NA;
         adRef = rs.getInt("AD_REF");
         adAlt = rs.getInt("AD_ALT");
         gq = FormatManager.getInt(rs, "GQ");
@@ -122,7 +122,7 @@ public class Carrier extends NonCarrier {
         }
 
         if (gt == Data.BYTE_NA) {
-            dpBin = Data.INTEGER_NA;
+            dpBin = Data.SHORT_NA;
         }
     }
 }

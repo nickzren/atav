@@ -125,7 +125,7 @@ public class CollapsingOutput extends Output {
         sb.append(sample.getType()).append(",");
         sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
         sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");
-        sb.append(FormatManager.getInteger(calledVar.getDPBin(sample.getIndex()))).append(",");
+        sb.append(FormatManager.getShort(calledVar.getDPBin(sample.getIndex()))).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");

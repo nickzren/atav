@@ -16,7 +16,7 @@ public class CalledVariant extends AnnotatedVariant {
     private HashMap<Integer, Carrier> carrierMap = new HashMap<>();
     private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<>();
     private byte[] gt = new byte[SampleManager.getListSize()];
-    private int[] dpBin = new int[SampleManager.getListSize()];
+    private short[] dpBin = new short[SampleManager.getListSize()];
     private int[] qcFailSample = new int[2];
 
     public CalledVariant(String chr, int variantId, ResultSet rset) throws Exception {
@@ -82,19 +82,19 @@ public class CalledVariant extends AnnotatedVariant {
             } else if (noncarrier != null) {
                 setGenoDPBin(noncarrier.getGT(), noncarrier.getDPBin(), s);
             } else {
-                setGenoDPBin(Data.BYTE_NA, Data.INTEGER_NA, s);
+                setGenoDPBin(Data.BYTE_NA, Data.SHORT_NA, s);
             }
         }
     }
 
-    private void setGenoDPBin(byte geno, int bin, int s) {
+    private void setGenoDPBin(byte geno, short bin, int s) {
         gt[s] = geno;
         dpBin[s] = bin;
     }
 
-    public int getDPBin(int index) {
+    public short getDPBin(int index) {
         if (index == Data.INTEGER_NA) {
-            return Data.INTEGER_NA;
+            return Data.SHORT_NA;
         }
 
         return dpBin[index];

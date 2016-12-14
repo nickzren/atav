@@ -178,13 +178,13 @@ public class TrioManager {
     }
 
     public static String getStatus(int chr, boolean refMajor, boolean isMale, byte oGeno,
-            int oCov, byte mGeno, int mCov, byte dGeno, int dCov) {
+            short oCov, byte mGeno, short mCov, byte dGeno, short dCov) {
         String key = getKey(chr, refMajor, isMale, oGeno, oCov, mGeno, mCov, dGeno, dCov);
         return denovoRules.containsKey(key) ? denovoRules.get(key) : Data.STRING_NA;
     }
 
     private static String getKey(int chr, boolean refMajor, boolean isMale, byte oGeno,
-            int oCov, byte mGeno, int mCov, byte dGeno, int dCov) {
+            short oCov, byte mGeno, short mCov, byte dGeno, short dCov) {
         StringBuilder sKey = new StringBuilder();
         if (chr < 23) {
             sKey.append('A');
@@ -211,7 +211,7 @@ public class TrioManager {
         return sKey.toString();
     }
 
-    private static void getKeyPartGenotypeAndCoverage(StringBuilder sKey, byte geno, int Cov) {
+    private static void getKeyPartGenotypeAndCoverage(StringBuilder sKey, byte geno, short cov) {
         switch (geno) {
             case Index.REF: //HOM REF
                 sKey.append('0');
@@ -229,7 +229,7 @@ public class TrioManager {
 
         if (geno == Data.BYTE_NA) { //missing
             sKey.append('0');
-        } else if (Cov >= GenotypeLevelFilterCommand.minCoverage
+        } else if (cov >= GenotypeLevelFilterCommand.minCoverage
                 || GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
             sKey.append('1');
         } else {
@@ -335,13 +335,13 @@ public class TrioManager {
     }
 
     public static String getCompHetFlag(
-            byte cGeno1, int cCov1,
-            byte mGeno1, int mCov1,
-            byte fGeno1, int fCov1,
+            byte cGeno1, short cCov1,
+            byte mGeno1, short mCov1,
+            byte fGeno1, short fCov1,
             boolean isMinorRef1,
-            byte cGeno2, int cCov2,
-            byte mGeno2, int mCov2,
-            byte fGeno2, int fCov2,
+            byte cGeno2, short cCov2,
+            byte mGeno2, short mCov2,
+            byte fGeno2, short fCov2,
             boolean isMinorRef2) {
         int minCov = GenotypeLevelFilterCommand.minCoverage;
 
@@ -416,14 +416,14 @@ public class TrioManager {
 
     public static String getCompHetFlagByDenovo(
             String compHetFlag,
-            byte cGeno1, int cCov1,
-            byte mGeno1, int mCov1,
-            byte fGeno1, int fCov1,
+            byte cGeno1, short cCov1,
+            byte mGeno1, short mCov1,
+            byte fGeno1, short fCov1,
             boolean isMinorRef1,
             String denovoFlag1,
-            byte cGeno2, int cCov2,
-            byte mGeno2, int mCov2,
-            byte fGeno2, int fCov2,
+            byte cGeno2, short cCov2,
+            byte mGeno2, short mCov2,
+            byte fGeno2, short fCov2,
             boolean isMinorRef2,
             String denovoFlag2) {
         if (compHetFlag.equals(COMP_HET_FLAG[2])) {
@@ -445,13 +445,13 @@ public class TrioManager {
             boolean isDenovo2 = denovoConfidence2 != Data.BYTE_NA;
 
             if (isDenovo1 ^ isDenovo2) {
-                int cGenoInherited = cGeno1;
-                int cCovInherited = cCov1;
-                int fGenoInherited = fGeno1;
-                int fCovInherited = fCov1;
-                int mGenoInherited = mGeno1;
-                int mCovInherited = mCov1;
-                int denovoConfidence = denovoConfidence2;
+                byte cGenoInherited = cGeno1;
+                short cCovInherited = cCov1;
+                byte fGenoInherited = fGeno1;
+                short fCovInherited = fCov1;
+                byte mGenoInherited = mGeno1;
+                short mCovInherited = mCov1;
+                byte denovoConfidence = denovoConfidence2;
 
                 if (isDenovo1) {
                     cGenoInherited = cGeno2;

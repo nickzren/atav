@@ -13,21 +13,21 @@ public class SampleDPBin {
     private int endPos; // end position of one coverage bin
     private int dpBinPos;
     private String dpBinStr;
-    private int dpBin;
+    private short dpBin;
 
     public SampleDPBin(int sampleId, String covBinStr) {
         this.sampleId = sampleId;
         dpBinCursor = 0;
         endPos = 0;
         this.dpBinStr = covBinStr;
-        dpBin = Data.INTEGER_NA;
+        dpBin = Data.SHORT_NA;
     }
 
     public int getSampleId() {
         return sampleId;
     }
 
-    public int getDPBin(int varPosIndex) {
+    public short getDPBin(int varPosIndex) {
         if (endPos != 0) {
             if (varPosIndex < endPos) {
                 return dpBin;
@@ -56,6 +56,6 @@ public class SampleDPBin {
             }
         }
 
-        return Data.INTEGER_NA;
+        return Data.SHORT_NA;
     }
 }

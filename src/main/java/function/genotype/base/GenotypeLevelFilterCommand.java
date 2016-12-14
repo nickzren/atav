@@ -204,7 +204,7 @@ public class GenotypeLevelFilterCommand {
         return value >= minCtrlMaf;
     }
 
-    public static boolean isMinCoverageValid(int value, int minCov) {
+    public static boolean isMinCoverageValid(short value, int minCov) {
         if (minCov == Data.NO_FILTER) {
             return true;
         }

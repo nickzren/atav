@@ -1,6 +1,7 @@
 package function.genotype.base;
 
 import global.Data;
+import global.Index;
 import java.util.ArrayList;
 
 /**
@@ -120,15 +121,11 @@ public class Sample {
     }
 
     public boolean isCase() {
-        return pheno == 1;
+        return pheno == Index.CASE;
     }
 
     public boolean isFamily() {
-        if (name.equals(familyId)) {
-            return false;
-        }
-
-        return true;
+        return !name.equals(familyId);
     }
 
     public void initCovariate(String[] values) {

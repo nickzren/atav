@@ -12,8 +12,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import utils.LogManager;
-
 /**
  *
  * @author nick
@@ -98,7 +96,7 @@ public class CoverageBlockTester {
 
     private static AllCovBin parseCoverageNoComma(String allCov) {
         List<Integer> pos = new ArrayList<>();
-        List<Integer> bin = new ArrayList<>();
+        List<Short> bin = new ArrayList<>();
         String binLengthStr = "";
         int covBinPos = 0;
 
@@ -119,7 +117,7 @@ public class CoverageBlockTester {
 
     private static AllCovBin parseCoverage16Base(String allCov) {
         List<Integer> pos = new ArrayList<>();
-        List<Integer> bin = new ArrayList<>();
+        List<Short> bin = new ArrayList<>();
         String binLengthStr = "";
         int covBinPos = 0;
 
@@ -140,7 +138,7 @@ public class CoverageBlockTester {
 
     private static AllCovBin parseCoverage36Base(String allCov) {
         List<Integer> pos = new ArrayList<>();
-        List<Integer> bin = new ArrayList<>();
+        List<Short> bin = new ArrayList<>();
         String binLengthStr = "";
         int covBinPos = 0;
 
@@ -162,9 +160,9 @@ public class CoverageBlockTester {
     static class AllCovBin {
 
         List<Integer> pos;
-        List<Integer> bin;
+        List<Short> bin;
 
-        public AllCovBin(List<Integer> pos, List<Integer> bin) {
+        public AllCovBin(List<Integer> pos, List<Short> bin) {
             this.pos = pos;
             this.bin = bin;
         }

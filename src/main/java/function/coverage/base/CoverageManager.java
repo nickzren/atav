@@ -131,7 +131,7 @@ public class CoverageManager {
                 int startIndex = endIndex + 1;
                 endIndex += Integer.parseInt(sb.toString(), 36);
 
-                int dpBin = DPBinBlockManager.getCoverageByBin(c);
+                short dpBin = DPBinBlockManager.getCoverageByBin(c);
 
                 if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
                     list.add(new CoverageInterval(blockId, startIndex, endIndex));

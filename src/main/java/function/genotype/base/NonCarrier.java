@@ -14,12 +14,12 @@ public class NonCarrier {
 
     public int sampleId;
     public byte gt;
-    public int dpBin;
+    public short dpBin;
 
     public NonCarrier() {
     }
 
-    public NonCarrier(int sampleId, int dpBin) {
+    public NonCarrier(int sampleId, short dpBin) {
         this.sampleId = sampleId;
         this.dpBin = dpBin;
 
@@ -36,7 +36,7 @@ public class NonCarrier {
     }
 
     private void initGenotype() {
-        if (dpBin == Data.INTEGER_NA) {
+        if (dpBin == Data.SHORT_NA) {
             gt = Data.BYTE_NA;
         } else {
             gt = Index.REF;
@@ -51,11 +51,11 @@ public class NonCarrier {
         return gt;
     }
 
-    public void setDPBin(int value) {
+    public void setDPBin(short value) {
         dpBin = value;
     }
 
-    public int getDPBin() {
+    public short getDPBin() {
         return dpBin;
     }
 
@@ -106,7 +106,7 @@ public class NonCarrier {
 
             if (!isValid) {
                 gt = Data.BYTE_NA;
-                dpBin = Data.INTEGER_NA;
+                dpBin = Data.SHORT_NA;
             }
         }
     }
@@ -117,7 +117,7 @@ public class NonCarrier {
             // do nothing
         } else {
             gt = Data.BYTE_NA;
-            dpBin = Data.INTEGER_NA;
+            dpBin = Data.SHORT_NA;
         }
     }
 

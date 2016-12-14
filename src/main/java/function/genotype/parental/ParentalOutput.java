@@ -152,7 +152,7 @@ public class ParentalOutput extends Output {
         int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
         int readsRef = carrier != null ? carrier.getADRef() : Data.INTEGER_NA;
         sb.append(FormatManager.getInteger(carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");
-        sb.append(FormatManager.getInteger(calledVar.getDPBin(child.getIndex()))).append(",");
+        sb.append(FormatManager.getShort(calledVar.getDPBin(child.getIndex()))).append(",");
         sb.append(FormatManager.getInteger(readsRef)).append(",");
         sb.append(FormatManager.getInteger(readsAlt)).append(",");
         sb.append(FormatManager.getPercAltRead(readsAlt, carrier != null ? carrier.getDP() : Data.INTEGER_NA)).append(",");

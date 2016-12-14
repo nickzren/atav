@@ -19,29 +19,29 @@ public class DPBinBlockManager {
     private static ArrayList<SampleDPBin> currentBlockList = new ArrayList<>();
     private static int currentBlockId = Data.INTEGER_NA;
 
-    private static HashMap<Character, Integer> dpBin = new HashMap<>();
+    private static HashMap<Character, Short> dpBin = new HashMap<>();
 
     public static void init() {
-        dpBin.put('a', Data.INTEGER_NA);
-        dpBin.put('b', 3);
-        dpBin.put('c', 10);
-        dpBin.put('d', 20);
-        dpBin.put('e', 30);
-        dpBin.put('f', 40);
-        dpBin.put('g', 50);
-        dpBin.put('h', 60);
-        dpBin.put('i', 80);
-        dpBin.put('j', 100);
-        dpBin.put('k', 150);
-        dpBin.put('i', 200);
-        dpBin.put('m', 250);
-        dpBin.put('n', 300);
-        dpBin.put('o', 500);
-        dpBin.put('p', 600);
-        dpBin.put('q', 800);
-        dpBin.put('r', 1000);
+        dpBin.put('a', Data.SHORT_NA);
+        dpBin.put('b', (short) 3);
+        dpBin.put('c', (short) 10);
+        dpBin.put('d', (short) 20);
+        dpBin.put('e', (short) 30);
+        dpBin.put('f', (short) 40);
+        dpBin.put('g', (short) 50);
+        dpBin.put('h', (short) 60);
+        dpBin.put('i', (short) 80);
+        dpBin.put('j', (short) 100);
+        dpBin.put('k', (short) 150);
+        dpBin.put('i', (short) 200);
+        dpBin.put('m', (short) 250);
+        dpBin.put('n', (short) 300);
+        dpBin.put('o', (short) 500);
+        dpBin.put('p', (short) 600);
+        dpBin.put('q', (short) 800);
+        dpBin.put('r', (short) 1000);
     }
-    
+
     // for GQ bin
 //    public static void init() {
 //        dpBin.put('a', Data.NA);
@@ -50,7 +50,6 @@ public class DPBinBlockManager {
 //        dpBin.put('d', 20);
 //        dpBin.put('e', 60);
 //    }
-
     public static void add(SampleDPBin sampleDPBin) {
         currentBlockList.add(sampleDPBin);
     }
@@ -136,11 +135,11 @@ public class DPBinBlockManager {
         }
     }
 
-    public static int getCoverageByBin(Character bin) {
+    public static short getCoverageByBin(Character bin) {
         return dpBin.get(bin);
     }
 
-    public static HashMap<Character, Integer> getCoverageBin() {
+    public static HashMap<Character, Short> getCoverageBin() {
         return dpBin;
     }
 }
