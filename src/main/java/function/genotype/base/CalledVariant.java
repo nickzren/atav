@@ -76,7 +76,7 @@ public class CalledVariant extends AnnotatedVariant {
 
                 if (carrier.getGT() == Data.BYTE_NA) {
                     // have to remove it for init Non-carrier map
-                    qcFailSample[(int) sample.getPheno()]++;
+                    qcFailSample[sample.getPheno()]++;
                     carrierMap.remove(sample.getId());
                 }
             } else if (noncarrier != null) {

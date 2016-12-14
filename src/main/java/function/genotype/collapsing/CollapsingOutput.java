@@ -63,7 +63,7 @@ public class CollapsingOutput extends Output {
         if (sample.getId() != Data.INTEGER_NA) {
             byte geno = calledVar.getGT(sample.getIndex());
             geno = getGenoType(geno, sample);
-            int pheno = (int) sample.getPheno();
+            int pheno = sample.getPheno();
 
             deleteSampleGeno(geno, pheno);
 

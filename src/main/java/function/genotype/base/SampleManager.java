@@ -516,7 +516,7 @@ public class SampleManager {
                             + sample.getName() + "\t");
 
                     if (CollapsingCommand.isCollapsingDoLogistic) {
-                        bwCov.write(String.valueOf((int) (sample.getPheno() + 1)));
+                        bwCov.write(String.valueOf(sample.getPheno() + 1));
                     } else if (CollapsingCommand.isCollapsingDoLinear) {
                         bwCov.write(String.valueOf(sample.getQuantitativeTrait()));
                     }
