@@ -122,7 +122,6 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(cCarrier != null ? cCarrier.getPercAltRead() : Data.STRING_NA).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(cAdAlt + cAdRef, cAdAlt, 0.5))).append(",");
         sb.append(FormatManager.getByte(cCarrier != null ? cCarrier.getGQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getVqslod() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getFS() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getByte(cCarrier != null ? cCarrier.getMQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getByte(cCarrier != null ? cCarrier.getQD() : Data.BYTE_NA)).append(",");

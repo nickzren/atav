@@ -47,12 +47,12 @@ public class ParentalCommand {
         }
     }
 
-    public static boolean isChildQdValid(int value) {
+    public static boolean isChildQdValid(byte value) {
         if (childQD == Data.NO_FILTER) {
             return true;
         }
 
-        if (value == Data.INTEGER_NA) {
+        if (value == Data.BYTE_NA) {
             if (GenotypeLevelFilterCommand.isQcMissingIncluded) {
                 return true;
             }

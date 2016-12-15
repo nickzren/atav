@@ -40,7 +40,6 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + "Percent Alt Read,"
                 + "Percent Alt Read Binomial P,"
                 + "GQ,"
-                + "VQSLOD,"
                 + "FS,"
                 + "MQ,"
                 + "QD,"
@@ -94,7 +93,6 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
         sb.append(FormatManager.getDouble(MathManager.getBinomial(adAlt + adRef, adAlt, 0.5))).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA)).append(",");

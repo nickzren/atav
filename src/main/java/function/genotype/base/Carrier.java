@@ -16,7 +16,6 @@ public class Carrier extends NonCarrier {
     private short adRef;
     private short adAlt;
     private byte gq;
-    private float vqslod;
     private float fs;
     private byte mq;
     private byte qd;
@@ -33,7 +32,6 @@ public class Carrier extends NonCarrier {
         adRef = rs.getShort("AD_REF");
         adAlt = rs.getShort("AD_ALT");
         gq = FormatManager.getByte(rs, "GQ");
-        vqslod = FormatManager.getFloat(rs, "VQSLOD");
         fs = FormatManager.getFloat(rs, "FS");
         mq = FormatManager.getByte(rs, "MQ");
         qd = FormatManager.getByte(rs, "QD");
@@ -57,10 +55,6 @@ public class Carrier extends NonCarrier {
 
     public byte getGQ() {
         return gq;
-    }
-
-    public float getVqslod() {
-        return vqslod;
     }
 
     public float getFS() {

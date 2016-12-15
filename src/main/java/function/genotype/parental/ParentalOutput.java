@@ -41,7 +41,6 @@ public class ParentalOutput extends Output {
                 + "AD ALT,"
                 + "Percent Alt Read,"
                 + "GQ,"
-                + "VQSLOD,"
                 + "FS,"
                 + "MQ,"
                 + "QD,"
@@ -72,10 +71,10 @@ public class ParentalOutput extends Output {
     }
 
     private boolean isChildQdValid(Carrier carrier) {
-        int value = Data.INTEGER_NA;
+        byte value = Data.BYTE_NA;
 
         if (ParentalCommand.childQD != Data.NO_FILTER) {
-            value = carrier != null ? carrier.getQD() : Data.INTEGER_NA;
+            value = carrier != null ? carrier.getQD() : Data.BYTE_NA;
         }
 
         return ParentalCommand.isChildQdValid(value);
@@ -157,7 +156,6 @@ public class ParentalOutput extends Output {
         sb.append(FormatManager.getShort(adAlt)).append(",");
         sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVqslod() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA)).append(",");
