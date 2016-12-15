@@ -9,9 +9,7 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class CompHetOutput extends Output implements Comparable {
-
-    String geneName = "";
+public class CompHetOutput extends Output {
 
     public static String getTitle() {
         return "Family ID,"
@@ -65,11 +63,5 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(FormatManager.getShort(calledVar.getDPBin(child2.getIndex()))).append(",");
 
         return sb.toString();
-    }
-
-    @Override
-    public int compareTo(Object another) throws ClassCastException {
-        CompHetOutput that = (CompHetOutput) another;
-        return this.geneName.compareTo(that.geneName); //small -> large
     }
 }

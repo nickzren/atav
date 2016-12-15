@@ -5,15 +5,15 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.trio.TrioManager;
 import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
-import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  *
@@ -25,9 +25,8 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     final String comphetNotSharedFilePath = CommonCommand.outputPath + "comphet.notshared.csv";
     BufferedWriter compHetSharedBw = null;
     BufferedWriter compHetNotSharedBw = null;
-    ArrayList<CompHetOutput> outputList = new ArrayList<>();
-    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
-    HashSet<String> currentGeneList = new HashSet<>();
+
+    HashMap<String, List<CompHetOutput>> geneVariantListMap = new HashMap<>();
 
     String[] FLAG = {
         "Shared", // 0
@@ -92,58 +91,43 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
             output.calculate();
 
             if (output.isValid()) {
-
-                for (String geneName : calledVar.getGeneSet()) {
-                    if (!geneName.equals(Data.STRING_NA)) {
-                        output.geneName = geneName;
-                        outputList.add((CompHetOutput) output.clone());
-                    }
-                }
+                addVariantToGeneList(output);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    private void addVariantToGeneList(CompHetOutput output) {
+        List<CompHetOutput> geneOutputList
+                = geneVariantListMap.get(output.getCalledVariant().getGeneName());
+
+        if (geneOutputList == null) {
+            geneOutputList = new ArrayList<>();
+            geneOutputList.add(output);
+            geneVariantListMap.put(output.getCalledVariant().getGeneName(), geneOutputList);
+        } else {
+            geneOutputList.add(output);
         }
     }
 
     private void listCompHets() {
-        if (outputList.size() > 0) {
-            Collections.sort(outputList);
-        } else {
+        if (geneVariantListMap.isEmpty()) {
             return;
         }
 
-        initGeneVariantList();
-
         try {
-            for (ArrayList<CompHetOutput> list : geneListVector) {
-                String geneName = list.get(0).geneName;
+            for (Entry<String, List<CompHetOutput>> entry : geneVariantListMap.entrySet()) {
+                LogManager.writeAndPrint("Processing variants in gene:" + entry.getKey());
 
-                LogManager.writeAndPrint("Analyzing qualified variants in ("+ geneName);
-
-                doOutput(list);
+                doOutput(entry.getValue());
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    private void initGeneVariantList() {
-        ArrayList<CompHetOutput> geneOutputList = null;
-
-        for (CompHetOutput output : outputList) {
-            if (!currentGeneList.contains(output.geneName)) {
-                currentGeneList.add(output.geneName);
-
-                geneOutputList = new ArrayList<>();
-                geneOutputList.add(output);
-                geneListVector.add(geneOutputList);
-            } else {
-                geneOutputList.add(output);
-            }
-        }
-    }
-
-    private void doOutput(ArrayList<CompHetOutput> geneOutputList) {
+    private void doOutput(List<CompHetOutput> geneOutputList) {
         StringBuilder sb = new StringBuilder();
 
         int outputSize = geneOutputList.size();
@@ -245,8 +229,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 sb.append(child2.getName()).append(",");
                 sb.append(child2Flag).append(",");
 
-                sb.append("'").append(output1.geneName).append("'").append(",");
-
                 sb.append(output1.getString(child1, child2));
                 sb.append(output2.getString(child2, child2));
 
@@ -266,9 +248,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     }
 
     private void clearList() {
-        outputList.clear();
-        geneListVector.clear();
-        currentGeneList.clear();
+        geneVariantListMap.clear();
     }
 
     @Override
