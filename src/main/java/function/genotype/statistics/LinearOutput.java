@@ -80,10 +80,6 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(0, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(1, y);
                         }
                     } else if (geno == Index.REF) {
                         sr.addData(0, y);
@@ -91,10 +87,6 @@ public class LinearOutput extends StatisticOutput {
                         sr.addData(1, y);
                     } else if (geno == Index.HOM) {
                         sr.addData(1, y);
-                    } else if (geno == Index.HOM_MALE) {
-                        sr.addData(1, y);
-                    } else if (geno == Index.REF_MALE) {
-                        sr.addData(0, y);
                     }
                 } else if (model.equals("recessive")) {
                     if (isMinorRef) {
@@ -104,10 +96,6 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(0, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(0, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(1, y);
                         }
                     } else if (geno == Index.REF) {
                         sr.addData(0, y);
@@ -115,10 +103,6 @@ public class LinearOutput extends StatisticOutput {
                         sr.addData(0, y);
                     } else if (geno == Index.HOM) {
                         sr.addData(1, y);
-                    } else if (geno == Index.HOM_MALE) {
-                        sr.addData(1, y);
-                    } else if (geno == Index.REF_MALE) {
-                        sr.addData(0, y);
                     }
                 } else if (model.equals("genotypic")) { // not complete yet, to be finished a bit later
                     if (isMinorRef) {
@@ -128,10 +112,6 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(0, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(1, y);
                         }
                     } else if (geno == Index.REF) {
                         sr.addData(0, y);
@@ -139,10 +119,6 @@ public class LinearOutput extends StatisticOutput {
                         sr.addData(1, y);
                     } else if (geno == Index.HOM) {
                         sr.addData(2, y);
-                    } else if (geno == Index.HOM_MALE) {
-                        sr.addData(1, y);
-                    } else if (geno == Index.REF_MALE) {
-                        sr.addData(0, y);
                     }
                 } else if (model.equals("additive")) {
                     if (isMinorRef) {
@@ -152,21 +128,13 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(0, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(1, y);
-                        }
+                        } 
                     } else if (geno == Index.REF) {
                         sr.addData(0, y);
                     } else if (geno == Index.HET) {
                         sr.addData(1, y);
                     } else if (geno == Index.HOM) {
                         sr.addData(2, y);
-                    } else if (geno == Index.HOM_MALE) {
-                        sr.addData(1, y);
-                    } else if (geno == Index.REF_MALE) {
-                        sr.addData(0, y);
                     }
                 } else {
                     LogManager.writeAndPrint("model is not recognized");

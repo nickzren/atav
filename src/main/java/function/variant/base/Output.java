@@ -73,9 +73,7 @@ public class Output implements Cloneable {
                 + "Minor Hom Ctrl,"
                 + "Minor Hom Ctrl Freq,"
                 + "Het Ctrl Freq,"
-                + "Missing Case,"
                 + "QC Fail Case,"
-                + "Missing Ctrl,"
                 + "QC Fail Ctrl,"
                 + "Case Maf,"
                 + "Ctrl Maf,"
@@ -87,7 +85,7 @@ public class Output implements Cloneable {
 
     protected boolean isMinorRef = false; // reference allele is minor or major
 
-    protected int[][] genoCount = new int[6][3];
+    protected int[][] genoCount = new int[3][2];
     protected int[] minorHomCount = new int[2];
     protected int[] majorHomCount = new int[2];
     protected float[] hetFreq = new float[2];
@@ -104,45 +102,21 @@ public class Output implements Cloneable {
     }
 
     public void countSampleGeno() {
-        byte geno;
-
         for (Sample sample : SampleManager.getList()) {
-            geno = calledVar.getGT(sample.getIndex());
-            geno = getGenoType(geno, sample);
-
-            addSampleGeno(geno, sample.getPheno());
+            addSampleGeno(calledVar.getGT(sample.getIndex()), sample.getPheno());
         }
     }
 
     public void addSampleGeno(byte geno, int pheno) {
-        if (geno == Data.BYTE_NA) {
-            geno = Index.MISSING;
+        if (geno != Data.BYTE_NA) {
+            genoCount[geno][pheno]++;
         }
-
-        genoCount[geno][Index.ALL]++;
-        genoCount[geno][pheno]++;
     }
 
     public void deleteSampleGeno(byte geno, int pheno) {
-        if (geno == Data.INTEGER_NA) {
-            geno = Index.MISSING;
+        if (geno != Data.INTEGER_NA) {
+            genoCount[geno][pheno]--;
         }
-
-        genoCount[geno][Index.ALL]--;
-        genoCount[geno][pheno]--;
-    }
-
-    public void countMissingSamples() {
-        genoCount[Index.MISSING][Index.CASE] = SampleManager.getCaseNum();
-        genoCount[Index.MISSING][Index.CTRL] = SampleManager.getCtrlNum();
-
-        for (int i = 0; i < genoCount.length - 1; i++) {
-            genoCount[Index.MISSING][Index.CASE] -= genoCount[i][Index.CASE];
-            genoCount[Index.MISSING][Index.CTRL] -= genoCount[i][Index.CTRL];
-        }
-
-        genoCount[Index.MISSING][Index.ALL] = genoCount[Index.MISSING][Index.CTRL]
-                + genoCount[Index.MISSING][Index.CASE];
     }
 
     public void calculate() {
@@ -157,13 +131,11 @@ public class Output implements Cloneable {
 
     private void calculateAlleleFreq() {
         int caseAC = 2 * genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HET][Index.CASE]
-                + genoCount[Index.HOM_MALE][Index.CASE];
+                + genoCount[Index.HET][Index.CASE];
         int caseTotalAC = caseAC + genoCount[Index.HET][Index.CASE]
-                + 2 * genoCount[Index.REF][Index.CASE]
-                + genoCount[Index.REF_MALE][Index.CASE];
+                + 2 * genoCount[Index.REF][Index.CASE];
 
-        float caseAF = MathManager.devide(caseAC, caseTotalAC); // (2*hom + het + homMale) / (2*hom + homMale + 2*het + 2*ref + refMale)
+        float caseAF = MathManager.devide(caseAC, caseTotalAC); // (2*hom + het) / (2*hom + 2*het + 2*ref)
 
         minorAlleleFreq[Index.CASE] = caseAF;
         if (caseAF > 0.5) {
@@ -171,11 +143,9 @@ public class Output implements Cloneable {
         }
 
         int ctrlAC = 2 * genoCount[Index.HOM][Index.CTRL]
-                + genoCount[Index.HET][Index.CTRL]
-                + genoCount[Index.HOM_MALE][Index.CTRL];
+                + genoCount[Index.HET][Index.CTRL];
         int ctrlTotalAC = ctrlAC + genoCount[Index.HET][Index.CTRL]
-                + 2 * genoCount[Index.REF][Index.CTRL]
-                + genoCount[Index.REF_MALE][Index.CTRL];
+                + 2 * genoCount[Index.REF][Index.CTRL];
 
         float ctrlAF = MathManager.devide(ctrlAC, ctrlTotalAC);
 
@@ -192,30 +162,22 @@ public class Output implements Cloneable {
         int totalCaseGenotypeCount
                 = genoCount[Index.HOM][Index.CASE]
                 + genoCount[Index.HET][Index.CASE]
-                + genoCount[Index.REF][Index.CASE]
-                + genoCount[Index.HOM_MALE][Index.CASE]
-                + genoCount[Index.REF_MALE][Index.CASE];
+                + genoCount[Index.REF][Index.CASE];
 
         int totalCtrlGenotypeCount
                 = genoCount[Index.HOM][Index.CTRL]
                 + genoCount[Index.HET][Index.CTRL]
-                + genoCount[Index.REF][Index.CTRL]
-                + genoCount[Index.HOM_MALE][Index.CTRL]
-                + genoCount[Index.REF_MALE][Index.CTRL];
+                + genoCount[Index.REF][Index.CTRL];
 
         // hom / (hom + het + ref)
         if (isMinorRef) {
-            minorHomFreq[Index.CASE] = MathManager.devide(genoCount[Index.REF][Index.CASE]
-                    + genoCount[Index.REF_MALE][Index.CASE], totalCaseGenotypeCount);
+            minorHomFreq[Index.CASE] = MathManager.devide(genoCount[Index.REF][Index.CASE], totalCaseGenotypeCount);
 
-            minorHomFreq[Index.CTRL] = MathManager.devide(genoCount[Index.REF][Index.CTRL]
-                    + genoCount[Index.REF_MALE][Index.CTRL], totalCtrlGenotypeCount);
+            minorHomFreq[Index.CTRL] = MathManager.devide(genoCount[Index.REF][Index.CTRL], totalCtrlGenotypeCount);
         } else {
-            minorHomFreq[Index.CASE] = MathManager.devide(genoCount[Index.HOM][Index.CASE]
-                    + genoCount[Index.HOM_MALE][Index.CASE], totalCaseGenotypeCount);
+            minorHomFreq[Index.CASE] = MathManager.devide(genoCount[Index.HOM][Index.CASE], totalCaseGenotypeCount);
 
-            minorHomFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HOM][Index.CTRL]
-                    + genoCount[Index.HOM_MALE][Index.CTRL], totalCtrlGenotypeCount);
+            minorHomFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HOM][Index.CTRL], totalCtrlGenotypeCount);
         }
 
         hetFreq[Index.CASE] = MathManager.devide(genoCount[Index.HET][Index.CASE], totalCaseGenotypeCount);
@@ -233,36 +195,17 @@ public class Output implements Cloneable {
     }
 
     public void countMajorMinorHomHet() {
-        int caseRef = genoCount[Index.REF][Index.CASE] + genoCount[Index.REF_MALE][Index.CASE];
-        int caseHom = genoCount[Index.HOM][Index.CASE] + genoCount[Index.HOM_MALE][Index.CASE];
-        int ctrlRef = genoCount[Index.REF][Index.CTRL] + genoCount[Index.REF_MALE][Index.CTRL];
-        int ctrlHom = genoCount[Index.HOM][Index.CTRL] + genoCount[Index.HOM_MALE][Index.CTRL];
-
         if (isMinorRef) {
-            minorHomCount[Index.CASE] = caseRef;
-            minorHomCount[Index.CTRL] = ctrlRef;
-            majorHomCount[Index.CASE] = caseHom;
-            majorHomCount[Index.CTRL] = ctrlHom;
+            minorHomCount[Index.CASE] = genoCount[Index.REF][Index.CASE];
+            minorHomCount[Index.CTRL] = genoCount[Index.REF][Index.CTRL];
+            majorHomCount[Index.CASE] = genoCount[Index.HOM][Index.CASE];
+            majorHomCount[Index.CTRL] = genoCount[Index.HOM][Index.CTRL];
         } else {
-            minorHomCount[Index.CASE] = caseHom;
-            minorHomCount[Index.CTRL] = ctrlHom;
-            majorHomCount[Index.CASE] = caseRef;
-            majorHomCount[Index.CTRL] = ctrlRef;
+            minorHomCount[Index.CASE] = genoCount[Index.HOM][Index.CASE];
+            minorHomCount[Index.CTRL] = genoCount[Index.HOM][Index.CTRL];
+            majorHomCount[Index.CASE] = genoCount[Index.REF][Index.CASE];
+            majorHomCount[Index.CTRL] = genoCount[Index.REF][Index.CTRL];
         }
-    }
-
-    public byte getGenoType(byte geno, Sample sample) {
-        if (sample.isMale()
-                && !calledVar.isInsideAutosomalOrPseudoautosomalRegions()) {
-
-            if (geno == Index.HOM) {
-                return Index.HOM_MALE;
-            } else if (geno == Index.REF) {
-                return Index.REF_MALE;
-            }
-        }
-
-        return geno;
     }
 
     public String getGenoStr(byte geno) {
@@ -353,9 +296,7 @@ public class Output implements Cloneable {
         sb.append(minorHomCount[Index.CTRL]).append(",");
         sb.append(FormatManager.getFloat(minorHomFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getFloat(hetFreq[Index.CTRL])).append(",");
-        sb.append(genoCount[Index.MISSING][Index.CASE]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
-        sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getFloat(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getFloat(minorAlleleFreq[Index.CTRL])).append(",");

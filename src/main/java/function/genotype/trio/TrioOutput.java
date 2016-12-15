@@ -59,12 +59,7 @@ public class TrioOutput extends Output implements Comparable {
         if (id != Data.INTEGER_NA) {
             Sample sample = SampleManager.getMap().get(id);
 
-            byte geno = calledVar.getGT(sample.getIndex());
-            geno = getGenoType(geno, sample);
-
-            deleteSampleGeno(geno, sample.getPheno());
-
-            genoCount[Index.MISSING][sample.getPheno()]++;
+            deleteSampleGeno(calledVar.getGT(sample.getIndex()), sample.getPheno());
         }
     }
 
@@ -78,12 +73,7 @@ public class TrioOutput extends Output implements Comparable {
         if (id != Data.INTEGER_NA) {
             Sample sample = SampleManager.getMap().get(id);
 
-            byte geno = calledVar.getGT(sample.getIndex());
-            byte type = getGenoType(geno, sample);
-
-            addSampleGeno(type, sample.getPheno());
-
-            genoCount[Index.MISSING][sample.getPheno()]--;
+            addSampleGeno(calledVar.getGT(sample.getIndex()), sample.getPheno());
         }
     }
 
