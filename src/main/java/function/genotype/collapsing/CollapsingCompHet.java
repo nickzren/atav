@@ -3,7 +3,6 @@ package function.genotype.collapsing;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
-import global.Data;
 import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -12,8 +11,10 @@ import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
 import utils.MathManager;
 
 /**
@@ -22,12 +23,11 @@ import utils.MathManager;
  */
 public class CollapsingCompHet extends CollapsingBase {
 
-    ArrayList<CompHetOutput> outputList = new ArrayList<>();
-    ArrayList<ArrayList<CompHetOutput>> geneListVector = new ArrayList<>();
-    HashSet<Integer> variantIdSet = new HashSet<>();
-    HashSet<String> currentGeneList = new HashSet<>();
     BufferedWriter bwCompHet = null;
     final String comphetFilePath = CommonCommand.outputPath + "comphet.csv";
+
+    HashSet<Integer> variantIdSet = new HashSet<>();
+    HashMap<String, List<CompHetOutput>> geneVariantListMap = new HashMap<>();
 
     @Override
     public void initOutput() {
@@ -71,57 +71,50 @@ public class CollapsingCompHet extends CollapsingBase {
             output.calculate();
 
             if (output.isValid()) {
-
-                for (String geneName : calledVar.getGeneSet()) {
-                    if (!geneName.equals(Data.STRING_NA)) {
-                        output.geneName = geneName;
-                        outputList.add((CompHetOutput) output.clone());
-                    }
-                }
+                addVariantToGeneList(output);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    private void listCompHets() {
-        if (outputList.size() > 0) {
-            Collections.sort(outputList);
+    private void addVariantToGeneList(CompHetOutput output) {
+        List<CompHetOutput> geneOutputList
+                = geneVariantListMap.get(output.getCalledVariant().getGeneName());
+
+        if (geneOutputList == null) {
+            geneOutputList = new ArrayList<>();
+            geneOutputList.add(output);
+            geneVariantListMap.put(output.getCalledVariant().getGeneName(), geneOutputList);
         } else {
+            geneOutputList.add(output);
+        }
+    }
+
+    private void listCompHets() {
+        if (geneVariantListMap.isEmpty()) {
             return;
         }
 
-        initGeneVariantList();
+        try {
+            for (Entry<String, List<CompHetOutput>> entry : geneVariantListMap.entrySet()) {
+                LogManager.writeAndPrint("Processing variants in gene:" + entry.getKey());
 
-        for (ArrayList<CompHetOutput> list : geneListVector) {
-            String geneName = list.get(0).geneName;
+                CollapsingSummary summary = summaryMap.get(entry.getKey());
 
-            LogManager.writeAndPrint("Analyzing qualified variants in gene " + geneName);
+                if (summary == null) {
+                    summary = new CollapsingGeneSummary(entry.getKey());
+                    summaryMap.put(entry.getKey(), summary);
+                }
 
-            CollapsingSummary summary = summaryMap.get(geneName);
-
-            doOutput(list, summary);
-        }
-    }
-
-    private void initGeneVariantList() {
-        ArrayList<CompHetOutput> geneOutputList = null;
-
-        for (CompHetOutput output : outputList) {
-            if (!currentGeneList.contains(output.geneName)) {
-                currentGeneList.add(output.geneName);
-                updateGeneSummaryMap(output.geneName);
-
-                geneOutputList = new ArrayList<>();
-                geneOutputList.add(output);
-                geneListVector.add(geneOutputList);
-            } else {
-                geneOutputList.add(output);
+                doOutput(entry.getValue(), summary);
             }
+        } catch (Exception e) {
+            ErrorManager.send(e);
         }
     }
 
-    private void doOutput(ArrayList<CompHetOutput> geneOutputList, CollapsingSummary summary) {
+    private void doOutput(List<CompHetOutput> geneOutputList, CollapsingSummary summary) {
         try {
             int outputSize = geneOutputList.size();
 
@@ -173,7 +166,6 @@ public class CollapsingCompHet extends CollapsingBase {
             sb.append(sample.getFamilyId()).append(",");
             sb.append(sample.getName()).append(",");
             sb.append(sample.getPhenotype()).append(",");
-            sb.append("'").append(output1.geneName).append("'").append(",");
             sb.append("NA,"); // Var Case Freq #1 & #2 (co-occurance)
             sb.append("NA,"); // Var Ctrl Freq #1 & #2 (co-occurance)
             sb.append(output1.getString(sample));
@@ -211,7 +203,6 @@ public class CollapsingCompHet extends CollapsingBase {
                     sb.append(sample.getFamilyId()).append(",");
                     sb.append(sample.getName()).append(",");
                     sb.append(sample.getPhenotype()).append(",");
-                    sb.append("'").append(output1.geneName).append("'").append(",");
                     sb.append(FormatManager.getFloat(coFreq[Index.CASE])).append(",");
                     sb.append(FormatManager.getFloat(coFreq[Index.CTRL])).append(",");
                     sb.append(output1.getString(sample));
@@ -275,9 +266,7 @@ public class CollapsingCompHet extends CollapsingBase {
     }
 
     private void clearList() {
-        outputList.clear();
-        geneListVector.clear();
-        currentGeneList.clear();
+        geneVariantListMap.clear();
     }
 
     @Override

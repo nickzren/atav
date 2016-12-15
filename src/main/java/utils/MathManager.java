@@ -13,13 +13,9 @@ public class MathManager {
 
     private static BinomialTest BT;
 
-    public static double getBinomial(int numberOfTrials, int numberOfSuccesses, double probability) {
+    public static double getBinomial(int numberOfTrials, short numberOfSuccesses, float probability) {
         if (BT == null) {
             BT = new BinomialTest();
-        }
-
-        if (numberOfTrials == Data.INTEGER_NA || numberOfSuccesses == Data.INTEGER_NA) {
-            return Data.DOUBLE_NA;
         }
 
         return BT.binomialTest(numberOfTrials,

@@ -85,7 +85,7 @@ public class ParentalOutput extends Output {
 
         if (ParentalCommand.childHetPercentAltRead != null
                 && childGeno == Index.HET) {
-            int readsAlt = carrier != null ? carrier.getAdAlt() : Data.INTEGER_NA;
+            int readsAlt = carrier != null ? carrier.getADAlt() : Data.INTEGER_NA;
             int gatkFilteredCoverage = carrier != null ? carrier.getDP() : Data.INTEGER_NA;
 
             percAltRead = MathManager.devide(readsAlt, gatkFilteredCoverage);
@@ -95,14 +95,7 @@ public class ParentalOutput extends Output {
     }
 
     private boolean isChildBinomialValid(Carrier carrier) {
-        short readsAlt = carrier != null ? carrier.getAdAlt() : Data.SHORT_NA;
-        short readsRef = carrier != null ? carrier.getADRef() : Data.SHORT_NA;
-
-        if (readsAlt == Data.SHORT_NA || readsRef == Data.SHORT_NA) {
-            childBinomial = Data.DOUBLE_NA;
-        } else {
-            childBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
-        }
+        childBinomial = carrier != null ? carrier.getPercentAltReadBinomialP() : Data.DOUBLE_NA;
 
         return ParentalCommand.isChildBinomialValid(childBinomial);
     }
@@ -115,18 +108,9 @@ public class ParentalOutput extends Output {
     }
 
     private boolean isParentBinomialValid() {
-        parentBinomial = Data.DOUBLE_NA;
-
         Carrier carrier = calledVar.getCarrier(parent.getId());
 
-        short readsAlt = carrier != null ? carrier.getAdAlt() : Data.SHORT_NA;
-        short readsRef = carrier != null ? carrier.getADRef() : Data.SHORT_NA;
-
-        if (readsAlt == Data.SHORT_NA || readsRef == Data.SHORT_NA) {
-            parentBinomial = Data.DOUBLE_NA;
-        } else {
-            parentBinomial = MathManager.getBinomial(readsAlt + readsRef, readsAlt, 0.5);
-        }
+        parentBinomial = carrier != null ? carrier.getPercentAltReadBinomialP() : Data.DOUBLE_NA;
 
         return ParentalCommand.isParentBinomialValid(parentBinomial);
     }
@@ -148,12 +132,10 @@ public class ParentalOutput extends Output {
         getGenotypeData(sb);
 
         Carrier carrier = calledVar.getCarrier(child.getId());
-        short adAlt = carrier != null ? carrier.getAdAlt() : Data.SHORT_NA;
-        short adRef = carrier != null ? carrier.getADRef() : Data.SHORT_NA;
         sb.append(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA)).append(",");
         sb.append(FormatManager.getShort(calledVar.getDPBin(child.getIndex()))).append(",");
-        sb.append(FormatManager.getShort(adRef)).append(",");
-        sb.append(FormatManager.getShort(adAlt)).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA)).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA)).append(",");
         sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");

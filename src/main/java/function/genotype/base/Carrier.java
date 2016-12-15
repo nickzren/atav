@@ -49,7 +49,7 @@ public class Carrier extends NonCarrier {
         return adRef;
     }
 
-    public short getAdAlt() {
+    public short getADAlt() {
         return adAlt;
     }
 
@@ -87,6 +87,14 @@ public class Carrier extends NonCarrier {
 
     public String getPercAltRead() {
         return FormatManager.getFloat(MathManager.devide(adAlt, dp));
+    }
+
+    public double getPercentAltReadBinomialP() {
+        if (adAlt == Data.SHORT_NA || adRef == Data.SHORT_NA) {
+            return Data.DOUBLE_NA;
+        } else {
+            return MathManager.getBinomial(adAlt + adRef, adAlt, 0.5f);
+        }
     }
 
     public void applyQualityFilter() {

@@ -6,19 +6,17 @@ import global.Index;
 import function.genotype.base.Carrier;
 import global.Data;
 import utils.FormatManager;
-import utils.MathManager;
 
 /**
  *
  * @author nick
  */
-public class CompHetOutput extends CollapsingOutput implements Comparable {
+public class CompHetOutput extends CollapsingOutput {
 
     public static String getTitle() {
         return "Family ID,"
                 + "Sample Name,"
                 + "Sample Type,"
-                + "Collapsed Gene,"
                 + "Var Case Freq #1 & #2 (co-occurance),"
                 + "Var Ctrl Freq #1 & #2 (co-occurance),"
                 + initVarTitleStr("1") + ","
@@ -81,17 +79,15 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         getGenotypeData(sb);
 
         Carrier carrier = calledVar.getCarrier(sample.getId());
-        short adAlt = carrier != null ? carrier.getAdAlt() : Data.SHORT_NA;
-        short adRef = carrier != null ? carrier.getADRef() : Data.SHORT_NA;
         sb.append(sample.getName()).append(",");
         sb.append(sample.getType()).append(",");
         sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
         sb.append(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA)).append(",");
         sb.append(FormatManager.getShort(calledVar.getDPBin(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getShort(adRef)).append(",");
-        sb.append(FormatManager.getShort(adAlt)).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA)).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA)).append(",");
         sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
-        sb.append(FormatManager.getDouble(MathManager.getBinomial(adAlt + adRef, adAlt, 0.5))).append(",");
+        sb.append(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");
@@ -108,11 +104,5 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
 
     public boolean isHomOrRef(byte geno) {
         return geno == Index.HOM || geno == Index.REF;
-    }
-
-    @Override
-    public int compareTo(Object another) throws ClassCastException {
-        CollapsingOutput that = (CollapsingOutput) another;
-        return this.geneName.compareTo(that.geneName); //small -> large
     }
 }

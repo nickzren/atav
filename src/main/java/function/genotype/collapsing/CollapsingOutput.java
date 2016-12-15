@@ -41,15 +41,12 @@ public class CollapsingOutput extends Output {
                 + "LOO MAF,";
     }
 
-    String geneName = "";
     double looMAF = 0;
 
     HashSet<String> regionBoundaryNameSet; // for --region-boundary only
 
     public CollapsingOutput(CalledVariant c) {
         super(c);
-
-        geneName = c.getGeneName();
     }
 
     public void initRegionBoundaryNameSet() {
@@ -120,17 +117,15 @@ public class CollapsingOutput extends Output {
         getGenotypeData(sb);
 
         Carrier carrier = calledVar.getCarrier(sample.getId());
-        short adAlt = carrier != null ? carrier.getAdAlt() : Data.SHORT_NA;
-        short adRef = carrier != null ? carrier.getADRef() : Data.SHORT_NA;
         sb.append(sample.getName()).append(",");
         sb.append(sample.getType()).append(",");
         sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
         sb.append(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA)).append(",");
         sb.append(FormatManager.getShort(calledVar.getDPBin(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getShort(adRef)).append(",");
-        sb.append(FormatManager.getShort(adAlt)).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA)).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA)).append(",");
         sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
-        sb.append(FormatManager.getDouble(MathManager.getBinomial(adAlt + adRef, adAlt, 0.5))).append(",");
+        sb.append(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");

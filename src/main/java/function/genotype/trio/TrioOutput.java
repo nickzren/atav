@@ -108,8 +108,6 @@ public class TrioOutput extends Output implements Comparable {
         calledVar.getExternalData(sb);
         getGenotypeData(sb);
 
-        short cAdAlt = cCarrier != null ? cCarrier.getAdAlt() : Data.SHORT_NA;
-        short cAdRef = cCarrier != null ? cCarrier.getADRef() : Data.SHORT_NA;
         sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getShort(mDPBin)).append(",");
         sb.append(getGenoStr(fGeno)).append(",");
@@ -117,10 +115,10 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(getGenoStr(cGeno)).append(",");
         sb.append(FormatManager.getShort(cCarrier != null ? cCarrier.getDP() : Data.SHORT_NA)).append(",");
         sb.append(FormatManager.getShort(cDPBin)).append(",");
-        sb.append(FormatManager.getShort(cAdRef)).append(",");
-        sb.append(FormatManager.getShort(cAdAlt)).append(",");
+        sb.append(FormatManager.getShort(cCarrier != null ? cCarrier.getADRef() : Data.SHORT_NA)).append(",");
+        sb.append(FormatManager.getShort(cCarrier != null ? cCarrier.getADAlt() : Data.SHORT_NA)).append(",");
         sb.append(cCarrier != null ? cCarrier.getPercAltRead() : Data.STRING_NA).append(",");
-        sb.append(FormatManager.getDouble(MathManager.getBinomial(cAdAlt + cAdRef, cAdAlt, 0.5))).append(",");
+        sb.append(cCarrier != null ? FormatManager.getDouble(cCarrier.getPercentAltReadBinomialP()) : Data.STRING_NA).append(",");
         sb.append(FormatManager.getByte(cCarrier != null ? cCarrier.getGQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getFS() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getByte(cCarrier != null ? cCarrier.getMQ() : Data.BYTE_NA)).append(",");
