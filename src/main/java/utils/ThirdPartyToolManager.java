@@ -112,7 +112,7 @@ public class ThirdPartyToolManager {
     }
 
     public static void callPvalueQQPlot(String pvalueFile, int col, String outputPath) {
-        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
+        String cmd = R_301_SCRIPT_SYSTEM_PATH + " "
                 + PVALS_QQPLOT_R + " "
                 + pvalueFile + " "
                 + col + " "
@@ -143,7 +143,7 @@ public class ThirdPartyToolManager {
     }
 
     public static void generateQQPlot4CollapsingFetP(String matrixFilePath, String outputPath) {
-        String cmd = R_301_SCRIPT_SYSTEM_PATH + " "
+        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
                 + QQPLOT_FOR_COLLAPSING_R + " "
                 + GenotypeLevelFilterCommand.sampleFile + " "
                 + matrixFilePath + " "
