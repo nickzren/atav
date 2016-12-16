@@ -14,34 +14,37 @@ public class ReloadData {
     public static void run() throws Exception {
         for (String chr : RegionManager.ALL_CHR) {
             // variant
-            String sql = "select * from variant_chr" + chr + " INTO OUTFILE '/nfs/seqscratch10/tmp/variant_chr" + chr + ".txt'";
-            executeSQL(sql);
-
-            sql = "TRUNCATE variant_chr" + chr;
-            updateSQL(sql);
-
-            sql = "load data infile '/nfs/seqscratch10/tmp/variant_chr" + chr + ".txt' into table variant_chr" + chr;
-            executeSQL(sql);
+//            String sql = "select * from variant_chr" + chr + " INTO OUTFILE '/nfs/seqscratch10/tmp/variant_chr" + chr + ".txt'";
+//            executeSQL(sql);
+//
+//            sql = "TRUNCATE variant_chr" + chr;
+//            updateSQL(sql);
+//
+//            sql = "load data infile '/nfs/seqscratch10/tmp/variant_chr" + chr + ".txt' into table variant_chr" + chr;
+//            executeSQL(sql);
 
             // called variant
-            sql = "select * from called_variant_chr" + chr + " INTO OUTFILE '/nfs/seqscratch10/tmp/called_variant_chr" + chr + ".txt'";
+            String sql = "select * from called_variant_chr" + chr + " INTO OUTFILE '/nfs/seqscratch10/tmp/called_variant_chr" + chr + ".txt'";
             executeSQL(sql);
 
             sql = "TRUNCATE called_variant_chr" + chr;
+            updateSQL(sql);
+            
+            sql = "ALTER TABLE called_variant_chr" + chr + " ROW_FORMAT=tokudb_zlib";
             updateSQL(sql);
 
             sql = "load data infile '/nfs/seqscratch10/tmp/called_variant_chr" + chr + ".txt' into table called_variant_chr" + chr;
             executeSQL(sql);
 
             // DP bins
-            sql = "select * from DP_bins_chr" + chr + " INTO OUTFILE '/nfs/seqscratch10/tmp/DP_bins_chr" + chr + ".txt'";
-            executeSQL(sql);
-
-            sql = "TRUNCATE DP_bins_chr" + chr;
-            updateSQL(sql);
-
-            sql = "load data infile '/nfs/seqscratch10/tmp/DP_bins_chr" + chr + ".txt' into table DP_bins_chr" + chr;
-            executeSQL(sql);
+//            sql = "select * from DP_bins_chr" + chr + " INTO OUTFILE '/nfs/seqscratch10/tmp/DP_bins_chr" + chr + ".txt'";
+//            executeSQL(sql);
+//
+//            sql = "TRUNCATE DP_bins_chr" + chr;
+//            updateSQL(sql);
+//
+//            sql = "load data infile '/nfs/seqscratch10/tmp/DP_bins_chr" + chr + ".txt' into table DP_bins_chr" + chr;
+//            executeSQL(sql);
         }
     }
 
