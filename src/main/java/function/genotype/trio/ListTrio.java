@@ -12,8 +12,9 @@ import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import utils.ThirdPartyToolManager;
 
 /**
@@ -28,9 +29,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
     BufferedWriter bwCompHet = null;
     final String compHetFilePath = CommonCommand.outputPath + "comphet.csv";
 
-    ArrayList<TrioOutput> outputList = new ArrayList<>();
-    ArrayList<ArrayList<TrioOutput>> geneListVector = new ArrayList<>();
-    HashSet<String> currentGeneList = new HashSet<>();
+    HashMap<String, List<TrioOutput>> geneVariantListMap = new HashMap<>();
 
     @Override
     public void initOutput() {
@@ -108,7 +107,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
                         doDenovoOutput(output);
 
-                        outputList.add((TrioOutput) output.clone());
+                        addVariantToGeneList((TrioOutput) output.clone());
                     }
                 }
 
@@ -116,6 +115,19 @@ public class ListTrio extends AnalysisBase4CalledVar {
             }
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+    
+    private void addVariantToGeneList(TrioOutput output) {
+        List<TrioOutput> geneOutputList
+                = geneVariantListMap.get(output.getCalledVariant().getGeneName());
+
+        if (geneOutputList == null) {
+            geneOutputList = new ArrayList<>();
+            geneOutputList.add(output);
+            geneVariantListMap.put(output.getCalledVariant().getGeneName(), geneOutputList);
+        } else {
+            geneOutputList.add(output);
         }
     }
 
@@ -134,44 +146,27 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void listCompHets() {
-        if (outputList.size() > 0) {
-            Collections.sort(outputList);
-        } else {
+        if (geneVariantListMap.isEmpty()) {
             return;
         }
 
-        initGeneVariantList();
-
-        for (ArrayList<TrioOutput> list : geneListVector) {
-            LogManager.writeAndPrint("Analyzing qualified variants in gene "
-                    + list.get(0).getCalledVariant().getGeneName());
-
-            processVariantsByGene(list);
-        }
-    }
-
-    private void initGeneVariantList() {
-        ArrayList<TrioOutput> geneOutputList = null;
-
-        for (TrioOutput output : outputList) {
-            if (!currentGeneList.contains(output.getCalledVariant().getGeneName())) {
-                currentGeneList.add(output.getCalledVariant().getGeneName());
-
-                geneOutputList = new ArrayList<>();
-                geneOutputList.add(output);
-                geneListVector.add(geneOutputList);
-            } else {
-                geneOutputList.add(output);
-            }
-        }
-    }
-
-    private void processVariantsByGene(ArrayList<TrioOutput> geneVariantList) {
         try {
-            for (int i = 0; i < geneVariantList.size() - 1; i++) {
-                TrioOutput output1 = geneVariantList.get(i);
-                for (int j = i + 1; j < geneVariantList.size(); j++) {
-                    TrioOutput output2 = geneVariantList.get(j);
+            for (Map.Entry<String, List<TrioOutput>> entry : geneVariantListMap.entrySet()) {
+                LogManager.writeAndPrint("Processing variants in gene:" + entry.getKey());
+
+                doOutput(entry.getValue());
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private void doOutput(List<TrioOutput> geneOutputList) {
+        try {
+            for (int i = 0; i < geneOutputList.size() - 1; i++) {
+                TrioOutput output1 = geneOutputList.get(i);
+                for (int j = i + 1; j < geneOutputList.size(); j++) {
+                    TrioOutput output2 = geneOutputList.get(j);
 
                     if (output1.child.getId() == output2.child.getId()
                             && output1.getCalledVariant().getVariantIdNegative4Indel()
@@ -198,19 +193,19 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 output2.mGeno, output2.mDPBin,
                 output2.fGeno, output2.fDPBin,
                 output2.isMinorRef());
-        
-        flag = TrioManager.getCompHetFlagByDenovo(flag, 
+
+        flag = TrioManager.getCompHetFlagByDenovo(flag,
                 output1.cGeno, output1.cDPBin,
                 output1.mGeno, output1.mDPBin,
                 output1.fGeno, output1.fDPBin,
-                output1.isMinorRef(), 
+                output1.isMinorRef(),
                 output1.denovoFlag,
                 output2.cGeno, output2.cDPBin,
                 output2.mGeno, output2.mDPBin,
                 output2.fGeno, output2.fDPBin,
-                output2.isMinorRef(), 
+                output2.isMinorRef(),
                 output2.denovoFlag);
-        
+
         return flag;
     }
 
@@ -235,9 +230,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void clearList() {
-        outputList.clear();
-        geneListVector.clear();
-        currentGeneList.clear();
+        geneVariantListMap.clear();
     }
 
     @Override

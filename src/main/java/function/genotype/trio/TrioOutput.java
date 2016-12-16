@@ -8,13 +8,12 @@ import global.Data;
 import global.Index;
 import function.genotype.base.SampleManager;
 import utils.FormatManager;
-import utils.MathManager;
 
 /**
  *
  * @author nick
  */
-public class TrioOutput extends Output implements Comparable {
+public class TrioOutput extends Output {
 
     String denovoFlag = "";
 
@@ -129,12 +128,5 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(cCarrier != null ? cCarrier.getFILTER() : Data.STRING_NA).append(",");
 
         return sb.toString();
-    }
-
-    @Override
-    public int compareTo(Object another) throws ClassCastException {
-        TrioOutput that = (TrioOutput) another;
-        return this.getCalledVariant().getGeneName().compareTo(
-                that.getCalledVariant().getGeneName()); //small -> large
     }
 }
