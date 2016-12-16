@@ -105,27 +105,14 @@ public class TrioOutput extends Output {
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
         calledVar.getExternalData(sb);
-        getGenotypeData(sb);
-
+        getGenoStatData(sb);
+        getCarrierData(sb, cCarrier, child);
+        
         sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getShort(mDPBin)).append(",");
         sb.append(getGenoStr(fGeno)).append(",");
         sb.append(FormatManager.getShort(fDPBin)).append(",");
-        sb.append(getGenoStr(cGeno)).append(",");
-        sb.append(FormatManager.getShort(cCarrier != null ? cCarrier.getDP() : Data.SHORT_NA)).append(",");
-        sb.append(FormatManager.getShort(cDPBin)).append(",");
-        sb.append(FormatManager.getShort(cCarrier != null ? cCarrier.getADRef() : Data.SHORT_NA)).append(",");
-        sb.append(FormatManager.getShort(cCarrier != null ? cCarrier.getADAlt() : Data.SHORT_NA)).append(",");
-        sb.append(cCarrier != null ? cCarrier.getPercAltRead() : Data.STRING_NA).append(",");
-        sb.append(cCarrier != null ? FormatManager.getDouble(cCarrier.getPercentAltReadBinomialP()) : Data.STRING_NA).append(",");
-        sb.append(FormatManager.getByte(cCarrier != null ? cCarrier.getGQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getFS() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getByte(cCarrier != null ? cCarrier.getMQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getByte(cCarrier != null ? cCarrier.getQD() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getInteger(cCarrier != null ? cCarrier.getQual() : Data.INTEGER_NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getFloat(cCarrier != null ? cCarrier.getMQRankSum() : Data.FLOAT_NA)).append(",");
-        sb.append(cCarrier != null ? cCarrier.getFILTER() : Data.STRING_NA).append(",");
+        sb.append(denovoFlag).append(",");
 
         return sb.toString();
     }

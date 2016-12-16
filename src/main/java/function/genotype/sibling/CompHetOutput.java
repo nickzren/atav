@@ -28,7 +28,7 @@ public class CompHetOutput extends Output {
         String varTitle = getVariantDataTitle()
                 + getAnnotationDataTitle()
                 + getExternalDataTitle()
-                + getGenotypeDataTitle()
+                + getGenoStatDataTitle()
                 + "Child1 GT,"
                 + "Child1 DP Bin,"
                 + "Child2 GT,"
@@ -55,7 +55,7 @@ public class CompHetOutput extends Output {
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
         calledVar.getExternalData(sb);
-        getGenotypeData(sb);
+        getGenoStatData(sb);
 
         sb.append(getGenoStr(calledVar.getGT(child1.getIndex()))).append(",");
         sb.append(FormatManager.getShort(calledVar.getDPBin(child1.getIndex()))).append(",");

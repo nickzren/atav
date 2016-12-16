@@ -43,7 +43,6 @@ public class TrioManager {
 
     public static String getTitle4Denovo() {
         return "Family ID,"
-                + "Child,"
                 + "Mother,"
                 + "Father,"
                 + getTitleByVariant();
@@ -51,7 +50,6 @@ public class TrioManager {
 
     public static String getTitle4CompHet() {
         return "Family ID,"
-                + "Child,"
                 + "Mother,"
                 + "Father,"
                 + "Comp Het Flag,"
@@ -74,30 +72,16 @@ public class TrioManager {
     }
 
     private static String getTitleByVariant() {
-        return "Denovo Flag,"
-                + Output.getVariantDataTitle()
+        return Output.getVariantDataTitle()
                 + Output.getAnnotationDataTitle()
                 + Output.getExternalDataTitle()
-                + Output.getGenotypeDataTitle()
+                + Output.getGenoStatDataTitle()
+                + Output.getCarrierDataTitle()
                 + "GT (mother),"
                 + "DP Bin (mother),"
                 + "GT (father),"
                 + "DP Bin (father),"
-                + "GT (child),"
-                + "DP (child),"
-                + "DP Bin (child),"
-                + "AD REF (child),"
-                + "AD ALT (child),"
-                + "Percent Alt Read (child),"
-                + "Percent Alt Read Binomial P (child),"
-                + "GQ (child),"
-                + "FS (child),"
-                + "MQ (child),"
-                + "QD (child),"
-                + "Qual (child),"
-                + "Read Pos Rank Sum (child),"
-                + "MQ Rank Sum (child),"
-                + "FILTER (child),";
+                + "Denovo Flag,";
     }
 
     public static void init() {

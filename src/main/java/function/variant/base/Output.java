@@ -11,6 +11,7 @@ import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
+import function.genotype.base.Carrier;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
@@ -61,7 +62,7 @@ public class Output implements Cloneable {
                 + MgiManager.getTitle();
     }
 
-    public static String getGenotypeDataTitle() {
+    public static String getGenoStatDataTitle() {
         return "Is Minor Ref,"
                 + "Major Hom Case,"
                 + "Het Case,"
@@ -79,6 +80,26 @@ public class Output implements Cloneable {
                 + "Ctrl Maf,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,";
+    }
+
+    public static String getCarrierDataTitle() {
+        return "Sample Name,"
+                + "Sample Type,"
+                + "GT,"
+                + "DP,"
+                + "DP Bin,"
+                + "AD REF,"
+                + "AD ALT,"
+                + "Percent Alt Read,"
+                + "Percent Alt Read Binomial P,"
+                + "GQ,"
+                + "FS,"
+                + "MQ,"
+                + "QD,"
+                + "Qual,"
+                + "Read Pos Rank Sum,"
+                + "MQ Rank Sum,"
+                + "FILTER,";
     }
 
     protected CalledVariant calledVar;
@@ -284,7 +305,7 @@ public class Output implements Cloneable {
         return isMinorRef;
     }
 
-    public void getGenotypeData(StringBuilder sb) {
+    public void getGenoStatData(StringBuilder sb) {
         sb.append(isMinorRef).append(",");
         sb.append(majorHomCount[Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
@@ -302,6 +323,26 @@ public class Output implements Cloneable {
         sb.append(FormatManager.getFloat(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
+    }
+
+    public void getCarrierData(StringBuilder sb, Carrier carrier, Sample sample) {
+        sb.append(sample.getName()).append(",");
+        sb.append(sample.getType()).append(",");
+        sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA)).append(",");
+        sb.append(FormatManager.getShort(calledVar.getDPBin(sample.getIndex()))).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA)).append(",");
+        sb.append(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA)).append(",");
+        sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
+        sb.append(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA).append(",");
+        sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");
+        sb.append(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA)).append(",");
+        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA)).append(",");
+        sb.append(carrier != null ? carrier.getFILTER() : Data.STRING_NA).append(",");
     }
 
     @Override

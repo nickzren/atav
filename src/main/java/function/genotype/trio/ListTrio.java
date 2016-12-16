@@ -135,10 +135,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
         if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
             StringBuilder sb = new StringBuilder();
             sb.append(output.child.getFamilyId()).append(",");
-            sb.append(output.child.getName()).append(",");
             sb.append(output.motherName).append(",");
             sb.append(output.fatherName).append(",");
-            sb.append("'").append(output.getCalledVariant().getGeneName()).append("'").append(",");
             sb.append(output.toString());
             bwDenovo.write(sb.toString());
             bwDenovo.newLine();
@@ -214,11 +212,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
         StringBuilder sb = new StringBuilder();
         sb.append(output1.child.getFamilyId()).append(",");
-        sb.append(output1.child.getName()).append(",");
         sb.append(output1.motherName).append(",");
         sb.append(output1.fatherName).append(",");
         sb.append(flag).append(",");
-        sb.append("'").append(output1.getCalledVariant().getGeneName()).append("'").append(",");
         sb.append(FormatManager.getFloat(coFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getFloat(coFreq[Index.CTRL])).append(",");
 

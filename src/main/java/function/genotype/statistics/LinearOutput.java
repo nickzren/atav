@@ -21,7 +21,7 @@ public class LinearOutput extends StatisticOutput {
         return getVariantDataTitle()
                 + getAnnotationDataTitle()
                 + getExternalDataTitle()
-                + getGenotypeDataTitle()
+                + getGenoStatDataTitle()
                 + "P Value,"
                 + "Beta1,";
     }
@@ -158,7 +158,7 @@ public class LinearOutput extends StatisticOutput {
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
         calledVar.getExternalData(sb);
-        getGenotypeData(sb);
+        getGenoStatData(sb);
 
         sb.append(FormatManager.getDouble(pValue)).append(",");
         sb.append(FormatManager.getDouble(beta1)).append(",");

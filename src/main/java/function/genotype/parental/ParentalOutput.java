@@ -25,29 +25,14 @@ public class ParentalOutput extends Output {
 
     public static String getTitle() {
         return "Family Id,"
-                + "Sample Name (child),"
-                + "Genotype (child),"
-                + "Binomial (child),"
                 + "Sample Name (parent),"
                 + "Genotype (parent),"
                 + "Binomial (parent),"
                 + getVariantDataTitle()
                 + getAnnotationDataTitle()
                 + getExternalDataTitle()
-                + getGenotypeDataTitle()
-                + "DP,"
-                + "DP Bin,"
-                + "AD REF,"
-                + "AD ALT,"
-                + "Percent Alt Read,"
-                + "GQ,"
-                + "FS,"
-                + "MQ,"
-                + "QD,"
-                + "Qual,"
-                + "Read Pos Rank Sum,"
-                + "MQ Rank Sum,"
-                + "FILTER,";
+                + getGenoStatDataTitle()
+                + getCarrierDataTitle();
     }
 
     public ParentalOutput(CalledVariant c) {
@@ -119,9 +104,6 @@ public class ParentalOutput extends Output {
         StringBuilder sb = new StringBuilder();
 
         sb.append(child.getFamilyId()).append(",");
-        sb.append(child.getName()).append(",");
-        sb.append(getGenoStr(childGeno)).append(",");
-        sb.append(FormatManager.getDouble(childBinomial)).append(",");
         sb.append(parent.getName()).append(",");
         sb.append(getGenoStr(parentGeno)).append(",");
         sb.append(FormatManager.getDouble(parentBinomial)).append(",");
@@ -129,22 +111,8 @@ public class ParentalOutput extends Output {
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
         calledVar.getExternalData(sb);
-        getGenotypeData(sb);
-
-        Carrier carrier = calledVar.getCarrier(child.getId());
-        sb.append(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA)).append(",");
-        sb.append(FormatManager.getShort(calledVar.getDPBin(child.getIndex()))).append(",");
-        sb.append(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA)).append(",");
-        sb.append(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA)).append(",");
-        sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
-        sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA)).append(",");
-        sb.append(carrier != null ? carrier.getFILTER() : Data.STRING_NA).append(",");
+        getGenoStatData(sb);
+        getCarrierData(sb, calledVar.getCarrier(child.getId()), child);
 
         return sb.toString();
     }

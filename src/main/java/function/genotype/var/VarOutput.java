@@ -13,7 +13,7 @@ public class VarOutput extends Output {
         return getVariantDataTitle()
                 + getAnnotationDataTitle()
                 + getExternalDataTitle()
-                + getGenotypeDataTitle();
+                + getGenoStatDataTitle();
     }
 
     public VarOutput(CalledVariant c) {
@@ -27,7 +27,7 @@ public class VarOutput extends Output {
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
         calledVar.getExternalData(sb);
-        getGenotypeData(sb);
+        getGenoStatData(sb);
 
         return sb.toString();
     }

@@ -19,7 +19,7 @@ public class FisherOutput extends StatisticOutput {
         return getVariantDataTitle()
                 + getAnnotationDataTitle()
                 + getExternalDataTitle()
-                + getGenotypeDataTitle()
+                + getGenoStatDataTitle()
                 + "P Value,"
                 + "Odds Ratio,";
     }
@@ -64,7 +64,7 @@ public class FisherOutput extends StatisticOutput {
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
         calledVar.getExternalData(sb);
-        getGenotypeData(sb);
+        getGenoStatData(sb);
 
         sb.append(FormatManager.getDouble(pValue)).append(",");
         sb.append(FormatManager.getDouble(oddsRatio)).append(",");
