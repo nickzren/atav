@@ -37,7 +37,6 @@ public class AnnotatedVariant extends Variant {
 
     // AnnoDB annotations / most damaging effect annotations
     int stableId;
-    String stableIdStr = "";
     String effect = "";
     String HGVS_c = "";
     String HGVS_p = "";
@@ -111,7 +110,6 @@ public class AnnotatedVariant extends Variant {
         if (isValid) {
             if (effect.isEmpty()) { // init most damaging effect annotations
                 stableId = annotation.stableId;
-                stableIdStr = annotation.getStableId();
                 effect = annotation.effect;
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
@@ -123,7 +121,7 @@ public class AnnotatedVariant extends Variant {
             allGeneTranscriptSB
                     .append(annotation.effect).append("|")
                     .append(annotation.geneName).append("|")
-                    .append(annotation.getStableId()).append("|")
+                    .append(annotation.stableId).append("|")
                     .append(annotation.HGVS_p);
 
             if (polyphenHumdiv < annotation.polyphenHumdiv) {
@@ -184,8 +182,8 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getAnnotationData(StringBuilder sb) {
-        sb.append(stableIdStr).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript(stableIdStr)).append(",");
+        sb.append(getStableId()).append(",");
+        sb.append(TranscriptManager.isCCDSTranscript(chrStr, stableId)).append(",");
         sb.append(effect).append(",");
         sb.append(HGVS_c).append(",");
         sb.append(HGVS_p).append(",");
@@ -198,7 +196,21 @@ public class AnnotatedVariant extends Variant {
     }
 
     public String getStableId() {
-        return stableIdStr;
+        if (stableId == Data.INTEGER_NA) {
+            return Data.STRING_NA;
+        }
+
+        StringBuilder idSB = new StringBuilder(String.valueOf(stableId));
+
+        int zeroStringLength = TranscriptManager.TRANSCRIPT_LENGTH - idSB.length() - 4;
+
+        for (int i = 0; i < zeroStringLength; i++) {
+            idSB.insert(0, 0);
+        }
+
+        idSB.insert(0, "ENST");
+
+        return idSB.toString();
     }
 
     public String getEffect() {

@@ -3,11 +3,11 @@ package function.annotation.base;
 import global.Data;
 import utils.CommonCommand;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.stream.Stream;
+import java.util.Map.Entry;
+import utils.ErrorManager;
 
 /**
  *
@@ -15,64 +15,75 @@ import java.util.stream.Stream;
  */
 public class TranscriptManager {
 
-    private static final String CCDS_TRANSCRIPT_PATH = "data/ccds_transcript.txt";
-    private static final String CANONICAL_TRANSCRIPT_PATH = "data/canonical_transcript.txt";
+    private static final String CCDS_TRANSCRIPT_PATH = "data/transcript/ccds_ensemble_v74.txt";
+    private static final String CANONICAL_TRANSCRIPT_PATH = "data/transcript/canonical_ensemble_v74.txt";
 
-    private static HashSet<String> currentTranscriptSet = new HashSet<>();
-    private static HashSet<String> ccdsTranscriptSet = new HashSet<>();
-    private static HashSet<String> canonicalTranscriptSet = new HashSet<>();
+    private static HashMap<String, HashSet<Integer>> transcriptMap = new HashMap<>();
+    private static HashMap<String, HashSet<Integer>> ccdsTranscriptMap = new HashMap<>();
+
     private static String ccdsTranscriptFile = "";
     private static String canonicalTranscriptFile = "";
 
     public static final int TRANSCRIPT_LENGTH = 15;
 
     public static void init() {
-        // init transcript set from --transcript input file
-        initFromTranscriptFile(AnnotationLevelFilterCommand.transcriptFile, currentTranscriptSet);
-
         // init ccds transcript
         TranscriptManager.initCCDSTranscriptPath();
-        initFromTranscriptFile(ccdsTranscriptFile, ccdsTranscriptSet);
+        initFromTranscriptFile(ccdsTranscriptFile, ccdsTranscriptMap);
         if (AnnotationLevelFilterCommand.isCcdsOnly) {
-            resetTranscriptSet(ccdsTranscriptSet);
+            resetTranscriptSet(ccdsTranscriptMap);
         }
 
         // init canonical transcript
         if (AnnotationLevelFilterCommand.isCanonicalOnly) {
+            HashMap<String, HashSet<Integer>> canonicalTranscriptMap = new HashMap<>();
             initCanonicalTranscriptPath();
-            initFromTranscriptFile(canonicalTranscriptFile, canonicalTranscriptSet);
-            resetTranscriptSet(canonicalTranscriptSet);
+            initFromTranscriptFile(canonicalTranscriptFile, canonicalTranscriptMap);
+            resetTranscriptSet(canonicalTranscriptMap);
         }
-
-        canonicalTranscriptSet.clear(); // free memory
     }
 
-    public static void initFromTranscriptFile(String path, HashSet<String> set) {
+    public static void initFromTranscriptFile(String path, HashMap<String, HashSet<Integer>> map) {
         if (path.isEmpty()) {
             return;
         }
 
-        try (Stream<String> stream = Files.lines(Paths.get(path))) {
-            stream.map(line -> line.replaceAll("( )+", ""))
-                    .filter(line -> !line.isEmpty())
-                    .filter(line -> !set.contains(line))
-                    .map(line -> set.add(line))
-                    .count(); // to trigger stream operation
-        } catch (IOException e) {
-            e.printStackTrace();
+        try {
+            File file = new File(path);
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.replaceAll("( )+", "");
+
+                if (!line.isEmpty()) {
+                    String[] tmp = line.split("\t"); // chr & transcript id
+
+                    HashSet<Integer> idSet = map.get(tmp[0]);
+
+                    if (idSet == null) {
+                        idSet = new HashSet<>();
+                        map.put(tmp[0], idSet);
+                    }
+
+                    idSet.add(Integer.valueOf(tmp[1]));
+                }
+            }
+            br.close();
+            fr.close();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
         }
     }
 
-    public static boolean isValid(String id) {
-        if (currentTranscriptSet.isEmpty()) {
-            return true;
-        } else {
-            return currentTranscriptSet.contains(id);
-        }
-    }
+    public static boolean isCCDSTranscript(String chr, int id) {
+        HashSet<Integer> idSet = ccdsTranscriptMap.get(chr);
 
-    public static boolean isCCDSTranscript(String id) {
-        return ccdsTranscriptSet.contains(id);
+        if (idSet == null) {
+            return false;
+        }
+
+        return idSet.contains(id);
     }
 
     private static void initCCDSTranscriptPath() {
@@ -91,15 +102,23 @@ public class TranscriptManager {
         }
     }
 
-    public static void resetTranscriptSet(HashSet<String> set) {
-        if (currentTranscriptSet.isEmpty()) {
-            currentTranscriptSet = (HashSet<String>) set.clone();
+    public static void resetTranscriptSet(HashMap<String, HashSet<Integer>> map) {
+        if (transcriptMap.isEmpty()) {
+            transcriptMap = (HashMap<String, HashSet<Integer>>) map.clone();
         } else {
-            Iterator<String> iterator = currentTranscriptSet.iterator();
-            while (iterator.hasNext()) {
-                String transcript = iterator.next();
-                if (!set.contains(transcript)) {
-                    iterator.remove();
+            for (Entry<String, HashSet<Integer>> entry : map.entrySet()) {
+                HashSet<Integer> idSet = transcriptMap.get(entry.getKey());
+
+                if (idSet == null) {
+                    continue;
+                }
+
+                Iterator<Integer> iterator = idSet.iterator();
+                while (iterator.hasNext()) {
+                    int id = iterator.next();
+                    if (!entry.getValue().contains(id)) {
+                        iterator.remove();
+                    }
                 }
             }
         }

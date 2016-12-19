@@ -39,24 +39,6 @@ public class Annotation {
         geneName = FormatManager.getString(rset.getString("gene"));
     }
 
-    public String getStableId() {
-        if (stableId == Data.INTEGER_NA) {
-            return Data.STRING_NA;
-        }
-
-        StringBuilder idSB = new StringBuilder(String.valueOf(stableId));
-
-        int zeroStringLength = TranscriptManager.TRANSCRIPT_LENGTH - idSB.length() - 4;
-
-        for (int i = 0; i < zeroStringLength; i++) {
-            idSB.insert(0, 0);
-        }
-
-        idSB.insert(0, "ENST");
-
-        return idSB.toString();
-    }
-
     public boolean isValid() {
         return PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
                 && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar)
