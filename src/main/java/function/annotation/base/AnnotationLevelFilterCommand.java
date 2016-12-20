@@ -33,7 +33,7 @@ public class AnnotationLevelFilterCommand {
                     effectInput = option.getValue();
                     break;
                 case "--gene":
-                    geneInput = getValidPath(option);
+                    geneInput = option.getValue();
                     break;
                 case "--gene-boundaries":
                 case "--gene-boundary":

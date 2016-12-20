@@ -1,8 +1,6 @@
 package function.annotation.base;
 
 import function.genotype.collapsing.CollapsingCommand;
-import global.Data;
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -192,8 +190,8 @@ public class GeneManager {
         }
     }
 
-    public static String getAllGeneByChr(String chr) {
-        return "(" + chrAllGeneMap.get(chr) + ")";
+    public static StringBuilder getAllGeneByChr(String chr) {
+        return chrAllGeneMap.get(chr);
     }
 
     public static void initCoverageSummary() throws Exception {

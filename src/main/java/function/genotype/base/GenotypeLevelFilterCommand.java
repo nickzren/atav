@@ -11,6 +11,13 @@ import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidFloat;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -45,6 +52,10 @@ public class GenotypeLevelFilterCommand {
     public static int maxQcFailSample = Data.NO_FILTER;
 
     public static final String[] VCF_FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
+
+    // below variables all true will trigger ATAV only retrive high quality variants
+    // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
+    private static boolean isHighQualityCallVariantOnly = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -106,6 +117,7 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--var-status":
                 case "--vcf-filter":
+                    option.setValue(option.getValue().toUpperCase());
                     checkValuesValid(VCF_FILTER, option);
                     String[] tmp = option.getValue().split(",");
 
@@ -166,6 +178,8 @@ public class GenotypeLevelFilterCommand {
         }
 
         initMinCoverage();
+
+        initIsHighQualityVariantOnly();
     }
 
     private static void initMinCoverage() {
@@ -186,6 +200,30 @@ public class GenotypeLevelFilterCommand {
                 minCtrlCoverageNoCall = minCoverage;
             }
         }
+    }
+
+    private static void initIsHighQualityVariantOnly() {
+        // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
+        if (qual >= 30 && rmsMapQualMQ >= 40 && minCoverage >= 3 && vcfFilter != null) {
+
+            int qualifiedFilterCount = 0;
+
+            for (int vcfFilterIndex : vcfFilter) {
+                if (vcfFilterIndex == Enum.FILTER.PASS.getValue()
+                        || vcfFilterIndex == Enum.FILTER.LIKELY.getValue()
+                        || vcfFilterIndex == Enum.FILTER.INTERMEDIATE.getValue()) {
+                    qualifiedFilterCount++;
+                }
+            }
+
+            if (qualifiedFilterCount == 3) {
+                isHighQualityCallVariantOnly = true;
+            }
+        }
+    }
+
+    public static boolean isHighQualityCallVariantOnly() {
+        return isHighQualityCallVariantOnly;
     }
 
     public static boolean isMaxCtrlMafValid(double value) {
