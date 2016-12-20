@@ -9,14 +9,7 @@ import static utils.CommandManager.getValidPath;
 import static utils.CommandManager.getValidRange;
 import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;
-import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidFloat;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.checkValueValid;
 
 /**

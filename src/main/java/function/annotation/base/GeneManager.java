@@ -50,10 +50,15 @@ public class GeneManager {
         } else {
             String[] genes = AnnotationLevelFilterCommand.geneInput.split(",");
             for (String geneName : genes) {
-                HashSet<Gene> set = new HashSet<>();
                 Gene gene = new Gene(geneName);
-                set.add(gene);
-                geneMapByName.put(geneName, set);
+
+                if (gene.isValid()) {
+                    HashSet<Gene> set = new HashSet<>();
+                    set.add(gene);
+                    geneMapByName.put(geneName, set);
+                } else {
+                    LogManager.writeAndPrint("Invalid gene: " + gene.getName());
+                }
             }
         }
     }
@@ -74,11 +79,15 @@ public class GeneManager {
                     continue;
                 }
 
-                HashSet<Gene> set = new HashSet<>();
                 Gene gene = new Gene(lineStr);
-                set.add(gene);
 
-                geneMapByName.put(lineStr, set);
+                if (gene.isValid()) {
+                    HashSet<Gene> set = new HashSet<>();
+                    set.add(gene);
+                    geneMapByName.put(lineStr, set);
+                } else {
+                    LogManager.writeAndPrint("Invalid gene: " + gene.getName());
+                }
             }
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
@@ -110,26 +119,30 @@ public class GeneManager {
 
                 Gene gene = new Gene(line);
 
-                HashSet<Gene> set = new HashSet<>();
-                set.add(gene);
+                if (gene.isValid()) {
+                    HashSet<Gene> set = new HashSet<>();
+                    set.add(gene);
 
-                String geneId = gene.getName();
+                    String geneId = gene.getName();
 
-                if (geneId.contains("_")) { // if using gene domain
-                    String geneName = geneId.substring(0, geneId.indexOf("_"));
+                    if (geneId.contains("_")) { // if using gene domain
+                        String geneName = geneId.substring(0, geneId.indexOf("_"));
 
-                    if (!geneMapByBoundaries.containsKey(geneName)) {
-                        geneMapByBoundaries.put(geneName, set);
+                        if (!geneMapByBoundaries.containsKey(geneName)) {
+                            geneMapByBoundaries.put(geneName, set);
+                        } else {
+                            geneMapByBoundaries.get(geneName).add(gene);
+                        }
                     } else {
-                        geneMapByBoundaries.get(geneName).add(gene);
+                        geneMapByBoundaries.put(geneId, set);
                     }
-                } else {
-                    geneMapByBoundaries.put(geneId, set);
-                }
 
-                gene.setIndex(geneIndex++);
-                geneBoundaryList.add(gene);
-                allGeneBoundaryLength += gene.getLength();
+                    gene.setIndex(geneIndex++);
+                    geneBoundaryList.add(gene);
+                    allGeneBoundaryLength += gene.getLength();
+                } else {
+                    LogManager.writeAndPrint("Invalid gene: " + gene.getName());
+                }
             }
         }
     }
