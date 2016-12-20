@@ -50,10 +50,14 @@ public class GeneManager {
         } else {
             String[] genes = AnnotationLevelFilterCommand.geneInput.split(",");
             for (String geneName : genes) {
-                HashSet<Gene> set = new HashSet<>();
                 Gene gene = new Gene(geneName);
-                set.add(gene);
-                geneMapByName.put(geneName, set);
+                if (gene.isValid()) {
+                    HashSet<Gene> set = new HashSet<>();
+                    set.add(gene);
+                    geneMapByName.put(geneName, set);
+                } else {
+                    LogManager.writeAndPrint("Invalid gene: " + gene.getName());
+                }
             }
         }
     }
@@ -74,11 +78,15 @@ public class GeneManager {
                     continue;
                 }
 
-                HashSet<Gene> set = new HashSet<>();
                 Gene gene = new Gene(lineStr);
-                set.add(gene);
+                if (gene.isValid()) {
+                    HashSet<Gene> set = new HashSet<>();
+                    set.add(gene);
 
-                geneMapByName.put(lineStr, set);
+                    geneMapByName.put(lineStr, set);
+                } else {
+                    LogManager.writeAndPrint("Invalid gene: " + gene.getName());
+                }
             }
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("

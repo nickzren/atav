@@ -12,11 +12,13 @@ import java.util.ArrayList;
  */
 public class Gene {
 
-    String name;
-    String chr;
-    ArrayList<Exon> exonList = new ArrayList<>();
+    private String name;
+    private String chr;
+    private ArrayList<Exon> exonList = new ArrayList<>();
 
-    int index; // index for line in gene boundary file
+    private boolean isValid = true;
+
+    private int index; // index for line in gene boundary file
 
     public Gene(String name) {
         this.name = name.trim();
@@ -54,7 +56,7 @@ public class Gene {
                 if (rset.next()) {
                     chr = rset.getString("name");
                 } else {
-                    ErrorManager.print("Invalid gene: " + this.name);
+                    isValid = false;
                 }
             }
 
@@ -111,6 +113,10 @@ public class Gene {
 
     public int getIndex() {
         return index;
+    }
+
+    public boolean isValid() {
+        return isValid;
     }
 
     @Override
