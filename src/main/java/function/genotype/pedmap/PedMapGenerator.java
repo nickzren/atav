@@ -238,8 +238,13 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 + " " + KINSHIP_SCRIPT_PATH
                 + " " + GenotypeLevelFilterCommand.sampleFile
                 + " " + CommonCommand.outputPath + "king.kin0"
+                + " --seed " + PedMapCommand.seed
                 + " --output " + CommonCommand.outputPath + "kinship_pruned_sample.txt"
                 + " --verbose";
+
+        if (!PedMapCommand.sampleSummaryPath.isEmpty()) {
+            cmd += " " + PedMapCommand.sampleSummaryPath;
+        }
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }

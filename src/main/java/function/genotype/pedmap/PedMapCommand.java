@@ -1,6 +1,8 @@
 package function.genotype.pedmap;
 
 import java.util.Iterator;
+import static utils.CommandManager.getValidInteger;
+import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 
 /**
@@ -14,6 +16,8 @@ public class PedMapCommand {
     public static boolean isEigenstrat = false;
     public static boolean isKinship = false;
     public static String pedMapPath = "";
+    public static String sampleSummaryPath = "";
+    public static int seed = 42;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -29,6 +33,12 @@ public class PedMapCommand {
                     break;
                 case "--kinship":
                     isKinship = true;
+                    break;
+                case "--sample-summary":
+                    sampleSummaryPath = getValidPath(option);
+                    break;
+                case "--seed":
+                    seed = getValidInteger(option);
                     break;
                 default:
                     continue;
