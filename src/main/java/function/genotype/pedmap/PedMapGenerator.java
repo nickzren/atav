@@ -2,6 +2,7 @@ package function.genotype.pedmap;
 
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
@@ -33,7 +34,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     int qualifiedVariants = 0;
 
     // --eigenstrat
-    private static final String RUN_EIGENSTRAT_PATH = "/nfs/goldstein/software/atav_home/lib/run_eigenstrat.py";
+    private static final String EIGENSTRAT_SCRIPT_PATH = "/nfs/goldstein/software/atav_home/lib/run_eigenstrat.py";
+
+    // --kinship
+    private static final String KINSHIP_SCRIPT_PATH = "/nfs/goldstein/software/atav_home/lib/run_kinship.py";
 
     @Override
     public void initOutput() {
@@ -66,6 +70,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     public void doAfterCloseOutput() {
         if (PedMapCommand.isEigenstrat) {
             doEigesntrat();
+        }
+
+        if (PedMapCommand.isKinship) {
+            doKinship();
         }
     }
 
@@ -197,13 +205,41 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     public void doEigesntrat() {
         String cmd = ThirdPartyToolManager.PYTHON
-                + " " + RUN_EIGENSTRAT_PATH
+                + " " + EIGENSTRAT_SCRIPT_PATH
                 + " --genotypefile " + pedFile
                 + " --snpfile " + mapFile
                 + " --indivfile " + pedFile
                 + " --numoutevec 10 "
                 + " --numoutlieriter 5 "
                 + " --outputdir " + CommonCommand.realOutputPath;
+
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+    }
+
+    public void doKinship() {
+        // Convert PED & MAP to BED format with PLINK
+        String cmd = ThirdPartyToolManager.PLINK
+                + " --file " + CommonCommand.outputPath + "output"
+                + " --make-bed"
+                + " --out " + CommonCommand.outputPath + "plink";
+
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+
+        // Run KING to get kinship
+        cmd = ThirdPartyToolManager.KING
+                + " -b " + CommonCommand.outputPath + "plink.bed"
+                + " --kinship --related --degree 3"
+                + " --prefix " + CommonCommand.outputPath + "king";
+
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+
+        // Run kinship pruning script
+        cmd = ThirdPartyToolManager.PYTHON
+                + " " + KINSHIP_SCRIPT_PATH
+                + " " + GenotypeLevelFilterCommand.sampleFile
+                + " " + CommonCommand.outputPath + "king.kin0"
+                + " --output " + CommonCommand.outputPath + "kinship_pruned_sample.txt"
+                + " --verbose";
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
