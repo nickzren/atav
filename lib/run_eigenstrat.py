@@ -2,7 +2,7 @@ import subprocess
 import os
 import argparse
 import matplotlib
-matplotlib.use('pdf')
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -11,15 +11,17 @@ sns.set_style("darkgrid")
 
 def add_outputprefix(outdir,f):
     """ Add output directory path to a file
-    outdir -> string ; path to the output dir
-    f -> string ; output file name 
+    outdir : string ; path to the output dir
+    f : string ; output file name 
+
+    returns : str; path to the full outputdir
     """
     
     return os.path.join(outdir,f)
 
 def create_parfile(parfile,args):
     """ Creates a parameter file for Eigenstrat
-    parfile -> string ; full path to the paramfile
+    parfile : string ; full path to the paramfile
     """
 
     with open(parfile,'w') as IN:
@@ -51,8 +53,8 @@ def run_smartpca(parfile,logfile):
 
 def plot_pcs(args,suffix):
     """Plot the principal components 
-    args -> a class whose members are the command line arguments parsed by argparse 
-    suffix -> suffix for the name of the PC plots
+    args : a class whose members are the command line arguments parsed by argparse 
+    suffix : suffix for the name of the PC plots
     """
 
     ## Parse the output evec file and store the PCs
@@ -112,6 +114,11 @@ def plot_pcs(args,suffix):
 def plot_eigenvals_pcs(args,suffix):
     """ Plot eigenvals vs PC,useful for selecting
     the number of principal components    
+    
+    args : argparse parameter object
+    suffix : str ; a identifier to add to plot title 
+
+    returns : nothing
     """
 
     found = 0
@@ -138,6 +145,40 @@ def plot_eigenvals_pcs(args,suffix):
     plt.xlim([0,100])
     plt.savefig(os.path.join(args.outputdir,'%s.eigenvalvspcs.pdf'%suffix))
 
+def get_samples(outlier_removed_file):
+    """ Read samples from the outlier removed file
+
+    outlier_removed_file : str ; the outlier removed file 
+    
+    returns : list ; the sample names of the outliers 
+    """
+
+    outlier_samples = []
+    with open(outlier_removed_file,'r') as IN:
+        for line in IN:
+            line = line.strip('\n')
+            sample = line.split(' ')[2].split(':')[0]
+            outlier_samples.append(sample)
+            
+    return outlier_samples
+
+def create_samplefile(samplefile,outlier_samples,outputfile):
+    """ Iterate over the famfile and output all the outlier samples to a new samplefile
+
+    samplefile : str ; atav's sample file
+    outlier_samples : list  ; list of outlier samples
+    outputfile : the output sample file name 
+
+    returns : does not return anything
+    """
+
+    with open(samplefile,'r') as IN, open(outputfile,'w') as OUT:
+        for line in IN:
+            line = line.strip('\n')
+            sample_name = line.split('\t')[1]
+            if sample_name not in outlier_samples:
+                print >> OUT,'\t'.join(line.split('\t'))
+
 def main(args):
 
     ## Create the output directory if it does not exist
@@ -147,11 +188,17 @@ def main(args):
     ## Create the parameter file
     parfile = os.path.join(args.outputdir,'eigenstrat_outlier_removed.smartpca.par')
     create_parfile(parfile,args)
+    
     ## Run smartpca
     run_smartpca(parfile,args.log)
     ## Plot principal components 
     plot_pcs(args,'eigenstrat_outlier_removed')
     plot_eigenvals_pcs(args,'eigenstrat_outlier_removed')
+    
+    ## Output a samplefile with outlier's removed
+    if args.prune:
+        outlier_samples = get_samples(add_outputprefix(args.outputdir,args.outlierout))
+        create_samplefile(args.inputsamples,outlier_samples,add_outputprefix(args.outputdir,'eigenstrat_pruned_sample.txt'))
 
     ## Repeat the above steps with outlier removal iterations set to 0
     ## to get a plot without any outliers removed
@@ -183,6 +230,8 @@ if __name__ == "__main__":
     parser.add_argument("-usenorm","--usenorm",dest="usenorm",help="Whether to normalize each SNP by a quanitity related to allele freq. , set to NO for microsatellite data, default is YES",default="YES")    
     parser.add_argument('-outputdir','--outputdir',dest="outputdir",help="Directory to save the output files(will be created if it does not exist)",required=True)
     parser.add_argument('-logfile','--logfile',dest="log",help="File to store smartpca output",required=False,default="eigenstrat_outlier_removed.log")
+    parser.add_argument('--prune-sample','--prune',dest="prune",action='store_true')
+    parser.add_argument('--sample','--sample',dest="inputsamples",help="The input atav samplefile used for this run",required=False)
     args = parser.parse_args()
     
     main(args)
