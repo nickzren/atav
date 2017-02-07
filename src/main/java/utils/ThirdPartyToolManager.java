@@ -24,8 +24,8 @@ public class ThirdPartyToolManager {
     private static final String QQPLOT_FOR_COLLAPSING_R = "/nfs/goldstein/software/atav_home/lib/qqplot_for_collapsing.R";
     private static final String PERL_SYSTEM_PATH = "perl";
     private static final String FLANKING_SEQ_PERL = "/nfs/goldstein/software/atav_home/lib/flanking_seq.pl";
-    private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_denovo_tier.R";
-    private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_comp_het_tier.R";
+    private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/r0.5_trio_denovo_tier.R";
+    private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/r0.5_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = "/nfs/goldstein/software/atav_home/lib/non_trio_tier.R";
     public static final String PYTHON = "/nfs/goldstein/software/python2.7.7/bin/python";
     public static final String PLINK = "/nfs/goldstein/software/PLINK_1.90/3.38/plink";

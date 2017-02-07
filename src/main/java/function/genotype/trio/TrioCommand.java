@@ -1,8 +1,10 @@
 package function.genotype.trio;
 
+import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.knownvar.KnownVarCommand;
+import function.external.trap.TrapCommand;
 import java.util.Iterator;
 import utils.CommandOption;
 
@@ -26,6 +28,8 @@ public class TrioCommand {
                     EvsCommand.isIncludeEvs = true;
                     ExacCommand.isIncludeExac = true;
                     KnownVarCommand.isIncludeKnownVar = true;
+                    TrapCommand.isIncludeTrap = true;
+                    DenovoDBCommand.isIncludeDenovoDB = true;
                     break;
                 default:
                     continue;
