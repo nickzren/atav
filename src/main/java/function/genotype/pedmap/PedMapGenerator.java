@@ -206,11 +206,13 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     public void doEigesntrat() {
         String cmd = ThirdPartyToolManager.PYTHON
                 + " " + EIGENSTRAT_SCRIPT_PATH
+                + " --sample " + GenotypeLevelFilterCommand.sampleFile
+                + " --prune-sample"
                 + " --genotypefile " + pedFile
                 + " --snpfile " + mapFile
                 + " --indivfile " + pedFile
-                + " --numoutevec 10 "
-                + " --numoutlieriter 5 "
+                + " --numoutevec 10"
+                + " --numoutlieriter 5"
                 + " --outputdir " + CommonCommand.realOutputPath;
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
