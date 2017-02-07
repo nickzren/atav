@@ -18,7 +18,7 @@ public class DenovoDB {
     private String alt;
 
     private String phenotyp;
-    private int pubmedID;
+    private String pubmedID;
 
     public DenovoDB(String chr, int pos, String ref, String alt) {
         this.chr = chr;
@@ -33,10 +33,10 @@ public class DenovoDB {
 
             if (rs.next()) {
                 phenotyp = rs.getString("Phenotype");
-                pubmedID = getInteger(rs.getString("PubmedID"));
+                pubmedID = rs.getString("PubmedID");
             } else {
                 phenotyp = "NA";
-                pubmedID = Data.NA;
+                pubmedID = "NA";
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -51,7 +51,7 @@ public class DenovoDB {
             alt = rs.getString("alt");
 
             phenotyp = rs.getString("Phenotype");
-            pubmedID = getInteger(rs.getString("PubmedID"));
+            pubmedID = rs.getString("PubmedID");
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -69,7 +69,7 @@ public class DenovoDB {
         StringBuilder sb = new StringBuilder();
 
         sb.append(FormatManager.getString(phenotyp)).append(",");
-        sb.append(FormatManager.getInteger(pubmedID)).append(",");
+        sb.append(FormatManager.getString(pubmedID)).append(",");
 
         return sb.toString();
     }
