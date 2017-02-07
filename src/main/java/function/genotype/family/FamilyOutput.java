@@ -1,5 +1,6 @@
 package function.genotype.family;
 
+import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
 import function.genotype.base.SampleManager;
 import function.external.exac.ExacManager;
@@ -79,7 +80,8 @@ public class FamilyOutput extends Output {
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
                 + GenomesManager.getTitle()
-                + MgiManager.getTitle();
+                + MgiManager.getTitle()
+                + DenovoDBManager.getTitle();
     }
 
     public FamilyOutput(CalledVariant c) {
@@ -267,6 +269,7 @@ public class FamilyOutput extends Output {
         sb.append(calledVar.getSubRvis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
+        sb.append(calledVar.getDenovoDB());
 
         return sb.toString();
     }

@@ -1,5 +1,7 @@
 package function.annotation.base;
 
+import function.external.denovo.DenovoDB;
+import function.external.denovo.DenovoDBCommand;
 import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
@@ -39,27 +41,28 @@ import utils.MathManager;
 public class AnnotatedVariant extends Variant {
 
     // AnnoDB annotations
-    String function;
-    String geneName;
-    String codonChange;
-    String aminoAcidChange;
-    String stableId;
-    HashSet<String> geneSet = new HashSet<>();
-    HashSet<String> transcriptSet = new HashSet<>();
-    double polyphenHumdiv;
-    double polyphenHumvar;
+    private String function;
+    private String geneName;
+    private String codonChange;
+    private String aminoAcidChange;
+    private String stableId;
+    private HashSet<String> geneSet = new HashSet<>();
+    private HashSet<String> transcriptSet = new HashSet<>();
+    private double polyphenHumdiv;
+    private double polyphenHumvar;
 
     // external db annotations
-    Exac exac;
-    Kaviar kaviar;
-    Evs evs;
-    float gerpScore;
-    float trapScore;
-    KnownVarOutput knownVarOutput;
+    private Exac exac;
+    private Kaviar kaviar;
+    private Evs evs;
+    private float gerpScore;
+    private float trapScore;
+    private KnownVarOutput knownVarOutput;
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
-    Genomes genomes;
+    private Genomes genomes;
     private String mgiStr;
+    private DenovoDB denovoDB;
 
     public boolean isValid = true;
 
@@ -98,6 +101,10 @@ public class AnnotatedVariant extends Variant {
 
         if (MgiCommand.isIncludeMgi) {
             mgiStr = MgiManager.getLine(getGeneName());
+        }
+
+        if (DenovoDBCommand.isIncludeDenovoDB) {
+            denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
         }
     }
 
@@ -184,7 +191,7 @@ public class AnnotatedVariant extends Variant {
 
             if (function.equals("SYNONYMOUS_CODING")
                     || function.equals("INTRON_EXON_BOUNDARY")
-                    || function.equals("INTRON")) { 
+                    || function.equals("INTRON")) {
                 // filter only apply to SYNONYMOUS_CODING, INTRON_EXON_BOUNDARY and INTRONIC variants
                 return TrapCommand.isTrapScoreValid(trapScore);
             }
@@ -389,6 +396,14 @@ public class AnnotatedVariant extends Variant {
     public String getMgi() {
         if (MgiCommand.isIncludeMgi) {
             return mgiStr;
+        } else {
+            return "";
+        }
+    }
+
+    public String getDenovoDB() {
+        if (DenovoDBCommand.isIncludeDenovoDB) {
+            return denovoDB.getOutput();
         } else {
             return "";
         }

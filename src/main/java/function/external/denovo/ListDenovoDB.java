@@ -1,4 +1,4 @@
-package function.external.kaviar;
+package function.external.denovo;
 
 import function.AnalysisBase;
 import function.variant.base.Region;
@@ -15,19 +15,19 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class ListKaviar extends AnalysisBase {
+public class ListDenovoDB extends AnalysisBase {
 
-    BufferedWriter bwKaviar = null;
-    final String kaviarFilePath = CommonCommand.outputPath + "kaviar.csv";
+    BufferedWriter bwDenovoDB = null;
+    final String denovoDBFilePath = CommonCommand.outputPath + "denovodb.csv";
 
     int analyzedRecords = 0;
 
     @Override
     public void initOutput() {
         try {
-            bwKaviar = new BufferedWriter(new FileWriter(kaviarFilePath));
-            bwKaviar.write(KaviarOutput.getTitle());
-            bwKaviar.newLine();
+            bwDenovoDB = new BufferedWriter(new FileWriter(denovoDBFilePath));
+            bwDenovoDB.write(DenovoDBOutput.getTitle());
+            bwDenovoDB.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -36,8 +36,8 @@ public class ListKaviar extends AnalysisBase {
     @Override
     public void closeOutput() {
         try {
-            bwKaviar.flush();
-            bwKaviar.close();
+            bwDenovoDB.flush();
+            bwDenovoDB.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -65,22 +65,19 @@ public class ListKaviar extends AnalysisBase {
 
                 if (VariantManager.isVariantTypeValid(r, varType)) {
 
-                    boolean isIndel = varType.equals("indel");
-
                     Region region = RegionManager.getRegion(r, varType);
-             
-                    String sqlCode = KaviarManager.getSql(isIndel, region);
-                    
+
+                    String sqlCode = DenovoDBManager.getSql(region);
+
                     ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 
                     while (rset.next()) {
-                        KaviarOutput output = new KaviarOutput(isIndel, rset);
+                        DenovoDBOutput output = new DenovoDBOutput(rset);
 
-                        if (VariantManager.isVariantIdIncluded(output.kaviar.getVariantId())
-                                && output.isValid()) {
-                            bwKaviar.write(output.kaviar.getVariantId() + ",");
-                            bwKaviar.write(output.toString());
-                            bwKaviar.newLine();
+                        if (VariantManager.isVariantIdIncluded(output.denovoDB.toString())) {
+                            bwDenovoDB.write(output.denovoDB.toString() + ",");
+                            bwDenovoDB.write(output.denovoDB.getOutput());
+                            bwDenovoDB.newLine();
                         }
 
                         countVariant();
@@ -100,6 +97,6 @@ public class ListKaviar extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "Start running list kaviar function";
+        return "Start running list denovodb function";
     }
 }

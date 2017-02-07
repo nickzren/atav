@@ -1,5 +1,6 @@
 package function.genotype.collapsing;
 
+import function.external.denovo.DenovoDBManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Index;
@@ -85,7 +86,8 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
                 + GenomesManager.getTitle()
-                + MgiManager.getTitle();
+                + MgiManager.getTitle()
+                + DenovoDBManager.getTitle();
 
         String[] list = varTitle.split(",");
 
@@ -166,6 +168,7 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getSubRvis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
+        sb.append(calledVar.getDenovoDB());
 
         return sb.toString();
     }

@@ -7,6 +7,7 @@ import global.Index;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.annotation.base.TranscriptManager;
+import function.external.denovo.DenovoDBManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
@@ -92,7 +93,8 @@ public class VarGenoOutput extends Output {
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
                 + GenomesManager.getTitle()
-                + MgiManager.getTitle();
+                + MgiManager.getTitle()
+                + DenovoDBManager.getTitle();
     }
 
     public VarGenoOutput(CalledVariant c) {
@@ -169,6 +171,7 @@ public class VarGenoOutput extends Output {
         sb.append(calledVar.getSubRvis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
+        sb.append(calledVar.getDenovoDB());
 
         return sb.toString();
     }
