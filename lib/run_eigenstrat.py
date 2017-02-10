@@ -35,7 +35,8 @@ def create_parfile(parfile,args):
         print >> IN,"numoutlierevec: {0}".format(args.numevec)
         print >> IN,"outliersigmathresh: {0}".format(args.sigma)
         print >> IN,"usenorm: {0}".format(args.usenorm)
-
+        print >> IN,"familynames: NO"
+        
 def run_smartpca(parfile,logfile):
     """ Run smartpca
     parfile -> string ; path to the parameter file for smartpca
