@@ -102,9 +102,7 @@ public class Output implements Cloneable {
     }
 
     protected CalledVariant calledVar;
-
-    protected boolean isMinorRef = false; // reference allele is minor or major
-
+    
     protected int[][] genoCount = new int[3][2];
     protected float[] homFreq = new float[2];
     protected float[] hetFreq = new float[2];
@@ -167,11 +165,8 @@ public class Output implements Cloneable {
 
         minorAlleleFreq[Index.CTRL] = ctrlAF;
         if (ctrlAF > 0.5) {
-            isMinorRef = true;
             minorAlleleFreq[Index.CTRL] = 1.0f - ctrlAF;
-        } else {
-            isMinorRef = false;
-        }
+        } 
     }
 
     private void calculateGenotypeFreq() {

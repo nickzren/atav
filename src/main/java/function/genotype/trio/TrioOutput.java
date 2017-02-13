@@ -81,7 +81,7 @@ public class TrioOutput extends Output {
         byte fGenotype = convertMissing2HomRef(fGeno);
 
         denovoFlag = TrioManager.getStatus(calledVar.getChrNum(),
-                !isMinorRef, child.isMale(),
+                child.isMale(),
                 cGeno, cDPBin,
                 mGenotype, mDPBin,
                 fGenotype, fDPBin);

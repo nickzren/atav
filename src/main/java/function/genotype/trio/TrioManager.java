@@ -23,7 +23,7 @@ import utils.MathManager;
  */
 public class TrioManager {
 
-    private static final String DENOVO_RULES_PATH = "data/trio_rule.txt";
+    private static final String DENOVO_RULES_PATH = "data/trio_rule_021717.txt";
 
     public static final String[] COMP_HET_FLAG = {
         "COMPOUND HETEROZYGOTE", // 0
@@ -161,13 +161,13 @@ public class TrioManager {
         }
     }
 
-    public static String getStatus(int chr, boolean refMajor, boolean isMale, byte oGeno,
+    public static String getStatus(int chr, boolean isMale, byte oGeno,
             short oCov, byte mGeno, short mCov, byte dGeno, short dCov) {
-        String key = getKey(chr, refMajor, isMale, oGeno, oCov, mGeno, mCov, dGeno, dCov);
+        String key = getKey(chr, isMale, oGeno, oCov, mGeno, mCov, dGeno, dCov);
         return denovoRules.containsKey(key) ? denovoRules.get(key) : Data.STRING_NA;
     }
 
-    private static String getKey(int chr, boolean refMajor, boolean isMale, byte oGeno,
+    private static String getKey(int chr, boolean isMale, byte oGeno,
             short oCov, byte mGeno, short mCov, byte dGeno, short dCov) {
         StringBuilder sKey = new StringBuilder();
         if (chr < 23) {
@@ -188,7 +188,6 @@ public class TrioManager {
             sKey.append('F');
         }
 
-        sKey.append(refMajor ? 'Y' : 'N');
         getKeyPartGenotypeAndCoverage(sKey, oGeno, oCov);
         getKeyPartGenotypeAndCoverage(sKey, mGeno, mCov);
         getKeyPartGenotypeAndCoverage(sKey, dGeno, dCov);
