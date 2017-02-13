@@ -46,24 +46,22 @@ public class CalledVariant extends AnnotatedVariant {
 
     // initialize genotype & coverage array for better compute performance use
     private void initGenoCovArray() {
-        for (int s = 0; s < SampleManager.getListSize(); s++) {
-            Sample sample = SampleManager.getList().get(s);
-
+        for (Sample sample : SampleManager.getList()) {
             Carrier carrier = carrierMap.get(sample.getId());
             NonCarrier noncarrier = noncarrierMap.get(sample.getId());
 
             if (carrier != null) {
-                setGenoCov(carrier.getGenotype(), carrier.getCoverage(), s);
+                setGenoCov(carrier.getGenotype(), carrier.getCoverage(), sample.getIndex());
 
                 if (carrier.getGenotype() == Data.NA) {
                     // have to remove it for init Non-carrier map
-                    qcFailSample[(int) sample.getPheno()]++;
+                    qcFailSample[sample.getPheno()]++;
                     carrierMap.remove(sample.getId());
                 }
             } else if (noncarrier != null) {
-                setGenoCov(noncarrier.getGenotype(), noncarrier.getCoverage(), s);
+                setGenoCov(noncarrier.getGenotype(), noncarrier.getCoverage(), sample.getIndex());
             } else {
-                setGenoCov(Data.NA, Data.NA, s);
+                setGenoCov(Data.NA, Data.NA, sample.getIndex());
             }
         }
     }

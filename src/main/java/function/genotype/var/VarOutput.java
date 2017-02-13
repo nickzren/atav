@@ -1,6 +1,5 @@
 package function.genotype.var;
 
-import function.annotation.base.GeneManager;
 import function.annotation.base.TranscriptManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;

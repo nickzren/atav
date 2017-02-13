@@ -78,14 +78,13 @@ public class CollapsingSummary implements Comparable {
     }
 
     public void countSample() {
-        for (int s = 0; s < SampleManager.getListSize(); s++) {
-            Sample sample = SampleManager.getList().get(s);
+        for (Sample sample : SampleManager.getList()) {
             if (sample.isCase()) {
-                if (variantNumBySample[s] > 0) {
+                if (variantNumBySample[sample.getIndex()] > 0) {
                     qualifiedCase++;
                 }
             } else {
-                if (variantNumBySample[s] > 0) {
+                if (variantNumBySample[sample.getIndex()] > 0) {
                     qualifiedCtrl++;
                 }
             }

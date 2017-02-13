@@ -128,9 +128,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
             long rowLen = 2 * SampleManager.getListSize() + 1L;
 
-            for (int s = 0; s < SampleManager.getListSize(); s++) {
-                Sample sample = SampleManager.getList().get(s);
-
+            for (Sample sample : SampleManager.getList()) {
                 String name = sample.getName();
 
                 int pheno = (int) sample.getPheno() + 1;
@@ -144,7 +142,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
                 for (int i = 0; i < qualifiedVariants; i++) {
                     for (int j = 0; j < 2; j++) {
-                        long pos = i * rowLen + 2 * s + j;
+                        long pos = i * rowLen + 2 * sample.getIndex() + j;
                         raf.seek(pos);
                         byte allele = raf.readByte();
                         bwPed.write(" " + String.valueOf((char) allele));
