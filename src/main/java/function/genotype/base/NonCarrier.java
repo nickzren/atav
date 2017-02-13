@@ -1,7 +1,6 @@
 package function.genotype.base;
 
 import function.genotype.trio.TrioCommand;
-import function.variant.base.Region;
 import function.genotype.trio.TrioManager;
 import global.Data;
 import global.Index;
@@ -71,42 +70,6 @@ public class NonCarrier {
         {
             if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 setMissing();
-            }
-        }
-    }
-
-    /*
-     * Outside of pseudoautosomal regions:
-     *
-     * ChrX: females are treated normally
-     *
-     * ChrX: males have het removed
-     *
-     * ChrY: females are set to missing
-     *
-     * ChrY: males have het removed
-     *
-     * Inside of pseudoautosomal region which are treated like autosomes.
-     */
-    public void checkValidOnXY(Region r) {
-        if (gt != Data.BYTE_NA) {
-            boolean isValid = true;
-
-            Sample sample = SampleManager.getMap().get(sampleId);
-
-            if (sample.isMale()) {
-                if (gt == Index.HET // male het chr x or y & outside 
-                        && !r.isInsideAutosomalOrPseudoautosomalRegions()) {
-                    isValid = false;
-                }
-            } else if (r.getChrNum() == 24 // female chy & outside
-                    && !r.isInsideYPseudoautosomalRegions()) {
-                isValid = false;
-            }
-
-            if (!isValid) {
-                gt = Data.BYTE_NA;
-                dpBin = Data.SHORT_NA;
             }
         }
     }

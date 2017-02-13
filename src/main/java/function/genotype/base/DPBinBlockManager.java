@@ -42,14 +42,6 @@ public class DPBinBlockManager {
         dpBin.put('r', (short) 1000);
     }
 
-    // for GQ bin
-//    public static void init() {
-//        dpBin.put('a', Data.NA);
-//        dpBin.put('b', 5);
-//        dpBin.put('c', 15);
-//        dpBin.put('d', 20);
-//        dpBin.put('e', 60);
-//    }
     public static void add(SampleDPBin sampleDPBin) {
         currentBlockList.add(sampleDPBin);
     }
@@ -78,8 +70,6 @@ public class DPBinBlockManager {
 
                     noncarrier.applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
                             GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
-
-                    noncarrier.checkValidOnXY(var);
 
                     if (noncarrier.isValid()) {
                         noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
@@ -120,8 +110,6 @@ public class DPBinBlockManager {
                 } else {
                     noncarrier.applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
                             GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
-
-                    noncarrier.checkValidOnXY(var);
 
                     if (noncarrier.isValid()) {
                         noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
