@@ -65,14 +65,12 @@ public class CalledVariant extends AnnotatedVariant {
 
     // initialize genotype & dpBin array for better compute performance use
     private void initGenoCovArray() {
-        for (int s = 0; s < SampleManager.getListSize(); s++) {
-            Sample sample = SampleManager.getList().get(s);
-
+        for (Sample sample : SampleManager.getList()) {
             Carrier carrier = carrierMap.get(sample.getId());
             NonCarrier noncarrier = noncarrierMap.get(sample.getId());
 
             if (carrier != null) {
-                setGenoDPBin(carrier.getGT(), carrier.getDPBin(), s);
+                setGenoDPBin(carrier.getGT(), carrier.getDPBin(), sample.getIndex());
 
                 if (carrier.getGT() == Data.BYTE_NA) {
                     // have to remove it for init Non-carrier map
@@ -80,9 +78,9 @@ public class CalledVariant extends AnnotatedVariant {
                     carrierMap.remove(sample.getId());
                 }
             } else if (noncarrier != null) {
-                setGenoDPBin(noncarrier.getGT(), noncarrier.getDPBin(), s);
+                setGenoDPBin(noncarrier.getGT(), noncarrier.getDPBin(), sample.getIndex());
             } else {
-                setGenoDPBin(Data.BYTE_NA, Data.SHORT_NA, s);
+                setGenoDPBin(Data.BYTE_NA, Data.SHORT_NA, sample.getIndex());
             }
         }
     }

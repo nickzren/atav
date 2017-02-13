@@ -160,8 +160,8 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
         for (CollapsingSummary summary : summaryList) {
             bwSampleMatrix.write(summary.name + "\t");
 
-            for (int s = 0; s < SampleManager.getListSize(); s++) {
-                bwSampleMatrix.write(summary.variantNumBySample[s] + "\t");
+            for (Sample sample : SampleManager.getList()) {
+                bwSampleMatrix.write(summary.variantNumBySample[sample.getIndex()] + "\t");
             }
 
             bwSampleMatrix.newLine();
