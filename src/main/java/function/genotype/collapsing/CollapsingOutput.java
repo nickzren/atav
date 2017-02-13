@@ -66,11 +66,7 @@ public class CollapsingOutput extends Output {
         looMAF = allAF;
 
         if (allAF > 0.5) {
-            isMinorRef = true;
-
             looMAF = 1.0 - allAF;
-        } else {
-            isMinorRef = false;
         }
     }
 

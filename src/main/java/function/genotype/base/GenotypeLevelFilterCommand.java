@@ -20,8 +20,6 @@ public class GenotypeLevelFilterCommand {
 
     public static String sampleFile = "";
     public static boolean isAllSample = false;
-    public static boolean isAllNonRef = false;
-    public static boolean isAllGeno = false;
     public static double maxCtrlMaf = Data.NO_FILTER;
     public static double minCtrlMaf = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
@@ -63,12 +61,6 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--all-sample":
                     isAllSample = true;
-                    break;
-                case "--all-non-ref":
-                    isAllNonRef = true;
-                    break;
-                case "--all-geno":
-                    isAllGeno = true;
                     break;
                 case "--ctrlMAF":
                 case "--ctrl-maf":

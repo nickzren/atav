@@ -17,16 +17,7 @@ public class StatisticOutput extends Output {
     }
 
     public boolean isRecessive() {
-        if (isMinorRef) {
-            if (genoCount[Index.REF][Index.CASE]
-                    + genoCount[Index.REF][Index.CTRL] > 0) {
-                return true;
-            }
-        } else if (genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HOM][Index.CTRL] > 0) {
-            return true;
-        }
-
-        return false;
+        return genoCount[Index.HOM][Index.CASE]
+                + genoCount[Index.HOM][Index.CTRL] > 0;
     }
 }

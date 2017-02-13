@@ -51,18 +51,7 @@ public class LinearOutput extends StatisticOutput {
             if (geno != Data.INTEGER_NA) {
                 float y = sample.getQuantitativeTrait();
                 if (model.equals("allelic")) {
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            sr.addData(1, y);
-                            sr.addData(1, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(1, y);
-                            sr.addData(0, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(0, y);
-                            sr.addData(0, y);
-                        }
-                    } else if (geno == Index.REF) {
+                    if (geno == Index.REF) {
                         sr.addData(0, y);
                         sr.addData(0, y);
                     } else if (geno == Index.HET) {
@@ -73,15 +62,7 @@ public class LinearOutput extends StatisticOutput {
                         sr.addData(1, y);
                     }
                 } else if (model.equals("dominant")) {
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(0, y);
-                        }
-                    } else if (geno == Index.REF) {
+                    if (geno == Index.REF) {
                         sr.addData(0, y);
                     } else if (geno == Index.HET) {
                         sr.addData(1, y);
@@ -89,15 +70,7 @@ public class LinearOutput extends StatisticOutput {
                         sr.addData(1, y);
                     }
                 } else if (model.equals("recessive")) {
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(0, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(0, y);
-                        }
-                    } else if (geno == Index.REF) {
+                    if (geno == Index.REF) {
                         sr.addData(0, y);
                     } else if (geno == Index.HET) {
                         sr.addData(0, y);
@@ -105,15 +78,7 @@ public class LinearOutput extends StatisticOutput {
                         sr.addData(1, y);
                     }
                 } else if (model.equals("genotypic")) { // not complete yet, to be finished a bit later
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            sr.addData(2, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(0, y);
-                        }
-                    } else if (geno == Index.REF) {
+                    if (geno == Index.REF) {
                         sr.addData(0, y);
                     } else if (geno == Index.HET) {
                         sr.addData(1, y);
@@ -121,15 +86,7 @@ public class LinearOutput extends StatisticOutput {
                         sr.addData(2, y);
                     }
                 } else if (model.equals("additive")) {
-                    if (isMinorRef) {
-                        if (geno == Index.REF) {
-                            sr.addData(2, y);
-                        } else if (geno == Index.HET) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.HOM) {
-                            sr.addData(0, y);
-                        } 
-                    } else if (geno == Index.REF) {
+                    if (geno == Index.REF) {
                         sr.addData(0, y);
                     } else if (geno == Index.HET) {
                         sr.addData(1, y);

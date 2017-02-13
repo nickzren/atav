@@ -187,7 +187,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     private String getTrioCompHetFlag(CompHetOutput output1, CompHetOutput output2,
             Sample child, Sample mother, Sample father) {
         byte cGeno1 = output1.getCalledVariant().getGT(child.getIndex());
-
         short cCov1 = output1.getCalledVariant().getDPBin(child.getIndex());
         byte mGeno1 = output1.getCalledVariant().getGT(mother.getIndex());
         short mCov1 = output1.getCalledVariant().getDPBin(mother.getIndex());
@@ -195,7 +194,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
         short fCov1 = output1.getCalledVariant().getDPBin(father.getIndex());
 
         byte cGeno2 = output2.getCalledVariant().getGT(child.getIndex());
-
         short cCov2 = output2.getCalledVariant().getDPBin(child.getIndex());
         byte mGeno2 = output2.getCalledVariant().getGT(mother.getIndex());
         short mCov2 = output2.getCalledVariant().getDPBin(mother.getIndex());
@@ -206,11 +204,9 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 cGeno1, cCov1,
                 mGeno1, mCov1,
                 fGeno1, fCov1,
-                output1.isMinorRef(),
                 cGeno2, cCov2,
                 mGeno2, mCov2,
-                fGeno2, fCov2,
-                output2.isMinorRef());
+                fGeno2, fCov2);
     }
 
     private void doOutput(StringBuilder sb,

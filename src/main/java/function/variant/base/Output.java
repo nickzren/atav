@@ -63,16 +63,15 @@ public class Output implements Cloneable {
     }
 
     public static String getGenoStatDataTitle() {
-        return "Is Minor Ref,"
-                + "Major Hom Case,"
+        return "Hom Case,"
                 + "Het Case,"
-                + "Minor Hom Case,"
-                + "Minor Hom Case Freq,"
+                + "Hom Ref Case,"
+                + "Hom Case Freq,"
                 + "Het Case Freq,"
-                + "Major Hom Ctrl,"
+                + "Hom Ctrl,"
                 + "Het Ctrl,"
-                + "Minor Hom Ctrl,"
-                + "Minor Hom Ctrl Freq,"
+                + "Hom Ref Ctrl,"
+                + "Hom Ctrl Freq,"
                 + "Het Ctrl Freq,"
                 + "QC Fail Case,"
                 + "QC Fail Ctrl,"
@@ -107,11 +106,9 @@ public class Output implements Cloneable {
     protected boolean isMinorRef = false; // reference allele is minor or major
 
     protected int[][] genoCount = new int[3][2];
-    protected int[] minorHomCount = new int[2];
-    protected int[] majorHomCount = new int[2];
+    protected float[] homFreq = new float[2];
     protected float[] hetFreq = new float[2];
     protected float[] minorAlleleFreq = new float[2];
-    protected float[] minorHomFreq = new float[2];
     protected double[] hweP = new double[2];
 
     public Output(CalledVariant c) {
@@ -146,8 +143,6 @@ public class Output implements Cloneable {
         calculateGenotypeFreq();
 
         calculateHweP();
-
-        countMajorMinorHomHet();
     }
 
     private void calculateAlleleFreq() {
@@ -191,15 +186,8 @@ public class Output implements Cloneable {
                 + genoCount[Index.REF][Index.CTRL];
 
         // hom / (hom + het + ref)
-        if (isMinorRef) {
-            minorHomFreq[Index.CASE] = MathManager.devide(genoCount[Index.REF][Index.CASE], totalCaseGenotypeCount);
-
-            minorHomFreq[Index.CTRL] = MathManager.devide(genoCount[Index.REF][Index.CTRL], totalCtrlGenotypeCount);
-        } else {
-            minorHomFreq[Index.CASE] = MathManager.devide(genoCount[Index.HOM][Index.CASE], totalCaseGenotypeCount);
-
-            minorHomFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HOM][Index.CTRL], totalCtrlGenotypeCount);
-        }
+        homFreq[Index.CASE] = MathManager.devide(genoCount[Index.HOM][Index.CASE], totalCaseGenotypeCount);
+        homFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HOM][Index.CTRL], totalCtrlGenotypeCount);
 
         hetFreq[Index.CASE] = MathManager.devide(genoCount[Index.HET][Index.CASE], totalCaseGenotypeCount);
         hetFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HET][Index.CTRL], totalCtrlGenotypeCount);
@@ -213,20 +201,6 @@ public class Output implements Cloneable {
         hweP[Index.CTRL] = HWEExact.getP(genoCount[Index.HOM][Index.CTRL],
                 genoCount[Index.HET][Index.CTRL],
                 genoCount[Index.REF][Index.CTRL]);
-    }
-
-    public void countMajorMinorHomHet() {
-        if (isMinorRef) {
-            minorHomCount[Index.CASE] = genoCount[Index.REF][Index.CASE];
-            minorHomCount[Index.CTRL] = genoCount[Index.REF][Index.CTRL];
-            majorHomCount[Index.CASE] = genoCount[Index.HOM][Index.CASE];
-            majorHomCount[Index.CTRL] = genoCount[Index.HOM][Index.CTRL];
-        } else {
-            minorHomCount[Index.CASE] = genoCount[Index.HOM][Index.CASE];
-            minorHomCount[Index.CTRL] = genoCount[Index.HOM][Index.CTRL];
-            majorHomCount[Index.CASE] = genoCount[Index.REF][Index.CASE];
-            majorHomCount[Index.CTRL] = genoCount[Index.REF][Index.CTRL];
-        }
     }
 
     public String getGenoStr(byte geno) {
@@ -252,70 +226,31 @@ public class Output implements Cloneable {
     }
 
     private int getVarPresent() {
-        if (GenotypeLevelFilterCommand.isAllNonRef && isMinorRef) {
-            return majorHomCount[Index.CASE]
-                    + genoCount[Index.HET][Index.CASE]
-                    + majorHomCount[Index.CTRL]
-                    + genoCount[Index.HET][Index.CTRL];
-        }
-
-        return minorHomCount[Index.CASE]
+        return genoCount[Index.HOM][Index.CASE]
                 + genoCount[Index.HET][Index.CASE]
-                + minorHomCount[Index.CTRL]
+                + genoCount[Index.HOM][Index.CTRL]
                 + genoCount[Index.HET][Index.CTRL];
     }
 
     private int getCaseCarrier() {
-        if (GenotypeLevelFilterCommand.isAllNonRef && isMinorRef) {
-            return majorHomCount[Index.CASE]
-                    + genoCount[Index.HET][Index.CASE];
-        }
-
-        return minorHomCount[Index.CASE]
+        return genoCount[Index.HOM][Index.CASE]
                 + genoCount[Index.HET][Index.CASE];
     }
 
-    /*
-     * if ref is minor then only het & ref are qualified samples. If ref is
-     * major then only hom & het are qualified samples.
-     */
     public boolean isQualifiedGeno(byte geno) {
-        if (GenotypeLevelFilterCommand.isAllGeno) {
-            return true;
-        }
-
-        if (GenotypeLevelFilterCommand.isAllNonRef) {
-            if (geno == Index.HOM || geno == Index.HET) {
-                return true;
-            }
-        }
-
-        if (isMinorRef) {
-            if (geno == Index.REF || geno == Index.HET) {
-                return true;
-            }
-        } else if (geno == Index.HOM || geno == Index.HET) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean isMinorRef() {
-        return isMinorRef;
+        return geno == Index.HOM || geno == Index.HET;
     }
 
     public void getGenoStatData(StringBuilder sb) {
-        sb.append(isMinorRef).append(",");
-        sb.append(majorHomCount[Index.CASE]).append(",");
+        sb.append(genoCount[Index.HOM][Index.CASE]).append(",");
         sb.append(genoCount[Index.HET][Index.CASE]).append(",");
-        sb.append(minorHomCount[Index.CASE]).append(",");
-        sb.append(FormatManager.getFloat(minorHomFreq[Index.CASE])).append(",");
+        sb.append(genoCount[Index.REF][Index.CASE]).append(",");
+        sb.append(FormatManager.getFloat(homFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getFloat(hetFreq[Index.CASE])).append(",");
-        sb.append(majorHomCount[Index.CTRL]).append(",");
+        sb.append(genoCount[Index.HOM][Index.CTRL]).append(",");
         sb.append(genoCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(minorHomCount[Index.CTRL]).append(",");
-        sb.append(FormatManager.getFloat(minorHomFreq[Index.CTRL])).append(",");
+        sb.append(genoCount[Index.REF][Index.CTRL]).append(",");
+        sb.append(FormatManager.getFloat(homFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getFloat(hetFreq[Index.CTRL])).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
@@ -350,11 +285,9 @@ public class Output implements Cloneable {
         Output output = (Output) super.clone();
 
         output.genoCount = FormatManager.deepCopyArray(genoCount);
-        output.minorHomCount = FormatManager.deepCopyArray(minorHomCount);
-        output.majorHomCount = FormatManager.deepCopyArray(majorHomCount);
+        output.homFreq = FormatManager.deepCopyArray(homFreq);
         output.hetFreq = FormatManager.deepCopyArray(hetFreq);
         output.minorAlleleFreq = FormatManager.deepCopyArray(minorAlleleFreq);
-        output.minorHomFreq = FormatManager.deepCopyArray(minorHomFreq);
         output.hweP = FormatManager.deepCopyArray(hweP);
 
         return output;

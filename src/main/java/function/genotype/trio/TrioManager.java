@@ -322,26 +322,11 @@ public class TrioManager {
             byte cGeno1, short cCov1,
             byte mGeno1, short mCov1,
             byte fGeno1, short fCov1,
-            boolean isMinorRef1,
             byte cGeno2, short cCov2,
             byte mGeno2, short mCov2,
-            byte fGeno2, short fCov2,
-            boolean isMinorRef2) {
+            byte fGeno2, short fCov2) {
         int minCov = GenotypeLevelFilterCommand.minCoverage;
 
-        // to limit confusion, we swap genotypes 0<->2 if isMinorRef
-        // i.e. hom ref<->hom variant
-        // that enables us to ignore the isMinorRef aspect thereafter
-        if (isMinorRef1) {
-            cGeno1 = swapGenotypes(cGeno1);
-            fGeno1 = swapGenotypes(fGeno1);
-            mGeno1 = swapGenotypes(mGeno1);
-        }
-        if (isMinorRef2) {
-            cGeno2 = swapGenotypes(cGeno2);
-            fGeno2 = swapGenotypes(fGeno2);
-            mGeno2 = swapGenotypes(mGeno2);
-        }
         // exclude if the child is homozygous, wild type or variant, for either variant
         if (((cGeno1 == Index.REF || cGeno1 == Index.HOM) && cCov1 >= minCov)
                 || ((cGeno2 == Index.REF || cGeno2 == Index.HOM) && cCov2 >= minCov)) {
@@ -403,25 +388,12 @@ public class TrioManager {
             byte cGeno1, short cCov1,
             byte mGeno1, short mCov1,
             byte fGeno1, short fCov1,
-            boolean isMinorRef1,
             String denovoFlag1,
             byte cGeno2, short cCov2,
             byte mGeno2, short mCov2,
             byte fGeno2, short fCov2,
-            boolean isMinorRef2,
             String denovoFlag2) {
         if (compHetFlag.equals(COMP_HET_FLAG[2])) {
-            if (isMinorRef1) {
-                cGeno1 = swapGenotypes(cGeno1);
-                fGeno1 = swapGenotypes(fGeno1);
-                mGeno1 = swapGenotypes(mGeno1);
-            }
-            if (isMinorRef2) {
-                cGeno2 = swapGenotypes(cGeno2);
-                fGeno2 = swapGenotypes(fGeno2);
-                mGeno2 = swapGenotypes(mGeno2);
-            }
-
             byte denovoConfidence1 = getDenovoConfidence(denovoFlag1);
             byte denovoConfidence2 = getDenovoConfidence(denovoFlag2);
 
