@@ -64,11 +64,9 @@ public class NonCarrier {
                 setMissing();
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(coverage, minCtrlCov)) {
+         if (!GenotypeLevelFilterCommand.isMinCoverageValid(coverage, minCtrlCov)) {
                 setMissing();
             }
-        }
     }
 
     /*
@@ -85,7 +83,8 @@ public class NonCarrier {
      * Inside of pseudoautosomal region which are treated like autosomes.
      */
     protected void checkValidOnXY(Region r) {
-        if (genotype != Data.NA) {
+        if (genotype != Data.NA
+                && !GenotypeLevelFilterCommand.disableCheckOnSexChr) {
             boolean isValid = true;
 
             Sample sample = SampleManager.getMap().get(sampleId);
