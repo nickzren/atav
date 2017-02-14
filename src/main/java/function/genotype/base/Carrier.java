@@ -1,6 +1,6 @@
 package function.genotype.base;
 
-import function.variant.base.Region;
+import function.variant.base.Variant;
 import global.Data;
 import global.Index;
 import java.math.BigDecimal;
@@ -136,7 +136,7 @@ public class Carrier extends NonCarrier {
         return FormatManager.getFloat(MathManager.devide(readsAlt, gatkFilteredCoverage));
     }
 
-    private void applyQualityFilter() {
+    private void applyQualityFilter(boolean isSnv) {
         if (genotype != Data.NA) {
             if (!GenotypeLevelFilterCommand.isVarStatusValid(passFailStatus)
                     || !GenotypeLevelFilterCommand.isGqValid(genotypeQualGQ)
@@ -144,7 +144,7 @@ public class Carrier extends NonCarrier {
                     || !GenotypeLevelFilterCommand.isHapScoreValid(haplotypeScore)
                     || !GenotypeLevelFilterCommand.isMqValid(rmsMapQualMQ)
                     || !GenotypeLevelFilterCommand.isQdValid(qualByDepthQD)
-                    || !GenotypeLevelFilterCommand.isQualValid(qual)
+                    || !GenotypeLevelFilterCommand.isQualValid(qual, isSnv)
                     || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum)
                     || !GenotypeLevelFilterCommand.isMqrsValid(mapQualRankSum)
                     || !GenotypeLevelFilterCommand.isMaxHetBinomialPValid(hetBinomialP)
@@ -175,14 +175,14 @@ public class Carrier extends NonCarrier {
     }
 
     @Override
-    public void applyFilters(Region region) {
+    public void applyFilters(Variant var) {
         // min coverage filter
         applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
                 GenotypeLevelFilterCommand.minCtrlCoverageCall);
 
         // default pseudoautosomal region filter
-        checkValidOnXY(region);
+        checkValidOnXY(var);
 
-        applyQualityFilter();
+        applyQualityFilter(var.isSnv());
     }
 }

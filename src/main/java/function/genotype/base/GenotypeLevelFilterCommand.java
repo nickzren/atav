@@ -40,7 +40,8 @@ public class GenotypeLevelFilterCommand {
     public static double haplotypeScore = Data.NO_FILTER;
     public static double rmsMapQualMQ = Data.NO_FILTER;
     public static double qualByDepthQD = Data.NO_FILTER;
-    public static double qual = Data.NO_FILTER;
+    public static double snvQual = Data.NO_FILTER;
+    public static double indelQual = Data.NO_FILTER;
     public static double readPosRankSum = Data.NO_FILTER;
     public static double mapQualRankSum = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
@@ -150,7 +151,16 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--qual":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    qual = getValidDouble(option);
+                    snvQual = getValidDouble(option);
+                    indelQual = getValidDouble(option);
+                    break;
+                case "--qual-snv":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvQual = getValidDouble(option);
+                    break;
+                case "--qual-indel":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelQual = getValidDouble(option);
                     break;
                 case "--rprs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
@@ -357,7 +367,15 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isQualValid(float value) {
+    public static boolean isQualValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isQualValid(value, snvQual);
+        } else {
+            return isQualValid(value, indelQual);
+        }
+    }
+
+    private static boolean isQualValid(float value, double qual) {
         if (qual == Data.NO_FILTER) {
             return true;
         }

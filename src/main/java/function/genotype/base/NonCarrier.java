@@ -3,6 +3,7 @@ package function.genotype.base;
 import function.genotype.trio.TrioCommand;
 import function.variant.base.Region;
 import function.genotype.trio.TrioManager;
+import function.variant.base.Variant;
 import global.Data;
 import global.Index;
 
@@ -64,9 +65,11 @@ public class NonCarrier {
                 setMissing();
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-         if (!GenotypeLevelFilterCommand.isMinCoverageValid(coverage, minCtrlCov)) {
+        {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(coverage, minCtrlCov)) {
                 setMissing();
             }
+        }
     }
 
     /*
@@ -106,13 +109,13 @@ public class NonCarrier {
         }
     }
 
-    public void applyFilters(Region region) {
+    public void applyFilters(Variant var) {
         // min coverage filter
         applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
                 GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
 
         // default pseudoautosomal region filter
-        checkValidOnXY(region);
+        checkValidOnXY(var);
     }
 
     private void setMissing() {
