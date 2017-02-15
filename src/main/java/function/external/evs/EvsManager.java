@@ -56,9 +56,9 @@ public class EvsManager {
                 + "FilterStatus "
                 + "FROM " + variantTable + " "
                 + "WHERE chr = '" + chr + "' "
-                + "AND position = " + pos + " "
-                + "AND ref_allele = '" + ref + "' "
-                + "AND alt_allele = '" + alt + "'";
+                + "AND pos = " + pos + " "
+                + "AND ref = '" + ref + "' "
+                + "AND alt = '" + alt + "'";
     }
 
     public static String getSql4Cvg(String chr, int pos) {
