@@ -13,8 +13,6 @@ public class CompHetOutput extends CollapsingOutput {
 
     public static String getTitle() {
         return "Family ID,"
-                + "Var Case Freq #1 & #2 (co-occurance),"
-                + "Var Ctrl Freq #1 & #2 (co-occurance),"
                 + initVarTitleStr("1") + ","
                 + initVarTitleStr("2");
     }

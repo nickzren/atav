@@ -1,7 +1,5 @@
 package function.genotype.base;
 
-import function.genotype.trio.TrioCommand;
-import function.genotype.trio.TrioManager;
 import global.Data;
 import global.Index;
 
@@ -67,21 +65,14 @@ public class NonCarrier {
                 setMissing();
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 setMissing();
             }
-        }
     }
 
     private void setMissing() {
-        if (TrioCommand.isListTrio
-                && TrioManager.isParent(sampleId)) {
-            // do nothing
-        } else {
-            gt = Data.BYTE_NA;
-            dpBin = Data.SHORT_NA;
-        }
+        gt = Data.BYTE_NA;
+        dpBin = Data.SHORT_NA;
     }
 
     public boolean isValid() {

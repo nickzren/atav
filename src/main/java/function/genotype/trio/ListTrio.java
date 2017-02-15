@@ -2,12 +2,10 @@ package function.genotype.trio;
 
 import function.genotype.base.CalledVariant;
 import function.genotype.base.AnalysisBase4CalledVar;
-import global.Index;
 import static function.genotype.trio.TrioManager.COMP_HET_FLAG;
 import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
-import utils.FormatManager;
 import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -193,15 +191,11 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
-        float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
-
         StringBuilder sb = new StringBuilder();
         sb.append(output1.child.getFamilyId()).append(",");
         sb.append(output1.motherName).append(",");
         sb.append(output1.fatherName).append(",");
         sb.append(flag).append(",");
-        sb.append(FormatManager.getFloat(coFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getFloat(coFreq[Index.CTRL])).append(",");
 
         sb.append(output1.toString());
         sb.append(output2.toString());

@@ -3,10 +3,8 @@ package function.genotype.collapsing;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
-import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
-import utils.FormatManager;
 import utils.LogManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import utils.MathManager;
 
 /**
  *
@@ -158,8 +155,6 @@ public class CollapsingCompHet extends CollapsingBase {
 
             StringBuilder sb = new StringBuilder();
             sb.append(sample.getFamilyId()).append(",");
-            sb.append("NA,"); // Var Case Freq #1 & #2 (co-occurance)
-            sb.append("NA,"); // Var Ctrl Freq #1 & #2 (co-occurance)
             sb.append(output1.getString(sample));
 
             bwCompHet.write(sb.toString());
@@ -183,9 +178,6 @@ public class CollapsingCompHet extends CollapsingBase {
                 output2.calculateLooFreq(sample);
 
                 if (output2.isMaxLooMafValid()) {
-
-                    float[] coFreq = getCoOccurrenceFreq(output1, output2);
-
                     summary.updateSampleVariantCount4CompHet(sample.getIndex());
 
                     updateSummaryVariantCount(output1, summary);
@@ -193,8 +185,6 @@ public class CollapsingCompHet extends CollapsingBase {
 
                     StringBuilder sb = new StringBuilder();
                     sb.append(sample.getFamilyId()).append(",");
-                    sb.append(FormatManager.getFloat(coFreq[Index.CASE])).append(",");
-                    sb.append(FormatManager.getFloat(coFreq[Index.CTRL])).append(",");
                     sb.append(output1.getString(sample));
                     sb.append(output2.getString(sample));
 
@@ -203,49 +193,6 @@ public class CollapsingCompHet extends CollapsingBase {
                 }
             }
         }
-    }
-
-    /*
-     * The number of people who have BOTH of the variants divided by the total
-     * number of covered people. freq[0] Frequency of Variant #1 & #2
-     * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
-     * (co-occurance) in ctrls
-     */
-    private float[] getCoOccurrenceFreq(CompHetOutput output1, CompHetOutput output2) {
-        float[] freq = new float[2];
-
-        int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
-        int totalCaseCount = 0, totalCtrlCount = 0;
-
-        for (Sample sample : SampleManager.getList()) {
-            boolean isCoQualifiedGeno = isCoQualifiedGeno(output1, output2, sample.getIndex());
-
-            if (sample.isCase()) {
-                totalCaseCount++;
-                if (isCoQualifiedGeno) {
-                    quanlifiedCaseCount++;
-                }
-            } else {
-                totalCtrlCount++;
-                if (isCoQualifiedGeno) {
-                    qualifiedCtrlCount++;
-                }
-            }
-        }
-
-        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
-        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
-
-        return freq;
-    }
-
-    private boolean isCoQualifiedGeno(CompHetOutput output1,
-            CompHetOutput output2, int index) {
-        byte geno1 = output1.getCalledVariant().getGT(index);
-        byte geno2 = output2.getCalledVariant().getGT(index);
-
-        return output1.isQualifiedGeno(geno1)
-                && output2.isQualifiedGeno(geno2);
     }
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {
