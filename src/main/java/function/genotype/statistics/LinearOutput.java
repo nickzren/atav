@@ -37,11 +37,7 @@ public class LinearOutput extends StatisticOutput {
             }
         }
 
-        if (isValid()) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public void doRegression(String model) {

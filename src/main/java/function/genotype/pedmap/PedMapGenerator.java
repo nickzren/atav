@@ -81,13 +81,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
-            Output output = new Output(calledVar);
-            output.countSampleGeno();
-            output.calculate();
-
-            if (output.isValid()) {
-                doOutput(calledVar);
-            }
+            doOutput(calledVar);
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -123,7 +117,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             for (Sample sample : SampleManager.getList()) {
                 String name = sample.getName();
 
-                int pheno = sample.getPheno() + 1;
+                byte pheno = (byte) (sample.getPheno() + 1);
 
                 bwPed.write(sample.getFamilyId() + " "
                         + name + " "

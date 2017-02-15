@@ -61,22 +61,17 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             ParentalOutput output = new ParentalOutput(calledVar);
-            output.countSampleGeno();
-            output.calculate();
 
-            if (output.isValid()) {
+            for (Family family : FamilyManager.getList()) {
 
-                for (Family family : FamilyManager.getList()) {
+                for (Sample child : family.getChildList()) {
 
-                    for (Sample child : family.getChildList()) {
+                    if (output.isChildValid(child)) {
 
-                        if (output.isChildValid(child)) {
+                        for (Sample parent : family.getParentList()) {
 
-                            for (Sample parent : family.getParentList()) {
-
-                                if (output.isParentValid(parent)) {
-                                    doOutput(output.getString());
-                                }
+                            if (output.isParentValid(parent)) {
+                                doOutput(output.getString());
                             }
                         }
                     }
@@ -86,7 +81,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
             ErrorManager.send(e);
         }
     }
-    
+
     private void doOutput(String str) throws IOException {
         bwOutput.write(str);
         bwOutput.newLine();

@@ -58,13 +58,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             initSummaryList(output, summaryList);
 
             if (!summaryList.isEmpty()) {
-                output.countSampleGeno();
-
-                output.calculate();
-
-                if (output.isValid()) {
-                    processOutput4Summary(output, summaryList);
-                }
+                processOutput4Summary(output, summaryList);
             }
         } catch (Exception e) {
             ErrorManager.send(e);

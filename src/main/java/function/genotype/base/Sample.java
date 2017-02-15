@@ -17,20 +17,19 @@ public class Sample {
     private String name; // sample name
     private String paternalId;
     private String maternalId;
-    private int sex;
-    private int pheno; // ctrl 0 , case 1
-    private String phenotype; // case or ctrl
+    private byte sex;
+    private byte pheno; // ctrl 0 , case 1
     private float quantitativeTrait;
     private String type;
     private String captureKit;
-    
+
     // covariate
     private ArrayList<Double> covariateList = new ArrayList<>();
     // sample file order
     private int index;
 
     public Sample(int sampled_id, String family_id, String child_id,
-            String paternal_id, String maternal_id, int _sex, int _pheno,
+            String paternal_id, String maternal_id, byte _sex, byte _pheno,
             String sample_type, String _captureKit) {
         id = sampled_id;
         type = sample_type;
@@ -41,14 +40,7 @@ public class Sample {
         paternalId = paternal_id;
         maternalId = maternal_id;
         sex = _sex;
-        pheno = _pheno - 1;
-
-        if (pheno == 0) {
-            phenotype = "ctrl";
-        } else {
-            phenotype = "case";
-        }
-
+        pheno = (byte) (_pheno - 1);
         quantitativeTrait = Data.FLOAT_NA;
     }
 
@@ -92,16 +84,12 @@ public class Sample {
         return sex;
     }
 
-    public void setPheno(int value) {
+    public void setPheno(byte value) {
         pheno = value;
     }
 
-    public int getPheno() {
+    public byte getPheno() {
         return pheno;
-    }
-    
-    public String getPhenotype() {
-        return phenotype;
     }
 
     public void setQuantitativeTrait(float value) {

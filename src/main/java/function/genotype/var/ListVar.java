@@ -57,13 +57,9 @@ public class ListVar extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             VarOutput output = new VarOutput(calledVar);
-            output.countSampleGeno();
-            output.calculate();
 
-            if (output.isValid()) {
-                bwVariants.write(output.toString());
-                bwVariants.newLine();
-            }
+            bwVariants.write(output.toString());
+            bwVariants.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

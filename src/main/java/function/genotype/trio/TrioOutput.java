@@ -6,7 +6,6 @@ import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
-import function.genotype.base.SampleManager;
 import utils.FormatManager;
 
 /**
@@ -46,34 +45,6 @@ public class TrioOutput extends Output {
         fatherName = trio.getFatherName();
         fGeno = calledVar.getGT(trio.getFatherIndex());
         fDPBin = calledVar.getDPBin(trio.getFatherIndex());
-    }
-
-    public void deleteParentGeno(Trio trio) {
-        deleteSampleGeno(trio.getMotherId());
-
-        deleteSampleGeno(trio.getFatherId());
-    }
-
-    public void deleteSampleGeno(int id) {
-        if (id != Data.INTEGER_NA) {
-            Sample sample = SampleManager.getMap().get(id);
-
-            deleteSampleGeno(calledVar.getGT(sample.getIndex()), sample.getPheno());
-        }
-    }
-
-    public void addParentGeno(Trio trio) {
-        addSampleGeno(trio.getMotherId());
-
-        addSampleGeno(trio.getFatherId());
-    }
-
-    public void addSampleGeno(int id) {
-        if (id != Data.INTEGER_NA) {
-            Sample sample = SampleManager.getMap().get(id);
-
-            addSampleGeno(calledVar.getGT(sample.getIndex()), sample.getPheno());
-        }
     }
 
     public void initDenovoFlag(Sample child) {

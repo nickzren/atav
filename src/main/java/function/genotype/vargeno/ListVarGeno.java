@@ -63,18 +63,14 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             VarGenoOutput output = new VarGenoOutput(calledVar);
-            output.countSampleGeno();
-            output.calculate();
 
-            if (output.isValid()) {
-                for (Sample sample : SampleManager.getList()) {
-                    if (isCaseOnlyValid(sample)) {
-                        byte geno = output.getCalledVariant().getGT(sample.getIndex());
+            for (Sample sample : SampleManager.getList()) {
+                if (isCaseOnly(sample)) {
+                    byte geno = output.getCalledVariant().getGT(sample.getIndex());
 
-                        if (output.isQualifiedGeno(geno)) {
-                            bwGenotypes.write(output.getString(sample));
-                            bwGenotypes.newLine();
-                        }
+                    if (output.isQualifiedGeno(geno)) {
+                        bwGenotypes.write(output.getString(sample));
+                        bwGenotypes.newLine();
                     }
                 }
             }
@@ -83,7 +79,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         }
     }
 
-    private boolean isCaseOnlyValid(Sample sample) {
+    private boolean isCaseOnly(Sample sample) {
         if (VarGenoCommand.isCaseOnly) {
             return sample.isCase();
         } else {

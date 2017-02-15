@@ -200,13 +200,13 @@ public class SampleManager {
                 String paternalId = values[2];
                 String maternalId = values[3];
 
-                int sex = Integer.valueOf(values[4]);
+                byte sex = Byte.valueOf(values[4]);
                 if (sex != 1 && sex != 2) {
                     ErrorManager.print("\nWrong Sex value: " + sex
                             + " (line " + lineNum + " in sample file)");
                 }
 
-                int pheno = Integer.valueOf(values[5]);
+                byte pheno = Byte.valueOf(values[5]);
                 if (pheno != 1 && pheno != 2) {
                     ErrorManager.print("\nWrong Phenotype value: " + pheno
                             + " (line " + lineNum + " in sample file)");
@@ -265,8 +265,8 @@ public class SampleManager {
                 String individualId = rs.getString("sample_name").trim();
                 String paternalId = "0";
                 String maternalId = "0";
-                int sex = 1; // male
-                int pheno = 1; // control
+                byte sex = 1; // male
+                byte pheno = 1; // control
                 String sampleType = rs.getString("sample_type").trim();
                 String captureKit = rs.getString("capture_kit").trim();
 
@@ -722,7 +722,7 @@ public class SampleManager {
 
     private static void resetSamplePheno4Linear() {
         for (Sample sample : sampleList) {
-            sample.setPheno(0);
+            sample.setPheno((byte) 0);
         }
 
         ctrlNum = sampleList.size();

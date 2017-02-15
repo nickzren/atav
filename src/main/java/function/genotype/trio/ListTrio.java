@@ -89,35 +89,24 @@ public class ListTrio extends AnalysisBase4CalledVar {
         try {
             TrioOutput output = new TrioOutput(calledVar);
 
-            output.countSampleGeno();
-
             for (Trio trio : TrioManager.getList()) {
                 output.initTrioFamilyData(trio);
 
-                output.deleteParentGeno(trio);
+                byte geno = output.getCalledVariant().getGT(trio.getChild().getIndex());
 
-                output.calculate();
+                if (output.isQualifiedGeno(geno)) {
+                    output.initDenovoFlag(trio.getChild());
 
-                if (output.isValid()) {
+                    doDenovoOutput(output);
 
-                    byte geno = output.getCalledVariant().getGT(trio.getChild().getIndex());
-
-                    if (output.isQualifiedGeno(geno)) {
-                        output.initDenovoFlag(trio.getChild());
-
-                        doDenovoOutput(output);
-
-                        addVariantToGeneList((TrioOutput) output.clone());
-                    }
+                    addVariantToGeneList((TrioOutput) output.clone());
                 }
-
-                output.addParentGeno(trio);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-    
+
     private void addVariantToGeneList(TrioOutput output) {
         List<TrioOutput> geneOutputList
                 = geneVariantListMap.get(output.getCalledVariant().getGeneName());

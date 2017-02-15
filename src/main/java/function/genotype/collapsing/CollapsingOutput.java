@@ -41,26 +41,25 @@ public class CollapsingOutput extends Output {
     public void calculateLooFreq(Sample sample) {
         if (sample.getId() != Data.INTEGER_NA) {
             byte geno = calledVar.getGT(sample.getIndex());
-            int pheno = sample.getPheno();
 
-            deleteSampleGeno(geno, pheno);
+            calledVar.deleteSampleGeno(geno, sample);
 
             calculateLooMaf();
 
-            addSampleGeno(geno, pheno);
+            calledVar.addSampleGeno(geno, sample);
         }
     }
 
     private void calculateLooMaf() {
-        int alleleCount = 2 * genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HET][Index.CASE]
-                + 2 * genoCount[Index.HOM][Index.CTRL]
-                + genoCount[Index.HET][Index.CTRL];
+        int alleleCount = 2 * calledVar.genoCount[Index.HOM][Index.CASE]
+                + calledVar.genoCount[Index.HET][Index.CASE]
+                + 2 * calledVar.genoCount[Index.HOM][Index.CTRL]
+                + calledVar.genoCount[Index.HET][Index.CTRL];
         int totalCount = alleleCount
-                + genoCount[Index.HET][Index.CASE]
-                + 2 * genoCount[Index.REF][Index.CASE]
-                + genoCount[Index.HET][Index.CTRL]
-                + 2 * genoCount[Index.REF][Index.CTRL];
+                + calledVar.genoCount[Index.HET][Index.CASE]
+                + 2 * calledVar.genoCount[Index.REF][Index.CASE]
+                + calledVar.genoCount[Index.HET][Index.CTRL]
+                + 2 * calledVar.genoCount[Index.REF][Index.CTRL];
 
         double allAF = MathManager.devide(alleleCount, totalCount);
         looMAF = allAF;
