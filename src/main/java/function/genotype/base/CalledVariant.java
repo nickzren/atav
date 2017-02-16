@@ -36,9 +36,8 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     private void init() throws Exception {
-        if (isValid) {
-            initCarrierData();
-
+        if (isValid
+                && initCarrierData()) {
             DPBinBlockManager.initCarrierAndNonCarrierByDPBin(this, carrierMap, noncarrierMap);
 
             initGenoCovArray();
@@ -55,14 +54,13 @@ public class CalledVariant extends AnnotatedVariant {
         }
     }
 
-    private void initCarrierData() {
+    private boolean initCarrierData() {
         if (VariantManager.isUsed()) { // when --variant or --rs-number applied
             // single variant carriers data process
             CarrierBlockManager.initCarrierMap(carrierMap, this);
 
             if (carrierMap.isEmpty()) {
                 isValid = false;
-                return;
             }
         } else {
             // block variants carriers data process
@@ -72,9 +70,10 @@ public class CalledVariant extends AnnotatedVariant {
 
             if (carrierMap == null) {
                 isValid = false;
-                return;
             }
         }
+
+        return isValid;
     }
 
     private boolean checkGenoCountValid() {
