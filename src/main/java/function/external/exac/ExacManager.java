@@ -67,7 +67,7 @@ public class ExacManager {
     }
 
     public static String getSqlByRegion(Region region) {
-        String result = "chr,pos,ref_allele,alt_allele,";
+        String result = "chr,pos,ref,alt,";
 
         for (String str : EXAC_POP) {
             result += str + "_af,"
@@ -99,8 +99,8 @@ public class ExacManager {
                 + "FROM " + variantTable + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
-                + "AND ref_allele = '" + ref + "' "
-                + "AND alt_allele = '" + alt + "'";
+                + "AND ref = '" + ref + "' "
+                + "AND alt = '" + alt + "'";
     }
 
     private static void initGeneDamagingCountsMap() {
