@@ -25,6 +25,8 @@ import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.coverage.comparison.SiteCoverageComparison;
+import function.external.denovo.DenovoDBCommand;
+import function.external.denovo.ListDenovoDB;
 import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
@@ -185,6 +187,8 @@ public class Program {
                 runAnalysis(new List1000Genomes());
             } else if (MgiCommand.isListMgi) {
                 runAnalysis(new ListMgi());
+            } else if (DenovoDBCommand.isListDenovoDB) {
+                runAnalysis(new ListDenovoDB());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }

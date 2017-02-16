@@ -12,7 +12,6 @@ import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
@@ -118,9 +117,9 @@ public class Output implements Cloneable {
                 return "hom ref";
             case Data.BYTE_NA:
                 return Data.STRING_NA;
+            default:
+                return Data.STRING_NA;
         }
-
-        return "";
     }
 
     public boolean isQualifiedGeno(byte geno) {

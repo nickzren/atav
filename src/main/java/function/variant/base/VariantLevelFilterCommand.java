@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacCommand;
@@ -177,6 +178,9 @@ public class VariantLevelFilterCommand {
                 case "--include-mgi":
                     MgiCommand.isIncludeMgi = true;
                     break;
+                case "--include-denovo-db":
+                    DenovoDBCommand.isIncludeDenovoDB = true;
+                    break;
                 case "--include-all-external-data":
                     EvsCommand.isIncludeEvs = true;
                     ExacCommand.isIncludeExac = true;
@@ -188,6 +192,7 @@ public class VariantLevelFilterCommand {
                     SubRvisCommand.isIncludeSubRvis = true;
                     GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isIncludeMgi = true;
+                    DenovoDBCommand.isIncludeDenovoDB = true;
                     break;
                 default:
                     continue;

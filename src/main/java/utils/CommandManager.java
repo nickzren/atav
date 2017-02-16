@@ -4,6 +4,7 @@ import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
+import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.flanking.FlankingCommand;
@@ -305,14 +306,15 @@ public class CommandManager {
                     VarAnnoCommand.isListVarAnno = true;
                     EvsCommand.isIncludeEvs = true;
                     ExacCommand.isIncludeExac = true;
-//                    GerpCommand.isIncludeGerp = true;
-//                    TrapCommand.isIncludeTrap = true;
+                    GerpCommand.isIncludeGerp = true;
+                    TrapCommand.isIncludeTrap = true;
 //                    KaviarCommand.isIncludeKaviar = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     RvisCommand.isIncludeRvis = true;
                     SubRvisCommand.isIncludeSubRvis = true;
 //                    GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isIncludeMgi = true;
+                    DenovoDBCommand.isIncludeDenovoDB = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -386,6 +388,11 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     MgiCommand.isListMgi = true;
                     MgiCommand.isIncludeMgi = true;
+                    break;
+                case "--list-denovo-db":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    DenovoDBCommand.isListDenovoDB = true;
+                    DenovoDBCommand.isIncludeDenovoDB = true;
                     break;
                 case "--test":
                     // Test Functions

@@ -1,5 +1,7 @@
 package function.annotation.base;
 
+import function.external.denovo.DenovoDB;
+import function.external.denovo.DenovoDBCommand;
 import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
@@ -36,28 +38,29 @@ import utils.MathManager;
 public class AnnotatedVariant extends Variant {
 
     // AnnoDB annotations / most damaging effect annotations
-    int stableId;
-    String effect = "";
-    String HGVS_c = "";
-    String HGVS_p = "";
-    float polyphenHumdiv;
-    float polyphenHumvar;
-    String geneName = "";
+    private int stableId;
+    private String effect = "";
+    private String HGVS_c = "";
+    private String HGVS_p = "";
+    private float polyphenHumdiv;
+    private float polyphenHumvar;
+    private String geneName = "";
 
-    HashSet<String> geneSet = new HashSet<>();
-    StringBuilder allGeneTranscriptSB = new StringBuilder();
+    private HashSet<String> geneSet = new HashSet<>();
+    private StringBuilder allGeneTranscriptSB = new StringBuilder();
 
     // external db annotations
-    Exac exac;
-    Kaviar kaviar;
-    Evs evs;
-    float gerpScore;
-    float trapScore;
-    KnownVarOutput knownVarOutput;
+    private Exac exac;
+    private Kaviar kaviar;
+    private Evs evs;
+    private float gerpScore;
+    private float trapScore;
+    private KnownVarOutput knownVarOutput;
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
-    Genomes genomes;
+    private Genomes genomes;
     private String mgiStr;
+    private DenovoDB denovoDB;
 
     public boolean isValid = true;
 
@@ -153,13 +156,17 @@ public class AnnotatedVariant extends Variant {
         if (MgiCommand.isIncludeMgi) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
+
+        if (DenovoDBCommand.isIncludeDenovoDB) {
+            denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
+        }
     }
 
     public boolean isValid() {
         return isValid
                 & PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
-                & PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar);
-//                & isTrapValid();
+                & PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar)
+                & isTrapValid();
     }
 
     private boolean isTrapValid() {
@@ -264,6 +271,7 @@ public class AnnotatedVariant extends Variant {
         sb.append(getGerpScore());
         sb.append(getTrapScore());
         sb.append(getMgi());
+        sb.append(getDenovoDB());
     }
 
     public String getExacStr() {
@@ -341,6 +349,14 @@ public class AnnotatedVariant extends Variant {
     public String getMgi() {
         if (MgiCommand.isIncludeMgi) {
             return mgiStr;
+        } else {
+            return "";
+        }
+    }
+
+    public String getDenovoDB() {
+        if (DenovoDBCommand.isIncludeDenovoDB) {
+            return denovoDB.getOutput();
         } else {
             return "";
         }
