@@ -87,11 +87,13 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-         if (isCommandFileIncluded(options)) {
+        {
+            if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
+        }
 
         cleanUpOddSymbol();
 
@@ -292,6 +294,7 @@ public class CommandManager {
                     break;
                 case "--list-trio":
                     TrioCommand.isListTrio = true;
+                    GenotypeLevelFilterCommand.minCaseCarrier = 1;
                     break;
                 case "--list-parental-mosaic":
                     ParentalCommand.isParentalMosaic = true;
