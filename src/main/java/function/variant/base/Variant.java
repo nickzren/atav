@@ -26,7 +26,7 @@ public class Variant extends Region {
         refAllele = rset.getString("REF");
         rsNumber = FormatManager.getInt(rset, "rs_number");
 
-        isIndel = rset.getInt("indel") == 1;
+        isIndel = rset.getInt("indel_length") > 0;
 
         initRegion(chr, pos, pos);
 

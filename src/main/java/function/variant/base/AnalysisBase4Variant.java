@@ -29,7 +29,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
 
     protected static ResultSet getAnnotationList(Region region) throws SQLException {
         String sql = "SELECT variant_id, POS, REF, ALT, rs_number, transcript_stable_id, "
-                + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene, indel "
+                + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene, indel_length "
                 + "FROM variant_chr" + region.getChrStr() + " ";
 
         // region filter
@@ -38,7 +38,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         }
 
         if (region.getEndPosition() != Data.INTEGER_NA) {
-            sql = addFilter2SQL(sql, "POS <= " + region.getEndPosition() + " ");
+            sql = addFilter2SQL(sql, " POS <= " + region.getEndPosition() + " ");
         }
 
         // effect filter
