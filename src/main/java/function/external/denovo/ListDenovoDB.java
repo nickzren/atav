@@ -69,8 +69,8 @@ public class ListDenovoDB extends AnalysisBase {
                 DenovoDBOutput output = new DenovoDBOutput(rset);
 
                 if (VariantManager.isVariantIdIncluded(output.denovoDB.toString())) {
-                    bwDenovoDB.write(output.denovoDB.toString() + ",");
-                    bwDenovoDB.write(output.denovoDB.getOutput());
+                    bwDenovoDB.write(output.denovoDB.getVariantId() + ",");
+                    bwDenovoDB.write(output.denovoDB.toString());
                     bwDenovoDB.newLine();
                 }
 

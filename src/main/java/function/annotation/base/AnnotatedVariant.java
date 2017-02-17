@@ -356,7 +356,7 @@ public class AnnotatedVariant extends Variant {
 
     public String getDenovoDB() {
         if (DenovoDBCommand.isIncludeDenovoDB) {
-            return denovoDB.getOutput();
+            return denovoDB.toString();
         } else {
             return "";
         }

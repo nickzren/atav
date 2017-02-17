@@ -1,6 +1,5 @@
 package function.external.denovo;
 
-import global.Data;
 import java.sql.ResultSet;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -57,25 +56,17 @@ public class DenovoDB {
         }
     }
 
-    private int getInteger(String value) {
-        if (value == null) {
-            return Data.INTEGER_NA;
-        }
-
-        return Integer.valueOf(value);
+    public String getVariantId() {
+        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
-    public String getOutput() {
+    @Override
+    public String toString() {
         StringBuilder sb = new StringBuilder();
 
         sb.append(FormatManager.getString(phenotyp)).append(",");
         sb.append(FormatManager.getString(pubmedID)).append(",");
 
         return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-        return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 }
