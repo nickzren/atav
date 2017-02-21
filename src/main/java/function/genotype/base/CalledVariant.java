@@ -143,7 +143,7 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     public void deleteSampleGeno(byte geno, Sample sample) {
-        if (geno != Data.INTEGER_NA) {
+        if (geno != Data.BYTE_NA) {
             genoCount[geno][sample.getPheno()]--;
         }
     }
