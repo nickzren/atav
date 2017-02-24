@@ -16,7 +16,7 @@ public class PedMapCommand {
     public static boolean isEigenstrat = false;
     public static boolean isKinship = false;
     public static String pedMapPath = "";
-    public static String sampleSummaryPath = "";
+    public static String sampleCoverageSummaryPath = "";
     public static int seed = 42;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
@@ -34,8 +34,8 @@ public class PedMapCommand {
                 case "--kinship":
                     isKinship = true;
                     break;
-                case "--sample-summary":
-                    sampleSummaryPath = getValidPath(option);
+                case "--sample-coverage-summary":
+                    sampleCoverageSummaryPath = getValidPath(option);
                     break;
                 case "--seed":
                     seed = getValidInteger(option);

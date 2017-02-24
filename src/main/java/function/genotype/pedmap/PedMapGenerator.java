@@ -242,8 +242,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 + " --output " + CommonCommand.outputPath + "kinship_pruned_sample.txt"
                 + " --verbose";
 
-        if (!PedMapCommand.sampleSummaryPath.isEmpty()) {
-            cmd += " " + PedMapCommand.sampleSummaryPath;
+        if (!PedMapCommand.sampleCoverageSummaryPath.isEmpty()) {
+            cmd += " --sample-coverage-summary " + PedMapCommand.sampleCoverageSummaryPath;
         }
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
