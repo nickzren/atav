@@ -43,7 +43,7 @@ def run_smartpca(parfile,logfile):
     logfile -> string ; path to the log file to store smartpca stdout
     """
 
-    smartpca_loc = "/nfs/seqscratch11/rp2801/eigenstrat_stuff/EIG-6.1.4/bin/smartpca"
+    smartpca_loc = "/nfs/goldstein/software/EIG-6.1.4/bin/smartpca"
     logfile = add_outputprefix(args.outputdir,logfile)
     cmd = "{0} -p {1} > {2}".format(smartpca_loc,parfile,logfile)
     proc = subprocess.Popen(cmd,shell=True)
