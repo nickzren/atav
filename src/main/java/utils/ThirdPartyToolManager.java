@@ -28,6 +28,8 @@ public class ThirdPartyToolManager {
     private static final String TRIO_COMP_HET_TIER = "/nfs/goldstein/software/atav_home/lib/r0.4_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = "/nfs/goldstein/software/atav_home/lib/non_trio_tier.R";
     public static final String PYTHON = "/nfs/goldstein/software/python2.7.7/bin/python";
+    public static final String PLINK = "/nfs/goldstein/software/PLINK_1.90/3.38/plink";
+    public static final String KING = "/nfs/goldstein/software/king_relatedness/king";
 
     public static int systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start");

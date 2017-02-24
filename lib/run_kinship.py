@@ -41,6 +41,7 @@ from random import seed as set_seed
 from UndirectedSampleGraph import UndirectedSampleGraph
 from CustomFormatter import CustomFormatter
 
+
 def get_samples_with_min_coverage(coverage_by_sample, sample_list):
     """return a subset of the samples with the min coverage
     """
@@ -51,6 +52,7 @@ def get_samples_with_min_coverage(coverage_by_sample, sample_list):
             min_coverage = coverage_by_sample[sample]
             samples_min_coverage[min_coverage].append(sample)
     return samples_min_coverage[min_coverage]
+
 
 def process_ped_file(ped_fh, log_fh, verbose=False):
     """get the affectation status for all samples and return as a dict
@@ -76,6 +78,7 @@ def process_ped_file(ped_fh, log_fh, verbose=False):
                 phenotype, counter[phenotype]))
     return phenotypes, ped_lines
 
+
 def process_coverage_summary_file(coverage_summary_fh, log_fh, verbose=False):
     """get the number of bases covered for all samples and return as a dict
     """
@@ -94,8 +97,9 @@ def process_coverage_summary_file(coverage_summary_fh, log_fh, verbose=False):
                      format(len(coverage_by_sample)))
     return coverage_by_sample
 
+
 def process_kinship_file(
-    kinship_fh, relatedness_threshold, phenotypes, log_fh, verbose=False):
+        kinship_fh, relatedness_threshold, phenotypes, log_fh, verbose=False):
     """process all entries in the kinship file into one of the six defined
     categories and return as a list of graphs
     """
@@ -143,7 +147,8 @@ def process_kinship_file(
                 mixed_affecteds_related_graph.add_edge(sample_two, sample_one)
             else:
                 graph = mixed_unrelated_graph
-                mixed_affecteds_unrelated_graph.add_edge(sample_two, sample_one)
+                mixed_affecteds_unrelated_graph.add_edge(
+                    sample_two, sample_one)
         graph.add_edge(sample_one, sample_two)
     kinship_fh.close()
     log_fh.write(
@@ -161,6 +166,7 @@ def process_kinship_file(
             mixed_related_graph, mixed_unrelated_graph,
             mixed_affecteds_related_graph, mixed_affecteds_unrelated_graph,
             unaffecteds_related_graph, unaffecteds_unrelated_graph)
+
 
 def remove_samples(graph, tie_break_graphs, log_fh,
                    coverage_by_sample=None, verbose=False):
@@ -222,9 +228,10 @@ def remove_samples(graph, tie_break_graphs, log_fh,
 
     return samples_to_remove
 
+
 def find_samples_to_remove(
-    ped_fh, kinship_fh, relatedness_threshold, output_fh,
-    coverage_summary_fh=None, seed=None, verbose=False):
+        ped_fh, kinship_fh, relatedness_threshold, output_fh,
+        coverage_summary_fh=None, seed=None, verbose=False):
     if output_fh is sys.stdout:
         log_fh = sys.stderr
     else:
@@ -235,7 +242,7 @@ def find_samples_to_remove(
         phenotypes, ped_lines = process_ped_file(ped_fh, log_fh, verbose)
         global all_graphs
         all_graphs = process_kinship_file(
-             kinship_fh, relatedness_threshold, phenotypes, log_fh, verbose)
+            kinship_fh, relatedness_threshold, phenotypes, log_fh, verbose)
         (affecteds_related_graph, affecteds_unrelated_graph, mixed_related_graph,
          mixed_unrelated_graph, mixed_affecteds_related_graph,
          mixed_affecteds_unrelated_graph, unaffecteds_related_graph,
@@ -288,7 +295,7 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--relatedness_threshold", default=0.0884,
                         type=float, help="consider kinship coefficients "
                         "above this value to be related")
-    parser.add_argument("--coverage_summary", type=argparse.FileType("r"),
+    parser.add_argument("--sample-coverage-summary", type=argparse.FileType("r"),
                         help="break ties by removing the sample with the "
                         "lowest coverage as indicated in this file")
     parser.add_argument("--seed", type=int, help="set a random seed to "
