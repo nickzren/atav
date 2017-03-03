@@ -237,7 +237,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 + " --verbose";
 
         if (!PedMapCommand.sampleCoverageSummaryPath.isEmpty()) {
-            cmd += " --sample-coverage-summary " + PedMapCommand.sampleCoverageSummaryPath;
+            cmd += " --sample_coverage_summary " + PedMapCommand.sampleCoverageSummaryPath;
         }
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
