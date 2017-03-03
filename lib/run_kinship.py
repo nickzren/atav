@@ -295,7 +295,7 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--relatedness_threshold", default=0.0884,
                         type=float, help="consider kinship coefficients "
                         "above this value to be related")
-    parser.add_argument("--sample-coverage-summary", type=argparse.FileType("r"),
+    parser.add_argument("--sample_coverage_summary", type=argparse.FileType("r"),
                         help="break ties by removing the sample with the "
                         "lowest coverage as indicated in this file")
     parser.add_argument("--seed", type=int, help="set a random seed to "
@@ -307,4 +307,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     find_samples_to_remove(
         args.PED_FILE, args.KINSHIP_FILE, args.relatedness_threshold,
-        args.output, args.coverage_summary, args.seed, args.verbose)
+        args.output, args.sample_coverage_summary, args.seed, args.verbose)
