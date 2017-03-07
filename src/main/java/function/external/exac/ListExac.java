@@ -69,7 +69,7 @@ public class ListExac extends AnalysisBase {
 
                     Region region = RegionManager.getRegion(r, varType);
 
-                    String sqlCode = ExacManager.getSql4Maf(isIndel, region);
+                    String sqlCode = ExacManager.getSql4Maf(region);
 
                     ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 

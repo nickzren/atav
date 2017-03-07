@@ -323,7 +323,7 @@ public class AnnotatedVariant extends Variant {
 
     public String getExacStr() {
         if (ExacCommand.isIncludeExac) {
-            return exac.toString() + ExacManager.getGeneDamagingCountsLine(geneName);
+            return exac.toString();
         } else {
             return "";
         }
