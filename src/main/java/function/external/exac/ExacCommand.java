@@ -10,12 +10,9 @@ public class ExacCommand {
 
     public static boolean isListExac = false;
     public static boolean isIncludeExac = false;
-    public static boolean isListExacCount = false;
 
     public static String exacPop = "global";
     public static float exacMaf = Data.NO_FILTER;
-    public static float exacVqslodSnv = Data.NO_FILTER;
-    public static float exacVqslodIndel = Data.NO_FILTER;
     public static float exacMeanCoverage = Data.NO_FILTER;
 
     public static boolean isExacMafValid(float value) {
@@ -24,32 +21,6 @@ public class ExacCommand {
         }
 
         return value <= exacMaf
-                || value == Data.FLOAT_NA;
-    }
-
-    public static boolean isExacVqslodValid(float value, boolean isSnv) {
-        if (isSnv) {
-            return isExacVqslodSnvValid(value);
-        } else {
-            return isExacVqslodIndelValid(value);
-        }
-    }
-
-    private static boolean isExacVqslodSnvValid(float value) {
-        if (exacVqslodSnv == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value >= exacVqslodSnv
-                || value == Data.FLOAT_NA;
-    }
-
-    private static boolean isExacVqslodIndelValid(float value) {
-        if (exacVqslodIndel == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value >= exacVqslodIndel
                 || value == Data.FLOAT_NA;
     }
 

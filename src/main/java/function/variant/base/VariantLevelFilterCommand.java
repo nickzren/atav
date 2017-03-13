@@ -99,16 +99,6 @@ public class VariantLevelFilterCommand {
                     ExacCommand.exacMaf = getValidFloat(option);
                     ExacCommand.isIncludeExac = true;
                     break;
-                case "--min-exac-vqslod-snv":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    ExacCommand.exacVqslodSnv = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
-                    break;
-                case "--min-exac-vqslod-indel":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    ExacCommand.exacVqslodIndel = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
-                    break;
                 case "--min-exac-mean-coverage":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     ExacCommand.exacMeanCoverage = getValidFloat(option);

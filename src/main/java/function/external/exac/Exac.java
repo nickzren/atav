@@ -17,21 +17,21 @@ public class Exac {
     private int pos;
     private String ref;
     private String alt;
-    private boolean isSnv;
 
     private float meanCoverage;
     private int sampleCovered10x;
     private float[] maf;
     private String[] gts;
-    private float vqslod;
+    private String filter;
+    private float abMedian;
+    private int gqMedian;
+    private float asRF;
 
     public Exac(String chr, int pos, String ref, String alt) {
         this.chr = chr;
         this.pos = pos;
         this.ref = ref;
         this.alt = alt;
-
-        initType();
 
         initCoverage();
 
@@ -46,23 +46,11 @@ public class Exac {
             alt = rs.getString("alt_allele");
             maf = new float[ExacManager.EXAC_POP.length];
             gts = new String[ExacManager.EXAC_POP.length];
-            
-            initType();
+            setMaf(rs);
 
             initCoverage();
-            
-            setMaf(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    private void initType() {
-        isSnv = true;
-
-        if (ref.length() > 1
-                || alt.length() > 1) {
-            isSnv = false;
         }
     }
 
@@ -117,7 +105,10 @@ public class Exac {
             gts[i] = rs.getString(ExacManager.EXAC_POP[i] + "_gts");
         }
 
-        vqslod = rs.getFloat("vqslod");
+        filter = rs.getString("filter");
+        abMedian = rs.getFloat("AB_MEDIAN");
+        gqMedian = rs.getInt("GQ_MEDIAN");
+        asRF = rs.getFloat("AS_RF");
     }
 
     private void resetMaf(float value) {
@@ -126,7 +117,10 @@ public class Exac {
             gts[i] = Data.STRING_NA;
         }
 
-        vqslod = Data.FLOAT_NA;
+        filter = Data.STRING_NA;
+        abMedian = Data.FLOAT_NA;
+        gqMedian = Data.INTEGER_NA;
+        asRF = Data.FLOAT_NA;
     }
 
     private float getMaxMaf() {
@@ -144,7 +138,6 @@ public class Exac {
 
     public boolean isValid() {
         return ExacCommand.isExacMafValid(getMaxMaf())
-                && ExacCommand.isExacVqslodValid(vqslod, isSnv)
                 && ExacCommand.isExacMeanCoverageValid(meanCoverage);
     }
 
@@ -166,7 +159,10 @@ public class Exac {
             }
         }
 
-        sb.append(FormatManager.getFloat(vqslod)).append(",");
+        sb.append(filter).append(",");
+        sb.append(FormatManager.getFloat(abMedian)).append(",");
+        sb.append(FormatManager.getInteger(gqMedian)).append(",");
+        sb.append(FormatManager.getFloat(asRF)).append(",");
         sb.append(FormatManager.getFloat(meanCoverage)).append(",");
         sb.append(FormatManager.getInteger(sampleCovered10x)).append(",");
 

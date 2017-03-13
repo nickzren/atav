@@ -33,7 +33,6 @@ import function.external.evs.ListEvs;
 import function.external.exac.ExacCommand;
 import function.external.exac.ExacManager;
 import function.external.exac.ListExac;
-import function.external.exac.ListExacCount;
 import function.external.flanking.FlankingCommand;
 import function.external.flanking.ListFlankingSeq;
 import function.external.genomes.GenomesCommand;
@@ -167,8 +166,6 @@ public class Program {
                 runAnalysis(new ListEvs());
             } else if (ExacCommand.isListExac) {
                 runAnalysis(new ListExac());
-            } else if (ExacCommand.isListExacCount) {
-                runAnalysis(new ListExacCount());
             } else if (KnownVarCommand.isListKnownVar) {
                 runAnalysis(new ListKnownVar());
             } else if (FlankingCommand.isListFlankingSeq) {
