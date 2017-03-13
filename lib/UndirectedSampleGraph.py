@@ -23,6 +23,7 @@ class UndirectedSampleGraph(object):
     def add_edge(self, sample_one, sample_two):
         """add an edge between two samples
         """
+        assert sample_one != sample_two
         if sample_two not in self.connections[sample_one]:
             self.connections[sample_one].add(sample_two)
             self.num_connections[sample_one] += 1
