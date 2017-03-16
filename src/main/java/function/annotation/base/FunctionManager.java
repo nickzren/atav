@@ -18,7 +18,7 @@ public class FunctionManager {
 
     public static final String[] SNV_EFFECT_FULL_LIST = {"NON_SYNONYMOUS_CODING",
         "NON_SYNONYMOUS_START", "SPLICE_SITE_ACCEPTOR", "SPLICE_SITE_DONOR",
-        "START_GAINED", "START_LOST", "STOP_GAINED", "STOP_LOST",
+        "START_GAINED", "START_LOST", "STOP_GAINED", "STOP_LOST", "RARE_AMINO_ACID",
         "SYNONYMOUS_CODING", "SYNONYMOUS_START", "SYNONYMOUS_STOP"};
     public static final String[] HIT_TYPE_FULL_LIST = {"DOWNSTREAM", "EXON",
         "INTRAGENIC", "INTRON", "INTRON_EXON_BOUNDARY", "UPSTREAM",
@@ -28,7 +28,7 @@ public class FunctionManager {
         "EXON_DELETED", "FRAME_SHIFT", "SPLICE_SITE_ACCEPTOR", "SPLICE_SITE_DONOR", "START_LOST",
         "STOP_GAINED", "STOP_LOST", "UTR_3_DELETED", "UTR_5_DELETED"};
     public static final String[] RANDKING_FUNCTION__LIST = {
-        "STOP_GAINED", "FRAME_SHIFT", "STOP_LOST", "START_LOST",
+        "STOP_GAINED", "FRAME_SHIFT", "STOP_LOST", "RARE_AMINO_ACID", "START_LOST",
         "NON_SYNONYMOUS_CODING", "START_GAINED", "NON_SYNONYMOUS_START",
         "EXON_DELETED", "CODON_CHANGE_PLUS_CODON_DELETION", "CODON_CHANGE_PLUS_CODON_INSERTION",
         "CODON_DELETION", "CODON_INSERTION", "SPLICE_SITE_ACCEPTOR",
@@ -47,10 +47,10 @@ public class FunctionManager {
 
     public static void init() {
         initDefaultFunctionList();
-        
+
         initUserFunctionList();
     }
-    
+
     private static void initDefaultFunctionList() {
         for (int i = 0; i < RANDKING_FUNCTION__LIST.length; i++) {
             rankingFunctionMap.put(RANDKING_FUNCTION__LIST[i], i);
