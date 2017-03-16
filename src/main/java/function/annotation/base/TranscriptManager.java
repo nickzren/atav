@@ -15,8 +15,8 @@ import utils.ErrorManager;
  */
 public class TranscriptManager {
 
-    private static final String CCDS_TRANSCRIPT_PATH = "data/transcript/ccds_ensemble_v74.txt";
-    private static final String CANONICAL_TRANSCRIPT_PATH = "data/transcript/canonical_ensemble_v74.txt";
+    private static final String CCDS_TRANSCRIPT_PATH = "data/transcript/ccds_transcripts_ens87.txt";
+    private static final String CANONICAL_TRANSCRIPT_PATH = "data/transcript/canonical_transcripts_ens87.txt";
 
     private static HashMap<String, HashSet<Integer>> transcriptMap = new HashMap<>();
     private static HashMap<String, HashSet<Integer>> ccdsTranscriptMap = new HashMap<>();
