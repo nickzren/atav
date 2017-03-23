@@ -104,6 +104,16 @@ public class VariantLevelFilterCommand {
                     ExacCommand.exacMeanCoverage = getValidFloat(option);
                     ExacCommand.isIncludeExac = true;
                     break;
+                case "--min-exac-as-rf-snv":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    ExacCommand.exacAsRfSnv = getValidFloat(option);
+                    ExacCommand.isIncludeExac = true;
+                    break;
+                case "--min-exac-as-rf-indel":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    ExacCommand.exacAsRfIndel = getValidFloat(option);
+                    ExacCommand.isIncludeExac = true;
+                    break;
                 case "--known-var-only":
                     KnownVarCommand.isKnownVarOnly = true;
                     KnownVarCommand.isIncludeKnownVar = true;

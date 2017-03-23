@@ -6,7 +6,6 @@ import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
 import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
 import function.external.genomes.Genomes;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
