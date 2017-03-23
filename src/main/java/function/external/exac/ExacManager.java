@@ -55,7 +55,7 @@ public class ExacManager {
     }
 
     public static String getSqlByRegion(Region region) {
-        String result = "chr,pos,ref,alt,";
+        String result = "chr,pos,ref_allele,alt_allele,";
 
         for (String str : EXAC_POP) {
             result += str + "_af,"

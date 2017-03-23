@@ -17,6 +17,7 @@ public class Exac {
     private int pos;
     private String ref;
     private String alt;
+    private boolean isSnv;
 
     private float meanCoverage;
     private int sampleCovered10x;
@@ -25,13 +26,19 @@ public class Exac {
     private String filter;
     private float abMedian;
     private int gqMedian;
-    private float asRF;
+    private float asRf;
 
     public Exac(String chr, int pos, String ref, String alt) {
         this.chr = chr;
         this.pos = pos;
         this.ref = ref;
         this.alt = alt;
+
+        isSnv = true;
+
+        if (ref.length() != alt.length()) {
+            isSnv = false;
+        }
 
         initCoverage();
 
@@ -44,11 +51,19 @@ public class Exac {
             pos = rs.getInt("pos");
             ref = rs.getString("ref_allele");
             alt = rs.getString("alt_allele");
+
+            isSnv = true;
+
+            if (ref.length() != alt.length()) {
+                isSnv = false;
+            }
+
             maf = new float[ExacManager.EXAC_POP.length];
             gts = new String[ExacManager.EXAC_POP.length];
-            setMaf(rs);
 
             initCoverage();
+
+            setMaf(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -108,7 +123,7 @@ public class Exac {
         filter = rs.getString("filter");
         abMedian = rs.getFloat("AB_MEDIAN");
         gqMedian = rs.getInt("GQ_MEDIAN");
-        asRF = rs.getFloat("AS_RF");
+        asRf = rs.getFloat("AS_RF");
     }
 
     private void resetMaf(float value) {
@@ -120,7 +135,7 @@ public class Exac {
         filter = Data.STRING_NA;
         abMedian = Data.FLOAT_NA;
         gqMedian = Data.INTEGER_NA;
-        asRF = Data.FLOAT_NA;
+        asRf = Data.FLOAT_NA;
     }
 
     private float getMaxMaf() {
@@ -138,7 +153,8 @@ public class Exac {
 
     public boolean isValid() {
         return ExacCommand.isExacMafValid(getMaxMaf())
-                && ExacCommand.isExacMeanCoverageValid(meanCoverage);
+                && ExacCommand.isExacMeanCoverageValid(meanCoverage)
+                && ExacCommand.isExacAsRfValid(asRf, isSnv);
     }
 
     public String getVariantId() {
@@ -162,7 +178,7 @@ public class Exac {
         sb.append(filter).append(",");
         sb.append(FormatManager.getFloat(abMedian)).append(",");
         sb.append(FormatManager.getInteger(gqMedian)).append(",");
-        sb.append(FormatManager.getFloat(asRF)).append(",");
+        sb.append(FormatManager.getFloat(asRf)).append(",");
         sb.append(FormatManager.getFloat(meanCoverage)).append(",");
         sb.append(FormatManager.getInteger(sampleCovered10x)).append(",");
 
