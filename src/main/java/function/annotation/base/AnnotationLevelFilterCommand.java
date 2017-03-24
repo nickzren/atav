@@ -28,7 +28,6 @@ public class AnnotationLevelFilterCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
-                case "--function":
                 case "--effect":
                     effectInput = option.getValue();
                     break;

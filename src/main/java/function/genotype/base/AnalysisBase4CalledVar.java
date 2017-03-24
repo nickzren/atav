@@ -27,10 +27,10 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
             region = RegionManager.getRegion(r);
 
             rset = getAnnotationList(region);
-            
-            while (rset.next()) {                
+
+            while (rset.next()) {
                 annotation.init(rset, region.getChrStr());
-                
+
                 if (annotation.isValid()) {
 
                     nextVariantId = rset.getInt("variant_id");
@@ -41,15 +41,15 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
                         calledVar = new CalledVariant(region.getChrStr(), nextVariantId, rset);
                     } // end of new one
-                    
+
                     calledVar.update(annotation);
                 }
             }
-            
+
             processVariant(); // only for the last qualified variant
 
             rset.close();
-            
+
             doOutput(); // only comphet function support it
         }
     }
@@ -58,10 +58,10 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
         if (calledVar != null
                 && calledVar.isValid()) {
             calledVar.initExternalData();
-            
-            processVariant(calledVar);
 
-            countVariant();
+            processVariant(calledVar);
         }
+
+        countVariant();
     }
 }

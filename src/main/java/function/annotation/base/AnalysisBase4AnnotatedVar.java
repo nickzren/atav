@@ -55,8 +55,8 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
             annotatedVar.initExternalData();
 
             processVariant(annotatedVar);
-
-            countVariant();
         }
+
+        countVariant();
     }
 }
