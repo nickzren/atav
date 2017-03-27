@@ -1,6 +1,7 @@
 package function.external.rvis;
 
 import function.external.base.DataManager;
+import global.Data;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -18,7 +19,7 @@ public class RvisManager {
     private static final String RVIS_PATH = "data/rvis/gene_score_120316.csv";
 
     private static String title;
-    private static final HashMap<String, String> rvisMap = new HashMap<String, String>();
+    private static final HashMap<String, String> rvisMap = new HashMap<>();
     private static String NA = "";
 
     public static String getTitle() {
@@ -36,7 +37,7 @@ public class RvisManager {
             return "";
         }
     }
-    
+
     public static void init() {
         if (RvisCommand.isIncludeRvis) {
             initRvisMap();
@@ -45,7 +46,7 @@ public class RvisManager {
 
     private static void initRvisMap() {
         try {
-            File f = new File(RVIS_PATH);
+            File f = new File(Data.ATAV_HOME + RVIS_PATH);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));

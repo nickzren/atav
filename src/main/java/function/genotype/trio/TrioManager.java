@@ -16,7 +16,6 @@ import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
 import global.Index;
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -197,12 +196,8 @@ public class TrioManager {
     }
 
     private static void initDenovoRules() {
-        String trioRulesPath = DENOVO_RULES_PATH;
-
-        if (CommonCommand.isDebug) {
-            trioRulesPath = Data.RECOURCE_PATH + trioRulesPath;
-        }
-
+        String trioRulesPath = Data.ATAV_HOME + DENOVO_RULES_PATH;
+        
         File RuleFile = new File(trioRulesPath);
         if (!RuleFile.exists()) {
             ErrorManager.print("The trio rule file (" + trioRulesPath + ") doesn't exist.");

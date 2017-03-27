@@ -1,6 +1,7 @@
 package function.external.subrvis;
 
 import function.external.base.DataManager;
+import global.Data;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -35,7 +36,7 @@ public class SubRvisManager {
             return "";
         }
     }
-    
+
     public static String getVersion() {
         if (SubRvisCommand.isIncludeSubRvis) {
             return "Sub RVIS: " + DataManager.getVersion(SUBRVIS_EXON_PATH) + "\n";
@@ -46,9 +47,9 @@ public class SubRvisManager {
 
     public static void init() {
         if (SubRvisCommand.isIncludeSubRvis) {
-            initGeneMap(geneDomainMap, SUBRVIS_DOMAIN_PATH);
+            initGeneMap(geneDomainMap, Data.ATAV_HOME + SUBRVIS_DOMAIN_PATH);
 
-            initGeneMap(geneExonMap, SUBRVIS_EXON_PATH);
+            initGeneMap(geneExonMap, Data.ATAV_HOME + SUBRVIS_EXON_PATH);
         }
     }
 
@@ -74,7 +75,7 @@ public class SubRvisManager {
                 ArrayList<Region> regionList = getRegionList(regionStr[1]);
                 float score = FormatManager.getFloat(tmp[3]);
                 float oEratio = FormatManager.getFloat(tmp[4]);
-                
+
                 SubRvisGene subRvisGene = new SubRvisGene(id, chr, regionList, score, oEratio);
 
                 if (geneMap.containsKey(geneName)) {

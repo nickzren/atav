@@ -14,13 +14,10 @@ public class Data {
     // system config file path
     public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.system.config.properties";
     public static final String SYSTEM_CONFIG_FOR_DEBUG = "/nfs/goldstein/software/config/atav.debug.system.config.properties";
-    
-    // recource path for server-side debug
-    public static final String RECOURCE_PATH = "";
-    
-    // recource path for client-side debug
-    // public static final String RECOURCE_PATH = new File(".").getAbsolutePath() + "/src/main/resources/";
-    
+
+    // atav home path
+    public static final String ATAV_HOME = "/nfs/goldstein/software/atav_home/";
+
     public static final int NO_FILTER = Integer.MAX_VALUE;
     public static final int NA = Integer.MIN_VALUE;
 }

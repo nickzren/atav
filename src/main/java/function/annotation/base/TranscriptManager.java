@@ -1,7 +1,6 @@
 package function.annotation.base;
 
 import global.Data;
-import utils.CommonCommand;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -74,19 +73,11 @@ public class TranscriptManager {
     }
 
     private static void initCCDSTranscriptPath() {
-        ccdsTranscriptFile = CCDS_TRANSCRIPT_PATH;
-
-        if (CommonCommand.isDebug) {
-            ccdsTranscriptFile = Data.RECOURCE_PATH + ccdsTranscriptFile;
-        }
+        ccdsTranscriptFile = Data.ATAV_HOME + CCDS_TRANSCRIPT_PATH;
     }
 
     private static void initCanonicalTranscriptPath() {
-        canonicalTranscriptFile = CANONICAL_TRANSCRIPT_PATH;
-
-        if (CommonCommand.isDebug) {
-            canonicalTranscriptFile = Data.RECOURCE_PATH + canonicalTranscriptFile;
-        }
+        canonicalTranscriptFile = Data.ATAV_HOME + CANONICAL_TRANSCRIPT_PATH;
     }
 
     public static void resetTranscriptSet(HashSet<String> set) {
