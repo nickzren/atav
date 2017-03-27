@@ -14,8 +14,8 @@ import utils.ErrorManager;
  */
 public class TranscriptManager {
 
-    private static final String CCDS_TRANSCRIPT_PATH = Data.ATAV_HOME + "data/transcript/ccds_transcripts_ens87.txt";
-    private static final String CANONICAL_TRANSCRIPT_PATH = Data.ATAV_HOME + "data/transcript/canonical_transcripts_ens87.txt";
+    private static final String CCDS_TRANSCRIPT_PATH = "data/transcript/ccds_transcripts_ens87.txt";
+    private static final String CANONICAL_TRANSCRIPT_PATH = "data/transcript/canonical_transcripts_ens87.txt";
 
     private static HashMap<String, HashSet<Integer>> transcriptMap = new HashMap<>();
     private static HashMap<String, HashSet<Integer>> ccdsTranscriptMap = new HashMap<>();
@@ -86,11 +86,11 @@ public class TranscriptManager {
     }
 
     private static void initCCDSTranscriptPath() {
-        ccdsTranscriptFile = CCDS_TRANSCRIPT_PATH;
+        ccdsTranscriptFile = Data.ATAV_HOME + CCDS_TRANSCRIPT_PATH;
     }
 
     private static void initCanonicalTranscriptPath() {
-        canonicalTranscriptFile = CANONICAL_TRANSCRIPT_PATH;
+        canonicalTranscriptFile = Data.ATAV_HOME + CANONICAL_TRANSCRIPT_PATH;
     }
 
     public static void resetTranscriptSet(HashMap<String, HashSet<Integer>> map) {
