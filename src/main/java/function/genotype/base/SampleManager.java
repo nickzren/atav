@@ -25,8 +25,8 @@ import utils.FormatManager;
  */
 public class SampleManager {
 
-    private static final String SAMPLE_GROUP_RESTRICTION_PATH = "config/sample.group.restriction.txt";
-    private static final String USER_GROUP_RESTRICTION_PATH = "config/user.group.restriction.txt";
+    private static final String SAMPLE_GROUP_RESTRICTION_PATH = Data.ATAV_HOME + "config/sample.group.restriction.txt";
+    private static final String USER_GROUP_RESTRICTION_PATH = Data.ATAV_HOME + "config/user.group.restriction.txt";
 
     public static final String[] SAMPLE_TYPE = {"genome", "exome"};
     public static final String ALL_SAMPLE_ID_TABLE = "all_sample_id";

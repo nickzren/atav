@@ -1,6 +1,7 @@
 package function.external.mgi;
 
 import function.external.base.DataManager;
+import global.Data;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -36,7 +37,7 @@ public class MgiManager {
             return "";
         }
     }
-    
+
     public static void init() {
         if (MgiCommand.isIncludeMgi) {
             initMgiMap();
@@ -45,13 +46,13 @@ public class MgiManager {
 
     private static void initMgiMap() {
         try {
-            File f = new File(MGI_PATH);
+            File f = new File(Data.ATAV_HOME + MGI_PATH);
             FileInputStream fstream = new FileInputStream(f);
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             String lineStr = "";
-            while ((lineStr = br.readLine()) != null) {  
+            while ((lineStr = br.readLine()) != null) {
                 int firstCommaIndex = lineStr.indexOf(",");
                 String geneName = lineStr.substring(0, firstCommaIndex);
                 String values = lineStr.substring(firstCommaIndex + 1);

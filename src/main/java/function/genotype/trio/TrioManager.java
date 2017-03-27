@@ -22,7 +22,7 @@ import java.util.HashSet;
  */
 public class TrioManager {
 
-    private static final String DENOVO_RULES_PATH = "data/trio_rule_021717.txt";
+    private static final String DENOVO_RULES_PATH = Data.ATAV_HOME + "data/trio_rule_021717.txt";
 
     public static final String[] COMP_HET_FLAG = {
         "COMPOUND HETEROZYGOTE", // 0
@@ -121,10 +121,6 @@ public class TrioManager {
 
     private static void initDenovoRules() {
         String trioRulesPath = DENOVO_RULES_PATH;
-
-        if (CommonCommand.isDebug) {
-            trioRulesPath = Data.RECOURCE_PATH + trioRulesPath;
-        }
 
         File RuleFile = new File(trioRulesPath);
         if (!RuleFile.exists()) {

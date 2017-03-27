@@ -6,6 +6,7 @@ import function.external.knownvar.DBDSM;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
 import function.genotype.trio.TrioCommand;
+import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -21,7 +22,7 @@ import utils.DBManager;
  */
 public class VariantManager {
 
-    private static final String ARTIFACTS_Variant_PATH = "data/artifacts_variant.txt";
+    private static final String ARTIFACTS_Variant_PATH = Data.ATAV_HOME + "data/artifacts_variant.txt";
     public static final String[] VARIANT_TYPE = {"snv", "indel"};
 
     private static HashSet<String> includeVariantSet = new HashSet<>();

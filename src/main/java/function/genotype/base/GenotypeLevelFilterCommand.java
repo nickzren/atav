@@ -56,7 +56,6 @@ public class GenotypeLevelFilterCommand {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--sample":
-                case "--pedinfo":
                     sampleFile = getValidPath(option);
                     break;
                 case "--all-sample":
@@ -100,7 +99,6 @@ public class GenotypeLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     minCaseCarrier = getValidInteger(option);
                     break;
-                case "--var-status":
                 case "--vcf-filter":
                     option.setValue(option.getValue().toUpperCase());
                     checkValuesValid(VCF_FILTER, option);
