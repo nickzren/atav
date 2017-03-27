@@ -112,7 +112,7 @@ public class ExonClean {
         sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
         for (Exon exon : gene.getExonList()) {
-            String exonIdStr = gene.getName() + "_" + exon.getIdStr();
+            String exonIdStr = gene.getName() + "_" + exon.getId();
             if (cleanedExonMap.containsKey(exonIdStr)) {
                 size += exon.getLength();
                 if (isFirst) {
@@ -137,7 +137,7 @@ public class ExonClean {
         float caseAvg = 0;
         float ctrlAvg = 0;
         for (Exon exon : gene.getExonList()) {
-            String regionIdStr = gene.getName() + "_" + exon.getIdStr();
+            String regionIdStr = gene.getName() + "_" + exon.getId();
             SortedExon sortedExon = cleanedExonMap.get(regionIdStr);
             if (sortedExon != null) {
                 geneSize += sortedExon.getLength();

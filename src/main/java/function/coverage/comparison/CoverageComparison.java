@@ -37,7 +37,7 @@ public class CoverageComparison extends CoverageComparisonBase {
             super.initOutput();
 
             bwCoverageSummaryByExon = new BufferedWriter(new FileWriter(coverageSummaryByExon));
-            bwCoverageSummaryByExon.write("EXON,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
+            bwCoverageSummaryByExon.write("EXON,Chr,Start,End,AvgCase,AvgCtrl,AbsDiff,Length");
             if (CoverageCommand.isLinear) {
                 bwCoverageSummaryByExon.write(",P Value,R2,Variance");
             }
@@ -105,9 +105,11 @@ public class CoverageComparison extends CoverageComparisonBase {
             ctrlAvg = MathManager.devide(ctrlAvg, exon.getLength());
 
             StringBuilder sb = new StringBuilder();
-            String name = gene.getName() + "_" + exon.getIdStr();
+            String name = gene.getName() + "_" + exon.getId();
             sb.append(name).append(",");
-            sb.append(gene.getChr()).append(",");
+            sb.append(exon.getChrStr()).append(",");
+            sb.append(exon.getStartPosition()).append(",");
+            sb.append(exon.getEndPosition()).append(",");
             sb.append(FormatManager.getFloat(caseAvg)).append(",");
             sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
             float absDiff = MathManager.abs(caseAvg, ctrlAvg);

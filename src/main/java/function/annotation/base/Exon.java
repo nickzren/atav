@@ -8,15 +8,15 @@ import function.variant.base.Region;
  */
 public class Exon extends Region {
 
-    String idStr;
+    int id;
 
-    public Exon(String idStr, String chr, int start, int end) {
+    public Exon(int idInt, String chr, int start, int end) {
         super(chr, start, end);
 
-        this.idStr = idStr;
+        this.id = idInt;
     }
 
-    public String getIdStr() {
-        return idStr;
+    public int getId() {
+        return id;
     }
 }

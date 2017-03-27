@@ -29,7 +29,7 @@ public class CoverageSummary extends CoverageAnalysisBase {
             super.initOutput();
 
             bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
-            bwCoverageDetailsByExon.write("Sample,Gene,Chr,Exon,Start_Position,Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
+            bwCoverageDetailsByExon.write("Sample,Gene,ExonID,Chr,Start_Position,Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
             bwCoverageDetailsByExon.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -60,8 +60,8 @@ public class CoverageSummary extends CoverageAnalysisBase {
             for (Sample sample : SampleManager.getList()) {
                 sb.append(sample.getName()).append(",");
                 sb.append(gene.getName()).append(",");
+                sb.append(exon.getId()).append(",");
                 sb.append(exon.getChrStr()).append(",");
-                sb.append(exon.getIdStr()).append(",");
                 sb.append(exon.getStartPosition()).append(",");
                 sb.append(exon.getEndPosition()).append(",");
                 sb.append(exon.getLength()).append(",");

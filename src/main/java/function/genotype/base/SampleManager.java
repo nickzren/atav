@@ -258,7 +258,7 @@ public class SampleManager {
     private static void initSampleFromAnnoDB(String sqlCode) {
         try {
             ResultSet rs = DBManager.executeQuery(sqlCode);
-
+            
             while (rs.next()) {
                 int sampleId = rs.getInt("sample_id");
                 String familyId = rs.getString("sample_name").trim();

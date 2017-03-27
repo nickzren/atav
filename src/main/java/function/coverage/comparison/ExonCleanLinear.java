@@ -105,7 +105,7 @@ public class ExonCleanLinear {
         sb.append(" ").append(gene.getChr()).append(" (");
         boolean isFirst = true;
         for (Exon exon : gene.getExonList()) {
-            String regionIdStr = gene.getName() + "_" + exon.getIdStr();
+            String regionIdStr = gene.getName() + "_" + exon.getId();
             if (cleanedRegionMap.containsKey(regionIdStr)) {
                 size += exon.getLength();
                 if (isFirst) {
@@ -130,7 +130,7 @@ public class ExonCleanLinear {
         float avgCase = 0;
         float avgCtrl = 0;
         for (Exon exon : gene.getExonList()) {
-            String regionId = gene.getName() + "_" + exon.getIdStr();
+            String regionId = gene.getName() + "_" + exon.getId();
 
             SortedExonLinear sortedExon = cleanedRegionMap.get(regionId);
             if (sortedExon != null) {

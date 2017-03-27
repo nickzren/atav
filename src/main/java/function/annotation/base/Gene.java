@@ -63,14 +63,14 @@ public class Gene {
         String[] fields = boundary.trim().replace("(", "").replace(")", "").split("( )+");
         name = fields[0];
         chr = fields[1];
+        int count = 0;
 
         String[] exons = fields[2].trim().split(",");
         for (String exon : exons) {
             String[] r = exon.split("\\W");
             int seq_region_start = Integer.parseInt(r[0]);
             int seq_region_end = Integer.parseInt(r[2]);
-            String idStr = "Exon_" + seq_region_start + "_" + seq_region_end;
-            exonList.add(new Exon(idStr, chr, seq_region_start, seq_region_end));
+            exonList.add(new Exon(count++, chr, seq_region_start, seq_region_end));
         }
     }
 
