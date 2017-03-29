@@ -59,6 +59,8 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
             sql = addFilter2SQL(sql, " has_high_quality_call = 1 ");
         }
 
+        sql += "ORDER BY POS,variant_id,effect_id,transcript_stable_id;";
+
         return DBManager.executeReadOnlyQuery(sql);
     }
 
