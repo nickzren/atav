@@ -6,6 +6,7 @@ import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
+import function.external.exac.ExacCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.flanking.FlankingCommand;
 import function.external.genomes.GenomesCommand;
@@ -88,11 +89,13 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-         if (isCommandFileIncluded(options)) {
+        {
+            if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
+        }
 
         cleanUpOddSymbol();
 
@@ -312,6 +315,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isListVarAnno = true;
                     EvsCommand.isIncludeEvs = true;
+                    ExacCommand.isIncludeExac = true;
                     GnomADCommand.isIncludeGnomADExome = true;
                     GerpCommand.isIncludeGerp = true;
                     TrapCommand.isIncludeTrap = true;
@@ -342,6 +346,11 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     EvsCommand.isListEvs = true;
                     EvsCommand.isIncludeEvs = true;
+                    break;
+                case "--list-exac":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    ExacCommand.isListExac = true;
+                    ExacCommand.isIncludeExac = true;
                     break;
                 case "--list-gnomad-exome":
                     CommonCommand.isNonSampleAnalysis = true;

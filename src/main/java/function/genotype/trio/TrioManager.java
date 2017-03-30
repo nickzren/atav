@@ -2,6 +2,7 @@ package function.genotype.trio;
 
 import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
+import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
@@ -147,6 +148,7 @@ public class TrioManager {
                 + "Function,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
+                + ExacManager.getTitle()
                 + GnomADManager.getTitle()
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()

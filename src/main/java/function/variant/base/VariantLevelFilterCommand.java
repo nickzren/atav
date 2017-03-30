@@ -3,6 +3,8 @@ package function.variant.base;
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
+import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesCommand;
@@ -120,6 +122,26 @@ public class VariantLevelFilterCommand {
                     EvsCommand.isExcludeEvsQcFailed = true;
                     EvsCommand.isIncludeEvs = true;
                     break;
+                case "--exac-pop":
+                    checkValuesValid(ExacManager.EXAC_POP, option);
+                    ExacCommand.exacPop = option.getValue();
+                    ExacCommand.isIncludeExac = true;
+                    break;
+                case "--exac-maf":
+                    checkValueValid(0.5, 0, option);
+                    ExacCommand.exacMaf = getValidFloat(option);
+                    ExacCommand.isIncludeExac = true;
+                    break;
+                case "--min-exac-vqslod-snv":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    ExacCommand.exacVqslodSnv = getValidFloat(option);
+                    ExacCommand.isIncludeExac = true;
+                    break;
+                case "--min-exac-vqslod-indel":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    ExacCommand.exacVqslodIndel = getValidFloat(option);
+                    ExacCommand.isIncludeExac = true;
+                    break;
                 case "--gnomad-exome-pop":
                     checkValuesValid(GnomADManager.GNOMAD_POP, option);
                     GnomADCommand.gnomADExomePop = option.getValue();
@@ -182,6 +204,9 @@ public class VariantLevelFilterCommand {
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
+                case "--include-exac":
+                    ExacCommand.isIncludeExac = true;
+                    break;
                 case "--include-gnomad-exome":
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
@@ -210,19 +235,6 @@ public class VariantLevelFilterCommand {
                     MgiCommand.isIncludeMgi = true;
                     break;
                 case "--include-denovo-db":
-                    DenovoDBCommand.isIncludeDenovoDB = true;
-                    break;
-                case "--include-all-external-data":
-                    EvsCommand.isIncludeEvs = true;
-                    GnomADCommand.isIncludeGnomADExome = true;
-                    GerpCommand.isIncludeGerp = true;
-                    TrapCommand.isIncludeTrap = true;
-                    KaviarCommand.isIncludeKaviar = true;
-                    KnownVarCommand.isIncludeKnownVar = true;
-                    RvisCommand.isIncludeRvis = true;
-                    SubRvisCommand.isIncludeSubRvis = true;
-                    GenomesCommand.isInclude1000Genomes = true;
-                    MgiCommand.isIncludeMgi = true;
                     DenovoDBCommand.isIncludeDenovoDB = true;
                     break;
                 default:
