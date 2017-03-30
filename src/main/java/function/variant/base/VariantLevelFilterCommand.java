@@ -3,8 +3,8 @@ package function.variant.base;
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.gnomad.GnomADCommand;
+import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesCommand;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
@@ -23,6 +23,37 @@ import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 import utils.CommonCommand;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.checkValueValid;
 
 /**
@@ -89,30 +120,25 @@ public class VariantLevelFilterCommand {
                     EvsCommand.isExcludeEvsQcFailed = true;
                     EvsCommand.isIncludeEvs = true;
                     break;
-                case "--exac-pop":
-                    checkValuesValid(ExacManager.EXAC_POP, option);
-                    ExacCommand.exacPop = option.getValue();
-                    ExacCommand.isIncludeExac = true;
+                case "--gnomad-exome-pop":
+                    checkValuesValid(GnomADManager.GNOMAD_POP, option);
+                    GnomADCommand.gnomADExomePop = option.getValue();
+                    GnomADCommand.isIncludeGnomADExome = true;
                     break;
-                case "--exac-maf":
+                case "--gnomad-exome-maf":
                     checkValueValid(0.5, 0, option);
-                    ExacCommand.exacMaf = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    GnomADCommand.gnomADExomeMaf = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADExome = true;
                     break;
-                case "--min-exac-mean-coverage":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    ExacCommand.exacMeanCoverage = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
-                    break;
-                case "--min-exac-as-rf-snv":
+                case "--gnomad-exome-as-rf-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    ExacCommand.exacAsRfSnv = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    GnomADCommand.gnomADExomeAsRfSnv = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADExome = true;
                     break;
-                case "--min-exac-as-rf-indel":
+                case "--gnomad-exome-as-rf-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    ExacCommand.exacAsRfIndel = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    GnomADCommand.gnomADExomeAsRfIndel = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADExome = true;
                     break;
                 case "--known-var-only":
                     KnownVarCommand.isKnownVarOnly = true;
@@ -156,8 +182,8 @@ public class VariantLevelFilterCommand {
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
-                case "--include-exac":
-                    ExacCommand.isIncludeExac = true;
+                case "--include-gnomad-exome":
+                    GnomADCommand.isIncludeGnomADExome = true;
                     break;
                 case "--include-gerp":
                     GerpCommand.isIncludeGerp = true;
@@ -188,7 +214,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-all-external-data":
                     EvsCommand.isIncludeEvs = true;
-                    ExacCommand.isIncludeExac = true;
+                    GnomADCommand.isIncludeGnomADExome = true;
                     GerpCommand.isIncludeGerp = true;
                     TrapCommand.isIncludeTrap = true;
                     KaviarCommand.isIncludeKaviar = true;

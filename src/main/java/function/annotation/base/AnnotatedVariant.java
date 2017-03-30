@@ -4,8 +4,8 @@ import function.external.denovo.DenovoDB;
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
-import function.external.exac.Exac;
-import function.external.exac.ExacCommand;
+import function.external.gnomad.GnomADExome;
+import function.external.gnomad.GnomADCommand;
 import function.external.genomes.Genomes;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
@@ -51,7 +51,7 @@ public class AnnotatedVariant extends Variant {
     private double polyphenHumvar;
 
     // external db annotations
-    private Exac exac;
+    private GnomADExome gnomADExome;
     private Kaviar kaviar;
     private Evs evs;
     private float gerpScore;
@@ -142,10 +142,10 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid & ExacCommand.isIncludeExac) {
-            exac = new Exac(chrStr, startPosition, refAllele, allele);
+        if (isValid & GnomADCommand.isIncludeGnomADExome) {
+            gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
-            isValid = exac.isValid();
+            isValid = gnomADExome.isValid();
         }
 
         if (isValid & EvsCommand.isIncludeEvs) {
@@ -320,9 +320,9 @@ public class AnnotatedVariant extends Variant {
         return prediction;
     }
 
-    public String getExacStr() {
-        if (ExacCommand.isIncludeExac) {
-            return exac.toString();
+    public String getGnomADStr() {
+        if (GnomADCommand.isIncludeGnomADExome) {
+            return gnomADExome.toString();
         } else {
             return "";
         }

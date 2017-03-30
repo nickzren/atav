@@ -1,4 +1,4 @@
-package function.external.exac;
+package function.external.gnomad;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
@@ -7,12 +7,12 @@ import function.variant.base.Region;
  *
  * @author nick
  */
-public class ExacManager {
+public class GnomADManager {
 
-    public static final String[] EXAC_POP = {"global", "afr", "amr", "asj", "eas", "sas", "fin", "nfe", "oth"};
+    public static final String[] GNOMAD_POP = {"global", "afr", "amr", "asj", "eas", "sas", "fin", "nfe", "oth"};
 
-    static final String coverageTable = "exac.coverage_v2_2017_03_01";
-    static String table = "exac.variant_v2_2017_03_01";
+    private static final String coverageTable = "gnomad.exome_coverage_170228";
+    private static final String variantTable = "gnomad.exome_variant_170228";
 
     public static void init() {
     }
@@ -20,26 +20,26 @@ public class ExacManager {
     public static String getTitle() {
         String title = "";
 
-        if (ExacCommand.isIncludeExac) {
-            for (String str : EXAC_POP) {
-                title += "ExAC " + str + " maf,"
-                        + "ExAC " + str + " gts,";
+        if (GnomADCommand.isIncludeGnomADExome) {
+            for (String str : GNOMAD_POP) {
+                title += "gnomAD Exome " + str + " maf,"
+                        + "gnomAD Exome " + str + " gts,";
             }
 
-            title += "ExAC filter,"
-                    + "ExAC AB MEDIAN,"
-                    + "ExAC GQ MEDIAN,"
-                    + "ExAC AS RF,"
-                    + "ExAC Mean Coverage,"
-                    + "ExAC Sample Covered 10x,";
+            title += "gnomAD Exome filter,"
+                    + "gnomAD Exome AB MEDIAN,"
+                    + "gnomAD Exome GQ MEDIAN,"
+                    + "gnomAD Exome AS RF,"
+                    + "gnomAD Exome Mean Coverage,"
+                    + "gnomAD Exome Sample Covered 10x,";
         }
 
         return title;
     }
 
     public static String getVersion() {
-        if (ExacCommand.isIncludeExac) {
-            return "ExAC: " + DataManager.getVersion(table) + "\n";
+        if (GnomADCommand.isIncludeGnomADExome) {
+            return "gnomAD Exome: " + DataManager.getVersion(variantTable) + "\n";
         } else {
             return "";
         }
@@ -57,14 +57,14 @@ public class ExacManager {
     public static String getSql4Maf(Region region) {
         String result = "chr,pos,ref_allele,alt_allele,";
 
-        for (String str : EXAC_POP) {
+        for (String str : GNOMAD_POP) {
             result += str + "_af,"
                     + str + "_gts,";
         }
 
         result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
 
-        String sql = "SELECT " + result + "FROM " + table + " "
+        String sql = "SELECT " + result + "FROM " + variantTable + " "
                 + "WHERE chr = '" + region.getChrStr() + "' "
                 + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
 
@@ -75,14 +75,14 @@ public class ExacManager {
             int pos, String ref, String alt) {
         String result = "";
 
-        for (String str : EXAC_POP) {
+        for (String str : GNOMAD_POP) {
             result += str + "_af,"
                     + str + "_gts,";
         }
 
         result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
 
-        String sql = "SELECT " + result + "FROM " + table + " "
+        String sql = "SELECT " + result + "FROM " + variantTable + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "

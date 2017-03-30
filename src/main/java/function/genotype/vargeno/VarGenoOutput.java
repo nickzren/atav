@@ -5,7 +5,7 @@ import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Index;
 import function.external.evs.EvsManager;
-import function.external.exac.ExacManager;
+import function.external.gnomad.GnomADManager;
 import function.annotation.base.TranscriptManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.genomes.GenomesManager;
@@ -87,7 +87,7 @@ public class VarGenoOutput extends Output {
                 + "Is CCDS Transcript,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
-                + ExacManager.getTitle()
+                + GnomADManager.getTitle()
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
@@ -164,7 +164,7 @@ public class VarGenoOutput extends Output {
         sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
-        sb.append(calledVar.getExacStr());
+        sb.append(calledVar.getGnomADStr());
         sb.append(calledVar.getKaviarStr());
         sb.append(calledVar.getKnownVarStr());
         sb.append(calledVar.getRvis());

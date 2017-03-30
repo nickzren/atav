@@ -4,7 +4,7 @@ import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.TranscriptManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
-import function.external.exac.ExacManager;
+import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
@@ -45,7 +45,7 @@ public class VarAnnoOutput {
             + "Amino Acid Change,"
             + "Coding Sequence Change,"
             + "Gene Transcript (AA Change),"
-            + ExacManager.getTitle()
+            + GnomADManager.getTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
@@ -83,7 +83,7 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getAminoAcidChange()).append(",");
         sb.append(annotatedVar.getCodingSequenceChange()).append(",");
         sb.append(annotatedVar.getTranscriptSet()).append(",");
-        sb.append(annotatedVar.getExacStr());
+        sb.append(annotatedVar.getGnomADStr());
         sb.append(annotatedVar.getKaviarStr());
         sb.append(annotatedVar.getKnownVarStr());
         sb.append(annotatedVar.getRvis());

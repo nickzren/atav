@@ -1,7 +1,7 @@
 package function.genotype.vargeno;
 
 import function.external.evs.EvsCommand;
-import function.external.exac.ExacCommand;
+import function.external.gnomad.GnomADCommand;
 import function.external.knownvar.KnownVarCommand;
 import java.util.Iterator;
 import utils.CommandOption;
@@ -28,7 +28,6 @@ public class VarGenoCommand {
                 case "--run-tier":
                     isRunTier = true;
                     EvsCommand.isIncludeEvs = true;
-                    ExacCommand.isIncludeExac = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     break;
                 default:

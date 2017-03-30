@@ -193,7 +193,7 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(calledVar.getFunction()).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
-        sb.append(calledVar.getExacStr());
+        sb.append(calledVar.getGnomADStr());
         sb.append(calledVar.getKaviarStr());
         sb.append(calledVar.getKnownVarStr());
         sb.append(calledVar.getRvis());

@@ -1,4 +1,4 @@
-package function.external.exac;
+package function.external.gnomad;
 
 import global.Data;
 import utils.ErrorManager;
@@ -11,7 +11,7 @@ import utils.DBManager;
  *
  * @author nick
  */
-public class Exac {
+public class GnomADExome {
 
     private String chr;
     private int pos;
@@ -28,7 +28,7 @@ public class Exac {
     private int gqMedian;
     private float asRf;
 
-    public Exac(String chr, int pos, String ref, String alt) {
+    public GnomADExome(String chr, int pos, String ref, String alt) {
         this.chr = chr;
         this.pos = pos;
         this.ref = ref;
@@ -45,14 +45,14 @@ public class Exac {
         initMaf();
     }
 
-    public Exac(boolean isIndel, ResultSet rs) {
+    public GnomADExome(boolean isIndel, ResultSet rs) {
         try {
             chr = rs.getString("chr");
             pos = rs.getInt("pos");
             ref = rs.getString("ref_allele");
             alt = rs.getString("alt_allele");
-            maf = new float[ExacManager.EXAC_POP.length];
-            gts = new String[ExacManager.EXAC_POP.length];
+            maf = new float[GnomADManager.GNOMAD_POP.length];
+            gts = new String[GnomADManager.GNOMAD_POP.length];
 
             isSnv = true;
 
@@ -70,7 +70,7 @@ public class Exac {
 
     private void initCoverage() {
         try {
-            String sql = ExacManager.getSql4Cvg(chr, pos);
+            String sql = GnomADManager.getSql4Cvg(chr, pos);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
@@ -87,11 +87,11 @@ public class Exac {
     }
 
     private void initMaf() {
-        maf = new float[ExacManager.EXAC_POP.length];
-        gts = new String[ExacManager.EXAC_POP.length];
+        maf = new float[GnomADManager.GNOMAD_POP.length];
+        gts = new String[GnomADManager.GNOMAD_POP.length];
 
         try {
-            String sql = ExacManager.getSql4Maf(chr, pos, ref, alt);
+            String sql = GnomADManager.getSql4Maf(chr, pos, ref, alt);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
@@ -108,15 +108,15 @@ public class Exac {
     }
 
     private void setMaf(ResultSet rs) throws SQLException {
-        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            float af = rs.getFloat(ExacManager.EXAC_POP[i] + "_af");
+        for (int i = 0; i < GnomADManager.GNOMAD_POP.length; i++) {
+            float af = rs.getFloat(GnomADManager.GNOMAD_POP[i] + "_af");
 
             if (af > 0.5) {
                 af = 1 - af;
             }
 
             maf[i] = af;
-            gts[i] = rs.getString(ExacManager.EXAC_POP[i] + "_gts");
+            gts[i] = rs.getString(GnomADManager.GNOMAD_POP[i] + "_gts");
         }
 
         filter = rs.getString("filter");
@@ -126,7 +126,7 @@ public class Exac {
     }
 
     private void resetMaf(int value) {
-        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
+        for (int i = 0; i < GnomADManager.GNOMAD_POP.length; i++) {
             maf[i] = value;
             gts[i] = "NA";
         }
@@ -140,9 +140,9 @@ public class Exac {
     private float getMaxMaf() {
         float value = Data.NA;
 
-        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
+        for (int i = 0; i < GnomADManager.GNOMAD_POP.length; i++) {
             if (maf[i] != Data.NA
-                    && ExacCommand.exacPop.contains(ExacManager.EXAC_POP[i])) {
+                    && GnomADCommand.gnomADExomePop.contains(GnomADManager.GNOMAD_POP[i])) {
                 value = Math.max(value, maf[i]);
             }
         }
@@ -151,9 +151,8 @@ public class Exac {
     }
 
     public boolean isValid() {
-        return ExacCommand.isExacMafValid(getMaxMaf())
-                && ExacCommand.isExacMeanCoverageValid(meanCoverage)
-                && ExacCommand.isExacAsRfValid(asRf, isSnv);
+        return GnomADCommand.isGnomADExomeMafValid(getMaxMaf())
+                && GnomADCommand.isGnomADExomeAsRfValid(asRf, isSnv);
     }
 
     public String getVariantId() {
@@ -164,7 +163,7 @@ public class Exac {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
+        for (int i = 0; i < GnomADManager.GNOMAD_POP.length; i++) {
             sb.append(FormatManager.getDouble(maf[i])).append(",");
 
             if (gts[i].equals("NA")) {
