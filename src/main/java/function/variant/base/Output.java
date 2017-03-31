@@ -1,7 +1,7 @@
 package function.variant.base;
 
 import function.external.evs.EvsManager;
-import function.external.exac.ExacManager;
+import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
@@ -47,7 +47,7 @@ public class Output implements Cloneable {
 
     public static String getExternalDataTitle() {
         return EvsManager.getTitle()
-                + ExacManager.getTitle()
+                + GnomADManager.getTitle()
                 + KnownVarManager.getTitle()
                 + KaviarManager.getTitle()
                 + GenomesManager.getTitle()

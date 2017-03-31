@@ -1,4 +1,4 @@
-package function.external.exac;
+package function.external.gnomad;
 
 import function.AnalysisBase;
 import function.variant.base.Region;
@@ -15,19 +15,19 @@ import utils.DBManager;
  *
  * @author nick
  */
-public class ListExac extends AnalysisBase {
+public class ListGnomADExome extends AnalysisBase {
 
-    BufferedWriter bwExac = null;
-    final String exacFilePath = CommonCommand.outputPath + "exac.csv";
+    BufferedWriter bwGnomADExome = null;
+    final String gnomADExomeFilePath = CommonCommand.outputPath + "gnomad.exome.csv";
 
     int analyzedRecords = 0;
 
     @Override
     public void initOutput() {
         try {
-            bwExac = new BufferedWriter(new FileWriter(exacFilePath));
-            bwExac.write(ExacOutput.getTitle());
-            bwExac.newLine();
+            bwGnomADExome = new BufferedWriter(new FileWriter(gnomADExomeFilePath));
+            bwGnomADExome.write(GnomADOutput.getTitle());
+            bwGnomADExome.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -36,8 +36,8 @@ public class ListExac extends AnalysisBase {
     @Override
     public void closeOutput() {
         try {
-            bwExac.flush();
-            bwExac.close();
+            bwGnomADExome.flush();
+            bwGnomADExome.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -61,18 +61,18 @@ public class ListExac extends AnalysisBase {
 
             Region region = RegionManager.getRegion(r);
 
-            String sqlCode = ExacManager.getSqlByRegion(region);
+            String sqlCode = GnomADManager.getSqlByRegion(region);
 
             ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
-                ExacOutput output = new ExacOutput(rset);
+                GnomADOutput output = new GnomADOutput(rset);
 
-                if (VariantManager.isVariantIdIncluded(output.exac.getVariantId())
+                if (VariantManager.isVariantIdIncluded(output.gnomADExome.getVariantId())
                         && output.isValid()) {
-                    bwExac.write(output.exac.getVariantId() + ",");
-                    bwExac.write(output.toString());
-                    bwExac.newLine();
+                    bwGnomADExome.write(output.gnomADExome.getVariantId() + ",");
+                    bwGnomADExome.write(output.toString());
+                    bwGnomADExome.newLine();
                 }
 
                 countVariant();
@@ -89,6 +89,6 @@ public class ListExac extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "Start running list exac function";
+        return "Start running list gnomad exome function";
     }
 }

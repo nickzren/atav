@@ -6,7 +6,7 @@ import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
-import function.external.exac.ExacCommand;
+import function.external.gnomad.GnomADCommand;
 import function.external.flanking.FlankingCommand;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
@@ -308,7 +308,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isListVarAnno = true;
                     EvsCommand.isIncludeEvs = true;
-                    ExacCommand.isIncludeExac = true;
+                    GnomADCommand.isIncludeGnomADExome = true;
                     GerpCommand.isIncludeGerp = true;
                     TrapCommand.isIncludeTrap = true;
 //                    KaviarCommand.isIncludeKaviar = true;
@@ -339,10 +339,10 @@ public class CommandManager {
                     EvsCommand.isListEvs = true;
                     EvsCommand.isIncludeEvs = true;
                     break;
-                case "--list-exac":
+                case "--list-gnomad-exome":
                     CommonCommand.isNonSampleAnalysis = true;
-                    ExacCommand.isListExac = true;
-                    ExacCommand.isIncludeExac = true;
+                    GnomADCommand.isListGnomADExome = true;
+                    GnomADCommand.isIncludeGnomADExome = true;
                     break;
                 case "--list-known-var":
                     CommonCommand.isNonSampleAnalysis = true;
@@ -447,7 +447,7 @@ public class CommandManager {
             CoverageCommand.initCoverageComparisonSite(optionList.iterator());
         } else if (EvsCommand.isListEvs) { // External Datasets Functions
 
-        } else if (ExacCommand.isListExac) {
+        } else if (GnomADCommand.isListGnomADExome) {
 
         } else if (KnownVarCommand.isListKnownVar) {
 

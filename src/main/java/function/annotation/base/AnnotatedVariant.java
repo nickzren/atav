@@ -4,9 +4,8 @@ import function.external.denovo.DenovoDB;
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
-import function.external.exac.Exac;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.gnomad.GnomADExome;
+import function.external.gnomad.GnomADCommand;
 import function.external.genomes.Genomes;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
@@ -50,7 +49,7 @@ public class AnnotatedVariant extends Variant {
     private StringBuilder allGeneTranscriptSB = new StringBuilder();
 
     // external db annotations
-    private Exac exac;
+    private GnomADExome gnomADExome;
     private Kaviar kaviar;
     private Evs evs;
     private float gerpScore;
@@ -78,10 +77,10 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid & ExacCommand.isIncludeExac) {
-            exac = new Exac(chrStr, startPosition, refAllele, allele);
+        if (isValid & GnomADCommand.isIncludeGnomADExome) {
+            gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
-            isValid = exac.isValid();
+            isValid = gnomADExome.isValid();
         }
 
         if (isValid & EvsCommand.isIncludeEvs) {
@@ -262,7 +261,7 @@ public class AnnotatedVariant extends Variant {
 
     public void getExternalData(StringBuilder sb) {
         sb.append(getEvsStr());
-        sb.append(getExacStr());
+        sb.append(getGnomADExomeStr());
         sb.append(getKnownVarStr());
         sb.append(getKaviarStr());
         sb.append(get1000Genomes());
@@ -274,9 +273,9 @@ public class AnnotatedVariant extends Variant {
         sb.append(getDenovoDB());
     }
 
-    public String getExacStr() {
-        if (ExacCommand.isIncludeExac) {
-            return exac.toString();
+    public String getGnomADExomeStr() {
+        if (GnomADCommand.isIncludeGnomADExome) {
+            return gnomADExome.toString();
         } else {
             return "";
         }
