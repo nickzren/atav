@@ -30,7 +30,13 @@ public class EffectManager {
     private static HashSet<Integer> inputIdSet = new HashSet<>();
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
 
-    private static Impact lowestInputImpact = Impact.HIGH; // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
+    private static Impact lowestInputImpact = Impact.MODIFIER; // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
+
+    private static final String HIGH_IMPACT = "('HIGH')";
+    private static final String MODERATE_IMPACT = "('HIGH','MODERATE')";
+    private static final String LOW_IMPACT = "('HIGH','MODERATE','LOW')";
+    private static final String MODIFIER_IMPACT = "('HIGH','MODERATE','LOW','MODIFIER')";
+    private static String impactList4SQL = MODIFIER_IMPACT; // default included all
 
     private static boolean isUsed = false;
 
@@ -106,13 +112,30 @@ public class EffectManager {
         if (!inputEffectSet.isEmpty()) {
             isUsed = true;
 
-            for (Impact impact : inputImpactSet) {
+            lowestInputImpact = Impact.HIGH;
+
+            for (Impact impact : inputImpactSet) {                
                 if (lowestInputImpact.getValue() < impact.getValue()) {
                     lowestInputImpact = impact;
                 }
             }
-        } else {
-            lowestInputImpact = Impact.MODIFIER;
+
+            switch (lowestInputImpact) {
+                case HIGH:
+                    impactList4SQL = HIGH_IMPACT;
+                    break;
+                case MODERATE:
+                    impactList4SQL = MODERATE_IMPACT;
+                    break;
+                case LOW:
+                    impactList4SQL = LOW_IMPACT;
+                    break;
+                case MODIFIER:
+                    impactList4SQL = MODIFIER_IMPACT;
+                    break;
+                default:
+                    ErrorManager.print("Unknown impact: " + lowestInputImpact);
+            }
         }
     }
 
@@ -145,6 +168,10 @@ public class EffectManager {
         return id2EffectMap.get(id);
     }
 
+    public static String getImpactList4SQL() {
+        return impactList4SQL;
+    }
+    
     public static boolean isUsed() {
         return isUsed;
     }
