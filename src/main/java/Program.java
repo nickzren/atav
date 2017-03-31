@@ -30,6 +30,8 @@ import function.external.denovo.ListDenovoDB;
 import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
+import function.external.exac.ExacCommand;
+import function.external.exac.ListExac;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.gnomad.ListGnomADExome;
@@ -164,6 +166,8 @@ public class Program {
                 runAnalysis(new SiteCoverageComparison());
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
+            } else if (ExacCommand.isListExac) {
+                runAnalysis(new ListExac());
             } else if (GnomADCommand.isListGnomADExome) {
                 runAnalysis(new ListGnomADExome());
             } else if (KnownVarCommand.isListKnownVar) {
