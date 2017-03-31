@@ -57,7 +57,7 @@ public class CalledVariant extends AnnotatedVariant {
 
     private boolean initCarrierData() {
         if (VariantManager.isUsed()
-                || EffectManager.isOnlyHighOrModerateEffect()) { // when --variant or --rs-number applied , or effect list only High/Moderate input values
+                || !EffectManager.isModifierEffectIncluded()) { // when --variant or --rs-number applied , or effect list has no MODIFIER effects
             // single variant carriers data process
             CarrierBlockManager.initCarrierMap(carrierMap, this);
 

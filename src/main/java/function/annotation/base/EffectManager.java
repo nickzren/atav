@@ -111,12 +111,13 @@ public class EffectManager {
                     lowestInputImpact = impact;
                 }
             }
+        } else {
+            lowestInputImpact = Impact.MODIFIER;
         }
     }
 
-    public static boolean isOnlyHighOrModerateEffect() {
-        return lowestInputImpact == Impact.HIGH
-                || lowestInputImpact == Impact.MODERATE;
+    public static boolean isModifierEffectIncluded() {
+        return lowestInputImpact == Impact.MODIFIER;
     }
 
     public static String getEffectIdList4SQL() {
