@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
@@ -55,7 +56,8 @@ public class Output implements Cloneable {
                 + SubRvisManager.getTitle()
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
-                + MgiManager.getTitle();
+                + MgiManager.getTitle()
+                + DenovoDBManager.getTitle();
     }
 
     public static String getGenoStatDataTitle() {
