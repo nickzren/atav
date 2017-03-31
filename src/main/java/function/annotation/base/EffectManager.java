@@ -23,8 +23,10 @@ public class EffectManager {
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
     private static HashMap<String, Integer> effect2IdMap = new HashMap<>();
+    private static HashMap<String, Impact> effect2ImpactMap = new HashMap<>();
 
     // user input values
+    private static HashSet<String> inputEffectSet = new HashSet<>();
     private static HashSet<Integer> inputIdSet = new HashSet<>();
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
 
@@ -51,6 +53,7 @@ public class EffectManager {
 
                 id2EffectMap.put(id, effect);
                 effect2IdMap.put(effect, id);
+                effect2ImpactMap.put(effect, impact);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -93,12 +96,14 @@ public class EffectManager {
                 continue;
             }
 
+            inputEffectSet.add(effect);
             inputIdSet.add(effect2IdMap.get(effect));
+            inputImpactSet.add(effect2ImpactMap.get(effect));
         }
     }
 
     private static void initLowestImpact() {
-        if (!inputImpactSet.isEmpty()) {
+        if (!inputEffectSet.isEmpty()) {
             isUsed = true;
 
             for (Impact impact : inputImpactSet) {
