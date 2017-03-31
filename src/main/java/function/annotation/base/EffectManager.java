@@ -23,19 +23,12 @@ public class EffectManager {
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
     private static HashMap<String, Integer> effect2IdMap = new HashMap<>();
-    private static HashMap<String, Impact> effect2ImpactMap = new HashMap<>();
 
     // user input values
-    private static HashSet<String> inputEffectSet = new HashSet<>();
     private static HashSet<Integer> inputIdSet = new HashSet<>();
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
 
     private static Impact lowestInputImpact = Impact.HIGH; // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
-    private static final String HIGH_IMPACT = "('HIGH')";
-    private static final String MODERATE_IMPACT = "('HIGH','MODERATE')";
-    private static final String LOW_IMPACT = "('HIGH','MODERATE','LOW')";
-    private static final String MODIFIER_IMPACT = "('HIGH','MODERATE','LOW','MODIFIER')";
-    private static String impactList4SQL = MODIFIER_IMPACT; // default included all
 
     private static boolean isUsed = false;
 
@@ -58,7 +51,6 @@ public class EffectManager {
 
                 id2EffectMap.put(id, effect);
                 effect2IdMap.put(effect, id);
-                effect2ImpactMap.put(effect, impact);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -101,14 +93,12 @@ public class EffectManager {
                 continue;
             }
 
-            inputEffectSet.add(effect);
             inputIdSet.add(effect2IdMap.get(effect));
-            inputImpactSet.add(effect2ImpactMap.get(effect));
         }
     }
 
     private static void initLowestImpact() {
-        if (!inputEffectSet.isEmpty()) {
+        if (!inputImpactSet.isEmpty()) {
             isUsed = true;
 
             for (Impact impact : inputImpactSet) {
@@ -116,24 +106,12 @@ public class EffectManager {
                     lowestInputImpact = impact;
                 }
             }
-
-            switch (lowestInputImpact) {
-                case HIGH:
-                    impactList4SQL = HIGH_IMPACT;
-                    break;
-                case MODERATE:
-                    impactList4SQL = MODERATE_IMPACT;
-                    break;
-                case LOW:
-                    impactList4SQL = LOW_IMPACT;
-                    break;
-                case MODIFIER:
-                    impactList4SQL = MODIFIER_IMPACT;
-                    break;
-                default:
-                    ErrorManager.print("Unknown impact: " + lowestInputImpact);
-            }
         }
+    }
+
+    public static boolean isOnlyHighOrModerateEffect() {
+        return lowestInputImpact == Impact.HIGH
+                || lowestInputImpact == Impact.MODERATE;
     }
 
     public static String getEffectIdList4SQL() {
@@ -159,10 +137,6 @@ public class EffectManager {
 
     public static String getEffectById(int id) {
         return id2EffectMap.get(id);
-    }
-
-    public static String getImpactList4SQL() {
-        return impactList4SQL;
     }
 
     public static boolean isUsed() {

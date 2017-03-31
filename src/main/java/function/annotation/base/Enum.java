@@ -1,8 +1,5 @@
 package function.annotation.base;
 
-import function.genotype.base.DPBinBlockManager;
-import java.util.StringJoiner;
-
 /**
  *
  * @author nick
