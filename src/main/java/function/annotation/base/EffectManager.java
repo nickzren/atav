@@ -23,12 +23,10 @@ public class EffectManager {
 
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
-    private static HashMap<String, Integer> effect2IdMap = new HashMap<>();
-    private static HashMap<String, Impact> effect2ImpactMap = new HashMap<>();
+    private static HashMap<String, Integer> impactEffect2IdMap = new HashMap<>();
 
     // user input values
-    private static HashSet<String> inputEffectSet = new HashSet<>();
-    private static HashSet<Integer> inputIdSet = new HashSet<>();
+    private static HashSet<Integer> inputEffectIdSet = new HashSet<>();
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
 
     private static Impact lowestInputImpact = Impact.MODIFIER; // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
@@ -56,10 +54,10 @@ public class EffectManager {
                 int id = rs.getInt("id");
                 String effect = rs.getString("effect");
                 Impact impact = Impact.valueOf(rs.getString("impact"));
+                String impactEffect = impact + ":" + effect;
 
                 id2EffectMap.put(id, effect);
-                effect2IdMap.put(effect, id);
-                effect2ImpactMap.put(effect, impact);
+                impactEffect2IdMap.put(impactEffect, id);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -96,20 +94,19 @@ public class EffectManager {
     }
 
     private static void initEffectSet(String inputEffect) {
-        for (String effect : inputEffect.split(",")) {
-            if (!effect2IdMap.containsKey(effect)) {
-                LogManager.writeAndPrint("Invalid effect: " + effect);
+        for (String impactEffect : inputEffect.split(",")) { // input impactEffect format: impact:effect
+            if (!impactEffect2IdMap.containsKey(impactEffect)) {
+                LogManager.writeAndPrint("Invalid effect: " + impactEffect);
                 continue;
             }
-
-            inputEffectSet.add(effect);
-            inputIdSet.add(effect2IdMap.get(effect));
-            inputImpactSet.add(effect2ImpactMap.get(effect));
+            
+            inputEffectIdSet.add(impactEffect2IdMap.get(impactEffect));
+            inputImpactSet.add(Impact.valueOf(impactEffect.split(":")[0]));
         }
     }
 
     private static void initLowestImpact() {
-        if (!inputEffectSet.isEmpty()) {
+        if (!inputEffectIdSet.isEmpty()) {
             isUsed = true;
 
             lowestInputImpact = Impact.HIGH;
@@ -164,7 +161,7 @@ public class EffectManager {
 
         boolean isFirst = true;
 
-        for (int id : inputIdSet) {
+        for (int id : inputEffectIdSet) {
             if (isFirst) {
                 isFirst = false;
                 sb.append("(");
