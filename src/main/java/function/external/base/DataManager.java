@@ -3,6 +3,7 @@ package function.external.base;
 import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
+import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
@@ -27,6 +28,7 @@ public class DataManager {
 
         sb.append(EvsManager.getVersion());
         sb.append(ExacManager.getVersion());
+        sb.append(GnomADManager.getVersion());
         sb.append(KnownVarManager.getVersion());
         sb.append(KaviarManager.getVersion());
         sb.append(GenomesManager.getVersion());

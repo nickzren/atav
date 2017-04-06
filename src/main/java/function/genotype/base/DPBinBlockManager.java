@@ -14,7 +14,7 @@ import utils.ErrorManager;
  */
 public class DPBinBlockManager {
 
-    public static final int DP_BIN_BLOCK_SIZE = 10000;
+    public static final int DP_BIN_BLOCK_SIZE = 1000;
 
     private static ArrayList<SampleDPBin> currentBlockList = new ArrayList<>();
     private static int currentBlockId = Data.INTEGER_NA;
@@ -27,19 +27,8 @@ public class DPBinBlockManager {
         dpBin.put('c', (short) 10);
         dpBin.put('d', (short) 20);
         dpBin.put('e', (short) 30);
-        dpBin.put('f', (short) 40);
-        dpBin.put('g', (short) 50);
-        dpBin.put('h', (short) 60);
-        dpBin.put('i', (short) 80);
-        dpBin.put('j', (short) 100);
-        dpBin.put('k', (short) 150);
-        dpBin.put('i', (short) 200);
-        dpBin.put('m', (short) 250);
-        dpBin.put('n', (short) 300);
-        dpBin.put('o', (short) 500);
-        dpBin.put('p', (short) 600);
-        dpBin.put('q', (short) 800);
-        dpBin.put('r', (short) 1000);
+        dpBin.put('f', (short) 50);
+        dpBin.put('g', (short) 200);
     }
 
     public static void add(SampleDPBin sampleDPBin) {
