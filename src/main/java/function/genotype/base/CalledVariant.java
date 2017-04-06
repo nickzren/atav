@@ -1,7 +1,6 @@
 package function.genotype.base;
 
 import function.annotation.base.AnnotatedVariant;
-import function.annotation.base.EffectManager;
 import function.genotype.statistics.HWEExact;
 import function.genotype.trio.TrioCommand;
 import function.genotype.trio.TrioManager;
@@ -57,7 +56,7 @@ public class CalledVariant extends AnnotatedVariant {
 
     private boolean initCarrierData() {
         if (VariantManager.isUsed()
-                || !EffectManager.isModifierEffectIncluded()) { // when --variant or --rs-number applied , or effect list has no MODIFIER effects
+                ) { // when --variant or --rs-number applied
             // single variant carriers data process
             CarrierBlockManager.initCarrierMap(carrierMap, this);
 
