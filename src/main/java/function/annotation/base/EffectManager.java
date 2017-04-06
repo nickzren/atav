@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -33,10 +34,9 @@ public class EffectManager {
     private static Impact lowestInputImpact = Impact.MODIFIER; // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
 
     private static final String HIGH_IMPACT = "('HIGH')";
-    private static final String MODERATE_IMPACT = "('HIGH','MODERATE')";
-    private static final String LOW_IMPACT = "('HIGH','MODERATE','LOW')";
-    private static final String MODIFIER_IMPACT = "('HIGH','MODERATE','LOW','MODIFIER')";
-    private static String impactList4SQL = MODIFIER_IMPACT; // default included all
+    private static final String MODERATE_IMPACT = "('HIGH'),('MODERATE')";
+    private static final String LOW_IMPACT = "('HIGH'),('MODERATE'),('LOW')";
+    private static final String MODIFIER_IMPACT = "('HIGH'),('MODERATE'),('LOW'),('MODIFIER')";
 
     private static boolean isUsed = false;
 
@@ -114,7 +114,7 @@ public class EffectManager {
 
             lowestInputImpact = Impact.HIGH;
 
-            for (Impact impact : inputImpactSet) {                
+            for (Impact impact : inputImpactSet) {
                 if (lowestInputImpact.getValue() < impact.getValue()) {
                     lowestInputImpact = impact;
                 }
@@ -122,16 +122,16 @@ public class EffectManager {
 
             switch (lowestInputImpact) {
                 case HIGH:
-                    impactList4SQL = HIGH_IMPACT;
+                    initImpactTable(HIGH_IMPACT);
                     break;
                 case MODERATE:
-                    impactList4SQL = MODERATE_IMPACT;
+                    initImpactTable(MODERATE_IMPACT);
                     break;
                 case LOW:
-                    impactList4SQL = LOW_IMPACT;
+                    initImpactTable(LOW_IMPACT);
                     break;
                 case MODIFIER:
-                    impactList4SQL = MODIFIER_IMPACT;
+                    initImpactTable(MODIFIER_IMPACT);
                     break;
                 default:
                     ErrorManager.print("Unknown impact: " + lowestInputImpact);
@@ -139,8 +139,24 @@ public class EffectManager {
         }
     }
 
-    public static boolean isModifierEffectIncluded() {
-        return lowestInputImpact == Impact.MODIFIER;
+    private static void initImpactTable(String impactList4SQL) {
+        try {
+            Statement stmt = DBManager.createStatement();
+
+            // create table
+            String sqlQuery = "CREATE TEMPORARY TABLE impact("
+                    + "impact enum('HIGH','MODERATE','LOW','MODIFIER') NOT NULL, "
+                    + "PRIMARY KEY (impact)) ENGINE=TokuDB;";
+
+            stmt.executeUpdate(sqlQuery);
+
+            // insert values
+            sqlQuery = "INSERT INTO impact values " + impactList4SQL;
+
+            stmt.executeUpdate(sqlQuery);
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
     }
 
     public static String getEffectIdList4SQL() {
@@ -168,10 +184,6 @@ public class EffectManager {
         return id2EffectMap.get(id);
     }
 
-    public static String getImpactList4SQL() {
-        return impactList4SQL;
-    }
-    
     public static boolean isUsed() {
         return isUsed;
     }
