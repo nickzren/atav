@@ -200,7 +200,7 @@ public class GeneManager {
     }
 
     public static String getAllGeneByChr(String chr) {
-        return "(" + chrAllGeneMap.get(chr) + ")";
+        return "(" + chrAllGeneMap.get(chr) + ",'')";
     }
 
     public static void initCoverageSummary() throws Exception {
