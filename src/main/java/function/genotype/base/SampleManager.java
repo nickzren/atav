@@ -28,10 +28,7 @@ public class SampleManager {
     private static final String SAMPLE_GROUP_RESTRICTION_PATH = Data.ATAV_HOME + "config/sample.group.restriction.txt";
     private static final String USER_GROUP_RESTRICTION_PATH = Data.ATAV_HOME + "config/user.group.restriction.txt";
 
-    public static final String[] SAMPLE_TYPE = {"genome", "exome"};
     public static final String ALL_SAMPLE_ID_TABLE = "all_sample_id";
-    public static final String GENOME_SAMPLE_ID_TABLE = "genome_sample_id";
-    public static final String EXOME_SAMPLE_ID_TABLE = "exome_sample_id";
 
     // sample permission
     private static HashMap<String, String> sampleGroupMap = new HashMap<>();// sample_name, group_name
@@ -46,8 +43,6 @@ public class SampleManager {
 
     // sample id StringBuilder is just temp used for creating temp tables
     private static StringBuilder allSampleIdSb = new StringBuilder();
-    private static StringBuilder exomeSampleIdSb = new StringBuilder();
-    private static StringBuilder genomeSampleIdSb = new StringBuilder();
 
     private static ArrayList<Sample> failedSampleList = new ArrayList<>();
     private static ArrayList<Sample> diffTypeSampleList = new ArrayList<>();
@@ -191,29 +186,27 @@ public class SampleManager {
                     continue;
                 }
 
-                lineStr = lineStr.replaceAll("( )+", "");
-
                 String[] values = lineStr.split("\t");
 
-                String familyId = values[0];
-                String individualId = values[1];
-                String paternalId = values[2];
-                String maternalId = values[3];
+                String familyId = values[0].trim();
+                String individualId = values[1].trim();
+                String paternalId = values[2].trim();
+                String maternalId = values[3].trim();
 
-                byte sex = Byte.valueOf(values[4]);
+                byte sex = Byte.valueOf(values[4].trim());
                 if (sex != 1 && sex != 2) {
                     ErrorManager.print("\nWrong Sex value: " + sex
                             + " (line " + lineNum + " in sample file)");
                 }
 
-                byte pheno = Byte.valueOf(values[5]);
+                byte pheno = Byte.valueOf(values[5].trim());
                 if (pheno != 1 && pheno != 2) {
                     ErrorManager.print("\nWrong Phenotype value: " + pheno
                             + " (line " + lineNum + " in sample file)");
                 }
 
-                String sampleType = values[6];
-                String captureKit = values[7];
+                String sampleType = values[6].trim();
+                String captureKit = values[7].trim();
 
                 if (sampleType.equalsIgnoreCase("genome")) {
                     captureKit = "N/A";
@@ -258,7 +251,7 @@ public class SampleManager {
     private static void initSampleFromAnnoDB(String sqlCode) {
         try {
             ResultSet rs = DBManager.executeQuery(sqlCode);
-            
+
             while (rs.next()) {
                 int sampleId = rs.getInt("sample_id");
                 String familyId = rs.getString("sample_name").trim();
@@ -567,21 +560,13 @@ public class SampleManager {
     }
 
     private static void initTempTables() {
-        createTempTables();
+        createTempTable(ALL_SAMPLE_ID_TABLE);
 
         initSampleIdSbs();
 
-        insertSampleId2Tables();
+        insertId2Table(allSampleIdSb.toString(), ALL_SAMPLE_ID_TABLE);
 
-        clearSampleIdSbs();
-    }
-
-    private static void createTempTables() {
-        createTempTable(ALL_SAMPLE_ID_TABLE);
-
-        createTempTable(GENOME_SAMPLE_ID_TABLE);
-
-        createTempTable(EXOME_SAMPLE_ID_TABLE);
+        allSampleIdSb.setLength(0); // free memory
     }
 
     private static void createTempTable(String sqlTable) {
@@ -601,27 +586,13 @@ public class SampleManager {
     public static void initSampleIdSbs() {
         for (Sample sample : sampleList) {
             addToSampleIdSb(allSampleIdSb, sample.getId());
-
-            if (sample.getType().equalsIgnoreCase("genome")) {
-                addToSampleIdSb(genomeSampleIdSb, sample.getId());
-            } else {
-                addToSampleIdSb(exomeSampleIdSb, sample.getId());
-            }
         }
 
         FormatManager.deleteLastComma(allSampleIdSb);
-        FormatManager.deleteLastComma(genomeSampleIdSb);
-        FormatManager.deleteLastComma(exomeSampleIdSb);
     }
 
     private static void addToSampleIdSb(StringBuilder sb, int id) {
         sb.append("(").append(id).append(")").append(",");
-    }
-
-    private static void insertSampleId2Tables() {
-        insertId2Table(allSampleIdSb.toString(), ALL_SAMPLE_ID_TABLE);
-        insertId2Table(genomeSampleIdSb.toString(), GENOME_SAMPLE_ID_TABLE);
-        insertId2Table(exomeSampleIdSb.toString(), EXOME_SAMPLE_ID_TABLE);
     }
 
     private static void insertId2Table(String ids, String table) {
@@ -632,12 +603,6 @@ public class SampleManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-    }
-
-    private static void clearSampleIdSbs() {
-        allSampleIdSb.setLength(0); // free memory
-        genomeSampleIdSb.setLength(0);
-        exomeSampleIdSb.setLength(0);
     }
 
     private static int getSampleId(String sampleName, String sampleType,
@@ -664,26 +629,7 @@ public class SampleManager {
 
         return sampleId;
     }
-
-    public static int getSamplePrepId(int sampleId) {
-        int prepId = Data.INTEGER_NA;
-
-        try {
-            String sqlCode = "SELECT prep_id FROM sample WHERE sample_id = " + sampleId;
-
-            ResultSet rs = DBManager.executeReadOnlyQuery(sqlCode);
-            if (rs.next()) {
-                prepId = rs.getInt("prep_id");
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
-        return prepId;
-    }
-
+    
     public static int getIdByName(String sampleName) {
         for (Sample sample : sampleList) {
             if (sample.getName().equals(sampleName)) {
@@ -714,10 +660,6 @@ public class SampleManager {
 
     public static int getListSize() {
         return listSize;
-    }
-
-    public static boolean isMale(int sampleId) {
-        return sampleMap.get(sampleId).isMale();
     }
 
     private static void resetSamplePheno4Linear() {

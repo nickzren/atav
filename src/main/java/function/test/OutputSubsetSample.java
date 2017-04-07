@@ -45,19 +45,19 @@ public class OutputSubsetSample {
     }
 
     public static void outputNonCarrierData() throws SQLException {
-        for (int i = 0; i < SampleManager.SAMPLE_TYPE.length; i++) {
-            for (String chr : RegionManager.ALL_CHR) {
-                String nonCarrierSql = "SELECT * "
-                        + "FROM " + SampleManager.SAMPLE_TYPE[i]
-                        + "_read_coverage_" + DPBinBlockManager.DP_BIN_BLOCK_SIZE + "_chr" + chr + " c,"
-                        + SampleManager.SAMPLE_TYPE[i] + "_sample_id t "
-                        + "WHERE c.sample_id = t.id "
-                        + "INTO OUTFILE '" + OUTPUT_PATH + SampleManager.SAMPLE_TYPE[i]
-                        + "_read_coverage_" + DPBinBlockManager.DP_BIN_BLOCK_SIZE + "_chr" + chr + ".txt'";
-
-                LogManager.writeAndPrint(nonCarrierSql);
-                DBManager.executeQuery(nonCarrierSql);
-            }
-        }
+//        for (int i = 0; i < SampleManager.SAMPLE_TYPE.length; i++) {
+//            for (String chr : RegionManager.ALL_CHR) {
+//                String nonCarrierSql = "SELECT * "
+//                        + "FROM " + SampleManager.SAMPLE_TYPE[i]
+//                        + "_read_coverage_" + DPBinBlockManager.DP_BIN_BLOCK_SIZE + "_chr" + chr + " c,"
+//                        + SampleManager.SAMPLE_TYPE[i] + "_sample_id t "
+//                        + "WHERE c.sample_id = t.id "
+//                        + "INTO OUTFILE '" + OUTPUT_PATH + SampleManager.SAMPLE_TYPE[i]
+//                        + "_read_coverage_" + DPBinBlockManager.DP_BIN_BLOCK_SIZE + "_chr" + chr + ".txt'";
+//
+//                LogManager.writeAndPrint(nonCarrierSql);
+//                DBManager.executeQuery(nonCarrierSql);
+//            }
+//        }
     }
 }
