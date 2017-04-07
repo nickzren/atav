@@ -36,7 +36,7 @@ public class CoverageManager {
     }
 
     public static String getDPBinsSQLStr(Region region) {
-        String str = "SELECT * FROM DP_bins_chr" + region.getChrStr() + ","
+        String str = "SELECT * FROM DP_bins_chr" + region.getChrStr() + " use index(primary),"
                 + SampleManager.ALL_SAMPLE_ID_TABLE
                 + " WHERE block_id in (" + getBlockIdStr(region) + ")"
                 + " AND sample_id = id ";
