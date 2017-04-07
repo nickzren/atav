@@ -1187,6 +1187,9 @@ public class VariantLevelFilterCommand {
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
+                case "--include-exac":
+                    ExacCommand.isIncludeExac = true;
+                    break;
                 case "--include-gnomad-exome":
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
