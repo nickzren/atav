@@ -29,8 +29,6 @@ public class EffectManager {
     private static HashSet<Integer> inputEffectIdSet = new HashSet<>();
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
 
-    private static Impact lowestInputImpact = Impact.MODIFIER; // higher impact value, lower impact affect - HIGH(1), MODERATE(2), LOW(3), MODIFIER(4)
-
     private static final String HIGH_IMPACT = "('HIGH')";
     private static final String MODERATE_IMPACT = "('HIGH'),('MODERATE')";
     private static final String LOW_IMPACT = "('HIGH'),('MODERATE'),('LOW')";
@@ -67,10 +65,6 @@ public class EffectManager {
     private static void initInputEffectSet() {
         String inputEffect = AnnotationLevelFilterCommand.effectInput.replaceAll("( )+", "");
 
-        if (inputEffect.isEmpty()) {
-            return;
-        }
-
         if (CommandManager.isFileExist(inputEffect)) {
             inputEffect = initEffectFromFile(inputEffect);
         }
@@ -94,12 +88,16 @@ public class EffectManager {
     }
 
     private static void initEffectSet(String inputEffect) {
-        for (String impactEffect : inputEffect.split(",")) { // input impactEffect format: impact:effect
+        if (inputEffect.isEmpty()) {
+            return;
+        }
+
+        for (String impactEffect : inputEffect.split(",")) { // input impactEffect format: lowestImpact:effect
             if (!impactEffect2IdMap.containsKey(impactEffect)) {
                 LogManager.writeAndPrint("Invalid effect: " + impactEffect);
                 continue;
             }
-            
+
             inputEffectIdSet.add(impactEffect2IdMap.get(impactEffect));
             inputImpactSet.add(Impact.valueOf(impactEffect.split(":")[0]));
         }
@@ -109,15 +107,15 @@ public class EffectManager {
         if (!inputEffectIdSet.isEmpty()) {
             isUsed = true;
 
-            lowestInputImpact = Impact.HIGH;
+            Impact lowestImpact = Impact.HIGH;
 
             for (Impact impact : inputImpactSet) {
-                if (lowestInputImpact.getValue() < impact.getValue()) {
-                    lowestInputImpact = impact;
+                if (impact.getValue() < impact.getValue()) {
+                    lowestImpact = impact;
                 }
             }
 
-            switch (lowestInputImpact) {
+            switch (lowestImpact) {
                 case HIGH:
                     initImpactTable(HIGH_IMPACT);
                     break;
@@ -131,8 +129,11 @@ public class EffectManager {
                     initImpactTable(MODIFIER_IMPACT);
                     break;
                 default:
-                    ErrorManager.print("Unknown impact: " + lowestInputImpact);
+                    ErrorManager.print("Unknown impact: " + lowestImpact);
             }
+        } else {
+            // when--effect not used
+            initImpactTable(MODIFIER_IMPACT);
         }
     }
 
