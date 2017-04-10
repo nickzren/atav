@@ -11,6 +11,13 @@ import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -29,7 +36,7 @@ public class GenotypeLevelFilterCommand {
     public static int minCtrlCoverageNoCall = Data.NO_FILTER;
     public static int minVarPresent = 1; // special case
     public static int minCaseCarrier = Data.NO_FILTER;
-    public static int[] vcfFilter; // null - no filer 
+    public static int[] varFilter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
     public static double[] homPercentAltRead = null;
     public static int genotypeQualGQ = Data.NO_FILTER;
@@ -42,7 +49,7 @@ public class GenotypeLevelFilterCommand {
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
 
-    public static final String[] VCF_FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
+    public static final String[] VAR_FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
@@ -99,15 +106,16 @@ public class GenotypeLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     minCaseCarrier = getValidInteger(option);
                     break;
-                case "--vcf-filter":
+                case "--var-status":
+                case "--var-filter":
                     option.setValue(option.getValue().toUpperCase());
-                    checkValuesValid(VCF_FILTER, option);
+                    checkValuesValid(VAR_FILTER, option);
                     String[] tmp = option.getValue().split(",");
 
-                    vcfFilter = new int[tmp.length];
+                    varFilter = new int[tmp.length];
 
                     for (int i = 0; i < tmp.length; i++) {
-                        vcfFilter[i] = Enum.FILTER.valueOf(tmp[i]).getValue();
+                        varFilter[i] = Enum.FILTER.valueOf(tmp[i]).getValue();
                     }
                     break;
                 case "--het-percent-alt-read":
@@ -187,11 +195,11 @@ public class GenotypeLevelFilterCommand {
 
     private static void initIsHighQualityVariantOnly() {
         // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
-        if (qual >= 30 && rmsMapQualMQ >= 40 && minCoverage >= 3 && vcfFilter != null) {
+        if (qual >= 30 && rmsMapQualMQ >= 40 && minCoverage >= 3 && varFilter != null) {
 
             int qualifiedFilterCount = 0;
 
-            for (int vcfFilterIndex : vcfFilter) {
+            for (int vcfFilterIndex : varFilter) {
                 if (vcfFilterIndex == Enum.FILTER.PASS.getValue()
                         || vcfFilterIndex == Enum.FILTER.LIKELY.getValue()
                         || vcfFilterIndex == Enum.FILTER.INTERMEDIATE.getValue()) {
@@ -249,12 +257,12 @@ public class GenotypeLevelFilterCommand {
         return value >= minCaseCarrier;
     }
 
-    public static boolean isVcfFilterValid(byte value) {
-        if (vcfFilter == null) { // no filter
+    public static boolean isVarFilterValid(byte value) {
+        if (varFilter == null) { // no filter
             return true;
         }
 
-        for (int tmp : vcfFilter) {
+        for (int tmp : varFilter) {
             if (value == tmp) {
                 return true;
             }
