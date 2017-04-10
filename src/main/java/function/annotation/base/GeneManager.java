@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
+import java.sql.Statement;
+import utils.DBManager;
 
 /**
  *
@@ -34,6 +36,8 @@ public class GeneManager {
         initGeneMap();
 
         resetRegionList();
+
+        initTempTable();
     }
 
     private static void initGeneName() throws Exception {
@@ -188,9 +192,9 @@ public class GeneManager {
 
                     StringBuilder sb = chrAllGeneMap.get(gene.getChr());
                     if (sb.length() == 0) {
-                        sb.append("'").append(entry.getKey()).append("'");
+                        sb.append("('").append(entry.getKey()).append("')");
                     } else {
-                        sb.append(",'").append(entry.getKey()).append("'");
+                        sb.append(",('").append(entry.getKey()).append("')");
                     }
                 }
             });
@@ -203,8 +207,32 @@ public class GeneManager {
         }
     }
 
-    public static StringBuilder getAllGeneByChr(String chr) {
-        return chrAllGeneMap.get(chr);
+    private static void initTempTable() {
+        try {
+            for (String chr : chrAllGeneMap.keySet()) {
+                if (chrAllGeneMap.get(chr).length() > 0) {
+                    Statement stmt = DBManager.createStatementByReadOnlyConn();
+
+                    // create table
+                    String sqlQuery = "CREATE TEMPORARY TABLE gene_chr" + chr + " ("
+                            + "gene_name varchar(128) NOT NULL, "
+                            + "PRIMARY KEY (gene_name)) ENGINE=TokuDB;";
+
+                    stmt.executeUpdate(sqlQuery);
+
+                    // insert values
+                    sqlQuery = "INSERT INTO gene_chr" + chr + " values " + chrAllGeneMap.get(chr);
+
+                    stmt.executeUpdate(sqlQuery);
+
+                    stmt.closeOnCompletion();
+                }
+            }
+
+            chrAllGeneMap.clear(); // free memmory
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
     }
 
     public static void initCoverageSummary() throws Exception {

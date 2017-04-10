@@ -111,6 +111,16 @@ public class DBManager {
 
         return null;
     }
+    
+    public static Statement createStatementByReadOnlyConn() {
+        try {
+            return readOnlyConn.createStatement();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        return null;
+    }
 
     public static ResultSet executeReadOnlyQuery(String sqlQuery) throws SQLException {
         return readOnlyStmt.executeQuery(sqlQuery);

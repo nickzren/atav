@@ -30,7 +30,12 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
     protected static ResultSet getAnnotationList(Region region) throws SQLException {
         String sql = "SELECT variant_id, POS, REF, ALT, rs_number, transcript_stable_id, "
                 + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene, indel_length "
-                + "FROM variant_chr" + region.getChrStr() + " ";
+                + "FROM variant_chr" + region.getChrStr();
+
+        // gene filter
+        if (GeneManager.isUsed()) {
+            sql += ", gene_chr" + region.getChrStr() + " ";
+        }
 
         // region filter
         if (region.getStartPosition() != Data.INTEGER_NA) {
@@ -48,10 +53,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
 
         // gene filter
         if (GeneManager.isUsed()) {
-            StringBuilder allGeneSB = GeneManager.getAllGeneByChr(region.getChrStr());
-            if (allGeneSB.length() > 0) {
-                sql = addFilter2SQL(sql, " gene in (" + allGeneSB.toString() + ") ");
-            }
+            sql = addFilter2SQL(sql, " gene = gene_name ");
         }
 
         // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP

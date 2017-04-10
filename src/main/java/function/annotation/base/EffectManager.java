@@ -152,6 +152,8 @@ public class EffectManager {
             sqlQuery = "INSERT INTO impact values " + impactList4SQL;
 
             stmt.executeUpdate(sqlQuery);
+            
+            stmt.closeOnCompletion();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
