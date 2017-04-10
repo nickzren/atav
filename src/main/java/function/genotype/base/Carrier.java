@@ -82,7 +82,7 @@ public class Carrier extends NonCarrier {
     }
 
     public String getFILTER() {
-        return GenotypeLevelFilterCommand.VAR_FILTER[filterValue - 1];
+        return GenotypeLevelFilterCommand.FILTER[filterValue - 1];
     }
 
     public String getPercAltRead() {
@@ -99,7 +99,7 @@ public class Carrier extends NonCarrier {
 
     public void applyQualityFilter() {
         if (gt != Data.BYTE_NA) {
-            if (!GenotypeLevelFilterCommand.isVarFilterValid(filterValue)
+            if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isGqValid(gq)
                     || !GenotypeLevelFilterCommand.isFsValid(fs)
                     || !GenotypeLevelFilterCommand.isMqValid(mq)
