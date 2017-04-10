@@ -11,21 +11,6 @@ import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -87,7 +72,7 @@ public class GenotypeLevelFilterCommand {
                     minCtrlMaf = getValidDouble(option);
                     break;
                 case "--min-coverage":
-                    checkValueValid(new String[]{"0", "3", "10", "20", "201"}, option);
+                    checkValueValid(new String[]{"3", "10", "20", "30", "50", "200"}, option);
                     minCoverage = getValidInteger(option);
                     break;
                 case "--min-case-coverage-call":
@@ -95,7 +80,7 @@ public class GenotypeLevelFilterCommand {
                     minCaseCoverageCall = getValidInteger(option);
                     break;
                 case "--min-case-coverage-no-call":
-                    checkValueValid(new String[]{"3", "10", "20", "201"}, option);
+                    checkValueValid(new String[]{"3", "10", "20", "30", "50", "200"}, option);
                     minCaseCoverageNoCall = getValidInteger(option);
                     break;
                 case "--min-ctrl-coverage-call":
@@ -103,7 +88,7 @@ public class GenotypeLevelFilterCommand {
                     minCtrlCoverageCall = getValidInteger(option);
                     break;
                 case "--min-ctrl-coverage-no-call":
-                    checkValueValid(new String[]{"3", "10", "20", "201"}, option);
+                    checkValueValid(new String[]{"3", "10", "20", "30", "50", "200"}, option);
                     minCtrlCoverageNoCall = getValidInteger(option);
                     break;
                 case "--min-variant-present":
