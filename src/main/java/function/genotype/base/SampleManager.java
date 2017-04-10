@@ -575,7 +575,7 @@ public class SampleManager {
 
             String sqlQuery = "CREATE TEMPORARY TABLE "
                     + sqlTable
-                    + "(id int, PRIMARY KEY (id)) ENGINE=TokuDB";
+                    + "(id mediumint, PRIMARY KEY (id)) ENGINE=TokuDB";
 
             stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
         } catch (Exception e) {
