@@ -25,7 +25,7 @@ public class Annotation {
     public void init(ResultSet rset, String chr) throws SQLException {
         this.chr = chr;
         pos = rset.getInt("POS");
-        stableId = FormatManager.getInt(rset, "transcript_stable_id");
+        stableId = rset.getInt("transcript_stable_id");
 
         if (stableId < 0) {
             stableId = Data.INTEGER_NA;

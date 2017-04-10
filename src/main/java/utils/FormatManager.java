@@ -51,7 +51,7 @@ public class FormatManager {
 
         return String.valueOf(value);
     }
-    
+
     public static byte getByte(ResultSet rs, String strColName) throws SQLException {
         byte nValue = rs.getByte(strColName);
         return rs.wasNull() ? Data.BYTE_NA : nValue;
@@ -63,7 +63,7 @@ public class FormatManager {
     }
 
     public static String getString(String str) {
-        if (str == null || str.equals("-") || str.equals("")) {
+        if (str == null) {
             str = Data.STRING_NA;
         }
 
