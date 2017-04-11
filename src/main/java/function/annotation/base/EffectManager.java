@@ -137,7 +137,7 @@ public class EffectManager {
             Impact lowestImpact = Impact.HIGH;
 
             for (Impact impact : inputImpactSet) {
-                if (impact.getValue() < impact.getValue()) {
+                if (lowestImpact.getValue() < impact.getValue()) {
                     lowestImpact = impact;
                 }
             }

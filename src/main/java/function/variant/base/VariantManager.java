@@ -264,18 +264,15 @@ public class VariantManager {
     }
 
     private static void resetRegionList() throws SQLException {
-        if (!RegionManager.isUsed()
-                && !GeneManager.isUsed()) {
-            RegionManager.clear();
+        RegionManager.clear();
 
-            if (includeVariantSet.size() <= maxIncludeNum) {
-                for (String varPos : includeVariantPosList) {
-                    RegionManager.addRegionByVariantPos(varPos);
-                }
-            } else {
-                RegionManager.initChrRegionList(includeChrList.toArray(new String[includeChrList.size()]));
-                RegionManager.sortRegionList();
+        if (includeVariantSet.size() <= maxIncludeNum) {
+            for (String varPos : includeVariantPosList) {
+                RegionManager.addRegionByVariantPos(varPos);
             }
+        } else {
+            RegionManager.initChrRegionList(includeChrList.toArray(new String[includeChrList.size()]));
+            RegionManager.sortRegionList();
         }
     }
 

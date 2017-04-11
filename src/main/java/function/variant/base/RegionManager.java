@@ -15,7 +15,6 @@ import java.util.Collections;
 public class RegionManager {
 
     private static ArrayList<Region> regionList = new ArrayList<>();
-    private static boolean isUsed = false;
 
     public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
         "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT"};
@@ -28,8 +27,6 @@ public class RegionManager {
         if (CommonCommand.regionInput.isEmpty()) {
             initChrRegionList(ALL_CHR);
         } else {
-            isUsed = true;
-
             File f = new File(CommonCommand.regionInput);
 
             if (CommonCommand.regionInput.equals("all")) {
@@ -51,10 +48,6 @@ public class RegionManager {
 
     public static void clear() {
         regionList.clear();
-    }
-
-    public static boolean isUsed() {
-        return isUsed;
     }
 
     public static int getRegionSize() {

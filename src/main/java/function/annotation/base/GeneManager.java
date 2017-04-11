@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
+import function.variant.base.VariantManager;
 import java.sql.Statement;
 import utils.DBManager;
 
@@ -201,11 +202,9 @@ public class GeneManager {
                 }
             });
 
-            if (!RegionManager.isUsed()) {
-                RegionManager.clear();
-                RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
-                RegionManager.sortRegionList();
-            }
+            RegionManager.clear();
+            RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
+            RegionManager.sortRegionList();
         }
     }
 
