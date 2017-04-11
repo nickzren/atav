@@ -28,7 +28,7 @@ public class SampleManager {
     private static final String SAMPLE_GROUP_RESTRICTION_PATH = Data.ATAV_HOME + "config/sample.group.restriction.txt";
     private static final String USER_GROUP_RESTRICTION_PATH = Data.ATAV_HOME + "config/user.group.restriction.txt";
 
-    public static final String ALL_SAMPLE_ID_TABLE = "all_sample_id";
+    public static final String TMP_SAMPLE_ID_TABLE = "tmp_sample_id";
 
     // sample permission
     private static HashMap<String, String> sampleGroupMap = new HashMap<>();// sample_name, group_name
@@ -560,11 +560,11 @@ public class SampleManager {
     }
 
     private static void initTempTables() {
-        createTempTable(ALL_SAMPLE_ID_TABLE);
+        createTempTable(TMP_SAMPLE_ID_TABLE);
 
         initSampleIdSbs();
 
-        insertId2Table(allSampleIdSb.toString(), ALL_SAMPLE_ID_TABLE);
+        insertId2Table(allSampleIdSb.toString(), TMP_SAMPLE_ID_TABLE);
 
         allSampleIdSb.setLength(0); // free memory
     }
@@ -575,7 +575,7 @@ public class SampleManager {
 
             String sqlQuery = "CREATE TEMPORARY TABLE "
                     + sqlTable
-                    + "(id mediumint, PRIMARY KEY (id)) ENGINE=TokuDB";
+                    + "(input_sample_id mediumint, PRIMARY KEY (input_sample_id)) ENGINE=TokuDB";
 
             stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
         } catch (Exception e) {

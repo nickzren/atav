@@ -1,6 +1,5 @@
 package function.genotype.base;
 
-import static function.genotype.base.SampleManager.ALL_SAMPLE_ID_TABLE;
 import function.variant.base.Variant;
 import global.Data;
 import java.sql.ResultSet;
@@ -80,8 +79,8 @@ public class DPBinBlockManager {
             int posIndex,
             int blockId) {
         try {
-            String sql = "SELECT sample_id, DP_string FROM DP_bins_chr" + var.getChrStr() + "," + ALL_SAMPLE_ID_TABLE
-                    + " WHERE block_id = " + blockId + " AND sample_id = id";
+            String sql = "SELECT sample_id, DP_string FROM DP_bins_chr" + var.getChrStr() + "," + SampleManager.TMP_SAMPLE_ID_TABLE
+                    + " WHERE block_id = " + blockId + " AND sample_id = input_sample_id";
 
             ResultSet rs = DBManager.executeQuery(sql);
             while (rs.next()) {

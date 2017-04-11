@@ -1,5 +1,6 @@
 package function.genotype.base;
 
+import function.annotation.base.EffectManager;
 import function.variant.base.Variant;
 import global.Data;
 import java.sql.ResultSet;
@@ -34,11 +35,11 @@ public class CarrierBlockManager {
 
     private static void initBlockCarrierMap(Variant var) {
         String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0 "
-                + "FROM called_variant_chr" + var.getChrStr() + ",impact i,"
-                + SampleManager.ALL_SAMPLE_ID_TABLE
+                + "FROM called_variant_chr" + var.getChrStr() + "," + EffectManager.TMP_IMPACT_TABLE + ","
+                + SampleManager.TMP_SAMPLE_ID_TABLE
                 + " WHERE block_id = " + currentBlockId
-                + " AND highest_impact = i.impact "
-                + " AND sample_id = id ";
+                + " AND highest_impact = input_impact "
+                + " AND sample_id = input_sample_id ";
 
         try {
             HashMap<Integer, Integer> validVariantCarrierCount = new HashMap<>();
@@ -85,11 +86,11 @@ public class CarrierBlockManager {
         int blockId = Math.floorDiv(var.getStartPosition(), CARRIER_BLOCK_SIZE);
 
         String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0 "
-                + "FROM called_variant_chr" + var.getChrStr() + ",impact i,"
-                + SampleManager.ALL_SAMPLE_ID_TABLE
+                + "FROM called_variant_chr" + var.getChrStr() + "," + EffectManager.TMP_IMPACT_TABLE + ","
+                + SampleManager.TMP_SAMPLE_ID_TABLE
                 + " WHERE block_id = " + blockId
-                + " AND highest_impact = i.impact "
-                + " AND sample_id = id"
+                + " AND highest_impact = input_impact "
+                + " AND sample_id = input_sample_id"
                 + " AND variant_id =" + var.getVariantId();
 
         try {

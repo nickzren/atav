@@ -17,6 +17,8 @@ import utils.DBManager;
  */
 public class GeneManager {
 
+    public static final String TMP_GENE_TABLE = "tmp_gene_chr"; // need to append chr in real time
+
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringBuilder> chrAllGeneMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
@@ -214,16 +216,14 @@ public class GeneManager {
                     Statement stmt = DBManager.createStatementByReadOnlyConn();
 
                     // create table
-                    String sqlQuery = "CREATE TEMPORARY TABLE gene_chr" + chr + " ("
-                            + "gene_name varchar(128) NOT NULL, "
-                            + "PRIMARY KEY (gene_name)) ENGINE=TokuDB;";
-
-                    stmt.executeUpdate(sqlQuery);
+                    stmt.executeUpdate(
+                            "CREATE TEMPORARY TABLE " + TMP_GENE_TABLE + chr + "("
+                            + "input_gene varchar(128) NOT NULL, "
+                            + "PRIMARY KEY (input_gene)) ENGINE=TokuDB;");
 
                     // insert values
-                    sqlQuery = "INSERT INTO gene_chr" + chr + " values " + chrAllGeneMap.get(chr);
-
-                    stmt.executeUpdate(sqlQuery);
+                    stmt.executeUpdate("INSERT INTO " + TMP_GENE_TABLE + chr
+                            + " values " + chrAllGeneMap.get(chr));
 
                     stmt.closeOnCompletion();
                 }

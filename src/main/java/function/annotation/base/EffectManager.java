@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,12 +22,14 @@ import utils.DBManager;
  */
 public class EffectManager {
 
+    public static final String TMP_EFFECT_ID_TABLE = "tmp_effect_id";
+    public static final String TMP_IMPACT_TABLE = "tmp_impact";
+
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
     private static HashMap<String, Integer> impactEffect2IdMap = new HashMap<>();
 
     // user input values
-    private static HashSet<Integer> inputEffectIdSet = new HashSet<>();
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
 
     private static final String HIGH_IMPACT = "('HIGH')";
@@ -36,10 +39,26 @@ public class EffectManager {
 
     private static boolean isUsed = false;
 
-    public static void init() {
+    public static void init() throws SQLException {
         initDefaultEffectSet();
 
         initInputEffectSet();
+    }
+
+    private static void initTempTable() {
+        try {
+            Statement stmt = DBManager.createStatementByReadOnlyConn();
+
+            // create table
+            String sqlQuery = "CREATE TEMPORARY TABLE " + TMP_EFFECT_ID_TABLE + " ("
+                    + "input_effect_id tinyint(3) NOT NULL, "
+                    + "PRIMARY KEY (input_effect_id)) ENGINE=TokuDB;";
+
+            stmt.executeUpdate(sqlQuery);
+            stmt.closeOnCompletion();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
     }
 
     private static void initDefaultEffectSet() {
@@ -62,7 +81,7 @@ public class EffectManager {
         }
     }
 
-    private static void initInputEffectSet() {
+    private static void initInputEffectSet() throws SQLException {
         String inputEffect = AnnotationLevelFilterCommand.effectInput.replaceAll("( )+", "");
 
         if (CommandManager.isFileExist(inputEffect)) {
@@ -87,10 +106,14 @@ public class EffectManager {
         return inputEffect;
     }
 
-    private static void initEffectSet(String inputEffect) {
+    private static void initEffectSet(String inputEffect) throws SQLException {
         if (inputEffect.isEmpty()) {
             return;
         }
+
+        initTempTable();
+
+        Statement stmt = DBManager.createStatementByReadOnlyConn();
 
         for (String impactEffect : inputEffect.split(",")) { // input impactEffect format: lowestImpact:effect
             if (!impactEffect2IdMap.containsKey(impactEffect)) {
@@ -98,13 +121,17 @@ public class EffectManager {
                 continue;
             }
 
-            inputEffectIdSet.add(impactEffect2IdMap.get(impactEffect));
+            stmt.executeUpdate("INSERT INTO tmp_effect_id values ("
+                    + impactEffect2IdMap.get(impactEffect) + ")");
+
             inputImpactSet.add(Impact.valueOf(impactEffect.split(":")[0]));
         }
+
+        stmt.closeOnCompletion();
     }
 
     private static void initLowestImpact() {
-        if (!inputEffectIdSet.isEmpty()) {
+        if (!inputImpactSet.isEmpty()) {
             isUsed = true;
 
             Impact lowestImpact = Impact.HIGH;
@@ -142,42 +169,18 @@ public class EffectManager {
             Statement stmt = DBManager.createStatement();
 
             // create table
-            String sqlQuery = "CREATE TEMPORARY TABLE impact("
-                    + "impact enum('HIGH','MODERATE','LOW','MODIFIER') NOT NULL, "
-                    + "PRIMARY KEY (impact)) ENGINE=TokuDB;";
-
-            stmt.executeUpdate(sqlQuery);
+            stmt.executeUpdate(
+                    "CREATE TEMPORARY TABLE " + TMP_IMPACT_TABLE + " ("
+                    + "input_impact enum('HIGH','MODERATE','LOW','MODIFIER') NOT NULL, "
+                    + "PRIMARY KEY (input_impact)) ENGINE=TokuDB;");
 
             // insert values
-            sqlQuery = "INSERT INTO impact values " + impactList4SQL;
+            stmt.executeUpdate("INSERT INTO tmp_impact values " + impactList4SQL);
 
-            stmt.executeUpdate(sqlQuery);
-            
             stmt.closeOnCompletion();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-    }
-
-    public static String getEffectIdList4SQL() {
-        StringBuilder sb = new StringBuilder();
-
-        boolean isFirst = true;
-
-        for (int id : inputEffectIdSet) {
-            if (isFirst) {
-                isFirst = false;
-                sb.append("(");
-            } else {
-                sb.append(",");
-            }
-
-            sb.append(id);
-        }
-
-        sb.append(")");
-
-        return sb.toString();
     }
 
     public static String getEffectById(int id) {

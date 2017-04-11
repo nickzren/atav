@@ -32,9 +32,14 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
                 + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene, indel_length "
                 + "FROM variant_chr" + region.getChrStr();
 
-        // gene filter
+        // effect filter - add tmp table
+        if (EffectManager.isUsed()) {
+            sql += "," + EffectManager.TMP_EFFECT_ID_TABLE + " ";
+        }
+
+        // gene filter - add tmp table
         if (GeneManager.isUsed()) {
-            sql += ", gene_chr" + region.getChrStr() + " ";
+            sql += "," + GeneManager.TMP_GENE_TABLE + region.getChrStr() + " ";
         }
 
         // region filter
@@ -46,14 +51,14 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
             sql = addFilter2SQL(sql, " POS <= " + region.getEndPosition() + " ");
         }
 
-        // effect filter
+        // effect filter - join tmp table
         if (EffectManager.isUsed()) {
-            sql = addFilter2SQL(sql, " effect_id IN " + EffectManager.getEffectIdList4SQL() + " ");
+            sql = addFilter2SQL(sql, " effect_id = input_effect_id ");
         }
 
-        // gene filter
+        // gene filter - join tmp table
         if (GeneManager.isUsed()) {
-            sql = addFilter2SQL(sql, " gene = gene_name ");
+            sql = addFilter2SQL(sql, " gene = input_gene ");
         }
 
         // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP

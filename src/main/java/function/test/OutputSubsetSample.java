@@ -1,8 +1,6 @@
 package function.test;
 
-import function.genotype.base.DPBinBlockManager;
 import function.genotype.base.SampleManager;
-import function.variant.base.RegionManager;
 import java.sql.SQLException;
 import utils.DBManager;
 import utils.LogManager;
@@ -26,18 +24,18 @@ public class OutputSubsetSample {
 
     public static void outputCarrierData() throws SQLException {   
         String snvCarrierSql = "SELECT * "
-                + "FROM called_snv va,"
-                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
-                + "WHERE va.sample_id = t.id "
+                + "FROM called_snv c,"
+                + SampleManager.TMP_SAMPLE_ID_TABLE + " t "
+                + "WHERE c.sample_id = t.input_sample_id "
                 + "INTO OUTFILE '" + OUTPUT_PATH + "called_snv.txt'";
 
         LogManager.writeAndPrint(snvCarrierSql);
         DBManager.executeQuery(snvCarrierSql);
 
         String indelCarrierSql = "SELECT * "
-                + "FROM called_indel va,"
-                + SampleManager.ALL_SAMPLE_ID_TABLE + " t "
-                + "WHERE va.sample_id = t.id "
+                + "FROM called_indel c,"
+                + SampleManager.TMP_SAMPLE_ID_TABLE + " t "
+                + "WHERE c.sample_id = t.input_sample_id "
                 + "INTO OUTFILE '" + OUTPUT_PATH + "called_indel.txt'";
 
         LogManager.writeAndPrint(indelCarrierSql);
