@@ -30,7 +30,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
     protected static ResultSet getAnnotationList(Region region) throws SQLException {
         String sql = "SELECT variant_id, POS, REF, ALT, rs_number, transcript_stable_id, "
                 + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene, indel_length "
-                + "FROM variant_chr" + region.getChrStr();
+                + "FROM variant_chr" + region.getChrStr() + " ";
 
         // effect filter - add tmp table
         if (EffectManager.isUsed()) {
@@ -67,7 +67,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         }
 
         sql += "ORDER BY POS,variant_id,effect_id,transcript_stable_id;";
-
+        
         return DBManager.executeReadOnlyQuery(sql);
     }
 

@@ -122,7 +122,7 @@ public class EffectManager {
             }
 
             stmt.executeUpdate("INSERT INTO tmp_effect_id values ("
-                    + impactEffect2IdMap.get(impactEffect) + ")");
+                    + impactEffect2IdMap.get(impactEffect) + ");");
 
             inputImpactSet.add(Impact.valueOf(impactEffect.split(":")[0]));
         }
