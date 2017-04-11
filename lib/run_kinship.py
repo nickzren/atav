@@ -63,7 +63,7 @@ def process_ped_file(ped_fh, log_fh, verbose=False):
     if verbose:
         log_fh.write("Parsing PED/FAM/ATAV sample file\n")
     for line in ped_fh:
-        fields = line.strip().split()
+        fields = line.strip().split("\t")
         ped_lines.append(fields)
         phenotype = int(fields[5]) - 1
         assert phenotype in (0, 1)
