@@ -1,6 +1,5 @@
 package function.variant.base;
 
-import function.annotation.base.GeneManager;
 import function.external.knownvar.ClinVar;
 import function.external.knownvar.DBDSM;
 import function.external.knownvar.HGMD;

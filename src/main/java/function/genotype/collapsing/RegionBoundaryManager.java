@@ -69,7 +69,8 @@ public class RegionBoundaryManager {
     }
 
     private static void resetRegionList() throws Exception {
-        if (!GeneManager.isUsed()) {
+        if (!RegionManager.isUsed()
+                && !GeneManager.isUsed()) {
             RegionManager.clear();
 
             HashSet<String> regionSet = new HashSet<String>();

@@ -202,9 +202,11 @@ public class GeneManager {
                 }
             });
 
-            RegionManager.clear();
-            RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
-            RegionManager.sortRegionList();
+            if (!RegionManager.isUsed()) {
+                RegionManager.clear();
+                RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
+                RegionManager.sortRegionList();
+            }
         }
     }
 
