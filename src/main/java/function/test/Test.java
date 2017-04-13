@@ -2,7 +2,9 @@ package function.test;
 
 import function.AnalysisBase;
 import function.genotype.base.DPBinBlockManager;
+import static function.test.ConvertCalledVariant.executeSQL;
 import function.variant.base.RegionManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +41,7 @@ public class Test extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-//            ConvertCalledVariant.run();
+            CountVariant.run();
         } catch (Exception ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }
