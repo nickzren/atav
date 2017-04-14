@@ -54,7 +54,7 @@ public class ListGerp extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-            for (String variantId : VariantManager.getIncludeVariantList()) {
+            for (String variantId : VariantManager.getIncludeVariantSet()) {
                 GerpOutput output = new GerpOutput(variantId);
 
                 if (output.isValid()) {

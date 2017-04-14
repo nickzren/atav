@@ -363,8 +363,8 @@ public class VariantManager {
         includeVariantTypeList.add(type);
     }
 
-    public static ArrayList<String> getIncludeVariantList() {
-        return includeVariantPosList;
+    public static HashSet<String> getIncludeVariantSet() {
+        return includeVariantSet;
     }
 
     private static void clearIncludeVarSet() {
