@@ -54,7 +54,7 @@ public class ListTrap extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-            for (String variantId : VariantManager.getIncludeVariantList()) {
+            for (String variantId : VariantManager.getIncludeVariantSet()) {
                 TrapOutput output = new TrapOutput(variantId);
                 bwTrap.write(output.toString());
                 countVariant();

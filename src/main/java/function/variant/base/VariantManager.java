@@ -309,8 +309,8 @@ public class VariantManager {
         return excludeVariantSet.contains(varId);
     }
 
-    public static ArrayList<String> getIncludeVariantList() {
-        return includeVariantPosList;
+    public static HashSet<String> getIncludeVariantSet() {
+        return includeVariantSet;
     }
 
     private static void clearIncludeVarSet() {
