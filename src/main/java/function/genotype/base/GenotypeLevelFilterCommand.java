@@ -23,6 +23,7 @@ public class GenotypeLevelFilterCommand {
     public static double maxCtrlMaf = Data.NO_FILTER;
     public static double minCtrlMaf = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
+    public static int minGQBin = Data.NO_FILTER;
     public static int minCaseCoverageCall = Data.NO_FILTER;
     public static int minCaseCoverageNoCall = Data.NO_FILTER;
     public static int minCtrlCoverageCall = Data.NO_FILTER;
@@ -74,6 +75,10 @@ public class GenotypeLevelFilterCommand {
                 case "--min-coverage":
                     checkValueValid(new String[]{"3", "10", "20", "30", "50", "200"}, option);
                     minCoverage = getValidInteger(option);
+                    break;
+                case "--min-gq-bin":
+                    checkValueValid(new String[]{"5", "15", "20", "60"}, option);
+                    minGQBin = getValidInteger(option);
                     break;
                 case "--min-case-coverage-call":
                     checkValueValid(Data.NO_FILTER, 0, option);
