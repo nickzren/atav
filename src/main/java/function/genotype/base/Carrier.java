@@ -139,14 +139,14 @@ public class Carrier extends NonCarrier {
     private void applyQualityFilter(boolean isSnv) {
         if (genotype != Data.NA) {
             if (!GenotypeLevelFilterCommand.isVarStatusValid(passFailStatus)
-                    || !GenotypeLevelFilterCommand.isGqValid(genotypeQualGQ)
-                    || !GenotypeLevelFilterCommand.isFsValid(strandBiasFS)
-                    || !GenotypeLevelFilterCommand.isHapScoreValid(haplotypeScore)
-                    || !GenotypeLevelFilterCommand.isMqValid(rmsMapQualMQ)
-                    || !GenotypeLevelFilterCommand.isQdValid(qualByDepthQD)
+                    || !GenotypeLevelFilterCommand.isGqValid(genotypeQualGQ, isSnv)
+                    || !GenotypeLevelFilterCommand.isFsValid(strandBiasFS, isSnv)
+                    || !GenotypeLevelFilterCommand.isHapScoreValid(haplotypeScore, isSnv)
+                    || !GenotypeLevelFilterCommand.isMqValid(rmsMapQualMQ, isSnv)
+                    || !GenotypeLevelFilterCommand.isQdValid(qualByDepthQD, isSnv)
                     || !GenotypeLevelFilterCommand.isQualValid(qual, isSnv)
-                    || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum)
-                    || !GenotypeLevelFilterCommand.isMqrsValid(mapQualRankSum)
+                    || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum, isSnv)
+                    || !GenotypeLevelFilterCommand.isMqrsValid(mapQualRankSum, isSnv)
                     || !GenotypeLevelFilterCommand.isMaxHetBinomialPValid(hetBinomialP)
                     || !GenotypeLevelFilterCommand.isMaxHomBinomialPValid(homBinomialP)) {
                 genotype = Data.NA;
