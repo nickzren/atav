@@ -49,7 +49,7 @@ public class CarrierBlockManager {
             while (rs.next()) {
                 Carrier carrier = new Carrier(rs);
 
-                carrier.applyQualityFilter();
+                carrier.applyQualityFilter(var.isSnv());
 
                 int variantId = rs.getInt("variant_id");
 
@@ -99,7 +99,7 @@ public class CarrierBlockManager {
             while (rs.next()) {
                 Carrier carrier = new Carrier(rs);
 
-                carrier.applyQualityFilter();
+                carrier.applyQualityFilter(var.isSnv());
 
                 carrierMap.put(carrier.getSampleId(), carrier);
             }

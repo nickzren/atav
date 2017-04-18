@@ -97,16 +97,16 @@ public class Carrier extends NonCarrier {
         }
     }
 
-    public void applyQualityFilter() {
+    public void applyQualityFilter(boolean isSnv) {
         if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
-                    || !GenotypeLevelFilterCommand.isGqValid(gq)
-                    || !GenotypeLevelFilterCommand.isFsValid(fs)
-                    || !GenotypeLevelFilterCommand.isMqValid(mq)
-                    || !GenotypeLevelFilterCommand.isQdValid(qd)
-                    || !GenotypeLevelFilterCommand.isQualValid(qual)
-                    || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum)
-                    || !GenotypeLevelFilterCommand.isMqrsValid(mqRankSum)) {
+                    || !GenotypeLevelFilterCommand.isGqValid(gq, isSnv)
+                    || !GenotypeLevelFilterCommand.isFsValid(fs, isSnv)
+                    || !GenotypeLevelFilterCommand.isMqValid(mq, isSnv)
+                    || !GenotypeLevelFilterCommand.isQdValid(qd, isSnv)
+                    || !GenotypeLevelFilterCommand.isQualValid(qual, isSnv)
+                    || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum, isSnv)
+                    || !GenotypeLevelFilterCommand.isMqrsValid(mqRankSum, isSnv)) {
                 gt = Data.BYTE_NA;
             }
         }

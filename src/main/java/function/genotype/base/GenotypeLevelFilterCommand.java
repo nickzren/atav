@@ -33,13 +33,20 @@ public class GenotypeLevelFilterCommand {
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
     public static double[] homPercentAltRead = null;
-    public static int genotypeQualGQ = Data.NO_FILTER;
-    public static float strandBiasFS = Data.NO_FILTER;
-    public static int rmsMapQualMQ = Data.NO_FILTER;
-    public static int qualByDepthQD = Data.NO_FILTER;
-    public static int qual = Data.NO_FILTER;
-    public static float readPosRankSum = Data.NO_FILTER;
-    public static float mapQualRankSum = Data.NO_FILTER;
+    public static int snvGQ = Data.NO_FILTER;
+    public static int indelGQ = Data.NO_FILTER;
+    public static float snvFS = Data.NO_FILTER;
+    public static float indelFS = Data.NO_FILTER;
+    public static int snvMQ = Data.NO_FILTER;
+    public static int indelMQ = Data.NO_FILTER;
+    public static int snvQD = Data.NO_FILTER;
+    public static int indelQD = Data.NO_FILTER;
+    public static int snvQual = Data.NO_FILTER;
+    public static int indelQual = Data.NO_FILTER;
+    public static float snvRPRS = Data.NO_FILTER;
+    public static float indelRPRS = Data.NO_FILTER;
+    public static float snvMQRS = Data.NO_FILTER;
+    public static float indelMQRS = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
 
@@ -125,31 +132,85 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--gq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    genotypeQualGQ = getValidInteger(option);
+                    snvGQ = getValidInteger(option);
+                    indelGQ = getValidInteger(option);
+                    break;
+                case "--snv-gq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvGQ = getValidInteger(option);
+                    break;
+                case "--indel-gq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelGQ = getValidInteger(option);
                     break;
                 case "--fs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    strandBiasFS = getValidFloat(option);
+                    snvFS = getValidFloat(option);
+                    indelFS = getValidFloat(option);
+                    break;
+                case "--snv-fs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvFS = getValidFloat(option);
+                    break;
+                case "--indel-fs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelFS = getValidFloat(option);
                     break;
                 case "--mq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    rmsMapQualMQ = getValidInteger(option);
+                    snvMQ = getValidInteger(option);
+                    indelMQ = getValidInteger(option);
+                    break;
+                case "--snv-mq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvMQ = getValidInteger(option);
+                    break;
+                case "--indel-mq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelMQ = getValidInteger(option);
                     break;
                 case "--qd":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    qualByDepthQD = getValidInteger(option);
+                    snvQD = getValidInteger(option);
                     break;
                 case "--qual":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    qual = getValidInteger(option);
+                    snvQual = getValidInteger(option);
+                    indelQual = getValidInteger(option);
+                    break;
+                case "--snv-qual":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvQual = getValidInteger(option);
+                    break;
+                case "--indel-qual":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelQual = getValidInteger(option);
                     break;
                 case "--rprs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    readPosRankSum = getValidFloat(option);
+                    snvRPRS = getValidFloat(option);
+                    indelRPRS = getValidFloat(option);
+                    break;
+                case "--snv-rprs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvRPRS = getValidFloat(option);
+                    break;
+                case "--indel-rprs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelRPRS = getValidFloat(option);
                     break;
                 case "--mqrs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    mapQualRankSum = getValidFloat(option);
+                    snvMQRS = getValidFloat(option);
+                    indelMQRS = getValidFloat(option);
+                    break;
+                case "--snv-mqrs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvMQRS = getValidFloat(option);
+                    break;
+                case "--indel-mqrs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelMQRS = getValidFloat(option);
                     break;
                 case "--include-qc-missing":
                     isQcMissingIncluded = true;
@@ -192,7 +253,10 @@ public class GenotypeLevelFilterCommand {
 
     private static void initIsHighQualityVariantOnly() {
         // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
-        if (qual >= 30 && rmsMapQualMQ >= 40 && minCoverage >= 3 && filter != null) {
+        if ((snvQual >= 30 & indelQual >= 30)
+                && (snvMQ >= 40 && indelMQ >= 40)
+                && minCoverage >= 3
+                && filter != null) {
 
             int qualifiedFilterCount = 0;
 
@@ -268,8 +332,16 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isGqValid(byte value) {
-        if (genotypeQualGQ == Data.NO_FILTER) {
+    public static boolean isGqValid(byte value, boolean isSnv) {
+        if (isSnv) {
+            return isGqValid(value, snvGQ);
+        } else {
+            return isGqValid(value, indelGQ);
+        }
+    }
+
+    private static boolean isGqValid(byte value, int gq) {
+        if (gq == Data.NO_FILTER) {
             return true;
         }
 
@@ -277,15 +349,23 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= genotypeQualGQ) {
+        } else if (value >= gq) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isFsValid(float value) {
-        if (strandBiasFS == Data.NO_FILTER) {
+    public static boolean isFsValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isFsValid(value, snvFS);
+        } else {
+            return isFsValid(value, indelFS);
+        }
+    }
+
+    private static boolean isFsValid(float value, float fs) {
+        if (fs == Data.NO_FILTER) {
             return true;
         }
 
@@ -293,15 +373,23 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value <= strandBiasFS) {
+        } else if (value <= fs) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isMqValid(byte value) {
-        if (rmsMapQualMQ == Data.NO_FILTER) {
+    public static boolean isMqValid(byte value, boolean isSnv) {
+        if (isSnv) {
+            return isMqValid(value, snvMQ);
+        } else {
+            return isMqValid(value, indelMQ);
+        }
+    }
+
+    private static boolean isMqValid(byte value, int mq) {
+        if (mq == Data.NO_FILTER) {
             return true;
         }
 
@@ -309,15 +397,23 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= rmsMapQualMQ) {
+        } else if (value >= mq) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isQdValid(byte value) {
-        if (qualByDepthQD == Data.NO_FILTER) {
+    public static boolean isQdValid(byte value, boolean isSnv) {
+        if (isSnv) {
+            return isQdValid(value, snvQD);
+        } else {
+            return isQdValid(value, indelQD);
+        }
+    }
+
+    private static boolean isQdValid(byte value, int qd) {
+        if (qd == Data.NO_FILTER) {
             return true;
         }
 
@@ -325,14 +421,22 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= qualByDepthQD) {
+        } else if (value >= qd) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isQualValid(int value) {
+    public static boolean isQualValid(int value, boolean isSnv) {
+        if (isSnv) {
+            return isQualValid(value, snvQual);
+        } else {
+            return isQualValid(value, indelQual);
+        }
+    }
+
+    private static boolean isQualValid(int value, int qual) {
         if (qual == Data.NO_FILTER) {
             return true;
         }
@@ -348,7 +452,15 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isRprsValid(float value) {
+    public static boolean isRprsValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isRprsValid(value, snvRPRS);
+        } else {
+            return isRprsValid(value, indelRPRS);
+        }
+    }
+
+    private static boolean isRprsValid(float value, float readPosRankSum) {
         if (readPosRankSum == Data.NO_FILTER) {
             return true;
         }
@@ -364,8 +476,16 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isMqrsValid(float value) {
-        if (mapQualRankSum == Data.NO_FILTER) {
+    public static boolean isMqrsValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isMqrsValid(value, snvMQRS);
+        } else {
+            return isMqrsValid(value, indelMQRS);
+        }
+    }
+
+    private static boolean isMqrsValid(float value, float mqRankSum) {
+        if (mqRankSum == Data.NO_FILTER) {
             return true;
         }
 
@@ -373,7 +493,7 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= mapQualRankSum) {
+        } else if (value >= mqRankSum) {
             return true;
         }
 
