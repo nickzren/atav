@@ -13,6 +13,7 @@ import static utils.CommandManager.getValidRangeList;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidFloat;
 import utils.CommandOption;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -366,8 +367,8 @@ public class GenotypeLevelFilterCommand {
         }
     }
 
-    private static boolean isGqValid(float value, float snvGQ) {
-        if (snvGQ == Data.NO_FILTER) {
+    private static boolean isGqValid(float value, float gq) {
+        if (gq == Data.NO_FILTER) {
             return true;
         }
 
@@ -375,7 +376,7 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= snvGQ) {
+        } else if (value >= gq) {
             return true;
         }
 
