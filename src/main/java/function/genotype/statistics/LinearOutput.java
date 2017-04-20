@@ -46,51 +46,75 @@ public class LinearOutput extends StatisticOutput {
             byte geno = calledVar.getGT(sample.getIndex());
             if (geno != Data.INTEGER_NA) {
                 float y = sample.getQuantitativeTrait();
-                if (model.equals("allelic")) {
-                    if (geno == Index.REF) {
-                        sr.addData(0, y);
-                        sr.addData(0, y);
-                    } else if (geno == Index.HET) {
-                        sr.addData(1, y);
-                        sr.addData(0, y);
-                    } else if (geno == Index.HOM) {
-                        sr.addData(1, y);
-                        sr.addData(1, y);
-                    }
-                } else if (model.equals("dominant")) {
-                    if (geno == Index.REF) {
-                        sr.addData(0, y);
-                    } else if (geno == Index.HET) {
-                        sr.addData(1, y);
-                    } else if (geno == Index.HOM) {
-                        sr.addData(1, y);
-                    }
-                } else if (model.equals("recessive")) {
-                    if (geno == Index.REF) {
-                        sr.addData(0, y);
-                    } else if (geno == Index.HET) {
-                        sr.addData(0, y);
-                    } else if (geno == Index.HOM) {
-                        sr.addData(1, y);
-                    }
-                } else if (model.equals("genotypic")) { // not complete yet, to be finished a bit later
-                    if (geno == Index.REF) {
-                        sr.addData(0, y);
-                    } else if (geno == Index.HET) {
-                        sr.addData(1, y);
-                    } else if (geno == Index.HOM) {
-                        sr.addData(2, y);
-                    }
-                } else if (model.equals("additive")) {
-                    if (geno == Index.REF) {
-                        sr.addData(0, y);
-                    } else if (geno == Index.HET) {
-                        sr.addData(1, y);
-                    } else if (geno == Index.HOM) {
-                        sr.addData(2, y);
-                    }
-                } else {
-                    LogManager.writeAndPrint("model is not recognized");
+                switch (model) {
+                    case "allelic":
+                        if (geno == Index.REF) {
+                            sr.addData(0, y);
+                            sr.addData(0, y);
+                        } else if (geno == Index.HET) {
+                            sr.addData(1, y);
+                            sr.addData(0, y);
+                        } else if (geno == Index.HOM) {
+                            sr.addData(1, y);
+                            sr.addData(1, y);
+                        }
+                        break;
+                    case "dominant":
+                        if (geno == Index.REF) {
+                            sr.addData(0, y);
+                        } else if (geno == Index.HET) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.HOM) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.HOM_MALE) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.REF_MALE) {
+                            sr.addData(0, y);
+                        }
+                        break;
+                    case "recessive":
+                        if (geno == Index.REF) {
+                            sr.addData(0, y);
+                        } else if (geno == Index.HET) {
+                            sr.addData(0, y);
+                        } else if (geno == Index.HOM) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.HOM_MALE) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.REF_MALE) {
+                            sr.addData(0, y);
+                        }
+                        break;
+                    case "genotypic":
+                        // not complete yet, to be finished a bit later
+                        if (geno == Index.REF) {
+                            sr.addData(0, y);
+                        } else if (geno == Index.HET) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.HOM) {
+                            sr.addData(2, y);
+                        } else if (geno == Index.HOM_MALE) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.REF_MALE) {
+                            sr.addData(0, y);
+                        }
+                        break;
+                    case "additive":
+                        if (geno == Index.REF) {
+                            sr.addData(0, y);
+                        } else if (geno == Index.HET) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.HOM) {
+                            sr.addData(2, y);
+                        } else if (geno == Index.HOM_MALE) {
+                            sr.addData(1, y);
+                        } else if (geno == Index.REF_MALE) {
+                            sr.addData(0, y);
+                        }
+                        break;
+                    default:
+                        LogManager.writeAndPrint("model is not recognized");
+                        break;
                 }
             }
         }

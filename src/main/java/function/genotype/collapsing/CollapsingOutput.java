@@ -52,14 +52,18 @@ public class CollapsingOutput extends Output {
 
     private void calculateLooMaf() {
         int alleleCount = 2 * calledVar.genoCount[Index.HOM][Index.CASE]
+                + calledVar.genoCount[Index.HOM_MALE][Index.CASE]
                 + calledVar.genoCount[Index.HET][Index.CASE]
                 + 2 * calledVar.genoCount[Index.HOM][Index.CTRL]
+                + calledVar.genoCount[Index.HOM_MALE][Index.CTRL]
                 + calledVar.genoCount[Index.HET][Index.CTRL];
         int totalCount = alleleCount
                 + calledVar.genoCount[Index.HET][Index.CASE]
                 + 2 * calledVar.genoCount[Index.REF][Index.CASE]
+                + calledVar.genoCount[Index.REF_MALE][Index.CASE]
                 + calledVar.genoCount[Index.HET][Index.CTRL]
-                + 2 * calledVar.genoCount[Index.REF][Index.CTRL];
+                + 2 * calledVar.genoCount[Index.REF][Index.CTRL]
+                + calledVar.genoCount[Index.REF_MALE][Index.CTRL];
 
         double allAF = MathManager.devide(alleleCount, totalCount);
         looMAF = allAF;

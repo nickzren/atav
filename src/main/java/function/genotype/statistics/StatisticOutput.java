@@ -18,6 +18,8 @@ public class StatisticOutput extends Output {
 
     public boolean isRecessive() {
         return calledVar.genoCount[Index.HOM][Index.CASE]
-                + calledVar.genoCount[Index.HOM][Index.CTRL] > 0;
+                + calledVar.genoCount[Index.HOM_MALE][Index.CASE]
+                + calledVar.genoCount[Index.HOM][Index.CTRL
+                + calledVar.genoCount[Index.HOM_MALE][Index.CTRL]] > 0;
     }
 }

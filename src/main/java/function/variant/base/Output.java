@@ -131,14 +131,18 @@ public class Output implements Cloneable {
     }
 
     public void getGenoStatData(StringBuilder sb) {
-        sb.append(calledVar.genoCount[Index.HOM][Index.CASE]).append(",");
+        sb.append(calledVar.genoCount[Index.HOM][Index.CASE]
+                + calledVar.genoCount[Index.HOM_MALE][Index.CASE]).append(",");
         sb.append(calledVar.genoCount[Index.HET][Index.CASE]).append(",");
-        sb.append(calledVar.genoCount[Index.REF][Index.CASE]).append(",");
+        sb.append(calledVar.genoCount[Index.REF][Index.CASE]
+                + calledVar.genoCount[Index.REF_MALE][Index.CASE]).append(",");
         sb.append(FormatManager.getFloat(calledVar.homFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getFloat(calledVar.hetFreq[Index.CASE])).append(",");
-        sb.append(calledVar.genoCount[Index.HOM][Index.CTRL]).append(",");
+        sb.append(calledVar.genoCount[Index.HOM][Index.CTRL]
+                + calledVar.genoCount[Index.HOM_MALE][Index.CTRL]).append(",");
         sb.append(calledVar.genoCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(calledVar.genoCount[Index.REF][Index.CTRL]).append(",");
+        sb.append(calledVar.genoCount[Index.REF][Index.CTRL]
+                + calledVar.genoCount[Index.REF_MALE][Index.CTRL]).append(",");
         sb.append(FormatManager.getFloat(calledVar.homFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getFloat(calledVar.hetFreq[Index.CTRL])).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");

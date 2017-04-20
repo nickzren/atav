@@ -41,7 +41,8 @@ public class FisherOutput extends StatisticOutput {
     boolean isCaseOnlyValid() {
         if (StatisticsCommand.isCaseOnly) {
             if ((calledVar.genoCount[Index.HET][Index.CASE]
-                    + calledVar.genoCount[Index.HOM][Index.CASE]) > 0) {
+                    + calledVar.genoCount[Index.HOM][Index.CASE]
+                    + calledVar.genoCount[Index.HOM_MALE][Index.CASE]) > 0) {
                 return true;
             }
 
@@ -110,49 +111,54 @@ public class FisherOutput extends StatisticOutput {
     public void initCount(ArrayList<Integer> countList, String model) {
         switch (model) {
             case "allelic":
-                if (calledVar.getChrNum() == 23) { // exclude male
-                    countList.add(2 * calledVar.genoCount[Index.HOM][Index.CASE]
-                            + calledVar.genoCount[Index.HET][Index.CASE]);
-                    countList.add(2 * calledVar.genoCount[Index.REF][Index.CASE]
-                            + calledVar.genoCount[Index.HET][Index.CASE]);
-                    countList.add(2 * calledVar.genoCount[Index.HOM][Index.CTRL]
-                            + calledVar.genoCount[Index.HET][Index.CTRL]);
-                    countList.add(2 * calledVar.genoCount[Index.REF][Index.CTRL]
-                            + calledVar.genoCount[Index.HET][Index.CTRL]);
-                } else {
-                    countList.add(2 * calledVar.genoCount[Index.HOM][Index.CASE]
-                            + calledVar.genoCount[Index.HET][Index.CASE]);
-                    countList.add(2 * calledVar.genoCount[Index.REF][Index.CASE]
-                            + calledVar.genoCount[Index.HET][Index.CASE]);
-                    countList.add(2 * calledVar.genoCount[Index.HOM][Index.CTRL]
-                            + calledVar.genoCount[Index.HET][Index.CTRL]);
-                    countList.add(2 * calledVar.genoCount[Index.REF][Index.CTRL]
-                            + calledVar.genoCount[Index.HET][Index.CTRL]);
-                }
+                countList.add(2 * calledVar.genoCount[Index.HOM][Index.CASE]
+                        + calledVar.genoCount[Index.HOM_MALE][Index.CASE]
+                        + calledVar.genoCount[Index.HET][Index.CASE]);
+                countList.add(2 * calledVar.genoCount[Index.REF][Index.CASE]
+                        + calledVar.genoCount[Index.REF_MALE][Index.CASE]
+                        + calledVar.genoCount[Index.HET][Index.CASE]);
+                countList.add(2 * calledVar.genoCount[Index.HOM][Index.CTRL]
+                        + calledVar.genoCount[Index.HOM_MALE][Index.CTRL]
+                        + calledVar.genoCount[Index.HET][Index.CTRL]);
+                countList.add(2 * calledVar.genoCount[Index.REF][Index.CTRL]
+                        + calledVar.genoCount[Index.REF_MALE][Index.CTRL]
+                        + calledVar.genoCount[Index.HET][Index.CTRL]);
                 break;
             case "dominant":
                 countList.add(calledVar.genoCount[Index.HOM][Index.CASE]
+                        + calledVar.genoCount[Index.HOM_MALE][Index.CASE]
                         + calledVar.genoCount[Index.HET][Index.CASE]);
-                countList.add(calledVar.genoCount[Index.REF][Index.CASE]);
+                countList.add(calledVar.genoCount[Index.REF][Index.CASE]
+                        + calledVar.genoCount[Index.REF_MALE][Index.CASE]);
                 countList.add(calledVar.genoCount[Index.HOM][Index.CTRL]
+                        + calledVar.genoCount[Index.HOM_MALE][Index.CTRL]
                         + calledVar.genoCount[Index.HET][Index.CTRL]);
-                countList.add(calledVar.genoCount[Index.REF][Index.CTRL]);
+                countList.add(calledVar.genoCount[Index.REF][Index.CTRL]
+                        + calledVar.genoCount[Index.REF_MALE][Index.CTRL]);
                 break;
             case "recessive":
-                countList.add(calledVar.genoCount[Index.HOM][Index.CASE]);
+                countList.add(calledVar.genoCount[Index.HOM][Index.CASE]
+                        + calledVar.genoCount[Index.HOM_MALE][Index.CASE]);
                 countList.add(calledVar.genoCount[Index.HET][Index.CASE]
-                        + calledVar.genoCount[Index.REF][Index.CASE]);
-                countList.add(calledVar.genoCount[Index.HOM][Index.CTRL]);
+                        + calledVar.genoCount[Index.REF][Index.CASE]
+                        + calledVar.genoCount[Index.REF_MALE][Index.CASE]);
+                countList.add(calledVar.genoCount[Index.HOM][Index.CTRL]
+                        + calledVar.genoCount[Index.HOM_MALE][Index.CTRL]);
                 countList.add(calledVar.genoCount[Index.HET][Index.CTRL]
-                        + calledVar.genoCount[Index.REF][Index.CTRL]);
+                        + calledVar.genoCount[Index.REF][Index.CTRL]
+                        + calledVar.genoCount[Index.REF_MALE][Index.CTRL]);
                 break;
             case "genotypic":
-                countList.add(calledVar.genoCount[Index.HOM][Index.CASE]);
+                countList.add(calledVar.genoCount[Index.HOM][Index.CASE]
+                        + calledVar.genoCount[Index.HOM_MALE][Index.CASE]);
                 countList.add(calledVar.genoCount[Index.HET][Index.CASE]);
-                countList.add(calledVar.genoCount[Index.REF][Index.CASE]);
-                countList.add(calledVar.genoCount[Index.HOM][Index.CTRL]);
+                countList.add(calledVar.genoCount[Index.REF][Index.CASE]
+                        + calledVar.genoCount[Index.REF_MALE][Index.CASE]);
+                countList.add(calledVar.genoCount[Index.HOM][Index.CTRL]
+                        + calledVar.genoCount[Index.HOM_MALE][Index.CTRL]);
                 countList.add(calledVar.genoCount[Index.HET][Index.CTRL]);
-                countList.add(calledVar.genoCount[Index.REF][Index.CTRL]);
+                countList.add(calledVar.genoCount[Index.REF][Index.CTRL]
+                        + calledVar.genoCount[Index.REF_MALE][Index.CTRL]);
                 break;
             default:
                 LogManager.writeAndPrint("not available model");
