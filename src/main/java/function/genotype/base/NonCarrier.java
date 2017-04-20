@@ -1,5 +1,7 @@
 package function.genotype.base;
 
+import function.genotype.trio.TrioCommand;
+import function.variant.base.Region;
 import global.Data;
 import global.Index;
 
@@ -70,7 +72,7 @@ public class NonCarrier {
             }
     }
 
-    private void setMissing() {
+    public void setMissing() {
         gt = Data.BYTE_NA;
         dpBin = Data.SHORT_NA;
     }

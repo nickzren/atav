@@ -49,6 +49,8 @@ public class CarrierBlockManager {
             while (rs.next()) {
                 Carrier carrier = new Carrier(rs);
 
+                carrier.checkValidOnXY(var);
+
                 carrier.applyQualityFilter(var.isSnv());
 
                 int variantId = rs.getInt("variant_id");
@@ -98,6 +100,8 @@ public class CarrierBlockManager {
 
             while (rs.next()) {
                 Carrier carrier = new Carrier(rs);
+
+                carrier.checkValidOnXY(var);
 
                 carrier.applyQualityFilter(var.isSnv());
 
