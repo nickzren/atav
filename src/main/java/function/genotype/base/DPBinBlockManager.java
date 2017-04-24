@@ -35,7 +35,7 @@ public class DPBinBlockManager {
         gqBin.put('b', (short) 5);
         gqBin.put('c', (short) 15);
         gqBin.put('d', (short) 20);
-        dpBin.put('e', (short) 60);
+        gqBin.put('e', (short) 60);
     }
 
     public static void add(SampleDPBin sampleDPBin) {
@@ -129,5 +129,9 @@ public class DPBinBlockManager {
 
     public static HashMap<Character, Short> getCoverageBin() {
         return dpBin;
+    }
+
+    public static HashMap<Character, Short> getGQbin() {
+        return gqBin;
     }
 }

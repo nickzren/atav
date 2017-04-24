@@ -22,9 +22,11 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
     BufferedWriter bwSiteSummary = null;
     BufferedWriter bwSiteClean = null;
+    public static BufferedWriter bwSitePruned = null;
 
     final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
     final String cleanedSiteList = CommonCommand.outputPath + "site.clean.txt";
+    final String sitePrunedFilePath = CommonCommand.outputPath + "site.pruned.csv";
 
     SiteClean siteClean = new SiteClean();
 
@@ -38,6 +40,10 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             bwSiteSummary.newLine();
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
+
+            bwSitePruned = new BufferedWriter(new FileWriter(sitePrunedFilePath));
+            bwSitePruned.write("Sample ID,Chr,Block Id,Start,End,Value");
+            bwSitePruned.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -52,6 +58,8 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             bwSiteSummary.close();
             bwSiteClean.flush();
             bwSiteClean.close();
+            bwSitePruned.flush();
+            bwSitePruned.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -97,7 +105,6 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 writeToFile(sb.toString(), bwSiteSummary);
                 sb.setLength(0);
 
-                String name = gene.getName() + "_" + gene.getChr() + "_" + start;
                 float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
                 float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
                 float absDiff = MathManager.abs(caseAvg, ctrlAvg);
