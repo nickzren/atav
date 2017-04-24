@@ -15,7 +15,6 @@ public class EvsCommand {
     // filter option
     public static String evsPop = "all";
     public static double evsMaf = Data.NO_FILTER;
-    public static int evsAllAverageCoverage = Data.NO_FILTER;
     public static boolean isExcludeEvsQcFailed = false;
 
     public static boolean isEvsMafValid(float value) {
@@ -25,14 +24,6 @@ public class EvsCommand {
 
         return value <= evsMaf
                 || value == Data.FLOAT_NA;
-    }
-
-    public static boolean isEvsAllCoverageValid(int value) {
-        if (evsAllAverageCoverage == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value >= evsAllAverageCoverage;
     }
 
     public static boolean isEvsStatusValid(String status) {

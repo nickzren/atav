@@ -68,19 +68,9 @@ public class VariantLevelFilterCommand {
                 case "--exclude-indel":
                     isExcludeIndel = true;
                     break;
-                case "--evs-pop":
-                    checkValuesValid(EvsManager.EVS_POP, option);
-                    EvsCommand.evsPop = option.getValue();
-                    EvsCommand.isIncludeEvs = true;
-                    break;
                 case "--evs-maf":
                     checkValueValid(0.5, 0, option);
                     EvsCommand.evsMaf = getValidDouble(option);
-                    EvsCommand.isIncludeEvs = true;
-                    break;
-                case "--min-evs-all-average-coverage":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    EvsCommand.evsAllAverageCoverage = getValidInteger(option);
                     EvsCommand.isIncludeEvs = true;
                     break;
                 case "--exclude-evs-qc-failed":
