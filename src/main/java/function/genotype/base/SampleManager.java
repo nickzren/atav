@@ -48,6 +48,8 @@ public class SampleManager {
     private static ArrayList<Sample> diffTypeSampleList = new ArrayList<>();
     private static ArrayList<Sample> notExistSampleList = new ArrayList<>();
 
+    private static boolean isSampleFileCorrect = true;
+
     private static ArrayList<Sample> restrictedSampleList = new ArrayList<>();
 
     private static String tempCovarFile;
@@ -346,11 +348,19 @@ public class SampleManager {
 
         printSampleList("Not exist samples:",
                 notExistSampleList);
+        
+        if(!isSampleFileCorrect){
+            ErrorManager.print("Wrong values in sample file.");
+        }
     }
 
     private static void printSampleList(String startMessage,
             ArrayList<Sample> sampleList) {
         if (!sampleList.isEmpty()) {
+            if (isSampleFileCorrect) {
+                isSampleFileCorrect = false;
+            }
+
             LogManager.writeAndPrintNoNewLine(startMessage);
 
             for (Sample sample : sampleList) {
@@ -629,7 +639,7 @@ public class SampleManager {
 
         return sampleId;
     }
-    
+
     public static int getIdByName(String sampleName) {
         for (Sample sample : sampleList) {
             if (sample.getName().equals(sampleName)) {
