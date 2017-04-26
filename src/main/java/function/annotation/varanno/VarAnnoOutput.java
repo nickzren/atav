@@ -41,7 +41,7 @@ public class VarAnnoOutput {
             + "Function,"
             + "Gene Name,"
             + "Transcript Stable Id,"
-            + "Is CCDS Transcript,"
+            + "Has CCDS Transcript,"
             + "Codon Change,"
             + "Amino Acid Change,"
             + "Coding Sequence Change,"
@@ -80,7 +80,7 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getFunction()).append(",");
         sb.append("'").append(annotatedVar.getGeneName()).append("'").append(",");
         sb.append(annotatedVar.getStableId()).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript((annotatedVar.getStableId()))).append(",");
+        sb.append(annotatedVar.hasCCDS()).append(",");
         sb.append(annotatedVar.getCodonChange()).append(",");
         sb.append(annotatedVar.getAminoAcidChange()).append(",");
         sb.append(annotatedVar.getCodingSequenceChange()).append(",");

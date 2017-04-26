@@ -66,7 +66,7 @@ public class FisherOutput extends StatisticOutput {
                 + "Function,"
                 + "Gene Name,"
                 + "Transcript Stable Id,"
-                + "Is CCDS Transcript,"
+                + "Has CCDS Transcript,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
@@ -156,7 +156,7 @@ public class FisherOutput extends StatisticOutput {
         sb.append(calledVar.getFunction()).append(",");
         sb.append("'").append(calledVar.getGeneName()).append("'").append(",");
         sb.append(calledVar.getStableId()).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
+        sb.append(calledVar.hasCCDS()).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());

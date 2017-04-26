@@ -33,7 +33,6 @@ import java.sql.ResultSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
-import utils.MathManager;
 
 /**
  *
@@ -49,8 +48,11 @@ public class AnnotatedVariant extends Variant {
     private String stableId;
     private HashSet<String> geneSet = new HashSet<>();
     private HashSet<String> transcriptSet = new HashSet<>();
-    private double polyphenHumdiv;
-    private double polyphenHumvar;
+    private float polyphenHumdiv;
+    private float polyphenHumdivCCDS;
+    private float polyphenHumvar;
+    private float polyphenHumvarCCDS;
+    private boolean hasCCDS;
 
     // external db annotations
     private Exac exac;
@@ -66,24 +68,22 @@ public class AnnotatedVariant extends Variant {
     private String mgiStr;
     private DenovoDB denovoDB;
 
-    public boolean isValid = true;
+    public boolean isValid = true; // at variant level
 
     public AnnotatedVariant(int variantId, boolean isIndel, ResultSet rset) throws Exception {
         super(variantId, isIndel, rset);
-
-        if (isIndel) {
-            polyphenHumdiv = Data.NA;
-            polyphenHumvar = Data.NA;
-        } else {
-            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
-            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
-        }
 
         function = "";
         geneName = "";
         codonChange = "";
         aminoAcidChange = "";
         stableId = "";
+        hasCCDS = false;
+
+        polyphenHumdivCCDS = Data.NA;
+        polyphenHumvarCCDS = Data.NA;
+        polyphenHumdiv = Data.NA;
+        polyphenHumvar = Data.NA;
 
         checkValid();
     }
@@ -128,12 +128,17 @@ public class AnnotatedVariant extends Variant {
                     + annotation.stableId
                     + "(" + annotation.aminoAcidChange + ")");
 
-            if (polyphenHumdiv < annotation.polyphenHumdiv) {
-                polyphenHumdiv = annotation.polyphenHumdiv;
-            }
+            polyphenHumdiv = Math.max(polyphenHumdiv, annotation.polyphenHumdiv);
+            polyphenHumvar = Math.max(polyphenHumvar, annotation.polyphenHumvar);
 
-            if (polyphenHumvar < annotation.polyphenHumvar) {
-                polyphenHumvar = annotation.polyphenHumvar;
+            if (annotation.isCCDS) {
+                polyphenHumdivCCDS = Math.max(polyphenHumdivCCDS, annotation.polyphenHumdivCCDS);
+                polyphenHumvarCCDS = Math.max(polyphenHumvarCCDS, annotation.polyphenHumvarCCDS);
+
+                polyphenHumdiv = polyphenHumdivCCDS;
+                polyphenHumvar = polyphenHumvarCCDS;
+
+                hasCCDS = true;
             }
         }
     }
@@ -184,8 +189,6 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
-                & PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
-                & PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
                 & isTrapValid();
     }
 
@@ -234,6 +237,10 @@ public class AnnotatedVariant extends Variant {
         }
 
         return stableId;
+    }
+
+    public boolean hasCCDS() {
+        return hasCCDS;
     }
 
     public String getAminoAcidChange() {
@@ -300,7 +307,7 @@ public class AnnotatedVariant extends Variant {
             polyphenHumdiv = Data.NA;
         }
 
-        return FormatManager.getDouble(polyphenHumdiv);
+        return FormatManager.getFloat(polyphenHumdiv);
     }
 
     public String getPolyphenHumvarScore() {
@@ -309,24 +316,15 @@ public class AnnotatedVariant extends Variant {
             polyphenHumvar = Data.NA;
         }
 
-        return FormatManager.getDouble(polyphenHumvar);
+        return FormatManager.getFloat(polyphenHumvar);
     }
 
     public String getPolyphenHumdivPrediction() {
-        return getPredictionByScore(polyphenHumdiv);
+        return PolyphenManager.getPrediction(polyphenHumdiv, function);
     }
 
     public String getPolyphenHumvarPrediction() {
-        return getPredictionByScore(polyphenHumvar);
-    }
-
-    private String getPredictionByScore(double score) {
-        String prediction = PolyphenManager.getPrediction(score, function);
-
-        prediction = prediction.replaceAll("probably", "probably_damaging");
-        prediction = prediction.replaceAll("possibly", "possibly_damaging");
-
-        return prediction;
+        return PolyphenManager.getPrediction(polyphenHumvar, function);
     }
 
     public String getGnomADStr() {

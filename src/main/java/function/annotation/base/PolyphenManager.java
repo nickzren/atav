@@ -6,7 +6,7 @@ package function.annotation.base;
  */
 public class PolyphenManager {
 
-    public static String getPrediction(double score, String function) {
+    public static String getPrediction(float score, String function) {
         if (score < 0) {
             if (function.startsWith("NON_SYNONYMOUS")) {
                 return "unknown";
@@ -26,7 +26,7 @@ public class PolyphenManager {
         return "probably";
     }
 
-    public static boolean isValid(double score, String function, 
+    public static boolean isValid(float score, String function, 
             String prediction) {
         String polyphenPrediction = getPrediction(score, function);
 

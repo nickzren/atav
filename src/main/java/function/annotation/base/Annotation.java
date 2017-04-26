@@ -19,25 +19,37 @@ public class Annotation {
     public String stableId;
     public String codonChange;
     public String aminoAcidChange;
-    public double polyphenHumdiv;
-    public double polyphenHumvar;
+    public float polyphenHumdiv;
+    public float polyphenHumdivCCDS;
+    public float polyphenHumvar;
+    public float polyphenHumvarCCDS;
+    public boolean isCCDS;
+
     public Region region = new Region("1", 0, 0);
 
     public void init(ResultSet rset, boolean isIndel) throws SQLException {
         function = FunctionManager.getFunction(rset, isIndel);
 
-        if (isIndel) {
-            polyphenHumdiv = Data.NA;
-            polyphenHumvar = Data.NA;
-        } else {
-            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
-            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
-        }
-
         geneName = FormatManager.getString(rset.getString("gene_name"));
         codonChange = FormatManager.getString(rset.getString("codon_change"));
         aminoAcidChange = FormatManager.getString(rset.getString("amino_acid_change"));
         stableId = FormatManager.getString(rset.getString("transcript_stable_id"));
+
+        polyphenHumdivCCDS = Data.NA;
+        polyphenHumvarCCDS = Data.NA;
+        polyphenHumdiv = Data.NA;
+        polyphenHumvar = Data.NA;
+
+        if (!isIndel) {
+            polyphenHumdiv = MathManager.devide(rset.getInt("polyphen_humdiv"), 1000);
+            polyphenHumvar = MathManager.devide(rset.getInt("polyphen_humvar"), 1000);
+
+            isCCDS = TranscriptManager.isCCDSTranscript(stableId);
+            if (isCCDS) {
+                polyphenHumdivCCDS = polyphenHumdiv;
+                polyphenHumvarCCDS = polyphenHumvar;
+            }
+        }
 
         int id = rset.getInt("seq_region_id");
         String chrStr = RegionManager.getChrById(id);

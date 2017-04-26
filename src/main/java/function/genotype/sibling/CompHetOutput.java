@@ -80,7 +80,7 @@ public class CompHetOutput extends Output implements Comparable {
                 + "Polyphen Humvar Prediction,"
                 + "Function,"
                 + "Transcript Stable Id,"
-                + "Is CCDS Transcript,"
+                + "Has CCDS Transcript,"
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
@@ -149,7 +149,7 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getPolyphenHumvarPrediction()).append(",");
         sb.append(calledVar.getFunction()).append(",");
         sb.append(calledVar.getStableId()).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript((calledVar.getStableId()))).append(",");
+        sb.append(calledVar.hasCCDS()).append(",");
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());
