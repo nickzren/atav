@@ -65,6 +65,16 @@ public class MathManager {
         }
     }
 
+    public static float max(float a, float b) {
+        if (a == Data.FLOAT_NA && b != Data.FLOAT_NA) {
+            return b;
+        } else if (a != Data.FLOAT_NA && b == Data.FLOAT_NA) {
+            return a;
+        }
+
+        return Math.max(a, b);
+    }
+
     //    public static double roundToDecimals(double d, double c) {
 //        int t = (int) (d * c + 0.5);
 //

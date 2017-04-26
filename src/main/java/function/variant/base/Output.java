@@ -35,7 +35,7 @@ public class Output implements Cloneable {
 
     public static String getAnnotationDataTitle() {
         return "Transcript Stable Id,"
-                + "Is CCDS Transcript,"
+                + "Has CCDS Transcript,"
                 + "Effect,"
                 + "HGVS_c,"
                 + "HGVS_p,"

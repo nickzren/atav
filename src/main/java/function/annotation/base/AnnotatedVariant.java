@@ -43,8 +43,11 @@ public class AnnotatedVariant extends Variant {
     private String effect = "";
     private String HGVS_c = "";
     private String HGVS_p = "";
-    private float polyphenHumdiv;
-    private float polyphenHumvar;
+    private float polyphenHumdiv = Data.FLOAT_NA;
+    private float polyphenHumdivCCDS = Data.FLOAT_NA;
+    private float polyphenHumvar = Data.FLOAT_NA;
+    private float polyphenHumvarCCDS = Data.FLOAT_NA;
+    private boolean hasCCDS = false;
     private String geneName = "";
 
     private HashSet<String> geneSet = new HashSet<>();
@@ -69,9 +72,6 @@ public class AnnotatedVariant extends Variant {
     public AnnotatedVariant(String chr, int variantId, ResultSet rset) throws Exception {
         super(chr, variantId, rset);
 
-        polyphenHumdiv = MathManager.devide(FormatManager.getInt(rset, "polyphen_humdiv"), 1000);
-        polyphenHumdiv = MathManager.devide(FormatManager.getInt(rset, "polyphen_humvar"), 1000);
-
         checkValid();
     }
 
@@ -79,7 +79,7 @@ public class AnnotatedVariant extends Variant {
         if (isValid) {
             isValid = VariantManager.isValid(this);
         }
-        
+
         if (isValid & GnomADCommand.isIncludeGnomADExome) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
@@ -135,16 +135,20 @@ public class AnnotatedVariant extends Variant {
                     .append(annotation.stableId).append("|")
                     .append(annotation.HGVS_p);
 
-            if (polyphenHumdiv < annotation.polyphenHumdiv) {
-                polyphenHumdiv = annotation.polyphenHumdiv;
-            }
+            polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
+            polyphenHumvar = MathManager.max(polyphenHumvar, annotation.polyphenHumvar);
 
-            if (polyphenHumvar < annotation.polyphenHumvar) {
-                polyphenHumvar = annotation.polyphenHumvar;
+            if (annotation.isCCDS) {
+                polyphenHumdivCCDS = MathManager.max(polyphenHumdivCCDS, annotation.polyphenHumdivCCDS);
+                polyphenHumvarCCDS = MathManager.max(polyphenHumvarCCDS, annotation.polyphenHumvarCCDS);
+
+                polyphenHumdiv = polyphenHumdivCCDS;
+                polyphenHumvar = polyphenHumvarCCDS;
+
+                hasCCDS = true;
             }
 
             geneSet.add(annotation.geneName);
-
         }
     }
 
@@ -172,8 +176,6 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
-                & PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
-                & PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar)
                 & isTrapValid();
     }
 
@@ -198,7 +200,7 @@ public class AnnotatedVariant extends Variant {
 
     public void getAnnotationData(StringBuilder sb) {
         sb.append(getStableId()).append(",");
-        sb.append(TranscriptManager.isCCDSTranscript(chrStr, stableId)).append(",");
+        sb.append(hasCCDS).append(",");
         sb.append(effect).append(",");
         sb.append(HGVS_c).append(",");
         sb.append(HGVS_p).append(",");
@@ -226,6 +228,10 @@ public class AnnotatedVariant extends Variant {
         idSB.insert(0, "ENST");
 
         return idSB.toString();
+    }
+
+    public boolean hasCCDS() {
+        return hasCCDS;
     }
 
     public String getEffect() {
@@ -290,7 +296,7 @@ public class AnnotatedVariant extends Variant {
             return "";
         }
     }
-    
+
     public String getGnomADExomeStr() {
         if (GnomADCommand.isIncludeGnomADExome) {
             return gnomADExome.toString();

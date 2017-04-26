@@ -166,9 +166,9 @@ public class VariantLevelFilterCommand {
                 case "--include-trap":
                     TrapCommand.isIncludeTrap = true;
                     break;
-                case "--include-kaviar":
-                    KaviarCommand.isIncludeKaviar = true;
-                    break;
+//                case "--include-kaviar":
+//                    KaviarCommand.isIncludeKaviar = true;
+//                    break;
                 case "--include-known-var":
                     KnownVarCommand.isIncludeKnownVar = true;
                     break;
@@ -178,9 +178,9 @@ public class VariantLevelFilterCommand {
                 case "--include-sub-rvis":
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
-                case "--include-1000-genomes":
-                    GenomesCommand.isInclude1000Genomes = true;
-                    break;
+//                case "--include-1000-genomes":
+//                    GenomesCommand.isInclude1000Genomes = true;
+//                    break;
                 case "--include-mgi":
                     MgiCommand.isIncludeMgi = true;
                     break;
