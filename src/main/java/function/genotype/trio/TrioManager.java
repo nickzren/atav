@@ -133,7 +133,7 @@ public class TrioManager {
             while ((str = br.readLine()) != null) {
                 if (LineCount > 0) {
                     String[] fields = str.split("\\t");
-                    if (fields.length != 10) {
+                    if (fields.length != 9) {
                         ErrorManager.print("Wrong trio rule file format.");
                     }
                     StringBuilder sKey = new StringBuilder();
@@ -239,20 +239,9 @@ public class TrioManager {
                     sKey.append('?');
                 }
                 break;
-            case 2:     //ref allele major
-                if (field.equalsIgnoreCase("YES")) {
-                    sKey.append('Y');
-                } else if (field.equalsIgnoreCase("NO")) {
-                    sKey.append('N');
-                } else if (field.equalsIgnoreCase("ANY")) {
-                    sKey.append('_');
-                } else {
-                    sKey.append('?');
-                }
-                break;
-            case 3:     //child genotype
-            case 5:     //mom genetpye
-            case 7:     //dad genotype
+            case 2:     //child genotype
+            case 4:     //mom genetpye
+            case 6:     //dad genotype
                 if (field.equalsIgnoreCase("HOM-REF")) {
                     sKey.append('0');
                 } else if (field.equalsIgnoreCase("HET")) {
@@ -265,9 +254,9 @@ public class TrioManager {
                     sKey.append('?');
                 }
                 break;
-            case 4:     //child coverage
-            case 6:     //mom coverage
-            case 8:     //dad coverage
+            case 3:     //child coverage
+            case 5:     //mom coverage
+            case 7:     //dad coverage
                 if (field.equalsIgnoreCase(">=10")) {
                     sKey.append('1');
                 } else if (field.equalsIgnoreCase("<10")) {
