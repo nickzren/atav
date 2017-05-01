@@ -56,6 +56,8 @@ public class SampleManager {
 
     private static ArrayList<Sample> restrictedSampleList = new ArrayList<>();
 
+    private static boolean isSampleFileCorrect = true;
+
     private static String tempCovarFile;
     private static String covariateFileTitle = "";
     private static int covariateNum = Data.NA;
@@ -366,11 +368,19 @@ public class SampleManager {
 
         printSampleList("Not exist samples:",
                 notExistSampleList);
+
+        if (!isSampleFileCorrect) {
+            ErrorManager.print("Wrong values in sample file.");
+        }
     }
 
     private static void printSampleList(String startMessage,
             ArrayList<Sample> sampleList) {
         if (!sampleList.isEmpty()) {
+            if (isSampleFileCorrect) {
+                isSampleFileCorrect = false;
+            }
+
             LogManager.writeAndPrintNoNewLine(startMessage);
 
             for (Sample sample : sampleList) {
