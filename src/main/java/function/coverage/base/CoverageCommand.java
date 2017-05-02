@@ -27,6 +27,7 @@ public class CoverageCommand {
     public static boolean isCoverageComparison = false;
     public static boolean isSiteCoverageComparison = false;
     public static boolean isRelativeDifference = false;
+    public static boolean isIncludePrunedSite = false;
     public static boolean isLinear = false;
 
     public static void initCoverageComparison(Iterator<CommandOption> iterator) {
@@ -81,6 +82,9 @@ public class CoverageCommand {
                     break;
                 case "--relative-difference":
                     isRelativeDifference = true;
+                    break;
+                case "--include-pruned-site":
+                    isIncludePrunedSite = true;
                     break;
                 default:
                     continue;

@@ -180,7 +180,7 @@ public class CoverageManager {
 
                     if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
                         list.add(new CoverageInterval(blockId, startIndex, endIndex));
-                    } else {
+                    } else if (CoverageCommand.isIncludePrunedSite) {
                         siteSB.append(sampleId).append(",");
                         siteSB.append(chr).append(",");
                         siteSB.append(blockId).append(",");
@@ -196,7 +196,7 @@ public class CoverageManager {
 
                     if (gqBin >= GenotypeLevelFilterCommand.minGQBin) {
                         list.add(new CoverageInterval(blockId, startIndex, endIndex));
-                    } else {
+                    } else if (CoverageCommand.isIncludePrunedSite) {
                         siteSB.append(sampleId).append(",");
                         siteSB.append(chr).append(",");
                         siteSB.append(blockId).append(",");

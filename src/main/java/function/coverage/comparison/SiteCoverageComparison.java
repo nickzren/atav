@@ -43,9 +43,11 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
 
-            bwSitePruned = new BufferedWriter(new FileWriter(sitePrunedFilePath));
-            bwSitePruned.write("Sample ID,Chr,Block Id,Start,End,Value");
-            bwSitePruned.newLine();
+            if (CoverageCommand.isIncludePrunedSite) {
+                bwSitePruned = new BufferedWriter(new FileWriter(sitePrunedFilePath));
+                bwSitePruned.write("Sample ID,Chr,Block Id,Start,End,Value");
+                bwSitePruned.newLine();
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -60,8 +62,10 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             bwSiteSummary.close();
             bwSiteClean.flush();
             bwSiteClean.close();
-            bwSitePruned.flush();
-            bwSitePruned.close();
+            if (CoverageCommand.isIncludePrunedSite) {
+                bwSitePruned.flush();
+                bwSitePruned.close();
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -121,7 +125,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
             }
         } catch (Exception e) {
-            ErrorManager.send(e); 
+            ErrorManager.send(e);
         }
     }
 
