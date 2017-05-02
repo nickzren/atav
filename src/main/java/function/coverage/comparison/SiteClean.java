@@ -25,8 +25,8 @@ public class SiteClean {
     ArrayList<SortedSite> siteList = new ArrayList<>();
     HashMap<String, HashMap<Integer, SortedSite>> cleanedSiteMap = new HashMap<>();
 
-    public void addSite(String chr, int pos, float caseAvg, float ctrlAvg, float absDiff) {
-        siteList.add(new SortedSite(chr, pos, caseAvg, ctrlAvg, absDiff));
+    public void addSite(String chr, int pos, float caseAvg, float ctrlAvg, float covDiff) {
+        siteList.add(new SortedSite(chr, pos, caseAvg, ctrlAvg, covDiff));
         totalBases++;
     }
 
@@ -137,7 +137,8 @@ public class SiteClean {
                     previousEndPosition = currentPosition;
                 } else //there are gaps within the exon, so record the previos discovered region if any
                 //need to record the new discovered region
-                 if (previouStartPosition != Data.INTEGER_NA) {
+                {
+                    if (previouStartPosition != Data.INTEGER_NA) {
                         if (isFirst) {
                             isFirst = false;
                         } else {
@@ -149,6 +150,7 @@ public class SiteClean {
                         previouStartPosition = Data.INTEGER_NA;
                         previousEndPosition = Data.INTEGER_NA;
                     }
+                }
             }
             //repeat the recoring for last potential region
             //make sure this code is consistent with the code in previous section
@@ -200,8 +202,16 @@ public class SiteClean {
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
         sb.append(FormatManager.getDouble(caseAvg)).append(",");
         sb.append(FormatManager.getDouble(ctrlAvg)).append(",");
-        float absDiff = MathManager.abs(caseAvg, ctrlAvg);
-        sb.append(FormatManager.getDouble(absDiff)).append(",");
+
+        float covDiff = Data.FLOAT_NA;
+
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+        } else {
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
+        }
+
+        sb.append(FormatManager.getDouble(covDiff)).append(",");
         sb.append(geneSize);
         return sb.toString();
     }

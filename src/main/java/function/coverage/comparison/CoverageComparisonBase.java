@@ -5,6 +5,7 @@ import function.coverage.base.CoverageAnalysisBase;
 import function.coverage.base.CoverageCommand;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import utils.CommonCommand;
@@ -30,11 +31,11 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             super.initOutput();
 
             bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
-            bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
+            bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,CovDiff,Length");
             bwCoverageSummaryByGene.newLine();
 
             bwGeneSummaryClean = new BufferedWriter(new FileWriter(cleanedGeneSummaryList));
-            bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength");
+            bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,CovDiff,CleanedLength");
             bwGeneSummaryClean.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -93,9 +94,17 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             sb.append(gene.getChr()).append(",");
             sb.append(FormatManager.getFloat(caseAvg)).append(",");
             sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
-            float absDiff = MathManager.abs(caseAvg, ctrlAvg);
-            sb.append(FormatManager.getFloat(absDiff)).append(",");
-            sb.append(gene.getLength());         
+
+            float covDiff = Data.FLOAT_NA;
+
+            if (CoverageCommand.isRelativeDifference) {
+                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+            } else {
+                covDiff = MathManager.abs(caseAvg, ctrlAvg);
+            }
+
+            sb.append(FormatManager.getFloat(covDiff)).append(",");
+            sb.append(gene.getLength());
             writeToFile(sb.toString(), bwCoverageSummaryByGene);
         } catch (Exception ex) {
             ErrorManager.send(ex);

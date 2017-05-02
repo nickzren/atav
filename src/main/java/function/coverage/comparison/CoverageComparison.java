@@ -6,6 +6,7 @@ import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -37,7 +38,7 @@ public class CoverageComparison extends CoverageComparisonBase {
             super.initOutput();
 
             bwCoverageSummaryByExon = new BufferedWriter(new FileWriter(coverageSummaryByExon));
-            bwCoverageSummaryByExon.write("EXON,Chr,Start,End,AvgCase,AvgCtrl,AbsDiff,Length");
+            bwCoverageSummaryByExon.write("EXON,Chr,Start,End,AvgCase,AvgCtrl,CovDiff,Length");
             if (CoverageCommand.isLinear) {
                 bwCoverageSummaryByExon.write(",P Value,R2,Variance");
             }
@@ -112,11 +113,19 @@ public class CoverageComparison extends CoverageComparisonBase {
             sb.append(exon.getEndPosition()).append(",");
             sb.append(FormatManager.getFloat(caseAvg)).append(",");
             sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
-            float absDiff = MathManager.abs(caseAvg, ctrlAvg);
-            sb.append(FormatManager.getFloat(absDiff)).append(",");
+            
+            float covDiff = Data.FLOAT_NA;
+
+            if (CoverageCommand.isRelativeDifference) {
+                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+            } else {
+                covDiff = MathManager.abs(caseAvg, ctrlAvg);
+            }
+            
+            sb.append(FormatManager.getFloat(covDiff)).append(",");
             sb.append(exon.getLength());
 
-            addExon(sb, name, caseAvg, ctrlAvg, absDiff, exon.getLength(), sr, lss);
+            addExon(sb, name, caseAvg, ctrlAvg, covDiff, exon.getLength(), sr, lss);
 
             bwCoverageSummaryByExon.write(sb.toString());
             bwCoverageSummaryByExon.newLine();
@@ -134,7 +143,7 @@ public class CoverageComparison extends CoverageComparisonBase {
         }
     }
 
-    private void addExon(StringBuilder sb, String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize,
+    private void addExon(StringBuilder sb, String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize,
             SimpleRegression sr, SummaryStatistics lss) {
         if (CoverageCommand.isLinear) {
             double r2 = sr.getRSquare();
@@ -150,10 +159,10 @@ public class CoverageComparison extends CoverageComparisonBase {
             sb.append(",").append(r2);
             sb.append(",").append(variance);
 
-            exonCleanLinear.addExon(name, caseAvg, ctrlAvg, absDiff,
+            exonCleanLinear.addExon(name, caseAvg, ctrlAvg, covDiff,
                     regionSize, pValue, r2, variance);
         } else {
-            regionClean.addExon(name, caseAvg, ctrlAvg, absDiff, regionSize);
+            regionClean.addExon(name, caseAvg, ctrlAvg, covDiff, regionSize);
         }
     }
 

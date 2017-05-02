@@ -26,6 +26,7 @@ public class CoverageCommand {
     // coverage comparison 
     public static boolean isCoverageComparison = false;
     public static boolean isSiteCoverageComparison = false;
+    public static boolean isRelativeDifference = false;
     public static boolean isLinear = false;
 
     public static void initCoverageComparison(Iterator<CommandOption> iterator) {
@@ -41,6 +42,9 @@ public class CoverageCommand {
                 case "--quantitative":
                     isLinear = true;
                     StatisticsCommand.quantitativeFile = getValidPath(option);
+                    break;
+                case "--relative-difference":
+                    isRelativeDifference = true;
                     break;
                 default:
                     continue;
@@ -74,6 +78,9 @@ public class CoverageCommand {
                     break;
                 case "--percent-region-covered":
                     minPercentRegionCovered = getValidDouble(option);
+                    break;
+                case "--relative-difference":
+                    isRelativeDifference = true;
                     break;
                 default:
                     continue;

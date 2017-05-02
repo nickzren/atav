@@ -25,9 +25,9 @@ public class ExonCleanLinear {
     ArrayList<SortedExonLinear> regionList = new ArrayList<>();
     HashMap<String, SortedExonLinear> cleanedRegionMap = new HashMap<>();
 
-    public void addExon(String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize,
+    public void addExon(String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize,
             double p, double r2, double variance) {
-        regionList.add(new SortedExonLinear(name, caseAvg, ctrlAvg, absDiff, regionSize,
+        regionList.add(new SortedExonLinear(name, caseAvg, ctrlAvg, covDiff, regionSize,
                 p, r2, variance));
 
         totalBases += regionSize;
@@ -153,8 +153,16 @@ public class ExonCleanLinear {
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
         sb.append(FormatManager.getDouble(caseAvg)).append(",");
         sb.append(FormatManager.getDouble(ctrlAvg)).append(",");
-        float absDiff = MathManager.abs(caseAvg, ctrlAvg);
-        sb.append(FormatManager.getDouble(absDiff)).append(",");
+
+        float covDiff = Data.FLOAT_NA;
+
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+        } else {
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
+        }
+
+        sb.append(FormatManager.getDouble(covDiff)).append(",");
         sb.append(geneSize);
         return sb.toString();
     }

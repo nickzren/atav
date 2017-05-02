@@ -5,7 +5,9 @@ import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
+import function.coverage.base.CoverageCommand;
 import function.genotype.base.SampleManager;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -107,11 +109,19 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
                 float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
                 float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
-                float absDiff = MathManager.abs(caseAvg, ctrlAvg);
-                siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, absDiff);
+
+                float covDiff = Data.FLOAT_NA;
+
+                if (CoverageCommand.isRelativeDifference) {
+                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+                } else {
+                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
+                }
+
+                siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
             }
         } catch (Exception e) {
-            ErrorManager.send(e);
+            ErrorManager.send(e); 
         }
     }
 

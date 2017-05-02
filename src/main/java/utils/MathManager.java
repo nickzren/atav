@@ -39,6 +39,14 @@ public class MathManager {
             return a / (float) b;
         }
     }
+    
+    public static float devide(float a, float b) {
+        if (b == 0 || a == Data.FLOAT_NA || b == Data.FLOAT_NA) {
+            return Data.FLOAT_NA;
+        } else {
+            return a / b;
+        }
+    }
 
     public static float devide(int a, int b) {
         if (b == 0 || a == Data.INTEGER_NA || b == Data.INTEGER_NA) {
@@ -54,6 +62,13 @@ public class MathManager {
         } else {
             return (float) a / (float) b;
         }
+    }
+
+    public static float relativeDiff(float a, float b) {
+        float max = MathManager.max(a, b);
+        float min = MathManager.min(a, b);
+
+        return devide(max - min, min);
     }
 
     public static float abs(float a, float b) {
@@ -73,6 +88,36 @@ public class MathManager {
         }
 
         return Math.max(a, b);
+    }
+
+    public static int max(int a, int b) {
+        if (a == Data.INTEGER_NA && b != Data.INTEGER_NA) {
+            return b;
+        } else if (a != Data.INTEGER_NA && b == Data.INTEGER_NA) {
+            return a;
+        }
+
+        return Math.max(a, b);
+    }
+
+    public static int min(int a, int b) {
+        if (a == Data.INTEGER_NA && b != Data.INTEGER_NA) {
+            return b;
+        } else if (a != Data.INTEGER_NA && b == Data.INTEGER_NA) {
+            return a;
+        }
+
+        return Math.min(a, b);
+    }
+    
+    public static float min(float a, float b) {
+        if (a == Data.FLOAT_NA && b != Data.FLOAT_NA) {
+            return b;
+        } else if (a != Data.INTEGER_NA && b == Data.INTEGER_NA) {
+            return a;
+        }
+
+        return Math.min(a, b);
     }
 
     //    public static double roundToDecimals(double d, double c) {
