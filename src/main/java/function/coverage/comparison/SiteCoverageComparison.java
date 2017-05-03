@@ -114,15 +114,18 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
                 float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
 
-                float covDiff = Data.FLOAT_NA;
+                if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
+                        && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
+                    float covDiff = Data.FLOAT_NA;
 
-                if (CoverageCommand.isRelativeDifference) {
-                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-                } else {
-                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
+                    if (CoverageCommand.isRelativeDifference) {
+                        covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+                    } else {
+                        covDiff = MathManager.abs(caseAvg, ctrlAvg);
+                    }
+
+                    siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
                 }
-
-                siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
             }
         } catch (Exception e) {
             ErrorManager.send(e);

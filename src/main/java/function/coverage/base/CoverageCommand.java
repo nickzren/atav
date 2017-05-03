@@ -4,7 +4,6 @@ import function.genotype.statistics.StatisticsCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
@@ -18,7 +17,7 @@ public class CoverageCommand {
     // coverage summary
     public static boolean isCoverageSummary = false;
     public static boolean isSiteCoverageSummary = false;
-    public static double minPercentRegionCovered = 0; //so all is output by default
+    public static float minPercentRegionCovered = 0; //so all is output by default
     public static float exonCleanCutoff = Data.NO_FILTER;
     public static float geneCleanCutoff = 1;
     public static float siteCleanCutoff = Data.NO_FILTER;
@@ -29,6 +28,7 @@ public class CoverageCommand {
     public static boolean isRelativeDifference = false;
     public static boolean isIncludePrunedSite = false;
     public static boolean isLinear = false;
+    public static float minCoverageFraction = Data.NO_FILTER;
 
     public static void initCoverageComparison(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -47,6 +47,10 @@ public class CoverageCommand {
                 case "--relative-difference":
                     isRelativeDifference = true;
                     break;
+                case "--min-coverage-fraction":
+                    checkValueValid(1, 0, option);
+                    minCoverageFraction = getValidFloat(option);
+                    break;
                 default:
                     continue;
             }
@@ -60,7 +64,7 @@ public class CoverageCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             if (option.getName().equals("--percent-region-covered")) {
-                minPercentRegionCovered = getValidDouble(option);
+                minPercentRegionCovered = getValidFloat(option);
             } else {
                 continue;
             }
@@ -78,7 +82,7 @@ public class CoverageCommand {
                     siteCleanCutoff = getValidFloat(option);
                     break;
                 case "--percent-region-covered":
-                    minPercentRegionCovered = getValidDouble(option);
+                    minPercentRegionCovered = getValidFloat(option);
                     break;
                 case "--relative-difference":
                     isRelativeDifference = true;
@@ -86,10 +90,26 @@ public class CoverageCommand {
                 case "--include-pruned-site":
                     isIncludePrunedSite = true;
                     break;
+                case "--min-coverage-fraction":
+                    checkValueValid(1, 0, option);
+                    minCoverageFraction = getValidFloat(option);
+                    break;
                 default:
                     continue;
             }
             iterator.remove();
         }
+    }
+
+    public static boolean isMinCoverageFractionValid(float value) {
+        if (minCoverageFraction == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value >= minCoverageFraction) {
+            return true;
+        }
+
+        return false;
     }
 }

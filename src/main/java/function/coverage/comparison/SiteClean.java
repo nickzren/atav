@@ -193,27 +193,33 @@ public class SiteClean {
     }
 
     private String getGeneStr(Gene gene, int geneSize, float caseAvg, float ctrlAvg) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(gene.getName()).append(",");
-        sb.append(gene.getChr()).append(",");
-        sb.append(gene.getLength()).append(",");
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
-        sb.append(FormatManager.getDouble(caseAvg)).append(",");
-        sb.append(FormatManager.getDouble(ctrlAvg)).append(",");
 
-        float covDiff = Data.FLOAT_NA;
+        if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
+                && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
+            StringBuilder sb = new StringBuilder();
 
-        if (CoverageCommand.isRelativeDifference) {
-            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+            sb.append(gene.getName()).append(",");
+            sb.append(gene.getChr()).append(",");
+            sb.append(gene.getLength()).append(",");
+            sb.append(FormatManager.getFloat(caseAvg)).append(",");
+            sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+
+            float covDiff = Data.FLOAT_NA;
+
+            if (CoverageCommand.isRelativeDifference) {
+                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+            } else {
+                covDiff = MathManager.abs(caseAvg, ctrlAvg);
+            }
+
+            sb.append(FormatManager.getDouble(covDiff)).append(",");
+            sb.append(geneSize);
+            return sb.toString();
         } else {
-            covDiff = MathManager.abs(caseAvg, ctrlAvg);
+            return "";
         }
-
-        sb.append(FormatManager.getDouble(covDiff)).append(",");
-        sb.append(geneSize);
-        return sb.toString();
     }
 
     public void outputLog() {

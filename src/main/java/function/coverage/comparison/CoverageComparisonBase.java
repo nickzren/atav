@@ -89,23 +89,26 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             ctrlAvg = MathManager.devide(ctrlAvg, SampleManager.getCtrlNum());
             ctrlAvg = MathManager.devide(ctrlAvg, gene.getLength());
 
-            StringBuilder sb = new StringBuilder();
-            sb.append(gene.getName()).append(",");
-            sb.append(gene.getChr()).append(",");
-            sb.append(FormatManager.getFloat(caseAvg)).append(",");
-            sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+            if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
+                    && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(gene.getName()).append(",");
+                sb.append(gene.getChr()).append(",");
+                sb.append(FormatManager.getFloat(caseAvg)).append(",");
+                sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
 
-            float covDiff = Data.FLOAT_NA;
+                float covDiff = Data.FLOAT_NA;
 
-            if (CoverageCommand.isRelativeDifference) {
-                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-            } else {
-                covDiff = MathManager.abs(caseAvg, ctrlAvg);
+                if (CoverageCommand.isRelativeDifference) {
+                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+                } else {
+                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
+                }
+
+                sb.append(FormatManager.getFloat(covDiff)).append(",");
+                sb.append(gene.getLength());
+                writeToFile(sb.toString(), bwCoverageSummaryByGene);
             }
-
-            sb.append(FormatManager.getFloat(covDiff)).append(",");
-            sb.append(gene.getLength());
-            writeToFile(sb.toString(), bwCoverageSummaryByGene);
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
