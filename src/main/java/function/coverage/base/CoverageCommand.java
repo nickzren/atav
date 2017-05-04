@@ -106,10 +106,7 @@ public class CoverageCommand {
             return true;
         }
 
-        if (value >= minCoverageFraction) {
-            return true;
-        }
-
-        return false;
+        return value >= minCoverageFraction
+                && value != Data.FLOAT_NA;
     }
 }
