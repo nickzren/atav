@@ -27,6 +27,9 @@ public class SiteClean {
 
     public void addSite(String chr, int pos, float caseAvg, float ctrlAvg, float covDiff) {
         siteList.add(new SortedSite(chr, pos, caseAvg, ctrlAvg, covDiff));
+    }
+
+    public void count() {
         totalBases++;
     }
 
