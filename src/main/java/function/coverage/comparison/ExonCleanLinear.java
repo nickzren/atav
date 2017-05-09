@@ -25,9 +25,9 @@ public class ExonCleanLinear {
     ArrayList<SortedExonLinear> regionList = new ArrayList<>();
     HashMap<String, SortedExonLinear> cleanedRegionMap = new HashMap<>();
 
-    public void addExon(String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize,
+    public void addExon(String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize,
             double p, double r2, double variance) {
-        regionList.add(new SortedExonLinear(name, caseAvg, ctrlAvg, absDiff, regionSize,
+        regionList.add(new SortedExonLinear(name, caseAvg, ctrlAvg, covDiff, regionSize,
                 p, r2, variance));
 
         totalBases += regionSize;
@@ -127,23 +127,23 @@ public class ExonCleanLinear {
 
     public String getCleanedGeneSummaryStrByExon(Gene gene) {
         int geneSize = 0;
-        double avgCase = 0;
-        double avgCtrl = 0;
+        float avgCase = 0;
+        float avgCtrl = 0;
         for (Exon exon : gene.getExonList()) {
             String regionId = gene.getName() + "_" + exon.getIdStr();
 
             SortedExonLinear sortedExon = cleanedRegionMap.get(regionId);
             if (sortedExon != null) {
                 geneSize += sortedExon.getLength();
-                avgCase += (double) sortedExon.getLength() * sortedExon.getCaseAvg();
-                avgCtrl += (double) sortedExon.getLength() * sortedExon.getCtrlAvg();
+                avgCase += (float) sortedExon.getLength() * sortedExon.getCaseAvg();
+                avgCtrl += (float) sortedExon.getLength() * sortedExon.getCtrlAvg();
             }
         }
 
         return getGeneStr(gene, geneSize, avgCase, avgCtrl);
     }
 
-    private String getGeneStr(Gene gene, int geneSize, double caseAvg, double ctrlAvg) {
+    private String getGeneStr(Gene gene, int geneSize, float caseAvg, float ctrlAvg) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(gene.getName()).append(",");
@@ -151,10 +151,18 @@ public class ExonCleanLinear {
         sb.append(gene.getLength()).append(",");
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
-        sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
-        sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
-        double absDiff = MathManager.abs(caseAvg, ctrlAvg);
-        sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
+        sb.append(FormatManager.getFloat(caseAvg)).append(",");
+        sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+        
+        float covDiff = Data.NA;
+
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+        } else {
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
+        }
+
+        sb.append(FormatManager.getFloat(covDiff)).append(",");
         sb.append(geneSize);
         return sb.toString();
     }

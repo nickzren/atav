@@ -29,8 +29,8 @@ public class MathManager {
     }
 
     public static double getBinomialP(
-            int numberOfTrials, 
-            int numberOfSuccesses, 
+            int numberOfTrials,
+            int numberOfSuccesses,
             double probability,
             AlternativeHypothesis alternativeHypothesis) {
         if (BT == null) {
@@ -71,12 +71,39 @@ public class MathManager {
         }
     }
 
+    public static float relativeDiff(float a, float b) {
+        float max = max(a, b);
+        float min = min(a, b);
+
+        return devide(max - min, min);
+    }
+
     public static float abs(float a, float b) {
         if (b == Data.NA || a == Data.NA) {
             return Data.NA;
         } else {
             return Math.abs(a - b);
         }
+    }
+
+    public static float max(float a, float b) {
+        if (a == Data.NA && b != Data.NA) {
+            return b;
+        } else if (a != Data.NA && b == Data.NA) {
+            return a;
+        }
+
+        return Math.max(a, b);
+    }
+
+    public static float min(float a, float b) {
+        if (a == Data.NA && b != Data.NA) {
+            return b;
+        } else if (a != Data.NA && b == Data.NA) {
+            return a;
+        }
+
+        return Math.min(a, b);
     }
 
     //    public static double roundToDecimals(double d, double c) {

@@ -25,8 +25,8 @@ public class ExonClean {
     ArrayList<SortedExon> exonList = new ArrayList<>();
     HashMap<String, SortedExon> cleanedExonMap = new HashMap<>();
 
-    public void addExon(String name, float caseAvg, float ctrlAvg, float absDiff, int regionSize) {
-        exonList.add(new SortedExon(name, caseAvg, ctrlAvg, absDiff, regionSize));
+    public void addExon(String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize) {
+        exonList.add(new SortedExon(name, caseAvg, ctrlAvg, covDiff, regionSize));
         totalBases += regionSize;
     }
 
@@ -134,22 +134,22 @@ public class ExonClean {
 
     public String getCleanedGeneSummaryStrByExon(Gene gene) {
         int geneSize = 0;
-        double caseAvg = 0;
-        double ctrlAvg = 0;
+        float caseAvg = 0;
+        float ctrlAvg = 0;
         for (Exon exon : gene.getExonList()) {
             String regionIdStr = gene.getName() + "_" + exon.getIdStr();
             SortedExon sortedExon = cleanedExonMap.get(regionIdStr);
             if (sortedExon != null) {
                 geneSize += sortedExon.getLength();
-                caseAvg += (double) sortedExon.getLength() * sortedExon.getCaseAvg();
-                ctrlAvg += (double) sortedExon.getLength() * sortedExon.getCtrlAvg();
+                caseAvg += (float) sortedExon.getLength() * sortedExon.getCaseAvg();
+                ctrlAvg += (float) sortedExon.getLength() * sortedExon.getCtrlAvg();
             }
         }
 
         return getGeneStr(gene, geneSize, caseAvg, ctrlAvg);
     }
 
-    private String getGeneStr(Gene gene, int geneSize, double caseAvg, double ctrlAvg) {
+    private String getGeneStr(Gene gene, int geneSize, float caseAvg, float ctrlAvg) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(gene.getName()).append(",");
@@ -157,10 +157,18 @@ public class ExonClean {
         sb.append(gene.getLength()).append(",");
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
-        sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
-        sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
-        double absDiff = MathManager.abs(caseAvg, ctrlAvg);
-        sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
+        sb.append(FormatManager.getFloat(caseAvg)).append(",");
+        sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+        
+        float covDiff = Data.NA;
+
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+        } else {
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
+        }
+
+        sb.append(FormatManager.getFloat(covDiff)).append(",");
         sb.append(geneSize);
         return sb.toString();
     }

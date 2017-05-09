@@ -25,8 +25,8 @@ public class SiteClean {
     ArrayList<SortedSite> siteList = new ArrayList<>();
     HashMap<String, HashMap<Integer, SortedSite>> cleanedSiteMap = new HashMap<>();
 
-    public void addSite(String chr, int pos, float caseAvg, float ctrlAvg, float absDiff) {
-        siteList.add(new SortedSite(chr, pos, caseAvg, ctrlAvg, absDiff));
+    public void addSite(String chr, int pos, float caseAvg, float ctrlAvg, float covDiff) {
+        siteList.add(new SortedSite(chr, pos, caseAvg, ctrlAvg, covDiff));
         totalBases++;
     }
 
@@ -137,18 +137,18 @@ public class SiteClean {
                     previousEndPosition = currentPosition;
                 } else //there are gaps within the exon, so record the previos discovered region if any
                 //need to record the new discovered region
-                if (previouStartPosition != Data.NA) {
-                    if (isFirst) {
-                        isFirst = false;
-                    } else {
-                        sb.append(",");
+                 if (previouStartPosition != Data.NA) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            sb.append(",");
+                        }
+                        sb.append(previouStartPosition);
+                        sb.append("..").append(previousEndPosition);
+                        //reset to no region
+                        previouStartPosition = Data.NA;
+                        previousEndPosition = Data.NA;
                     }
-                    sb.append(previouStartPosition);
-                    sb.append("..").append(previousEndPosition);
-                    //reset to no region
-                    previouStartPosition = Data.NA;
-                    previousEndPosition = Data.NA;
-                }
             }
             //repeat the recoring for last potential region
             //make sure this code is consistent with the code in previous section
@@ -172,8 +172,8 @@ public class SiteClean {
 
     public String getCleanedGeneSummaryStrBySite(Gene gene) {
         int geneSize = 0;
-        double caseAvg = 0;
-        double ctrlAvg = 0;
+        float caseAvg = 0;
+        float ctrlAvg = 0;
         for (Exon exon : gene.getExonList()) {
             int start = exon.getStartPosition();
             int end = exon.getEndPosition();
@@ -190,7 +190,7 @@ public class SiteClean {
         return getGeneStr(gene, geneSize, caseAvg, ctrlAvg);
     }
 
-    private String getGeneStr(Gene gene, int geneSize, double caseAvg, double ctrlAvg) {
+    private String getGeneStr(Gene gene, int geneSize, float caseAvg, float ctrlAvg) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(gene.getName()).append(",");
@@ -198,10 +198,18 @@ public class SiteClean {
         sb.append(gene.getLength()).append(",");
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
-        sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
-        sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
-        double absDiff = MathManager.abs(caseAvg, ctrlAvg);
-        sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
+        sb.append(FormatManager.getFloat(caseAvg)).append(",");
+        sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+        
+        float covDiff = Data.NA;
+
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+        } else {
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
+        }
+
+        sb.append(FormatManager.getFloat(covDiff)).append(",");
         sb.append(geneSize);
         return sb.toString();
     }

@@ -5,6 +5,7 @@ import function.coverage.base.CoverageAnalysisBase;
 import function.coverage.base.CoverageCommand;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import utils.CommonCommand;
@@ -30,11 +31,11 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             super.initOutput();
 
             bwCoverageSummaryByGene = new BufferedWriter(new FileWriter(coverageSummaryByGene));
-            bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,AbsDiff,Length");
+            bwCoverageSummaryByGene.write("Gene,Chr,AvgCase,AvgCtrl,CovDiff,Length");
             bwCoverageSummaryByGene.newLine();
 
             bwGeneSummaryClean = new BufferedWriter(new FileWriter(cleanedGeneSummaryList));
-            bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,AbsDiff,CleanedLength");
+            bwGeneSummaryClean.write("Gene,Chr,OriginalLength,AvgCase,AvgCtrl,CovDiff,CleanedLength");
             bwGeneSummaryClean.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -74,7 +75,7 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
 
     private void outputGeneSummary(Gene gene) {
         try {
-            double caseAvg = 0, ctrlAvg = 0;
+            float caseAvg = 0, ctrlAvg = 0;
             for (Sample sample : SampleManager.getList()) {
                 if (sample.isCase()) {
                     caseAvg += geneSampleCoverage[gene.getIndex()][sample.getIndex()];
@@ -91,11 +92,19 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             StringBuilder sb = new StringBuilder();
             sb.append(gene.getName()).append(",");
             sb.append(gene.getChr()).append(",");
-            sb.append(FormatManager.getSixDegitDouble(caseAvg)).append(",");
-            sb.append(FormatManager.getSixDegitDouble(ctrlAvg)).append(",");
-            double absDiff = MathManager.abs(caseAvg, ctrlAvg);
-            sb.append(FormatManager.getSixDegitDouble(absDiff)).append(",");
-            sb.append(gene.getLength());         
+            sb.append(FormatManager.getFloat(caseAvg)).append(",");
+            sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+
+            float covDiff = Data.NA;
+
+            if (CoverageCommand.isRelativeDifference) {
+                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+            } else {
+                covDiff = MathManager.abs(caseAvg, ctrlAvg);
+            }
+
+            sb.append(FormatManager.getFloat(covDiff)).append(",");
+            sb.append(gene.getLength());
             writeToFile(sb.toString(), bwCoverageSummaryByGene);
         } catch (Exception ex) {
             ErrorManager.send(ex);
