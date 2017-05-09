@@ -105,28 +105,31 @@ public class CoverageComparison extends CoverageComparisonBase {
             ctrlAvg = MathManager.devide(ctrlAvg, SampleManager.getCtrlNum());
             ctrlAvg = MathManager.devide(ctrlAvg, exon.getLength());
 
-            StringBuilder sb = new StringBuilder();
-            String name = gene.getName() + "_" + exon.getIdStr();
-            sb.append(name).append(",");
-            sb.append(gene.getChr()).append(",");
-            sb.append(FormatManager.getFloat(caseAvg)).append(",");
-            sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+            if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
+                    && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
+                StringBuilder sb = new StringBuilder();
+                String name = gene.getName() + "_" + exon.getIdStr();
+                sb.append(name).append(",");
+                sb.append(gene.getChr()).append(",");
+                sb.append(FormatManager.getFloat(caseAvg)).append(",");
+                sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
 
-            float covDiff = Data.NA;
+                float covDiff = Data.NA;
 
-            if (CoverageCommand.isRelativeDifference) {
-                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-            } else {
-                covDiff = MathManager.abs(caseAvg, ctrlAvg);
+                if (CoverageCommand.isRelativeDifference) {
+                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+                } else {
+                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
+                }
+
+                sb.append(FormatManager.getFloat(covDiff)).append(",");
+                sb.append(exon.getLength());
+
+                addExon(sb, name, caseAvg, ctrlAvg, covDiff, exon.getLength(), sr, lss);
+
+                bwCoverageSummaryByExon.write(sb.toString());
+                bwCoverageSummaryByExon.newLine();
             }
-
-            sb.append(FormatManager.getFloat(covDiff)).append(",");
-            sb.append(exon.getLength());
-
-            addExon(sb, name, caseAvg, ctrlAvg, covDiff, exon.getLength(), sr, lss);
-
-            bwCoverageSummaryByExon.write(sb.toString());
-            bwCoverageSummaryByExon.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

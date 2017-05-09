@@ -18,7 +18,7 @@ public class GeneManager {
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringBuilder> chrAllGeneMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
-    private static final HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<>();
+    private static final HashMap<String, HashSet<Gene>> geneMapByBoundary = new HashMap<>();
 
     private static ArrayList<Gene> geneBoundaryList = new ArrayList<>();
     private static int allGeneBoundaryLength;
@@ -126,13 +126,13 @@ public class GeneManager {
                 if (geneId.contains("_")) { // if using gene domain
                     String geneName = geneId.substring(0, geneId.indexOf("_"));
 
-                    if (!geneMapByBoundaries.containsKey(geneName)) {
-                        geneMapByBoundaries.put(geneName, set);
+                    if (!geneMapByBoundary.containsKey(geneName)) {
+                        geneMapByBoundary.put(geneName, set);
                     } else {
-                        geneMapByBoundaries.get(geneName).add(gene);
+                        geneMapByBoundary.get(geneName).add(gene);
                     }
                 } else {
-                    geneMapByBoundaries.put(geneId, set);
+                    geneMapByBoundary.put(geneId, set);
                 }
 
                 gene.setIndex(geneIndex++);
@@ -145,19 +145,19 @@ public class GeneManager {
     private static void initGeneMap() {
         if (isUsed) {
             if (geneMapByName.isEmpty()) {
-                geneMap.putAll(geneMapByBoundaries);
-            } else if (geneMapByBoundaries.isEmpty()) {
+                geneMap.putAll(geneMapByBoundary);
+            } else if (geneMapByBoundary.isEmpty()) {
                 geneMap.putAll(geneMapByName);
             } else {
                 HashSet<String> nameSet = new HashSet<>();
 
                 nameSet.addAll(geneMapByName.keySet());
-                nameSet.addAll(geneMapByBoundaries.keySet());
+                nameSet.addAll(geneMapByBoundary.keySet());
 
                 for (String geneName : nameSet) {
                     if (geneMapByName.containsKey(geneName)
-                            && geneMapByBoundaries.containsKey(geneName)) {
-                        HashSet<Gene> set = geneMapByBoundaries.get(geneName);
+                            && geneMapByBoundary.containsKey(geneName)) {
+                        HashSet<Gene> set = geneMapByBoundary.get(geneName);
 
                         geneMap.put(geneName, set);
                     }
