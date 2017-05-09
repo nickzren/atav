@@ -172,7 +172,7 @@ public class ExonClean {
                 covDiff = MathManager.abs(caseAvg, ctrlAvg);
             }
 
-            sb.append(FormatManager.getDouble(covDiff)).append(",");
+            sb.append(FormatManager.getFloat(covDiff)).append(",");
             sb.append(geneSize);
             return sb.toString();
         } else {
