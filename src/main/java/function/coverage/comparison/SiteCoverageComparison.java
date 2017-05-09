@@ -126,8 +126,6 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
                     siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
                 }
-                
-                siteClean.count(); // count every bases included the filtered ones
             }
         } catch (Exception e) {
             ErrorManager.send(e);

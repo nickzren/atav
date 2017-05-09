@@ -2,6 +2,7 @@ package function.coverage.comparison;
 
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
+import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
 import function.genotype.base.SampleManager;
 import global.Data;
@@ -18,7 +19,6 @@ import utils.MathManager;
  */
 public class SiteClean {
 
-    int totalBases = 0;
     int totalCleanedBases = 0;
     double caseCoverage = 0;
     double ctrlCoverage = 0;
@@ -27,10 +27,6 @@ public class SiteClean {
 
     public void addSite(String chr, int pos, float caseAvg, float ctrlAvg, float covDiff) {
         siteList.add(new SortedSite(chr, pos, caseAvg, ctrlAvg, covDiff));
-    }
-
-    public void count() {
-        totalBases++;
     }
 
     private double getAllCoverage() {
@@ -110,8 +106,8 @@ public class SiteClean {
             }
         }
 
-        caseCoverage = MathManager.devide(caseCoverage, totalBases);
-        ctrlCoverage = MathManager.devide(ctrlCoverage, totalBases);
+        caseCoverage = MathManager.devide(caseCoverage, GeneManager.getAllGeneBoundaryLength());
+        ctrlCoverage = MathManager.devide(ctrlCoverage, GeneManager.getAllGeneBoundaryLength());
 
         siteList.clear(); // free memory
     }
@@ -227,25 +223,25 @@ public class SiteClean {
 
     public void outputLog() {
         LogManager.writeAndPrint("The total number of bases before pruning is "
-                + FormatManager.getDouble((double) totalBases / 1000000.0) + " MB");
+                + FormatManager.getDouble((double) GeneManager.getAllGeneBoundaryLength() / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases after pruning is "
                 + FormatManager.getDouble((double) totalCleanedBases / 1000000.0) + " MB");
         LogManager.writeAndPrint("The % of bases pruned is "
-                + FormatManager.getDouble(100.0 - (double) totalCleanedBases / (double) totalBases * 100) + "%");
+                + FormatManager.getDouble(100.0 - (double) totalCleanedBases / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
 
         LogManager.writeAndPrint("The average coverage rate for all samples after pruning is "
                 + FormatManager.getDouble(getAllCoverage() * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for all samples after pruning is "
-                + FormatManager.getDouble(getAllCoverage() * totalBases / 1000000.0) + " MB");
+                + FormatManager.getDouble(getAllCoverage() * GeneManager.getAllGeneBoundaryLength() / 1000000.0) + " MB");
 
         LogManager.writeAndPrint("The average coverage rate for cases after pruning is  "
                 + FormatManager.getDouble(caseCoverage * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for cases after pruning is "
-                + FormatManager.getDouble(caseCoverage * totalBases / 1000000.0) + " MB");
+                + FormatManager.getDouble(caseCoverage * GeneManager.getAllGeneBoundaryLength() / 1000000.0) + " MB");
 
         LogManager.writeAndPrint("The average coverage rate for controls after pruning is  "
                 + FormatManager.getDouble(ctrlCoverage * 100) + "%");
         LogManager.writeAndPrint("The average number of bases well covered for controls after pruning is "
-                + FormatManager.getDouble(ctrlCoverage * totalBases / 1000000.0) + " MB");
+                + FormatManager.getDouble(ctrlCoverage * GeneManager.getAllGeneBoundaryLength() / 1000000.0) + " MB");
     }
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
-import function.variant.base.VariantManager;
 import java.sql.Statement;
 import utils.DBManager;
 
