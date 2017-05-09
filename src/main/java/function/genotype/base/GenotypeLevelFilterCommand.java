@@ -208,11 +208,11 @@ public class GenotypeLevelFilterCommand {
                     snvQual = getValidFloat(option);
                     indelQual = getValidFloat(option);
                     break;
-                case "--qual-snv":
+                case "--snv-qual":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     snvQual = getValidFloat(option);
                     break;
-                case "--qual-indel":
+                case "--indel-qual":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     indelQual = getValidFloat(option);
                     break;
