@@ -200,15 +200,13 @@ public class AnnotatedVariant extends Variant {
                 trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
             }
 
-            if (function.equals("SYNONYMOUS_CODING")
-                    && polyphenHumvar < 0.4335 && polyphenHumvar >= 0) {
-                // filter applied to SYNONYMOUS_CODING variant with polyphen humvar benign
+            if (polyphenHumvar < 0.4335 && polyphenHumvar >= 0) {
+                // filter applied to polyphen humvar benign
                 return TrapCommand.isTrapScoreValid(trapScore);
-            }
-
-            if (function.equals("INTRON_EXON_BOUNDARY")
+            } else if (function.equals("SYNONYMOUS_CODING")
+                    || function.equals("INTRON_EXON_BOUNDARY")
                     || function.equals("INTRON")) {
-                // filter applied to INTRON_EXON_BOUNDARY or INTRONIC variants
+                // filter applied to SYNONYMOUS_CODING, INTRON_EXON_BOUNDARY or INTRONIC variants
                 return TrapCommand.isTrapScoreValid(trapScore);
             }
         }
