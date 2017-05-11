@@ -201,9 +201,14 @@ public class AnnotatedVariant extends Variant {
             }
 
             if (function.equals("SYNONYMOUS_CODING")
-                    || function.equals("INTRON_EXON_BOUNDARY")
+                    && polyphenHumvar < 0.4335 && polyphenHumvar >= 0) {
+                // filter applied to SYNONYMOUS_CODING variant with polyphen humvar benign
+                return TrapCommand.isTrapScoreValid(trapScore);
+            }
+
+            if (function.equals("INTRON_EXON_BOUNDARY")
                     || function.equals("INTRON")) {
-                // filter only apply to SYNONYMOUS_CODING, INTRON_EXON_BOUNDARY and INTRONIC variants
+                // filter applied to INTRON_EXON_BOUNDARY or INTRONIC variants
                 return TrapCommand.isTrapScoreValid(trapScore);
             }
         }
