@@ -6,7 +6,6 @@ import global.Data;
 import function.genotype.base.SampleManager;
 import function.variant.base.Output;
 import global.Index;
-import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
@@ -15,6 +14,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import utils.MathManager;
 
 /**
  *
@@ -52,6 +52,8 @@ public class TrioManager {
                 + "Mother,"
                 + "Father,"
                 + "Comp Het Flag,"
+                + "Var Case Freq #1 & #2 (co-occurance),"
+                + "Var Ctrl Freq #1 & #2 (co-occurance),"
                 + initVarTitleStr("1")
                 + initVarTitleStr("2");
     }
@@ -442,5 +444,54 @@ public class TrioManager {
         }
 
         return Data.BYTE_NA;
+    }
+
+    /*
+     * The number of people who have BOTH of the variants divided by the total
+     * number of covered people. freq[0] Frequency of Variant #1 & #2
+     * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
+     * (co-occurance) in ctrls
+     */
+    public static float[] getCoOccurrenceFreq(TrioOutput output1, TrioOutput output2) {
+        float[] freq = new float[2];
+
+        int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
+        int totalCaseCount = 0, totalCtrlCount = 0;
+
+        for (Sample sample : SampleManager.getList()) {
+            if (sample.getName().equals(output1.fatherName)
+                    || sample.getName().equals(output1.motherName)) // ignore parents trio
+            {
+                continue;
+            }
+
+            boolean isCoQualifiedGeno = isCoQualifiedGeno(output1, output2, sample.getIndex());
+
+            if (sample.isCase()) {
+                totalCaseCount++;
+                if (isCoQualifiedGeno) {
+                    quanlifiedCaseCount++;
+                }
+            } else {
+                totalCtrlCount++;
+                if (isCoQualifiedGeno) {
+                    qualifiedCtrlCount++;
+                }
+            }
+        }
+
+        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
+        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
+
+        return freq;
+    }
+
+    private static boolean isCoQualifiedGeno(TrioOutput output1,
+            TrioOutput output2, int index) {
+        byte geno1 = output1.getCalledVariant().getGT(index);
+        byte geno2 = output2.getCalledVariant().getGT(index);
+
+        return output1.isQualifiedGeno(geno1)
+                && output2.isQualifiedGeno(geno2);
     }
 }
