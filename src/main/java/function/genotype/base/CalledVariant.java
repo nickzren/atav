@@ -19,8 +19,8 @@ public class CalledVariant extends AnnotatedVariant {
 
     private HashMap<Integer, Carrier> carrierMap = new HashMap<>();
     private HashMap<Integer, NonCarrier> noncarrierMap = new HashMap<>();
-    private byte[] gt = new byte[SampleManager.getListSize()];
-    private short[] dpBin = new short[SampleManager.getListSize()];
+    private byte[] gt = new byte[SampleManager.getTotalSampleNum()];
+    private short[] dpBin = new short[SampleManager.getTotalSampleNum()];
 
     private int[] qcFailSample = new int[2];
     public int[][] genoCount = new int[5][2];
@@ -28,6 +28,8 @@ public class CalledVariant extends AnnotatedVariant {
     public float[] hetFreq = new float[2];
     public float[] maf = new float[2];
     public double[] hweP = new double[2];
+    private int[] dpBinCoveredSample = new int[2];
+    private double dpBinCoveredSampleBinomialP;
 
     public CalledVariant(String chr, int variantId, ResultSet rset) throws Exception {
         super(chr, variantId, rset);
@@ -42,7 +44,10 @@ public class CalledVariant extends AnnotatedVariant {
 
             initGenoCovArray();
 
-            if (checkGenoCountValid()) {
+            initDPBinCoveredSampleBinomialP();
+
+            if (checkDPBinCoveredSampleBinomialP()
+                    && checkGenoCountValid()) {
                 calculateAlleleFreq();
 
                 if (checkAlleleFreqValid()) {
@@ -86,6 +91,13 @@ public class CalledVariant extends AnnotatedVariant {
         return isValid;
     }
 
+    private boolean checkDPBinCoveredSampleBinomialP() {
+        isValid = GenotypeLevelFilterCommand
+                .isMinDPBinCoveredSampleBinomialPValid(dpBinCoveredSampleBinomialP);
+
+        return isValid;
+    }
+
     private boolean checkAlleleFreqValid() {
         isValid = GenotypeLevelFilterCommand.isMaxCtrlMafValid(maf[Index.CTRL])
                 && GenotypeLevelFilterCommand.isMinCtrlMafValid(maf[Index.CTRL]);
@@ -114,6 +126,8 @@ public class CalledVariant extends AnnotatedVariant {
             Carrier carrier = carrierMap.get(sample.getId());
             NonCarrier noncarrier = noncarrierMap.get(sample.getId());
 
+            short dpBin;
+
             if (carrier != null) {
                 setGenoDPBin(carrier.getGT(), carrier.getDPBin(), sample.getIndex());
                 addSampleGeno(carrier.getGT(), sample);
@@ -123,15 +137,51 @@ public class CalledVariant extends AnnotatedVariant {
                     qcFailSample[sample.getPheno()]++;
                     carrierMap.remove(sample.getId());
                 }
+
+                dpBin = applyCoverageFilter(sample,
+                        carrier.getDPBin(),
+                        GenotypeLevelFilterCommand.minCaseCoverageCall,
+                        GenotypeLevelFilterCommand.minCtrlCoverageCall);
             } else if (noncarrier != null) {
                 setGenoDPBin(noncarrier.getGT(), noncarrier.getDPBin(), sample.getIndex());
                 addSampleGeno(noncarrier.getGT(), sample);
+
+                dpBin = applyCoverageFilter(sample,
+                        noncarrier.getDPBin(),
+                        GenotypeLevelFilterCommand.minCaseCoverageNoCall,
+                        GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
             } else {
                 setGenoDPBin(Data.BYTE_NA, Data.SHORT_NA, sample.getIndex());
+                dpBin = Data.SHORT_NA;
+            }
+
+            if (dpBin != Data.SHORT_NA) {
+                dpBinCoveredSample[sample.getPheno()]++;
             }
         }
 
         noncarrierMap = null; // free memory
+    }
+
+    private void initDPBinCoveredSampleBinomialP() {
+        dpBinCoveredSampleBinomialP = MathManager.getBinomialTWOSIDED(
+                dpBinCoveredSample[Index.CASE] + dpBinCoveredSample[Index.CTRL],
+                dpBinCoveredSample[Index.CASE],
+                MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+    }
+
+    private short applyCoverageFilter(Sample sample, short dpBin, int minCaseCov, int minCtrlCov) {
+        if (sample.isCase()) // --min-case-coverage-call or --min-case-coverage-no-call
+        {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCaseCov)) {
+                return Data.SHORT_NA;
+            }
+        } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
+         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+                return Data.SHORT_NA;
+            }
+
+        return dpBin;
     }
 
     public void addSampleGeno(byte geno, Sample sample) {
@@ -268,5 +318,13 @@ public class CalledVariant extends AnnotatedVariant {
 
     public int getQcFailSample(byte pheno) {
         return qcFailSample[pheno];
+    }
+
+    public int getDPBinCoveredSample(byte pheno) {
+        return dpBinCoveredSample[pheno];
+    }
+
+    public double getDPBinCoveredSampleBinomialP() {
+        return dpBinCoveredSampleBinomialP;
     }
 }

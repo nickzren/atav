@@ -47,10 +47,10 @@ public class GenotypeLevelFilterCommand {
     public static float indelRPRS = Data.NO_FILTER;
     public static float snvMQRS = Data.NO_FILTER;
     public static float indelMQRS = Data.NO_FILTER;
+    public static final String[] FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
-
-    public static final String[] FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
+    public static double minDPBinCoveredSampleBinomialP = Data.NO_FILTER;
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
@@ -218,6 +218,10 @@ public class GenotypeLevelFilterCommand {
                 case "--max-qc-fail-sample":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     maxQcFailSample = getValidInteger(option);
+                    break;
+                case "--min-dp-bin-covered-sample-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minDPBinCoveredSampleBinomialP = getValidDouble(option);
                     break;
                 default:
                     continue;
@@ -536,5 +540,13 @@ public class GenotypeLevelFilterCommand {
         }
 
         return value <= maxQcFailSample;
+    }
+
+    public static boolean isMinDPBinCoveredSampleBinomialPValid(double value) {
+        if (minDPBinCoveredSampleBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minDPBinCoveredSampleBinomialP;
     }
 }

@@ -13,7 +13,7 @@ public class MathManager {
 
     private static BinomialTest BT;
 
-    public static double getBinomial(int numberOfTrials, short numberOfSuccesses, float probability) {
+    public static double getBinomialLessThan(int numberOfTrials, int numberOfSuccesses, float probability) {
         if (BT == null) {
             BT = new BinomialTest();
         }
@@ -22,6 +22,17 @@ public class MathManager {
                 numberOfSuccesses,
                 probability,
                 AlternativeHypothesis.LESS_THAN);
+    }
+    
+    public static double getBinomialTWOSIDED(int numberOfTrials, int numberOfSuccesses, float probability) {
+        if (BT == null) {
+            BT = new BinomialTest();
+        }
+
+        return BT.binomialTest(numberOfTrials,
+                numberOfSuccesses,
+                probability,
+                AlternativeHypothesis.TWO_SIDED);
     }
 
     public static double devide(double a, int b) {

@@ -95,7 +95,7 @@ public class Carrier extends NonCarrier {
         if (adAlt == Data.SHORT_NA || adRef == Data.SHORT_NA) {
             return Data.DOUBLE_NA;
         } else {
-            return MathManager.getBinomial(adAlt + adRef, adAlt, 0.5f);
+            return MathManager.getBinomialLessThan(adAlt + adRef, adAlt, 0.5f);
         }
     }
 
@@ -128,10 +128,6 @@ public class Carrier extends NonCarrier {
                 gt = Data.BYTE_NA;
             }
         }
-
-        if (gt == Data.BYTE_NA) {
-            dpBin = Data.SHORT_NA;
-        }
     }
 
     /*
@@ -163,7 +159,7 @@ public class Carrier extends NonCarrier {
             }
 
             if (!isValid) {
-                setMissing();
+                gt = Data.BYTE_NA;
             }
         }
     }

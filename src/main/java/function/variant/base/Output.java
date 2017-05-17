@@ -75,6 +75,9 @@ public class Output implements Cloneable {
                 + "Het Ctrl Freq,"
                 + "QC Fail Case,"
                 + "QC Fail Ctrl,"
+                + "DP Bin Covered Case,"
+                + "DP Bin Covered Ctrl,"
+                + "DP Bin Covered Sample Binomial P (two sided),"
                 + "Case Maf,"
                 + "Ctrl Maf,"
                 + "Case HWE_P,"
@@ -147,6 +150,9 @@ public class Output implements Cloneable {
         sb.append(FormatManager.getFloat(calledVar.hetFreq[Index.CTRL])).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
+        sb.append(calledVar.getDPBinCoveredSample(Index.CASE)).append(",");
+        sb.append(calledVar.getDPBinCoveredSample(Index.CTRL)).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getDPBinCoveredSampleBinomialP())).append(",");
         sb.append(FormatManager.getFloat(calledVar.maf[Index.CASE])).append(",");
         sb.append(FormatManager.getFloat(calledVar.maf[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(calledVar.hweP[Index.CASE])).append(",");

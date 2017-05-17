@@ -30,7 +30,7 @@ public class SiteClean {
     }
 
     private double getAllCoverage() {
-        return (caseCoverage * SampleManager.getCaseNum() + ctrlCoverage * SampleManager.getCtrlNum()) / SampleManager.getListSize();
+        return (caseCoverage * SampleManager.getCaseNum() + ctrlCoverage * SampleManager.getCtrlNum()) / SampleManager.getTotalSampleNum();
     }
 
     protected double getCutoff() {

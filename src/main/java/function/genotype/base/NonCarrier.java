@@ -64,17 +64,14 @@ public class NonCarrier {
         if (sample.isCase()) // --min-case-coverage-call or --min-case-coverage-no-call
         {
             if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCaseCov)) {
-                setMissing();
+                gt = Data.BYTE_NA;
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
-                setMissing();
+        {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+                gt = Data.BYTE_NA;
             }
-    }
-
-    public void setMissing() {
-        gt = Data.BYTE_NA;
-        dpBin = Data.SHORT_NA;
+        }
     }
 
     public boolean isValid() {
