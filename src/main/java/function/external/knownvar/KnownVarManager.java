@@ -22,8 +22,8 @@ import utils.FormatManager;
 public class KnownVarManager {
 
     public static final String hgmdTable = "knownvar.hgmd_2017_1";
-    public static final String clinVarTable = "knownvar.clinvar_2017_05_16";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2017_05_02";
+    public static final String clinVarTable = "knownvar.clinvar_2017_05_19";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2017_05_19";
     public static final String clinGenTable = "knownvar.clingen_2017_05_03";
     public static final String omimTable = "knownvar.omim_2017_05_02";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
@@ -62,6 +62,7 @@ public class KnownVarManager {
                     + "ClinVar Pathogenic SNV Splice Count,"
                     + "ClinVar Pathogenic SNV Nonsense Count,"
                     + "ClinVar Pathogenic SNV Missense Count,"
+                    + "ClinVar Pathogenic Last Pathogenic Location,"
                     + "ClinGen,"
                     + "ClinGen HaploinsufficiencyDesc,"
                     + "ClinGen TriplosensitivityDesc,"
@@ -185,13 +186,15 @@ public class KnownVarManager {
                 int snvSpliceCount = rs.getInt("snvSpliceCount");
                 int snvNonsenseCount = rs.getInt("snvNonsenseCount");
                 int snvMissenseCount = rs.getInt("snvMissenseCount");
+                int lastPathoLoc = rs.getInt("lastPathoLoc");
 
                 ClinVarPathoratio clinVarPathoratio = new ClinVarPathoratio(
                         indelCount,
                         copyCount,
                         snvSpliceCount,
                         snvNonsenseCount,
-                        snvMissenseCount);
+                        snvMissenseCount,
+                        lastPathoLoc);
 
                 clinVarPathoratioMap.put(geneName, clinVarPathoratio);
             }
@@ -450,7 +453,7 @@ public class KnownVarManager {
 
         if (clinVarPathoratio == null) {
             clinVarPathoratio = new ClinVarPathoratio(Data.INTEGER_NA, Data.INTEGER_NA,
-                    Data.INTEGER_NA, Data.INTEGER_NA, Data.INTEGER_NA);
+                    Data.INTEGER_NA, Data.INTEGER_NA, Data.INTEGER_NA, Data.INTEGER_NA);
         }
 
         return clinVarPathoratio;
