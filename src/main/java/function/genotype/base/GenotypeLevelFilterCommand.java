@@ -69,12 +69,13 @@ public class GenotypeLevelFilterCommand {
                 case "--all-sample":
                     isAllSample = true;
                     break;
+                case "--ctrl-af":
                 case "--max-ctrl-af":
-                    checkValueValid(0.5, 0, option);
+                    checkValueValid(1, 0, option);
                     maxCtrlAF = getValidDouble(option);
                     break;
                 case "--min-ctrl-af":
-                    checkValueValid(0.5, 0, option);
+                    checkValueValid(1, 0, option);
                     minCtrlAF = getValidDouble(option);
                     break;
                 case "--min-coverage":

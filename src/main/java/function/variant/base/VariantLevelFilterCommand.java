@@ -90,7 +90,7 @@ public class VariantLevelFilterCommand {
                     ExacCommand.isIncludeExac = true;
                     break;
                 case "--exac-af":
-                    checkValueValid(0.5, 0, option);
+                    checkValueValid(1, 0, option);
                     ExacCommand.exacAF = getValidFloat(option);
                     ExacCommand.isIncludeExac = true;
                     break;
@@ -110,7 +110,7 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
                 case "--gnomad-exome-af":
-                    checkValueValid(0.5, 0, option);
+                    checkValueValid(1, 0, option);
                     GnomADCommand.gnomADExomeAF = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
@@ -154,7 +154,7 @@ public class VariantLevelFilterCommand {
                     GenomesCommand.isInclude1000Genomes = true;
                     break;
                 case "--max-1000-genomes-af":
-                    checkValueValid(0.5, 0, option);
+                    checkValueValid(1, 0, option);
                     GenomesCommand.maxGenomesAF = getValidFloat(option);
                     GenomesCommand.isInclude1000Genomes = true;
                     break;

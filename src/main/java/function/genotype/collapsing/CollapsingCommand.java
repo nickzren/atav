@@ -34,7 +34,7 @@ public class CollapsingCommand {
             switch (option.getName()) {
                 case "--loo-af":
                 case "--max-loo-af":
-                    checkValueValid(0.5, 0, option);
+                    checkValueValid(1, 0, option);
                     maxLooAF = getValidDouble(option);
                     break;
                 case "--read-coverage-summary":
@@ -73,7 +73,7 @@ public class CollapsingCommand {
             switch (option.getName()) {
                 case "--loo-af":
                 case "--max-loo-af":
-                    checkValueValid(0.5, 0, option);
+                    checkValueValid(1, 0, option);
                     maxLooAF = getValidDouble(option);
                     break;
                 case "--read-coverage-summary":
