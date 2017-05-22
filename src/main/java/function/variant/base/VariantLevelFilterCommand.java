@@ -25,6 +25,13 @@ import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -82,9 +89,9 @@ public class VariantLevelFilterCommand {
                     ExacCommand.exacPop = option.getValue();
                     ExacCommand.isIncludeExac = true;
                     break;
-                case "--exac-maf":
+                case "--exac-af":
                     checkValueValid(0.5, 0, option);
-                    ExacCommand.exacMaf = getValidFloat(option);
+                    ExacCommand.exacAF = getValidFloat(option);
                     ExacCommand.isIncludeExac = true;
                     break;
                 case "--min-exac-vqslod-snv":
@@ -102,9 +109,9 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.gnomADExomePop = option.getValue();
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
-                case "--gnomad-exome-maf":
+                case "--gnomad-exome-af":
                     checkValueValid(0.5, 0, option);
-                    GnomADCommand.gnomADExomeMaf = getValidFloat(option);
+                    GnomADCommand.gnomADExomeAF = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
                 case "--gnomad-exome-as-rf-snv":
@@ -146,9 +153,9 @@ public class VariantLevelFilterCommand {
                     GenomesCommand.genomesPop = option.getValue();
                     GenomesCommand.isInclude1000Genomes = true;
                     break;
-                case "--max-1000-genomes-maf":
+                case "--max-1000-genomes-af":
                     checkValueValid(0.5, 0, option);
-                    GenomesCommand.maxGenomesMaf = getValidFloat(option);
+                    GenomesCommand.maxGenomesAF = getValidFloat(option);
                     GenomesCommand.isInclude1000Genomes = true;
                     break;
                 case "--include-evs":

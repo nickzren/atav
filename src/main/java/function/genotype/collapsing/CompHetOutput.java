@@ -23,7 +23,7 @@ public class CompHetOutput extends CollapsingOutput {
                 + getExternalDataTitle()
                 + getGenoStatDataTitle()
                 + getCarrierDataTitle()
-                + "LOO MAF,";
+                + "LOO AF,";
         
         String[] list = varTitle.split(",");
 
@@ -57,7 +57,7 @@ public class CompHetOutput extends CollapsingOutput {
         getGenoStatData(sb);
         getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
 
-        sb.append(FormatManager.getDouble(looMAF)).append(",");
+        sb.append(FormatManager.getDouble(looAF)).append(",");
 
         return sb.toString();
     }

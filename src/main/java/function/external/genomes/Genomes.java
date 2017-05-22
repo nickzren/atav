@@ -19,7 +19,7 @@ public class Genomes {
     private String alt;
     private boolean isSnv;
 
-    private float[] maf;
+    private float[] af;
 
     public Genomes(String chr, int pos, String ref, String alt) {
         this.chr = chr;
@@ -34,7 +34,7 @@ public class Genomes {
             isSnv = false;
         }
 
-        initMaf();
+        initAF();
     }
 
     public Genomes(boolean isIndel, ResultSet rs) {
@@ -44,10 +44,10 @@ public class Genomes {
             ref = rs.getString("ref_allele");
             alt = rs.getString("alt_allele");
 
-            maf = new float[GenomesManager.GENOMES_POP.length];
+            af = new float[GenomesManager.GENOMES_POP.length];
 
             for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-                maf[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_maf");
+                af[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_af");
             }
 
             isSnv = !isIndel;
@@ -56,21 +56,21 @@ public class Genomes {
         }
     }
 
-    private void initMaf() {
-        maf = new float[GenomesManager.GENOMES_POP.length];
+    private void initAF() {
+        af = new float[GenomesManager.GENOMES_POP.length];
 
         try {
-            String sql = GenomesManager.getSql4Maf(isSnv, chr, pos, ref, alt);
+            String sql = GenomesManager.getSql4AF(isSnv, chr, pos, ref, alt);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
                 for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-                    maf[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_maf");
+                    af[i] = rs.getFloat(GenomesManager.GENOMES_POP[i] + "_af");
                 }
             } else {
                 for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-                    maf[i] = Data.FLOAT_NA;
+                    af[i] = Data.FLOAT_NA;
                 }
             }
         } catch (Exception e) {
@@ -78,13 +78,13 @@ public class Genomes {
         }
     }
 
-    private float getMaxMaf() {
+    private float getMaxAF() {
         float value = Data.FLOAT_NA;
 
         for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-            if (maf[i] != Data.FLOAT_NA
+            if (af[i] != Data.FLOAT_NA
                     && GenomesCommand.genomesPop.contains(GenomesManager.GENOMES_POP[i])) {
-                value = Math.max(value, maf[i]);
+                value = Math.max(value, af[i]);
             }
         }
 
@@ -92,7 +92,7 @@ public class Genomes {
     }
 
     public boolean isValid() {
-        return GenomesCommand.isMaxGenomesMafValid(getMaxMaf());
+        return GenomesCommand.isMaxGenomesAFValid(getMaxAF());
     }
 
     public String getVariantId() {
@@ -104,7 +104,7 @@ public class Genomes {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-            sb.append(FormatManager.getFloat(maf[i])).append(",");
+            sb.append(FormatManager.getFloat(af[i])).append(",");
         }
 
         return sb.toString();

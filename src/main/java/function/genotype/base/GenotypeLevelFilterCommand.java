@@ -20,8 +20,8 @@ public class GenotypeLevelFilterCommand {
 
     public static String sampleFile = "";
     public static boolean isAllSample = false;
-    public static double maxCtrlMaf = Data.NO_FILTER;
-    public static double minCtrlMaf = Data.NO_FILTER;
+    public static double maxCtrlAF = Data.NO_FILTER;
+    public static double minCtrlAF = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
     public static int minGQBin = Data.NO_FILTER;
     public static int minCaseCoverageCall = Data.NO_FILTER;
@@ -69,15 +69,13 @@ public class GenotypeLevelFilterCommand {
                 case "--all-sample":
                     isAllSample = true;
                     break;
-                case "--ctrlMAF":
-                case "--ctrl-maf":
-                case "--max-ctrl-maf":
+                case "--max-ctrl-af":
                     checkValueValid(0.5, 0, option);
-                    maxCtrlMaf = getValidDouble(option);
+                    maxCtrlAF = getValidDouble(option);
                     break;
-                case "--min-ctrl-maf":
+                case "--min-ctrl-af":
                     checkValueValid(0.5, 0, option);
-                    minCtrlMaf = getValidDouble(option);
+                    minCtrlAF = getValidDouble(option);
                     break;
                 case "--min-coverage":
                     checkValueValid(new String[]{"3", "10", "20", "30", "50", "200"}, option);
@@ -282,20 +280,20 @@ public class GenotypeLevelFilterCommand {
         return isHighQualityCallVariantOnly;
     }
 
-    public static boolean isMaxCtrlMafValid(double value) {
-        if (maxCtrlMaf == Data.NO_FILTER) {
+    public static boolean isMaxCtrlAFValid(double value) {
+        if (maxCtrlAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= maxCtrlMaf;
+        return value <= maxCtrlAF;
     }
 
-    public static boolean isMinCtrlMafValid(double value) {
-        if (minCtrlMaf == Data.NO_FILTER) {
+    public static boolean isMinCtrlAFValid(double value) {
+        if (minCtrlAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= minCtrlMaf;
+        return value >= minCtrlAF;
     }
 
     public static boolean isMinCoverageValid(short value, int minCov) {

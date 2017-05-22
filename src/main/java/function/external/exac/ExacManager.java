@@ -19,7 +19,7 @@ public class ExacManager {
 
         if (ExacCommand.isIncludeExac) {
             for (String str : EXAC_POP) {
-                title += "ExAC " + str + " maf,"
+                title += "ExAC " + str + " af,"
                         + "ExAC " + str + " gts,";
             }
 

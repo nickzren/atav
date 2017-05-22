@@ -21,10 +21,10 @@ public class CollapsingOutput extends Output {
                 + getExternalDataTitle()
                 + getGenoStatDataTitle()
                 + getCarrierDataTitle()
-                + "LOO MAF,";
+                + "LOO AF,";
     }
 
-    double looMAF = 0;
+    double looAF = 0;
 
     HashSet<String> regionBoundaryNameSet; // for --region-boundary only
 
@@ -44,13 +44,13 @@ public class CollapsingOutput extends Output {
 
             calledVar.deleteSampleGeno(geno, sample);
 
-            calculateLooMaf();
+            calculateLooAF();
 
             calledVar.addSampleGeno(geno, sample);
         }
     }
 
-    private void calculateLooMaf() {
+    private void calculateLooAF() {
         int alleleCount = 2 * calledVar.genoCount[Index.HOM][Index.CASE]
                 + calledVar.genoCount[Index.HOM_MALE][Index.CASE]
                 + calledVar.genoCount[Index.HET][Index.CASE]
@@ -65,16 +65,11 @@ public class CollapsingOutput extends Output {
                 + 2 * calledVar.genoCount[Index.REF][Index.CTRL]
                 + calledVar.genoCount[Index.REF_MALE][Index.CTRL];
 
-        double allAF = MathManager.devide(alleleCount, totalCount);
-        looMAF = allAF;
-
-        if (allAF > 0.5) {
-            looMAF = 1.0 - allAF;
-        }
+        looAF = MathManager.devide(alleleCount, totalCount);
     }
 
-    public boolean isMaxLooMafValid() {
-        return CollapsingCommand.isMaxLooMafValid(looMAF);
+    public boolean isMaxLooAFValid() {
+        return CollapsingCommand.isMaxLooAFValid(looAF);
     }
 
     /*
@@ -99,7 +94,7 @@ public class CollapsingOutput extends Output {
         getGenoStatData(sb);
         getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
 
-        sb.append(FormatManager.getDouble(looMAF)).append(",");
+        sb.append(FormatManager.getDouble(looAF)).append(",");
 
         return sb.toString();
     }

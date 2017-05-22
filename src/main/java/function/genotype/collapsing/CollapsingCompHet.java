@@ -123,7 +123,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                         output1.calculateLooFreq(sample);
 
-                        if (output1.isMaxLooMafValid()) {
+                        if (output1.isMaxLooAFValid()) {
 
                             if (isOutputValid(output1, geno1, sample, summary)) {
                                 continue;
@@ -177,7 +177,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
                 output2.calculateLooFreq(sample);
 
-                if (output2.isMaxLooMafValid()) {
+                if (output2.isMaxLooAFValid()) {
                     summary.updateSampleVariantCount4CompHet(sample.getIndex());
 
                     updateSummaryVariantCount(output1, summary);

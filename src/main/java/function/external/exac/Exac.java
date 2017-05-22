@@ -21,7 +21,7 @@ public class Exac {
 
     private float meanCoverage;
     private int sampleCovered10x;
-    private float[] maf;
+    private float[] af;
     private String[] gts;
     private float vqslod;
 
@@ -35,7 +35,7 @@ public class Exac {
 
         initCoverage();
 
-        initMaf();
+        initAF();
     }
 
     public Exac(ResultSet rs) {
@@ -44,14 +44,14 @@ public class Exac {
             pos = rs.getInt("pos");
             ref = rs.getString("ref_allele");
             alt = rs.getString("alt_allele");
-            maf = new float[ExacManager.EXAC_POP.length];
+            af = new float[ExacManager.EXAC_POP.length];
             gts = new String[ExacManager.EXAC_POP.length];
             
             initType();
 
             initCoverage();
             
-            setMaf(rs);
+            setAF(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -84,8 +84,8 @@ public class Exac {
         }
     }
 
-    private void initMaf() {
-        maf = new float[ExacManager.EXAC_POP.length];
+    private void initAF() {
+        af = new float[ExacManager.EXAC_POP.length];
         gts = new String[ExacManager.EXAC_POP.length];
 
         try {
@@ -94,48 +94,44 @@ public class Exac {
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                setMaf(rs);
+                setAF(rs);
             } else if (meanCoverage > 0) {
-                resetMaf(0);
+                resetAF(0);
             } else {
-                resetMaf(Data.FLOAT_NA);
+                resetAF(Data.FLOAT_NA);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    private void setMaf(ResultSet rs) throws SQLException {
+    private void setAF(ResultSet rs) throws SQLException {
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
             float af = rs.getFloat(ExacManager.EXAC_POP[i] + "_af");
 
-            if (af > 0.5) {
-                af = 1 - af;
-            }
-
-            maf[i] = af;
+            this.af[i] = af;
             gts[i] = rs.getString(ExacManager.EXAC_POP[i] + "_gts");
         }
 
         vqslod = rs.getFloat("vqslod");
     }
 
-    private void resetMaf(float value) {
+    private void resetAF(float value) {
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            maf[i] = value;
+            af[i] = value;
             gts[i] = Data.STRING_NA;
         }
 
         vqslod = Data.FLOAT_NA;
     }
 
-    private float getMaxMaf() {
+    private float getMaxAF() {
         float value = Data.FLOAT_NA;
 
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            if (maf[i] != Data.FLOAT_NA
+            if (af[i] != Data.FLOAT_NA
                     && ExacCommand.exacPop.contains(ExacManager.EXAC_POP[i])) {
-                value = Math.max(value, maf[i]);
+                value = Math.max(value, af[i]);
             }
         }
 
@@ -143,7 +139,7 @@ public class Exac {
     }
 
     public boolean isValid() {
-        return ExacCommand.isExacMafValid(getMaxMaf())
+        return ExacCommand.isExacAFValid(getMaxAF())
                 && ExacCommand.isExacVqslodValid(vqslod, isSnv)
                 && ExacCommand.isExacMeanCoverageValid(meanCoverage);
     }
@@ -157,7 +153,7 @@ public class Exac {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            sb.append(FormatManager.getFloat(maf[i])).append(",");
+            sb.append(FormatManager.getFloat(af[i])).append(",");
 
             if (gts[i].equals(Data.STRING_NA)) {
                 sb.append(gts[i]).append(",");

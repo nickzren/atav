@@ -78,8 +78,8 @@ public class Output implements Cloneable {
                 + "DP Bin Covered Case,"
                 + "DP Bin Covered Ctrl,"
                 + "DP Bin Covered Sample Binomial P (two sided),"
-                + "Case Maf,"
-                + "Ctrl Maf,"
+                + "Case AF,"
+                + "Ctrl AF,"
                 + "Case HWE_P,"
                 + "Ctrl HWE_P,";
     }
@@ -153,8 +153,8 @@ public class Output implements Cloneable {
         sb.append(calledVar.getDPBinCoveredSample(Index.CASE)).append(",");
         sb.append(calledVar.getDPBinCoveredSample(Index.CTRL)).append(",");
         sb.append(FormatManager.getDouble(calledVar.getDPBinCoveredSampleBinomialP())).append(",");
-        sb.append(FormatManager.getFloat(calledVar.maf[Index.CASE])).append(",");
-        sb.append(FormatManager.getFloat(calledVar.maf[Index.CTRL])).append(",");
+        sb.append(FormatManager.getFloat(calledVar.af[Index.CASE])).append(",");
+        sb.append(FormatManager.getFloat(calledVar.af[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(calledVar.hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(calledVar.hweP[Index.CTRL])).append(",");
     }
@@ -186,7 +186,7 @@ public class Output implements Cloneable {
         output.calledVar.genoCount = FormatManager.deepCopyArray(calledVar.genoCount);
         output.calledVar.homFreq = FormatManager.deepCopyArray(calledVar.homFreq);
         output.calledVar.hetFreq = FormatManager.deepCopyArray(calledVar.hetFreq);
-        output.calledVar.maf = FormatManager.deepCopyArray(calledVar.maf);
+        output.calledVar.af = FormatManager.deepCopyArray(calledVar.af);
         output.calledVar.hweP = FormatManager.deepCopyArray(calledVar.hweP);
 
         return output;

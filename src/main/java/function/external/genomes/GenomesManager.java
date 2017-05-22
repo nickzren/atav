@@ -19,7 +19,7 @@ public class GenomesManager {
 
         if (GenomesCommand.isInclude1000Genomes) {
             for (String str : GENOMES_POP) {
-                title += "1000 Genomes " + str.toUpperCase() + " maf,";
+                title += "1000 Genomes " + str.toUpperCase() + " af,";
             }
         }
 
@@ -34,7 +34,7 @@ public class GenomesManager {
         }
     }
 
-    public static String getSql4Maf(boolean isSnv, String chr,
+    public static String getSql4AF(boolean isSnv, String chr,
             int pos, String ref, String alt) {
         String sql = "SELECT * ";
 
@@ -54,7 +54,7 @@ public class GenomesManager {
         return sql;
     }
 
-    public static String getSql4Maf(boolean isIndel, Region region) {
+    public static String getSql4AF(boolean isIndel, Region region) {
         String table = snvTable;
 
         if (isIndel) {

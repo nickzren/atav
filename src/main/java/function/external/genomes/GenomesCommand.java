@@ -11,14 +11,14 @@ public class GenomesCommand {
     public static boolean isInclude1000Genomes = false;
     
     public static String genomesPop = "global";
-    public static float maxGenomesMaf = Data.NO_FILTER;
+    public static float maxGenomesAF = Data.NO_FILTER;
     
-    public static boolean isMaxGenomesMafValid(float value) {
-        if (maxGenomesMaf == Data.NO_FILTER) {
+    public static boolean isMaxGenomesAFValid(float value) {
+        if (maxGenomesAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= maxGenomesMaf
+        return value <= maxGenomesAF
                 || value == Data.FLOAT_NA;
     }
 }

@@ -17,7 +17,7 @@ public class Evs {
     private String ref;
     private String alt;
 
-    // from maf table
+    // from af table
     private float allMaf;
     private String allGenotypeCount;
     private String filterStatus;
@@ -28,7 +28,7 @@ public class Evs {
         this.ref = ref;
         this.alt = alt;
         
-        initMaf();
+        initAF();
     }
 
     public Evs(ResultSet rs) {
@@ -45,7 +45,7 @@ public class Evs {
         }
     }
 
-    private void initMaf() {
+    private void initAF() {
         try {
             String sql = EvsManager.getSqlByVariant(chr, pos, ref, alt);
 

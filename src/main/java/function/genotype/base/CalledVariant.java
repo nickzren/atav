@@ -26,7 +26,7 @@ public class CalledVariant extends AnnotatedVariant {
     public int[][] genoCount = new int[5][2];
     public float[] homFreq = new float[2];
     public float[] hetFreq = new float[2];
-    public float[] maf = new float[2];
+    public float[] af = new float[2];
     public double[] hweP = new double[2];
     private int[] dpBinCoveredSample = new int[2];
     private double dpBinCoveredSampleBinomialP;
@@ -99,8 +99,8 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     private boolean checkAlleleFreqValid() {
-        isValid = GenotypeLevelFilterCommand.isMaxCtrlMafValid(maf[Index.CTRL])
-                && GenotypeLevelFilterCommand.isMinCtrlMafValid(maf[Index.CTRL]);
+        isValid = GenotypeLevelFilterCommand.isMaxCtrlAFValid(af[Index.CTRL])
+                && GenotypeLevelFilterCommand.isMinCtrlAFValid(af[Index.CTRL]);
 
         return isValid;
     }
@@ -177,9 +177,11 @@ public class CalledVariant extends AnnotatedVariant {
                 return Data.SHORT_NA;
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+        {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 return Data.SHORT_NA;
             }
+        }
 
         return dpBin;
     }
@@ -239,12 +241,7 @@ public class CalledVariant extends AnnotatedVariant {
                 + genoCount[Index.REF_MALE][Index.CASE];
 
         // (2*hom + maleHom + het) / (2*hom + maleHom + 2*het + 2*ref + maleRef)
-        float caseAF = MathManager.devide(caseAC, caseTotalAC);
-
-        maf[Index.CASE] = caseAF;
-        if (caseAF > 0.5) {
-            maf[Index.CASE] = 1.0f - caseAF;
-        }
+        af[Index.CASE] = MathManager.devide(caseAC, caseTotalAC);
 
         int ctrlAC = 2 * genoCount[Index.HOM][Index.CTRL]
                 + genoCount[Index.HOM_MALE][Index.CTRL]
@@ -253,12 +250,7 @@ public class CalledVariant extends AnnotatedVariant {
                 + 2 * genoCount[Index.REF][Index.CTRL]
                 + genoCount[Index.REF_MALE][Index.CTRL];
 
-        float ctrlAF = MathManager.devide(ctrlAC, ctrlTotalAC);
-
-        maf[Index.CTRL] = ctrlAF;
-        if (ctrlAF > 0.5) {
-            maf[Index.CTRL] = 1.0f - ctrlAF;
-        }
+        af[Index.CTRL] = MathManager.devide(ctrlAC, ctrlTotalAC);
     }
 
     private void calculateGenotypeFreq() {

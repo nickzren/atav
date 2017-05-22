@@ -12,16 +12,16 @@ public class GnomADCommand {
     public static boolean isIncludeGnomADExome = false;
 
     public static String gnomADExomePop = "global";
-    public static float gnomADExomeMaf = Data.NO_FILTER;
+    public static float gnomADExomeAF = Data.NO_FILTER;
     public static float gnomADExomeAsRfSnv = Data.NO_FILTER;
     public static float gnomADExomeAsRfIndel = Data.NO_FILTER;
 
-    public static boolean isGnomADExomeMafValid(float value) {
-        if (gnomADExomeMaf == Data.NO_FILTER) {
+    public static boolean isGnomADExomeAFValid(float value) {
+        if (gnomADExomeAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= gnomADExomeMaf
+        return value <= gnomADExomeAF
                 || value == Data.FLOAT_NA;
     }
 

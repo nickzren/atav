@@ -22,7 +22,7 @@ public class GnomADManager {
 
         if (GnomADCommand.isIncludeGnomADExome) {
             for (String str : GNOMAD_EXOME_POP) {
-                title += "gnomAD Exome " + str + " maf,"
+                title += "gnomAD Exome " + str + " af,"
                         + "gnomAD Exome " + str + " gts,";
             }
 
