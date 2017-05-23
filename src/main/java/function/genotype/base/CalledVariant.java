@@ -47,6 +47,7 @@ public class CalledVariant extends AnnotatedVariant {
             initDPBinCoveredSampleBinomialP();
 
             if (checkDPBinCoveredSampleBinomialP()
+                    && checkMaxDPBinCoveredSampleBinomialP()
                     && checkGenoCountValid()) {
                 calculateAlleleFreq();
 
@@ -94,6 +95,13 @@ public class CalledVariant extends AnnotatedVariant {
     private boolean checkDPBinCoveredSampleBinomialP() {
         isValid = GenotypeLevelFilterCommand
                 .isMinDPBinCoveredSampleBinomialPValid(dpBinCoveredSampleBinomialP);
+
+        return isValid;
+    }
+
+    private boolean checkMaxDPBinCoveredSampleBinomialP() {
+        isValid = GenotypeLevelFilterCommand
+                .isMaxDPBinCoveredSampleBinomialPValid(dpBinCoveredSampleBinomialP);
 
         return isValid;
     }
@@ -177,11 +185,9 @@ public class CalledVariant extends AnnotatedVariant {
                 return Data.SHORT_NA;
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 return Data.SHORT_NA;
             }
-        }
 
         return dpBin;
     }

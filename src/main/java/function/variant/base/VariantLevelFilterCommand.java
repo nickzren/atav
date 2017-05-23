@@ -2,7 +2,6 @@ package function.variant.base;
 
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
-import function.external.evs.EvsManager;
 import function.external.exac.ExacCommand;
 import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADCommand;
@@ -24,13 +23,6 @@ import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.checkValueValid;
 
 /**
