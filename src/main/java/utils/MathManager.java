@@ -18,15 +18,23 @@ public class MathManager {
             BT = new BinomialTest();
         }
 
+        if (numberOfTrials == Data.INTEGER_NA || numberOfSuccesses == Data.INTEGER_NA) {
+            return Data.DOUBLE_NA;
+        }
+
         return BT.binomialTest(numberOfTrials,
                 numberOfSuccesses,
                 probability,
                 AlternativeHypothesis.LESS_THAN);
     }
-    
+
     public static double getBinomialTWOSIDED(int numberOfTrials, int numberOfSuccesses, float probability) {
         if (BT == null) {
             BT = new BinomialTest();
+        }
+
+        if (numberOfTrials == Data.INTEGER_NA || numberOfSuccesses == Data.INTEGER_NA) {
+            return Data.DOUBLE_NA;
         }
 
         return BT.binomialTest(numberOfTrials,
@@ -50,7 +58,7 @@ public class MathManager {
             return a / (float) b;
         }
     }
-    
+
     public static float devide(float a, float b) {
         if (b == 0 || a == Data.FLOAT_NA || b == Data.FLOAT_NA) {
             return Data.FLOAT_NA;
@@ -120,7 +128,7 @@ public class MathManager {
 
         return Math.min(a, b);
     }
-    
+
     public static float min(float a, float b) {
         if (a == Data.FLOAT_NA && b != Data.FLOAT_NA) {
             return b;

@@ -28,8 +28,8 @@ public class CalledVariant extends AnnotatedVariant {
     public float[] hetFreq = new float[2];
     public float[] af = new float[2];
     public double[] hweP = new double[2];
-    private int[] dpBinCoveredSample = new int[2];
-    private double dpBinCoveredSampleBinomialP;
+    private int[] coveredSample = new int[2];
+    private double coveredSampleBinomialP;
 
     public CalledVariant(String chr, int variantId, ResultSet rset) throws Exception {
         super(chr, variantId, rset);
@@ -46,8 +46,8 @@ public class CalledVariant extends AnnotatedVariant {
 
             initDPBinCoveredSampleBinomialP();
 
-            if (checkDPBinCoveredSampleBinomialP()
-                    && checkMaxDPBinCoveredSampleBinomialP()
+            if (checkCoveredSampleBinomialP()
+                    && checkMaxCoveredSampleBinomialP()
                     && checkGenoCountValid()) {
                 calculateAlleleFreq();
 
@@ -92,16 +92,16 @@ public class CalledVariant extends AnnotatedVariant {
         return isValid;
     }
 
-    private boolean checkDPBinCoveredSampleBinomialP() {
+    private boolean checkCoveredSampleBinomialP() {
         isValid = GenotypeLevelFilterCommand
-                .isMinDPBinCoveredSampleBinomialPValid(dpBinCoveredSampleBinomialP);
+                .isMinCoveredSampleBinomialPValid(coveredSampleBinomialP);
 
         return isValid;
     }
 
-    private boolean checkMaxDPBinCoveredSampleBinomialP() {
+    private boolean checkMaxCoveredSampleBinomialP() {
         isValid = GenotypeLevelFilterCommand
-                .isMaxDPBinCoveredSampleBinomialPValid(dpBinCoveredSampleBinomialP);
+                .isMaxCoveredSampleBinomialPValid(coveredSampleBinomialP);
 
         return isValid;
     }
@@ -164,7 +164,7 @@ public class CalledVariant extends AnnotatedVariant {
             }
 
             if (dpBin != Data.SHORT_NA) {
-                dpBinCoveredSample[sample.getPheno()]++;
+                coveredSample[sample.getPheno()]++;
             }
         }
 
@@ -172,9 +172,8 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     private void initDPBinCoveredSampleBinomialP() {
-        dpBinCoveredSampleBinomialP = MathManager.getBinomialTWOSIDED(
-                dpBinCoveredSample[Index.CASE] + dpBinCoveredSample[Index.CTRL],
-                dpBinCoveredSample[Index.CASE],
+        coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(coveredSample[Index.CASE] + coveredSample[Index.CTRL],
+                coveredSample[Index.CASE],
                 MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
     }
 
@@ -318,11 +317,11 @@ public class CalledVariant extends AnnotatedVariant {
         return qcFailSample[pheno];
     }
 
-    public int getDPBinCoveredSample(byte pheno) {
-        return dpBinCoveredSample[pheno];
+    public int getCoveredSample(byte pheno) {
+        return coveredSample[pheno];
     }
 
-    public double getDPBinCoveredSampleBinomialP() {
-        return dpBinCoveredSampleBinomialP;
+    public double getCoveredSampleBinomialP() {
+        return coveredSampleBinomialP;
     }
 }
