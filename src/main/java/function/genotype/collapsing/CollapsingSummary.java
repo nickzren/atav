@@ -14,7 +14,7 @@ public class CollapsingSummary implements Comparable {
 
     String name; // gene name or region name
 
-    int[] variantNumBySample = new int[SampleManager.getListSize()];
+    int[] variantNumBySample = new int[SampleManager.getTotalSampleNum()];
 
     int totalVariant = 0;
     int totalSnv = 0;

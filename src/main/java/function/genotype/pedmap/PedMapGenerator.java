@@ -126,7 +126,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             File tmpFile = new File(tmpPedFile);
             RandomAccessFile raf = new RandomAccessFile(tmpFile, "r");
 
-            long rowLen = 2 * SampleManager.getListSize() + 1L;
+            long rowLen = 2 * SampleManager.getTotalSampleNum() + 1L;
 
             for (Sample sample : SampleManager.getList()) {
                 String name = sample.getName();

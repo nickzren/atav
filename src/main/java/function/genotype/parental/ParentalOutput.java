@@ -6,7 +6,6 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.external.evs.EvsManager;
 import function.external.gnomad.GnomADManager;
-import function.annotation.base.TranscriptManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.exac.ExacManager;
 import function.external.genomes.GenomesManager;
@@ -160,7 +159,7 @@ public class ParentalOutput extends Output {
         if (readsAlt == Data.NA || readsRef == Data.NA) {
             childBinomial = Data.NA;
         } else {
-            childBinomial = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 0.5, AlternativeHypothesis.LESS_THAN);
+            childBinomial = MathManager.getBinomialLessThan(readsAlt + readsRef, readsAlt, 0.5f, AlternativeHypothesis.LESS_THAN);
         }
 
         return ParentalCommand.isChildBinomialValid(childBinomial);
@@ -184,7 +183,7 @@ public class ParentalOutput extends Output {
         if (readsAlt == Data.NA || readsRef == Data.NA) {
             parentBinomial = Data.NA;
         } else {
-            parentBinomial = MathManager.getBinomialP(readsAlt + readsRef, readsAlt, 0.5, AlternativeHypothesis.LESS_THAN);
+            parentBinomial = MathManager.getBinomialLessThan(readsAlt + readsRef, readsAlt, 0.5f, AlternativeHypothesis.LESS_THAN);
         }
 
         return ParentalCommand.isParentBinomialValid(parentBinomial);

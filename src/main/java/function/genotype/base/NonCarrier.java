@@ -124,7 +124,6 @@ public class NonCarrier {
             // do nothing
         } else {
             genotype = Data.NA;
-            coverage = Data.NA;
         }
     }
 

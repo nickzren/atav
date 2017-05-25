@@ -28,10 +28,7 @@ public class MathManager {
         return renjinEngine;
     }
 
-    public static double getBinomialP(
-            int numberOfTrials,
-            int numberOfSuccesses,
-            double probability,
+    public static double getBinomialLessThan(int numberOfTrials, int numberOfSuccesses, float probability,
             AlternativeHypothesis alternativeHypothesis) {
         if (BT == null) {
             BT = new BinomialTest();
@@ -45,6 +42,21 @@ public class MathManager {
                 numberOfSuccesses,
                 probability,
                 alternativeHypothesis);
+    }
+
+    public static double getBinomialTWOSIDED(int numberOfTrials, int numberOfSuccesses, float probability) {
+        if (BT == null) {
+            BT = new BinomialTest();
+        }
+
+        if (numberOfTrials == Data.NA || numberOfSuccesses == Data.NA) {
+            return Data.NA;
+        }
+
+        return BT.binomialTest(numberOfTrials,
+                numberOfSuccesses,
+                probability,
+                AlternativeHypothesis.TWO_SIDED);
     }
 
     public static double devide(double a, double b) {

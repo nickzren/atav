@@ -49,10 +49,10 @@ public class Carrier extends NonCarrier {
         mapQualRankSum = getFloat(rs.getBigDecimal("map_qual_rank_sum"));
         passFailStatus = rs.getString("pass_fail_status");
 
-        hetBinomialP = MathManager.getBinomialP(readsAlt + readsRef, readsAlt,
+        hetBinomialP = MathManager.getBinomialLessThan(readsAlt + readsRef, readsAlt,
                 GenotypeLevelFilterCommand.hetBinomialProbability, AlternativeHypothesis.LESS_THAN);
 
-        homBinomialP = MathManager.getBinomialP(readsAlt + readsRef, readsAlt,
+        homBinomialP = MathManager.getBinomialLessThan(readsAlt + readsRef, readsAlt,
                 GenotypeLevelFilterCommand.homBinomialProbability, AlternativeHypothesis.GREATER_THAN);
     }
 

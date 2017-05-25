@@ -41,7 +41,7 @@ public class SampleManager {
     private static ArrayList<Sample> sampleList = new ArrayList<>();
     private static HashMap<Integer, Sample> sampleMap = new HashMap<>();
 
-    private static int listSize; // case + ctrl
+    private static int totalSampleNum; // case + ctrl
     private static int caseNum = 0;
     private static int ctrlNum = 0;
 
@@ -168,7 +168,7 @@ public class SampleManager {
             sample.setIndex(index++);
         }
 
-        listSize = sampleList.size();
+        totalSampleNum = sampleList.size();
     }
 
     private static void initAllSampleFromAnnoDB() {
@@ -716,8 +716,8 @@ public class SampleManager {
         return sampleMap;
     }
 
-    public static int getListSize() {
-        return listSize;
+    public static int getTotalSampleNum() {
+        return totalSampleNum;
     }
 
     public static void initNonCarrierMap(Variant var,

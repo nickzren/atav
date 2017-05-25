@@ -28,8 +28,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
     final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
 
-    public int[] sampleCoverageCount = new int[SampleManager.getListSize()];
-    public int[][] geneSampleCoverage = new int[GeneManager.getGeneBoundaryList().size()][SampleManager.getListSize()];
+    public int[] sampleCoverageCount = new int[SampleManager.getTotalSampleNum()];
+    public int[][] geneSampleCoverage = new int[GeneManager.getGeneBoundaryList().size()][SampleManager.getTotalSampleNum()];
 
     @Override
     public void initOutput() {

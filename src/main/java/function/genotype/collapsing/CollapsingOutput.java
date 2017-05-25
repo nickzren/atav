@@ -2,7 +2,6 @@ package function.genotype.collapsing;
 
 import function.external.evs.EvsManager;
 import function.external.gnomad.GnomADManager;
-import function.annotation.base.TranscriptManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.exac.ExacManager;
 import function.external.genomes.GenomesManager;
@@ -56,6 +55,9 @@ public class CollapsingOutput extends Output {
                 + "QC Fail Case,"
                 + "Missing Ctrl,"
                 + "QC Fail Ctrl,"
+                + "Covered Case,"
+                + "Covered Ctrl,"
+                + "Covered Sample Binomial P (two sided),"
                 + "Case Maf,"
                 + "Ctrl Maf,"
                 + "LOO MAF,"
@@ -199,6 +201,9 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
+        sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
+        sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP())).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(looMAF)).append(",");

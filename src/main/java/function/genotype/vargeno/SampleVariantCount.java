@@ -30,11 +30,11 @@ public class SampleVariantCount {
     }
 
     public static void init() {
-        genoSnvCount = new int[5][SampleManager.getListSize()];
-        genoIndelCount = new int[5][SampleManager.getListSize()];
+        genoSnvCount = new int[5][SampleManager.getTotalSampleNum()];
+        genoIndelCount = new int[5][SampleManager.getTotalSampleNum()];
 
-        sampleSnvCount = new int[SampleManager.getListSize()];
-        sampleIndelCount = new int[SampleManager.getListSize()];
+        sampleSnvCount = new int[SampleManager.getTotalSampleNum()];
+        sampleIndelCount = new int[SampleManager.getTotalSampleNum()];
     }
 
     public static void update(boolean isSnv, int geno, int sampleIndex) {

@@ -10,9 +10,9 @@ import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import static utils.CommandManager.getValidRange;
 import static utils.CommandManager.getValidRangeList;
-import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getValidFloat;
 import utils.CommandOption;
+import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.checkValueValid;
 
 /**
@@ -55,13 +55,13 @@ public class GenotypeLevelFilterCommand {
     public static float indelMQRS = Data.NO_FILTER;
     public static boolean isQcMissingIncluded = false;
     public static int maxQcFailSample = Data.NO_FILTER;
-    public static double maxHetBinomialP = Data.NO_FILTER;
-    public static double hetBinomialProbability = 0.5;
-    public static double maxHomBinomialP = Data.NO_FILTER;
-    public static double homBinomialProbability = 0.01;
+    public static float maxHetBinomialP = Data.NO_FILTER;
+    public static float hetBinomialProbability = 0.5f;
+    public static float maxHomBinomialP = Data.NO_FILTER;
+    public static float homBinomialProbability = 0.01f;
     public static boolean disableCheckOnSexChr = false;
-
     public static final String[] VARIANT_STATUS = {"pass", "pass+intermediate", "all"};
+    public static double minCoveredSampleBinomialP = Data.NO_FILTER;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -251,23 +251,26 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--max-het-binomial-p":
                     checkValueValid(1, 0, option);
-                    maxHetBinomialP = getValidDouble(option);
+                    maxHetBinomialP = getValidFloat(option);
                     break;
                 case "--het-binomial-probability":
                     checkValueValid(1, 0, option);
-                    hetBinomialProbability = getValidDouble(option);
+                    hetBinomialProbability = getValidFloat(option);
                     break;
                 case "--max-hom-binomial-p":
                     checkValueValid(1, 0, option);
-                    maxHomBinomialP = getValidDouble(option);
+                    maxHomBinomialP = getValidFloat(option);
                     break;
                 case "--hom-binomial-probability":
                     checkValueValid(1, 0, option);
-                    homBinomialProbability = getValidDouble(option);
+                    homBinomialProbability = getValidFloat(option);
                     break;
-
                 case "--disable-check-on-sex-chr":
                     disableCheckOnSexChr = true;
+                    break;
+                case "--min-covered-sample-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minCoveredSampleBinomialP = getValidDouble(option);
                     break;
                 default:
                     continue;
@@ -605,5 +608,13 @@ public class GenotypeLevelFilterCommand {
         }
 
         return value <= maxHomBinomialP;
+    }
+
+    public static boolean isMinDPBinCoveredSampleBinomialPValid(double value) {
+        if (minCoveredSampleBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minCoveredSampleBinomialP;
     }
 }
