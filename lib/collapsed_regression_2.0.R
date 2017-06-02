@@ -345,7 +345,7 @@ tryCatch({
     genos <- collapsed[gene]
     genos <- ifelse(genos > 0, 1, 0) # convert from ATAV format
     colnames(genos) <- 'gene'
-    lm.data <- merge(samples, genos, by.x=1, by.y=0)[, -c(1:2)]
+    lm.data <- merge(samples, genos, by.x=2, by.y=0)[, -c(1:2)]
     gene.model <- Regress(gene, lm.data, opt$method)
 
     # add single quotes
