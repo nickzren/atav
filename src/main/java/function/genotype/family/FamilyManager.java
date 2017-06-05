@@ -109,7 +109,7 @@ public class FamilyManager {
         String[] tempArray = familyIds.split(",");
 
         for (String id : tempArray) {
-            userFamilyIdSet.add(id.toLowerCase());
+            userFamilyIdSet.add(id);
         }
     }
 
