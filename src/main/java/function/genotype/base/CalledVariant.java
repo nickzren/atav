@@ -45,7 +45,7 @@ public class CalledVariant extends AnnotatedVariant {
 
     private void checkValid() {
         isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(qcFailSample[Index.CASE] + qcFailSample[Index.CTRL])
-                && GenotypeLevelFilterCommand.isMinDPBinCoveredSampleBinomialPValid(coveredSampleBinomialP);
+                && GenotypeLevelFilterCommand.isMinCoveredSampleBinomialPValid(coveredSampleBinomialP);
     }
 
     // initialize genotype & coverage array for better compute performance use

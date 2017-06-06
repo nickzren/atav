@@ -4,7 +4,6 @@ import function.genotype.statistics.StatisticsCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;

@@ -14,6 +14,8 @@ import static utils.CommandManager.getValidFloat;
 import utils.CommandOption;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -610,7 +612,7 @@ public class GenotypeLevelFilterCommand {
         return value <= maxHomBinomialP;
     }
 
-    public static boolean isMinDPBinCoveredSampleBinomialPValid(double value) {
+    public static boolean isMinCoveredSampleBinomialPValid(double value) {
         if (minCoveredSampleBinomialP == Data.NO_FILTER) {
             return true;
         }
