@@ -9,7 +9,7 @@ public class Data {
     // software info
     public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
     public static String VERSION = "dragen";
-    public static String userName = Data.STRING_NA;
+    public static String userName = System.getProperty("user.name");;
 
     // system config file path
     public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.dragen.system.config.properties";

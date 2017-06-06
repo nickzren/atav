@@ -45,7 +45,6 @@ public class LogManager {
             ex.printStackTrace();
         }
 
-        Data.userName = System.getProperty("user.name");
         try {
             writeAndPrint("Program start: " + date.toString());
             writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
