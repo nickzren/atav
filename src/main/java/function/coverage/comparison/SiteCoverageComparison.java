@@ -117,7 +117,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                     sb.append(start).append(",");
                     sb.append(caseCoverage + ctrlCoverage).append(",");
                     sb.append(caseCoverage).append(",");
-                    sb.append(ctrlCoverage);
+                    sb.append(ctrlCoverage).append(",");
                     sb.append(FormatManager.getDouble(coveredSampleBinomialP));
                     writeToFile(sb.toString(), bwSiteSummary);
                     sb.setLength(0);
