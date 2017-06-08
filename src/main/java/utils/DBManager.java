@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 public class DBManager {
 
     private static int maxATAVJobNum; // using this to control max connections to AnnoDB server
+    private static String priorityUsers;
 
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_PORT = "3306";
@@ -76,6 +77,7 @@ public class DBManager {
             dbUser = prop.getProperty("dbuser");
             dbPassword = prop.getProperty("dbpassword");
             maxATAVJobNum = Integer.parseInt(prop.getProperty("max-atav-job"));
+            priorityUsers = prop.getProperty("priority-user");
         } catch (IOException e) {
             ErrorManager.send(e);
         }
@@ -143,7 +145,7 @@ public class DBManager {
         } else {
             minNum = getMinNumFromServers();
 
-            if (minNum > maxATAVJobNum) {
+            if (minNum > maxATAVJobNum && !priorityUsers.contains(Data.userName)) {
                 ErrorManager.print("All AnnoDB servers "
                         + "reached to max concurrent jobs, please submit your ATAV job latter.");
             }

@@ -9,8 +9,6 @@ import java.io.*;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -46,8 +44,7 @@ public class LogManager {
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
-
-        Data.userName = System.getProperty("user.name");
+        
         try {
             writeAndPrint("Program start: " + date.toString());
             writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
