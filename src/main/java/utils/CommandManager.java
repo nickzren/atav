@@ -357,6 +357,11 @@ public class CommandManager {
                     GnomADCommand.isListGnomADExome = true;
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
+                case "--list-gnomad-genome":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    GnomADCommand.isListGnomADGenome = true;
+                    GnomADCommand.isIncludeGnomADGenome = true;
+                    break;
                 case "--list-known-var":
                     CommonCommand.isNonSampleAnalysis = true;
                     KnownVarCommand.isListKnownVar = true;
@@ -465,6 +470,8 @@ public class CommandManager {
         } else if (EvsCommand.isListEvs) { // External Datasets Functions
 
         } else if (GnomADCommand.isListGnomADExome) {
+
+        } else if (GnomADCommand.isListGnomADGenome) {
 
         } else if (KnownVarCommand.isListKnownVar) {
 

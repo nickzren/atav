@@ -26,6 +26,7 @@ import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -112,7 +113,7 @@ public class VariantLevelFilterCommand {
                     ExacCommand.isIncludeExac = true;
                     break;
                 case "--gnomad-exome-pop":
-                    checkValuesValid(GnomADManager.GNOMAD_POP, option);
+                    checkValuesValid(GnomADManager.GNOMAD_EXOME_POP, option);
                     GnomADCommand.gnomADExomePop = option.getValue();
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;

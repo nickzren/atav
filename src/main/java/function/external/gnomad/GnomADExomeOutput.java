@@ -12,7 +12,7 @@ public class GnomADExomeOutput {
 
     public static String getTitle() {
         return "Variant ID,"
-                + GnomADManager.getTitle();
+                + GnomADManager.getExomeTitle();
     }
 
     public GnomADExomeOutput(String id) {

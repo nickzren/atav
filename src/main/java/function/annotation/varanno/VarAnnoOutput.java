@@ -47,7 +47,8 @@ public class VarAnnoOutput {
             + "Coding Sequence Change,"
             + "Gene Transcript (AA Change),"
             + ExacManager.getTitle()
-            + GnomADManager.getTitle()
+            + GnomADManager.getExomeTitle()
+            + GnomADManager.getGenomeTitle()
             + KaviarManager.getTitle()
             + KnownVarManager.getTitle()
             + RvisManager.getTitle()
@@ -86,7 +87,8 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.getCodingSequenceChange()).append(",");
         sb.append(annotatedVar.getTranscriptSet()).append(",");
         sb.append(annotatedVar.getExacStr());
-        sb.append(annotatedVar.getGnomADStr());
+        sb.append(annotatedVar.getGnomADExomeStr());
+        sb.append(annotatedVar.getGnomADGenomeStr());
         sb.append(annotatedVar.getKaviarStr());
         sb.append(annotatedVar.getKnownVarStr());
         sb.append(annotatedVar.getRvis());

@@ -92,7 +92,8 @@ public class CollapsingOutput extends Output {
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
-                + GnomADManager.getTitle()
+                + GnomADManager.getExomeTitle()
+                + GnomADManager.getGenomeTitle()
                 + KaviarManager.getTitle()
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
@@ -238,7 +239,8 @@ public class CollapsingOutput extends Output {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());
-        sb.append(calledVar.getGnomADStr());
+        sb.append(calledVar.getGnomADExomeStr());
+        sb.append(calledVar.getGnomADGenomeStr());
         sb.append(calledVar.getKaviarStr());
         sb.append(calledVar.getKnownVarStr());
         sb.append(calledVar.getRvis());

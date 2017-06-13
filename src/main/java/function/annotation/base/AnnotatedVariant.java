@@ -12,6 +12,7 @@ import function.external.genomes.Genomes;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gnomad.GnomADGenome;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import function.external.kaviar.Kaviar;
@@ -57,6 +58,7 @@ public class AnnotatedVariant extends Variant {
     // external db annotations
     private Exac exac;
     private GnomADExome gnomADExome;
+    private GnomADGenome gnomADGenome;
     private Kaviar kaviar;
     private Evs evs;
     private float gerpScore;
@@ -154,6 +156,12 @@ public class AnnotatedVariant extends Variant {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADExome.isValid();
+        }
+        
+        if (isValid & GnomADCommand.isIncludeGnomADGenome) {
+            gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
+
+            isValid = gnomADGenome.isValid();
         }
 
         if (isValid & ExacCommand.isIncludeExac) {
@@ -330,7 +338,7 @@ public class AnnotatedVariant extends Variant {
         return PolyphenManager.getPrediction(polyphenHumvar, function);
     }
 
-    public String getGnomADStr() {
+    public String getGnomADExomeStr() {
         if (GnomADCommand.isIncludeGnomADExome) {
             return gnomADExome.toString();
         } else {
@@ -338,6 +346,14 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
+    public String getGnomADGenomeStr() {
+        if (GnomADCommand.isIncludeGnomADGenome) {
+            return gnomADGenome.toString();
+        } else {
+            return "";
+        }
+    }
+    
     public String getExacStr() {
         if (ExacCommand.isIncludeExac) {
             return exac.toString();

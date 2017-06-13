@@ -42,6 +42,7 @@ import function.external.genomes.GenomesCommand;
 import function.external.genomes.List1000Genomes;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.ListGerp;
+import function.external.gnomad.ListGnomADGenome;
 import function.external.kaviar.KaviarCommand;
 import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
@@ -175,6 +176,8 @@ public class Program {
                 runAnalysis(new ListEvs());
             } else if (GnomADCommand.isListGnomADExome) {
                 runAnalysis(new ListGnomADExome());
+            } else if (GnomADCommand.isListGnomADGenome) {
+                runAnalysis(new ListGnomADGenome());
             } else if (ExacCommand.isListExac) {
                 runAnalysis(new ListExac());
             } else if (KnownVarCommand.isListKnownVar) {
