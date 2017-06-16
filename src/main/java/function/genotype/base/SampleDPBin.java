@@ -29,7 +29,7 @@ public class SampleDPBin {
 
     public short getDPBin(int varPosIndex) {
         if (endPos != 0) {
-            if (varPosIndex < endPos) {
+            if (varPosIndex <= endPos) {
                 return dpBin;
             } else {
                 dpBinCursor = dpBinPos + 1; // move cursor for new variant
