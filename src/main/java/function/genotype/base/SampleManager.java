@@ -36,6 +36,7 @@ public class SampleManager {
 
     private static ArrayList<Sample> sampleList = new ArrayList<>();
     private static HashMap<Integer, Sample> sampleMap = new HashMap<>();
+    private static HashSet<String> sampleNameSet = new HashSet<>();
 
     private static int totalSampleNum; // case + ctrl
     private static int caseNum = 0;
@@ -192,6 +193,14 @@ public class SampleManager {
 
                 String familyId = values[0].trim();
                 String individualId = values[1].trim();
+
+                if (!sampleNameSet.contains(individualId)) {
+                    sampleNameSet.add(individualId);
+                } else {
+                    ErrorManager.print("\nDuplicate sample: " + individualId
+                            + " (line " + lineNum + " in sample file)");
+                }
+
                 String paternalId = values[2].trim();
                 String maternalId = values[3].trim();
 
@@ -348,8 +357,8 @@ public class SampleManager {
 
         printSampleList("Not exist samples:",
                 notExistSampleList);
-        
-        if(!isSampleFileCorrect){
+
+        if (!isSampleFileCorrect) {
             ErrorManager.print("Wrong values in sample file.");
         }
     }
