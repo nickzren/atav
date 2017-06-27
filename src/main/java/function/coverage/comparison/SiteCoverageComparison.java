@@ -48,7 +48,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     }
 
     @Override
-        public void closeOutput() {
+    public void closeOutput() {
         try {
             super.closeOutput();
 
@@ -92,10 +92,15 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 int caseCoverage = siteCoverage.getCaseSiteCov(pos);
                 int ctrlCoverage = siteCoverage.getCtrlSiteCov(pos);
 
-                double coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(
-                        caseCoverage + ctrlCoverage,
-                        caseCoverage,
-                        MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+                double coveredSampleBinomialP = Data.NA;
+
+                if (caseCoverage != 0
+                        && ctrlCoverage != 0) {
+                    coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(
+                            caseCoverage + ctrlCoverage,
+                            caseCoverage,
+                            MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+                }
 
                 if (GenotypeLevelFilterCommand.isMinCoveredSampleBinomialPValid(coveredSampleBinomialP)) {
                     int start = exon.getStartPosition() + pos;

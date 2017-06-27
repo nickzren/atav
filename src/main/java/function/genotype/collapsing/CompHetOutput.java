@@ -68,6 +68,9 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
                 + "QC Fail Case,"
                 + "Missing Ctrl,"
                 + "QC Fail Ctrl,"
+                + "Covered Case,"
+                + "Covered Ctrl,"
+                + "Covered Sample Binomial P (two sided),"
                 + "Case MAF,"
                 + "Ctrl MAF,"
                 + "LOO MAF,"
@@ -151,6 +154,9 @@ public class CompHetOutput extends CollapsingOutput implements Comparable {
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
+        sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
+        sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
+        sb.append(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP())).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(looMAF)).append(",");

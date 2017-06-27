@@ -1,6 +1,7 @@
 package function.genotype.base;
 
 import function.annotation.base.AnnotatedVariant;
+import function.genotype.collapsing.CollapsingCommand;
 import global.Data;
 import global.Index;
 import java.sql.ResultSet;
@@ -44,8 +45,7 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     private void checkValid() {
-        isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(qcFailSample[Index.CASE] + qcFailSample[Index.CTRL])
-                && GenotypeLevelFilterCommand.isMinCoveredSampleBinomialPValid(coveredSampleBinomialP);
+        isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(qcFailSample[Index.CASE] + qcFailSample[Index.CTRL]);
     }
 
     // initialize genotype & coverage array for better compute performance use
@@ -116,10 +116,19 @@ public class CalledVariant extends AnnotatedVariant {
         return qcFailSample[pheno];
     }
 
-    private void initDPBinCoveredSampleBinomialP() {
-        coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(coveredSample[Index.CASE] + coveredSample[Index.CTRL],
-                coveredSample[Index.CASE],
-                MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+    public void initDPBinCoveredSampleBinomialP() {
+        if (CollapsingCommand.isCollapsingSingleVariant
+                || CollapsingCommand.isCollapsingCompHet) {
+            // CoveredSampleBinomialP only for collapsing filtering and output
+            if (coveredSample[Index.CASE] == 0
+                    || coveredSample[Index.CTRL] == 0) {
+                coveredSampleBinomialP = Data.NA;
+            } else {
+                coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(coveredSample[Index.CASE] + coveredSample[Index.CTRL],
+                        coveredSample[Index.CASE],
+                        MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+            }
+        }
     }
 
     private int applyCoverageFilter(Sample sample, int dpBin, int minCaseCov, int minCtrlCov) {
@@ -144,5 +153,14 @@ public class CalledVariant extends AnnotatedVariant {
 
     public double getCoveredSampleBinomialP() {
         return coveredSampleBinomialP;
+    }
+
+    public boolean isMinCoveredSampleBinomialPValid() {
+        if (CollapsingCommand.isCollapsingSingleVariant
+                || CollapsingCommand.isCollapsingCompHet) {
+            return GenotypeLevelFilterCommand.isMinCoveredSampleBinomialPValid(coveredSampleBinomialP);
+        }
+
+        return true;
     }
 }

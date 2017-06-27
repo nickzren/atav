@@ -63,7 +63,11 @@ public class CollapsingSingleVariant extends CollapsingBase {
                 output.calculate();
 
                 if (output.isValid()) {
-                    processOutput4Summary(output, summaryList);
+                    output.getCalledVariant().initDPBinCoveredSampleBinomialP();
+
+                    if (output.getCalledVariant().isMinCoveredSampleBinomialPValid()) {
+                        processOutput4Summary(output, summaryList);
+                    }
                 }
             }
         } catch (Exception e) {

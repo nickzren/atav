@@ -71,11 +71,14 @@ public class CollapsingCompHet extends CollapsingBase {
             output.calculate();
 
             if (output.isValid()) {
+                output.getCalledVariant().initDPBinCoveredSampleBinomialP();
 
-                for (String geneName : calledVar.getGeneSet()) {
-                    if (!geneName.equals("NA")) {
-                        output.geneName = geneName;
-                        outputList.add((CompHetOutput) output.clone());
+                if (output.getCalledVariant().isMinCoveredSampleBinomialPValid()) {
+                    for (String geneName : calledVar.getGeneSet()) {
+                        if (!geneName.equals("NA")) {
+                            output.geneName = geneName;
+                            outputList.add((CompHetOutput) output.clone());
+                        }
                     }
                 }
             }

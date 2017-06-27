@@ -13,9 +13,6 @@ import static utils.CommandManager.getValidRangeList;
 import static utils.CommandManager.getValidFloat;
 import utils.CommandOption;
 import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
 
 /**
  *

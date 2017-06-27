@@ -55,9 +55,6 @@ public class VarGenoOutput extends Output {
                 + "QC Fail Case,"
                 + "Missing Ctrl,"
                 + "QC Fail Ctrl,"
-                + "Covered Case,"
-                + "Covered Ctrl,"
-                + "Covered Sample Binomial P (two sided),"
                 + "Case Maf,"
                 + "Ctrl Maf,"
                 + "Case HWE_P,"
@@ -139,9 +136,6 @@ public class VarGenoOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
         sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
         sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP())).append(",");
-        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
