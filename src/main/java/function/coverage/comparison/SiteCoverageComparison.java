@@ -6,7 +6,6 @@ import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.CoverageCommand;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import global.Data;
 import utils.CommonCommand;
@@ -14,7 +13,6 @@ import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
-import utils.FormatManager;
 import utils.MathManager;
 import utils.ThirdPartyToolManager;
 
@@ -38,7 +36,7 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             super.initOutput();
 
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
-            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,Site Coverage Case,Site Coverage Control,Covered Sample Binomial P (two sided)");
+            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,Site Coverage Case,Site Coverage Control");
             bwSiteSummary.newLine();
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
@@ -92,43 +90,30 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 int caseCoverage = siteCoverage.getCaseSiteCov(pos);
                 int ctrlCoverage = siteCoverage.getCtrlSiteCov(pos);
 
-                double coveredSampleBinomialP = Data.NA;
+                int start = exon.getStartPosition() + pos;
+                sb.append(gene.getName()).append(",");
+                sb.append(gene.getChr()).append(",");
+                sb.append(start).append(",");
+                sb.append(caseCoverage + ctrlCoverage).append(",");
+                sb.append(caseCoverage).append(",");
+                sb.append(ctrlCoverage).append(",");
+                writeToFile(sb.toString(), bwSiteSummary);
+                sb.setLength(0);
 
-                if (caseCoverage != 0
-                        && ctrlCoverage != 0) {
-                    coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(
-                            caseCoverage + ctrlCoverage,
-                            caseCoverage,
-                            MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
-                }
+                float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
+                float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
 
-                if (GenotypeLevelFilterCommand.isMinCoveredSampleBinomialPValid(coveredSampleBinomialP)) {
-                    int start = exon.getStartPosition() + pos;
-                    sb.append(gene.getName()).append(",");
-                    sb.append(gene.getChr()).append(",");
-                    sb.append(start).append(",");
-                    sb.append(caseCoverage + ctrlCoverage).append(",");
-                    sb.append(caseCoverage).append(",");
-                    sb.append(ctrlCoverage).append(",");
-                    sb.append(FormatManager.getDouble(coveredSampleBinomialP));
-                    writeToFile(sb.toString(), bwSiteSummary);
-                    sb.setLength(0);
+                if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
+                        && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
+                    float covDiff = Data.NA;
 
-                    float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
-                    float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
-
-                    if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                            && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-                        float covDiff = Data.NA;
-
-                        if (CoverageCommand.isRelativeDifference) {
-                            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-                        } else {
-                            covDiff = MathManager.abs(caseAvg, ctrlAvg);
-                        }
-
-                        siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
+                    if (CoverageCommand.isRelativeDifference) {
+                        covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+                    } else {
+                        covDiff = MathManager.abs(caseAvg, ctrlAvg);
                     }
+
+                    siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
                 }
             }
         } catch (Exception e) {
