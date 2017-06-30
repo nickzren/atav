@@ -44,17 +44,17 @@ public class CalledVariant extends AnnotatedVariant {
 
             initGenoCovArray();
 
-            initDPBinCoveredSampleBinomialP();
-
-            if (checkCoveredSampleBinomialP()
-                    && checkMaxCoveredSampleBinomialP()
-                    && checkGenoCountValid()) {
+            if (checkGenoCountValid()) {
                 calculateAlleleFreq();
 
                 if (checkAlleleFreqValid()) {
-                    calculateGenotypeFreq();
+                    initDPBinCoveredSampleBinomialP();
 
-                    calculateHweP();
+                    if (checkCoveredSampleBinomialP()) {
+                        calculateGenotypeFreq();
+
+                        calculateHweP();
+                    }
                 }
             }
         }
@@ -95,13 +95,6 @@ public class CalledVariant extends AnnotatedVariant {
     private boolean checkCoveredSampleBinomialP() {
         isValid = GenotypeLevelFilterCommand
                 .isMinCoveredSampleBinomialPValid(coveredSampleBinomialP);
-
-        return isValid;
-    }
-
-    private boolean checkMaxCoveredSampleBinomialP() {
-        isValid = GenotypeLevelFilterCommand
-                .isMaxCoveredSampleBinomialPValid(coveredSampleBinomialP);
 
         return isValid;
     }
@@ -171,10 +164,15 @@ public class CalledVariant extends AnnotatedVariant {
         noncarrierMap = null; // free memory
     }
 
-    private void initDPBinCoveredSampleBinomialP() {
-        coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(coveredSample[Index.CASE] + coveredSample[Index.CTRL],
-                coveredSample[Index.CASE],
-                MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+    public void initDPBinCoveredSampleBinomialP() {
+        if (coveredSample[Index.CASE] == 0
+                || coveredSample[Index.CTRL] == 0) {
+            coveredSampleBinomialP = Data.DOUBLE_NA;
+        } else {
+            coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(coveredSample[Index.CASE] + coveredSample[Index.CTRL],
+                    coveredSample[Index.CASE],
+                    MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+        }
     }
 
     private short applyCoverageFilter(Sample sample, short dpBin, int minCaseCov, int minCtrlCov) {
@@ -184,9 +182,11 @@ public class CalledVariant extends AnnotatedVariant {
                 return Data.SHORT_NA;
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+        {
+            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 return Data.SHORT_NA;
             }
+        }
 
         return dpBin;
     }

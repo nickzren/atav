@@ -104,10 +104,15 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 int caseCoverage = siteCoverage.getCaseSiteCov(pos);
                 int ctrlCoverage = siteCoverage.getCtrlSiteCov(pos);
 
-                double coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(
-                        caseCoverage + ctrlCoverage,
-                        caseCoverage,
-                        MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+                double coveredSampleBinomialP = Data.DOUBLE_NA;
+
+                if (caseCoverage != 0
+                        && ctrlCoverage != 0) {
+                    coveredSampleBinomialP = MathManager.getBinomialTWOSIDED(
+                            caseCoverage + ctrlCoverage,
+                            caseCoverage,
+                            MathManager.devide(SampleManager.getCaseNum(), SampleManager.getTotalSampleNum()));
+                }
 
                 // apply --min-covered-sample-binomial-p
                 if (GenotypeLevelFilterCommand.isMinCoveredSampleBinomialPValid(coveredSampleBinomialP)) {
