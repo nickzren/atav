@@ -28,6 +28,7 @@ public class DataManager {
         sb.append(EvsManager.getVersion());
         sb.append(ExacManager.getVersion());
         sb.append(GnomADManager.getExomeVersion());
+        sb.append(GnomADManager.getGenomeVersion());
         sb.append(KnownVarManager.getVersion());
         sb.append(KaviarManager.getVersion());
         sb.append(GenomesManager.getVersion());

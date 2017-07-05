@@ -14,7 +14,7 @@ public class GnomADManager {
 
     private static final String exomeCoverageTable = "gnomad.exome_coverage_170228";
     private static final String exomeVariantTable = "gnomad.exome_variant_170228";
-    private static final String genomeVariantTable = "gnomad.gnomad_genome_r2_0_1_chr21_snp";
+    private static final String genomeVariantTable = "gnomad.genome_variant_chr1_170228";
 
     public static void init() {
     }
@@ -66,7 +66,7 @@ public class GnomADManager {
     }
 
     public static String getGenomeVersion() {
-        if (GnomADCommand.isIncludeGnomADExome) {
+        if (GnomADCommand.isIncludeGnomADGenome) {
             return "gnomAD Genome: " + DataManager.getVersion(genomeVariantTable) + "\n";
         } else {
             return "";
@@ -109,7 +109,7 @@ public class GnomADManager {
 
         result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
 
-        String sql = "SELECT " + result + "FROM " + genomeVariantTable + " "
+        String sql = "SELECT " + result + "FROM gnomad.genome_variant_chr" + region.getChrStr() + "_170228 "
                 + "WHERE chr = '" + region.getChrStr() + "' "
                 + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
 
@@ -147,7 +147,7 @@ public class GnomADManager {
 
         result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
 
-        String sql = "SELECT " + result + "FROM " + genomeVariantTable + " "
+        String sql = "SELECT " + result + "FROM gnomad.genome_variant_chr" + chr + "_170228 "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "
