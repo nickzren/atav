@@ -8,7 +8,7 @@ public class Data {
 
     // software info
     public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String VERSION = "6.6";
+    public static String VERSION = "trunk";
     public static String userName = System.getProperty("user.name");
 
     // system config file path
