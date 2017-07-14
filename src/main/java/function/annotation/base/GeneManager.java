@@ -268,7 +268,7 @@ public class GeneManager {
             } else {
                 for (Gene gene : set) {
                     if (gene.contains(annotation.region)) {
-                        annotation.geneName = gene.getName();
+                        annotation.geneDomainName = gene.getName(); // set gene domain name
                         return true;
                     }
                 }

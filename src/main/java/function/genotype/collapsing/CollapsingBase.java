@@ -34,6 +34,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     final String geneLogisticPQQPlotPath = CommonCommand.outputPath + "summary.logistic.p.qq.plot.pdf";
 
     ArrayList<CollapsingSummary> summaryList = new ArrayList<>();
+    // key here could be gene name / gene domain name / region name
     HashMap<String, CollapsingSummary> summaryMap = new HashMap<>();
 
     @Override
@@ -133,6 +134,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     public void updateGeneSummaryMap(String geneName) {
+        // geneName could be real gene name or gene domain name
         if (!summaryMap.containsKey(geneName)) {
             summaryMap.put(geneName, new CollapsingGeneSummary(geneName));
         }

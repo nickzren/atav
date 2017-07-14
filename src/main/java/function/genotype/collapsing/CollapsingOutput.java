@@ -103,7 +103,7 @@ public class CollapsingOutput extends Output {
                 + DenovoDBManager.getTitle();
     }
 
-    String geneName = "";
+    String geneName = ""; // gene domain format when --gene-boundary used
     double looMAF = 0;
 
     HashSet<String> regionBoundaryNameSet; // for --region-boundary only
@@ -111,7 +111,11 @@ public class CollapsingOutput extends Output {
     public CollapsingOutput(CalledVariant c) {
         super(c);
 
-        geneName = c.getGeneName();
+        if (!c.getGeneDomainName().isEmpty()) {
+            geneName = c.getGeneDomainName();
+        } else {
+            geneName = c.getGeneName();
+        }
     }
 
     public void initRegionBoundaryNameSet() {

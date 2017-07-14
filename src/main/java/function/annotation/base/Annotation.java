@@ -16,6 +16,7 @@ public class Annotation {
 
     public String function;
     public String geneName;
+    public String geneDomainName;
     public String stableId;
     public String codonChange;
     public String aminoAcidChange;
@@ -31,6 +32,7 @@ public class Annotation {
         function = FunctionManager.getFunction(rset, isIndel);
 
         geneName = FormatManager.getString(rset.getString("gene_name"));
+        geneDomainName = "";
         codonChange = FormatManager.getString(rset.getString("codon_change"));
         aminoAcidChange = FormatManager.getString(rset.getString("amino_acid_change"));
         stableId = FormatManager.getString(rset.getString("transcript_stable_id"));

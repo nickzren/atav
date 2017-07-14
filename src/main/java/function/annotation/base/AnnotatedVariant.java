@@ -44,6 +44,7 @@ public class AnnotatedVariant extends Variant {
     // AnnoDB annotations
     private String function;
     private String geneName;
+    private String geneDomainName;
     private String codonChange;
     private String aminoAcidChange;
     private String stableId;
@@ -77,6 +78,7 @@ public class AnnotatedVariant extends Variant {
 
         function = "";
         geneName = "";
+        geneDomainName = "";
         codonChange = "";
         aminoAcidChange = "";
         stableId = "";
@@ -114,12 +116,17 @@ public class AnnotatedVariant extends Variant {
 
     public void update(Annotation annotation) {
         if (isValid) {
-            geneSet.add(annotation.geneName);
+            if (annotation.geneDomainName.isEmpty()) {
+                geneSet.add(annotation.geneName);
+            } else {
+                geneSet.add(annotation.geneDomainName);
+            }
 
             if (function.isEmpty()
                     || FunctionManager.isMoreDamage(annotation.function, function)) {
                 function = annotation.function;
                 geneName = annotation.geneName;
+                geneDomainName = annotation.geneDomainName;
                 codonChange = annotation.codonChange;
                 aminoAcidChange = annotation.aminoAcidChange;
                 stableId = annotation.stableId;
@@ -157,7 +164,7 @@ public class AnnotatedVariant extends Variant {
 
             isValid = gnomADExome.isValid();
         }
-        
+
         if (isValid & GnomADCommand.isIncludeGnomADGenome) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
@@ -228,6 +235,14 @@ public class AnnotatedVariant extends Variant {
         }
 
         return geneName;
+    }
+
+    public String getGeneDomainName() {
+        if (geneDomainName.isEmpty()) {
+            return "NA";
+        }
+
+        return geneDomainName;
     }
 
     public String getFunction() {
@@ -353,7 +368,7 @@ public class AnnotatedVariant extends Variant {
             return "";
         }
     }
-    
+
     public String getExacStr() {
         if (ExacCommand.isIncludeExac) {
             return exac.toString();
