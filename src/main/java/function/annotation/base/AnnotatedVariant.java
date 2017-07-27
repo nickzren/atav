@@ -101,10 +101,6 @@ public class AnnotatedVariant extends Variant {
             rvisStr = RvisManager.getLine(getGeneName());
         }
 
-        if (SubRvisCommand.isIncludeSubRvis) {
-            subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
-        }
-
         if (MgiCommand.isIncludeMgi) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
@@ -204,9 +200,11 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
-                & isTrapValid();
+                && isTrapValid()
+                && isSubRVISValid();
     }
 
+    // init trap score base on most damaging gene and applied filter
     private boolean isTrapValid() {
         if (TrapCommand.isIncludeTrap) {
             if (isIndel()) {
@@ -223,6 +221,25 @@ public class AnnotatedVariant extends Variant {
                     || function.equals("INTRON")) {
                 // filter applied to SYNONYMOUS_CODING, INTRON_EXON_BOUNDARY or INTRONIC variants
                 return TrapCommand.isTrapScoreValid(trapScore);
+            }
+        }
+
+        return true;
+    }
+
+    // init sub rvis score base on most damaging gene and applied filter
+    private boolean isSubRVISValid() {
+        if (SubRvisCommand.isIncludeSubRvis) {
+            subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
+
+            // sub rvis filters will only apply missense variants
+            if (function.startsWith("NON_SYNONYMOUS")) {
+                return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
+                        && SubRvisCommand.isSubRVISDomainOEratioValid(subRvisOutput.getDomainOEratio())
+                        && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
+                        && SubRvisCommand.isSubRVISExonOEratioValid(subRvisOutput.getExonOEratio());
+            } else {
+                return true;
             }
         }
 
