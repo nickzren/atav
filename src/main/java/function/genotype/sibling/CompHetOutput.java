@@ -1,6 +1,7 @@
 package function.genotype.sibling;
 
 import function.annotation.base.TranscriptManager;
+import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
@@ -90,6 +91,7 @@ public class CompHetOutput extends Output implements Comparable {
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
+                + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
                 + DenovoDBManager.getTitle();
@@ -160,6 +162,7 @@ public class CompHetOutput extends Output implements Comparable {
         sb.append(calledVar.getKnownVarStr());
         sb.append(calledVar.getRvis());
         sb.append(calledVar.getSubRvis());
+        sb.append(calledVar.getBis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());

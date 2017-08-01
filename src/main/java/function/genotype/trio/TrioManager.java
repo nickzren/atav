@@ -1,5 +1,6 @@
 package function.genotype.trio;
 
+import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
@@ -155,6 +156,7 @@ public class TrioManager {
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
+                + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
                 + DenovoDBManager.getTitle();

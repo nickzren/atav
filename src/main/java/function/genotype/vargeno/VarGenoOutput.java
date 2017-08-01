@@ -1,5 +1,6 @@
 package function.genotype.vargeno;
 
+import function.external.bis.BisManager;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
@@ -94,6 +95,7 @@ public class VarGenoOutput extends Output {
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
+                + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
                 + DenovoDBManager.getTitle();
@@ -173,6 +175,7 @@ public class VarGenoOutput extends Output {
         sb.append(calledVar.getKnownVarStr());
         sb.append(calledVar.getRvis());
         sb.append(calledVar.getSubRvis());
+        sb.append(calledVar.getBis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());

@@ -1,6 +1,7 @@
 package function.genotype.statistics;
 
 import function.annotation.base.TranscriptManager;
+import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
@@ -83,6 +84,7 @@ public class LogisticOutput extends StatisticOutput {
                 + KnownVarManager.getTitle()
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
+                + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
                 + DenovoDBManager.getTitle();
@@ -321,6 +323,7 @@ public class LogisticOutput extends StatisticOutput {
         sb.append(calledVar.getKnownVarStr());
         sb.append(calledVar.getRvis());
         sb.append(calledVar.getSubRvis());
+        sb.append(calledVar.getBis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());

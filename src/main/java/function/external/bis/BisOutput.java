@@ -22,6 +22,14 @@ public class BisOutput {
         geneExon = BisManager.getExonDomain(geneName, chr, pos);
     }
 
+    public BisGene getGeneDomain() {
+        return geneDomain;
+    }
+
+    public BisGene getGeneExon() {
+        return geneExon;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

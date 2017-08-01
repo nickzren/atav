@@ -200,6 +200,7 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(calledVar.getKnownVarStr());
         sb.append(calledVar.getRvis());
         sb.append(calledVar.getSubRvis());
+        sb.append(calledVar.getBis());
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());
