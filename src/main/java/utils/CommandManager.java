@@ -4,6 +4,7 @@ import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
+import function.external.bis.BisCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
@@ -389,6 +390,11 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     SubRvisCommand.isListSubRvis = true;
                     SubRvisCommand.isIncludeSubRvis = true;
+                    break;
+                case "--list-bis":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    BisCommand.isListBis = true;
+                    BisCommand.isIncludeBis = true;
                     break;
                 case "--list-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
