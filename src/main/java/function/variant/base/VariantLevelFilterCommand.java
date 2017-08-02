@@ -150,6 +150,26 @@ public class VariantLevelFilterCommand {
                     GenomesCommand.maxGenomesAF = getValidFloat(option);
                     GenomesCommand.isInclude1000Genomes = true;
                     break;
+                case "--sub-rvis-domain-score-percentile":
+                    checkValueValid(100, 0, option);
+                    SubRvisCommand.subRVISDomainScorePercentile = getValidFloat(option);
+                    SubRvisCommand.isIncludeSubRvis = true;
+                    break;
+                case "--sub-rvis-domain-oeratio-percentile":
+                    checkValueValid(100, 0, option);
+                    SubRvisCommand.subRVISDomainOEratioPercentile = getValidFloat(option);
+                    SubRvisCommand.isIncludeSubRvis = true;
+                    break;
+                case "--sub-rvis-exon-score-percentile":
+                    checkValueValid(100, 0, option);
+                    SubRvisCommand.subRVISExonScorePercentile = getValidFloat(option);
+                    SubRvisCommand.isIncludeSubRvis = true;
+                    break;
+                case "--sub-rvis-exon-oeratio-percentile":
+                    checkValueValid(100, 0, option);
+                    SubRvisCommand.subRVISExonOEratioPercentile = getValidFloat(option);
+                    SubRvisCommand.isIncludeSubRvis = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;

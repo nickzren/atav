@@ -1,5 +1,6 @@
 package function.annotation.base;
 
+import function.external.bis.BisOutput;
 import function.external.denovo.DenovoDB;
 import function.external.denovo.DenovoDBCommand;
 import function.external.evs.Evs;
@@ -63,6 +64,7 @@ public class AnnotatedVariant extends Variant {
     private KnownVarOutput knownVarOutput;
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
+    private BisOutput bisOutput;
     private Genomes genomes;
     private String mgiStr;
     private DenovoDB denovoDB;
@@ -161,10 +163,6 @@ public class AnnotatedVariant extends Variant {
             rvisStr = RvisManager.getLine(getGeneName());
         }
 
-        if (SubRvisCommand.isIncludeSubRvis) {
-            subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
-        }
-
         if (MgiCommand.isIncludeMgi) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
@@ -176,7 +174,8 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
-                & isTrapValid();
+                && isTrapValid()
+                && isSubRVISValid();
     }
 
     private boolean isTrapValid() {
@@ -187,10 +186,9 @@ public class AnnotatedVariant extends Variant {
                 trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
             }
 
-            if (effect.equals("SYNONYMOUS_CODING")
-                    || effect.equals("INTRON_EXON_BOUNDARY")
-                    || effect.equals("INTRON")) {
-                // filter only apply to SYNONYMOUS_CODING, INTRON_EXON_BOUNDARY and INTRONIC variants
+            if (effect.equals("missense_variant")
+                    || effect.equals("intron_variant")) {
+                // filter only apply to missense_variant and intron_variant variants
                 return TrapCommand.isTrapScoreValid(trapScore);
             }
         }
@@ -198,6 +196,25 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
+    // init sub rvis score base on most damaging gene and applied filter
+    private boolean isSubRVISValid() {
+        if (SubRvisCommand.isIncludeSubRvis) {
+            subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
+
+            // sub rvis filters will only apply missense variants
+            if (effect.startsWith("missense_variant")) {
+                return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
+                        && SubRvisCommand.isSubRVISDomainOEratioValid(subRvisOutput.getDomainOEratio())
+                        && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
+                        && SubRvisCommand.isSubRVISExonOEratioValid(subRvisOutput.getExonOEratio());
+            } else {
+                return true;
+            }
+        }
+
+        return true;
+    }
+    
     public void getAnnotationData(StringBuilder sb) {
         sb.append(getStableId()).append(",");
         sb.append(hasCCDS).append(",");

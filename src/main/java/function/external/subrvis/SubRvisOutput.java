@@ -38,6 +38,22 @@ public class SubRvisOutput {
         }
     }
 
+    public float getDomainScore() {
+        return domainScore;
+    }
+
+    public float getDomainOEratio() {
+        return domainOEratio;
+    }
+
+    public float getExonScore() {
+        return exonScore;
+    }
+
+    public float getExonOEratio() {
+        return exonOEratio;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
