@@ -1,5 +1,7 @@
 package function.annotation.base;
 
+import function.external.bis.BisCommand;
+import function.external.bis.BisGene;
 import function.external.bis.BisOutput;
 import function.external.denovo.DenovoDB;
 import function.external.denovo.DenovoDBCommand;
@@ -175,7 +177,8 @@ public class AnnotatedVariant extends Variant {
     public boolean isValid() {
         return isValid
                 && isTrapValid()
-                && isSubRVISValid();
+                && isSubRVISValid()
+                && isBisValid();
     }
 
     private boolean isTrapValid() {
@@ -202,7 +205,7 @@ public class AnnotatedVariant extends Variant {
             subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
 
             // sub rvis filters will only apply missense variants
-            if (effect.startsWith("missense_variant")) {
+            if (effect.equals("missense_variant")) {
                 return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
                         && SubRvisCommand.isSubRVISDomainOEratioValid(subRvisOutput.getDomainOEratio())
                         && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
@@ -214,7 +217,33 @@ public class AnnotatedVariant extends Variant {
 
         return true;
     }
-    
+
+    // init bis score base on most damaging gene and applied filter
+    private boolean isBisValid() {
+        if (BisCommand.isIncludeBis) {
+            bisOutput = new BisOutput(getGeneName(), getChrStr(), getStartPosition());
+
+            // bis filters will only apply missense variants
+            if (effect.equals("missense_variant")) {
+                BisGene geneDomain = bisOutput.getGeneDomain();
+                BisGene geneExon = bisOutput.getGeneExon();
+
+                return BisCommand.isBisDomainScore0005Valid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getScore0005())
+                        && BisCommand.isBisDomainScore0001Valid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getScore0001())
+                        && BisCommand.isBisDomainScore00005Valid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getScore00005())
+                        && BisCommand.isBisDomainScore00001Valid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getScore00001())
+                        && BisCommand.isBisExonScore0005Valid(geneExon == null ? Data.FLOAT_NA : geneExon.getScore0005())
+                        && BisCommand.isBisExonScore0001Valid(geneExon == null ? Data.FLOAT_NA : geneExon.getScore0001())
+                        && BisCommand.isBisExonScore00005Valid(geneExon == null ? Data.FLOAT_NA : geneExon.getScore00005())
+                        && BisCommand.isBisExonScore00001Valid(geneExon == null ? Data.FLOAT_NA : geneExon.getScore00001());
+            } else {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
     public void getAnnotationData(StringBuilder sb) {
         sb.append(getStableId()).append(",");
         sb.append(hasCCDS).append(",");
@@ -296,6 +325,7 @@ public class AnnotatedVariant extends Variant {
         sb.append(get1000Genomes());
         sb.append(getRvis());
         sb.append(getSubRvis());
+        sb.append(getBis());
         sb.append(getGerpScore());
         sb.append(getTrapScore());
         sb.append(getMgi());
@@ -369,6 +399,14 @@ public class AnnotatedVariant extends Variant {
     public String getSubRvis() {
         if (SubRvisCommand.isIncludeSubRvis) {
             return subRvisOutput.toString();
+        } else {
+            return "";
+        }
+    }
+
+    public String getBis() {
+        if (BisCommand.isIncludeBis) {
+            return bisOutput.toString();
         } else {
             return "";
         }

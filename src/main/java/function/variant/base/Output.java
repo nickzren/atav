@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
@@ -56,6 +57,7 @@ public class Output implements Cloneable {
                 + GenomesManager.getTitle()
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
+                + BisManager.getTitle()
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
                 + MgiManager.getTitle()
