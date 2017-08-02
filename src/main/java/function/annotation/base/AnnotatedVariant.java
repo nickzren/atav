@@ -270,10 +270,6 @@ public class AnnotatedVariant extends Variant {
         return geneSet;
     }
 
-    public String getAllGeneTranscript() {
-        return allGeneTranscriptSB.toString();
-    }
-
     public void getExternalData(StringBuilder sb) {
         sb.append(getEvsStr());
         sb.append(getExacStr());

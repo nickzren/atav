@@ -95,7 +95,7 @@ public class CollapsingOutput extends Output {
         getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
 
         sb.append(FormatManager.getDouble(looAF)).append(",");
-
+        
         return sb.toString();
     }
 }

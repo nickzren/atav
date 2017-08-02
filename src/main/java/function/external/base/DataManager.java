@@ -1,5 +1,6 @@
 package function.external.base;
 
+import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
@@ -34,6 +35,7 @@ public class DataManager {
         sb.append(GenomesManager.getVersion());
         sb.append(RvisManager.getVersion());
         sb.append(SubRvisManager.getVersion());
+        sb.append(BisManager.getVersion());
         sb.append(GerpManager.getVersion());
         sb.append(TrapManager.getVersion());
         sb.append(MgiManager.getVersion());
