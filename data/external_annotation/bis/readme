@@ -1,0 +1,15 @@
+Files generated from the script
+/nfs/svaprojects2/hierarchModel/src/createAtaveScoreFile.py 
+to be used in ATAV for filtering based on domain or exon. 
+The collumns are,
+
+gene: name of the gene
+sub_region: either the domain or exon 
+position: vector of position values say if we have a domain
+  over 3 discontinuous regions we might have something that 
+  looks like chrom:start-end,start-end,start-end
+BIS_percentiles_[MAF]: the percentiles of the 
+  Bayesian Intolerance Scores (BIS) using different Minor Allele
+  Thresholds (MAF) to define common missense variants in the 
+  model.
+  
