@@ -92,7 +92,13 @@ public class CollapsingGeneSummary extends CollapsingSummary {
 
     public String getRvis() {
         if (RvisCommand.isIncludeRvis) {
-            return RvisManager.getLine(name);
+            String geneName = name;
+
+            if (name.contains("_")) { // if using gene domain
+                geneName = name.substring(0, name.indexOf("_"));
+            }
+
+            return RvisManager.getLine(geneName);
         } else {
             return "";
         }
