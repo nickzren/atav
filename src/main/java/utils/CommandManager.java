@@ -352,6 +352,11 @@ public class CommandManager {
                     GnomADCommand.isListGnomADExome = true;
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
+                case "--list-gnomad-genome":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    GnomADCommand.isListGnomADGenome = true;
+                    GnomADCommand.isIncludeGnomADGenome = true;
+                    break;
                 case "--list-known-var":
                     CommonCommand.isNonSampleAnalysis = true;
                     KnownVarCommand.isListKnownVar = true;

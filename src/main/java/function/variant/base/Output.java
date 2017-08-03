@@ -51,7 +51,8 @@ public class Output implements Cloneable {
     public static String getExternalDataTitle() {
         return EvsManager.getTitle()
                 + ExacManager.getTitle()
-                + GnomADManager.getTitle()
+                + GnomADManager.getExomeTitle()
+                + GnomADManager.getGenomeTitle()
                 + KnownVarManager.getTitle()
                 + KaviarManager.getTitle()
                 + GenomesManager.getTitle()

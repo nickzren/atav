@@ -102,20 +102,40 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.gnomADExomePop = option.getValue();
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
-                case "--gnomad-exome-af":
-                    checkValueValid(1, 0, option);
-                    GnomADCommand.gnomADExomeAF = getValidFloat(option);
+                case "--gnomad-genome-pop":
+                    checkValuesValid(GnomADManager.GNOMAD_GENOME_POP, option);
+                    GnomADCommand.gnomADGenomePop = option.getValue();
+                    GnomADCommand.isIncludeGnomADGenome = true;
+                    break;
+                case "--gnomad-exome-maf":
+                    checkValueValid(0.5, 0, option);
+                    GnomADCommand.gnomADExomeMaf = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADExome = true;
+                    break;
+                case "--gnomad-genome-maf":
+                    checkValueValid(0.5, 0, option);
+                    GnomADCommand.gnomADGenomeMaf = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADGenome = true;
                     break;
                 case "--gnomad-exome-as-rf-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     GnomADCommand.gnomADExomeAsRfSnv = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
+                case "--gnomad-genome-as-rf-snv":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    GnomADCommand.gnomADGenomeAsRfSnv = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADGenome = true;
+                    break;
                 case "--gnomad-exome-as-rf-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     GnomADCommand.gnomADExomeAsRfIndel = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADExome = true;
+                    break;
+                case "--gnomad-genome-as-rf-indel":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    GnomADCommand.gnomADGenomeAsRfIndel = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADGenome = true;
                     break;
                 case "--known-var-only":
                     KnownVarCommand.isKnownVarOnly = true;
@@ -219,6 +239,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-gnomad-exome":
                     GnomADCommand.isIncludeGnomADExome = true;
+                    break;
+                case "--include-gnomad-genome":
+                    GnomADCommand.isIncludeGnomADGenome = true;
                     break;
                 case "--include-gerp":
                     GerpCommand.isIncludeGerp = true;

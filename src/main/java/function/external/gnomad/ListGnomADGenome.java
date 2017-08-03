@@ -15,19 +15,19 @@ import utils.DBManager;
  *
  * @author nick
  */
-public class ListGnomADExome extends AnalysisBase {
+public class ListGnomADGenome extends AnalysisBase {
 
-    BufferedWriter bwGnomADExome = null;
-    final String gnomADExomeFilePath = CommonCommand.outputPath + "gnomad.exome.csv";
+    BufferedWriter bwGnomADGenome = null;
+    final String gnomADGenomeFilePath = CommonCommand.outputPath + "gnomad.genome.csv";
 
     int analyzedRecords = 0;
 
     @Override
     public void initOutput() {
         try {
-            bwGnomADExome = new BufferedWriter(new FileWriter(gnomADExomeFilePath));
-            bwGnomADExome.write(GnomADExomeOutput.getTitle());
-            bwGnomADExome.newLine();
+            bwGnomADGenome = new BufferedWriter(new FileWriter(gnomADGenomeFilePath));
+            bwGnomADGenome.write(GnomADGenomeOutput.getTitle());
+            bwGnomADGenome.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -36,8 +36,8 @@ public class ListGnomADExome extends AnalysisBase {
     @Override
     public void closeOutput() {
         try {
-            bwGnomADExome.flush();
-            bwGnomADExome.close();
+            bwGnomADGenome.flush();
+            bwGnomADGenome.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -61,18 +61,18 @@ public class ListGnomADExome extends AnalysisBase {
 
             Region region = RegionManager.getRegion(r);
 
-            String sqlCode = GnomADManager.getSql4MafExome(region);
+            String sqlCode = GnomADManager.getSql4MafGenome(region);
 
             ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
-                GnomADExomeOutput output = new GnomADExomeOutput(rset);
+                GnomADGenomeOutput output = new GnomADGenomeOutput(rset);
 
-                if (VariantManager.isVariantIdIncluded(output.gnomADExome.getVariantId())
+                if (VariantManager.isVariantIdIncluded(output.gnomADGenome.getVariantId())
                         && output.isValid()) {
-                    bwGnomADExome.write(output.gnomADExome.getVariantId() + ",");
-                    bwGnomADExome.write(output.toString());
-                    bwGnomADExome.newLine();
+                    bwGnomADGenome.write(output.gnomADGenome.getVariantId() + ",");
+                    bwGnomADGenome.write(output.toString());
+                    bwGnomADGenome.newLine();
                 }
 
                 countVariant();
@@ -89,6 +89,6 @@ public class ListGnomADExome extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "Start running list gnomad exome function";
+        return "Start running list gnomad genome function";
     }
 }
