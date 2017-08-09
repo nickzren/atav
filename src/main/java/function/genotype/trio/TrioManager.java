@@ -2,6 +2,7 @@ package function.genotype.trio;
 
 import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADManager;
@@ -159,7 +160,8 @@ public class TrioManager {
                 + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
-                + DenovoDBManager.getTitle();
+                + DenovoDBManager.getTitle()
+                + DiscovEHRManager.getTitle();
     }
 
     public static void init() {
@@ -202,7 +204,7 @@ public class TrioManager {
 
     private static void initDenovoRules() {
         String trioRulesPath = Data.ATAV_HOME + DENOVO_RULES_PATH;
-        
+
         File RuleFile = new File(trioRulesPath);
         if (!RuleFile.exists()) {
             ErrorManager.print("The trio rule file (" + trioRulesPath + ") doesn't exist.");

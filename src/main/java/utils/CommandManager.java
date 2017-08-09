@@ -6,6 +6,7 @@ import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.external.bis.BisCommand;
 import function.external.denovo.DenovoDBCommand;
+import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.gnomad.GnomADCommand;
@@ -90,11 +91,13 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-         if (isCommandFileIncluded(options)) {
+        {
+            if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
+        }
 
         cleanUpOddSymbol();
 
@@ -326,6 +329,7 @@ public class CommandManager {
                     GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isIncludeMgi = true;
                     DenovoDBCommand.isIncludeDenovoDB = true;
+                    DiscovEHRCommand.isIncludeDiscovEHR = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -415,6 +419,11 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     DenovoDBCommand.isListDenovoDB = true;
                     DenovoDBCommand.isIncludeDenovoDB = true;
+                    break;
+                case "--list-discovehr":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    DiscovEHRCommand.isListDiscovEHR = true;
+                    DiscovEHRCommand.isIncludeDiscovEHR = true;
                     break;
                 case "--test":
                     // Test Functions

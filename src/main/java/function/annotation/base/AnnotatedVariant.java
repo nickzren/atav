@@ -5,6 +5,8 @@ import function.external.bis.BisGene;
 import function.external.bis.BisOutput;
 import function.external.denovo.DenovoDB;
 import function.external.denovo.DenovoDBCommand;
+import function.external.discovehr.DiscovEHR;
+import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
@@ -74,6 +76,7 @@ public class AnnotatedVariant extends Variant {
     private Genomes genomes;
     private String mgiStr;
     private DenovoDB denovoDB;
+    private DiscovEHR discovEHR;
 
     public boolean isValid = true; // at variant level
 
@@ -111,6 +114,10 @@ public class AnnotatedVariant extends Variant {
 
         if (DenovoDBCommand.isIncludeDenovoDB) {
             denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
+        }
+
+        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+            discovEHR = new DiscovEHR(chrStr, startPosition, refAllele, allele);
         }
     }
 
@@ -508,6 +515,14 @@ public class AnnotatedVariant extends Variant {
     public String getDenovoDB() {
         if (DenovoDBCommand.isIncludeDenovoDB) {
             return denovoDB.getOutput();
+        } else {
+            return "";
+        }
+    }
+
+    public String getDiscovEHR() {
+        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+            return discovEHR.toString();
         } else {
             return "";
         }

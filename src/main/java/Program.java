@@ -31,6 +31,8 @@ import function.external.bis.BisManager;
 import function.external.bis.ListBis;
 import function.external.denovo.DenovoDBCommand;
 import function.external.denovo.ListDenovoDB;
+import function.external.discovehr.DiscovEHRCommand;
+import function.external.discovehr.ListDiscovEHR;
 import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
@@ -207,6 +209,8 @@ public class Program {
                 runAnalysis(new ListMgi());
             } else if (DenovoDBCommand.isListDenovoDB) {
                 runAnalysis(new ListDenovoDB());
+            } else if (DiscovEHRCommand.isListDiscovEHR) {
+                runAnalysis(new ListDiscovEHR());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }

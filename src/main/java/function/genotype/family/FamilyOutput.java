@@ -2,6 +2,7 @@ package function.genotype.family;
 
 import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.genotype.base.SampleManager;
@@ -86,7 +87,8 @@ public class FamilyOutput extends Output {
                 + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
-                + DenovoDBManager.getTitle();
+                + DenovoDBManager.getTitle()
+                + DiscovEHRManager.getTitle();
     }
 
     public FamilyOutput(CalledVariant c) {
@@ -278,6 +280,7 @@ public class FamilyOutput extends Output {
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());
+        sb.append(calledVar.getDiscovEHR());
 
         return sb.toString();
     }

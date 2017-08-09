@@ -3,6 +3,7 @@ package function.genotype.var;
 import function.annotation.base.TranscriptManager;
 import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADManager;
@@ -74,7 +75,8 @@ public class VarOutput extends Output {
                 + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
-                + DenovoDBManager.getTitle();
+                + DenovoDBManager.getTitle()
+                + DiscovEHRManager.getTitle();
     }
 
     public VarOutput(CalledVariant c) {
@@ -134,6 +136,7 @@ public class VarOutput extends Output {
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());
+        sb.append(calledVar.getDiscovEHR());
 
         return sb.toString();
     }

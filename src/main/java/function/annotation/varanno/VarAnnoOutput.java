@@ -1,9 +1,9 @@
 package function.annotation.varanno;
 
 import function.annotation.base.AnnotatedVariant;
-import function.annotation.base.TranscriptManager;
 import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADManager;
@@ -57,7 +57,8 @@ public class VarAnnoOutput {
             + BisManager.getTitle()
             + GenomesManager.getTitle()
             + MgiManager.getTitle()
-            + DenovoDBManager.getTitle();
+            + DenovoDBManager.getTitle()
+            + DiscovEHRManager.getTitle();
 
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
@@ -99,6 +100,7 @@ public class VarAnnoOutput {
         sb.append(annotatedVar.get1000Genomes());
         sb.append(annotatedVar.getMgi());
         sb.append(annotatedVar.getDenovoDB());
+        sb.append(annotatedVar.getDiscovEHR());
 
         return sb.toString();
     }

@@ -2,6 +2,7 @@ package function.variant.base;
 
 import function.external.bis.BisCommand;
 import function.external.denovo.DenovoDBCommand;
+import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacCommand;
@@ -292,6 +293,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-denovo-db":
                     DenovoDBCommand.isIncludeDenovoDB = true;
+                    break;
+                case "--include-discovehr":
+                    DiscovEHRCommand.isIncludeDiscovEHR = true;
                     break;
                 default:
                     continue;

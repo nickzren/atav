@@ -8,6 +8,7 @@ import function.external.gnomad.GnomADManager;
 import function.annotation.base.TranscriptManager;
 import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.exac.ExacManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
@@ -80,7 +81,8 @@ public class FisherOutput extends StatisticOutput {
                 + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
-                + DenovoDBManager.getTitle();
+                + DenovoDBManager.getTitle()
+                + DiscovEHRManager.getTitle();
     }
 
     public FisherOutput(CalledVariant c) {
@@ -173,6 +175,7 @@ public class FisherOutput extends StatisticOutput {
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());
+        sb.append(calledVar.getDiscovEHR());
 
         return sb.toString();
     }

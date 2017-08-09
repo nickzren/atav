@@ -8,6 +8,7 @@ import global.Index;
 import function.external.evs.EvsManager;
 import function.external.gnomad.GnomADManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.exac.ExacManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpManager;
@@ -108,7 +109,8 @@ public class ParentalOutput extends Output {
                 + BisManager.getTitle()
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
-                + DenovoDBManager.getTitle();
+                + DenovoDBManager.getTitle()
+                + DiscovEHRManager.getTitle();
     }
 
     public ParentalOutput(CalledVariant c) {
@@ -270,6 +272,7 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.get1000Genomes());
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());
+        sb.append(calledVar.getDiscovEHR());
 
         return sb.toString();
     }
