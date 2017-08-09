@@ -2,6 +2,7 @@ package function.external.base;
 
 import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADManager;
@@ -41,6 +42,7 @@ public class DataManager {
         sb.append(TrapManager.getVersion());
         sb.append(MgiManager.getVersion());
         sb.append(DenovoDBManager.getVersion());
+        sb.append(DiscovEHRManager.getVersion());
 
         return sb.toString();
     }

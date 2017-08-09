@@ -2,6 +2,7 @@ package function.variant.base;
 
 import function.external.bis.BisManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
 import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADManager;
@@ -62,7 +63,8 @@ public class Output implements Cloneable {
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
                 + MgiManager.getTitle()
-                + DenovoDBManager.getTitle();
+                + DenovoDBManager.getTitle()
+                + DiscovEHRManager.getTitle();
     }
 
     public static String getGenoStatDataTitle() {
