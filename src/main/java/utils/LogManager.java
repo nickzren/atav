@@ -47,6 +47,7 @@ public class LogManager {
 
         try {
             writeAndPrint("Program start: " + date.toString());
+            writeAndPrint("Program run on: " + System.getenv("HOSTNAME"));
             writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
             writeAndPrint("Version: " + Data.VERSION);
 
