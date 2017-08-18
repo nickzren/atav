@@ -138,8 +138,8 @@ public class VarGenoOutput extends Output {
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(genoCount[Index.MISSING][Index.CTRL]).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
-        sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CASE])).append(",");
+        sb.append(FormatManager.getDouble(minorAlleleFreq[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CASE])).append(",");
         sb.append(FormatManager.getDouble(hweP[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(calledVar.getCoverage(sample.getIndex()))).append(",");
