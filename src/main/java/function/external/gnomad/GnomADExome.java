@@ -152,7 +152,8 @@ public class GnomADExome {
 
     public boolean isValid() {
         return GnomADCommand.isGnomADExomeMafValid(getMaxMaf())
-                && GnomADCommand.isGnomADExomeAsRfValid(asRf, isSnv);
+                && GnomADCommand.isGnomADExomeAsRfValid(asRf, isSnv)
+                && GnomADCommand.isGnomADExomeABMedianValid(abMedian);
     }
 
     public String getVariantId() {

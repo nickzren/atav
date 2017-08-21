@@ -138,6 +138,16 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.gnomADGenomeAsRfIndel = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
+                case "--gnomad-exome-ab-median":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    GnomADCommand.gnomADExomeABMedian = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADExome = true;
+                    break;
+                case "--gnomad-genome-ab-median":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    GnomADCommand.gnomADGenomeABMedian = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADGenome = true;
+                    break;
                 case "--known-var-only":
                     KnownVarCommand.isKnownVarOnly = true;
                     KnownVarCommand.isIncludeKnownVar = true;

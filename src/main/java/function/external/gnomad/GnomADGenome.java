@@ -55,7 +55,7 @@ public class GnomADGenome {
             if (ref.length() != alt.length()) {
                 isSnv = false;
             }
-            
+
             setMaf(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -126,7 +126,8 @@ public class GnomADGenome {
 
     public boolean isValid() {
         return GnomADCommand.isGnomADGenomeMafValid(getMaxMaf())
-                && GnomADCommand.isGnomADGenomeAsRfValid(asRf, isSnv);
+                && GnomADCommand.isGnomADGenomeAsRfValid(asRf, isSnv)
+                && GnomADCommand.isGnomADGenomeABMedianValid(abMedian);
     }
 
     public String getVariantId() {
