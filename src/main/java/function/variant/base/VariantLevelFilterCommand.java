@@ -28,6 +28,9 @@ import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -251,6 +254,11 @@ public class VariantLevelFilterCommand {
                     checkValueValid(100, 0, option);
                     BisCommand.bisExonScorePercentile00001 = getValidFloat(option);
                     BisCommand.isIncludeBis = true;
+                    break;
+                case "--discovehr-af":
+                    checkValueValid(1, 0, option);
+                    DiscovEHRCommand.discovEHRAF = getValidFloat(option);
+                    DiscovEHRCommand.isIncludeDiscovEHR = true;
                     break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;

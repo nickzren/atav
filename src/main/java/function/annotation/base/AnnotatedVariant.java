@@ -115,10 +115,6 @@ public class AnnotatedVariant extends Variant {
         if (DenovoDBCommand.isIncludeDenovoDB) {
             denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
         }
-
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
-            discovEHR = new DiscovEHR(chrStr, startPosition, refAllele, allele);
-        }
     }
 
     public void update(Annotation annotation) {
@@ -166,46 +162,52 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid & GnomADCommand.isIncludeGnomADExome) {
+        if (isValid && GnomADCommand.isIncludeGnomADExome) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADExome.isValid();
         }
 
-        if (isValid & GnomADCommand.isIncludeGnomADGenome) {
+        if (isValid && GnomADCommand.isIncludeGnomADGenome) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADGenome.isValid();
         }
 
-        if (isValid & ExacCommand.isIncludeExac) {
+        if (isValid && ExacCommand.isIncludeExac) {
             exac = new Exac(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
         }
 
-        if (isValid & EvsCommand.isIncludeEvs) {
+        if (isValid && EvsCommand.isIncludeEvs) {
             evs = new Evs(chrStr, startPosition, refAllele, allele);
 
             isValid = evs.isValid();
         }
 
-        if (isValid & GerpCommand.isIncludeGerp) {
+        if (isValid && GerpCommand.isIncludeGerp) {
             gerpScore = GerpManager.getScore(chrStr, startPosition, refAllele, allele);
 
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
-        if (isValid & KaviarCommand.isIncludeKaviar) {
+        if (isValid && KaviarCommand.isIncludeKaviar) {
             kaviar = new Kaviar(chrStr, startPosition, refAllele, allele);
 
             isValid = kaviar.isValid();
         }
 
-        if (isValid & GenomesCommand.isInclude1000Genomes) {
+        if (isValid && GenomesCommand.isInclude1000Genomes) {
             genomes = new Genomes(chrStr, startPosition, refAllele, allele);
 
             isValid = genomes.isValid();
+        }
+
+        if (isValid && DiscovEHRCommand.isIncludeDiscovEHR) {
+            discovEHR = new DiscovEHR(chrStr, startPosition, refAllele, allele);
+
+            isValid = discovEHR.isValid();
         }
     }
 
