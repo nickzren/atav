@@ -232,6 +232,11 @@ public class VariantLevelFilterCommand {
                     BisCommand.bisExonScorePercentile00001 = getValidFloat(option);
                     BisCommand.isIncludeBis = true;
                     break;
+                case "--discovehr-af":
+                    checkValueValid(1, 0, option);
+                    DiscovEHRCommand.discovEHRAF = getValidFloat(option);
+                    DiscovEHRCommand.isIncludeDiscovEHR = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
