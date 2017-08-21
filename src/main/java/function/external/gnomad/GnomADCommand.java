@@ -21,6 +21,8 @@ public class GnomADCommand {
     public static float gnomADGenomeAsRfSnv = Data.NO_FILTER;
     public static float gnomADExomeAsRfIndel = Data.NO_FILTER;
     public static float gnomADGenomeAsRfIndel = Data.NO_FILTER;
+    public static float gnomADExomeABMedian = Data.NO_FILTER;
+    public static float gnomADGenomeABMedian = Data.NO_FILTER;
 
     public static boolean isGnomADExomeMafValid(float value) {
         if (gnomADExomeMaf == Data.NO_FILTER) {
@@ -89,6 +91,24 @@ public class GnomADCommand {
         }
 
         return value >= gnomADGenomeAsRfIndel
+                || value == Data.NA;
+    }
+
+    public static boolean isGnomADExomeABMedianValid(float value) {
+        if (gnomADExomeABMedian == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= gnomADExomeABMedian
+                || value == Data.NA;
+    }
+
+    public static boolean isGnomADGenomeABMedianValid(float value) {
+        if (gnomADGenomeABMedian == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= gnomADGenomeABMedian
                 || value == Data.NA;
     }
 }

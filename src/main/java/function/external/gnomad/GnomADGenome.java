@@ -126,7 +126,8 @@ public class GnomADGenome {
 
     public boolean isValid() {
         return GnomADCommand.isGnomADGenomeMafValid(getMaxMaf())
-                && GnomADCommand.isGnomADGenomeAsRfValid(asRf, isSnv);
+                && GnomADCommand.isGnomADGenomeAsRfValid(asRf, isSnv)
+                && GnomADCommand.isGnomADGenomeABMedianValid(abMedian);
     }
 
     public String getVariantId() {
