@@ -46,10 +46,10 @@ public class LogManager {
         }
 
         try {
-            writeAndPrint("Program start: " + date.toString());
-            writeAndPrint("Program run on: " + System.getenv("HOSTNAME"));
             writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
             writeAndPrint("Version: " + Data.VERSION);
+            writeAndPrint("Start: " + date.toString());
+            writeAndPrint("Compute server: " + System.getenv("HOSTNAME"));
 
             writeLog("ATAV command:");
             writeLog(CommandManager.command + "\n");
