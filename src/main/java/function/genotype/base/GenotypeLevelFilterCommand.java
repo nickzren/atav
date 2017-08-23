@@ -21,6 +21,7 @@ import static utils.CommandManager.checkValueValid;
 public class GenotypeLevelFilterCommand {
 
     public static String sampleFile = "";
+    public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
     public static boolean isAllNonRef = false;
     public static boolean isAllGeno = false;
@@ -81,6 +82,9 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--all-geno":
                     isAllGeno = true;
+                    break;
+                case "--disable-check-duplicate-sample":
+                    isDisableCheckDuplicateSample = true;
                     break;
                 case "--ctrlMAF":
                 case "--ctrl-maf":

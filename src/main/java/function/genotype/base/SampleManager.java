@@ -205,11 +205,13 @@ public class SampleManager {
                 String familyId = values[0];
                 String individualId = values[1];
 
-                if (!sampleNameSet.contains(individualId)) {
-                    sampleNameSet.add(individualId);
-                } else {
-                    ErrorManager.print("\nDuplicate sample: " + individualId
-                            + " (line " + lineNum + " in sample file)");
+                if (!GenotypeLevelFilterCommand.isDisableCheckDuplicateSample) {
+                    if (!sampleNameSet.contains(individualId)) {
+                        sampleNameSet.add(individualId);
+                    } else {
+                        ErrorManager.print("\nDuplicate sample: " + individualId
+                                + " (line " + lineNum + " in sample file)");
+                    }
                 }
 
                 String paternalId = values[2];
