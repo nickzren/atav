@@ -11,6 +11,7 @@ import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.Exac;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADCommand;
 import function.external.genomes.Genomes;
@@ -63,6 +64,7 @@ public class AnnotatedVariant extends Variant {
 
     // external db annotations
     private Exac exac;
+    private String exacGeneVariantCountStr;
     private GnomADExome gnomADExome;
     private GnomADGenome gnomADGenome;
     private Kaviar kaviar;
@@ -114,6 +116,10 @@ public class AnnotatedVariant extends Variant {
 
         if (DenovoDBCommand.isIncludeDenovoDB) {
             denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
+        }
+
+        if (ExacCommand.isIncludeExacGeneVariantCount) {
+            exacGeneVariantCountStr = ExacManager.getLine(getGeneName());
         }
     }
 
@@ -525,6 +531,14 @@ public class AnnotatedVariant extends Variant {
     public String getDiscovEHR() {
         if (DiscovEHRCommand.isIncludeDiscovEHR) {
             return discovEHR.toString();
+        } else {
+            return "";
+        }
+    }
+
+    public String getExacGeneVariantCount() {
+        if (ExacCommand.isIncludeExacGeneVariantCount) {
+            return exacGeneVariantCountStr;
         } else {
             return "";
         }

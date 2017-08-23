@@ -151,6 +151,7 @@ public class TrioManager {
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
+                + ExacManager.getGeneVariantCountTitle()
                 + GnomADManager.getExomeTitle()
                 + GnomADManager.getGenomeTitle()
                 + KaviarManager.getTitle()

@@ -66,6 +66,7 @@ public class VarOutput extends Output {
                 + "Codon Change,"
                 + "Gene Transcript (AA Change),"
                 + ExacManager.getTitle()
+                + ExacManager.getGeneVariantCountTitle()
                 + GnomADManager.getExomeTitle()
                 + GnomADManager.getGenomeTitle()
                 + KaviarManager.getTitle()
@@ -126,6 +127,7 @@ public class VarOutput extends Output {
         sb.append(calledVar.getCodonChange()).append(",");
         sb.append(calledVar.getTranscriptSet()).append(",");
         sb.append(calledVar.getExacStr());
+        sb.append(calledVar.getExacGeneVariantCount());
         sb.append(calledVar.getGnomADExomeStr());
         sb.append(calledVar.getGnomADGenomeStr());
         sb.append(calledVar.getKaviarStr());
