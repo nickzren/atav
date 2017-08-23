@@ -19,6 +19,7 @@ import static utils.CommandManager.checkValueValid;
 public class GenotypeLevelFilterCommand {
 
     public static String sampleFile = "";
+    public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
     public static double maxCtrlAF = Data.NO_FILTER;
     public static double minCtrlAF = Data.NO_FILTER;
@@ -68,6 +69,9 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--all-sample":
                     isAllSample = true;
+                    break;
+                case "--disable-check-duplicate-sample":
+                    isDisableCheckDuplicateSample = true;
                     break;
                 case "--ctrl-af":
                 case "--max-ctrl-af":
