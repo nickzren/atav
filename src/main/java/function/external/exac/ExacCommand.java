@@ -10,6 +10,7 @@ public class ExacCommand {
 
     public static boolean isListExac = false;
     public static boolean isIncludeExac = false;
+    public static boolean isIncludeExacGeneVariantCount = false;
     public static boolean isListExacCount = false;
 
     public static String exacPop = "global";

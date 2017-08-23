@@ -36,6 +36,7 @@ import function.external.evs.EvsCommand;
 import function.genotype.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
 import function.external.exac.ExacCommand;
+import function.external.exac.ExacManager;
 import function.external.exac.ListExac;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
@@ -120,6 +121,8 @@ public class Program {
             VariantManager.init();
 
             DPBinBlockManager.init();
+            
+            ExacManager.init();
 
             KnownVarManager.init();
 
