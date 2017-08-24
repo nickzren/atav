@@ -115,7 +115,7 @@ public class CollapsingOutput extends Output {
     public CollapsingOutput(CalledVariant c) {
         super(c);
 
-        if (!c.getGeneDomainName().isEmpty()) {
+        if (!c.getGeneDomainName().equals("NA")) {
             geneName = c.getGeneDomainName();
         } else {
             geneName = c.getGeneName();
