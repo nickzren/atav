@@ -25,6 +25,7 @@ import function.genotype.trio.ListTrio;
 import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
+import function.coverage.base.ListSampleCoverageBin;
 import function.coverage.comparison.SiteCoverageComparison;
 import function.external.bis.BisCommand;
 import function.external.bis.BisManager;
@@ -126,7 +127,7 @@ public class Program {
             CoverageBlockManager.init();
 
             ExacManager.init();
-            
+
             KnownVarManager.init();
 
             RvisManager.init();
@@ -182,6 +183,8 @@ public class Program {
                 runAnalysis(new CoverageComparison());
             } else if (CoverageCommand.isSiteCoverageComparison) {
                 runAnalysis(new SiteCoverageComparison());
+            } else if (CoverageCommand.isListSampleCoverageBin) {
+                runAnalysis(new ListSampleCoverageBin());
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
             } else if (GnomADCommand.isListGnomADExome) {

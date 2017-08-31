@@ -17,6 +17,7 @@ public class CoverageCommand {
     // coverage summary
     public static boolean isCoverageSummary = false;
     public static boolean isSiteCoverageSummary = false;
+    public static boolean isListSampleCoverageBin = false;
     public static double minPercentRegionCovered = 0; //so all is output by default
     public static float exonCleanCutoff = Data.NO_FILTER;
     public static float geneCleanCutoff = 1;

@@ -344,6 +344,9 @@ public class CommandManager {
                 case "--site-coverage-comparison":
                     CoverageCommand.isSiteCoverageComparison = true;
                     break;
+                case "--list-sample-coverage-bin":
+                    CoverageCommand.isListSampleCoverageBin = true;
+                    break;
 
                 // External Datasets Functions    
                 case "--list-evs":
