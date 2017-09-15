@@ -14,7 +14,7 @@ import utils.ErrorManager;
  */
 public class TrapManager {
 
-    static final String table = "trap.snv_chr";
+    static final String table = "trap_v2.snv_chr";
 
     public static String getTitle() {
         String title = "";
