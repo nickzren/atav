@@ -206,6 +206,7 @@ public class TrioOutput extends Output implements Comparable {
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());
         sb.append(calledVar.getDiscovEHR());
+        sb.append(calledVar.getMTR());
 
         return sb.toString();
     }

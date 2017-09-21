@@ -15,6 +15,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.mgi.MgiManager;
+import function.external.mtr.MTRManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
@@ -110,7 +111,8 @@ public class ParentalOutput extends Output {
                 + GenomesManager.getTitle()
                 + MgiManager.getTitle()
                 + DenovoDBManager.getTitle()
-                + DiscovEHRManager.getTitle();
+                + DiscovEHRManager.getTitle()
+                + MTRManager.getTitle();
     }
 
     public ParentalOutput(CalledVariant c) {
@@ -273,6 +275,7 @@ public class ParentalOutput extends Output {
         sb.append(calledVar.getMgi());
         sb.append(calledVar.getDenovoDB());
         sb.append(calledVar.getDiscovEHR());
+        sb.append(calledVar.getMTR());
 
         return sb.toString();
     }

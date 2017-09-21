@@ -15,6 +15,7 @@ import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
+import function.external.mtr.MTRCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
@@ -267,6 +268,21 @@ public class VariantLevelFilterCommand {
                     DiscovEHRCommand.discovEHRAF = getValidFloat(option);
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
                     break;
+                case "--mtr":
+                    checkValueValid(2, 0, option);
+                    MTRCommand.mtr = getValidFloat(option);
+                    MTRCommand.isIncludeMTR = true;
+                    break;
+                case "--mtr-fdr":
+                    checkValueValid(1, 0, option);
+                    MTRCommand.fdr = getValidFloat(option);
+                    MTRCommand.isIncludeMTR = true;
+                    break;
+                case "--mtr-centile":
+                    checkValueValid(1, 0, option);
+                    MTRCommand.mtrCentile = getValidFloat(option);
+                    MTRCommand.isIncludeMTR = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
@@ -314,6 +330,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-discovehr":
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
+                    break;
+                case "--include-mtr":
+                    MTRCommand.isIncludeMTR = true;
                     break;
                 default:
                     continue;

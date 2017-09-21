@@ -16,6 +16,7 @@ import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
+import function.external.mtr.MTRCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
@@ -330,6 +331,7 @@ public class CommandManager {
                     MgiCommand.isIncludeMgi = true;
                     DenovoDBCommand.isIncludeDenovoDB = true;
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
+                    MTRCommand.isIncludeMTR = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
