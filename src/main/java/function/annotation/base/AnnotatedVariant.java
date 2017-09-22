@@ -299,15 +299,11 @@ public class AnnotatedVariant extends Variant {
     // init MTR score based on most damaging transcript and applied filter
     private boolean isMTRValid() {
         if (MTRCommand.isIncludeMTR) {
-            mtr = new MTR(chrStr, startPosition);
+            mtr = new MTR(chrStr, startPosition, stableId);
 
             // MTR filters will only apply missense variants
             if (function.startsWith("NON_SYNONYMOUS")) {
-                if (mtr.getFeature().isEmpty()) {
-                    return true;
-                } else if (mtr.getFeature().equals(stableId)) {
-                    return mtr.isValid();
-                }
+                return mtr.isValid();
             }
         }
 
@@ -565,7 +561,7 @@ public class AnnotatedVariant extends Variant {
             return "";
         }
     }
-    
+
     public String getMTR() {
         if (MTRCommand.isIncludeMTR) {
             return mtr.toString();

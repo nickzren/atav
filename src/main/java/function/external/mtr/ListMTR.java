@@ -58,34 +58,34 @@ public class ListMTR extends AnalysisBase {
 
     @Override
     public void processDatabaseData() throws Exception {
-        int totalNumOfRegionList = RegionManager.getRegionSize();
-
-        for (int r = 0; r < totalNumOfRegionList; r++) {
-
-            for (String varType : VariantManager.VARIANT_TYPE) {
-                if (VariantManager.isVariantTypeValid(r, varType)) {
-                    Region region = RegionManager.getRegion(r, varType);
-
-                    String sqlCode = MTRManager.getSql4MTR(region);
-
-                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
-
-                    while (rset.next()) {
-                        MTROutput output = new MTROutput(rset);
-
-                        if (VariantManager.isVariantIdIncluded(output.mtr.getVariantPos())) { // needs to fix here
-                            bwMTR.write(output.mtr.getVariantPos() + ",");
-                            bwMTR.write(output.toString());
-                            bwMTR.newLine();
-                        }
-
-                        countVariant();
-                    }
-
-                    rset.close();
-                }
-            }
-        }
+//        int totalNumOfRegionList = RegionManager.getRegionSize();
+//
+//        for (int r = 0; r < totalNumOfRegionList; r++) {
+//
+//            for (String varType : VariantManager.VARIANT_TYPE) {
+//                if (VariantManager.isVariantTypeValid(r, varType)) {
+//                    Region region = RegionManager.getRegion(r, varType);
+//
+//                    String sqlCode = MTRManager.getSql4MTR(region);
+//
+//                    ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+//
+//                    while (rset.next()) {
+//                        MTROutput output = new MTROutput(rset);
+//
+//                        if (VariantManager.isVariantIdIncluded(output.mtr.getVariantPos())) { // needs to fix here
+//                            bwMTR.write(output.mtr.getVariantPos() + ",");
+//                            bwMTR.write(output.toString());
+//                            bwMTR.newLine();
+//                        }
+//
+//                        countVariant();
+//                    }
+//
+//                    rset.close();
+//                }
+//            }
+//        }
     }
 
     protected void countVariant() {

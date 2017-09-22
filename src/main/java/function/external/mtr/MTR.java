@@ -19,9 +19,10 @@ public class MTR {
     private float fdr;
     private float mtrCentile;
 
-    public MTR(String chr, int pos) {
+    public MTR(String chr, int pos, String transcript) {
         this.chr = chr;
         this.pos = pos;
+        this.feature = transcript;
 
         initMTR();
     }
@@ -39,17 +40,15 @@ public class MTR {
 
     private void initMTR() {
         try {
-            String sql = MTRManager.getSql4MTR(chr, pos);
+            String sql = MTRManager.getSql4MTR(chr, pos, feature);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                feature = rs.getString("Feature");
                 mtr = getFloat((Float) rs.getObject("MTR"));
                 fdr = getFloat((Float) rs.getObject("FDR"));
                 mtrCentile = getFloat((Float) rs.getObject("MTR_centile"));
             } else {
-                feature = "";
                 mtr = Data.NA;
                 fdr = Data.NA;
                 mtrCentile = Data.NA;
@@ -61,10 +60,6 @@ public class MTR {
 
     public String getVariantPos() {
         return chr + "-" + pos;
-    }
-    
-    public String getFeature(){
-        return feature;
     }
 
     public boolean isValid() {

@@ -35,9 +35,9 @@ public class MTRManager {
                 + "WHERE Genomic_position BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
     }
 
-    public static String getSql4MTR(String chr, int pos) {
-        return "SELECT Feature,MTR,FDR,MTR_centile "
+    public static String getSql4MTR(String chr, int pos, String transcript) {
+        return "SELECT MTR,FDR,MTR_centile "
                 + "FROM " + MTRManager.table + chr + " "
-                + "WHERE Genomic_position = " + pos;
+                + "WHERE Genomic_position = " + pos + " AND Feature ='" + transcript + "'";
     }
 }
