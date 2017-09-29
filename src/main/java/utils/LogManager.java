@@ -31,7 +31,7 @@ public class LogManager {
     public static void run() {
         logRunTime();
 
-        logUserCommand();
+        writeUserCommand2Log();
 
         logSampleFile();
 
@@ -105,7 +105,7 @@ public class LogManager {
                 + runTime + "\n");
     }
 
-    private static void logUserCommand() {
+    private static void writeUserCommand2Log() {
         logUserCommand(USERS_COMMAND_LOG, ErrorManager.SUCCESS);
     }
 
