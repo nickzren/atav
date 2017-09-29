@@ -156,7 +156,7 @@ public class EffectManager {
                     initImpactTable(MODIFIER_IMPACT);
                     break;
                 default:
-                    ErrorManager.print("Unknown impact: " + lowestImpact);
+                    ErrorManager.print("Unknown impact: " + lowestImpact, ErrorManager.INPUT_PARSING);
             }
         } else {
             // when--effect not used

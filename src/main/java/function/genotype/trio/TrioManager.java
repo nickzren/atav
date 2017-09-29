@@ -107,7 +107,7 @@ public class TrioManager {
         }
 
         if (trioList.isEmpty()) {
-            ErrorManager.print("Missing trio from sample file.");
+            ErrorManager.print("Missing trio from sample file.", ErrorManager.INPUT_PARSING);
         } else {
             LogManager.writeAndPrint("Total trios: " + trioList.size());
         }
@@ -126,7 +126,7 @@ public class TrioManager {
 
         File RuleFile = new File(trioRulesPath);
         if (!RuleFile.exists()) {
-            ErrorManager.print("The trio rule file (" + trioRulesPath + ") doesn't exist.");
+            ErrorManager.print("The trio rule file (" + trioRulesPath + ") doesn't exist.", ErrorManager.INPUT_PARSING);
         }
         try {
             BufferedReader br = new BufferedReader(new FileReader(trioRulesPath));
@@ -136,7 +136,7 @@ public class TrioManager {
                 if (LineCount > 0) {
                     String[] fields = str.split("\\t");
                     if (fields.length != 9) {
-                        ErrorManager.print("Wrong trio rule file format.");
+                        ErrorManager.print("Wrong trio rule file format.", ErrorManager.INPUT_PARSING);
                     }
                     StringBuilder sKey = new StringBuilder();
                     for (int i = 0; i < fields.length - 1; i++) {
@@ -144,7 +144,7 @@ public class TrioManager {
                     }
                     String StatusKey = sKey.toString();
                     if (StatusKey.contains("?")) { //un recognized field value
-                        ErrorManager.print(sKey.append(": parsing trio rule failed at Line ").append(LineCount + 1).toString());
+                        ErrorManager.print(sKey.append(": parsing trio rule failed at Line ").append(LineCount + 1).toString(), ErrorManager.INPUT_PARSING);
                     }
                     expand(StatusKey, fields[fields.length - 1].trim()); // the last field holds the value
                 }

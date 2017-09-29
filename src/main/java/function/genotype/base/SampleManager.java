@@ -152,7 +152,7 @@ public class SampleManager {
     private static void checkSampleFile() {
         if (GenotypeLevelFilterCommand.sampleFile.isEmpty()
                 && !GenotypeLevelFilterCommand.isAllSample) {
-            ErrorManager.print("Please specify your sample file: --sample $PATH");
+            ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
         }
     }
 
@@ -199,7 +199,7 @@ public class SampleManager {
                         sampleNameSet.add(individualId);
                     } else {
                         ErrorManager.print("\nDuplicate sample: " + individualId
-                                + " (line " + lineNum + " in sample file)");
+                                + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
                     }
                 }
 
@@ -209,13 +209,13 @@ public class SampleManager {
                 byte sex = Byte.valueOf(values[4].trim());
                 if (sex != 1 && sex != 2) {
                     ErrorManager.print("\nWrong Sex value: " + sex
-                            + " (line " + lineNum + " in sample file)");
+                            + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
                 }
 
                 byte pheno = Byte.valueOf(values[5].trim());
                 if (pheno != 1 && pheno != 2) {
                     ErrorManager.print("\nWrong Phenotype value: " + pheno
-                            + " (line " + lineNum + " in sample file)");
+                            + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
                 }
 
                 String sampleType = values[6].trim();
@@ -361,7 +361,7 @@ public class SampleManager {
                 notExistSampleList);
 
         if (!isSampleFileCorrect) {
-            ErrorManager.print("Wrong values in sample file.");
+            ErrorManager.print("Wrong values in sample file.", ErrorManager.INPUT_PARSING);
         }
     }
 

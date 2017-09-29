@@ -40,7 +40,7 @@ public class FamilyManager {
         }
 
         if (familyList.isEmpty()) {
-            ErrorManager.print("Missing family in sample file");
+            ErrorManager.print("Missing family in sample file", ErrorManager.INPUT_PARSING);
         } else {
             LogManager.writeAndPrint("Total families: " + familyList.size());
         }

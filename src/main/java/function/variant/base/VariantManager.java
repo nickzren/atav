@@ -169,7 +169,7 @@ public class VariantManager {
             boolean isInclude) throws SQLException {
         if (str.startsWith("rs")) {
             ErrorManager.print("warning: rs number is no longer support in --variant option, "
-                    + "please use --rs-number instead.");
+                    + "please use --rs-number instead.", ErrorManager.INPUT_PARSING);
         }
 
         str = str.replaceAll("( )+", "");

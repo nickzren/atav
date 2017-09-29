@@ -435,7 +435,7 @@ public class CommandManager {
 
         if (!hasMainFunction) {
             ErrorManager.print("Missing function command: --list-var-geno, --collapsing-dom, --collapsing-rec, "
-                    + "--collapsing-comp-het, --fisher, --linear");
+                    + "--collapsing-comp-het, --fisher, --linear... etc.", ErrorManager.COMMAND_PARSING);
         }
     }
 
@@ -506,7 +506,7 @@ public class CommandManager {
         }
 
         if (hasInvalid) {
-            ErrorManager.print("You have invalid options in your ATAV command.");
+            ErrorManager.print("You have invalid options in your ATAV command.", ErrorManager.COMMAND_PARSING);
         }
     }
 
@@ -659,6 +659,6 @@ public class CommandManager {
 
     public static void outputInvalidOptionValue(CommandOption option) {
         ErrorManager.print("\nInvalid value '" + option.getValue()
-                + "' for '" + option.getName() + "' option.");
+                + "' for '" + option.getName() + "' option.", ErrorManager.COMMAND_PARSING);
     }
 }
