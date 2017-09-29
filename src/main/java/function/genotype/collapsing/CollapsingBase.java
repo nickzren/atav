@@ -177,7 +177,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     private void generatePvaluesQQPlot() {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
-            ThirdPartyToolManager.generateQQPlot4CollapsingFetP(matrixFilePath, geneFetPQQPlotPath);
+            ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
 
             if (CollapsingCommand.isCollapsingDoLogistic) {
                 ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),

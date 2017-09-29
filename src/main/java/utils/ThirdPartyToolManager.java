@@ -21,7 +21,7 @@ public class ThirdPartyToolManager {
     private static final String R_325_SCRIPT_SYSTEM_PATH = "/nfs/goldstein/software/R-3.2.5/bin/Rscript";
     private static final String COLLAPSED_REGRESSION_R = "/nfs/goldstein/software/atav_home/lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = "/nfs/goldstein/software/atav_home/lib/pvals_qqplot.R";
-    private static final String QQPLOT_FOR_COLLAPSING_R = "/nfs/goldstein/software/atav_home/lib/qqplot_for_collapsing.R";
+    private static final String PERM_QQPLOT_FOR_COLLAPSING = "/nfs/goldstein/software/atav_home/lib/generate_qq.py";
     private static final String PERL_SYSTEM_PATH = "perl";
     private static final String FLANKING_SEQ_PERL = "/nfs/goldstein/software/atav_home/lib/flanking_seq.pl";
     private static final String TRIO_DENOVO_TIER = "/nfs/goldstein/software/atav_home/lib/r0.5_trio_denovo_tier.R";
@@ -140,12 +140,11 @@ public class ThirdPartyToolManager {
         callPvalueQQPlot(pvalueFile, col, outputPath);
     }
 
-    public static void generateQQPlot4CollapsingFetP(String matrixFilePath, String outputPath) {
-        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
-                + QQPLOT_FOR_COLLAPSING_R + " "
-                + GenotypeLevelFilterCommand.sampleFile + " "
+    public static void generateQQPlot4CollapsingFetP(String summaryFilePath, String matrixFilePath, String outputPath) {
+        String cmd = PYTHON + " "
+                + PERM_QQPLOT_FOR_COLLAPSING + " "
+                + summaryFilePath + " "
                 + matrixFilePath + " "
-                + "1000 " // permutation#
                 + outputPath; // output path
 
         int exitValue = systemCall(new String[]{cmd});
