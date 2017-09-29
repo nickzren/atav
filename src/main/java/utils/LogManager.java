@@ -22,6 +22,7 @@ public class LogManager {
 
     // users command log file path
     public static final String USERS_COMMAND_LOG = "log/users.command.log";
+    public static final String USERS_COMMAND_FAILED_LOG = "log/users.command.failed.log";
     // user sample file log path
     public static final String SAMPLE_DIR_LOG = "log/sample/";
     // program start date
@@ -44,19 +45,19 @@ public class LogManager {
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
-        
+
         try {
             writeAndPrintNoNewLine(FigletFont.convertOneLine("ATAV"));
             writeAndPrint("Version: " + Data.VERSION);
             writeAndPrint("Start: " + date.toString());
             writeAndPrint("Compute server: " + System.getenv("HOSTNAME"));
-            
+
             writeLog("ATAV command:");
             writeLog(CommandManager.command + "\n");
 
             userLog.flush();
         } catch (Exception e) {
-            ErrorManager.print("Error in writing log file: " + e.toString());
+            ErrorManager.print("Error in writing log file: " + e.toString(), ErrorManager.UNEXPECTED_FAIL);
         }
     }
 
@@ -105,6 +106,14 @@ public class LogManager {
     }
 
     private static void logUserCommand() {
+        logUserCommand(USERS_COMMAND_LOG, ErrorManager.SUCCESS);
+    }
+
+    public static void writeUserCommand2FailedLog(int exit) {
+        logUserCommand(USERS_COMMAND_FAILED_LOG, exit);
+    }
+
+    private static void logUserCommand(String logFilePath, int exit) {
         try {
             if (isBioinfoTeam()
                     || Data.VERSION.equals("trunk")
@@ -112,7 +121,7 @@ public class LogManager {
                 return;
             }
 
-            File file = new File(USERS_COMMAND_LOG);
+            File file = new File(logFilePath);
 
             FileWriter fileWritter = new FileWriter(file, true);
 
@@ -126,7 +135,10 @@ public class LogManager {
                     + System.getenv("HOSTNAME") + "\t"
                     + CommandManager.command + "\t"
                     + runTime + "\t"
-                    + outputFolderSize + " bytes");
+                    + outputFolderSize + " bytes" + "\t"
+                    + System.getenv("JOB_ID") + "\t"
+                    + "\t"
+                    + exit);
 
             bufferWritter.newLine();
 

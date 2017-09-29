@@ -70,7 +70,7 @@ public class FamilyManager {
 
     private static void printFamilyNum() {
         if (allFamilyMap.isEmpty()) {
-            ErrorManager.print("Missing family in sample file");
+            ErrorManager.print("Missing family in sample file", ErrorManager.INPUT_PARSING);
         } else {
             LogManager.writeAndPrint("Total families: " + allFamilyMap.size());
         }

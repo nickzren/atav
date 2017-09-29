@@ -170,35 +170,40 @@ public class VariantManager {
     }
 
     private static void addVariantToList(String str, HashSet<String> variantSet,
-            boolean isInclude) throws SQLException {
+            boolean isInclude) {
         if (str.startsWith("rs")) {
             ErrorManager.print("warning: rs number is no longer support in --variant option, "
-                    + "please use --rs-number instead.");
+                    + "please use --rs-number instead.", ErrorManager.INPUT_PARSING);
         }
 
-        str = str.replaceAll("( )+", "");
+        try {
 
-        if (str.startsWith("chr")) {
-            str = str.substring(3, str.length());
-        }
+            str = str.replaceAll("( )+", "");
 
-        if (!variantSet.contains(str)) {
-            if (isInclude) {
-                String[] values = str.split("-");
-                String varPos = values[0] + "-" + values[1];
-                if (values[2].length() == 1
-                        && values[3].length() == 1) {
-                    varPos += "-snv";
-                } else {
-                    varPos += "-indel";
-                }
-
-                add2IncludeVariantPosSet(varPos);
+            if (str.startsWith("chr")) {
+                str = str.substring(3, str.length());
             }
 
-            str = getPARVariantId(str);
+            if (!variantSet.contains(str)) {
+                if (isInclude) {
+                    String[] values = str.split("-");
+                    String varPos = values[0] + "-" + values[1];
+                    if (values[2].length() == 1
+                            && values[3].length() == 1) {
+                        varPos += "-snv";
+                    } else {
+                        varPos += "-indel";
+                    }
 
-            variantSet.add(str);
+                    add2IncludeVariantPosSet(varPos);
+                }
+
+                str = getPARVariantId(str);
+
+                variantSet.add(str);
+            }
+        } catch (Exception ex) {
+            ErrorManager.print("Invalid --variant input format: " + str, ErrorManager.INPUT_PARSING);
         }
     }
 
@@ -341,11 +346,9 @@ public class VariantManager {
                     return false;
                 }
             } else // indel
-            {
-                if (VariantLevelFilterCommand.isExcludeIndel) {
+             if (VariantLevelFilterCommand.isExcludeIndel) {
                     return false;
                 }
-            }
 
             if (includeVariantTypeList.isEmpty()) {
                 return true;

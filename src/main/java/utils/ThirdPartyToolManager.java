@@ -1,7 +1,6 @@
 package utils;
 
 import function.external.flanking.FlankingCommand;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
 import function.variant.base.VariantLevelFilterCommand;

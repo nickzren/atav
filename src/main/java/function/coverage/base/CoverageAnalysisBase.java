@@ -68,7 +68,7 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     @Override
     public void beforeProcessDatabaseData() {
         if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
-            ErrorManager.print("--min-coverage option has to be used in this function.");
+            ErrorManager.print("--min-coverage option has to be used in this function.", ErrorManager.COMMAND_PARSING);
         }
     }
 
@@ -95,8 +95,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 bw.write(str);
                 bw.newLine();
             }
-        } catch (Exception e) {
-            ErrorManager.send(e);
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
         }
     }
 
@@ -140,8 +140,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 // count region per sample
                 sampleCoverageCount[sample.getIndex()] += pass;
             }
-        } catch (Exception e) {
-            ErrorManager.send(e);
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
         }
     }
 

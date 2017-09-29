@@ -21,7 +21,7 @@ public class MathManager {
             renjinEngine = new ScriptEngineManager().getEngineByName("Renjin");
 
             if (renjinEngine == null) {
-                ErrorManager.print("Renjin Script Engine not found on the classpath.");
+                ErrorManager.print("Renjin Script Engine not found on the classpath.", ErrorManager.UNEXPECTED_FAIL);
             }
         }
 

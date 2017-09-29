@@ -172,7 +172,7 @@ public class RegionManager {
                 }
             }
         } catch (Exception e) {
-            ErrorManager.print("Invalid region: " + str);
+            ErrorManager.print("Invalid region: " + str, ErrorManager.INPUT_PARSING);
         }
 
         return new Region(chr, start, end);
@@ -197,7 +197,7 @@ public class RegionManager {
         }
 
         if (!isValid) {
-            ErrorManager.print("Invalid chr: " + chr);
+            ErrorManager.print("Invalid chr: " + chr, ErrorManager.INPUT_PARSING);
         }
     }
 

@@ -31,7 +31,7 @@ public class FamilyCommand {
         }
 
         if (familyId.isEmpty()) {
-            ErrorManager.print("Please specify a family id by using '--family-id'.");
+            ErrorManager.print("Please specify a family id by using '--family-id'.", ErrorManager.COMMAND_PARSING);
         }
     }
 }

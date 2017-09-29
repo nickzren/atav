@@ -109,10 +109,8 @@ public class FunctionManager {
             in.close();
             fstream.close();
         } catch (Exception e) {
-            LogManager.writeAndPrintNoNewLine("\nError line ("
-                    + lineNum + ") in function file: " + lineStr);
-
-            ErrorManager.send(e);
+            ErrorManager.print("\nError line ("
+                    + lineNum + ") in function file: " + lineStr, ErrorManager.INPUT_PARSING);
         }
     }
 

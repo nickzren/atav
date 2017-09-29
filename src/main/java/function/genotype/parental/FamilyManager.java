@@ -13,14 +13,14 @@ import java.util.HashMap;
  */
 public class FamilyManager {
 
-    private static ArrayList<Family> familyList = new ArrayList<Family>();
+    private static ArrayList<Family> familyList = new ArrayList<>();
 
     public static void init() {
         initList();
     }
 
     private static void initList() {
-        HashMap<String, Family> familyMap = new HashMap<String, Family>();
+        HashMap<String, Family> familyMap = new HashMap<>();
 
         for (Sample sample : SampleManager.getList()) {
             if (!sample.getPaternalId().equals("0")
@@ -40,7 +40,7 @@ public class FamilyManager {
         }
 
         if (familyList.isEmpty()) {
-            ErrorManager.print("Missing family in sample file");
+            ErrorManager.print("Missing family in sample file", ErrorManager.INPUT_PARSING);
         } else {
             LogManager.writeAndPrint("Total families: " + familyList.size());
         }

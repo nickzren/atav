@@ -138,7 +138,7 @@ public class DBManager {
             dbHostIp = dbHostMap.get(dbHostName);
 
             if (dbHostIp == null) {
-                ErrorManager.print("Not exist server: " + dbHostName);
+                ErrorManager.print("Not exist server: " + dbHostName, ErrorManager.UNEXPECTED_FAIL);
             }
 
             minNum = getNumOfATAV(dbHostIp);
@@ -147,7 +147,7 @@ public class DBManager {
 
             if (minNum > maxATAVJobNum && !priorityUsers.contains(Data.userName)) {
                 ErrorManager.print("All AnnoDB servers "
-                        + "reached to max concurrent jobs, please submit your ATAV job latter.");
+                        + "reached to max concurrent jobs, please submit your ATAV job latter.", ErrorManager.MAX_CONNECTION);
             }
         }
 

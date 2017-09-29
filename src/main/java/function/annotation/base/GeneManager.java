@@ -89,10 +89,8 @@ public class GeneManager {
                 }
             }
         } catch (Exception e) {
-            LogManager.writeAndPrintNoNewLine("\nError line ("
-                    + lineNum + ") in gene file: " + lineStr);
-
-            ErrorManager.send(e);
+            ErrorManager.print("\nError line ("
+                    + lineNum + ") in gene file: " + lineStr, ErrorManager.INPUT_PARSING);
         }
     }
 
