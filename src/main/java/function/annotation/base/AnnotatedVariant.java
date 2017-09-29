@@ -27,6 +27,8 @@ import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
 import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
+import function.external.mtr.MTR;
+import function.external.mtr.MTRCommand;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
@@ -77,6 +79,7 @@ public class AnnotatedVariant extends Variant {
     private String mgiStr;
     private DenovoDB denovoDB;
     private DiscovEHR discovEHR;
+    private MTR mtr;
 
     public boolean isValid = true;
 
@@ -201,7 +204,8 @@ public class AnnotatedVariant extends Variant {
         return isValid
                 && isTrapValid()
                 && isSubRVISValid()
-                && isBisValid();
+                && isBisValid()
+                && isMTRValid();
     }
 
     private boolean isTrapValid() {
@@ -261,6 +265,20 @@ public class AnnotatedVariant extends Variant {
                         && BisCommand.isBisExonScore00001Valid(geneExon == null ? Data.FLOAT_NA : geneExon.getScore00001());
             } else {
                 return true;
+            }
+        }
+
+        return true;
+    }
+
+    // init MTR score based on most damaging transcript and applied filter
+    private boolean isMTRValid() {
+        if (MTRCommand.isIncludeMTR) {
+            mtr = new MTR(chrStr, startPosition, getStableId());
+
+            // MTR filters will only apply missense variants
+            if (effect.equals("missense_variant")) {
+                return mtr.isValid();
             }
         }
 
@@ -356,6 +374,7 @@ public class AnnotatedVariant extends Variant {
         sb.append(getMgi());
         sb.append(getDenovoDB());
         sb.append(getDiscovEHR());
+        sb.append(getMTR());
     }
 
     public String getExacStr() {
@@ -481,6 +500,14 @@ public class AnnotatedVariant extends Variant {
     public String getExacGeneVariantCount() {
         if (ExacCommand.isIncludeExacGeneVariantCount) {
             return exacGeneVariantCountStr;
+        } else {
+            return "";
+        }
+    }
+    
+    public String getMTR() {
+        if (MTRCommand.isIncludeMTR) {
+            return mtr.toString();
         } else {
             return "";
         }

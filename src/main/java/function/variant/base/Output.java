@@ -11,6 +11,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.mgi.MgiManager;
+import function.external.mtr.MTRManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
@@ -65,7 +66,8 @@ public class Output implements Cloneable {
                 + TrapManager.getTitle()
                 + MgiManager.getTitle()
                 + DenovoDBManager.getTitle()
-                + DiscovEHRManager.getTitle();
+                + DiscovEHRManager.getTitle()
+                + MTRManager.getTitle();
     }
 
     public static String getGenoStatDataTitle() {

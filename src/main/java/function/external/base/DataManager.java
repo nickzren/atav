@@ -11,6 +11,7 @@ import function.external.gerp.GerpManager;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarManager;
 import function.external.mgi.MgiManager;
+import function.external.mtr.MTRManager;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
@@ -43,6 +44,7 @@ public class DataManager {
         sb.append(MgiManager.getVersion());
         sb.append(DenovoDBManager.getVersion());
         sb.append(DiscovEHRManager.getVersion());
+        sb.append(MTRManager.getVersion());
 
         return sb.toString();
     }
