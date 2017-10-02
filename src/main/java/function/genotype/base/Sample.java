@@ -59,6 +59,14 @@ public class Sample {
     public String getType() {
         return type;
     }
+    
+    public String getPhenotype() {
+        if (pheno == 0) {
+            return "ctrl";
+        } else {
+            return "case";
+        }
+    }
 
     public String getCaptureKit() {
         return captureKit;

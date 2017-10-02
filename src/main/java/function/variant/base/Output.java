@@ -95,6 +95,7 @@ public class Output implements Cloneable {
     public static String getCarrierDataTitle() {
         return "Sample Name,"
                 + "Sample Type,"
+                + "Sample Phenotype,"
                 + "GT,"
                 + "DP,"
                 + "DP Bin,"
@@ -170,6 +171,7 @@ public class Output implements Cloneable {
     public void getCarrierData(StringBuilder sb, Carrier carrier, Sample sample) {
         sb.append(sample.getName()).append(",");
         sb.append(sample.getType()).append(",");
+        sb.append(sample.getPhenotype()).append(",");
         sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
         sb.append(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA)).append(",");
         sb.append(FormatManager.getShort(calledVar.getDPBin(sample.getIndex()))).append(",");
