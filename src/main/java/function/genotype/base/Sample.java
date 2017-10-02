@@ -94,7 +94,7 @@ public class Sample {
 
     public void setQuantitativeTrait(float value) {
         quantitativeTrait = value;
-    }
+    } 
 
     public float getQuantitativeTrait() {
         return quantitativeTrait;

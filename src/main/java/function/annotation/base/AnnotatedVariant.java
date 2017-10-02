@@ -274,10 +274,10 @@ public class AnnotatedVariant extends Variant {
     // init MTR score based on most damaging transcript and applied filter
     private boolean isMTRValid() {
         if (MTRCommand.isIncludeMTR) {
-            mtr = new MTR(chrStr, startPosition, getStableId());
-
             // MTR filters will only apply missense variants
             if (effect.equals("missense_variant")) {
+                mtr = new MTR(chrStr, startPosition, getStableId());
+
                 return mtr.isValid();
             }
         }
@@ -504,10 +504,14 @@ public class AnnotatedVariant extends Variant {
             return "";
         }
     }
-    
+
     public String getMTR() {
         if (MTRCommand.isIncludeMTR) {
-            return mtr.toString();
+            if (mtr != null) {
+                return mtr.toString();
+            } else {
+                return "NA,NA,NA,";
+            }
         } else {
             return "";
         }
