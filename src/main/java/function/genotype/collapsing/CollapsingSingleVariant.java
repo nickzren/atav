@@ -4,6 +4,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
 import global.Data;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -18,6 +19,10 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
     BufferedWriter bwGenotypes = null;
     final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
+
+    static int genoCount;
+    static char previousGeno;
+    static char currentGeno;
 
     @Override
     public void initOutput() {
@@ -88,30 +93,37 @@ public class CollapsingSingleVariant extends CollapsingBase {
     private void processOutput4Summary(CollapsingOutput output,
             ArrayList<CollapsingSummary> summaryList) {
         try {
-            boolean isVariantQualified = false;
+            boolean hasQualifiedVariant = false;
+            StringBuilder gtArraySB = new StringBuilder();
+            genoCount = 0;
 
             for (Sample sample : SampleManager.getList()) {
                 output.calculateLooFreq(sample);
+                byte geno = output.getCalledVariant().getGT(sample.getIndex());
 
-                if (output.isMaxLooAFValid()) {
-                    byte geno = output.getCalledVariant().getGT(sample.getIndex());
+                if (output.isMaxLooAFValid()
+                        && output.isQualifiedGeno(geno)) {
+                    hasQualifiedVariant = true;
 
-                    if (output.isQualifiedGeno(geno)) {
-                        for (CollapsingSummary summary : summaryList) {
-                            summary.updateSampleVariantCount4SingleVar(sample.getIndex());
-                        }
-
-                        outputQualifiedVariant(output, sample);
-
-                        isVariantQualified = true;
+                    for (CollapsingSummary summary : summaryList) {
+                        summary.updateSampleVariantCount4SingleVar(sample.getIndex());
                     }
+
+                    outputQualifiedVariant(output, sample);
                 }
+
+                add2GTArraySB(geno, gtArraySB);
             }
 
             // only count qualified variant once per gene or region
-            if (isVariantQualified) {
+            if (hasQualifiedVariant) {
                 for (CollapsingSummary summary : summaryList) {
                     summary.updateVariantCount(output);
+                }
+
+                if (CollapsingCommand.isIncludeHomRef) {
+                    bwGenotypes.write(output.getJointedGenotypeString(gtArraySB.toString()));
+                    bwGenotypes.newLine();
                 }
             }
         } catch (Exception e) {
@@ -123,6 +135,39 @@ public class CollapsingSingleVariant extends CollapsingBase {
             Sample sample) throws Exception {
         bwGenotypes.write(output.getString(sample));
         bwGenotypes.newLine();
+    }
+
+    private void add2GTArraySB(byte geno, StringBuilder gtArraySB) {
+        if (CollapsingCommand.isIncludeHomRef) {
+            currentGeno = getGeno(geno);
+
+            if (genoCount == 0) // first character geno
+            {
+                previousGeno = currentGeno;
+                genoCount++;
+            } else if (currentGeno == previousGeno) {
+                genoCount++;
+            } else {
+                gtArraySB.append(genoCount).append(previousGeno);
+                genoCount = 1;
+                previousGeno = currentGeno;
+            }
+        }
+    }
+
+    private char getGeno(byte geno) {
+        switch (geno) {
+            case Index.HOM:
+            case Index.HOM_MALE:
+                return 'H';
+            case Index.HET:
+                return 'T';
+            case Index.REF:
+            case Index.REF_MALE:
+                return 'R';
+            default:
+                return 'N';
+        }
     }
 
     @Override

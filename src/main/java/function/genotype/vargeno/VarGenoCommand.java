@@ -15,6 +15,7 @@ public class VarGenoCommand {
     public static boolean isListVarGeno = false;
     public static boolean isRunTier = false;
     public static boolean isCaseOnly = false;
+    public static boolean isIncludeHomRef = false;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -30,6 +31,9 @@ public class VarGenoCommand {
                     EvsCommand.isIncludeEvs = true;
                     ExacCommand.isIncludeExac = true;
                     KnownVarCommand.isIncludeKnownVar = true;
+                    break;
+                case "--include-hom-ref":
+                    isIncludeHomRef = true;
                     break;
                 default:
                     continue;

@@ -98,4 +98,23 @@ public class CollapsingOutput extends Output {
         
         return sb.toString();
     }
+    
+    public String getJointedGenotypeString(String genoArrayStr) {
+        StringBuilder sb = new StringBuilder();
+
+        calledVar.getVariantData(sb);
+        calledVar.getAnnotationData(sb);
+        calledVar.getExternalData(sb);
+        getGenoStatData(sb);
+
+        sb.append("NA,NA,NA,");
+        sb.append(genoArrayStr).append(",");
+        sb.append("NA,");
+        sb.append("NA,"); // DP Bin
+        sb.append("NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,");
+        
+        sb.append(FormatManager.getDouble(looAF)).append(",");
+
+        return sb.toString();
+    }
 }

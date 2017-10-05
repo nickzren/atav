@@ -4,6 +4,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.SampleManager;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -18,6 +19,10 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     BufferedWriter bwGenotypes = null;
     final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
+
+    private static int genoCount;
+    private static char previousGeno;
+    private static char currentGeno;
 
     @Override
     public void initOutput() {
@@ -64,18 +69,62 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         try {
             VarGenoOutput output = new VarGenoOutput(calledVar);
 
-            for (Sample sample : SampleManager.getList()) {
-                if (isCaseOnly(sample)) {
-                    byte geno = output.getCalledVariant().getGT(sample.getIndex());
+            boolean hasQualifiedVariant = false;
+            StringBuilder gtArraySB = new StringBuilder();
+            genoCount = 0;
 
-                    if (output.isQualifiedGeno(geno)) {
-                        bwGenotypes.write(output.getString(sample));
-                        bwGenotypes.newLine();
-                    }
+            for (Sample sample : SampleManager.getList()) {
+                byte geno = output.getCalledVariant().getGT(sample.getIndex());
+
+                if (isCaseOnly(sample)
+                        && output.isQualifiedGeno(geno)) {
+                    hasQualifiedVariant = true;
+                    bwGenotypes.write(output.getString(sample));
+                    bwGenotypes.newLine();
                 }
+
+                add2GTArraySB(geno, gtArraySB);
+            }
+
+            if (VarGenoCommand.isIncludeHomRef && hasQualifiedVariant) {
+                bwGenotypes.write(output.getJointedGenotypeString(gtArraySB.toString()));
+                bwGenotypes.newLine();
             }
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    private void add2GTArraySB(byte geno, StringBuilder gtArraySB) {
+        if (VarGenoCommand.isIncludeHomRef) {
+            currentGeno = getGeno(geno);
+
+            if (genoCount == 0) // first character geno
+            {
+                previousGeno = currentGeno;
+                genoCount++;
+            } else if (currentGeno == previousGeno) {
+                genoCount++;
+            } else {
+                gtArraySB.append(genoCount).append(previousGeno);
+                genoCount = 1;
+                previousGeno = currentGeno;
+            }
+        }
+    }
+
+    private char getGeno(byte geno) {
+        switch (geno) {
+            case Index.HOM:
+            case Index.HOM_MALE:
+                return 'H';
+            case Index.HET:
+                return 'T';
+            case Index.REF:
+            case Index.REF_MALE:
+                return 'R';
+            default:
+                return 'N';
         }
     }
 
