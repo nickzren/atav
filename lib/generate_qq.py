@@ -1,6 +1,8 @@
 """
-Reads collapsing matrix and summary file from summarize.py and performs
-FET on all genes, along with permutation based QQ plot
+Reads collapsing matrix and summary file from ATAV and generates an 
+empirical permutation-based Q-Q plot.
+
+Written by Charlie Wolock <cw3026@cumc.columbia.edu> 
 """
 
 from functools import partial
@@ -173,6 +175,7 @@ def plot_qq(qq_file, exp, obs, lower, upper, sorted_genes):
     # transform p-values to log10
     exp = -np.log10(exp)
     obs = -np.log10(obs)
+    # note that "upper" and "lower" switch here because of the transformation
     lower = -np.log10(lower)
     upper = -np.log10(upper)
 
@@ -204,6 +207,9 @@ def plot_qq(qq_file, exp, obs, lower, upper, sorted_genes):
     uppAx.plot(exp, upper, 'g-')
     lowAx = fig.add_subplot(1,1,1)
     lowAx.plot(exp, lower, 'y-')
+    plt.legend(['2.5th percentile of expected p-values', 
+                '97.5th percentile of expected p-values'],
+                loc=2)
     plt.tight_layout()
     plt.savefig(qq_file)
 
