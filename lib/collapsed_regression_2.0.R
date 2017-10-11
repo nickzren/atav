@@ -1,4 +1,3 @@
-#!/nfs/goldstein/software/R-3.0.1/bin/Rscript
 ### libraries -----------------------------------------------------------------
 suppressPackageStartupMessages(library(yaml))
 suppressPackageStartupMessages(library(logistf))
@@ -141,7 +140,7 @@ Regress <- function(gene.name, lm.data, method) {
   }
 
   if (method == "logistf") { 
-   gene.model <- logistf(pheno ~ ., data=lm.data, pl=F)
+   gene.model <- logistf(pheno ~ ., data=lm.data, pl=T)
   } else if (method == "linear") { 
     gene.model <- lm(pheno ~ ., data=lm.data)
   } else {
