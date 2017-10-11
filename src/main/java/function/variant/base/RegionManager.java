@@ -171,10 +171,6 @@ public class RegionManager {
     }
 
     private static String getChr(String chr) {
-        if (chr.equalsIgnoreCase("XY")) {
-            chr = "X";
-        }
-
         checkChrValid(chr);
 
         return chr;

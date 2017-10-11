@@ -55,7 +55,7 @@ public class HGMDOutput {
         boolean isFirstSite = true;
 
         for (HGMD tmpHgmd : collection) {
-            String idStr = var.getVariantIdStr().replaceAll("XY", "X");
+            String idStr = var.getVariantIdStr();
 
             if (idStr.equals(tmpHgmd.getVariantId())) {
                 return tmpHgmd;

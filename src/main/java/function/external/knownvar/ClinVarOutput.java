@@ -48,7 +48,7 @@ public class ClinVarOutput {
         boolean isFirstSite = true;
         
         for (ClinVar tmpClinvar : collection) {
-            String idStr = var.getVariantIdStr().replaceAll("XY", "X");
+            String idStr = var.getVariantIdStr();
             
             if (idStr.equals(tmpClinvar.getVariantId())) {
                 return tmpClinvar;

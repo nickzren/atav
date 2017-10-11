@@ -151,12 +151,12 @@ public class VariantManager {
 
     public static void reset2KnownVarSet() throws SQLException {
         clearIncludeVarSet();
-        
+
         // init ClinVar variants set
         for (ClinVar clinvar : KnownVarManager.getClinVarMultiMap().values()) {
             addVariantToList(clinvar.getVariantId(), includeVariantSet, true);
         }
-        
+
         // init HGMD variants set
         for (HGMD hgmd : KnownVarManager.getHGMDMultiMap().values()) {
             addVariantToList(hgmd.getVariantId(), includeVariantSet, true);
@@ -172,7 +172,7 @@ public class VariantManager {
                     + "please use --rs-number instead.", ErrorManager.INPUT_PARSING);
         }
 
-        str = str.replaceAll("( )+", "");
+        str = str.replaceAll("( )+", "").replace("XY", "X");
 
         if (str.startsWith("chr")) {
             str = str.substring(3, str.length());
@@ -185,8 +185,6 @@ public class VariantManager {
 
                 add2IncludeVariantPosSet(varPos);
             }
-
-            str = getPARVariantId(str);
 
             variantSet.add(str);
         }
@@ -222,26 +220,6 @@ public class VariantManager {
         }
 
         return "";
-    }
-
-    private static String getPARVariantId(String str) {
-        if (!str.contains("X")
-                || str.contains("XY")) {
-            return str;
-        }
-
-        String[] temp = str.split("-");
-
-        String chr = temp[0];
-        int pos = Integer.valueOf(temp[1]);
-
-        Region region = new Region(chr, pos, pos);
-
-        if (region.isInsideXPseudoautosomalRegions()) {
-            return "XY" + str.substring(str.indexOf("-"));
-        }
-
-        return str;
     }
 
     private static void add2IncludeVariantPosSet(String str) {

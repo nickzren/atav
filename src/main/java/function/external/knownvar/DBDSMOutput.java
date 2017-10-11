@@ -37,7 +37,7 @@ public class DBDSMOutput {
         boolean isFirstSite = true;
 
         for (DBDSM tmpDBDSM : collection) {
-            String idStr = var.getVariantIdStr().replaceAll("XY", "X");
+            String idStr = var.getVariantIdStr();
 
             if (idStr.equals(tmpDBDSM.getVariantId())) {
                 return tmpDBDSM;

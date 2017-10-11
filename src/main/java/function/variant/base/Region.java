@@ -34,8 +34,7 @@ public class Region implements Comparable {
     }
 
     private int intChr() {
-        if (chrStr.equals("X")
-                || chrStr.equals("XY")) {
+        if (chrStr.equals("X")) {
             return 23;
         } else if (chrStr.equals("Y")) {
             return 24;
