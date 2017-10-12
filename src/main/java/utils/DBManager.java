@@ -134,7 +134,8 @@ public class DBManager {
 
     //executeUpdate
     public static void executeUpdate(String sqlQuery) throws SQLException {
-        stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
+//        stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
+        stmt.executeUpdate(sqlQuery);
     }
 
     public static void setDBHost(String hostName) {

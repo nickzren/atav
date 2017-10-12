@@ -1,6 +1,6 @@
 package function.test;
 
-import function.genotype.base.SampleManager;
+import function.variant.base.RegionManager;
 import java.sql.SQLException;
 import utils.DBManager;
 import utils.LogManager;
@@ -13,8 +13,8 @@ public class OutputSubsetSample {
 
     // minor config tweak for this task
     // CommonCommand.isNonSampleAnalysis = true;
-    // server annodb04
-    public static final String OUTPUT_PATH = "/nfs/seqscratch11/zr2180/";
+
+    public static final String OUTPUT_PATH = "/nfs/seqscratch_ssd/zr2180/waldb/";
 
     public static void run() throws SQLException {
         outputCarrierData();
@@ -22,40 +22,62 @@ public class OutputSubsetSample {
         outputNonCarrierData();
     }
 
-    public static void outputCarrierData() throws SQLException {   
-        String snvCarrierSql = "SELECT * "
-                + "FROM called_snv c,"
-                + SampleManager.TMP_SAMPLE_ID_TABLE + " t "
-                + "WHERE c.sample_id = t.input_sample_id "
-                + "INTO OUTFILE '" + OUTPUT_PATH + "called_snv.txt'";
+    public static void outputCarrierData() throws SQLException {
+        String sql = "CREATE TEMPORARY TABLE IF NOT EXISTS exome_sample_id AS "
+                + "(SELECT sample_id FROM sample where sample_type = 'exome' "
+                + "and sample_name not like '%SRR%' limit 10000)";
+        updateSQL(sql);
 
-        LogManager.writeAndPrint(snvCarrierSql);
-        DBManager.executeQuery(snvCarrierSql);
-
-        String indelCarrierSql = "SELECT * "
-                + "FROM called_indel c,"
-                + SampleManager.TMP_SAMPLE_ID_TABLE + " t "
-                + "WHERE c.sample_id = t.input_sample_id "
-                + "INTO OUTFILE '" + OUTPUT_PATH + "called_indel.txt'";
-
-        LogManager.writeAndPrint(indelCarrierSql);
-        DBManager.executeQuery(indelCarrierSql);
+        for (String chr : RegionManager.ALL_CHR) {
+//            // get variant id , pos, ref, alt data
+            sql = "select distinct variant_id,POS,REF,ALT from WalDB.variant_chr" + chr
+                    + " into outfile '" + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt';";
+            executeSQL(sql);
+//
+//            // create variant id table            
+            sql = "CREATE temporary TABLE WalDB.variant_pos_chr" + chr + " ("
+                    + " variant_id int(10) unsigned NOT NULL,"
+                    + " POS int(10) unsigned NOT NULL,"
+                    + " REF varchar(255) NOT NULL,"
+                    + " ALT varchar(255) NOT NULL,"
+                    + " PRIMARY KEY (variant_id)"
+                    + ") ENGINE=TokuDB;";
+            updateSQL(sql);
+//
+//            // load variant id, pos, ref, alt into table
+            sql = "load data infile '" + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt' "
+                    + "into table WalDB.variant_pos_chr" + chr;
+            executeSQL(sql);
+//
+//            // get carrier data
+            sql = "select c.sample_id," + chr + ",v.POS,v.REF,v.ALT"
+                    + ",c.GT,c.DP,c.AD_REF,c.AD_ALT,c.GQ,c.VQSLOD,c.FS,c.MQ,c.QD,c.QUAL"
+                    + ",c.ReadPosRankSum,c.MQRankSum,c.FILTER "
+                    + "from WalDB.variant_pos_chr" + chr + " v"
+                    + ", WalDB.called_variant_chr" + chr + " c"
+                    + ", exome_sample_id s "
+                    + "where v.variant_id = c.variant_id and c.sample_id = s.sample_id "
+                    + "into outfile '" + OUTPUT_PATH + "called_variant_chr" + chr + ".txt';";
+            executeSQL(sql);
+        }
     }
 
     public static void outputNonCarrierData() throws SQLException {
-//        for (int i = 0; i < SampleManager.SAMPLE_TYPE.length; i++) {
-//            for (String chr : RegionManager.ALL_CHR) {
-//                String nonCarrierSql = "SELECT * "
-//                        + "FROM " + SampleManager.SAMPLE_TYPE[i]
-//                        + "_read_coverage_" + DPBinBlockManager.DP_BIN_BLOCK_SIZE + "_chr" + chr + " c,"
-//                        + SampleManager.SAMPLE_TYPE[i] + "_sample_id t "
-//                        + "WHERE c.sample_id = t.id "
-//                        + "INTO OUTFILE '" + OUTPUT_PATH + SampleManager.SAMPLE_TYPE[i]
-//                        + "_read_coverage_" + DPBinBlockManager.DP_BIN_BLOCK_SIZE + "_chr" + chr + ".txt'";
-//
-//                LogManager.writeAndPrint(nonCarrierSql);
-//                DBManager.executeQuery(nonCarrierSql);
-//            }
-//        }
+        for (String chr : RegionManager.ALL_CHR) {
+            String sql = "select d.* from DP_bins_chr" + chr + " d, exome_sample_id s "
+                    + "where d.sample_id = s.sample_id "
+                    + "into outfile '" + OUTPUT_PATH + "DP_bins_chr" + chr + ".txt';";
+            executeSQL(sql);
+        }
+    }
+
+    public static void executeSQL(String sql) throws SQLException {
+        LogManager.writeAndPrint(sql);
+        DBManager.executeQuery(sql);
+    }
+
+    public static void updateSQL(String sql) throws SQLException {
+        LogManager.writeAndPrint(sql);
+        DBManager.executeUpdate(sql);
     }
 }
