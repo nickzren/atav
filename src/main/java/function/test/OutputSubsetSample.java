@@ -13,24 +13,25 @@ public class OutputSubsetSample {
 
     // minor config tweak for this task
     // CommonCommand.isNonSampleAnalysis = true;
-
     public static final String OUTPUT_PATH = "/nfs/seqscratch_ssd/zr2180/waldb/";
 
     public static void run() throws SQLException {
-        outputCarrierData();
+        String sql = "CREATE TEMPORARY TABLE IF NOT EXISTS exome_sample_id AS "
+                + "(SELECT sample_id FROM sample where sample_type = 'exome' "
+                + "and sample_name not like '%SRR%' "
+                + "and sample_finished = 1 "
+                + "and sample_failure = 0 limit 10000)";
+        updateSQL(sql);
 
-        outputNonCarrierData();
+//        outputCarrierData();
+
+//        outputNonCarrierData();
     }
 
     public static void outputCarrierData() throws SQLException {
-        String sql = "CREATE TEMPORARY TABLE IF NOT EXISTS exome_sample_id AS "
-                + "(SELECT sample_id FROM sample where sample_type = 'exome' "
-                + "and sample_name not like '%SRR%' limit 10000)";
-        updateSQL(sql);
-
         for (String chr : RegionManager.ALL_CHR) {
-//            // get variant id , pos, ref, alt data
-            sql = "select distinct variant_id,POS,REF,ALT from WalDB.variant_chr" + chr
+            // get variant id , pos, ref, alt data
+            String sql = "select distinct variant_id,POS,REF,ALT from WalDB.variant_chr" + chr
                     + " into outfile '" + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt';";
             executeSQL(sql);
 //
@@ -46,11 +47,11 @@ public class OutputSubsetSample {
 //
 //            // load variant id, pos, ref, alt into table
             sql = "load data infile '" + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt' "
-                    + "into table WalDB.variant_pos_chr" + chr;
+                    + "ignore into table WalDB.variant_pos_chr" + chr;
             executeSQL(sql);
 //
 //            // get carrier data
-            sql = "select c.sample_id," + chr + ",v.POS,v.REF,v.ALT"
+            sql = "select CONCAT('" + chr + "','-',c.block_id),c.sample_id,'" + chr + "',v.POS,v.REF,v.ALT"
                     + ",c.GT,c.DP,c.AD_REF,c.AD_ALT,c.GQ,c.VQSLOD,c.FS,c.MQ,c.QD,c.QUAL"
                     + ",c.ReadPosRankSum,c.MQRankSum,c.FILTER "
                     + "from WalDB.variant_pos_chr" + chr + " v"
@@ -59,12 +60,15 @@ public class OutputSubsetSample {
                     + "where v.variant_id = c.variant_id and c.sample_id = s.sample_id "
                     + "into outfile '" + OUTPUT_PATH + "called_variant_chr" + chr + ".txt';";
             executeSQL(sql);
+
+            sql = "drop table WalDB.variant_pos_chr" + chr;
+            updateSQL(sql);
         }
     }
 
     public static void outputNonCarrierData() throws SQLException {
         for (String chr : RegionManager.ALL_CHR) {
-            String sql = "select d.* from DP_bins_chr" + chr + " d, exome_sample_id s "
+            String sql = "select CONCAT('" + chr + "','-',d.block_id),d.sample_id,d.DP_string from DP_bins_chr" + chr + " d, exome_sample_id s "
                     + "where d.sample_id = s.sample_id "
                     + "into outfile '" + OUTPUT_PATH + "DP_bins_chr" + chr + ".txt';";
             executeSQL(sql);
