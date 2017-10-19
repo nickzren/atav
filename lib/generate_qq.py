@@ -83,8 +83,8 @@ def permute(counter, statuses):
     # make contingency table and calculate pvals for each gene
     pvals = []
     for row in range(col_matrix.shape[0]):
-        q_case = np.where(col_matrix[row,case_indices] == 1)[0].shape[0]
-        q_ctrl = np.where(col_matrix[row,ctrl_indices] == 1)[0].shape[0]
+        q_case = np.where(col_matrix[row,case_indices] > 0)[0].shape[0]
+        q_ctrl = np.where(col_matrix[row,ctrl_indices] > 0)[0].shape[0]
         # fisher exact test
         # if number of qualified samples is in the lookup table, use that
         if q_case + 1 <= lookup.shape[0] and q_ctrl + 1 <= lookup.shape[1]:
