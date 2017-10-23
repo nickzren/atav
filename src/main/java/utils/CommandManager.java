@@ -318,6 +318,7 @@ public class CommandManager {
                     KnownVarCommand.isIncludeKnownVar = true;
                     RvisCommand.isIncludeRvis = true;
                     SubRvisCommand.isIncludeSubRvis = true;
+                    BisCommand.isIncludeBis = true;
 //                    GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isIncludeMgi = true;
                     DenovoDBCommand.isIncludeDenovoDB = true;
