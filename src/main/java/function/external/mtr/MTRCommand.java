@@ -12,7 +12,7 @@ public class MTRCommand {
     public static boolean isIncludeMTR = false;
     public static float mtr = Data.NO_FILTER;
     public static float fdr = Data.NO_FILTER;
-    public static int mtrCentile = Data.NO_FILTER;
+    public static float mtrCentile = Data.NO_FILTER;
 
     public static boolean isMTRValid(float value) {
         if (mtr == Data.NO_FILTER) {
@@ -32,7 +32,7 @@ public class MTRCommand {
                 || value == Data.NA;
     }
 
-    public static boolean isMTRCentileValid(int value) {
+    public static boolean isMTRCentileValid(float value) {
         if (mtrCentile == Data.NO_FILTER) {
             return true;
         }

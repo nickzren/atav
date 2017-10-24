@@ -17,7 +17,7 @@ public class MTR {
     private String feature; // transcript stable id
     private float mtr;
     private float fdr;
-    private int mtrCentile;
+    private float mtrCentile;
 
     public MTR(String chr, int pos, String transcript) {
         this.chr = chr;
@@ -47,7 +47,7 @@ public class MTR {
             if (rs.next()) {
                 mtr = getFloat((Float) rs.getObject("MTR"));
                 fdr = getFloat((Float) rs.getObject("FDR"));
-                mtrCentile = getInteger((Integer) rs.getObject("MTR_centile"));
+                mtrCentile = getFloat((Float) rs.getObject("MTR_centile"));
             } else {
                 mtr = Data.NA;
                 fdr = Data.NA;
@@ -75,14 +75,6 @@ public class MTR {
 
         return f;
     }
-    
-    private int getInteger(Integer i) {
-        if (i == null) {
-            return Data.NA;
-        }
-
-        return i;
-    }
 
     @Override
     public String toString() {
@@ -90,7 +82,7 @@ public class MTR {
 
         sb.append(FormatManager.getFloat(mtr)).append(",");
         sb.append(FormatManager.getFloat(fdr)).append(",");
-        sb.append(FormatManager.getInteger(mtrCentile)).append(",");
+        sb.append(FormatManager.getFloat(mtrCentile)).append(",");
 
         return sb.toString();
     }
