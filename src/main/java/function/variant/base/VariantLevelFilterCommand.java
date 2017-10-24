@@ -279,8 +279,8 @@ public class VariantLevelFilterCommand {
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--mtr-centile":
-                    checkValueValid(1, 0, option);
-                    MTRCommand.mtrCentile = getValidFloat(option);
+                    checkValueValid(100, 0, option);
+                    MTRCommand.mtrCentile = getValidInteger(option);
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--include-evs":
