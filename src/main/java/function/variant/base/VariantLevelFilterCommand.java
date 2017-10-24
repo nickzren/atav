@@ -260,7 +260,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--mtr-centile":
                     checkValueValid(100, 0, option);
-                    MTRCommand.mtrCentile = getValidInteger(option);
+                    MTRCommand.mtrCentile = getValidFloat(option);
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--include-evs":
