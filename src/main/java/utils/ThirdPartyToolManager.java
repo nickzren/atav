@@ -20,6 +20,7 @@ import java.util.Vector;
 public class ThirdPartyToolManager {
 
     public static String PYTHON;
+    public static String PERL;
     public static String PLINK;
     public static String KING;
     private static String R_301_SCRIPT_SYSTEM_PATH;
@@ -27,7 +28,6 @@ public class ThirdPartyToolManager {
     private static final String COLLAPSED_REGRESSION_R = Data.ATAV_HOME + "lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = Data.ATAV_HOME + "lib/pvals_qqplot.R";
     private static final String PERM_QQPLOT_FOR_COLLAPSING = Data.ATAV_HOME + "lib/generate_qq.py";
-    private static final String PERL_SYSTEM_PATH = "perl";
     private static final String FLANKING_SEQ_PERL = Data.ATAV_HOME + "lib/flanking_seq.pl";
     private static final String TRIO_DENOVO_TIER = Data.ATAV_HOME + "lib/r0.5_trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.5_trio_comp_het_tier.R";
@@ -50,6 +50,7 @@ public class ThirdPartyToolManager {
             prop.load(input);
 
             PYTHON = prop.getProperty("python");
+            PERL = prop.getProperty("perl");
             PLINK = prop.getProperty("plink");
             KING = prop.getProperty("king");
             R_301_SCRIPT_SYSTEM_PATH = prop.getProperty("R-3.0.1");
@@ -122,7 +123,7 @@ public class ThirdPartyToolManager {
     }
 
     public static void callFlankingSeq(String baseFlankingSeqFilePath) {
-        String cmd = PERL_SYSTEM_PATH + " " + FLANKING_SEQ_PERL
+        String cmd = PERL + " " + FLANKING_SEQ_PERL
                 + " --variant " + VariantLevelFilterCommand.includeVariantId
                 + " --width " + FlankingCommand.width
                 + " --out " + baseFlankingSeqFilePath;
