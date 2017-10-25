@@ -65,7 +65,7 @@ public class CalledVariant extends AnnotatedVariant {
             // single variant carriers data process
             CarrierBlockManager.initCarrierMap(carrierMap, this);
 
-            if (carrierMap.isEmpty()) {
+            if (carrierMap.isEmpty() && GenotypeLevelFilterCommand.minVarPresent > 0) {
                 isValid = false;
             }
         } else {
@@ -74,7 +74,7 @@ public class CalledVariant extends AnnotatedVariant {
 
             carrierMap = CarrierBlockManager.getVarCarrierMap(variantId);
 
-            if (carrierMap == null) {
+            if (carrierMap == null && GenotypeLevelFilterCommand.minVarPresent > 0) {
                 isValid = false;
             }
         }
@@ -182,11 +182,9 @@ public class CalledVariant extends AnnotatedVariant {
                 return Data.SHORT_NA;
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 return Data.SHORT_NA;
             }
-        }
 
         return dpBin;
     }
