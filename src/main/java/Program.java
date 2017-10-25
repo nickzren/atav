@@ -77,6 +77,7 @@ import function.genotype.vargeno.VarGenoCommand;
 import function.test.Test;
 import function.test.TestCommand;
 import utils.RunTimeManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -108,6 +109,8 @@ public class Program {
 
             DBManager.init();
 
+            ThirdPartyToolManager.init();
+            
             EffectManager.init();
 
             SampleManager.init();
