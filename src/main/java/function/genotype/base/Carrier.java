@@ -145,7 +145,8 @@ public class Carrier extends NonCarrier {
      */
     protected void checkValidOnXY(Region r) {
         if (gt != Data.BYTE_NA
-                && !TrioCommand.isListTrio) {
+                && !TrioCommand.isListTrio
+                && !GenotypeLevelFilterCommand.disableCheckOnSexChr) {
             boolean isValid = true;
 
             if (SampleManager.getMap().get(sampleId).isMale()) {
