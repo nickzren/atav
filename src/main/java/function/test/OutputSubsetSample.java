@@ -4,6 +4,7 @@ import function.variant.base.RegionManager;
 import java.sql.SQLException;
 import utils.DBManager;
 import utils.LogManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -13,7 +14,7 @@ public class OutputSubsetSample {
 
     // minor config tweak for this task
     // CommonCommand.isNonSampleAnalysis = true;
-    public static final String OUTPUT_PATH = "/nfs/seqscratch_ssd/zr2180/waldb_chrY/";
+    public static final String OUTPUT_PATH = "/nfs/seqscratch_ssd/zr2180/waldb/";
 
     public static void run() throws SQLException {
         String sql = "CREATE TEMPORARY TABLE IF NOT EXISTS exome_sample_id AS "
@@ -22,14 +23,13 @@ public class OutputSubsetSample {
                 + "and sample_finished = 1 "
                 + "and sample_failure = 0 limit 10000)";
         updateSQL(sql);
-        
+
         sql = "SELECT sample_id,sample_id,sample_type,capture_kit,prep_id,NULL,0,1,0 FROM sample where sample_type = 'exome' "
                 + "and sample_name not like '%SRR%' "
                 + "and sample_finished = 1 "
                 + "and sample_failure = 0 limit 10000 "
                 + "into outfile '" + OUTPUT_PATH + "db_load_10k_exome_sample.txt';";
         executeSQL(sql);
-
         sql = "SELECT sample_id,sample_id,0,0,1,1,sample_type,capture_kit FROM sample where sample_type = 'exome' "
                 + "and sample_name not like '%SRR%' "
                 + "and sample_finished = 1 "
@@ -37,6 +37,13 @@ public class OutputSubsetSample {
                 + "into outfile '" + OUTPUT_PATH + "10k_exome_atav_sample.txt';";
         executeSQL(sql);
 
+        sql = "SELECT * FROM hgnc "
+                + "into outfile '" + OUTPUT_PATH + "hgnc.txt';";
+        executeSQL(sql);
+        
+        sql = "SELECT * FROM effect_ranking "
+                + "into outfile '" + OUTPUT_PATH + "effect_ranking.txt';";
+        executeSQL(sql);
         outputCarrierData();
         outputNonCarrierData();
     }
@@ -62,6 +69,8 @@ public class OutputSubsetSample {
             sql = "load data infile '" + OUTPUT_PATH + "variant_id_chr" + chr + ".txt' "
                     + "ignore into table WalDB.variant_id_chr" + chr;
             executeSQL(sql);
+            String[] cmd = {"rm " + OUTPUT_PATH + "variant_id_chr" + chr + ".txt "};
+            ThirdPartyToolManager.systemCall(cmd);
 
             // get variant id , pos, ref, alt data
             sql = "select distinct v.variant_id,v.POS,v.REF,v.ALT from WalDB.variant_chr" + chr
@@ -76,7 +85,9 @@ public class OutputSubsetSample {
                     + " where v.variant_id = i.variant_id"
                     + " into outfile '" + OUTPUT_PATH + "db_load_variant_chr" + chr + ".txt';";
             executeSQL(sql);
-
+            cmd[0] = "gzip -9 " + OUTPUT_PATH + "db_load_variant_chr" + chr + ".txt ";
+            ThirdPartyToolManager.systemCall(cmd);
+            
             // create variant pos table            
             sql = "CREATE temporary TABLE WalDB.variant_pos_chr" + chr + " ("
                     + " variant_id int(10) unsigned NOT NULL,"
@@ -91,7 +102,9 @@ public class OutputSubsetSample {
             sql = "load data infile '" + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt' "
                     + "ignore into table WalDB.variant_pos_chr" + chr;
             executeSQL(sql);
-//
+            cmd[0] = "rm " + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt ";
+            ThirdPartyToolManager.systemCall(cmd);
+
 //            // get carrier data
             sql = "select c.* "
                     + "from WalDB.variant_pos_chr" + chr + " v"
@@ -100,6 +113,8 @@ public class OutputSubsetSample {
                     + "where v.variant_id = c.variant_id and c.sample_id = s.sample_id "
                     + "into outfile '" + OUTPUT_PATH + "db_load_called_variant_chr" + chr + ".txt';";
             executeSQL(sql);
+            cmd[0] = "gzip -9 " + OUTPUT_PATH + "db_load_called_variant_chr" + chr + ".txt ";
+            ThirdPartyToolManager.systemCall(cmd);
 
             sql = "drop table WalDB.variant_pos_chr" + chr;
             updateSQL(sql);
@@ -112,6 +127,8 @@ public class OutputSubsetSample {
                     + "where d.sample_id = s.sample_id "
                     + "into outfile '" + OUTPUT_PATH + "db_load_DP_bins_chr" + chr + ".txt';";
             executeSQL(sql);
+            String[] cmd = {"gzip -9 " + OUTPUT_PATH + "db_load_DP_bins_chr" + chr + ".txt "};
+            ThirdPartyToolManager.systemCall(cmd);
         }
     }
 
