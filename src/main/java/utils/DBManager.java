@@ -87,7 +87,7 @@ public class DBManager {
         servers = servers.replaceAll("( )+", "");
 
         for (String server : servers.split(",")) {
-            String[] tmp = server.split("-"); // format: server_name-server_ip
+            String[] tmp = server.split(";"); // format: server_name;server_ip
             dbHostMap.put(tmp[0], tmp[1]);
         }
     }
