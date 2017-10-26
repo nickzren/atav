@@ -16,7 +16,7 @@ export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=256m"
 #  setup java 8
 sudo yum remove java-1.7.0 -y 
 sudo yum install java-1.8.0-openjdk-devel -y
-export JAVA_HOME=/
+export JAVA_HOME=/usr
 
 # Install ADAM
 git clone -b dragen https://github.com/igm-team/atav.git
