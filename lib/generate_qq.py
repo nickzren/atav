@@ -21,9 +21,10 @@ import sys
 
 sns.set_style('darkgrid')
 
+
 def valid_numerical_argument(
-    arg, arg_name, arg_type=int, min_value=0, max_value=sys.maxint,
-    left_op=lt, right_op=le):
+        arg, arg_name, arg_type=int, min_value=0, max_value=sys.maxint,
+        left_op=lt, right_op=le):
     """
     Confirm that the specified value is valid in the range
     (minimum_value, maximum_value] (by default)
@@ -52,6 +53,7 @@ def valid_numerical_argument(
             "{arg_name} ({arg}) is not a valid {arg_type}".format(
                 arg_name=arg_name, arg=arg, arg_type=arg_type.__name__))
 
+
 def precalc(pair, num_case, num_ctrl):
     """
     Calculate FET p-value for pair of qual case + qual ctrl
@@ -63,12 +65,14 @@ def precalc(pair, num_case, num_ctrl):
                                      [pair[1], num_ctrl - pair[1]]])
     return (pair[0], pair[1], pval)
 
+
 def shared_mem(result):
     """
     Populate lookup table with pre-calculated p-values
     :param result: (tuple) num. qual. cases, num. qual ctrls, associated FET p-value
     """
-    lookup[result[0],result[1]] = result[2]
+    lookup[result[0], result[1]] = result[2]
+
 
 def permute(counter, statuses):
     """
@@ -83,8 +87,8 @@ def permute(counter, statuses):
     # make contingency table and calculate pvals for each gene
     pvals = []
     for row in range(col_matrix.shape[0]):
-        q_case = np.where(col_matrix[row,case_indices] > 0)[0].shape[0]
-        q_ctrl = np.where(col_matrix[row,ctrl_indices] > 0)[0].shape[0]
+        q_case = np.where(col_matrix[row, case_indices] == 1)[0].shape[0]
+        q_ctrl = np.where(col_matrix[row, ctrl_indices] == 1)[0].shape[0]
         # fisher exact test
         # if number of qualified samples is in the lookup table, use that
         if q_case + 1 <= lookup.shape[0] and q_ctrl + 1 <= lookup.shape[1]:
@@ -96,6 +100,7 @@ def permute(counter, statuses):
         pvals.append(pvalue)
     pvals = sorted(pvals)
     return pvals
+
 
 def read_summary_file(summary_file):
     """
@@ -126,6 +131,7 @@ def read_summary_file(summary_file):
             ctrl_qual.append(int(line[qctrl_index]))
     return (genes, ncase, nctrl, case_qual, ctrl_qual)
 
+
 def read_matrix_file(matrix_file, ngenes):
     """
     Read in matrix file
@@ -138,8 +144,9 @@ def read_matrix_file(matrix_file, ngenes):
         col_matrix = np.zeros((ngenes, nsamps))
         for i, line in enumerate(infile):
             line = line.strip().split('\t')
-            col_matrix[i,:] = line[1:]
+            col_matrix[i, :] = line[1:]
     return col_matrix
+
 
 def plot_qq(qq_file, exp, obs, lower, upper, sorted_genes):
     """
@@ -163,10 +170,10 @@ def plot_qq(qq_file, exp, obs, lower, upper, sorted_genes):
     gws = 0.05 / len(obs)
     reg_exp = exp[(obs > gws) & (exp > gws) & (exp < 1) & (obs < 1)]
     reg_obs = obs[(obs > gws) & (exp > gws) & (exp < 1) & (obs < 1)]
-    reg_exp = stats.chi2.ppf(1-reg_exp, 1)
-    reg_obs = stats.chi2.ppf(1-reg_obs, 1)
+    reg_exp = stats.chi2.ppf(1 - reg_exp, 1)
+    reg_obs = stats.chi2.ppf(1 - reg_obs, 1)
     # for lstsq, explanatory vars must be in column form
-    reg_exp = reg_exp[:,np.newaxis]
+    reg_exp = reg_exp[:, np.newaxis]
     # this least squares regression forces intercept to be 0
     slope = np.linalg.lstsq(reg_exp, reg_obs)[0][0]
     lambda_factor = slope
@@ -184,32 +191,32 @@ def plot_qq(qq_file, exp, obs, lower, upper, sorted_genes):
     axisMax_exp = np.ceil(max(exp))
 
     # initialize qqplot with axes and labels
-    fig = plt.figure(figsize=(12,12))
+    fig = plt.figure(figsize=(12, 12))
     plt.xlim([0, axisMax_exp])
     plt.xlabel('Expected -log10(p)', fontsize=20)
     plt.ylim([0, axisMax_obs])
     plt.ylabel('Observed -log10(p)', fontsize=20)
     plt.title('QQ Plot: Observed vs. expected p-values. Lambda = {l}'.format(
-              l = lambda_factor), fontsize=20)
+              l=lambda_factor), fontsize=20)
 
     # change size of axis tick labels
     plt.tick_params(axis='both', which='major', labelsize=12)
 
     # plot the points, exp on x axis, obs on y axis
-    dataAx = fig.add_subplot(1,1,1)
+    dataAx = fig.add_subplot(1, 1, 1)
     dataAx.plot(exp, obs, 'r.', label='_nolegend_', markersize=12)
 
     # plot a diagonal line for comparison
-    lineAx = fig.add_subplot(1,1,1)
-    lineAx.plot([0,max(axisMax_obs,axisMax_exp)], [0,max(axisMax_obs,axisMax_exp)],
-                 'b-', label='_nolegend_')
-    uppAx = fig.add_subplot(1,1,1)
+    lineAx = fig.add_subplot(1, 1, 1)
+    lineAx.plot([0, max(axisMax_obs, axisMax_exp)], [0, max(axisMax_obs, axisMax_exp)],
+                'b-', label='_nolegend_')
+    uppAx = fig.add_subplot(1, 1, 1)
     uppAx.plot(exp, upper, 'g-')
-    lowAx = fig.add_subplot(1,1,1)
+    lowAx = fig.add_subplot(1, 1, 1)
     lowAx.plot(exp, lower, 'y-')
-    plt.legend(['2.5th percentile of expected p-values', 
+    plt.legend(['2.5th percentile of expected p-values',
                 '97.5th percentile of expected p-values'],
-                loc=2)
+               loc=2)
     plt.tight_layout()
     plt.savefig(qq_file)
 
@@ -227,15 +234,21 @@ if __name__ == '__main__':
                                      min_value=0, max_value=1000, arg_type=int),
                         default=1000,
                         help='Specify number of permutations')
+    parser.add_argument('--nprocs',
+                        type=partial(valid_numerical_argument, arg_name='nprocs',
+                                     min_value=0, max_value=10, arg_type=int),
+                        default=4,
+                        help='Specify number of concurrent processes')
     args = parser.parse_args()
 
     # name the output files
     qq_file = args.output + '.qqplot.pdf'
 
     # read summary file to get dictionary of gene-level info
-    ## num of cases, controls, and maximum number of qualified samples in any gene
+    # num of cases, controls, and maximum number of qualified samples in any
+    # gene
     genes, ncase, nctrl, case_qual, ctrl_qual = read_summary_file(
-                                         args.partial_summary_file)
+        args.partial_summary_file)
 
     # determine 99th percentile of qualified
     case_qual = np.array(case_qual)
@@ -262,26 +275,29 @@ if __name__ == '__main__':
     max_ctrl = min([high_qual, nctrl])
 
     # create shared memory FET lookup table
-    shared_array_base2 = mp.Array(ctypes.c_double, (max_case+1)*(max_ctrl+1))
+    shared_array_base2 = mp.Array(
+        ctypes.c_double, (max_case + 1) * (max_ctrl + 1))
     lookup = np.ctypeslib.as_array(shared_array_base2.get_obj())
-    lookup = lookup.reshape(max_case+1, max_ctrl+1)
+    lookup = lookup.reshape(max_case + 1, max_ctrl + 1)
 
-    # make list of qual case/qual ctrl pairs that need to be calculated for lookup
+    # make list of qual case/qual ctrl pairs that need to be calculated for
+    # lookup
     pairs = []
 
     # make list of (qual case, qual ctrl) tuples for FET lookup table
     for i in xrange(max_case + 1):
         for j in xrange(max_ctrl + 1):
-            pairs.append((i,j))
+            pairs.append((i, j))
 
     # generate FET p-values for lookup table
-    pool = mp.Pool(processes=12)
-    fisher_results = pool.map(partial(precalc, num_case=ncase, num_ctrl=nctrl), pairs)
+    pool = mp.Pool(processes=args.nprocs)
+    fisher_results = pool.map(
+        partial(precalc, num_case=ncase, num_ctrl=nctrl), pairs)
     pool.close()
     pool.join()
 
     # populate shared memory FET lookup table
-    pool = mp.Pool(processes=12)
+    pool = mp.Pool(processes=args.nprocs)
     pool.map(shared_mem, fisher_results)
     pool.close()
     pool.join()
@@ -289,15 +305,16 @@ if __name__ == '__main__':
     # perform permutations to generate expected p-values
     status_l = ['2'] * ncase
     status_l.extend(['1'] * nctrl)
-    pool = mp.Pool(processes=12)
-    permute_results = pool.map(partial(permute, statuses=status_l), range(args.nperms))
+    pool = mp.Pool(processes=args.nprocs)
+    permute_results = pool.map(
+        partial(permute, statuses=status_l), range(args.nperms))
     pool.close()
     pool.join()
 
     # populate array of permuted p-values
     perm_pvals = np.ones((ngenes, args.nperms))
     for i, pvals in enumerate(permute_results):
-        perm_pvals[:,i] = pvals
+        perm_pvals[:, i] = pvals
 
     # calculate 2.5%ile and 97.5%ile of permuted pvals
     bottom_perc = np.percentile(perm_pvals, 2.5, axis=1)
@@ -310,8 +327,9 @@ if __name__ == '__main__':
         if qcase + 1 <= lookup.shape[0] and qctrl + 1 <= lookup.shape[1]:
             v.append(lookup[qcase, qctrl])
         else:
-            v.append(stats.fisher_exact([[qcase, ncase-qcase],[qctrl, nctrl-qctrl]])[1])
-    ordered = sorted(genes.items(), key=lambda x:x[1][-1])
+            v.append(stats.fisher_exact(
+                [[qcase, ncase - qcase], [qctrl, nctrl - qctrl]])[1])
+    ordered = sorted(genes.items(), key=lambda x: x[1][-1])
 
     # create sorted gene list
     sorted_genes = [gene for gene, info in ordered]

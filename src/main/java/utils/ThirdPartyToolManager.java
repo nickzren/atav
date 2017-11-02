@@ -29,6 +29,7 @@ public class ThirdPartyToolManager {
     public static final String PYTHON = "/nfs/goldstein/software/python2.7.7/bin/python";
     public static final String PLINK = "/nfs/goldstein/software/PLINK_1.90/3.38/plink";
     public static final String KING = "/nfs/goldstein/software/king_relatedness/king";
+    public static final int nProcs = 4;
 
     public static int systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start");
@@ -146,6 +147,7 @@ public class ThirdPartyToolManager {
     public static void generateQQPlot4CollapsingFetP(String summaryFilePath, String matrixFilePath, String outputPath) {
         String cmd = PYTHON + " "
                 + PERM_QQPLOT_FOR_COLLAPSING + " "
+                 + "--nprocs " + nProcs + " "
                 + summaryFilePath + " "
                 + matrixFilePath + " "
                 + outputPath; // output path
