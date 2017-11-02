@@ -32,6 +32,7 @@ public class ThirdPartyToolManager {
     private static final String TRIO_DENOVO_TIER = Data.ATAV_HOME + "lib/r0.5_trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.5_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/non_trio_tier.R";
+    public static final int nProcs = 4;
 
     public static void init() {
         initDataFromSystemConfig();
@@ -172,6 +173,7 @@ public class ThirdPartyToolManager {
     public static void generateQQPlot4CollapsingFetP(String summaryFilePath, String matrixFilePath, String outputPath) {
         String cmd = PYTHON + " "
                 + PERM_QQPLOT_FOR_COLLAPSING + " "
+                + "--nprocs " + nProcs + " "
                 + summaryFilePath + " "
                 + matrixFilePath + " "
                 + outputPath; // output path
