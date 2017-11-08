@@ -269,7 +269,7 @@ public class GeneManager {
 
     public static String getCoverageSummary(String geneName) {
         if (geneCoverageSummaryMap.containsKey(geneName)) {
-            return geneCoverageSummaryMap.get(geneName);
+            return geneCoverageSummaryMap.get(geneName) + ",";
         } else {
             return "";
         }
