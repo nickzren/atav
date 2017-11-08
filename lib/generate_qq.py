@@ -241,9 +241,6 @@ if __name__ == '__main__':
                         help='Specify number of concurrent processes')
     args = parser.parse_args()
 
-    # name the output files
-    qq_file = args.output + '.qqplot.pdf'
-
     # read summary file to get dictionary of gene-level info
     # num of cases, controls, and maximum number of qualified samples in any
     # gene
@@ -339,4 +336,4 @@ if __name__ == '__main__':
     exp_pvals = np.mean(perm_pvals, axis=1)
 
     # generate qq plot
-    plot_qq(qq_file, exp_pvals, obs_pvals, bottom_perc, top_perc, sorted_genes)
+    plot_qq(args.output, exp_pvals, obs_pvals, bottom_perc, top_perc, sorted_genes)
