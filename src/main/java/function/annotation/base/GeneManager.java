@@ -30,6 +30,8 @@ public class GeneManager {
     private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<>();
     private static boolean isUsed = false;
 
+    private static boolean hasGeneDomainInput = false;
+
     public static void init() throws Exception {
         initGeneName();
 
@@ -132,6 +134,8 @@ public class GeneManager {
                     String geneId = gene.getName();
 
                     if (geneId.contains("_")) { // if using gene domain
+                        hasGeneDomainInput = true;
+
                         String geneName = geneId.substring(0, geneId.indexOf("_"));
 
                         if (!geneMapByBoundaries.containsKey(geneName)) {
@@ -312,5 +316,9 @@ public class GeneManager {
 
     public static boolean isUsed() {
         return isUsed;
+    }
+
+    public static boolean hasGeneDomainInput() {
+        return hasGeneDomainInput;
     }
 }

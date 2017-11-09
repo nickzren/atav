@@ -1,5 +1,6 @@
 package utils;
 
+import function.annotation.base.GeneManager;
 import function.external.flanking.FlankingCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
@@ -32,7 +33,7 @@ public class ThirdPartyToolManager {
     private static final String TRIO_DENOVO_TIER = Data.ATAV_HOME + "lib/r0.5_trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.5_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/non_trio_tier.R";
-    public static final int nProcs = 4;
+    private static final int nProcs = 4;
 
     public static void init() {
         initDataFromSystemConfig();
@@ -171,9 +172,16 @@ public class ThirdPartyToolManager {
     }
 
     public static void generateQQPlot4CollapsingFetP(String summaryFilePath, String matrixFilePath, String outputPath) {
+        int n = nProcs;
+
+        // hack tweaks here, gene domain input usually too large, needs to review the code again
+        if (GeneManager.hasGeneDomainInput()) {
+            n = 1;
+        }
+
         String cmd = PYTHON + " "
                 + PERM_QQPLOT_FOR_COLLAPSING + " "
-                + "--nprocs " + nProcs + " "
+                + "--nprocs " + n + " "
                 + summaryFilePath + " "
                 + matrixFilePath + " "
                 + outputPath; // output path
