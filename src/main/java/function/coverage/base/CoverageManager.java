@@ -5,7 +5,6 @@ import function.genotype.base.DPBinBlockManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import function.variant.base.Region;
-import global.Data;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -40,32 +39,15 @@ public class CoverageManager {
     }
 
     public static String getDPBinsSQLStr(Region region) {
-        String str = "SELECT * FROM DP_bins_chr" + region.getChrStr() + " use index(primary),"
+        return "SELECT * FROM DP_bins_chr" + region.getChrStr() + " use index(primary),"
                 + SampleManager.TMP_SAMPLE_ID_TABLE
                 + " WHERE block_id in (" + getBlockIdStr(region) + ")"
                 + " AND sample_id = input_sample_id ";
-
-        if (GenotypeLevelFilterCommand.minGQBin != Data.NO_FILTER) {
-            str = "SELECT * FROM GQ_bins_chr" + region.getChrStr() + " use index(primary),"
-                    + SampleManager.TMP_SAMPLE_ID_TABLE
-                    + " WHERE block_id in (" + getBlockIdStr(region) + ")"
-                    + " AND sample_id = input_sample_id ";
-        }
-
-        return str;
     }
 
     private static String getBlockIdStr(Region region) {
-        int startPosBlockId;
-        int endPosBlockId;
-
-        if (GenotypeLevelFilterCommand.minGQBin != Data.NO_FILTER) {
-            startPosBlockId = Math.floorDiv(region.getStartPosition(), DPBinBlockManager.GQ_BIN_BLOCK_SIZE);
-            endPosBlockId = Math.floorDiv(region.getEndPosition(), DPBinBlockManager.GQ_BIN_BLOCK_SIZE);
-        } else {
-            startPosBlockId = Math.floorDiv(region.getStartPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
-            endPosBlockId = Math.floorDiv(region.getEndPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
-        }
+        int startPosBlockId = Math.floorDiv(region.getStartPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
+        int endPosBlockId = Math.floorDiv(region.getEndPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
 
         if (startPosBlockId == endPosBlockId) {
             return Integer.toString(startPosBlockId);
@@ -84,12 +66,7 @@ public class CoverageManager {
             ResultSet rs = DBManager.executeQuery(strQuery);
             while (rs.next()) {
                 int blockId = rs.getInt("block_id");
-                String dpStr;
-                if (GenotypeLevelFilterCommand.minGQBin != Data.NO_FILTER) {
-                    dpStr = rs.getString("GQ_string");
-                } else {
-                    dpStr = rs.getString("DP_string");
-                }
+                String dpStr = rs.getString("DP_string");
 
                 ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(
                         rs.getInt("sample_id"), region.getChrStr(), blockId, dpStr);
@@ -120,13 +97,7 @@ public class CoverageManager {
         try {
             ResultSet rs = DBManager.executeQuery(strQuery);
             while (rs.next()) {
-                String dpStr;
-                if (GenotypeLevelFilterCommand.minGQBin != Data.NO_FILTER) {
-                    dpStr = rs.getString("GQ_string");
-                } else {
-                    dpStr = rs.getString("DP_string");
-                }
-
+                String dpStr = rs.getString("DP_string");
                 int blockId = rs.getInt("block_id");
                 int sampleId = rs.getInt("sample_id");
                 ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(
@@ -161,52 +132,27 @@ public class CoverageManager {
         for (int pos = 0; pos < dpBinStr.length(); pos++) {
             char c = dpBinStr.charAt(pos);
 
-            boolean isContained = false;
-
-            if (GenotypeLevelFilterCommand.minGQBin == Data.NO_FILTER) {
-                isContained = !DPBinBlockManager.getCoverageBin().containsKey(c);
-            } else {
-                isContained = !DPBinBlockManager.getGQbin().containsKey(c);
-            }
-
-            if (isContained) {
+            if (!DPBinBlockManager.getCoverageBin().containsKey(c)) {
                 sb.append(c);
             } else {
                 int startIndex = endIndex + 1;
+
                 endIndex += Integer.parseInt(sb.toString(), 36);
 
-                if (GenotypeLevelFilterCommand.minGQBin == Data.NO_FILTER) {
-                    short dpBin = DPBinBlockManager.getCoverageByBin(c);
+                short dpBin = DPBinBlockManager.getCoverageByBin(c);
 
-                    if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
-                        list.add(new CoverageInterval(blockId, startIndex, endIndex));
-                    } else if (CoverageCommand.isIncludePrunedSite) {
-                        siteSB.append(sampleId).append(",");
-                        siteSB.append(chr).append(",");
-                        siteSB.append(blockId).append(",");
-                        siteSB.append(blockId * 1000 + startIndex).append(",");
-                        siteSB.append(endIndex).append(",");
-                        siteSB.append(FormatManager.getShort(dpBin));
-                        SiteCoverageComparison.bwSitePruned.write(siteSB.toString());
-                        SiteCoverageComparison.bwSitePruned.newLine();
-                        siteSB.setLength(0);
-                    }
-                } else {
-                    short gqBin = DPBinBlockManager.getGQbinByBin(c);
-
-                    if (gqBin >= GenotypeLevelFilterCommand.minGQBin) {
-                        list.add(new CoverageInterval(blockId, startIndex, endIndex));
-                    } else if (CoverageCommand.isIncludePrunedSite) {
-                        siteSB.append(sampleId).append(",");
-                        siteSB.append(chr).append(",");
-                        siteSB.append(blockId).append(",");
-                        siteSB.append(startIndex).append(",");
-                        siteSB.append(endIndex).append(",");
-                        siteSB.append(FormatManager.getShort(gqBin));
-                        SiteCoverageComparison.bwSitePruned.write(siteSB.toString());
-                        SiteCoverageComparison.bwSitePruned.newLine();
-                        siteSB.setLength(0);
-                    }
+                if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
+                    list.add(new CoverageInterval(blockId, startIndex, endIndex));
+                } else if (CoverageCommand.isIncludePrunedSite) {
+                    siteSB.append(sampleId).append(",");
+                    siteSB.append(chr).append(",");
+                    siteSB.append(blockId).append(",");
+                    siteSB.append(blockId * 1000 + startIndex).append(",");
+                    siteSB.append(endIndex).append(",");
+                    siteSB.append(FormatManager.getShort(dpBin));
+                    SiteCoverageComparison.bwSitePruned.write(siteSB.toString());
+                    SiteCoverageComparison.bwSitePruned.newLine();
+                    siteSB.setLength(0);
                 }
 
                 sb.setLength(0);

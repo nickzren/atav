@@ -14,13 +14,11 @@ import utils.ErrorManager;
 public class DPBinBlockManager {
 
     public static final int DP_BIN_BLOCK_SIZE = 1000;
-    public static final int GQ_BIN_BLOCK_SIZE = 10000;
 
     private static ArrayList<SampleDPBin> currentBlockList = new ArrayList<>();
     private static int currentBlockId = Data.INTEGER_NA;
 
     private static HashMap<Character, Short> dpBin = new HashMap<>();
-    private static HashMap<Character, Short> gqBin = new HashMap<>();
 
     public static void init() {
         dpBin.put('a', Data.SHORT_NA);
@@ -30,12 +28,6 @@ public class DPBinBlockManager {
         dpBin.put('e', (short) 30);
         dpBin.put('f', (short) 50);
         dpBin.put('g', (short) 200);
-
-        gqBin.put('a', Data.SHORT_NA);
-        gqBin.put('b', (short) 5);
-        gqBin.put('c', (short) 15);
-        gqBin.put('d', (short) 20);
-        gqBin.put('e', (short) 60);
     }
 
     public static void add(SampleDPBin sampleDPBin) {
@@ -123,15 +115,7 @@ public class DPBinBlockManager {
         return dpBin.get(bin);
     }
 
-    public static short getGQbinByBin(Character bin) {
-        return gqBin.get(bin);
-    }
-
     public static HashMap<Character, Short> getCoverageBin() {
         return dpBin;
-    }
-
-    public static HashMap<Character, Short> getGQbin() {
-        return gqBin;
     }
 }
