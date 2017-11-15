@@ -388,6 +388,8 @@ public class SampleManager {
                 notExistSampleList);
 
         if (!isSampleFileCorrect) {
+            LogManager.writeAndPrint("Generated all existing samples:\n" + existingSampleFile);
+
             ErrorManager.print("Wrong values in sample file.", ErrorManager.INPUT_PARSING);
         }
     }
