@@ -57,6 +57,10 @@ public class SampleManager {
     private static String covariateFileTitle = "";
     private static int covariateNum = Data.INTEGER_NA;
 
+    // output existing / qualifed samples
+    private static BufferedWriter bwExistingSample = null;
+    private final static String existingSampleFile = CommonCommand.outputPath + "existing.sample.txt";
+
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
@@ -67,7 +71,9 @@ public class SampleManager {
         checkSampleFile();
 
         if (!GenotypeLevelFilterCommand.sampleFile.isEmpty()) {
+            initExistingSampleFile();
             initFromSampleFile();
+            closeExistingSampleFile();
         } else if (GenotypeLevelFilterCommand.isAllSample) {
             initAllSampleFromAnnoDB();
         }
@@ -81,6 +87,24 @@ public class SampleManager {
         initTempTables();
 
         outputSampleListSummary();
+    }
+
+    private static void initExistingSampleFile() {
+        try {
+            bwExistingSample = new BufferedWriter(new FileWriter(existingSampleFile));
+            bwExistingSample.newLine();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
+
+    private static void closeExistingSampleFile() {
+        try {
+            bwExistingSample.flush();
+            bwExistingSample.close();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
     }
 
     private static void initSamplePermission() {
@@ -248,6 +272,9 @@ public class SampleManager {
                 sampleMap.put(sampleId, sample);
 
                 countSampleNum(sample);
+
+                bwExistingSample.write(lineStr);
+                bwExistingSample.newLine();
             }
 
             br.close();

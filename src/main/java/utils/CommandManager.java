@@ -36,6 +36,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -91,11 +92,13 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-         if (isCommandFileIncluded(options)) {
+        {
+            if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
+        }
 
         cleanUpOddSymbol();
 
@@ -234,7 +237,13 @@ public class CommandManager {
 
             CommonCommand.realOutputPath = path;
             CommonCommand.outputDirName = dir.getName();
-            CommonCommand.outputPath = path + File.separator + dir.getName() + "_";
+            CommonCommand.outputPath
+                    = path
+                    + File.separator
+                    + LocalDateTime.now().toString()
+                    + "_"
+                    + dir.getName()
+                    + "_";
         } catch (Exception e) {
             System.out.println("\nError in creating an output directory. \n\nExit\n");
             System.exit(0);
