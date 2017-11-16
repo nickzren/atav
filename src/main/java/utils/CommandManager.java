@@ -37,6 +37,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -92,13 +94,11 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-        {
-            if (isCommandFileIncluded(options)) {
+         if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
-        }
 
         cleanUpOddSymbol();
 
@@ -235,16 +235,19 @@ public class CommandManager {
                 System.exit(0);
             }
 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+
             CommonCommand.realOutputPath = path;
             CommonCommand.outputDirName = dir.getName();
             CommonCommand.outputPath
                     = path
                     + File.separator
-                    + LocalDateTime.now().toString()
+                    + LocalDateTime.now().format(formatter)
                     + "_"
                     + dir.getName()
                     + "_";
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("\nError in creating an output directory. \n\nExit\n");
             System.exit(0);
         }

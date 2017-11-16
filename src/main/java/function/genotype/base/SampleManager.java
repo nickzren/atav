@@ -18,6 +18,7 @@ import java.util.Iterator;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import utils.FormatManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -391,6 +392,10 @@ public class SampleManager {
             LogManager.writeAndPrint("Generated all existing samples:\n" + existingSampleFile);
 
             ErrorManager.print("Wrong values in sample file.", ErrorManager.INPUT_PARSING);
+        }else{
+            // no need to keep existing samples file since there are no problems
+            File file = new File(existingSampleFile);
+            file.delete();
         }
     }
 
