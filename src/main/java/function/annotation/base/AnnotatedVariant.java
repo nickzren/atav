@@ -159,7 +159,9 @@ public class AnnotatedVariant extends Variant {
                     .append(annotation.effect).append("|")
                     .append(annotation.geneName).append("|")
                     .append(annotation.stableId).append("|")
-                    .append(annotation.HGVS_p);
+                    .append(annotation.HGVS_p).append("|")
+                    .append(PolyphenManager.getPrediction(annotation.polyphenHumdiv, annotation.effect)).append("|")
+                    .append(PolyphenManager.getPrediction(annotation.polyphenHumvar, annotation.effect));
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
             polyphenHumvar = MathManager.max(polyphenHumvar, annotation.polyphenHumvar);

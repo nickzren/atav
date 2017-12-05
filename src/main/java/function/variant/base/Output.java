@@ -47,7 +47,7 @@ public class Output implements Cloneable {
                 + "Polyphen Humvar Score,"
                 + "Polyphen Humvar Prediction,"
                 + "Gene Name,"
-                + "All Effect Gene Transcript HGVS_p,";
+                + "All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar,";
     }
 
     public static String getExternalDataTitle() {
