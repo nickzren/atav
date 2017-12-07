@@ -11,6 +11,7 @@ import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -35,6 +36,8 @@ public class GenotypeLevelFilterCommand {
     public static double[] homPercentAltRead = null;
     public static int snvGQ = Data.NO_FILTER;
     public static int indelGQ = Data.NO_FILTER;
+    public static float snvSOR = Data.NO_FILTER;
+    public static float indelSOR = Data.NO_FILTER;
     public static float snvFS = Data.NO_FILTER;
     public static float indelFS = Data.NO_FILTER;
     public static int snvMQ = Data.NO_FILTER;
@@ -141,6 +144,19 @@ public class GenotypeLevelFilterCommand {
                 case "--indel-gq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     indelGQ = getValidInteger(option);
+                    break;
+                case "--sor":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvSOR = getValidFloat(option);
+                    indelSOR = getValidFloat(option);
+                    break;
+                case "--snv-sor":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvSOR = getValidFloat(option);
+                    break;
+                case "--indel-sor":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelSOR = getValidFloat(option);
                     break;
                 case "--fs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
@@ -356,6 +372,30 @@ public class GenotypeLevelFilterCommand {
                 return true;
             }
         } else if (value >= gq) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    public static boolean isSorValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isSORValid(value, snvSOR);
+        } else {
+            return isSORValid(value, indelSOR);
+        }
+    }
+
+    private static boolean isSORValid(float value, float sor) {
+        if (sor == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.FLOAT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value <= sor) {
             return true;
         }
 

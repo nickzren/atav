@@ -37,7 +37,7 @@ public class ConvertCalledVariant {
 //
 //            // get 1k block carrier data
 //            sql = "select c.sample_id,c.variant_id,floor(v.POS / 1000)"
-//                    + ",c.GT,c.DP,c.AD_REF,c.AD_ALT,c.GQ,c.VQSLOD,c.FS,c.MQ,c.QD,c.QUAL"
+//                    + ",c.GT,c.DP,c.AD_REF,c.AD_ALT,c.GQ,c.VQSLOD,c.SOR,c.FS,c.MQ,c.QD,c.QUAL"
 //                    + ",c.ReadPosRankSum,c.MQRankSum,c.FILTER,c.highest_impact,c.PID_variant_id,"
 //                    + "c.PGT,c.HP_variant_id,c.HP_GT,c.PQ "
 //                    + "from WalDB.variant_pos_chr" + chr + " v, WalDB.called_variant_chr" + chr + " c "

@@ -104,6 +104,7 @@ public class Output implements Cloneable {
                 + "Percent Alt Read,"
                 + "Percent Alt Read Binomial P,"
                 + "GQ,"
+                + "SOR,"
                 + "FS,"
                 + "MQ,"
                 + "QD,"
@@ -180,6 +181,7 @@ public class Output implements Cloneable {
         sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
         sb.append(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
+        sb.append(FormatManager.getFloat(carrier != null ? carrier.getSOR() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");
         sb.append(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA)).append(",");
