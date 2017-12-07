@@ -18,6 +18,7 @@ public class Carrier extends NonCarrier {
     private short adRef;
     private short adAlt;
     private byte gq;
+    private float vqslod;
     private float sor;
     private float fs;
     private byte mq;
@@ -35,6 +36,7 @@ public class Carrier extends NonCarrier {
         adRef = rs.getShort("AD_REF");
         adAlt = rs.getShort("AD_ALT");
         gq = FormatManager.getByte(rs, "GQ");
+        vqslod = FormatManager.getFloat(rs, "VQSLOD");
         sor = FormatManager.getFloat(rs, "SOR");
         fs = FormatManager.getFloat(rs, "FS");
         mq = FormatManager.getByte(rs, "MQ");
@@ -60,7 +62,11 @@ public class Carrier extends NonCarrier {
     public byte getGQ() {
         return gq;
     }
-    
+
+    public float getVQSLOD() {
+        return vqslod;
+    }
+
     public float getSOR() {
         return sor;
     }
@@ -109,7 +115,6 @@ public class Carrier extends NonCarrier {
         if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isGqValid(gq, isSnv)
-                    || !GenotypeLevelFilterCommand.isSorValid(sor, isSnv)
                     || !GenotypeLevelFilterCommand.isFsValid(fs, isSnv)
                     || !GenotypeLevelFilterCommand.isMqValid(mq, isSnv)
                     || !GenotypeLevelFilterCommand.isQdValid(qd, isSnv)

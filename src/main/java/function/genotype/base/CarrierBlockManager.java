@@ -34,7 +34,7 @@ public class CarrierBlockManager {
     }
 
     private static void initBlockCarrierMap(Variant var) {
-        String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,SOR,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0 "
+        String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,VQSLOD,SOR,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0 "
                 + "FROM called_variant_chr" + var.getChrStr() + "," + EffectManager.TMP_IMPACT_TABLE + ","
                 + SampleManager.TMP_SAMPLE_ID_TABLE
                 + " WHERE block_id = " + currentBlockId
@@ -87,7 +87,7 @@ public class CarrierBlockManager {
     public static void initCarrierMap(HashMap<Integer, Carrier> carrierMap, Variant var) {
         int blockId = Math.floorDiv(var.getStartPosition(), CARRIER_BLOCK_SIZE);
 
-        String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,SOR,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0 "
+        String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,VQSLOD,SOR,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0 "
                 + "FROM called_variant_chr" + var.getChrStr() + "," + EffectManager.TMP_IMPACT_TABLE + ","
                 + SampleManager.TMP_SAMPLE_ID_TABLE
                 + " WHERE block_id = " + blockId
