@@ -248,6 +248,12 @@ public class VariantManager {
     }
 
     public static boolean isValid(Variant var) {
+        if (VariantLevelFilterCommand.isExcludeSnv && var.isSnv()) {
+            return false;
+        } else if (VariantLevelFilterCommand.isExcludeIndel && var.isIndel()) {
+            return false;
+        }
+
         return (isVariantIdIncluded(var.getVariantIdStr())
                 && isRsNumberIncluded(var.getRsNumber()))
                 && !isExcluded(var.getVariantIdStr());
