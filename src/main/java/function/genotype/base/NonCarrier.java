@@ -1,7 +1,5 @@
 package function.genotype.base;
 
-import function.genotype.trio.TrioCommand;
-import function.variant.base.Region;
 import global.Data;
 import global.Index;
 
@@ -44,6 +42,10 @@ public class NonCarrier {
 
     public int getSampleId() {
         return sampleId;
+    }
+
+    public void setGT(byte value) {
+        gt = value;
     }
 
     public byte getGT() {

@@ -11,7 +11,6 @@ import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -86,7 +85,7 @@ public class GenotypeLevelFilterCommand {
                     minCtrlAF = getValidDouble(option);
                     break;
                 case "--min-coverage":
-                    checkValueValid(new String[]{"3", "10", "20", "30", "50", "200"}, option);
+                    checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
                     minCoverage = getValidInteger(option);
                     break;
                 case "--min-case-coverage-call":

@@ -21,8 +21,7 @@ public class DPBinBlockManager {
     private static HashMap<Character, Short> dpBin = new HashMap<>();
 
     public static void init() {
-        dpBin.put('a', Data.SHORT_NA);
-        dpBin.put('b', (short) 3);
+        dpBin.put('b', Data.SHORT_NA);
         dpBin.put('c', (short) 10);
         dpBin.put('d', (short) 20);
         dpBin.put('e', (short) 30);
@@ -91,7 +90,7 @@ public class DPBinBlockManager {
                 if (carrier != null) {
                     if (carrier.isValid()) {
                         carrier.setDPBin(noncarrier.getDPBin());
-
+                        
                         carrier.applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
                                 GenotypeLevelFilterCommand.minCtrlCoverageCall);
                     }
