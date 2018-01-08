@@ -233,8 +233,8 @@ public class AnnotatedVariant extends Variant {
         if (SubRvisCommand.isIncludeSubRvis) {
             subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
 
-            // sub rvis filters will only apply missense variants
-            if (effect.equals("missense_variant")) {
+            // sub rvis filters will only apply missense variants except gene boundary option at domain level used
+            if (effect.equals("missense_variant") || GeneManager.hasGeneDomainInput()) {
                 return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
                         && SubRvisCommand.isSubRVISDomainOEratioValid(subRvisOutput.getDomainOEratio())
                         && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
@@ -252,8 +252,8 @@ public class AnnotatedVariant extends Variant {
         if (BisCommand.isIncludeBis) {
             bisOutput = new BisOutput(getGeneName(), getChrStr(), getStartPosition());
 
-            // bis filters will only apply missense variants
-            if (effect.equals("missense_variant")) {
+            // bis filters will only apply missense variants except gene boundary option at domain level used
+            if (effect.equals("missense_variant") || GeneManager.hasGeneDomainInput()) {
                 BisGene geneDomain = bisOutput.getGeneDomain();
                 BisGene geneExon = bisOutput.getGeneExon();
 
