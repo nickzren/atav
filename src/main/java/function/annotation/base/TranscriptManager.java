@@ -114,4 +114,18 @@ public class TranscriptManager {
             }
         }
     }
+
+    public static boolean isValid(String chr, int id) {
+        if (transcriptMap.isEmpty()) {
+            return true;
+        } else {
+            HashSet<Integer> idSet = transcriptMap.get(chr);
+
+            if (idSet == null) {
+                return false;
+            }
+
+            return idSet.contains(id);
+        }
+    }
 }

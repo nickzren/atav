@@ -51,9 +51,10 @@ public class Annotation {
         }
     }
 
-    public boolean isValid() {
+    public boolean isValid() {        
         return PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
                 && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar)
-                && GeneManager.isValid(this, chr, pos);
+                && GeneManager.isValid(this, chr, pos)
+                && TranscriptManager.isValid(chr, stableId);
     }
 }
