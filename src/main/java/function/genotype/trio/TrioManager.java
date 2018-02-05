@@ -73,14 +73,14 @@ public class TrioManager {
     private static String getTitleByVariant() {
         return Output.getVariantDataTitle()
                 + Output.getAnnotationDataTitle()
-                + Output.getExternalDataTitle()
-                + Output.getGenoStatDataTitle()
                 + Output.getCarrierDataTitle()
                 + "GT (mother),"
                 + "DP Bin (mother),"
                 + "GT (father),"
                 + "DP Bin (father),"
-                + "Denovo Flag,";
+                + "Denovo Flag,"
+                + Output.getGenoStatDataTitle()
+                + Output.getExternalDataTitle();
     }
 
     public static void init() {

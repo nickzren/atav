@@ -75,15 +75,14 @@ public class TrioOutput extends Output {
 
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
         getCarrierData(sb, cCarrier, child);
-        
         sb.append(getGenoStr(mGeno)).append(",");
         sb.append(FormatManager.getShort(mDPBin)).append(",");
         sb.append(getGenoStr(fGeno)).append(",");
         sb.append(FormatManager.getShort(fDPBin)).append(",");
         sb.append(denovoFlag).append(",");
+        getGenoStatData(sb);
+        calledVar.getExternalData(sb);
 
         return sb.toString();
     }

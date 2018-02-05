@@ -18,10 +18,10 @@ public class CollapsingOutput extends Output {
     public static String getTitle() {
         return getVariantDataTitle()
                 + getAnnotationDataTitle()
-                + getExternalDataTitle()
-                + getGenoStatDataTitle()
                 + getCarrierDataTitle()
-                + "LOO AF,";
+                + getGenoStatDataTitle()
+                + "LOO AF,"
+                + getExternalDataTitle();
     }
 
     double looAF = 0;
@@ -90,30 +90,32 @@ public class CollapsingOutput extends Output {
 
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
         getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
-
+        getGenoStatData(sb);
         sb.append(FormatManager.getDouble(looAF)).append(",");
-        
+        calledVar.getExternalData(sb);
+
         return sb.toString();
     }
-    
+
     public String getJointedGenotypeString(String genoArrayStr) {
         StringBuilder sb = new StringBuilder();
 
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
 
+        // getCarrierData
         sb.append("NA,NA,NA,");
         sb.append(genoArrayStr).append(",");
         sb.append("NA,");
         sb.append("NA,"); // DP Bin
         sb.append("NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,");
+
+        getGenoStatData(sb);
         
         sb.append(FormatManager.getDouble(looAF)).append(",");
+
+        calledVar.getExternalData(sb);
 
         return sb.toString();
     }

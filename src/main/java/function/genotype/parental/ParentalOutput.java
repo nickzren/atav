@@ -30,9 +30,9 @@ public class ParentalOutput extends Output {
                 + "Binomial (parent),"
                 + getVariantDataTitle()
                 + getAnnotationDataTitle()
-                + getExternalDataTitle()
+                + getCarrierDataTitle()
                 + getGenoStatDataTitle()
-                + getCarrierDataTitle();
+                + getExternalDataTitle();
     }
 
     public ParentalOutput(CalledVariant c) {
@@ -110,9 +110,9 @@ public class ParentalOutput extends Output {
 
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
         getCarrierData(sb, calledVar.getCarrier(child.getId()), child);
+        getGenoStatData(sb);
+        calledVar.getExternalData(sb);
 
         return sb.toString();
     }

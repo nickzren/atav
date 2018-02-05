@@ -13,9 +13,9 @@ public class VarGenoOutput extends Output {
     public static String getTitle() {
         return getVariantDataTitle()
                 + getAnnotationDataTitle()
-                + getExternalDataTitle()
+                + getCarrierDataTitle()
                 + getGenoStatDataTitle()
-                + getCarrierDataTitle();
+                + getExternalDataTitle();
     }
 
     public VarGenoOutput(CalledVariant c) {
@@ -27,9 +27,9 @@ public class VarGenoOutput extends Output {
 
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
         getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
+        getGenoStatData(sb);
+        calledVar.getExternalData(sb);
 
         return sb.toString();
     }
@@ -39,14 +39,13 @@ public class VarGenoOutput extends Output {
 
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
-
         sb.append("NA,NA,NA,");
         sb.append(genoArrayStr).append(",");
         sb.append("NA,");
         sb.append("NA,"); // DP Bin
         sb.append("NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,");
+        getGenoStatData(sb);
+        calledVar.getExternalData(sb);
 
         return sb.toString();
     }

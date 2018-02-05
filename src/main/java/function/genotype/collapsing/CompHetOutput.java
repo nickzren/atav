@@ -20,11 +20,11 @@ public class CompHetOutput extends CollapsingOutput {
     private static String initVarTitleStr(String var) {
         String varTitle = getVariantDataTitle()
                 + getAnnotationDataTitle()
-                + getExternalDataTitle()
-                + getGenoStatDataTitle()
                 + getCarrierDataTitle()
-                + "LOO AF,";
-        
+                + getGenoStatDataTitle()
+                + "LOO AF,"
+                + getExternalDataTitle();
+
         String[] list = varTitle.split(",");
 
         varTitle = "";
@@ -53,11 +53,10 @@ public class CompHetOutput extends CollapsingOutput {
 
         calledVar.getVariantData(sb);
         calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
         getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
-
+        getGenoStatData(sb);
         sb.append(FormatManager.getDouble(looAF)).append(",");
+        calledVar.getExternalData(sb);
 
         return sb.toString();
     }
