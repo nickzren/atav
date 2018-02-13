@@ -16,9 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringEscapeUtils;
-
 import utils.FormatManager;
-import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -93,7 +91,6 @@ public class SampleManager {
     private static void initExistingSampleFile() {
         try {
             bwExistingSample = new BufferedWriter(new FileWriter(existingSampleFile));
-            bwExistingSample.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
