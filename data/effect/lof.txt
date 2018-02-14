@@ -1,0 +1,10 @@
+HIGH:exon_loss_variant
+HIGH:frameshift_variant
+HIGH:rare_amino_acid_variant
+HIGH:stop_gained
+HIGH:stop_lost
+HIGH:start_lost
+HIGH:gene_fusion
+HIGH:bidirectional_gene_fusion
+HIGH:splice_acceptor_variant
+HIGH:splice_donor_variant
