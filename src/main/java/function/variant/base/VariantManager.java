@@ -162,7 +162,7 @@ public class VariantManager {
             addVariantToList(hgmd.getVariantId(), includeVariantSet, true);
         }
 
-        resetRegionList();
+//        resetRegionList();
     }
 
     private static void addVariantToList(String str, HashSet<String> variantSet,
