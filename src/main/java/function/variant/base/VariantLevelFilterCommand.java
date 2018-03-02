@@ -27,6 +27,7 @@ import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -203,44 +204,9 @@ public class VariantLevelFilterCommand {
                     SubRvisCommand.subRVISExonOEratioPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
-                case "--bis-domain-score-percentile-0.005":
+                case "--bis-exon-percentile":
                     checkValueValid(100, 0, option);
-                    BisCommand.bisDomainScorePercentile0005 = getValidFloat(option);
-                    BisCommand.isIncludeBis = true;
-                    break;
-                case "--bis-domain-score-percentile-0.001":
-                    checkValueValid(100, 0, option);
-                    BisCommand.bisDomainScorePercentile0001 = getValidFloat(option);
-                    BisCommand.isIncludeBis = true;
-                    break;
-                case "--bis-domain-score-percentile-0.0005":
-                    checkValueValid(100, 0, option);
-                    BisCommand.bisDomainScorePercentile00005 = getValidFloat(option);
-                    BisCommand.isIncludeBis = true;
-                    break;
-                case "--bis-domain-score-percentile-0.0001":
-                    checkValueValid(100, 0, option);
-                    BisCommand.bisDomainScorePercentile00001 = getValidFloat(option);
-                    BisCommand.isIncludeBis = true;
-                    break;
-                case "--bis-exon-score-percentile-0.005":
-                    checkValueValid(100, 0, option);
-                    BisCommand.bisExonScorePercentile0005 = getValidFloat(option);
-                    BisCommand.isIncludeBis = true;
-                    break;
-                case "--bis-exon-score-percentile-0.001":
-                    checkValueValid(100, 0, option);
-                    BisCommand.bisExonScorePercentile0001 = getValidFloat(option);
-                    BisCommand.isIncludeBis = true;
-                    break;
-                case "--bis-exon-score-percentile-0.0005":
-                    checkValueValid(100, 0, option);
-                    BisCommand.bisExonScorePercentile00005 = getValidFloat(option);
-                    BisCommand.isIncludeBis = true;
-                    break;
-                case "--bis-exon-score-percentile-0.0001":
-                    checkValueValid(100, 0, option);
-                    BisCommand.bisExonScorePercentile00001 = getValidFloat(option);
+                    BisCommand.bisExonPercentile = getValidFloat(option);
                     BisCommand.isIncludeBis = true;
                     break;
                 case "--discovehr-af":

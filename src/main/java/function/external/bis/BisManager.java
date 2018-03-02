@@ -18,24 +18,17 @@ import utils.FormatManager;
  */
 public class BisManager {
 
-    private static final String DOMAIN_PATH = "data/bis/DomainBISPercentile_072617.txt";
-    private static final String EXON_PATH = "data/bis/ExonBISPercentile_072617.txt";
+//    private static final String DOMAIN_PATH = "data/bis/DomainBISPercentile_072617.txt";
+    private static final String EXON_PATH = "data/bis/ExonBISPercentile_02-11-18.txt";
 
-    private static HashMap<String, ArrayList<BisGene>> geneDomainMap = new HashMap<>();
+//    private static HashMap<String, ArrayList<BisGene>> geneDomainMap = new HashMap<>();
     private static HashMap<String, ArrayList<BisGene>> geneExonMap = new HashMap<>();
 
     public static String getTitle() {
         if (BisCommand.isIncludeBis) {
-            return "BIS Domain Name,"
-                    + "BIS Domain Score Percentile (0.005),"
-                    + "BIS Domain Score Percentile (0.001),"
-                    + "BIS Domain Score Percentile (0.0005),"
-                    + "BIS Domain Score Percentile (0.0001),"
-                    + "BIS Exon Name,"
-                    + "BIS Exon Score Percentile (0.005),"
-                    + "BIS Exon Score Percentile (0.001),"
-                    + "BIS Exon Score Percentile (0.0005),"
-                    + "BIS Exon Score Percentile (0.0001),";
+            return "BIS Exon Name,"
+                    + "BIS Exon Score,"
+                    + "BIS Exon Percentiles,";
         } else {
             return "";
         }
@@ -51,7 +44,7 @@ public class BisManager {
 
     public static void init() {
         if (BisCommand.isIncludeBis) {
-            initGeneMap(geneDomainMap, Data.ATAV_HOME + DOMAIN_PATH);
+//            initGeneMap(geneDomainMap, Data.ATAV_HOME + DOMAIN_PATH);
 
             initGeneMap(geneExonMap, Data.ATAV_HOME + EXON_PATH);
         }
@@ -77,13 +70,11 @@ public class BisManager {
                 String[] regionStr = tmp[2].split(":");
                 String chr = regionStr[0];
                 ArrayList<Region> regionList = getRegionList(regionStr[1]);
-                float score0005 = FormatManager.getFloat(tmp[3]);
-                float score0001 = FormatManager.getFloat(tmp[4]);
-                float score00005 = FormatManager.getFloat(tmp[5]);
-                float score00001 = FormatManager.getFloat(tmp[6]);
-
+                float score = FormatManager.getFloat(tmp[3]);
+                float percentiles = FormatManager.getFloat(tmp[4]);
+                
                 BisGene bisGene = new BisGene(id, chr, regionList, 
-                        score0005, score0001, score00005, score00001);
+                        score, percentiles);
 
                 if (geneMap.containsKey(geneName)) {
                     geneMap.get(geneName).add(bisGene);
@@ -118,19 +109,19 @@ public class BisManager {
         return regionList;
     }
 
-    public static BisGene getGeneDomain(String geneName, String chr, int pos) {
-        ArrayList<BisGene> domainMap = geneDomainMap.get(geneName);
-
-        if (domainMap != null) {
-            for (BisGene domain : domainMap) {
-                if (domain.isPositionIncluded(chr, pos)) {
-                    return domain;
-                }
-            }
-        }
-
-        return null;
-    }
+//    public static BisGene getGeneDomain(String geneName, String chr, int pos) {
+//        ArrayList<BisGene> domainMap = geneDomainMap.get(geneName);
+//
+//        if (domainMap != null) {
+//            for (BisGene domain : domainMap) {
+//                if (domain.isPositionIncluded(chr, pos)) {
+//                    return domain;
+//                }
+//            }
+//        }
+//
+//        return null;
+//    }
 
     public static BisGene getExonDomain(String geneName, String chr, int pos) {
         ArrayList<BisGene> exonMap = geneExonMap.get(geneName);
