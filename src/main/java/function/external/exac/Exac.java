@@ -31,7 +31,7 @@ public class Exac {
         this.ref = ref;
         this.alt = alt;
 
-        initType();
+        isSnv = ref.length() == alt.length();
 
         initCoverage();
 
@@ -47,22 +47,13 @@ public class Exac {
             af = new float[ExacManager.EXAC_POP.length];
             gts = new String[ExacManager.EXAC_POP.length];
             
-            initType();
+            isSnv = ref.length() == alt.length();
 
             initCoverage();
             
             setAF(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    private void initType() {
-        isSnv = true;
-
-        if (ref.length() > 1
-                || alt.length() > 1) {
-            isSnv = false;
         }
     }
 

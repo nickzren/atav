@@ -27,12 +27,7 @@ public class Genomes {
         this.ref = ref;
         this.alt = alt;
 
-        isSnv = true;
-
-        if (ref.length() > 1
-                || alt.length() > 1) {
-            isSnv = false;
-        }
+        isSnv = ref.length() == alt.length();
 
         initAF();
     }

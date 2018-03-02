@@ -34,11 +34,7 @@ public class GnomADExome {
         this.ref = ref;
         this.alt = alt;
 
-        isSnv = true;
-
-        if (ref.length() != alt.length()) {
-            isSnv = false;
-        }
+        isSnv = ref.length() == alt.length();
 
         initCoverage();
 
@@ -54,11 +50,7 @@ public class GnomADExome {
             maf = new float[GnomADManager.GNOMAD_EXOME_POP.length];
             gts = new String[GnomADManager.GNOMAD_EXOME_POP.length];
 
-            isSnv = true;
-
-            if (ref.length() != alt.length()) {
-                isSnv = false;
-            }
+            isSnv = ref.length() == alt.length();
 
             initCoverage();
 

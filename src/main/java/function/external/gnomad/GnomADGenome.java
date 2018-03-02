@@ -32,11 +32,7 @@ public class GnomADGenome {
         this.ref = ref;
         this.alt = alt;
 
-        isSnv = true;
-
-        if (ref.length() != alt.length()) {
-            isSnv = false;
-        }
+        isSnv = ref.length() == alt.length();
 
         initMaf();
     }
@@ -50,11 +46,7 @@ public class GnomADGenome {
             maf = new float[GnomADManager.GNOMAD_GENOME_POP.length];
             gts = new String[GnomADManager.GNOMAD_GENOME_POP.length];
 
-            isSnv = true;
-
-            if (ref.length() != alt.length()) {
-                isSnv = false;
-            }
+            isSnv = ref.length() == alt.length();
 
             setMaf(rs);
         } catch (Exception e) {
