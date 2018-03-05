@@ -332,6 +332,7 @@ public class CommandManager {
                     DenovoDBCommand.isIncludeDenovoDB = true;
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
                     MTRCommand.isIncludeMTR = true;
+                    BisCommand.isIncludeBis = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":

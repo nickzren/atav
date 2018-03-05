@@ -257,7 +257,7 @@ public class AnnotatedVariant extends Variant {
             subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
 
             // sub rvis filters will only apply missense variants
-            if (function.startsWith("NON_SYNONYMOUS")) {
+            if (function.startsWith("NON_SYNONYMOUS") || GeneManager.hasGeneDomainInput()) {
                 return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
                         && SubRvisCommand.isSubRVISDomainOEratioValid(subRvisOutput.getDomainOEratio())
                         && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
@@ -276,18 +276,10 @@ public class AnnotatedVariant extends Variant {
             bisOutput = new BisOutput(getGeneName(), getChrStr(), getStartPosition());
 
             // bis filters will only apply missense variants
-            if (function.startsWith("NON_SYNONYMOUS")) {
-                BisGene geneDomain = bisOutput.getGeneDomain();
+            if (function.startsWith("NON_SYNONYMOUS") || GeneManager.hasGeneDomainInput()) {
                 BisGene geneExon = bisOutput.getGeneExon();
 
-                return BisCommand.isBisDomainScore0005Valid(geneDomain == null ? Data.NA : geneDomain.getScore0005())
-                        && BisCommand.isBisDomainScore0001Valid(geneDomain == null ? Data.NA : geneDomain.getScore0001())
-                        && BisCommand.isBisDomainScore00005Valid(geneDomain == null ? Data.NA : geneDomain.getScore00005())
-                        && BisCommand.isBisDomainScore00001Valid(geneDomain == null ? Data.NA : geneDomain.getScore00001())
-                        && BisCommand.isBisExonScore0005Valid(geneExon == null ? Data.NA : geneExon.getScore0005())
-                        && BisCommand.isBisExonScore0001Valid(geneExon == null ? Data.NA : geneExon.getScore0001())
-                        && BisCommand.isBisExonScore00005Valid(geneExon == null ? Data.NA : geneExon.getScore00005())
-                        && BisCommand.isBisExonScore00001Valid(geneExon == null ? Data.NA : geneExon.getScore00001());
+                return BisCommand.isBisExonPercentileValid(geneExon == null ? Data.NA : geneExon.getPercentiles());
             } else {
                 return true;
             }
