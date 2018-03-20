@@ -204,6 +204,8 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
+                && PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
+                && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar)
                 && isTrapValid()
                 && isSubRVISValid()
                 && isBisValid()

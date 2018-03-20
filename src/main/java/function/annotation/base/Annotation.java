@@ -41,6 +41,7 @@ public class Annotation {
 
         polyphenHumdiv = MathManager.devide(FormatManager.getInt(rset, "polyphen_humdiv"), 1000);
         polyphenHumvar = MathManager.devide(FormatManager.getInt(rset, "polyphen_humvar"), 1000);
+        
         isCCDS = TranscriptManager.isCCDSTranscript(chr, stableId);
         if (isCCDS) {
             polyphenHumdivCCDS = polyphenHumdiv;
@@ -52,9 +53,7 @@ public class Annotation {
     }
 
     public boolean isValid() {        
-        return PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
-                && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar)
-                && GeneManager.isValid(this, chr, pos)
+        return GeneManager.isValid(this, chr, pos)
                 && TranscriptManager.isValid(chr, stableId);
     }
 }
