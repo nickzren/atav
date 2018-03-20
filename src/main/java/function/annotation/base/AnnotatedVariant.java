@@ -143,12 +143,12 @@ public class AnnotatedVariant extends Variant {
                 aminoAcidChange = annotation.aminoAcidChange;
                 stableId = annotation.stableId;
             }
-
+            
             transcriptSet.add(annotation.function + "|"
                     + annotation.geneName + "|"
                     + annotation.stableId
                     + "(" + annotation.aminoAcidChange + ")");
-
+            
             polyphenHumdiv = Math.max(polyphenHumdiv, annotation.polyphenHumdiv);
             polyphenHumvar = Math.max(polyphenHumvar, annotation.polyphenHumvar);
 
@@ -222,6 +222,8 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
+                && PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
+                && PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
                 && isTrapValid()
                 && isSubRVISValid()
                 && isBisValid()
