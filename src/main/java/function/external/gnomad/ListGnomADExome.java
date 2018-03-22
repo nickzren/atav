@@ -20,8 +20,6 @@ public class ListGnomADExome extends AnalysisBase {
     BufferedWriter bwGnomADExome = null;
     final String gnomADExomeFilePath = CommonCommand.outputPath + "gnomad.exome.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -74,17 +72,10 @@ public class ListGnomADExome extends AnalysisBase {
                     bwGnomADExome.write(output.toString());
                     bwGnomADExome.newLine();
                 }
-
-                countVariant();
             }
 
             rset.close();
         }
-    }
-
-    private void countVariant() {
-        System.out.print("Processing variant "
-                + ++analyzedRecords + "                     \r");
     }
 
     @Override

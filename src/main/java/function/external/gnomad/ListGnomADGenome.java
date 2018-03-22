@@ -20,8 +20,6 @@ public class ListGnomADGenome extends AnalysisBase {
     BufferedWriter bwGnomADGenome = null;
     final String gnomADGenomeFilePath = CommonCommand.outputPath + "gnomad.genome.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -74,17 +72,10 @@ public class ListGnomADGenome extends AnalysisBase {
                     bwGnomADGenome.write(output.toString());
                     bwGnomADGenome.newLine();
                 }
-
-                countVariant();
             }
 
             rset.close();
         }
-    }
-
-    private void countVariant() {
-        System.out.print("Processing variant "
-                + ++analyzedRecords + "                     \r");
     }
 
     @Override

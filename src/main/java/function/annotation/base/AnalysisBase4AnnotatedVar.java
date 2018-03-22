@@ -19,8 +19,6 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
 
             annotatedVar = null;
 
-            analyzedRecords = 0;
-
             region = RegionManager.getRegion(r);
 
             rset = getAnnotationList(region);
@@ -56,7 +54,5 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
 
             processVariant(annotatedVar);
         }
-
-        countVariant();
     }
 }

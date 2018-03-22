@@ -20,8 +20,6 @@ public class ListEvs extends AnalysisBase {
     BufferedWriter bwEvs = null;
     final String evsFilePath = CommonCommand.outputPath + "evs.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -76,16 +74,8 @@ public class ListEvs extends AnalysisBase {
                 }
             }
 
-            countVariant();
-
             rset.close();
         }
-    }
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
     }
 
     @Override

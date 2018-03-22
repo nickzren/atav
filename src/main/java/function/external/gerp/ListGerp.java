@@ -16,8 +16,6 @@ public class ListGerp extends AnalysisBase {
     BufferedWriter bwGerp = null;
     final String gerpFilePath = CommonCommand.outputPath + "gerp.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -62,20 +60,12 @@ public class ListGerp extends AnalysisBase {
                     bwGerp.write(output.toString());
                     bwGerp.newLine();
                 }
-
-                countVariant();
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
-    }
-
+    
     @Override
     public String toString() {
         return "Start running list gerp function";

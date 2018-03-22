@@ -22,8 +22,6 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
             calledVar = null;
 
-            analyzedRecords = 0;
-
             region = RegionManager.getRegion(r);
 
             rset = getAnnotationList(region);
@@ -61,7 +59,5 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
 
             processVariant(calledVar);
         }
-
-        countVariant();
     }
 }

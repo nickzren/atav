@@ -16,8 +16,6 @@ public class ListTrap extends AnalysisBase {
     BufferedWriter bwTrap = null;
     final String trapFilePath = CommonCommand.outputPath + "trap.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -57,17 +55,10 @@ public class ListTrap extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
                 TrapOutput output = new TrapOutput(variantId);
                 bwTrap.write(output.toString());
-                countVariant();
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-    }
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
     }
 
     @Override

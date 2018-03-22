@@ -177,8 +177,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     }
 
     protected void count(Gene gene) {
-        System.out.print("Processing " + (gene.getIndex() + 1) + " of "
+        System.out.println("Processing " + (gene.getIndex() + 1) + " of "
                 + GeneManager.getGeneBoundaryList().size()
-                + ": " + gene.toString() + "                              \r");
+                + ": " + gene.toString());
     }
 }

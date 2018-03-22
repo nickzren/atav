@@ -20,8 +20,6 @@ public class ListDiscovEHR extends AnalysisBase {
     BufferedWriter bwDisCovEHR = null;
     final String disCovEHRFilePath = CommonCommand.outputPath + "discovehr.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -73,18 +71,10 @@ public class ListDiscovEHR extends AnalysisBase {
                     bwDisCovEHR.write(output.toString());
                     bwDisCovEHR.newLine();
                 }
-
-                countVariant();
             }
 
             rset.close();
         }
-    }
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
     }
 
     @Override

@@ -20,8 +20,6 @@ public class ListExac extends AnalysisBase {
     BufferedWriter bwExac = null;
     final String exacFilePath = CommonCommand.outputPath + "exac.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -74,17 +72,10 @@ public class ListExac extends AnalysisBase {
                     bwExac.write(output.toString());
                     bwExac.newLine();
                 }
-
-                countVariant();
             }
 
             rset.close();
         }
-    }
-
-    private void countVariant() {
-        System.out.print("Processing variant "
-                + ++analyzedRecords + "                     \r");
     }
 
     @Override

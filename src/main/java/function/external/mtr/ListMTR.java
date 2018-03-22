@@ -21,8 +21,6 @@ public class ListMTR extends AnalysisBase {
     BufferedWriter bwMTR = null;
     final String disMTRFilePath = CommonCommand.outputPath + "mtr.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -78,20 +76,12 @@ public class ListMTR extends AnalysisBase {
 //                            bwMTR.write(output.toString());
 //                            bwMTR.newLine();
 //                        }
-//
-//                        countVariant();
 //                    }
 //
 //                    rset.close();
 //                }
 //            }
 //        }
-    }
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
     }
 
     @Override

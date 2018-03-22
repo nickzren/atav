@@ -20,8 +20,6 @@ public class List1000Genomes extends AnalysisBase {
     BufferedWriter bw1000Genomes = null;
     final String genomesFilePath = CommonCommand.outputPath + "1000_genomes.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -80,20 +78,12 @@ public class List1000Genomes extends AnalysisBase {
 //                            bw1000Genomes.write(output.toString());
 //                            bw1000Genomes.newLine();
 //                        }
-//
-//                        countVariant();
 //                    }
 //
 //                    rset.close();
 //                }
             }
         }
-    }
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
     }
 
     @Override

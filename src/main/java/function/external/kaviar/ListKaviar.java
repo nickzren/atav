@@ -21,8 +21,6 @@ public class ListKaviar extends AnalysisBase {
     BufferedWriter bwKaviar = null;
     final String kaviarFilePath = CommonCommand.outputPath + "kaviar.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -81,20 +79,12 @@ public class ListKaviar extends AnalysisBase {
 //                            bwKaviar.write(output.toString());
 //                            bwKaviar.newLine();
 //                        }
-//
-//                        countVariant();
 //                    }
 //
 //                    rset.close();
 //                }
             }
         }
-    }
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
     }
 
     @Override

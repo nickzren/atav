@@ -20,8 +20,6 @@ public class ListDenovoDB extends AnalysisBase {
     BufferedWriter bwDenovoDB = null;
     final String denovoDBFilePath = CommonCommand.outputPath + "denovodb.csv";
 
-    int analyzedRecords = 0;
-
     @Override
     public void initOutput() {
         try {
@@ -73,18 +71,10 @@ public class ListDenovoDB extends AnalysisBase {
                     bwDenovoDB.write(output.denovoDB.toString());
                     bwDenovoDB.newLine();
                 }
-
-                countVariant();
             }
 
             rset.close();
         }
-    }
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant "
-                + analyzedRecords + "                     \r");
     }
 
     @Override

@@ -19,13 +19,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
     protected ResultSet rset;
     protected Region region;
     protected Annotation annotation = new Annotation();
-    protected int analyzedRecords;
     protected int nextVariantId;
-
-    protected void countVariant() {
-        analyzedRecords++;
-        System.out.print("Processing variant " + analyzedRecords + "                     \r");
-    }
 
     protected static ResultSet getAnnotationList(Region region) throws SQLException {
         String sql = "SELECT variant_id, POS, REF, ALT, rs_number, transcript_stable_id, "
