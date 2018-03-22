@@ -6,7 +6,6 @@ import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.CoverageCommand;
-import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import global.Data;
 import utils.CommonCommand;
@@ -14,7 +13,6 @@ import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
-import utils.FormatManager;
 import utils.MathManager;
 import utils.ThirdPartyToolManager;
 

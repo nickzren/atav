@@ -95,6 +95,7 @@ public class ThirdPartyToolManager {
 
         if (exitValue != 0) {
             LogManager.writeAndPrint("System call failed.");
+            ErrorManager.print("", ErrorManager.UNEXPECTED_FAIL);
         } else {
             LogManager.writeAndPrint("System call complete.");
         }
