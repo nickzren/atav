@@ -3,7 +3,6 @@ package function.genotype.pedmap;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.GenotypeLevelFilterCommand;
-import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;

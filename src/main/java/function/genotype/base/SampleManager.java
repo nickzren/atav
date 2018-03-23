@@ -216,6 +216,10 @@ public class SampleManager {
                 String familyId = values[0];
                 String individualId = values[1];
 
+                if (familyId.equalsIgnoreCase("NA") || familyId.equalsIgnoreCase("N/A")) {
+                    familyId = individualId;
+                }
+
                 if (!GenotypeLevelFilterCommand.isDisableCheckDuplicateSample) {
                     if (!sampleNameSet.contains(individualId)) {
                         sampleNameSet.add(individualId);
@@ -389,7 +393,7 @@ public class SampleManager {
             LogManager.writeAndPrint("Generated all existing samples:\n" + existingSampleFile);
 
             ErrorManager.print("Wrong values in sample file.", ErrorManager.INPUT_PARSING);
-        }else{
+        } else {
             // no need to keep existing samples file since there are no problems
             File file = new File(existingSampleFile);
             file.delete();
