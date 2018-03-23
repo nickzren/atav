@@ -216,10 +216,6 @@ public class SampleManager {
                 String familyId = values[0];
                 String individualId = values[1];
 
-                if (familyId.equalsIgnoreCase("NA") || familyId.equalsIgnoreCase("N/A")) {
-                    familyId = individualId;
-                }
-
                 if (!GenotypeLevelFilterCommand.isDisableCheckDuplicateSample) {
                     if (!sampleNameSet.contains(individualId)) {
                         sampleNameSet.add(individualId);
