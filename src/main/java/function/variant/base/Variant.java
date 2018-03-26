@@ -17,6 +17,7 @@ public class Variant extends Region {
     public int rsNumber;
     //Indel attributes
     private boolean isIndel;
+    private boolean isMNV;
 
     public Variant(String chr, int v_id, ResultSet rset) throws Exception {
         variantId = v_id;
@@ -27,6 +28,9 @@ public class Variant extends Region {
         rsNumber = FormatManager.getInt(rset, "rs_number");
 
         isIndel = refAllele.length() != allele.length();
+
+        isMNV = refAllele.length() > 1 && allele.length() > 1
+                && allele.length() == refAllele.length();
 
         initRegion(chr, pos, pos);
 
@@ -86,6 +90,10 @@ public class Variant extends Region {
 
     public boolean isIndel() {
         return isIndel;
+    }
+    
+    public boolean isMNV() {
+        return isMNV;
     }
 
     public boolean isDel() {

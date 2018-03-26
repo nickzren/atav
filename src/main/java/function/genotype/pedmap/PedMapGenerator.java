@@ -88,6 +88,11 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
+            // ignore MNV
+            if (calledVar.isMNV()) {
+                return;
+            }
+
             doOutput(calledVar);
         } catch (Exception ex) {
             ErrorManager.send(ex);
