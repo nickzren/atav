@@ -99,8 +99,8 @@ def process_coverage_summary_file(coverage_summary_fh, log_fh, verbose=False):
 
 
 def process_kinship_file(
-        kinship_fh, relatedness_threshold, phenotypes, log_fh, verbose=False):
-    """process all entries in the kinship file into one of the six defined
+        kinship_files, relatedness_threshold, phenotypes, log_fh, verbose=False):
+    """process all entries in the kinship files into one of the six defined
     categories and return as a list of graphs
     """
     affecteds_related_graph = UndirectedSampleGraph(
@@ -119,40 +119,44 @@ def process_kinship_file(
         desc="related unaffecteds")
     unaffecteds_unrelated_graph = UndirectedSampleGraph(
         desc="distantly related unaffecteds")
-    kinship_fh.next()
     if verbose:
-        log_fh.write("Parsing kinship file\n")
-    for line in kinship_fh:
-        fields = line.strip().split("\t")
-        sample_one = fields[1]
-        sample_two = fields[3]
-        related = float(fields[7]) >= relatedness_threshold
-        if phenotypes[sample_one] == phenotypes[sample_two]:
-            if phenotypes[sample_one] == 1:
-                if related:
-                    graph = affecteds_related_graph
+        log_fh.write("Parsing kinship files\n")
+    for fh in kinship_files:
+        header = fh.readline().strip().split("\t")
+        id1_index = header.index("ID1")
+        id2_index = header.index("ID2")
+        kinship_index = header.index("Kinship")
+        for line in fh:
+            fields = line.strip().split("\t")
+            sample_one = fields[id1_index]
+            sample_two = fields[id2_index]
+            related = float(fields[kinship_index]) >= relatedness_threshold
+            if phenotypes[sample_one] == phenotypes[sample_two]:
+                if phenotypes[sample_one] == 1:
+                    if related:
+                        graph = affecteds_related_graph
+                    else:
+                        graph = affecteds_unrelated_graph
                 else:
-                    graph = affecteds_unrelated_graph
+                    if related:
+                        graph = unaffecteds_related_graph
+                    else:
+                        graph = unaffecteds_unrelated_graph
             else:
+                # switch order of samples if sample_one is affected
+                if phenotypes[sample_one] == 1:
+                    sample_one, sample_two = sample_two, sample_one
                 if related:
-                    graph = unaffecteds_related_graph
+                    graph = mixed_related_graph
+                    mixed_affecteds_related_graph.add_edge(sample_two, sample_one)
                 else:
-                    graph = unaffecteds_unrelated_graph
-        else:
-            # switch order of samples if sample_one is affected
-            if phenotypes[sample_one] == 1:
-                sample_one, sample_two = sample_two, sample_one
-            if related:
-                graph = mixed_related_graph
-                mixed_affecteds_related_graph.add_edge(sample_two, sample_one)
-            else:
-                graph = mixed_unrelated_graph
-                mixed_affecteds_unrelated_graph.add_edge(
-                    sample_two, sample_one)
-        graph.add_edge(sample_one, sample_two)
-    kinship_fh.close()
+                    graph = mixed_unrelated_graph
+                    mixed_affecteds_unrelated_graph.add_edge(
+                        sample_two, sample_one)
+            graph.add_edge(sample_one, sample_two)
+        fh.close()
     log_fh.write(
-        "Done with kinship file; found:\n{} affected relationships\n{} "
+        "Done with kinship files; found:\n{} affected relationships\n{} "
         "affected distant relationships\n{} mixed relationships\n{} mixed "
         "distant relationships\n{} unaffected relationships\n{} "
         "unaffected distant relationships\n\n".format(
@@ -230,7 +234,7 @@ def remove_samples(graph, tie_break_graphs, log_fh,
 
 
 def find_samples_to_remove(
-        ped_fh, kinship_fh, relatedness_threshold, output_fh,
+        ped_fh, kin0_fh, kin_fh, relatedness_threshold, output_fh,
         coverage_summary_fh=None, seed=None, verbose=False):
     if output_fh is sys.stdout:
         log_fh = sys.stderr
@@ -241,8 +245,9 @@ def find_samples_to_remove(
             set_seed(seed)
         phenotypes, ped_lines = process_ped_file(ped_fh, log_fh, verbose)
         global all_graphs
+        kinship_files = [kin0_fh, kin_fh]
         all_graphs = process_kinship_file(
-            kinship_fh, relatedness_threshold, phenotypes, log_fh, verbose)
+            kinship_files, relatedness_threshold, phenotypes, log_fh, verbose)
         (affecteds_related_graph, affecteds_unrelated_graph, mixed_related_graph,
          mixed_unrelated_graph, mixed_affecteds_related_graph,
          mixed_affecteds_unrelated_graph, unaffecteds_related_graph,
@@ -259,7 +264,7 @@ def find_samples_to_remove(
             remove_samples(affecteds_related_graph,
                            [affecteds_unrelated_graph, mixed_affecteds_related_graph,
                             mixed_affecteds_unrelated_graph], log_fh,
-                           coverage_by_sample=coverage_by_sample, verbose=verbose))
+                            coverage_by_sample=coverage_by_sample, verbose=verbose))
         samples_to_remove.extend(
             remove_samples(unaffecteds_related_graph,
                            [mixed_related_graph, mixed_unrelated_graph,
@@ -290,8 +295,10 @@ if __name__ == "__main__":
         description=__doc__, formatter_class=CustomFormatter)
     parser.add_argument("PED_FILE", type=argparse.FileType("r"),
                         help="a PED/MAP/ATAV sample file to get phenotype")
-    parser.add_argument("KINSHIP_FILE", type=argparse.FileType("r"),
-                        help="the KING kinship output file to read")
+    parser.add_argument("KIN0_FILE", type=argparse.FileType("r"),
+                        help="the KING unrelated kinship output file to read")
+    parser.add_argument("KIN_FILE", type=argparse.FileType("r"), 
+                        help="the KING related kinship output file to read")
     parser.add_argument("-r", "--relatedness_threshold", default=0.0884,
                         type=float, help="consider kinship coefficients "
                         "above this value to be related")
@@ -306,5 +313,5 @@ if __name__ == "__main__":
                         default=sys.stdout, help="the output file")
     args = parser.parse_args()
     find_samples_to_remove(
-        args.PED_FILE, args.KINSHIP_FILE, args.relatedness_threshold,
+        args.PED_FILE, args.KIN0_FILE, args.KIN_FILE, args.relatedness_threshold,
         args.output, args.sample_coverage_summary, args.seed, args.verbose)
