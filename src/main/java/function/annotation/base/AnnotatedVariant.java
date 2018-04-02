@@ -170,9 +170,6 @@ public class AnnotatedVariant extends Variant {
                 polyphenHumdivCCDS = MathManager.max(polyphenHumdivCCDS, annotation.polyphenHumdivCCDS);
                 polyphenHumvarCCDS = MathManager.max(polyphenHumvarCCDS, annotation.polyphenHumvarCCDS);
 
-                polyphenHumdiv = polyphenHumdivCCDS;
-                polyphenHumvar = polyphenHumvarCCDS;
-
                 hasCCDS = true;
             }
 
@@ -204,8 +201,6 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
-                && PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
-                && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar)
                 && isTrapValid()
                 && isSubRVISValid()
                 && isBisValid()
@@ -289,8 +284,12 @@ public class AnnotatedVariant extends Variant {
         sb.append(HGVS_p).append(",");
         sb.append(FormatManager.getFloat(polyphenHumdiv)).append(",");
         sb.append(PolyphenManager.getPrediction(polyphenHumdiv, effect)).append(",");
+        sb.append(FormatManager.getFloat(polyphenHumdivCCDS)).append(",");
+        sb.append(PolyphenManager.getPrediction(polyphenHumdivCCDS, effect)).append(",");
         sb.append(FormatManager.getFloat(polyphenHumvar)).append(",");
         sb.append(PolyphenManager.getPrediction(polyphenHumvar, effect)).append(",");
+        sb.append(FormatManager.getFloat(polyphenHumvarCCDS)).append(",");
+        sb.append(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect)).append(",");
         sb.append("'").append(geneName).append("'").append(",");
         sb.append(allGeneTranscriptSB.toString()).append(",");
     }
@@ -327,22 +326,6 @@ public class AnnotatedVariant extends Variant {
 
     public String getHGVS_p() {
         return HGVS_p;
-    }
-
-    public String getPolyphenHumdivScore() {
-        return FormatManager.getFloat(polyphenHumdiv);
-    }
-
-    public String getPolyphenHumvarScore() {
-        return FormatManager.getFloat(polyphenHumvar);
-    }
-
-    public String getPolyphenHumdivPrediction() {
-        return PolyphenManager.getPrediction(polyphenHumdiv, effect);
-    }
-
-    public String getPolyphenHumvarPrediction() {
-        return PolyphenManager.getPrediction(polyphenHumvar, effect);
     }
 
     public String getGeneName() {

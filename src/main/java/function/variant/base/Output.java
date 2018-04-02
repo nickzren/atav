@@ -44,8 +44,12 @@ public class Output implements Cloneable {
                 + "HGVS_p,"
                 + "Polyphen Humdiv Score,"
                 + "Polyphen Humdiv Prediction,"
+                + "Polyphen Humdiv Score (CCDS),"
+                + "Polyphen Humdiv Prediction (CCDS),"
                 + "Polyphen Humvar Score,"
                 + "Polyphen Humvar Prediction,"
+                + "Polyphen Humvar Score (CCDS),"
+                + "Polyphen Humvar Prediction (CCDS),"
                 + "Gene Name,"
                 + "All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar,";
     }
