@@ -222,8 +222,6 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
-                && PolyphenManager.isValid(polyphenHumdiv, function, AnnotationLevelFilterCommand.polyphenHumdiv)
-                && PolyphenManager.isValid(polyphenHumvar, function, AnnotationLevelFilterCommand.polyphenHumvar)
                 && isTrapValid()
                 && isSubRVISValid()
                 && isBisValid()
