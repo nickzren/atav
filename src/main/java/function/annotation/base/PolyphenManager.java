@@ -10,7 +10,7 @@ public class PolyphenManager {
 
     public static String getPrediction(float score, String effect) {        
         if (score == Data.FLOAT_NA) {
-            if (effect.equals("missense_variant")
+            if (effect.startsWith("missense_variant")
                     || effect.equals("splice_region_variant")) {
                 return "unknown";
             } else {
@@ -32,7 +32,7 @@ public class PolyphenManager {
     public static boolean isValid(float score, String effect, String inputPrediction) {
         String prediction = getPrediction(score, effect);
 
-        if (effect.equals("missense_variant")
+        if (effect.startsWith("missense_variant")
                 || effect.equals("splice_region_variant")) {
             return inputPrediction.contains(prediction);
         } else {

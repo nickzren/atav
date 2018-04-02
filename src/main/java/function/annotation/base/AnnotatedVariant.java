@@ -215,7 +215,7 @@ public class AnnotatedVariant extends Variant {
                 trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
             }
 
-            if (effect.equals("missense_variant")
+            if (effect.startsWith("missense_variant")
                     || effect.equals("intron_variant")) {
                 // filter only apply to missense_variant and intron_variant variants
                 return TrapCommand.isTrapScoreValid(trapScore);
@@ -231,7 +231,7 @@ public class AnnotatedVariant extends Variant {
             subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
 
             // sub rvis filters will only apply missense variants except gene boundary option at domain level used
-            if (effect.equals("missense_variant") || GeneManager.hasGeneDomainInput()) {
+            if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
                 return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
                         && SubRvisCommand.isSubRVISDomainOEratioValid(subRvisOutput.getDomainOEratio())
                         && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
@@ -250,7 +250,7 @@ public class AnnotatedVariant extends Variant {
             bisOutput = new BisOutput(getGeneName(), getChrStr(), getStartPosition());
 
             // bis filters will only apply missense variants except gene boundary option at domain level used
-            if (effect.equals("missense_variant") || GeneManager.hasGeneDomainInput()) {
+            if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
                 BisGene geneExon = bisOutput.getGeneExon();
 
                 return BisCommand.isBisExonPercentileValid(geneExon == null ? Data.FLOAT_NA : geneExon.getPercentiles());
@@ -266,7 +266,7 @@ public class AnnotatedVariant extends Variant {
     private boolean isMTRValid() {
         if (MTRCommand.isIncludeMTR) {
             // MTR filters will only apply missense variants
-            if (effect.equals("missense_variant")) {
+            if (effect.startsWith("missense_variant")) {
                 mtr = new MTR(chrStr, startPosition, getStableId());
 
                 return mtr.isValid();
