@@ -43,13 +43,9 @@ public class Annotation {
         polyphenHumvar = MathManager.devide(FormatManager.getInt(rset, "polyphen_humvar"), 1000);
 
         isCCDS = TranscriptManager.isCCDSTranscript(chr, stableId);
-        if (isCCDS) {
-            polyphenHumdivCCDS = polyphenHumdiv;
-            polyphenHumvarCCDS = polyphenHumvar;
-        } else {
-            polyphenHumdivCCDS = Data.FLOAT_NA;
-            polyphenHumvarCCDS = Data.FLOAT_NA;
-        }
+
+        polyphenHumdivCCDS = isCCDS ? polyphenHumdiv : Data.FLOAT_NA;
+        polyphenHumvarCCDS = isCCDS ? polyphenHumvar : Data.FLOAT_NA; 
     }
 
     public boolean isValid() {
