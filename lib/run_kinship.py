@@ -41,7 +41,6 @@ from random import seed as set_seed
 from UndirectedSampleGraph import UndirectedSampleGraph
 from CustomFormatter import CustomFormatter
 
-
 def get_samples_with_min_coverage(coverage_by_sample, sample_list):
     """return a subset of the samples with the min coverage
     """
@@ -52,7 +51,6 @@ def get_samples_with_min_coverage(coverage_by_sample, sample_list):
             min_coverage = coverage_by_sample[sample]
             samples_min_coverage[min_coverage].append(sample)
     return samples_min_coverage[min_coverage]
-
 
 def process_ped_file(ped_fh, log_fh, verbose=False):
     """get the affectation status for all samples and return as a dict
@@ -78,7 +76,6 @@ def process_ped_file(ped_fh, log_fh, verbose=False):
                 phenotype, counter[phenotype]))
     return phenotypes, ped_lines
 
-
 def process_coverage_summary_file(coverage_summary_fh, log_fh, verbose=False):
     """get the number of bases covered for all samples and return as a dict
     """
@@ -97,9 +94,9 @@ def process_coverage_summary_file(coverage_summary_fh, log_fh, verbose=False):
                      format(len(coverage_by_sample)))
     return coverage_by_sample
 
-
 def process_kinship_file(
-        kinship_files, relatedness_threshold, phenotypes, log_fh, verbose=False):
+    kinship_files, relatedness_threshold, distant_relatedness_threshold,
+    phenotypes, log_fh, verbose=False):
     """process all entries in the kinship files into one of the six defined
     categories and return as a list of graphs
     """
@@ -130,7 +127,11 @@ def process_kinship_file(
             fields = line.strip().split("\t")
             sample_one = fields[id1_index]
             sample_two = fields[id2_index]
-            related = float(fields[kinship_index]) >= relatedness_threshold
+            kinship_coefficient = float(fields[kinship_index])
+            if kinship_coefficient < distant_relatedness_threshold:
+                # ignore any records below the minimal threshold
+                continue
+            related = kinship_coefficient >= relatedness_threshold
             if phenotypes[sample_one] == phenotypes[sample_two]:
                 if phenotypes[sample_one] == 1:
                     if related:
@@ -170,7 +171,6 @@ def process_kinship_file(
             mixed_related_graph, mixed_unrelated_graph,
             mixed_affecteds_related_graph, mixed_affecteds_unrelated_graph,
             unaffecteds_related_graph, unaffecteds_unrelated_graph)
-
 
 def remove_samples(graph, tie_break_graphs, log_fh,
                    coverage_by_sample=None, verbose=False):
@@ -232,10 +232,10 @@ def remove_samples(graph, tie_break_graphs, log_fh,
 
     return samples_to_remove
 
-
 def find_samples_to_remove(
-        ped_fh, kin0_fh, kin_fh, relatedness_threshold, output_fh,
-        coverage_summary_fh=None, seed=None, verbose=False):
+    ped_fh, kin0_fh, kin_fh, relatedness_threshold,
+    distant_relatedness_threshold, output_fh,
+    coverage_summary_fh=None, seed=None, verbose=False):
     if output_fh is sys.stdout:
         log_fh = sys.stderr
     else:
@@ -247,7 +247,8 @@ def find_samples_to_remove(
         global all_graphs
         kinship_files = [kin0_fh, kin_fh]
         all_graphs = process_kinship_file(
-            kinship_files, relatedness_threshold, phenotypes, log_fh, verbose)
+            kinship_files, relatedness_threshold, distant_relatedness_threshold,
+            phenotypes, log_fh, verbose)
         (affecteds_related_graph, affecteds_unrelated_graph, mixed_related_graph,
          mixed_unrelated_graph, mixed_affecteds_related_graph,
          mixed_affecteds_unrelated_graph, unaffecteds_related_graph,
@@ -302,6 +303,9 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--relatedness_threshold", default=0.0884,
                         type=float, help="consider kinship coefficients "
                         "above this value to be related")
+    parser.add_argument("-d", "--distantly_related_threshold", default=0.0442,
+                        type=float, help="consider kinship coefficients above "
+                        "this value to be distantly related")
     parser.add_argument("--sample_coverage_summary", type=argparse.FileType("r"),
                         help="break ties by removing the sample with the "
                         "lowest coverage as indicated in this file")
@@ -314,4 +318,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     find_samples_to_remove(
         args.PED_FILE, args.KIN0_FILE, args.KIN_FILE, args.relatedness_threshold,
-        args.output, args.sample_coverage_summary, args.seed, args.verbose)
+        args.distantly_related_threshold, args.output,
+        args.sample_coverage_summary, args.seed, args.verbose)
