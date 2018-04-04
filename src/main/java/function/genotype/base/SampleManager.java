@@ -214,6 +214,12 @@ public class SampleManager {
                 String[] values = lineStr.replaceAll("( )+", "").split("\t");
 
                 String familyId = values[0];
+                
+                if (familyId.equals("N/A")) {
+                    ErrorManager.print("\nWrong FamilyID: " + familyId
+                            + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
+                }
+                
                 String individualId = values[1];
 
                 if (!GenotypeLevelFilterCommand.isDisableCheckDuplicateSample) {
@@ -230,13 +236,13 @@ public class SampleManager {
 
                 byte sex = Byte.valueOf(values[4]);
                 if (sex != 1 && sex != 2) {
-                    ErrorManager.print("\nWrong Sex value: " + sex
+                    ErrorManager.print("\nWrong Sex: " + sex
                             + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
                 }
 
                 byte pheno = Byte.valueOf(values[5]);
                 if (pheno != 1 && pheno != 2) {
-                    ErrorManager.print("\nWrong Phenotype value: " + pheno
+                    ErrorManager.print("\nWrong Phenotype: " + pheno
                             + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
                 }
 

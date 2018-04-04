@@ -5,14 +5,11 @@ import function.external.flanking.FlankingCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
 import function.variant.base.VariantLevelFilterCommand;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Properties;
-import java.util.Vector;
 
 /**
  *
@@ -66,36 +63,34 @@ public class ThirdPartyToolManager {
         LogManager.writeAndPrintNoNewLine("System call start");
 
         int exitValue = Data.INTEGER_NA;
+        StringBuilder errorSB = new StringBuilder();
 
         try {
-            Process myProc;
+            Process process;
 
             if (cmd.length > 1) {
                 LogManager.writeAndPrintNoNewLine(cmd[2]);
-                myProc = Runtime.getRuntime().exec(cmd);
+                process = Runtime.getRuntime().exec(cmd);
             } else {
                 LogManager.writeAndPrintNoNewLine(cmd[0]);
-                myProc = Runtime.getRuntime().exec(cmd[0]);
-            }
-            InputStream is = myProc.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-
-            String line;
-
-            Vector<String> result = new Vector<>();
-            while ((line = br.readLine()) != null) {
-                result.add(line);
+                process = Runtime.getRuntime().exec(cmd[0]);
             }
 
-            exitValue = myProc.waitFor();
+            exitValue = process.waitFor();
+            
+            // get the error stream of the process and print it
+            process.getErrorStream();
+            InputStream error = process.getErrorStream();
+            for (int i = 0; i < error.available(); i++) {
+                errorSB.append(error.read()).append("\n");
+            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
 
         if (exitValue != 0) {
             LogManager.writeAndPrint("System call failed.");
-            ErrorManager.print("", ErrorManager.UNEXPECTED_FAIL);
+            ErrorManager.print(errorSB.toString(), ErrorManager.UNEXPECTED_FAIL);
         } else {
             LogManager.writeAndPrint("System call complete.");
         }
