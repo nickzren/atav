@@ -1,5 +1,6 @@
 package utils;
 
+import com.google.common.base.Stopwatch;
 import function.annotation.base.GeneManager;
 import function.external.flanking.FlankingCommand;
 import global.Data;
@@ -13,6 +14,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+import static utils.LogManager.writeAndPrint;
 
 /**
  *
@@ -64,6 +67,8 @@ public class ThirdPartyToolManager {
 
     public static int systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start");
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        stopwatch.start();
 
         int exitValue = Data.INTEGER_NA;
         StringBuilder cmdReadLine = new StringBuilder();
@@ -78,30 +83,43 @@ public class ThirdPartyToolManager {
                 LogManager.writeAndPrintNoNewLine(cmd[0]);
                 process = Runtime.getRuntime().exec(cmd[0]);
             }
-            
+
             InputStream is = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
-            
+
             String line;
 
             while ((line = br.readLine()) != null) {
                 cmdReadLine.append(line).append("\n");
             }
 
-            exitValue = process.waitFor();            
+            exitValue = process.waitFor();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
 
+        stopwatch.stop();
+        String runTime = getTotalRunTime(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+
         if (exitValue != 0) {
-            LogManager.writeAndPrint("System call failed.");
+            writeAndPrint("System call failed: " + runTime);
             ErrorManager.print(cmdReadLine.toString(), ErrorManager.UNEXPECTED_FAIL);
         } else {
-            LogManager.writeAndPrint("System call complete.");
+            writeAndPrint("System call complete: " + runTime);
         }
 
         return exitValue;
+    }
+
+    private static String getTotalRunTime(long elapsedTime) {
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
+        long hours = TimeUnit.MILLISECONDS.toHours(elapsedTime);
+
+        return seconds + " seconds "
+                + "(aka " + minutes + " minutes or "
+                + hours + " hours)";
     }
 
     public static void callCollapsedRegression(String outputFile,
