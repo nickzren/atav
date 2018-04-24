@@ -22,7 +22,7 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
             region = RegionManager.getRegion(r);
 
             rset = getAnnotationList(region);
-
+      
             while (rset.next()) {
                 annotation.init(rset, region.getChrStr());
 

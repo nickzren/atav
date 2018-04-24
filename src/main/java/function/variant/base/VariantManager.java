@@ -31,7 +31,7 @@ public class VariantManager {
 
     private static boolean isUsed = false;
 
-    private static int maxIncludeNum = 10000000;
+    private static int maxIncludeNum = 200000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
         if (TrioCommand.isListTrio) {

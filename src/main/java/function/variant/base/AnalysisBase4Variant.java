@@ -37,12 +37,18 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         }
 
         // region filter
-        if (region.getStartPosition() != Data.INTEGER_NA) {
-            sql = addFilter2SQL(sql, " POS >= " + region.getStartPosition() + " ");
-        }
+        // if start == end position , then avoid doing SQL range query
+        if (region.getStartPosition() == region.getEndPosition() &&
+                region.getStartPosition() != Data.INTEGER_NA) {
+            sql = addFilter2SQL(sql, " POS = " + region.getStartPosition() + " ");
+        } else {
+            if (region.getStartPosition() != Data.INTEGER_NA) {
+                sql = addFilter2SQL(sql, " POS >= " + region.getStartPosition() + " ");
+            }
 
-        if (region.getEndPosition() != Data.INTEGER_NA) {
-            sql = addFilter2SQL(sql, " POS <= " + region.getEndPosition() + " ");
+            if (region.getEndPosition() != Data.INTEGER_NA) {
+                sql = addFilter2SQL(sql, " POS <= " + region.getEndPosition() + " ");
+            }
         }
 
         // effect filter - join tmp table
@@ -61,7 +67,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         }
 
         sql += "ORDER BY POS,variant_id,effect_id,transcript_stable_id;";
-        
+
         return DBManager.executeReadOnlyQuery(sql);
     }
 
