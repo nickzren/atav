@@ -92,9 +92,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
             for (Trio trio : TrioManager.getList()) {
                 output.initTrioFamilyData(trio);
 
-                byte geno = output.getCalledVariant().getGT(trio.getChild().getIndex());
-
-                if (output.isQualifiedGeno(geno)) {
+                if (output.isQualifiedGeno(output.cGeno)) {
                     output.initDenovoFlag(trio.getChild());
 
                     doDenovoOutput(output);
