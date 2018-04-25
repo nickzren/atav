@@ -66,6 +66,8 @@ import function.external.trap.ListTrap;
 import function.external.trap.TrapCommand;
 import function.genotype.base.DPBinBlockManager;
 import function.genotype.collapsing.CollapsingCommand;
+import function.genotype.parent.ListParentCompHet;
+import function.genotype.parent.ParentCommand;
 import function.genotype.parental.ParentalCommand;
 import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
@@ -164,6 +166,8 @@ public class Program {
                 runAnalysis(new ListSiblingComphet());
             } else if (TrioCommand.isListTrio) {
                 runAnalysis(new ListTrio());
+            } else if (ParentCommand.isListParentCompHet) {
+                runAnalysis(new ListParentCompHet());
             } else if (ParentalCommand.isParentalMosaic) {
                 runAnalysis(new ParentalMosaic());
             } else if (PedMapCommand.isPedMap) {
