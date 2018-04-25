@@ -128,7 +128,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
 
         CompHetOutput output1, output2;
 
-        for (int i = 0; i < outputSize - 1; i++) {
+        for (int i = 0; i < outputSize; i++) {
             output1 = geneOutputList.get(i);
 
             for (int j = i + 1; j < outputSize; j++) {

@@ -107,8 +107,7 @@ public class ListParentCompHet extends AnalysisBase4CalledVar {
 
     private void doOutput(List<ParentOutput> geneOutputList) {
         try {
-
-            for (int i = 0; i < geneOutputList.size() - 1; i++) {
+            for (int i = 0; i < geneOutputList.size(); i++) {
                 ParentOutput output1 = geneOutputList.get(i);
                 
                 for (int j = i + 1; j < geneOutputList.size(); j++) {

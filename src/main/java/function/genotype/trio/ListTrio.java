@@ -48,7 +48,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     @Override
     public void doOutput() {
-        listCompHets();
+        outputDenovoAndCompHets();
 
         clearList();
     }
@@ -89,17 +89,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         try {
             TrioOutput output = new TrioOutput(calledVar);
 
-            for (Trio trio : TrioManager.getList()) {
-                output.initTrioFamilyData(trio);
-
-                if (output.isQualifiedGeno(output.cGeno)) {
-                    output.initDenovoFlag(trio.getChild());
-
-                    doDenovoOutput(output);
-
-                    addVariantToGeneList((TrioOutput) output.clone());
-                }
-            }
+            addVariantToGeneList(output);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -118,19 +108,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         }
     }
 
-    private void doDenovoOutput(TrioOutput output) throws Exception {
-        if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(output.child.getFamilyId()).append(",");
-            sb.append(output.motherName).append(",");
-            sb.append(output.fatherName).append(",");
-            sb.append(output.toString());
-            bwDenovo.write(sb.toString());
-            bwDenovo.newLine();
-        }
-    }
-
-    private void listCompHets() {
+    private void outputDenovoAndCompHets() {
         if (geneVariantListMap.isEmpty()) {
             return;
         }
@@ -148,24 +126,46 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     private void doOutput(List<TrioOutput> geneOutputList) {
         try {
-            for (int i = 0; i < geneOutputList.size() - 1; i++) {
-                TrioOutput output1 = geneOutputList.get(i);
-                for (int j = i + 1; j < geneOutputList.size(); j++) {
-                    TrioOutput output2 = geneOutputList.get(j);
+            for (Trio trio : TrioManager.getList()) {
+                for (int i = 0; i < geneOutputList.size(); i++) {
+                    TrioOutput output1 = geneOutputList.get(i);
+                    output1.initTrioFamilyData(trio);
+                    boolean isGeno1Valid = output1.isQualifiedGeno(output1.cGeno);
+                    if (isGeno1Valid) {
+                        outputDenovo(output1, trio);
+                    }
 
-                    if (output1.child.getId() == output2.child.getId()
-                            && output1.getCalledVariant().getVariantId()
-                            != output2.getCalledVariant().getVariantId()) {
-                        String compHetFlag = getTrioCompHetFlag(output1, output2);
+                    for (int j = i + 1; j < geneOutputList.size(); j++) {
+                        TrioOutput output2 = geneOutputList.get(j);
+                        output2.initTrioFamilyData(trio);
+                        boolean isGeno2Valid = output2.isQualifiedGeno(output2.cGeno);
 
-                        if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
-                            doCompHetOutput(bwCompHet, compHetFlag, output1, output2);
+                        if (isGeno1Valid && isGeno2Valid) {
+                            String compHetFlag = getTrioCompHetFlag(output1, output2);
+
+                            if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
+                                doCompHetOutput(bwCompHet, compHetFlag, output1, output2);
+                            }
                         }
                     }
                 }
             }
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    private void outputDenovo(TrioOutput output, Trio trio) throws Exception {
+        output.initDenovoFlag(trio.getChild());
+
+        if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(output.child.getFamilyId()).append(",");
+            sb.append(output.motherName).append(",");
+            sb.append(output.fatherName).append(",");
+            sb.append(output.toString());
+            bwDenovo.write(sb.toString());
+            bwDenovo.newLine();
         }
     }
 
