@@ -41,17 +41,6 @@ public class Variant extends Region {
         return variantId;
     }
 
-    /*
-     * snv id and indel id could be identical, indel id will now return as negative number 
-     */
-    public int getVariantIdNegative4Indel() {
-        if (isIndel) {
-            return -variantId;
-        } else {
-            return variantId;
-        }
-    }
-
     public String getVariantIdStr() {
         return variantIdStr;
     }

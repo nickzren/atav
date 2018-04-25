@@ -154,8 +154,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
                     TrioOutput output2 = geneOutputList.get(j);
 
                     if (output1.child.getId() == output2.child.getId()
-                            && output1.getCalledVariant().getVariantIdNegative4Indel()
-                            != output2.getCalledVariant().getVariantIdNegative4Indel()) {
+                            && output1.getCalledVariant().getVariantId()
+                            != output2.getCalledVariant().getVariantId()) {
                         String compHetFlag = getTrioCompHetFlag(output1, output2);
 
                         if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
