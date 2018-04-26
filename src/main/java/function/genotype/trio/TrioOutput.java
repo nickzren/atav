@@ -32,7 +32,7 @@ public class TrioOutput extends Output {
         super(c);
     }
 
-    public void initTrioFamilyData(Trio trio) {
+    public void initTrioData(Trio trio) {
         child = trio.getChild();
         cGeno = calledVar.getGT(child.getIndex());
         cDPBin = calledVar.getDPBin(child.getIndex());
