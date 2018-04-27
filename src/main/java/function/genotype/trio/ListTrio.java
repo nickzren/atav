@@ -176,22 +176,13 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private String getTrioCompHetFlag(TrioOutput output1, TrioOutput output2) {
-        String flag = TrioManager.getCompHetFlag(output1.cGeno, output1.cDPBin,
-                output1.mGeno, output1.mDPBin,
-                output1.fGeno, output1.fDPBin,
-                output2.cGeno, output2.cDPBin,
-                output2.mGeno, output2.mDPBin,
-                output2.fGeno, output2.fDPBin);
+        String flag = TrioManager.getCompHetFlag(
+                output1.cGeno, output1.mGeno, output1.fGeno,
+                output2.cGeno, output2.mGeno, output2.fGeno);
 
         flag = TrioManager.getCompHetFlagByDenovo(flag,
-                output1.cGeno, output1.cDPBin,
-                output1.mGeno, output1.mDPBin,
-                output1.fGeno, output1.fDPBin,
-                output1.denovoFlag,
-                output2.cGeno, output2.cDPBin,
-                output2.mGeno, output2.mDPBin,
-                output2.fGeno, output2.fDPBin,
-                output2.denovoFlag);
+                output1.cGeno, output1.mGeno, output1.fGeno, output1.denovoFlag,
+                output2.cGeno, output2.mGeno, output2.fGeno, output2.denovoFlag);
 
         return flag;
     }
