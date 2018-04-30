@@ -3,6 +3,7 @@ package function.variant.base;
 import function.external.knownvar.ClinVar;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
+import function.genotype.parent.ParentCommand;
 import function.genotype.trio.TrioCommand;
 import global.Data;
 import utils.ErrorManager;
@@ -34,7 +35,8 @@ public class VariantManager {
     private static int maxIncludeNum = 200000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
-        if (TrioCommand.isListTrio) {
+        if (TrioCommand.isListTrio ||
+                ParentCommand.isListParentCompHet) {
             // disable process region as variant by varaint way
             maxIncludeNum = 0;
         }

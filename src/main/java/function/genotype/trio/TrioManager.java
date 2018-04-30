@@ -302,17 +302,12 @@ public class TrioManager {
     }
 
     public static String getCompHetFlag(
-            byte cGeno1, short cCov1,
-            byte mGeno1, short mCov1,
-            byte fGeno1, short fCov1,
-            byte cGeno2, short cCov2,
-            byte mGeno2, short mCov2,
-            byte fGeno2, short fCov2) {
-        int minCov = GenotypeLevelFilterCommand.minCoverage;
+            byte cGeno1, byte mGeno1, byte fGeno1,
+            byte cGeno2, byte mGeno2, byte fGeno2) {
 
         // exclude if the child is homozygous, wild type or variant, for either variant
-        if (((cGeno1 == Index.REF || cGeno1 == Index.HOM) && cCov1 >= minCov)
-                || ((cGeno2 == Index.REF || cGeno2 == Index.HOM) && cCov2 >= minCov)) {
+        if (((cGeno1 == Index.REF || cGeno1 == Index.HOM))
+                || (cGeno2 == Index.REF || cGeno2 == Index.HOM)) {
             return COMP_HET_FLAG[2];
         }
         if ((fGeno1 == Data.BYTE_NA && mGeno1 == Data.BYTE_NA)
@@ -326,8 +321,8 @@ public class TrioManager {
             return COMP_HET_FLAG[2];
         }
         // if any parental call is hom at at least minCov depth, exclude
-        if ((fGeno1 == Index.HOM && fCov1 >= minCov) || (fGeno2 == Index.HOM && fCov2 >= minCov)
-                || (mGeno1 == Index.HOM && mCov1 >= minCov) || (mGeno2 == Index.HOM && mCov2 >= minCov)) {
+        if ((fGeno1 == Index.HOM) || (fGeno2 == Index.HOM)
+                || (mGeno1 == Index.HOM) || (mGeno2 == Index.HOM)) {
             return COMP_HET_FLAG[2];
         }
         // if either parent has both variants, exclude
@@ -336,13 +331,13 @@ public class TrioManager {
             return COMP_HET_FLAG[2];
         }
         // if either parent has neither variant, exclude
-        if ((fGeno1 == Index.REF && fCov1 >= minCov && fGeno2 == Index.REF && fCov2 >= minCov)
-                || (mGeno1 == Index.REF && mCov1 >= minCov && mGeno2 == Index.REF && mCov2 >= minCov)) {
+        if ((fGeno1 == Index.REF && fGeno2 == Index.REF)
+                || (mGeno1 == Index.REF && mGeno2 == Index.REF)) {
             return COMP_HET_FLAG[2];
         }
         // if both parents are wild type for the same variant, exclude
-        if ((fGeno1 == Index.REF && fCov1 >= minCov && mGeno1 == Index.REF && mCov1 >= minCov)
-                || (fGeno2 == Index.REF && fCov2 >= minCov && mGeno2 == Index.REF && mCov2 >= minCov)) {
+        if ((fGeno1 == Index.REF && mGeno1 == Index.REF)
+                || (fGeno2 == Index.REF && mGeno2 == Index.REF)) {
             return COMP_HET_FLAG[2];
         }
         // if both parents have the same variant, exclude
@@ -368,14 +363,8 @@ public class TrioManager {
 
     public static String getCompHetFlagByDenovo(
             String compHetFlag,
-            byte cGeno1, short cCov1,
-            byte mGeno1, short mCov1,
-            byte fGeno1, short fCov1,
-            String denovoFlag1,
-            byte cGeno2, short cCov2,
-            byte mGeno2, short mCov2,
-            byte fGeno2, short fCov2,
-            String denovoFlag2) {
+            byte cGeno1, byte mGeno1, byte fGeno1, String denovoFlag1,
+            byte cGeno2, byte mGeno2, byte fGeno2, String denovoFlag2) {
         if (compHetFlag.equals(COMP_HET_FLAG[2])) {
             byte denovoConfidence1 = getDenovoConfidence(denovoFlag1);
             byte denovoConfidence2 = getDenovoConfidence(denovoFlag2);
@@ -385,28 +374,21 @@ public class TrioManager {
 
             if (isDenovo1 ^ isDenovo2) {
                 byte cGenoInherited = cGeno1;
-                short cCovInherited = cCov1;
                 byte fGenoInherited = fGeno1;
-                short fCovInherited = fCov1;
                 byte mGenoInherited = mGeno1;
-                short mCovInherited = mCov1;
                 byte denovoConfidence = denovoConfidence2;
 
                 if (isDenovo1) {
                     cGenoInherited = cGeno2;
-                    cCovInherited = cCov2;
                     fGenoInherited = fGeno2;
-                    fCovInherited = fCov2;
                     mGenoInherited = mGeno2;
-                    mCovInherited = mCov2;
                     denovoConfidence = denovoConfidence1;
                 }
                 // Only consider situations in which no one is homozygous for the inherited variant
                 // and the child is not homozygous variant or wild-type 
-                int minCov = GenotypeLevelFilterCommand.minCoverage;
-                if (!((cGenoInherited == Index.HOM || cGenoInherited == Index.REF) && cCovInherited >= minCov)
-                        && !(fGenoInherited == Index.HOM && fCovInherited >= minCov)
-                        && !(mGenoInherited == Index.HOM && mCovInherited >= minCov)) {
+                if (!((cGenoInherited == Index.HOM || cGenoInherited == Index.REF))
+                        && !(fGenoInherited == Index.HOM)
+                        && !(mGenoInherited == Index.HOM)) {
                     // Treat the inherited variant as high confidence if neither parent
                     // is homozygous or missing a genotype, at least one parent is heterozygous,
                     // and the child is heterozygous

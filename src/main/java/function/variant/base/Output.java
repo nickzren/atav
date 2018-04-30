@@ -26,7 +26,7 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class Output implements Cloneable {
+public class Output {
 
     public static String getVariantDataTitle() {
         return "Variant ID,"
@@ -195,18 +195,5 @@ public class Output implements Cloneable {
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
         sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA)).append(",");
         sb.append(carrier != null ? carrier.getFILTER() : Data.STRING_NA).append(",");
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        Output output = (Output) super.clone();
-
-        output.calledVar.genoCount = FormatManager.deepCopyArray(calledVar.genoCount);
-        output.calledVar.homFreq = FormatManager.deepCopyArray(calledVar.homFreq);
-        output.calledVar.hetFreq = FormatManager.deepCopyArray(calledVar.hetFreq);
-        output.calledVar.af = FormatManager.deepCopyArray(calledVar.af);
-        output.calledVar.hweP = FormatManager.deepCopyArray(calledVar.hweP);
-
-        return output;
     }
 }
