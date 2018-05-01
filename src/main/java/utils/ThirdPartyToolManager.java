@@ -35,7 +35,7 @@ public class ThirdPartyToolManager {
     private static final String FLANKING_SEQ_PERL = Data.ATAV_HOME + "lib/flanking_seq.pl";
     private static final String TRIO_DENOVO_TIER = Data.ATAV_HOME + "lib/r0.6_trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.6_trio_comp_het_tier.R";
-    private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/non_trio_tier.R";
+    private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/r0.6_nonTrio_tier.R";
     private static final int nProcs = 4;
 
     public static void init() {
