@@ -9,7 +9,7 @@ import function.variant.base.Region;
  */
 public class DenovoDBManager {
 
-    static final String table = "knownvar.denovodb_2017_02_06";
+    static final String table = "knownvar.denovodb_2018_05_07";
 
     public static String getTitle() {
         String title = "";
