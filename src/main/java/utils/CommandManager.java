@@ -4,7 +4,7 @@ import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
-import function.external.bis.BisCommand;
+import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
@@ -22,7 +22,6 @@ import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
-import function.genotype.parent.ParentCommand;
 import function.genotype.parental.ParentalCommand;
 import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
@@ -38,7 +37,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -334,7 +332,7 @@ public class CommandManager {
                     KnownVarCommand.isIncludeKnownVar = true;
                     RvisCommand.isIncludeRvis = true;
                     SubRvisCommand.isIncludeSubRvis = true;
-                    BisCommand.isIncludeBis = true;
+                    LIMBRCommand.isIncludeLIMBR = true;
 //                    GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isIncludeMgi = true;
                     DenovoDBCommand.isIncludeDenovoDB = true;
@@ -405,10 +403,10 @@ public class CommandManager {
                     SubRvisCommand.isListSubRvis = true;
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
-                case "--list-bis":
+                case "--list-limbr":
                     CommonCommand.isNonSampleAnalysis = true;
-                    BisCommand.isListBis = true;
-                    BisCommand.isIncludeBis = true;
+                    LIMBRCommand.isListLIMBR = true;
+                    LIMBRCommand.isIncludeLIMBR = true;
                     break;
                 case "--list-rvis":
                     CommonCommand.isNonSampleAnalysis = true;

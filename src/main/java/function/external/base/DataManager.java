@@ -1,6 +1,6 @@
 package function.external.base;
 
-import function.external.bis.BisManager;
+import function.external.limbr.LIMBRManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
@@ -38,7 +38,7 @@ public class DataManager {
         sb.append(GenomesManager.getVersion());
         sb.append(RvisManager.getVersion());
         sb.append(SubRvisManager.getVersion());
-        sb.append(BisManager.getVersion());
+        sb.append(LIMBRManager.getVersion());
         sb.append(GerpManager.getVersion());
         sb.append(TrapManager.getVersion());
         sb.append(MgiManager.getVersion());

@@ -25,9 +25,9 @@ import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.coverage.comparison.SiteCoverageComparison;
-import function.external.bis.BisCommand;
-import function.external.bis.BisManager;
-import function.external.bis.ListBis;
+import function.external.limbr.LIMBRCommand;
+import function.external.limbr.LIMBRManager;
+import function.external.limbr.ListLIMBR;
 import function.external.denovo.DenovoDBCommand;
 import function.external.denovo.ListDenovoDB;
 import function.external.discovehr.DiscovEHRCommand;
@@ -135,7 +135,7 @@ public class Program {
 
             SubRvisManager.init();
 
-            BisManager.init();
+            LIMBRManager.init();
 
             MgiManager.init();
 
@@ -202,8 +202,8 @@ public class Program {
                 runAnalysis(new ListTrap());
             } else if (SubRvisCommand.isListSubRvis) {
                 runAnalysis(new ListSubRvis());
-            } else if (BisCommand.isListBis) {
-                runAnalysis(new ListBis());
+            } else if (LIMBRCommand.isListLIMBR) {
+                runAnalysis(new ListLIMBR());
             } else if (RvisCommand.isListRvis) {
                 runAnalysis(new ListRvis());
             } else if (GenomesCommand.isList1000Genomes) {

@@ -1,4 +1,4 @@
-package function.external.bis;
+package function.external.limbr;
 
 import function.external.base.DataManager;
 import global.Data;
@@ -16,41 +16,44 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class BisManager {
+public class LIMBRManager {
 
-//    private static final String DOMAIN_PATH = "data/bis/DomainBISPercentile_072617.txt";
-    private static final String EXON_PATH = "data/bis/ExonBISPercentile_02-11-18.txt";
+    private static final String DOMAIN_PATH = "data/limbr/DomainLIMBR_05-23-18.txt";
+    private static final String EXON_PATH = "data/limbr/ExonLIMBR_05-23-18.txt";
 
-//    private static HashMap<String, ArrayList<BisGene>> geneDomainMap = new HashMap<>();
-    private static HashMap<String, ArrayList<BisGene>> geneExonMap = new HashMap<>();
+    private static HashMap<String, ArrayList<LIMBRGene>> geneDomainMap = new HashMap<>();
+    private static HashMap<String, ArrayList<LIMBRGene>> geneExonMap = new HashMap<>();
 
     public static String getTitle() {
-        if (BisCommand.isIncludeBis) {
-            return "BIS Exon Name,"
-                    + "BIS Exon Score,"
-                    + "BIS Exon Percentiles,";
+        if (LIMBRCommand.isIncludeLIMBR) {
+            return "LIMBR Domain Name,"
+                    + "LIMBR Domain Score,"
+                    + "LIMBR Domain Percentiles,"
+                    + "LIMBR Exon Name,"
+                    + "LIMBR Exon Score,"
+                    + "LIMBR Exon Percentiles,";
         } else {
             return "";
         }
     }
 
     public static String getVersion() {
-        if (BisCommand.isIncludeBis) {
-            return "BIS: " + DataManager.getVersion(EXON_PATH) + "\n";
+        if (LIMBRCommand.isIncludeLIMBR) {
+            return "LIMBR: " + DataManager.getVersion(EXON_PATH) + "\n";
         } else {
             return "";
         }
     }
 
     public static void init() {
-        if (BisCommand.isIncludeBis) {
-//            initGeneMap(geneDomainMap, Data.ATAV_HOME + DOMAIN_PATH);
+        if (LIMBRCommand.isIncludeLIMBR) {
+            initGeneMap(geneDomainMap, Data.ATAV_HOME + DOMAIN_PATH);
 
             initGeneMap(geneExonMap, Data.ATAV_HOME + EXON_PATH);
         }
     }
 
-    private static void initGeneMap(HashMap<String, ArrayList<BisGene>> geneMap, String filePath) {
+    private static void initGeneMap(HashMap<String, ArrayList<LIMBRGene>> geneMap, String filePath) {
         try {
             File f = new File(filePath);
             FileInputStream fstream = new FileInputStream(f);
@@ -63,7 +66,7 @@ public class BisManager {
                     continue;
                 }
 
-                String[] tmp = lineStr.split(" ");
+                String[] tmp = lineStr.split("\t");
 
                 String geneName = tmp[0];
                 String id = tmp[1];
@@ -73,14 +76,14 @@ public class BisManager {
                 float score = FormatManager.getFloat(tmp[3]);
                 float percentiles = FormatManager.getFloat(tmp[4]);
                 
-                BisGene bisGene = new BisGene(id, chr, regionList, 
+                LIMBRGene limbrGene = new LIMBRGene(id, chr, regionList, 
                         score, percentiles);
 
                 if (geneMap.containsKey(geneName)) {
-                    geneMap.get(geneName).add(bisGene);
+                    geneMap.get(geneName).add(limbrGene);
                 } else {
-                    ArrayList<BisGene> idArray = new ArrayList<>();
-                    idArray.add(bisGene);
+                    ArrayList<LIMBRGene> idArray = new ArrayList<>();
+                    idArray.add(limbrGene);
                     geneMap.put(geneName, idArray);
                 }
             }
@@ -109,25 +112,25 @@ public class BisManager {
         return regionList;
     }
 
-//    public static BisGene getGeneDomain(String geneName, String chr, int pos) {
-//        ArrayList<BisGene> domainMap = geneDomainMap.get(geneName);
-//
-//        if (domainMap != null) {
-//            for (BisGene domain : domainMap) {
-//                if (domain.isPositionIncluded(chr, pos)) {
-//                    return domain;
-//                }
-//            }
-//        }
-//
-//        return null;
-//    }
+    public static LIMBRGene getGeneDomain(String geneName, String chr, int pos) {
+        ArrayList<LIMBRGene> domainMap = geneDomainMap.get(geneName);
 
-    public static BisGene getExonDomain(String geneName, String chr, int pos) {
-        ArrayList<BisGene> exonMap = geneExonMap.get(geneName);
+        if (domainMap != null) {
+            for (LIMBRGene domain : domainMap) {
+                if (domain.isPositionIncluded(chr, pos)) {
+                    return domain;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static LIMBRGene getExonDomain(String geneName, String chr, int pos) {
+        ArrayList<LIMBRGene> exonMap = geneExonMap.get(geneName);
 
         if (exonMap != null) {
-            for (BisGene exon : exonMap) {
+            for (LIMBRGene exon : exonMap) {
                 if (exon.isPositionIncluded(chr, pos)) {
                     return exon;
                 }

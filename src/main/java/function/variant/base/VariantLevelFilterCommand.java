@@ -1,6 +1,6 @@
 package function.variant.base;
 
-import function.external.bis.BisCommand;
+import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
@@ -203,10 +203,15 @@ public class VariantLevelFilterCommand {
                     SubRvisCommand.subRVISExonOEratioPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
-                case "--bis-exon-percentile":
+                case "--limbr-domain-percentile":
                     checkValueValid(100, 0, option);
-                    BisCommand.bisExonPercentile = getValidFloat(option);
-                    BisCommand.isIncludeBis = true;
+                    LIMBRCommand.limbrDomainPercentile = getValidFloat(option);
+                    LIMBRCommand.isIncludeLIMBR = true;
+                    break;
+                case "--limbr-exon-percentile":
+                    checkValueValid(100, 0, option);
+                    LIMBRCommand.limbrExonPercentile = getValidFloat(option);
+                    LIMBRCommand.isIncludeLIMBR = true;
                     break;
                 case "--discovehr-af":
                     checkValueValid(1, 0, option);
@@ -261,8 +266,8 @@ public class VariantLevelFilterCommand {
                 case "--include-sub-rvis":
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
-                case "--include-bis":
-                    BisCommand.isIncludeBis = true;
+                case "--include-limbr":
+                    LIMBRCommand.isIncludeLIMBR = true;
                     break;
 //                case "--include-1000-genomes":
 //                    GenomesCommand.isInclude1000Genomes = true;

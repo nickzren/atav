@@ -1,4 +1,4 @@
-package function.external.bis;
+package function.external.limbr;
 
 import function.annotation.base.AnalysisBase4AnnotatedVar;
 import function.annotation.base.AnnotatedVariant;
@@ -11,22 +11,22 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class ListBis extends AnalysisBase4AnnotatedVar {
+public class ListLIMBR extends AnalysisBase4AnnotatedVar {
 
-    private BufferedWriter bwBis = null;
-    private final String bisFilePath = CommonCommand.outputPath + "bis.csv";
+    private BufferedWriter bwLIMBR = null;
+    private final String limbrFilePath = CommonCommand.outputPath + "limbr.csv";
 
     @Override
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
-            BisOutput bisOutput = new BisOutput(annotatedVar.getGeneName(),
+            LIMBROutput limbrOutput = new LIMBROutput(annotatedVar.getGeneName(),
                     annotatedVar.getChrStr(),
                     annotatedVar.getStartPosition());
 
-            bwBis.write(annotatedVar.getVariantIdStr() + ",");
-            bwBis.write(annotatedVar.getGeneName() + ",");
-            bwBis.write(bisOutput.toString());
-            bwBis.newLine();
+            bwLIMBR.write(annotatedVar.getVariantIdStr() + ",");
+            bwLIMBR.write(annotatedVar.getGeneName() + ",");
+            bwLIMBR.write(limbrOutput.toString());
+            bwLIMBR.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -35,9 +35,9 @@ public class ListBis extends AnalysisBase4AnnotatedVar {
     @Override
     public void initOutput() {
         try {
-            bwBis = new BufferedWriter(new FileWriter(bisFilePath));
-            bwBis.write(BisOutput.getTitle());
-            bwBis.newLine();
+            bwLIMBR = new BufferedWriter(new FileWriter(limbrFilePath));
+            bwLIMBR.write(LIMBROutput.getTitle());
+            bwLIMBR.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -46,8 +46,8 @@ public class ListBis extends AnalysisBase4AnnotatedVar {
     @Override
     public void closeOutput() {
         try {
-            bwBis.flush();
-            bwBis.close();
+            bwLIMBR.flush();
+            bwLIMBR.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -67,6 +67,6 @@ public class ListBis extends AnalysisBase4AnnotatedVar {
 
     @Override
     public String toString() {
-        return "Start running list bis function";
+        return "Start running list limbr function";
     }
 }

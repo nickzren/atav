@@ -1,4 +1,4 @@
-package function.external.bis;
+package function.external.limbr;
 
 import java.util.ArrayList;
 //
@@ -7,7 +7,7 @@ import java.util.ArrayList;
  *
  * @author nick
  */
-public class BisGene {
+public class LIMBRGene {
 
     private String id; // domain or exon identifier
     private String chr;
@@ -15,7 +15,7 @@ public class BisGene {
     private float score;
     private float percentiles;
 
-    public BisGene(String id,
+    public LIMBRGene(String id,
             String chr,
             ArrayList<Region> regionList,
             float score,

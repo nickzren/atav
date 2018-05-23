@@ -1,8 +1,8 @@
 package function.annotation.base;
 
-import function.external.bis.BisCommand;
-import function.external.bis.BisGene;
-import function.external.bis.BisOutput;
+import function.external.limbr.LIMBRCommand;
+import function.external.limbr.LIMBRGene;
+import function.external.limbr.LIMBROutput;
 import function.external.denovo.DenovoDB;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHR;
@@ -74,7 +74,7 @@ public class AnnotatedVariant extends Variant {
     private KnownVarOutput knownVarOutput;
     private String rvisStr;
     private SubRvisOutput subRvisOutput;
-    private BisOutput bisOutput;
+    private LIMBROutput limbrOutput;
     private Genomes genomes;
     private String mgiStr;
     private DenovoDB denovoDB;
@@ -203,7 +203,7 @@ public class AnnotatedVariant extends Variant {
         return isValid
                 && isTrapValid()
                 && isSubRVISValid()
-                && isBisValid()
+                && isLIMBRValid()
                 && isMTRValid();
     }
 
@@ -244,16 +244,18 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
-    // init bis score base on most damaging gene and applied filter
-    private boolean isBisValid() {
-        if (BisCommand.isIncludeBis) {
-            bisOutput = new BisOutput(getGeneName(), getChrStr(), getStartPosition());
+    // init LIMBR score base on most damaging gene and applied filter
+    private boolean isLIMBRValid() {
+        if (LIMBRCommand.isIncludeLIMBR) {
+            limbrOutput = new LIMBROutput(getGeneName(), getChrStr(), getStartPosition());
 
-            // bis filters will only apply missense variants except gene boundary option at domain level used
+            // LIMBR filters will only apply missense variants except gene boundary option at domain level used
             if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
-                BisGene geneExon = bisOutput.getGeneExon();
+                LIMBRGene geneDomain = limbrOutput.getGeneDomain();
+                LIMBRGene geneExon = limbrOutput.getGeneExon();
 
-                return BisCommand.isBisExonPercentileValid(geneExon == null ? Data.FLOAT_NA : geneExon.getPercentiles());
+                return LIMBRCommand.isLIMBRDomainPercentileValid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getPercentiles()) &&
+                        LIMBRCommand.isLIMBRExonPercentileValid(geneExon == null ? Data.FLOAT_NA : geneExon.getPercentiles());
             } else {
                 return true;
             }
@@ -347,7 +349,7 @@ public class AnnotatedVariant extends Variant {
         sb.append(get1000Genomes());
         sb.append(getRvis());
         sb.append(getSubRvis());
-        sb.append(getBis());
+        sb.append(getLIMBR());
         sb.append(getGerpScore());
         sb.append(getTrapScore());
         sb.append(getMgi());
@@ -436,9 +438,9 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
-    public String getBis() {
-        if (BisCommand.isIncludeBis) {
-            return bisOutput.toString();
+    public String getLIMBR() {
+        if (LIMBRCommand.isIncludeLIMBR) {
+            return limbrOutput.toString();
         } else {
             return "";
         }

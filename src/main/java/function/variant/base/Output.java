@@ -1,6 +1,6 @@
 package function.variant.base;
 
-import function.external.bis.BisManager;
+import function.external.limbr.LIMBRManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
@@ -65,7 +65,7 @@ public class Output {
                 + GenomesManager.getTitle()
                 + RvisManager.getTitle()
                 + SubRvisManager.getTitle()
-                + BisManager.getTitle()
+                + LIMBRManager.getTitle()
                 + GerpManager.getTitle()
                 + TrapManager.getTitle()
                 + MgiManager.getTitle()
