@@ -95,6 +95,10 @@ public class DBManager {
     private static Connection getConnection() {
         try {
             String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + annodbName + "?useSSL=false";
+            
+            if (CommonCommand.isDebug) {
+                System.out.println(url);
+            }
 
             return DriverManager.getConnection(url, dbUser, dbPassword);
         } catch (Exception e) {
