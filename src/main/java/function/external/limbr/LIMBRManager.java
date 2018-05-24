@@ -28,10 +28,10 @@ public class LIMBRManager {
         if (LIMBRCommand.isIncludeLIMBR) {
             return "LIMBR Domain Name,"
                     + "LIMBR Domain Score,"
-                    + "LIMBR Domain Percentiles,"
+                    + "LIMBR Domain Percentile,"
                     + "LIMBR Exon Name,"
                     + "LIMBR Exon Score,"
-                    + "LIMBR Exon Percentiles,";
+                    + "LIMBR Exon Percentile,";
         } else {
             return "";
         }
