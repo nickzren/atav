@@ -37,6 +37,8 @@ public class EffectManager {
     private static final String LOW_IMPACT = "('HIGH'),('MODERATE'),('LOW')";
     private static final String MODIFIER_IMPACT = "('HIGH'),('MODERATE'),('LOW'),('MODIFIER')";
 
+    public static int MISSENSE_VARIANT_ID;
+
     private static boolean isUsed = false;
 
     public static void init() throws SQLException {
@@ -75,6 +77,10 @@ public class EffectManager {
 
                 id2EffectMap.put(id, effect);
                 impactEffect2IdMap.put(impactEffect, id);
+
+                if (effect.equals("missense_variant")) {
+                    MISSENSE_VARIANT_ID = id;
+                }
             }
         } catch (Exception e) {
             ErrorManager.send(e);

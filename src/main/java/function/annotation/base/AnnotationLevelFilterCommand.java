@@ -1,5 +1,6 @@
 package function.annotation.base;
 
+import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidPath;
@@ -16,8 +17,8 @@ public class AnnotationLevelFilterCommand {
     public static String geneBoundaryFile = "";
     public static boolean isCcdsOnly = false;
     public static boolean isCanonicalOnly = false;
-    public static String polyphenHumdiv = "probably,possibly,unknown,benign";
-    public static String polyphenHumvar = "probably,possibly,unknown,benign";
+    public static String polyphenHumdiv = Data.NO_FILTER_STR;
+    public static String polyphenHumvar = Data.NO_FILTER_STR;
 
     public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
 

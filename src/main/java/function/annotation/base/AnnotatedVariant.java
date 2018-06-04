@@ -197,32 +197,17 @@ public class AnnotatedVariant extends Variant {
         if (ExacCommand.isIncludeExacGeneVariantCount) {
             exacGeneVariantCountStr = ExacManager.getLine(getGeneName());
         }
+
+        if (TrapCommand.isIncludeTrap) {
+            trapScore = isIndel() ? Data.FLOAT_NA : TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
+        }
     }
 
     public boolean isValid() {
         return isValid
-                && isTrapValid()
                 && isSubRVISValid()
                 && isLIMBRValid()
                 && isMTRValid();
-    }
-
-    private boolean isTrapValid() {
-        if (TrapCommand.isIncludeTrap) {
-            if (isIndel()) {
-                trapScore = Data.FLOAT_NA;
-            } else {
-                trapScore = TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
-            }
-
-            if (effect.startsWith("missense_variant")
-                    || effect.equals("intron_variant")) {
-                // filter only apply to missense_variant and intron_variant variants
-                return TrapCommand.isTrapScoreValid(trapScore);
-            }
-        }
-
-        return true;
     }
 
     // init sub rvis score base on most damaging gene and applied filter
@@ -254,8 +239,8 @@ public class AnnotatedVariant extends Variant {
                 LIMBRGene geneDomain = limbrOutput.getGeneDomain();
                 LIMBRGene geneExon = limbrOutput.getGeneExon();
 
-                return LIMBRCommand.isLIMBRDomainPercentileValid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getPercentiles()) &&
-                        LIMBRCommand.isLIMBRExonPercentileValid(geneExon == null ? Data.FLOAT_NA : geneExon.getPercentiles());
+                return LIMBRCommand.isLIMBRDomainPercentileValid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getPercentiles())
+                        && LIMBRCommand.isLIMBRExonPercentileValid(geneExon == null ? Data.FLOAT_NA : geneExon.getPercentiles());
             } else {
                 return true;
             }
