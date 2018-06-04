@@ -8,7 +8,7 @@ public class Data {
 
     // software info
     public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String VERSION = "7.0.3";
+    public static String VERSION = "trunk";
     public static String userName = System.getProperty("user.name");;
 
     // system config file path
@@ -20,6 +20,7 @@ public class Data {
     
     // system default values
     public static final int NO_FILTER = Integer.MAX_VALUE;
+    public static final String NO_FILTER_STR = "";
 
     public static final byte BYTE_NA = Byte.MIN_VALUE;
     public static final short SHORT_NA = Short.MIN_VALUE;
