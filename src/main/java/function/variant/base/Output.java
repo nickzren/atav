@@ -17,6 +17,7 @@ import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
@@ -74,26 +75,46 @@ public class Output {
                 + MTRManager.getTitle();
     }
 
+    // quick hack here, eventually will get rid of min covered sample binomial p
     public static String getGenoStatDataTitle() {
-        return "Hom Case,"
-                + "Het Case,"
-                + "Hom Ref Case,"
-                + "Hom Case Freq,"
-                + "Het Case Freq,"
-                + "Hom Ctrl,"
-                + "Het Ctrl,"
-                + "Hom Ref Ctrl,"
-                + "Hom Ctrl Freq,"
-                + "Het Ctrl Freq,"
-                + "QC Fail Case,"
-                + "QC Fail Ctrl,"
-                + "Covered Case,"
-                + "Covered Ctrl,"
-                + "Covered Sample Binomial P (two sided),"
-                + "Case AF,"
-                + "Ctrl AF,"
-                + "Case HWE_P,"
-                + "Ctrl HWE_P,";
+        if (GenotypeLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
+            return "Hom Case,"
+                    + "Het Case,"
+                    + "Hom Ref Case,"
+                    + "Hom Case Freq,"
+                    + "Het Case Freq,"
+                    + "Hom Ctrl,"
+                    + "Het Ctrl,"
+                    + "Hom Ref Ctrl,"
+                    + "Hom Ctrl Freq,"
+                    + "Het Ctrl Freq,"
+                    + "QC Fail Case,"
+                    + "QC Fail Ctrl,"
+                    + "Covered Case,"
+                    + "Covered Ctrl,"
+                    + "Covered Sample Binomial P (two sided),"
+                    + "Case AF,"
+                    + "Ctrl AF,"
+                    + "Case HWE_P,"
+                    + "Ctrl HWE_P,";
+        } else {
+            return "Hom Case,"
+                    + "Het Case,"
+                    + "Hom Ref Case,"
+                    + "Hom Case Freq,"
+                    + "Het Case Freq,"
+                    + "Hom Ctrl,"
+                    + "Het Ctrl,"
+                    + "Hom Ref Ctrl,"
+                    + "Hom Ctrl Freq,"
+                    + "Het Ctrl Freq,"
+                    + "QC Fail Case,"
+                    + "QC Fail Ctrl,"
+                    + "Case AF,"
+                    + "Ctrl AF,"
+                    + "Case HWE_P,"
+                    + "Ctrl HWE_P,";
+        }
     }
 
     public static String getCarrierDataTitle() {
@@ -165,9 +186,11 @@ public class Output {
         sb.append(FormatManager.getFloat(calledVar.hetFreq[Index.CTRL])).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
-        sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP())).append(",");
+        if (GenotypeLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
+            sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
+            sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
+            sb.append(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP())).append(",");
+        }
         sb.append(FormatManager.getFloat(calledVar.af[Index.CASE])).append(",");
         sb.append(FormatManager.getFloat(calledVar.af[Index.CTRL])).append(",");
         sb.append(FormatManager.getDouble(calledVar.hweP[Index.CASE])).append(",");
