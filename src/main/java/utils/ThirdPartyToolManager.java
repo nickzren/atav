@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import static utils.LogManager.writeAndPrint;
 
@@ -36,6 +35,7 @@ public class ThirdPartyToolManager {
     private static final String TRIO_DENOVO_TIER = Data.ATAV_HOME + "lib/r0.6_trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.6_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/r0.6_nonTrio_tier.R";
+    private static final String VARIANT_COUNT = Data.ATAV_HOME + "lib/variant_count.py";
     private static final int nProcs = 4;
 
     public static void init() {
@@ -211,7 +211,6 @@ public class ThirdPartyToolManager {
         if (exitValue != 0) {
             deleteFile(outputPath);
         }
-
     }
 
     private static void deleteFile(String filePath) {
@@ -245,6 +244,15 @@ public class ThirdPartyToolManager {
         String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
                 + NON_TRIO_TIER + " "
                 + variantFilePath;
+
+        systemCall(new String[]{cmd});
+    }
+    
+        
+    public static void runVariantCount(String genotypesFilePath) {
+        String cmd = PYTHON + " "
+                + VARIANT_COUNT + " "
+                + genotypesFilePath;
 
         systemCall(new String[]{cmd});
     }

@@ -24,6 +24,7 @@ public class CollapsingCommand {
     public static boolean isCollapsingDoLogistic = false;
     public static String regionBoundaryFile = "";
     public static boolean isIncludeHomRef = false;
+    public static boolean isRunVariantCount = false;
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -54,6 +55,9 @@ public class CollapsingCommand {
                     break;
                 case "--include-hom-ref":
                     isIncludeHomRef = true;
+                    break;
+                case "--run-variant-count":
+                    isRunVariantCount = true;
                     break;
                 default:
                     continue;

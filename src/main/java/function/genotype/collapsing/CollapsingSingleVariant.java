@@ -10,6 +10,7 @@ import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -50,6 +51,15 @@ public class CollapsingSingleVariant extends CollapsingBase {
             bwGenotypes.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
+        }
+    }
+
+    @Override
+    public void afterProcessDatabaseData() {
+        super.afterProcessDatabaseData();
+
+        if (CollapsingCommand.isRunVariantCount) {
+            ThirdPartyToolManager.runVariantCount(genotypesFilePath);
         }
     }
 

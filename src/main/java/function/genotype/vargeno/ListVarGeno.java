@@ -62,6 +62,9 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     @Override
     public void afterProcessDatabaseData() {
+        if (VarGenoCommand.isRunVariantCount) {
+            ThirdPartyToolManager.runVariantCount(genotypesFilePath);
+        }
     }
 
     @Override
