@@ -95,6 +95,9 @@ public class CollapsingCommand {
                     StatisticsCommand.quantitativeFile = getValidPath(option);
                     isCollapsingDoLinear = true;
                     break;
+                case "--run-variant-count":
+                    isRunVariantCount = true;
+                    break;
                 default:
                     continue;
             }

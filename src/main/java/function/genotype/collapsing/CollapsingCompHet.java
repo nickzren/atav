@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -44,6 +45,15 @@ public class CollapsingCompHet extends CollapsingBase {
         listCompHets();
 
         clearList();
+    }
+
+    @Override
+    public void afterProcessDatabaseData() {
+        super.afterProcessDatabaseData();
+
+        if (CollapsingCommand.isRunVariantCount) {
+            ThirdPartyToolManager.runVariantCount(comphetFilePath);
+        }
     }
 
     @Override
