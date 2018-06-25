@@ -240,7 +240,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 + " " + CommonCommand.outputPath + "king.kin0"
                 + " " + CommonCommand.outputPath + "king.kin"
                 + " --relatedness_threshold " + PedMapCommand.kinshipRelatednessThreshold
-                + " --seed " + PedMapCommand.seed
+                + " --seed " + PedMapCommand.kinshipSeed
                 + " --output " + CommonCommand.outputPath + "kinship_pruned_sample.txt"
                 + " --verbose";
 
