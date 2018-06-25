@@ -60,6 +60,10 @@ public class SampleManager {
     private static BufferedWriter bwExistingSample = null;
     private final static String existingSampleFile = CommonCommand.outputPath + "existing.sample.txt";
 
+    // output all existing samples
+    private static BufferedWriter bwAllSample = null;
+    private final static String allSampleFile = CommonCommand.outputPath + "all.sample.txt";
+
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
@@ -74,7 +78,10 @@ public class SampleManager {
             initFromSampleFile();
             closeExistingSampleFile();
         } else if (GenotypeLevelFilterCommand.isAllSample) {
+            initAllSampleFile();
             initAllSampleFromAnnoDB();
+            closeAllSampleFile();
+            GenotypeLevelFilterCommand.sampleFile = allSampleFile;
         }
 
         initCovariate();
@@ -96,10 +103,27 @@ public class SampleManager {
         }
     }
 
+    private static void initAllSampleFile() {
+        try {
+            bwAllSample = new BufferedWriter(new FileWriter(allSampleFile));
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
+
     private static void closeExistingSampleFile() {
         try {
             bwExistingSample.flush();
             bwExistingSample.close();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
+
+    private static void closeAllSampleFile() {
+        try {
+            bwAllSample.flush();
+            bwAllSample.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -214,12 +238,12 @@ public class SampleManager {
                 String[] values = lineStr.replaceAll("( )+", "").split("\t");
 
                 String familyId = values[0];
-                
+
                 if (familyId.equals("N/A")) {
                     ErrorManager.print("\nWrong FamilyID: " + familyId
                             + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
                 }
-                
+
                 String individualId = values[1];
 
                 if (!GenotypeLevelFilterCommand.isDisableCheckDuplicateSample) {
@@ -319,6 +343,16 @@ public class SampleManager {
                 sampleMap.put(sampleId, sample);
 
                 countSampleNum(sample);
+
+                bwAllSample.write(familyId + "\t"
+                        + individualId + "\t"
+                        + paternalId + "\t"
+                        + maternalId + "\t"
+                        + sex + "\t"
+                        + pheno + "\t"
+                        + sampleType + "\t"
+                        + captureKit);
+                bwAllSample.newLine();
             }
 
             rs.close();
