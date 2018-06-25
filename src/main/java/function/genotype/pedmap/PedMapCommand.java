@@ -1,6 +1,7 @@
 package function.genotype.pedmap;
 
 import java.util.Iterator;
+import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
@@ -18,6 +19,7 @@ public class PedMapCommand {
     public static String pedMapPath = "";
     public static String sampleCoverageSummaryPath = "";
     public static int seed = 42;
+    public static float kinshipRelatednessThreshold = 0.0884f;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -37,7 +39,9 @@ public class PedMapCommand {
                 case "--seed":
                     seed = getValidInteger(option);
                     break;
-
+                case "--kinship-relatedness-threshold":
+                    kinshipRelatednessThreshold = getValidFloat(option);
+                    break;
                 default:
                     continue;
             }

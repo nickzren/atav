@@ -226,7 +226,9 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         // Run KING to get kinship
         cmd = ThirdPartyToolManager.KING
                 + " -b " + CommonCommand.outputPath + "plink.bed"
-                + " --kinship --related --degree 3"
+                + " --kinship"
+                + " --related"
+                + " --degree 3"
                 + " --prefix " + CommonCommand.outputPath + "king";
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
@@ -237,6 +239,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 + " " + GenotypeLevelFilterCommand.sampleFile
                 + " " + CommonCommand.outputPath + "king.kin0"
                 + " " + CommonCommand.outputPath + "king.kin"
+                + " --relatedness_threshold " + PedMapCommand.kinshipRelatednessThreshold
                 + " --seed " + PedMapCommand.seed
                 + " --output " + CommonCommand.outputPath + "kinship_pruned_sample.txt"
                 + " --verbose";
