@@ -246,6 +246,9 @@ public class CommandManager {
                     + "_"
                     + dir.getName()
                     + "_";
+             
+            // hack fix here
+            CommonCommand.outputPath = CommonCommand.outputPath.replaceAll(File.separator + File.separator, File.separator);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("\nError in creating an output directory. \n\nExit\n");
