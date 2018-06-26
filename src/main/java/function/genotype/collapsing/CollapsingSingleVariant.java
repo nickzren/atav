@@ -46,8 +46,8 @@ public class CollapsingSingleVariant extends CollapsingBase {
     public void afterProcessDatabaseData() {
         super.afterProcessDatabaseData();
 
-        if (CollapsingCommand.isRunVariantCount) {
-            ThirdPartyToolManager.runVariantCount(genotypesFilePath);
+        if (CollapsingCommand.isRunVariantCheck) {
+            ThirdPartyToolManager.runVariantChecks(genotypesFilePath);
         }
     }
 

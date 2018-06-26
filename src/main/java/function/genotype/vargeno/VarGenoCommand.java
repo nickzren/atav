@@ -16,7 +16,7 @@ public class VarGenoCommand {
     public static boolean isRunTier = false;
     public static boolean isCaseOnly = false;
     public static boolean isIncludeHomRef = false;
-    public static boolean isRunVariantCount = false;
+    public static boolean isRunVariantCheck = false;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -36,8 +36,8 @@ public class VarGenoCommand {
                 case "--include-hom-ref":
                     isIncludeHomRef = true;
                     break;
-                case "--run-variant-count":
-                    isRunVariantCount = true;
+                case "--run-variant-check":
+                    isRunVariantCheck = true;
                     break;
                 default:
                     continue;

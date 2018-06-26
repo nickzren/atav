@@ -51,8 +51,8 @@ public class CollapsingCompHet extends CollapsingBase {
     public void afterProcessDatabaseData() {
         super.afterProcessDatabaseData();
 
-        if (CollapsingCommand.isRunVariantCount) {
-            ThirdPartyToolManager.runVariantCount(comphetFilePath);
+        if (CollapsingCommand.isRunVariantCheck) {
+            ThirdPartyToolManager.runVariantChecks(comphetFilePath);
         }
     }
 
