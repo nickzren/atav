@@ -54,6 +54,10 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         if (VarGenoCommand.isRunTier) {
             ThirdPartyToolManager.runNonTrioTier(genotypesFilePath);
         }
+
+        if (VarGenoCommand.isRunVariantCheck) {
+            ThirdPartyToolManager.runVariantChecks(genotypesFilePath);
+        }
     }
 
     @Override
@@ -62,9 +66,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     @Override
     public void afterProcessDatabaseData() {
-        if (VarGenoCommand.isRunVariantCheck) {
-            ThirdPartyToolManager.runVariantChecks(genotypesFilePath);
-        }
     }
 
     @Override

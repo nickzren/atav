@@ -43,15 +43,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
     }
 
     @Override
-    public void afterProcessDatabaseData() {
-        super.afterProcessDatabaseData();
-
-        if (CollapsingCommand.isRunVariantCheck) {
-            ThirdPartyToolManager.runVariantChecks(genotypesFilePath);
-        }
-    }
-
-    @Override
     public void closeOutput() {
         try {
             super.closeOutput();
@@ -60,6 +51,15 @@ public class CollapsingSingleVariant extends CollapsingBase {
             bwGenotypes.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
+        }
+    }
+
+    @Override
+    public void doAfterCloseOutput() {
+        super.doAfterCloseOutput();
+
+        if (CollapsingCommand.isRunVariantCheck) {
+            ThirdPartyToolManager.runVariantChecks(genotypesFilePath);
         }
     }
 

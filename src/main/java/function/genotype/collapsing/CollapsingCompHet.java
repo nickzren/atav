@@ -48,15 +48,6 @@ public class CollapsingCompHet extends CollapsingBase {
     }
 
     @Override
-    public void afterProcessDatabaseData() {
-        super.afterProcessDatabaseData();
-
-        if (CollapsingCommand.isRunVariantCheck) {
-            ThirdPartyToolManager.runVariantChecks(comphetFilePath);
-        }
-    }
-
-    @Override
     public void closeOutput() {
         try {
             super.closeOutput();
@@ -65,6 +56,15 @@ public class CollapsingCompHet extends CollapsingBase {
             bwCompHet.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
+        }
+    }
+
+    @Override
+    public void doAfterCloseOutput() {
+        super.doAfterCloseOutput();
+
+        if (CollapsingCommand.isRunVariantCheck) {
+            ThirdPartyToolManager.runVariantChecks(comphetFilePath);
         }
     }
 
