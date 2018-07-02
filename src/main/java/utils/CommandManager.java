@@ -313,9 +313,9 @@ public class CommandManager {
                     TrioCommand.isListTrio = true;
                     GenotypeLevelFilterCommand.minCaseCarrier = 1;
                     break;
-                case "--list-parent-comp-het":
-                    ParentCommand.isListParentCompHet = true;
-                    break;    
+//                case "--list-parent-comp-het":
+//                    ParentCommand.isListParentCompHet = true;
+//                    break;    
                 case "--list-parental-mosaic":
                     ParentalCommand.isParentalMosaic = true;
                     break;
