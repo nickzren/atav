@@ -35,7 +35,8 @@ public class ThirdPartyToolManager {
     private static final String TRIO_DENOVO_TIER = Data.ATAV_HOME + "lib/r0.6_trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.6_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/r0.6_nonTrio_tier.R";
-    private static final String VARIANTS_CHECK = Data.ATAV_HOME + "lib/variants_check.py";
+    private static final String MANN_WHITNEY_TEST = Data.ATAV_HOME + "lib/mann_whitney_test.py";
+
     private static final int nProcs = 4;
 
     public static void init() {
@@ -249,9 +250,9 @@ public class ThirdPartyToolManager {
     }
     
         
-    public static void runVariantChecks(String genotypesFilePath) {
+    public static void runMannWhitneyTest(String genotypesFilePath) {
         String cmd = PYTHON + " "
-                + VARIANTS_CHECK + " "
+                + MANN_WHITNEY_TEST + " "
                 + genotypesFilePath;
 
         systemCall(new String[]{cmd});

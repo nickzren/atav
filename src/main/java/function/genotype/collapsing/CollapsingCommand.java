@@ -8,7 +8,6 @@ import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -25,7 +24,7 @@ public class CollapsingCommand {
     public static boolean isCollapsingDoLogistic = false;
     public static String regionBoundaryFile = "";
     public static boolean isIncludeHomRef = false;
-    public static boolean isRunVariantCheck = false;
+    public static boolean isMannWhitneyTest = false;
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -57,8 +56,8 @@ public class CollapsingCommand {
                 case "--include-hom-ref":
                     isIncludeHomRef = true;
                     break;
-                case "--run-variant-check":
-                    isRunVariantCheck = true;
+                case "--mann-whitney-test":
+                    isMannWhitneyTest = true;
                     break;
                 default:
                     continue;
@@ -96,8 +95,8 @@ public class CollapsingCommand {
                     StatisticsCommand.quantitativeFile = getValidPath(option);
                     isCollapsingDoLinear = true;
                     break;
-                case "--run-variant-check":
-                    isRunVariantCheck = true;
+                case "--mann-whitney-test":
+                    isMannWhitneyTest = true;
                     break;
                 default:
                     continue;

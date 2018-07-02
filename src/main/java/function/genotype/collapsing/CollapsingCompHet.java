@@ -63,8 +63,8 @@ public class CollapsingCompHet extends CollapsingBase {
     public void doAfterCloseOutput() {
         super.doAfterCloseOutput();
 
-        if (CollapsingCommand.isRunVariantCheck) {
-            ThirdPartyToolManager.runVariantChecks(comphetFilePath);
+        if (CollapsingCommand.isMannWhitneyTest) {
+            ThirdPartyToolManager.runMannWhitneyTest(comphetFilePath);
         }
     }
 

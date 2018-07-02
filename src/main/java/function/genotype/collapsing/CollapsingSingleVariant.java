@@ -58,8 +58,8 @@ public class CollapsingSingleVariant extends CollapsingBase {
     public void doAfterCloseOutput() {
         super.doAfterCloseOutput();
 
-        if (CollapsingCommand.isRunVariantCheck) {
-            ThirdPartyToolManager.runVariantChecks(genotypesFilePath);
+        if (CollapsingCommand.isMannWhitneyTest) {
+            ThirdPartyToolManager.runMannWhitneyTest(genotypesFilePath);
         }
     }
 
