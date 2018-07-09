@@ -92,6 +92,8 @@ public class Output {
                     + "QC Fail Ctrl,"
                     + "Covered Case,"
                     + "Covered Ctrl,"
+                    + "Covered Case Percentage,"
+                    + "Covered Ctrl Percentage,"
                     + "Covered Sample Binomial P (two sided),"
                     + "Case AF,"
                     + "Ctrl AF,"
@@ -110,6 +112,10 @@ public class Output {
                     + "Het Ctrl Freq,"
                     + "QC Fail Case,"
                     + "QC Fail Ctrl,"
+                    + "Covered Case,"
+                    + "Covered Ctrl,"
+                    + "Covered Case Percentage,"
+                    + "Covered Ctrl Percentage,"
                     + "Case AF,"
                     + "Ctrl AF,"
                     + "Case HWE_P,"
@@ -186,9 +192,11 @@ public class Output {
         sb.append(FormatManager.getFloat(calledVar.hetFreq[Index.CTRL])).append(",");
         sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
         sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
+        sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
+        sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
+        sb.append(FormatManager.getFloat(calledVar.getCoveredSamplePercentage(Index.CASE))).append(",");
+        sb.append(FormatManager.getFloat(calledVar.getCoveredSamplePercentage(Index.CTRL))).append(",");
         if (GenotypeLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
-            sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
-            sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
             sb.append(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP())).append(",");
         }
         sb.append(FormatManager.getFloat(calledVar.af[Index.CASE])).append(",");

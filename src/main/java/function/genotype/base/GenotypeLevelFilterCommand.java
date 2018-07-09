@@ -1,6 +1,7 @@
 package function.genotype.base;
 
 import global.Data;
+import global.Index;
 import java.util.Iterator;
 import static utils.CommandManager.checkRangeValid;
 import static utils.CommandManager.getValidDouble;
@@ -54,6 +55,7 @@ public class GenotypeLevelFilterCommand {
     public static int maxQcFailSample = Data.NO_FILTER;
     public static double minCoveredSampleBinomialP = Data.NO_FILTER;
     public static boolean disableCheckOnSexChr = false;
+    public static float[] minCoveredSamplePercentage = {Data.NO_FILTER, Data.NO_FILTER};
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
@@ -240,6 +242,14 @@ public class GenotypeLevelFilterCommand {
                 case "--disable-check-on-sex-chr":
                     disableCheckOnSexChr = true;
                     break;
+                case "--min-covered-case-percentage":
+                    checkValueValid(100, 0, option);
+                    minCoveredSamplePercentage[Index.CASE] = getValidFloat(option);
+                    break;
+                case "--min-covered-ctrl-percentage":
+                    checkValueValid(100, 0, option);
+                    minCoveredSamplePercentage[Index.CTRL] = getValidFloat(option);
+                    break;
                 default:
                     continue;
             }
@@ -376,7 +386,7 @@ public class GenotypeLevelFilterCommand {
 
         return false;
     }
-    
+
     public static boolean isSorValid(float value, boolean isSnv) {
         if (isSnv) {
             return isSORValid(value, snvSOR);
@@ -589,5 +599,21 @@ public class GenotypeLevelFilterCommand {
         }
 
         return value >= minCoveredSampleBinomialP;
+    }
+
+    public static boolean isMinCoveredCasePercentageValid(float value) {
+        if (minCoveredSamplePercentage[Index.CASE] == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minCoveredSamplePercentage[Index.CASE];
+    }
+
+    public static boolean isMinCoveredCtrlPercentageValid(float value) {
+        if (minCoveredSamplePercentage[Index.CTRL] == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minCoveredSamplePercentage[Index.CTRL];
     }
 }
