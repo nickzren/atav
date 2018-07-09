@@ -2,6 +2,16 @@ package function.annotation.base;
 
 import function.variant.base.AnalysisBase4Variant;
 import function.variant.base.RegionManager;
+import function.variant.base.VariantLevelFilterCommand;
+import function.variant.base.VariantManager;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Map;
+import utils.ErrorManager;
+import utils.LogManager;
 
 /**
  *
@@ -22,7 +32,7 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
             region = RegionManager.getRegion(r);
 
             rset = getAnnotationList(region);
-      
+
             while (rset.next()) {
                 annotation.init(rset, region.getChrStr());
 

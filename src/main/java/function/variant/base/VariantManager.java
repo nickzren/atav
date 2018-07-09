@@ -12,6 +12,7 @@ import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import utils.DBManager;
 
@@ -35,8 +36,8 @@ public class VariantManager {
     private static int maxIncludeNum = 200000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
-        if (TrioCommand.isListTrio ||
-                ParentCommand.isListParentCompHet) {
+        if (TrioCommand.isListTrio
+                || ParentCommand.isListParentCompHet) {
             // disable process region as variant by varaint way
             maxIncludeNum = 0;
         }
