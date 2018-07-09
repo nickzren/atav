@@ -127,7 +127,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             long rowLen = 2 * SampleManager.getTotalSampleNum() + 1L;
 
             for (Sample sample : SampleManager.getList()) {
-                String name = sample.getName();
+                String name = sample.getName() + "|" + sample.getType() + "|" + sample.getCaptureKit();
 
                 byte pheno = (byte) (sample.getPheno() + 1);
 
