@@ -214,7 +214,7 @@ public class SampleManager {
 
     private static void initAllSampleFromAnnoDB() {
         String sqlCode = "SELECT * FROM sample "
-                + "WHERE sample_type != 'custom_capture' and sample_name not like 'SRR%' and sample_finished = 1 and sample_failure = 0";
+                + "WHERE sample_type != 'custom_capture' and sample_finished = 1 and sample_failure = 0";
 
         initSampleFromAnnoDB(sqlCode);
     }
