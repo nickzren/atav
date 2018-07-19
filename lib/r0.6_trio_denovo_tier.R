@@ -11,7 +11,7 @@ data <- Filter.for.denovo(data)
 write.csv(data, file = paste(atavOutput,"/denovo.csv", sep=""))
 
 data <- Filter.by.Denovo.Flag(atav.output,'NEWLY HEMIZYGOUS', strict = TRUE)
-data <- rbind(data,Filter.by.Denovo.Flag(data,'COMPOUND DELETION', strict = TRUE))
+data <- rbind(data,Filter.by.Denovo.Flag(atav.output,'COMPOUND DELETION', strict = TRUE))
 data <- Filter.for.hemizygous(data)
 write.csv(data, file = paste(atavOutput,"/hemizygous.csv", sep=""))
 
@@ -28,7 +28,7 @@ data <- Filter.for.tier2(data)
 write.csv(data, file = paste(atavOutput,"/denovo_tier2.csv", sep=""))
 
 data <- Filter.by.Denovo.Flag(input.data,'NEWLY HEMIZYGOUS', strict = FALSE)
-data <- rbind(data,Filter.by.Denovo.Flag(data,'COMPOUND DELETION', strict = TRUE))
+data <- rbind(data,Filter.by.Denovo.Flag(input.data,'COMPOUND DELETION', strict = TRUE))
 data <- Filter.by.HemiHomo.Count(data,9)
 data <- Filter.for.tier2(data)
 write.csv(data, file = paste(atavOutput,"/hemizygous_tier2.csv", sep=""))
