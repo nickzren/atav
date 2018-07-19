@@ -36,7 +36,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     private static final String EIGENSTRAT_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_eigenstrat.py";
 
     // --kinship
-    private static final String KINSHIP_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_kinship.py";
+    private static final String KINSHIP_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_kinship_071918.py";
 
     @Override
     public void initOutput() {
