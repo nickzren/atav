@@ -31,6 +31,7 @@ public class GenotypeLevelFilterCommand {
     public static int minCtrlCoverageNoCall = Data.NO_FILTER;
     public static int minVarPresent = 1; // special case
     public static int minCaseCarrier = Data.NO_FILTER;
+    public static boolean isIncludeHomRef = false;
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
     public static double[] homPercentAltRead = null;
@@ -113,6 +114,9 @@ public class GenotypeLevelFilterCommand {
                 case "--min-case-carrier":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     minCaseCarrier = getValidInteger(option);
+                    break;
+                case "--include-hom-ref":
+                    isIncludeHomRef = true;
                     break;
                 case "--filter":
                     option.setValue(option.getValue().toUpperCase());

@@ -18,6 +18,7 @@ import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
 import function.genotype.base.GenotypeLevelFilterCommand;
+import static function.genotype.base.GenotypeLevelFilterCommand.isIncludeHomRef;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
@@ -172,6 +173,10 @@ public class Output {
     }
 
     public boolean isQualifiedGeno(byte geno) {
+        if (isIncludeHomRef && geno == Index.REF) {
+            return true;
+        }
+
         return geno == Index.HOM || geno == Index.HET;
     }
 
