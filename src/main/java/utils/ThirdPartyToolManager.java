@@ -36,9 +36,7 @@ public class ThirdPartyToolManager {
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.6_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/r0.6_nonTrio_tier.R";
     private static final String MANN_WHITNEY_TEST = Data.ATAV_HOME + "lib/mann_whitney_test.py";
-
-    private static final int nProcs = 4;
-
+    
     public static void init() {
         initDataFromSystemConfig();
     }
@@ -193,16 +191,9 @@ public class ThirdPartyToolManager {
     }
 
     public static void generateQQPlot4CollapsingFetP(String summaryFilePath, String matrixFilePath, String outputPath) {
-        int n = nProcs;
-
-        // hack tweaks here, gene domain input usually too large, needs to review the code again
-        if (GeneManager.hasGeneDomainInput()) {
-            n = 1;
-        }
-
         String cmd = PYTHON + " "
                 + PERM_QQPLOT_FOR_COLLAPSING + " "
-                + "--nprocs " + n + " "
+                + "--nprocs 10 "
                 + summaryFilePath + " "
                 + matrixFilePath + " "
                 + outputPath; // output path
