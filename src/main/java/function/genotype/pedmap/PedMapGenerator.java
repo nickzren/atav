@@ -36,7 +36,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     private static final String EIGENSTRAT_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_eigenstrat.py";
 
     // --kinship
-    private static final String KINSHIP_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_kinship_071918.py";
+    private static final String KINSHIP_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_kinship.py";
 
     @Override
     public void initOutput() {
@@ -127,12 +127,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             long rowLen = 2 * SampleManager.getTotalSampleNum() + 1L;
 
             for (Sample sample : SampleManager.getList()) {
-                String name = sample.getName() + "|" + sample.getType() + "|" + sample.getCaptureKit();
-
                 byte pheno = (byte) (sample.getPheno() + 1);
 
                 bwPed.write(sample.getFamilyId() + " "
-                        + name + " "
+                        + sample.getName() + " "
                         + sample.getPaternalId() + " "
                         + sample.getMaternalId() + " "
                         + sample.getSex() + " "
