@@ -66,11 +66,7 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(1, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                        } 
                         break;
                     case "recessive":
                         if (geno == Index.REF) {
@@ -79,11 +75,7 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(0, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(1, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                        } 
                         break;
                     case "genotypic":
                         // not complete yet, to be finished a bit later
@@ -93,11 +85,7 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(2, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                        } 
                         break;
                     case "additive":
                         if (geno == Index.REF) {
@@ -106,10 +94,6 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(2, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
                         }
                         break;
                     default:

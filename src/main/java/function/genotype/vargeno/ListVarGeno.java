@@ -120,12 +120,10 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     private char getGeno(byte geno) {
         switch (geno) {
             case Index.HOM:
-            case Index.HOM_MALE:
                 return 'H';
             case Index.HET:
                 return 'T';
             case Index.REF:
-            case Index.REF_MALE:
                 return 'R';
             default:
                 return 'N';
