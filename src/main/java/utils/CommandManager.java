@@ -317,6 +317,7 @@ public class CommandManager {
 //                    break;    
                 case "--list-parental-mosaic":
                     ParentalCommand.isParentalMosaic = true;
+                    GenotypeLevelFilterCommand.isCaseOnly = true;
                     break;
                 case "--ped-map":
                     PedMapCommand.isPedMap = true;

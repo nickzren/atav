@@ -29,7 +29,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
 
         // case only filter - add tmp table
         if (GenotypeLevelFilterCommand.isCaseOnly) {
-            sql += ", tmp_case_variant_id_chr" + region.getChrStr();
+            sql += ", tmp_case_variant_id_chr" + region.getChrStr() + " ";
         }
 
         // effect filter - add tmp table
