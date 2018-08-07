@@ -2,6 +2,7 @@ package function.genotype.base;
 
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.statistics.StatisticsCommand;
+import function.variant.base.VariantManager;
 import global.Data;
 import utils.CommonCommand;
 import utils.DBManager;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.StringJoiner;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import utils.FormatManager;
@@ -63,6 +65,8 @@ public class SampleManager {
     // output all existing samples
     private static BufferedWriter bwAllSample = null;
     private final static String allSampleFile = CommonCommand.outputPath + "all.sample.txt";
+    
+    private static StringJoiner caseIDSJ = new StringJoiner(",");
 
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
@@ -297,6 +301,10 @@ public class SampleManager {
                     continue;
                 }
 
+                if(sample.isCase()) {
+                    caseIDSJ.add(String.valueOf(sample.getId()));
+                }
+                
                 sampleList.add(sample);
                 sampleMap.put(sampleId, sample);
 
@@ -762,5 +770,9 @@ public class SampleManager {
 
         ctrlNum = sampleList.size();
         caseNum = 0;
+    }
+    
+    public static StringJoiner getCaseIDSJ(){
+        return caseIDSJ;
     }
 }

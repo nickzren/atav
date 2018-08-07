@@ -5,6 +5,7 @@ import function.annotation.base.Annotation;
 import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.vargeno.VarGenoCommand;
 import global.Data;
 import utils.DBManager;
 import java.sql.ResultSet;
@@ -26,6 +27,11 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
                 + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene "
                 + "FROM variant_chr" + region.getChrStr() + " ";
 
+        // case only filter - add tmp table
+        if (GenotypeLevelFilterCommand.isCaseOnly) {
+            sql += ", tmp_case_variant_id_chr" + region.getChrStr();
+        }
+
         // effect filter - add tmp table
         if (EffectManager.isUsed()) {
             sql += "," + EffectManager.TMP_EFFECT_ID_TABLE + " ";
@@ -38,8 +44,8 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
 
         // region filter
         // if start == end position , then avoid doing SQL range query
-        if (region.getStartPosition() == region.getEndPosition() &&
-                region.getStartPosition() != Data.INTEGER_NA) {
+        if (region.getStartPosition() == region.getEndPosition()
+                && region.getStartPosition() != Data.INTEGER_NA) {
             sql = addFilter2SQL(sql, " POS = " + region.getStartPosition() + " ");
         } else {
             if (region.getStartPosition() != Data.INTEGER_NA) {
@@ -49,6 +55,11 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
             if (region.getEndPosition() != Data.INTEGER_NA) {
                 sql = addFilter2SQL(sql, " POS <= " + region.getEndPosition() + " ");
             }
+        }
+
+        // case only filter - join tmp table
+        if (GenotypeLevelFilterCommand.isCaseOnly) {
+            sql = addFilter2SQL(sql, " variant_id = case_variant_id ");
         }
 
         // effect filter - join tmp table

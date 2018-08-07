@@ -57,6 +57,7 @@ public class GenotypeLevelFilterCommand {
     public static double minCoveredSampleBinomialP = Data.NO_FILTER;
     public static boolean disableCheckOnSexChr = false;
     public static float[] minCoveredSamplePercentage = {Data.NO_FILTER, Data.NO_FILTER};
+    public static boolean isCaseOnly = false;
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
@@ -253,6 +254,9 @@ public class GenotypeLevelFilterCommand {
                 case "--min-covered-ctrl-percentage":
                     checkValueValid(100, 0, option);
                     minCoveredSamplePercentage[Index.CTRL] = getValidFloat(option);
+                    break;
+                case "--case-only":
+                    isCaseOnly = true;
                     break;
                 default:
                     continue;

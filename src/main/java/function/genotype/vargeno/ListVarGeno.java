@@ -4,7 +4,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.SampleManager;
-import global.Index;
+import function.variant.base.VariantManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -72,22 +72,13 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             for (Sample sample : SampleManager.getList()) {
                 byte geno = output.getCalledVariant().getGT(sample.getIndex());
 
-                if (isCaseOnly(sample)
-                        && output.isQualifiedGeno(geno)) {
+                if (output.isQualifiedGeno(geno)) {
                     bwGenotypes.write(output.getString(sample));
                     bwGenotypes.newLine();
                 }
             }
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    private boolean isCaseOnly(Sample sample) {
-        if (VarGenoCommand.isCaseOnly) {
-            return sample.isCase();
-        } else {
-            return true;
         }
     }
 

@@ -3,17 +3,21 @@ package function.variant.base;
 import function.external.knownvar.ClinVar;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
+import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.SampleManager;
 import function.genotype.parent.ParentCommand;
 import function.genotype.trio.TrioCommand;
+import function.genotype.vargeno.VarGenoCommand;
 import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import org.apache.commons.lang.StringEscapeUtils;
 import utils.DBManager;
 
 /**
@@ -58,6 +62,8 @@ public class VariantManager {
 
             resetRegionList();
         }
+        
+        initCaseVariantTable();
     }
 
     public static void initByVariantId(String input, HashSet<String> variantSet, boolean isInclude)
@@ -299,6 +305,27 @@ public class VariantManager {
         includeRsNumberSet.clear();
         includeVariantPosList.clear();
         includeChrList.clear();
+    }
+
+    private static void initCaseVariantTable() {
+        if (GenotypeLevelFilterCommand.isCaseOnly) {
+            try {
+                Statement stmt = DBManager.createStatementByReadOnlyConn();
+
+                for (String chr : RegionManager.getChrList()) {
+                    String sqlQuery = "CREATE TEMPORARY TABLE tmp_case_variant_id_chr" + chr + " "
+                            + "(case_variant_id INT NOT NULL,PRIMARY KEY (case_variant_id)) "
+                            + "ENGINE=TokuDB "
+                            + "SELECT DISTINCT variant_id AS case_variant_id FROM called_variant_chr" + chr + " "
+                            + "WHERE sample_id IN (" + SampleManager.getCaseIDSJ().toString() + ")";
+
+                    stmt.executeUpdate(sqlQuery);
+                    stmt.closeOnCompletion();
+                }
+            } catch (Exception e) {
+                ErrorManager.send(e);
+            }
+        }
     }
 
     public static boolean isUsed() {
