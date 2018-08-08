@@ -2,6 +2,8 @@ package function.external.trap;
 
 import global.Data;
 import java.util.ArrayList;
+import java.util.StringJoiner;
+import utils.FormatManager;
 
 /**
  *
@@ -13,9 +15,13 @@ public class TrapOutput {
     ArrayList<Trap> trapList = new ArrayList<>();
 
     public static String getTitle() {
-        return "Variant ID,"
-                + "Gene,"
-                + TrapManager.getTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Variant ID");
+        sj.add("Gene");
+        sj.add(TrapManager.getTitle());
+
+        return sj.toString();
     }
 
     public TrapOutput(String id) throws Exception {
@@ -30,20 +36,20 @@ public class TrapOutput {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
         for (Trap trap : trapList) {
-            sb.append(variantId).append(",");
-            sb.append(trap.getGene()).append(",");
-            sb.append(trap.getScore()).append("\n");
+            sj.add(variantId);
+            sj.add(trap.getGene());
+            sj.add(FormatManager.getFloat(trap.getScore()));
         }
 
-        if (sb.length() == 0) {
-            sb.append(variantId).append(",");
-            sb.append(Data.STRING_NA).append(",");
-            sb.append(Data.STRING_NA).append("\n");
+        if (sj.length() == 0) {
+            sj.add(variantId);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
         }
 
-        return sb.toString();
+        return sj.toString();
     }
 }

@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.StringJoiner;
 
 /**
  *
@@ -21,23 +22,31 @@ public class CollapsingGeneSummary extends CollapsingSummary {
 
     // output columns 
     public static String getTitle() {
-        return "Rank,"
-                + "Gene Name,"
-                + "Total Variant,"
-                + "Total SNV,"
-                + "Total Indel,"
-                + "Qualified Case,"
-                + "Unqualified Case,"
-                + "Qualified Case Freq,"
-                + "Qualified Ctrl,"
-                + "Unqualified Ctrl,"
-                + "Qualified Ctrl Freq,"
-                + "Enriched Direction,"
-                + "Fet P,"
-                + "Linear P,"
-                + "Logistic P,"
-                + GeneManager.getCoverageSummary("title")
-                + RvisManager.getTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Rank");
+        sj.add("Gene Name");
+        sj.add("Total Variant");
+        sj.add("Total SNV");
+        sj.add("Total Indel");
+        sj.add("Qualified Case");
+        sj.add("Unqualified Case");
+        sj.add("Qualified Case Freq");
+        sj.add("Qualified Ctrl");
+        sj.add("Unqualified Ctrl");
+        sj.add("Qualified Ctrl Freq");
+        sj.add("Enriched Direction");
+        sj.add("Fet P");
+        sj.add("Linear P");
+        sj.add("Logistic P");
+        if (!GeneManager.geneCoverageSummaryTitle.isEmpty()) {
+            sj.add(GeneManager.geneCoverageSummaryTitle);
+        }
+        if (RvisCommand.isIncludeRvis) {
+            sj.add(RvisManager.getTitle());
+        }
+
+        return sj.toString();
     }
 
     String coverageSummaryLine;
@@ -91,40 +100,38 @@ public class CollapsingGeneSummary extends CollapsingSummary {
     }
 
     public String getRvis() {
-        if (RvisCommand.isIncludeRvis) {
-            String geneName = name;
+        String geneName = name;
 
-            if (name.contains("_")) { // if using gene domain
-                geneName = name.substring(0, name.indexOf("_"));
-            }
-
-            return RvisManager.getLine(geneName);
-        } else {
-            return "";
+        if (name.contains("_")) { // if using gene domain
+            geneName = name.substring(0, name.indexOf("_"));
         }
+
+        return RvisManager.getLine(geneName);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        sb.append("'").append(name).append("'").append(",");
-        sb.append(totalVariant).append(",");
-        sb.append(totalSnv).append(",");
-        sb.append(totalIndel).append(",");
-        sb.append(qualifiedCase).append(",");
-        sb.append(unqualifiedCase).append(",");
-        sb.append(FormatManager.getFloat(qualifiedCaseFreq)).append(",");
-        sb.append(qualifiedCtrl).append(",");
-        sb.append(unqualifiedCtrl).append(",");
-        sb.append(FormatManager.getFloat(qualifiedCtrlFreq)).append(",");
-        sb.append(enrichedDirection).append(",");
-        sb.append(FormatManager.getDouble(fetP)).append(",");
-        sb.append(FormatManager.getDouble(linearP)).append(",");
-        sb.append(FormatManager.getDouble(logisticP)).append(",");
-        sb.append(GeneManager.getCoverageSummary(name));
-        sb.append(getRvis());
+        sj.add("'" + name + "'");
+        sj.add(FormatManager.getInteger(totalVariant));
+        sj.add(FormatManager.getInteger(totalSnv));
+        sj.add(FormatManager.getInteger(totalIndel));
+        sj.add(FormatManager.getInteger(qualifiedCase));
+        sj.add(FormatManager.getInteger(unqualifiedCase));
+        sj.add(FormatManager.getFloat(qualifiedCaseFreq));
+        sj.add(FormatManager.getInteger(qualifiedCtrl));
+        sj.add(FormatManager.getInteger(unqualifiedCtrl));
+        sj.add(FormatManager.getFloat(qualifiedCtrlFreq));
+        sj.add(enrichedDirection);
+        sj.add(FormatManager.getDouble(fetP));
+        sj.add(FormatManager.getDouble(linearP));
+        sj.add(FormatManager.getDouble(logisticP));
+        GeneManager.addCoverageSummary(name, sj);
+        if (RvisCommand.isIncludeRvis) {
+            sj.add(getRvis());
+        }
 
-        return sb.toString();
+        return sj.toString();
     }
 }

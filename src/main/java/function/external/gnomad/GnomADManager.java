@@ -2,6 +2,7 @@ package function.external.gnomad;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
+import java.util.StringJoiner;
 
 /**
  *
@@ -20,57 +21,45 @@ public class GnomADManager {
     }
 
     public static String getExomeTitle() {
-        String title = "";
+        StringJoiner sj = new StringJoiner(",");
 
-        if (GnomADCommand.isIncludeGnomADExome) {
-            for (String str : GNOMAD_EXOME_POP) {
-                title += "gnomAD Exome " + str + " maf,"
-                        + "gnomAD Exome " + str + " gts,";
-            }
-
-            title += "gnomAD Exome filter,"
-                    + "gnomAD Exome AB MEDIAN,"
-                    + "gnomAD Exome GQ MEDIAN,"
-                    + "gnomAD Exome AS RF,"
-                    + "gnomAD Exome Mean Coverage,"
-                    + "gnomAD Exome Sample Covered 10x,";
+        for (String str : GNOMAD_EXOME_POP) {
+            sj.add("gnomAD Exome " + str + " maf");
+            sj.add("gnomAD Exome " + str + " gts");
         }
 
-        return title;
+        sj.add("gnomAD Exome filter");
+        sj.add("gnomAD Exome AB MEDIAN");
+        sj.add("gnomAD Exome GQ MEDIAN");
+        sj.add("gnomAD Exome AS RF");
+        sj.add("gnomAD Exome Mean Coverage");
+        sj.add("gnomAD Exome Sample Covered 10x");
+
+        return sj.toString();
     }
 
     public static String getGenomeTitle() {
-        String title = "";
+        StringJoiner sj = new StringJoiner(",");
 
-        if (GnomADCommand.isIncludeGnomADGenome) {
-            for (String str : GNOMAD_GENOME_POP) {
-                title += "gnomAD Genome " + str + " maf,"
-                        + "gnomAD Genome " + str + " gts,";
-            }
-
-            title += "gnomAD Genome filter,"
-                    + "gnomAD Genome AB MEDIAN,"
-                    + "gnomAD Genome GQ MEDIAN,"
-                    + "gnomAD Genome AS RF,";
+        for (String str : GNOMAD_GENOME_POP) {
+            sj.add("gnomAD Genome " + str + " maf");
+            sj.add("gnomAD Genome " + str + " gts");
         }
 
-        return title;
+        sj.add("gnomAD Genome filter");
+        sj.add("gnomAD Genome AB MEDIAN");
+        sj.add("gnomAD Genome GQ MEDIAN");
+        sj.add("gnomAD Genome AS RF");
+
+        return sj.toString();
     }
 
     public static String getExomeVersion() {
-        if (GnomADCommand.isIncludeGnomADExome) {
-            return "gnomAD Exome: " + DataManager.getVersion(exomeVariantTable) + "\n";
-        } else {
-            return "";
-        }
+        return "gnomAD Exome: " + DataManager.getVersion(exomeVariantTable) + "\n";
     }
 
     public static String getGenomeVersion() {
-        if (GnomADCommand.isIncludeGnomADGenome) {
-            return "gnomAD Genome: " + DataManager.getVersion(genomeVariantTable) + "\n";
-        } else {
-            return "";
-        }
+        return "gnomAD Genome: " + DataManager.getVersion(genomeVariantTable) + "\n";
     }
 
     public static String getSql4CvgExome(String chr, int pos) {

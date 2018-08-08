@@ -2,7 +2,6 @@ package function.genotype.base;
 
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.statistics.StatisticsCommand;
-import function.variant.base.VariantManager;
 import global.Data;
 import utils.CommonCommand;
 import utils.DBManager;
@@ -18,7 +17,6 @@ import java.util.Iterator;
 import java.util.StringJoiner;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import utils.FormatManager;
 
 /**
  *
@@ -43,9 +41,6 @@ public class SampleManager {
     private static int caseNum = 0;
     private static int ctrlNum = 0;
 
-    // sample id StringBuilder is just temp used for creating temp tables
-    private static StringBuilder allSampleIdSb = new StringBuilder();
-
     private static ArrayList<Sample> failedSampleList = new ArrayList<>();
     private static ArrayList<Sample> diffTypeSampleList = new ArrayList<>();
     private static ArrayList<Sample> notExistSampleList = new ArrayList<>();
@@ -65,7 +60,7 @@ public class SampleManager {
     // output all existing samples
     private static BufferedWriter bwAllSample = null;
     private final static String allSampleFile = CommonCommand.outputPath + "all.sample.txt";
-    
+
     private static StringJoiner caseIDSJ = new StringJoiner(",");
 
     public static void init() {
@@ -301,10 +296,10 @@ public class SampleManager {
                     continue;
                 }
 
-                if(sample.isCase()) {
+                if (sample.isCase()) {
                     caseIDSJ.add(String.valueOf(sample.getId()));
                 }
-                
+
                 sampleList.add(sample);
                 sampleMap.put(sampleId, sample);
 
@@ -663,11 +658,12 @@ public class SampleManager {
     private static void initTempTables() {
         createTempTable(TMP_SAMPLE_ID_TABLE);
 
-        initSampleIdSbs();
+        StringJoiner allSampleIdSj = new StringJoiner(",");
+        for (Sample sample : sampleList) {
+            allSampleIdSj.add("(" + sample.getId() + ")");
+        }
 
-        insertId2Table(allSampleIdSb.toString(), TMP_SAMPLE_ID_TABLE);
-
-        allSampleIdSb.setLength(0); // free memory
+        insertId2Table(allSampleIdSj.toString(), TMP_SAMPLE_ID_TABLE);
     }
 
     private static void createTempTable(String sqlTable) {
@@ -682,18 +678,6 @@ public class SampleManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-    }
-
-    public static void initSampleIdSbs() {
-        for (Sample sample : sampleList) {
-            addToSampleIdSb(allSampleIdSb, sample.getId());
-        }
-
-        FormatManager.deleteLastComma(allSampleIdSb);
-    }
-
-    private static void addToSampleIdSb(StringBuilder sb, int id) {
-        sb.append("(").append(id).append(")").append(",");
     }
 
     private static void insertId2Table(String ids, String table) {
@@ -771,8 +755,8 @@ public class SampleManager {
         ctrlNum = sampleList.size();
         caseNum = 0;
     }
-    
-    public static StringJoiner getCaseIDSJ(){
+
+    public static StringJoiner getCaseIDSJ() {
         return caseIDSJ;
     }
 }

@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -25,24 +26,20 @@ public class LIMBRManager {
     private static HashMap<String, ArrayList<LIMBRGene>> geneExonMap = new HashMap<>();
 
     public static String getTitle() {
-        if (LIMBRCommand.isIncludeLIMBR) {
-            return "LIMBR Domain Name,"
-                    + "LIMBR Domain Score,"
-                    + "LIMBR Domain Percentile,"
-                    + "LIMBR Exon Name,"
-                    + "LIMBR Exon Score,"
-                    + "LIMBR Exon Percentile,";
-        } else {
-            return "";
-        }
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("LIMBR Domain Name");
+        sj.add("LIMBR Domain Score");
+        sj.add("LIMBR Domain Percentile");
+        sj.add("LIMBR Exon Name");
+        sj.add("LIMBR Exon Score");
+        sj.add("LIMBR Exon Percentile");
+
+        return sj.toString();
     }
 
     public static String getVersion() {
-        if (LIMBRCommand.isIncludeLIMBR) {
-            return "LIMBR: " + DataManager.getVersion(EXON_PATH) + "\n";
-        } else {
-            return "";
-        }
+        return "LIMBR: " + DataManager.getVersion(EXON_PATH) + "\n";
     }
 
     public static void init() {
@@ -75,8 +72,8 @@ public class LIMBRManager {
                 ArrayList<Region> regionList = getRegionList(regionStr[1]);
                 float score = FormatManager.getFloat(tmp[3]);
                 float percentiles = FormatManager.getFloat(tmp[4]);
-                
-                LIMBRGene limbrGene = new LIMBRGene(id, chr, regionList, 
+
+                LIMBRGene limbrGene = new LIMBRGene(id, chr, regionList,
                         score, percentiles);
 
                 if (geneMap.containsKey(geneName)) {

@@ -7,6 +7,7 @@ import global.Index;
 import utils.FormatManager;
 import utils.LogManager;
 import java.util.ArrayList;
+import java.util.StringJoiner;
 
 /**
  *
@@ -17,12 +18,16 @@ public class FisherOutput extends StatisticOutput {
     double oddsRatio = 0;
 
     public static String getTitle() {
-        return getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getExternalDataTitle()
-                + getGenoStatDataTitle()
-                + "P Value,"
-                + "Odds Ratio,";
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.add(getVariantDataTitle());
+        sj.add(getAnnotationDataTitle());
+        sj.add(getExternalDataTitle());
+        sj.add(getGenoStatDataTitle());
+        sj.add("P Value");
+        sj.add("Odds Ratio");
+        
+        return sj.toString();
     }
 
     public FisherOutput(CalledVariant c) {
@@ -54,17 +59,17 @@ public class FisherOutput extends StatisticOutput {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        calledVar.getExternalData(sj);
+        getGenoStatData(sj);
 
-        sb.append(FormatManager.getDouble(pValue)).append(",");
-        sb.append(FormatManager.getDouble(oddsRatio)).append(",");
+        sj.add(FormatManager.getDouble(pValue));
+        sj.add(FormatManager.getDouble(oddsRatio));
 
-        return sb.toString();
+        return sj.toString();
     }
 
     public void calculateP(ArrayList<Integer> countList) {

@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -40,56 +41,53 @@ public class KnownVarManager {
     private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
 
     public static String getTitle() {
-        if (KnownVarCommand.isIncludeKnownVar) {
-            return "HGMDm2site,"
-                    + "HGMDm1site,"
-                    + "HGMD site,"
-                    + "HGMD Disease,"
-                    + "HGMD PMID,"
-                    + "HGMD Class,"
-                    + "HGMDp1site,"
-                    + "HGMDp2site,"
-                    + "HGMD indel 9bpflanks,"
-                    + "ClinVar,"
-                    + "ClinVar RS Number,"
-                    + "ClinVar Disease,"
-                    + "ClinVar Clinical Significance,"
-                    + "ClinVar PMID,"
-                    + "ClinVar pathogenic indels,"
-                    + "ClinVar all indels,"
-                    + "ClinVar Pathogenic Indel Count,"
-                    + "Clinvar Pathogenic CNV Count,"
-                    + "ClinVar Pathogenic SNV Splice Count,"
-                    + "ClinVar Pathogenic SNV Nonsense Count,"
-                    + "ClinVar Pathogenic SNV Missense Count,"
-                    + "ClinVar Pathogenic Last Pathogenic Location,"
-                    + "ClinGen,"
-                    + "ClinGen HaploinsufficiencyDesc,"
-                    + "ClinGen TriplosensitivityDesc,"
-                    + "OMIM Disease,"
-                    + "RecessiveCarrier,"
-                    + "ACMG,"
-                    + "dbDSM Disease,"
-                    + "dbDSM Classification,"
-                    + "dbDSM PubmedID,";
-        } else {
-            return "";
-        }
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("HGMDm2site");
+        sj.add("HGMDm1site");
+        sj.add("HGMD site");
+        sj.add("HGMD Disease");
+        sj.add("HGMD PMID");
+        sj.add("HGMD Class");
+        sj.add("HGMDp1site");
+        sj.add("HGMDp2site");
+        sj.add("HGMD indel 9bpflanks");
+        sj.add("ClinVar");
+        sj.add("ClinVar RS Number");
+        sj.add("ClinVar Disease");
+        sj.add("ClinVar Clinical Significance");
+        sj.add("ClinVar PMID");
+        sj.add("ClinVar pathogenic indels");
+        sj.add("ClinVar all indels");
+        sj.add("ClinVar Pathogenic Indel Count");
+        sj.add("Clinvar Pathogenic CNV Count");
+        sj.add("ClinVar Pathogenic SNV Splice Count");
+        sj.add("ClinVar Pathogenic SNV Nonsense Count");
+        sj.add("ClinVar Pathogenic SNV Missense Count");
+        sj.add("ClinVar Pathogenic Last Pathogenic Location");
+        sj.add("ClinGen");
+        sj.add("ClinGen HaploinsufficiencyDesc");
+        sj.add("ClinGen TriplosensitivityDesc");
+        sj.add("OMIM Disease");
+        sj.add("RecessiveCarrier");
+        sj.add("ACMG");
+        sj.add("dbDSM Disease");
+        sj.add("dbDSM Classification");
+        sj.add("dbDSM PubmedID");
+
+        return sj.toString();
     }
 
     public static String getVersion() {
-        if (KnownVarCommand.isIncludeKnownVar) {
-            return "HGMD: " + DataManager.getVersion(hgmdTable) + "\n"
-                    + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n"
-                    + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n"
-                    + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
-                    + "OMIM: " + DataManager.getVersion(omimTable) + "\n"
-                    + "RecessiveCarrier: " + DataManager.getVersion(recessiveCarrierTable) + "\n"
-                    + "ACMG: " + DataManager.getVersion(acmgTable) + "\n"
-                    + "dbDSM: " + DataManager.getVersion(dbDSMTable) + "\n";
-        } else {
-            return "";
-        }
+        return "HGMD: " + DataManager.getVersion(hgmdTable) + "\n"
+                + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n"
+                + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n"
+                + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
+                + "OMIM: " + DataManager.getVersion(omimTable) + "\n"
+                + "RecessiveCarrier: " + DataManager.getVersion(recessiveCarrierTable) + "\n"
+                + "ACMG: " + DataManager.getVersion(acmgTable) + "\n"
+                + "dbDSM: " + DataManager.getVersion(dbDSMTable) + "\n";
+
     }
 
     public static void init() throws SQLException {

@@ -2,6 +2,7 @@ package function.external.evs;
 
 import global.Data;
 import java.sql.ResultSet;
+import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -85,12 +86,12 @@ public class Evs {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        sb.append(FormatManager.getFloat(allMaf)).append(",");
-        sb.append(allGenotypeCount).append(",");
-        sb.append(filterStatus).append(",");
+        sj.add(FormatManager.getFloat(allMaf));
+        sj.add(allGenotypeCount);
+        sj.add(filterStatus);
 
-        return sb.toString();
+        return sj.toString();
     }
 }

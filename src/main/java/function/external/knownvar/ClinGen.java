@@ -1,5 +1,6 @@
 package function.external.knownvar;
 
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -25,12 +26,12 @@ public class ClinGen {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        sb.append(clinGen).append(",");
-        sb.append(FormatManager.getString(haploinsufficiencyDesc)).append(",");
-        sb.append(FormatManager.getString(triplosensitivityDesc)).append(",");
+        sj.add(FormatManager.getInteger(clinGen));
+        sj.add(FormatManager.getString(haploinsufficiencyDesc));
+        sj.add(FormatManager.getString(triplosensitivityDesc));
 
-        return sb.toString();
+        return sj.toString();
     }
 }

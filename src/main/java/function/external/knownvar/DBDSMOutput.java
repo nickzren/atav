@@ -3,6 +3,7 @@ package function.external.knownvar;
 import function.variant.base.Variant;
 import global.Data;
 import java.util.Collection;
+import java.util.StringJoiner;
 
 /**
  *
@@ -65,12 +66,12 @@ public class DBDSMOutput {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        sb.append(dbDSM.getDiseaseName()).append(",");
-        sb.append(dbDSM.getClassification()).append(",");
-        sb.append(dbDSM.getPubmedID()).append(",");
+        sj.add(dbDSM.getDiseaseName());
+        sj.add(dbDSM.getClassification());
+        sj.add(dbDSM.getPubmedID());
 
-        return sb.toString();
+        return sj.toString();
     }
 }

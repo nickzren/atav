@@ -5,7 +5,6 @@ import function.annotation.base.Annotation;
 import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
-import function.genotype.vargeno.VarGenoCommand;
 import global.Data;
 import utils.DBManager;
 import java.sql.ResultSet;

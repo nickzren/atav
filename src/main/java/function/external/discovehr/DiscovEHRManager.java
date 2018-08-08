@@ -12,23 +12,15 @@ public class DiscovEHRManager {
     static final String table = "knownvar.discovEHR_2017_07_31";
 
     public static String getTitle() {
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
-            return "DiscovEHR AF,";
-        } else {
-            return "";
-        }
+        return "DiscovEHR AF";
     }
 
     public static String getVersion() {
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
-            return "DiscovEHR: " + DataManager.getVersion(table) + "\n";
-        } else {
-            return "";
-        }
+        return "DiscovEHR: " + DataManager.getVersion(table) + "\n";
     }
 
     public static String getSql4AF(Region region) {
-         return "SELECT * "
+        return "SELECT * "
                 + "FROM " + DiscovEHRManager.table + " "
                 + "WHERE chr = '" + region.getChrStr() + "' "
                 + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
@@ -37,7 +29,7 @@ public class DiscovEHRManager {
     public static String getSql4AF(String chr,
             int pos, String ref, String alt) {
         return "SELECT af "
-                + "FROM " +  DiscovEHRManager.table + " "
+                + "FROM " + DiscovEHRManager.table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "

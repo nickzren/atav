@@ -3,6 +3,7 @@ package function.genotype.vargeno;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
+import java.util.StringJoiner;
 
 /**
  *
@@ -23,30 +24,14 @@ public class VarGenoOutput extends Output {
     }
 
     public String getString(Sample sample) {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
-        getGenoStatData(sb);
-        calledVar.getExternalData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
+        getGenoStatData(sj);
+        calledVar.getExternalData(sj);
 
-        return sb.toString();
-    }
-
-    public String getJointedGenotypeString(String genoArrayStr) {
-        StringBuilder sb = new StringBuilder();
-
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        sb.append("NA,NA,NA,");
-        sb.append(genoArrayStr).append(",");
-        sb.append("NA,");
-        sb.append("NA,"); // DP Bin
-        sb.append("NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,");
-        getGenoStatData(sb);
-        calledVar.getExternalData(sb);
-
-        return sb.toString();
+        return sj.toString();
     }
 }

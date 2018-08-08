@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
 
 /**
  *
@@ -122,8 +123,6 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     }
 
     private void doOutput(List<CompHetOutput> geneOutputList) {
-        StringBuilder sb = new StringBuilder();
-
         int outputSize = geneOutputList.size();
 
         CompHetOutput output1, output2;
@@ -153,7 +152,7 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                             // sibling comp het flag
                             String flag = getFlag(child1Flag, child2Flag);
 
-                            doOutput(sb, output1, output2, child1, child1Flag, child2, child2Flag, flag);
+                            doOutput(output1, output2, child1, child1Flag, child2, child2Flag, flag);
                         }
                     }
                 }
@@ -193,34 +192,33 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
                 cGeno2, mGeno2, fGeno2);
     }
 
-    private void doOutput(StringBuilder sb,
+    private void doOutput(
             CompHetOutput output1, CompHetOutput output2,
             Sample child1, String child1Flag,
             Sample child2, String child2Flag,
             String flag) {
         try {
             if (!flag.equals(FLAG[3])) {
-                sb.append(child1.getFamilyId()).append(",");
-                sb.append(child1.getPaternalId()).append(",");
-                sb.append(child1.getMaternalId()).append(",");
-                sb.append(flag).append(",");
-                sb.append(child1.getName()).append(",");
-                sb.append(child1Flag).append(",");
-                sb.append(child2.getName()).append(",");
-                sb.append(child2Flag).append(",");
-
-                sb.append(output1.getString(child1, child2));
-                sb.append(output2.getString(child2, child2));
+                StringJoiner sj = new StringJoiner(",");
+                
+                sj.add(child1.getFamilyId());
+                sj.add(child1.getPaternalId());
+                sj.add(child1.getMaternalId());
+                sj.add(flag);
+                sj.add(child1.getName());
+                sj.add(child1Flag);
+                sj.add(child2.getName());
+                sj.add(child2Flag);
+                sj.merge(output1.getStringJoiner(child1, child2));
+                sj.merge(output2.getStringJoiner(child2, child2));
 
                 if (flag.equals(FLAG[2])) {
-                    compHetNotSharedBw.write(sb.toString());
+                    compHetNotSharedBw.write(sj.toString());
                     compHetNotSharedBw.newLine();
                 } else {
-                    compHetSharedBw.write(sb.toString());
+                    compHetSharedBw.write(sj.toString());
                     compHetSharedBw.newLine();
                 }
-
-                sb.setLength(0); // clear data
             }
         } catch (Exception e) {
             ErrorManager.send(e);

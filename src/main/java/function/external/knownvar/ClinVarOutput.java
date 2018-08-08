@@ -3,6 +3,7 @@ package function.external.knownvar;
 import function.variant.base.Variant;
 import global.Data;
 import java.util.Collection;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -78,16 +79,16 @@ public class ClinVarOutput {
     
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
         
-        sb.append(FormatManager.getInteger(siteCount)).append(",");
-        sb.append(clinvar.getRsNumber()).append(",");
-        sb.append(clinvar.getDiseaseName()).append(",");
-        sb.append(clinvar.getClinicalSignificance()).append(",");
-        sb.append(clinvar.getPubmedID()).append(",");
-        sb.append(FormatManager.getInteger(pathogenicIndelsCount)).append(",");
-        sb.append(FormatManager.getInteger(allIndelsCount)).append(",");
+        sj.add(FormatManager.getInteger(siteCount));
+        sj.add(clinvar.getRsNumber());
+        sj.add(clinvar.getDiseaseName());
+        sj.add(clinvar.getClinicalSignificance());
+        sj.add(clinvar.getPubmedID());
+        sj.add(FormatManager.getInteger(pathogenicIndelsCount));
+        sj.add(FormatManager.getInteger(allIndelsCount));
         
-        return sb.toString();
+        return sj.toString();
     }
 }

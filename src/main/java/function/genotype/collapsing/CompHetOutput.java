@@ -3,6 +3,7 @@ package function.genotype.collapsing;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Index;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -12,9 +13,13 @@ import utils.FormatManager;
 public class CompHetOutput extends CollapsingOutput {
 
     public static String getTitle() {
-        return "Family ID,"
-                + initVarTitleStr("1") + ","
-                + initVarTitleStr("2");
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Family ID");
+        sj.add(initVarTitleStr("1"));
+        sj.add(initVarTitleStr("2"));
+
+        return sj.toString();
     }
 
     private static String initVarTitleStr(String var) {
@@ -24,23 +29,14 @@ public class CompHetOutput extends CollapsingOutput {
                 + getGenoStatDataTitle()
                 + "LOO AF,"
                 + getExternalDataTitle();
+        
+        StringJoiner sj = new StringJoiner(",");
 
-        String[] list = varTitle.split(",");
-
-        varTitle = "";
-
-        boolean isFirst = true;
-
-        for (String s : list) {
-            if (isFirst) {
-                varTitle += s + " (#" + var + ")";
-                isFirst = false;
-            } else {
-                varTitle += "," + s + " (#" + var + ")";
-            }
+        for (String s : varTitle.split(",")) {
+            sj.add(s + " (#" + var + ")");
         }
 
-        return varTitle;
+        return sj.toString();
     }
 
     public CompHetOutput(CalledVariant c) {
@@ -48,17 +44,17 @@ public class CompHetOutput extends CollapsingOutput {
     }
 
     @Override
-    public String getString(Sample sample) {
-        StringBuilder sb = new StringBuilder();
+    public StringJoiner getStringJoiner(Sample sample) {
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
-        getGenoStatData(sb);
-        sb.append(FormatManager.getDouble(looAF)).append(",");
-        calledVar.getExternalData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
+        getGenoStatData(sj);
+        sj.add(FormatManager.getDouble(looAF));
+        calledVar.getExternalData(sj);
 
-        return sb.toString();
+        return sj;
     }
 
     public boolean isHomOrRef(byte geno) {

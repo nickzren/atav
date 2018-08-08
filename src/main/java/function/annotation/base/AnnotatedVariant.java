@@ -39,6 +39,7 @@ import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.HashSet;
+import java.util.StringJoiner;
 import utils.MathManager;
 
 /**
@@ -263,22 +264,22 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
-    public void getAnnotationData(StringBuilder sb) {
-        sb.append(getStableId()).append(",");
-        sb.append(hasCCDS).append(",");
-        sb.append(effect).append(",");
-        sb.append(HGVS_c).append(",");
-        sb.append(HGVS_p).append(",");
-        sb.append(FormatManager.getFloat(polyphenHumdiv)).append(",");
-        sb.append(PolyphenManager.getPrediction(polyphenHumdiv, effect)).append(",");
-        sb.append(FormatManager.getFloat(polyphenHumdivCCDS)).append(",");
-        sb.append(PolyphenManager.getPrediction(polyphenHumdivCCDS, effect)).append(",");
-        sb.append(FormatManager.getFloat(polyphenHumvar)).append(",");
-        sb.append(PolyphenManager.getPrediction(polyphenHumvar, effect)).append(",");
-        sb.append(FormatManager.getFloat(polyphenHumvarCCDS)).append(",");
-        sb.append(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect)).append(",");
-        sb.append("'").append(geneName).append("'").append(",");
-        sb.append(allGeneTranscriptSB.toString()).append(",");
+    public void getAnnotationData(StringJoiner sj) {
+        sj.add(getStableId());
+        sj.add(Boolean.toString(hasCCDS));
+        sj.add(effect);
+        sj.add(HGVS_c);
+        sj.add(HGVS_p);
+        sj.add(FormatManager.getFloat(polyphenHumdiv));
+        sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
+        sj.add(FormatManager.getFloat(polyphenHumdivCCDS));
+        sj.add(PolyphenManager.getPrediction(polyphenHumdivCCDS, effect));
+        sj.add(FormatManager.getFloat(polyphenHumvar));
+        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
+        sj.add(FormatManager.getFloat(polyphenHumvarCCDS));
+        sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
+        sj.add("'" + geneName + "'");
+        sj.add(allGeneTranscriptSB.toString());
     }
 
     public String getStableId() {
@@ -323,163 +324,145 @@ public class AnnotatedVariant extends Variant {
         return geneSet;
     }
 
-    public void getExternalData(StringBuilder sb) {
-        sb.append(getEvsStr());
-        sb.append(getExacStr());
-        sb.append(getExacGeneVariantCount());
-        sb.append(getGnomADExomeStr());
-        sb.append(getGnomADGenomeStr());
-        sb.append(getKnownVarStr());
-        sb.append(getKaviarStr());
-        sb.append(get1000Genomes());
-        sb.append(getRvis());
-        sb.append(getSubRvis());
-        sb.append(getLIMBR());
-        sb.append(getGerpScore());
-        sb.append(getTrapScore());
-        sb.append(getMgi());
-        sb.append(getDenovoDB());
-        sb.append(getDiscovEHR());
-        sb.append(getMTR());
-    }
+    public void getExternalData(StringJoiner sj) {
+        if (EvsCommand.isIncludeEvs) {
+            sj.add(getEvsStr());
+        }
 
-    public String getExacStr() {
         if (ExacCommand.isIncludeExac) {
-            return exac.toString();
-        } else {
-            return "";
+            sj.add(getExacStr());
         }
-    }
 
-    public String getGnomADExomeStr() {
+        if (ExacCommand.isIncludeExacGeneVariantCount) {
+            sj.add(getExacGeneVariantCount());
+        }
+
         if (GnomADCommand.isIncludeGnomADExome) {
-            return gnomADExome.toString();
-        } else {
-            return "";
+            sj.add(getGnomADExomeStr());
         }
-    }
 
-    public String getGnomADGenomeStr() {
         if (GnomADCommand.isIncludeGnomADGenome) {
-            return gnomADGenome.toString();
-        } else {
-            return "";
+            sj.add(getGnomADGenomeStr());
         }
-    }
 
-    public String getKaviarStr() {
+        if (KnownVarCommand.isIncludeKnownVar) {
+            sj.add(getKnownVarStr());
+        }
+
         if (KaviarCommand.isIncludeKaviar) {
-            return kaviar.toString();
-        } else {
-            return "";
+            sj.add(getKaviarStr());
+        }
+
+        if (GenomesCommand.isInclude1000Genomes) {
+            sj.add(get1000Genomes());
+        }
+
+        if (RvisCommand.isIncludeRvis) {
+            sj.add(getRvis());
+        }
+
+        if (SubRvisCommand.isIncludeSubRvis) {
+            sj.add(getSubRvis());
+        }
+
+        if (LIMBRCommand.isIncludeLIMBR) {
+            sj.add(getLIMBR());
+        }
+
+        if (GerpCommand.isIncludeGerp) {
+            sj.add(getGerpScore());
+        }
+
+        if (TrapCommand.isIncludeTrap) {
+            sj.add(getTrapScore());
+        }
+
+        if (MgiCommand.isIncludeMgi) {
+            sj.add(getMgi());
+        }
+
+        if (DenovoDBCommand.isIncludeDenovoDB) {
+            sj.add(getDenovoDB());
+        }
+
+        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+            sj.add(getDiscovEHR());
+        }
+
+        if (MTRCommand.isIncludeMTR) {
+            sj.add(getMTR());
         }
     }
 
     public String getEvsStr() {
-        if (EvsCommand.isIncludeEvs) {
-            return evs.toString();
-        } else {
-            return "";
-        }
+        return evs.toString();
     }
 
-    public String getKnownVarStr() {
-        if (KnownVarCommand.isIncludeKnownVar) {
-            return knownVarOutput.toString();
-        } else {
-            return "";
-        }
-    }
-
-    public String getGerpScore() {
-        if (GerpCommand.isIncludeGerp) {
-            return FormatManager.getFloat(gerpScore) + ",";
-        } else {
-            return "";
-        }
-    }
-
-    public String getTrapScore() {
-        if (TrapCommand.isIncludeTrap) {
-            return FormatManager.getFloat(trapScore) + ",";
-        } else {
-            return "";
-        }
-    }
-
-    public String getRvis() {
-        if (RvisCommand.isIncludeRvis) {
-            return rvisStr;
-        } else {
-            return "";
-        }
-    }
-
-    public String getSubRvis() {
-        if (SubRvisCommand.isIncludeSubRvis) {
-            return subRvisOutput.toString();
-        } else {
-            return "";
-        }
-    }
-
-    public String getLIMBR() {
-        if (LIMBRCommand.isIncludeLIMBR) {
-            return limbrOutput.toString();
-        } else {
-            return "";
-        }
-    }
-
-    public String get1000Genomes() {
-        if (GenomesCommand.isInclude1000Genomes) {
-            return genomes.toString();
-        } else {
-            return "";
-        }
-    }
-
-    public String getMgi() {
-        if (MgiCommand.isIncludeMgi) {
-            return mgiStr;
-        } else {
-            return "";
-        }
-    }
-
-    public String getDenovoDB() {
-        if (DenovoDBCommand.isIncludeDenovoDB) {
-            return denovoDB.toString();
-        } else {
-            return "";
-        }
-    }
-
-    public String getDiscovEHR() {
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
-            return discovEHR.toString();
-        } else {
-            return "";
-        }
+    public String getExacStr() {
+        return exac.toString();
     }
 
     public String getExacGeneVariantCount() {
-        if (ExacCommand.isIncludeExacGeneVariantCount) {
-            return exacGeneVariantCountStr;
-        } else {
-            return "";
-        }
+        return exacGeneVariantCountStr;
+    }
+
+    public String getGnomADExomeStr() {
+        return gnomADExome.toString();
+    }
+
+    public String getGnomADGenomeStr() {
+        return gnomADGenome.toString();
+    }
+
+    public String getKnownVarStr() {
+        return knownVarOutput.toString();
+    }
+
+    public String getKaviarStr() {
+        return kaviar.toString();
+    }
+
+    public String get1000Genomes() {
+        return genomes.toString();
+    }
+
+    public String getRvis() {
+        return rvisStr;
+    }
+
+    public String getSubRvis() {
+        return subRvisOutput.toString();
+    }
+
+    public String getLIMBR() {
+        return limbrOutput.toString();
+    }
+
+    public String getGerpScore() {
+        return FormatManager.getFloat(gerpScore);
+    }
+
+    public String getTrapScore() {
+        return FormatManager.getFloat(trapScore);
+    }
+
+    public String getMgi() {
+        return mgiStr;
+    }
+
+    public String getDenovoDB() {
+        return denovoDB.toString();
+    }
+
+    public String getDiscovEHR() {
+        return discovEHR.toString();
     }
 
     public String getMTR() {
-        if (MTRCommand.isIncludeMTR) {
-            if (mtr != null) {
-                return mtr.toString();
-            } else {
-                return "NA,NA,NA,";
-            }
+        if (mtr != null) {
+            return mtr.toString();
         } else {
-            return "";
+            return "NA,NA,NA";
         }
     }
 }

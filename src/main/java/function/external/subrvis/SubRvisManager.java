@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -25,24 +26,20 @@ public class SubRvisManager {
     private static HashMap<String, ArrayList<SubRvisGene>> geneExonMap = new HashMap<>();
 
     public static String getTitle() {
-        if (SubRvisCommand.isIncludeSubRvis) {
-            return "subRVIS Domain Name,"
-                    + "subRVIS Domain Score Percentile,"
-                    + "subRVIS Domain OEratio Percentile,"
-                    + "subRVIS Exon Name,"
-                    + "subRVIS Exon Score Percentile,"
-                    + "subRVIS Exon OEratio Percentile,";
-        } else {
-            return "";
-        }
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("subRVIS Domain Name");
+        sj.add("subRVIS Domain Score Percentile");
+        sj.add("subRVIS Domain OEratio Percentile");
+        sj.add("subRVIS Exon Name");
+        sj.add("subRVIS Exon Score Percentile");
+        sj.add("subRVIS Exon OEratio Percentile");
+
+        return sj.toString();
     }
 
     public static String getVersion() {
-        if (SubRvisCommand.isIncludeSubRvis) {
-            return "Sub RVIS: " + DataManager.getVersion(SUBRVIS_EXON_PATH) + "\n";
-        } else {
-            return "";
-        }
+        return "Sub RVIS: " + DataManager.getVersion(SUBRVIS_EXON_PATH) + "\n";
     }
 
     public static void init() {

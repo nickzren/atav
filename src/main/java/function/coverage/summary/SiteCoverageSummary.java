@@ -9,7 +9,9 @@ import utils.CommonCommand;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.ErrorManager;
+import utils.FormatManager;
 
 /**
  *
@@ -53,16 +55,15 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
     private void outputSiteSummary(Gene gene, Exon exon) {
         try {
             SiteCoverage siteCoverage = CoverageManager.getSiteCoverage(exon);
-            StringBuilder sb = new StringBuilder();
             for (int pos = 0; pos < exon.getLength(); pos++) {
-                sb.append(gene.getName()).append(",");
-                sb.append(exon.getChrStr()).append(",");
-                sb.append(exon.getStartPosition() + pos).append(",");
+                StringJoiner sj = new StringJoiner(",");
+                sj.add(gene.getName());
+                sj.add(exon.getChrStr());
+                sj.add(FormatManager.getInteger(exon.getStartPosition() + pos));
                 int siteTotalCov = siteCoverage.getCaseSiteCov(pos)
                         + siteCoverage.getCtrlSiteCov(pos);
-                sb.append(siteTotalCov);
-                writeToFile(sb.toString(), bwSiteSummary);
-                sb.setLength(0);
+                sj.add(FormatManager.getInteger(siteTotalCov));
+                writeToFile(sj.toString(), bwSiteSummary);
             }
         } catch (Exception e) {
             ErrorManager.send(e);

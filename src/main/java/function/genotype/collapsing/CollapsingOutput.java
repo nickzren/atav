@@ -6,6 +6,7 @@ import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import java.util.HashSet;
+import java.util.StringJoiner;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -16,12 +17,16 @@ import utils.MathManager;
 public class CollapsingOutput extends Output {
 
     public static String getTitle() {
-        return getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getCarrierDataTitle()
-                + getGenoStatDataTitle()
-                + "LOO AF,"
-                + getExternalDataTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add(getVariantDataTitle());
+        sj.add(getAnnotationDataTitle());
+        sj.add(getCarrierDataTitle());
+        sj.add(getGenoStatDataTitle());
+        sj.add("LOO AF");
+        sj.add(getExternalDataTitle());
+
+        return sj.toString();
     }
 
     double looAF = 0;
@@ -81,38 +86,16 @@ public class CollapsingOutput extends Output {
         return super.isQualifiedGeno(geno);
     }
 
-    public String getString(Sample sample) {
-        StringBuilder sb = new StringBuilder();
+    public StringJoiner getStringJoiner(Sample sample) {
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
-        getGenoStatData(sb);
-        sb.append(FormatManager.getDouble(looAF)).append(",");
-        calledVar.getExternalData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
+        getGenoStatData(sj);
+        sj.add(FormatManager.getDouble(looAF));
+        calledVar.getExternalData(sj);
 
-        return sb.toString();
-    }
-
-    public String getJointedGenotypeString(String genoArrayStr) {
-        StringBuilder sb = new StringBuilder();
-
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-
-        // getCarrierData
-        sb.append("NA,NA,NA,");
-        sb.append(genoArrayStr).append(",");
-        sb.append("NA,");
-        sb.append("NA,"); // DP Bin
-        sb.append("NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,");
-
-        getGenoStatData(sb);
-        
-        sb.append(FormatManager.getDouble(looAF)).append(",");
-
-        calledVar.getExternalData(sb);
-
-        return sb.toString();
+        return sj;
     }
 }

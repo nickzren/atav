@@ -66,10 +66,6 @@ public class DiscovEHR {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(FormatManager.getFloat(af)).append(",");
-
-        return sb.toString();
+        return FormatManager.getFloat(af);
     }
 }

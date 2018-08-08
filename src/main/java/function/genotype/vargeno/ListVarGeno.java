@@ -4,7 +4,6 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.SampleManager;
-import function.variant.base.VariantManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;

@@ -2,6 +2,7 @@ package function.genotype.var;
 
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
+import java.util.StringJoiner;
 
 /**
  *
@@ -10,10 +11,14 @@ import function.variant.base.Output;
 public class VarOutput extends Output {
 
     public static String getTitle() {
-        return getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getExternalDataTitle()
-                + getGenoStatDataTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add(getVariantDataTitle());
+        sj.add(getAnnotationDataTitle());
+        sj.add(getExternalDataTitle());
+        sj.add(getGenoStatDataTitle());
+
+        return sj.toString();
     }
 
     public VarOutput(CalledVariant c) {
@@ -22,13 +27,13 @@ public class VarOutput extends Output {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        calledVar.getExternalData(sj);
+        getGenoStatData(sj);
 
-        return sb.toString();
+        return sj.toString();
     }
 }

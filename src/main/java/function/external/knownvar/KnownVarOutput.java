@@ -1,6 +1,8 @@
 package function.external.knownvar;
 
 import function.annotation.base.AnnotatedVariant;
+import java.util.StringJoiner;
+import utils.FormatManager;
 
 /**
  *
@@ -37,17 +39,17 @@ public class KnownVarOutput {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        sb.append(hgmdOutput.toString());
-        sb.append(clinVarOutput.toString());
-        sb.append(clinVarPathoratio.toString());
-        sb.append(clinGen.toString());
-        sb.append(omimDiseaseName).append(",");
-        sb.append(recessiveCarrier).append(",");
-        sb.append(acmg).append(",");
-        sb.append(dbDSMOutput.toString());
+        sj.add(hgmdOutput.toString());
+        sj.add(clinVarOutput.toString());
+        sj.add(clinVarPathoratio.toString());
+        sj.add(clinGen.toString());
+        sj.add(omimDiseaseName);
+        sj.add(FormatManager.getInteger(recessiveCarrier));
+        sj.add(acmg);
+        sj.add(dbDSMOutput.toString());
 
-        return sb.toString();
+        return sj.toString();
     }
 }

@@ -120,14 +120,11 @@ public class CoverageManager {
 
     private static ArrayList<CoverageInterval> getCoverageIntervalListByMinCoverage(
             int sampleId, String chr, int blockId, String dpBinStr) throws IOException {
-
         StringBuilder sb = new StringBuilder();
 
         ArrayList<CoverageInterval> list = new ArrayList<>();
 
         int endIndex = 0;
-
-        StringBuilder siteSB = new StringBuilder();
 
         for (int pos = 0; pos < dpBinStr.length(); pos++) {
             char c = dpBinStr.charAt(pos);
@@ -144,15 +141,15 @@ public class CoverageManager {
                 if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
                     list.add(new CoverageInterval(blockId, startIndex, endIndex));
                 } else if (CoverageCommand.isIncludePrunedSite) {
-                    siteSB.append(sampleId).append(",");
-                    siteSB.append(chr).append(",");
-                    siteSB.append(blockId).append(",");
-                    siteSB.append(blockId * 1000 + startIndex).append(",");
-                    siteSB.append(endIndex).append(",");
-                    siteSB.append(FormatManager.getShort(dpBin));
-                    SiteCoverageComparison.bwSitePruned.write(siteSB.toString());
+                    StringJoiner sj = new StringJoiner(",");
+                    sj.add(FormatManager.getInteger(sampleId));
+                    sj.add(chr);
+                    sj.add(FormatManager.getInteger(blockId));
+                    sj.add(FormatManager.getInteger(blockId * 1000 + startIndex));
+                    sj.add(FormatManager.getInteger(endIndex));
+                    sj.add(FormatManager.getShort(dpBin));
+                    SiteCoverageComparison.bwSitePruned.write(sj.toString());
                     SiteCoverageComparison.bwSitePruned.newLine();
-                    siteSB.setLength(0);
                 }
 
                 sb.setLength(0);

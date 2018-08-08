@@ -6,6 +6,7 @@ import function.genotype.base.Sample;
 import global.Index;
 import function.genotype.base.Carrier;
 import global.Data;
+import java.util.StringJoiner;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -24,15 +25,19 @@ public class ParentalOutput extends Output {
     double parentBinomial;
 
     public static String getTitle() {
-        return "Family Id,"
-                + "Sample Name (parent),"
-                + "Genotype (parent),"
-                + "Binomial (parent),"
-                + getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getCarrierDataTitle()
-                + getGenoStatDataTitle()
-                + getExternalDataTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Family Id");
+        sj.add("Sample Name (parent)");
+        sj.add("Genotype (parent)");
+        sj.add("Binomial (parent)");
+        sj.add(getVariantDataTitle());
+        sj.add(getAnnotationDataTitle());
+        sj.add(getCarrierDataTitle());
+        sj.add(getGenoStatDataTitle());
+        sj.add(getExternalDataTitle());
+
+        return sj.toString();
     }
 
     public ParentalOutput(CalledVariant c) {
@@ -101,19 +106,19 @@ public class ParentalOutput extends Output {
     }
 
     public String getString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        sb.append(child.getFamilyId()).append(",");
-        sb.append(parent.getName()).append(",");
-        sb.append(getGenoStr(parentGeno)).append(",");
-        sb.append(FormatManager.getDouble(parentBinomial)).append(",");
+        sj.add(child.getFamilyId());
+        sj.add(parent.getName());
+        sj.add(getGenoStr(parentGeno));
+        sj.add(FormatManager.getDouble(parentBinomial));
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        getCarrierData(sb, calledVar.getCarrier(child.getId()), child);
-        getGenoStatData(sb);
-        calledVar.getExternalData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        getCarrierData(sj, calledVar.getCarrier(child.getId()), child);
+        getGenoStatData(sj);
+        calledVar.getExternalData(sj);
 
-        return sb.toString();
+        return sj.toString();
     }
 }

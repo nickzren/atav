@@ -5,6 +5,7 @@ import utils.ErrorManager;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.StringJoiner;
 import utils.DBManager;
 
 /**
@@ -141,22 +142,22 @@ public class Exac {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            sb.append(FormatManager.getFloat(af[i])).append(",");
+            sj.add(FormatManager.getFloat(af[i]));
 
             if (gts[i].equals(Data.STRING_NA)) {
-                sb.append(gts[i]).append(",");
+                sj.add(gts[i]);
             } else {
-                sb.append("'").append(gts[i]).append("',");
+                sj.add("'" + gts[i] + "'");
             }
         }
 
-        sb.append(FormatManager.getFloat(vqslod)).append(",");
-        sb.append(FormatManager.getFloat(meanCoverage)).append(",");
-        sb.append(FormatManager.getInteger(sampleCovered10x)).append(",");
+        sj.add(FormatManager.getFloat(vqslod));
+        sj.add(FormatManager.getFloat(meanCoverage));
+        sj.add(FormatManager.getInteger(sampleCovered10x));
 
-        return sb.toString();
+        return sj.toString();
     }
 }

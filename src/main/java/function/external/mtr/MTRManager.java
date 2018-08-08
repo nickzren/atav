@@ -2,6 +2,7 @@ package function.external.mtr;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
+import java.util.StringJoiner;
 
 /**
  *
@@ -12,21 +13,17 @@ public class MTRManager {
     static final String table = "mtr.variant_chr";
 
     public static String getTitle() {
-        if (MTRCommand.isIncludeMTR) {
-            return "MTR,"
-                    + "MTR FDR,"
-                    + "MTR Centile,";
-        } else {
-            return "";
-        }
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("MTR");
+        sj.add("MTR FDR");
+        sj.add("MTR Centile");
+
+        return sj.toString();
     }
 
     public static String getVersion() {
-        if (MTRCommand.isIncludeMTR) {
-            return "MTR: " + DataManager.getVersion(table) + "\n";
-        } else {
-            return "";
-        }
+        return "MTR: " + DataManager.getVersion(table) + "\n";
     }
 
     public static String getSql4MTR(Region region) {

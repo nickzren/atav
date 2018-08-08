@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.StringJoiner;
 import utils.MathManager;
 
 /**
@@ -41,46 +42,58 @@ public class TrioManager {
     private static final byte LOW = 0;
 
     public static String getTitle4Denovo() {
-        return "Family ID,"
-                + "Mother,"
-                + "Father,"
-                + getTitleByVariant();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Family ID");
+        sj.add("Mother");
+        sj.add("Father");
+        sj.merge(getTitleByVariant());
+
+        return sj.toString();
     }
 
     public static String getTitle4CompHet() {
-        return "Family ID,"
-                + "Mother,"
-                + "Father,"
-                + "Comp Het Flag,"
-                + "Var Case Freq #1 & #2 (co-occurance),"
-                + "Var Ctrl Freq #1 & #2 (co-occurance),"
-                + initVarTitleStr("1")
-                + initVarTitleStr("2");
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Family ID");
+        sj.add("Mother");
+        sj.add("Father");
+        sj.add("Comp Het Flag");
+        sj.add("Var Case Freq #1 & #2 (co-occurance)");
+        sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
+        sj.merge(initVarTitleStr("1"));
+        sj.merge(initVarTitleStr("2"));
+
+        return sj.toString();
     }
 
-    private static String initVarTitleStr(String var) {
-        String[] columnList = getTitleByVariant().split(",");
+    private static StringJoiner initVarTitleStr(String var) {
+        String[] columnList = getTitleByVariant().toString().split(",");
 
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
         for (String column : columnList) {
-            sb.append(column).append(" (#").append(var).append(")" + ",");
+            sj.add(column + " (#" + var + ")");
         }
 
-        return sb.toString();
+        return sj;
     }
 
-    private static String getTitleByVariant() {
-        return Output.getVariantDataTitle()
-                + Output.getAnnotationDataTitle()
-                + Output.getCarrierDataTitle()
-                + "GT (mother),"
-                + "DP Bin (mother),"
-                + "GT (father),"
-                + "DP Bin (father),"
-                + "Denovo Flag,"
-                + Output.getGenoStatDataTitle()
-                + Output.getExternalDataTitle();
+    private static StringJoiner getTitleByVariant() {
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add(Output.getVariantDataTitle());
+        sj.add(Output.getAnnotationDataTitle());
+        sj.add(Output.getCarrierDataTitle());
+        sj.add("GT (mother)");
+        sj.add("DP Bin (mother)");
+        sj.add("GT (father)");
+        sj.add("DP Bin (father)");
+        sj.add("Denovo Flag");
+        sj.add(Output.getGenoStatDataTitle());
+        sj.add(Output.getExternalDataTitle());
+
+        return sj;
     }
 
     public static void init() {

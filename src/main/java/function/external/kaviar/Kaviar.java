@@ -2,6 +2,7 @@ package function.external.kaviar;
 
 import global.Data;
 import java.sql.ResultSet;
+import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -107,12 +108,12 @@ public class Kaviar {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        sb.append(FormatManager.getFloat(maf)).append(",");
-        sb.append(FormatManager.getInteger(alleleCount)).append(",");
-        sb.append(FormatManager.getInteger(alleleNumber)).append(",");
+        sj.add(FormatManager.getFloat(maf));
+        sj.add(FormatManager.getInteger(alleleCount));
+        sj.add(FormatManager.getInteger(alleleNumber));
 
-        return sb.toString();
+        return sj.toString();
     }
 }

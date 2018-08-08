@@ -1,5 +1,6 @@
 package function.external.limbr;
 
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -32,24 +33,24 @@ public class LIMBROutput {
     
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
         if (geneDomain != null) {
-            sb.append(geneDomain.getId()).append(",");
-            sb.append(FormatManager.getFloat(geneDomain.getScore())).append(",");
-            sb.append(FormatManager.getFloat(geneDomain.getPercentiles())).append(",");
+            sj.add(geneDomain.getId());
+            sj.add(FormatManager.getFloat(geneDomain.getScore()));
+            sj.add(FormatManager.getFloat(geneDomain.getPercentiles()));
         } else {
-            sb.append("NA,NA,NA,");
+            sj.add("NA,NA,NA");
         }
 
         if (geneExon != null) {
-            sb.append(geneExon.getId()).append(",");
-            sb.append(FormatManager.getFloat(geneExon.getScore())).append(",");
-            sb.append(FormatManager.getFloat(geneExon.getPercentiles())).append(",");
+            sj.add(geneExon.getId());
+            sj.add(FormatManager.getFloat(geneExon.getScore()));
+            sj.add(FormatManager.getFloat(geneExon.getPercentiles()));
         } else {
-            sb.append("NA,NA,NA,");
+            sj.add("NA,NA,NA");
         }
 
-        return sb.toString();
+        return sj.toString();
     }
 }

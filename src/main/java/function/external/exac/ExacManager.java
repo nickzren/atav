@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.ErrorManager;
 
 /**
@@ -25,31 +26,25 @@ public class ExacManager {
     private static final String GENE_VARIANT_COUNT_PATH = "data/exac/ExAC.r0.3.damagingCounts.csv";
     private static final HashMap<String, String> geneVariantCountMap = new HashMap<>();
     private static String geneVariantCountTitle;
-    private static String NA = "";
+    private static StringJoiner NA = new StringJoiner(",");
 
     public static String getTitle() {
-        String title = "";
+        StringJoiner sj = new StringJoiner(",");
 
-        if (ExacCommand.isIncludeExac) {
-            for (String str : EXAC_POP) {
-                title += "ExAC " + str + " af,"
-                        + "ExAC " + str + " gts,";
-            }
-
-            title += "ExAC vqslod,"
-                    + "ExAC Mean Coverage,"
-                    + "ExAC Sample Covered 10x,";
+        for (String str : EXAC_POP) {
+            sj.add("ExAC " + str + " af");
+            sj.add("ExAC " + str + " gts");
         }
 
-        return title;
+        sj.add("ExAC vqslod");
+        sj.add("ExAC Mean Coverage");
+        sj.add("ExAC Sample Covered 10x");
+
+        return sj.toString();
     }
 
     public static String getGeneVariantCountTitle() {
-        if (ExacCommand.isIncludeExacGeneVariantCount) {
-            return geneVariantCountTitle + ",";
-        } else {
-            return "";
-        }
+        return geneVariantCountTitle;
     }
 
     public static void init() {
@@ -59,11 +54,7 @@ public class ExacManager {
     }
 
     public static String getVersion() {
-        if (ExacCommand.isIncludeExac) {
-            return "ExAC: " + DataManager.getVersion(variantTable) + "\n";
-        } else {
-            return "";
-        }
+        return "ExAC: " + DataManager.getVersion(variantTable) + "\n";
     }
 
     public static String getSql4Cvg(String chr, int pos) {
@@ -129,10 +120,10 @@ public class ExacManager {
                     geneVariantCountTitle = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
-                        NA += "NA,";
+                        NA.add("NA");
                     }
                 } else {
-                    geneVariantCountMap.put(geneName, values + ",");
+                    geneVariantCountMap.put(geneName, values);
                 }
             }
 
@@ -147,6 +138,6 @@ public class ExacManager {
     public static String getLine(String geneName) {
         String line = geneVariantCountMap.get(geneName);
 
-        return line == null ? NA : line;
+        return line == null ? NA.toString() : line;
     }
 }
