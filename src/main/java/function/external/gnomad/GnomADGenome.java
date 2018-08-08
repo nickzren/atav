@@ -126,9 +126,8 @@ public class GnomADGenome {
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
-
-    @Override
-    public String toString() {
+    
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
@@ -146,6 +145,11 @@ public class GnomADGenome {
         sj.add(FormatManager.getInteger(gqMedian));
         sj.add(FormatManager.getFloat(asRf));
 
-        return sj.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

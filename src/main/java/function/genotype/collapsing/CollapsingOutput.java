@@ -19,12 +19,12 @@ public class CollapsingOutput extends Output {
     public static String getTitle() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(getVariantDataTitle());
-        sj.add(getAnnotationDataTitle());
-        sj.add(getCarrierDataTitle());
-        sj.add(getGenoStatDataTitle());
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getCarrierDataTitle());
+        sj.merge(getGenoStatDataTitle());
         sj.add("LOO AF");
-        sj.add(getExternalDataTitle());
+        sj.merge(getExternalDataTitle());
 
         return sj.toString();
     }

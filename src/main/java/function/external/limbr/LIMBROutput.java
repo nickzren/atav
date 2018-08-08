@@ -31,8 +31,7 @@ public class LIMBROutput {
         return geneExon;
     }
     
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         if (geneDomain != null) {
@@ -51,6 +50,11 @@ public class LIMBROutput {
             sj.add("NA,NA,NA");
         }
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

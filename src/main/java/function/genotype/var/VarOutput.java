@@ -13,10 +13,10 @@ public class VarOutput extends Output {
     public static String getTitle() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(getVariantDataTitle());
-        sj.add(getAnnotationDataTitle());
-        sj.add(getExternalDataTitle());
-        sj.add(getGenoStatDataTitle());
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getExternalDataTitle());
+        sj.merge(getGenoStatDataTitle());
 
         return sj.toString();
     }

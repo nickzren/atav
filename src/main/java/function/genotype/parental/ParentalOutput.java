@@ -31,11 +31,11 @@ public class ParentalOutput extends Output {
         sj.add("Sample Name (parent)");
         sj.add("Genotype (parent)");
         sj.add("Binomial (parent)");
-        sj.add(getVariantDataTitle());
-        sj.add(getAnnotationDataTitle());
-        sj.add(getCarrierDataTitle());
-        sj.add(getGenoStatDataTitle());
-        sj.add(getExternalDataTitle());
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getCarrierDataTitle());
+        sj.merge(getGenoStatDataTitle());
+        sj.merge(getExternalDataTitle());
 
         return sj.toString();
     }

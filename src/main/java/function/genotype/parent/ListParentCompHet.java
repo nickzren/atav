@@ -148,8 +148,8 @@ public class ListParentCompHet extends AnalysisBase4CalledVar {
         sj.add(output1.child.getFamilyId());
         sj.add(parent);
         sj.add(flag);
-        sj.add(output1.toString());
-        sj.add(output2.toString());
+        sj.merge(output1.getStringJoiner());
+        sj.merge(output2.getStringJoiner());
 
         bw.write(sj.toString());
         bw.newLine();

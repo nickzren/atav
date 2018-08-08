@@ -47,11 +47,11 @@ public class Exac {
             alt = rs.getString("alt_allele");
             af = new float[ExacManager.EXAC_POP.length];
             gts = new String[ExacManager.EXAC_POP.length];
-            
+
             isSnv = ref.length() == alt.length();
 
             initCoverage();
-            
+
             setAF(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -140,8 +140,7 @@ public class Exac {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
@@ -158,6 +157,11 @@ public class Exac {
         sj.add(FormatManager.getFloat(meanCoverage));
         sj.add(FormatManager.getInteger(sampleCovered10x));
 
-        return sj.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

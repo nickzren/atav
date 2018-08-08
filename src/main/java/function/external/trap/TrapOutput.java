@@ -11,7 +11,7 @@ import utils.FormatManager;
  */
 public class TrapOutput {
 
-    String variantId;
+    String variantIdStr;
     ArrayList<Trap> trapList = new ArrayList<>();
 
     public static String getTitle() {
@@ -25,7 +25,7 @@ public class TrapOutput {
     }
 
     public TrapOutput(String id) throws Exception {
-        variantId = id;
+        variantIdStr = id;
 
         String[] tmp = id.split("-"); // chr-pos-ref-alt
 
@@ -34,22 +34,26 @@ public class TrapOutput {
         }
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        for (Trap trap : trapList) {
-            sj.add(variantId);
-            sj.add(trap.getGene());
-            sj.add(FormatManager.getFloat(trap.getScore()));
-        }
-
-        if (sj.length() == 0) {
-            sj.add(variantId);
+        if (trapList.isEmpty()) {
+            sj.add(variantIdStr);
             sj.add(Data.STRING_NA);
             sj.add(Data.STRING_NA);
+        } else {
+            for (Trap trap : trapList) {
+                sj.add(variantIdStr);
+                sj.add(trap.getGene());
+                sj.add(FormatManager.getFloat(trap.getScore()));
+            }
         }
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

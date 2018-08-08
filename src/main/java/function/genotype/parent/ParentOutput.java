@@ -31,13 +31,13 @@ public class ParentOutput extends Output {
         sj.add("Family ID");
         sj.add("Parent");
         sj.add("Comp Het Flag");
-        sj.add(initVarTitleStr("1"));
-        sj.add(initVarTitleStr("2"));
+        sj.merge(initVarTitleStr("1"));
+        sj.merge(initVarTitleStr("2"));
 
         return sj.toString();
     }
 
-    private static String initVarTitleStr(String var) {
+    private static StringJoiner initVarTitleStr(String var) {
         String[] columnList = getTitleByVariant().split(",");
         StringJoiner sj = new StringJoiner(",");
 
@@ -45,22 +45,22 @@ public class ParentOutput extends Output {
             sj.add(column + " (#" + var + ")");
         }
 
-        return sj.toString();
+        return sj;
     }
 
     private static String getTitleByVariant() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(Output.getVariantDataTitle());
-        sj.add(Output.getAnnotationDataTitle());
+        sj.merge(Output.getVariantDataTitle());
+        sj.merge(Output.getAnnotationDataTitle());
         sj.add("GT (child)");
         sj.add("DP Bin (child)");
         sj.add("GT (mother)");
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
-        sj.add(Output.getGenoStatDataTitle());
-        sj.add(Output.getExternalDataTitle());
+        sj.merge(Output.getGenoStatDataTitle());
+        sj.merge(Output.getExternalDataTitle());
 
         return sj.toString();
     }
@@ -84,8 +84,7 @@ public class ParentOutput extends Output {
         fDPBin = calledVar.getDPBin(family.getFatherIndex());
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         calledVar.getVariantData(sj);
@@ -99,6 +98,11 @@ public class ParentOutput extends Output {
         getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
-        return sj.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

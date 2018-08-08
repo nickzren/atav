@@ -12,11 +12,15 @@ import java.util.StringJoiner;
 public class VarGenoOutput extends Output {
 
     public static String getTitle() {
-        return getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getCarrierDataTitle()
-                + getGenoStatDataTitle()
-                + getExternalDataTitle();
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getCarrierDataTitle());
+        sj.merge(getGenoStatDataTitle());
+        sj.merge(getExternalDataTitle());
+        
+        return sj.toString();
     }
 
     public VarGenoOutput(CalledVariant c) {

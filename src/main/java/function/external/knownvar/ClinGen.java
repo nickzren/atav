@@ -24,14 +24,18 @@ public class ClinGen {
         }
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(clinGen));
         sj.add(FormatManager.getString(haploinsufficiencyDesc));
         sj.add(FormatManager.getString(triplosensitivityDesc));
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

@@ -25,9 +25,8 @@ public class ClinVarPathoratio {
         this.snvMissenseCount = snvMissenseCount;
         this.lastPathoLoc = lastPathoLoc;
     }
-
-    @Override
-    public String toString() {
+    
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(indelCount));
@@ -37,6 +36,11 @@ public class ClinVarPathoratio {
         sj.add(FormatManager.getInteger(snvMissenseCount));
         sj.add(FormatManager.getString(lastPathoLoc));
 
-        return sj.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

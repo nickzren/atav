@@ -152,9 +152,8 @@ public class GnomADExome {
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
-
-    @Override
-    public String toString() {
+    
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
@@ -174,6 +173,11 @@ public class GnomADExome {
         sj.add(FormatManager.getFloat(meanCoverage));
         sj.add(FormatManager.getInteger(sampleCovered10x));
 
-        return sj.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

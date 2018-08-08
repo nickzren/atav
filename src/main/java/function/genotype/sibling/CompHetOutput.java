@@ -32,10 +32,10 @@ public class CompHetOutput extends Output {
     private static StringJoiner initVarTitleStr(String var) {
         StringJoiner sj = new StringJoiner(",");
         
-        sj.add(getVariantDataTitle());
-        sj.add(getAnnotationDataTitle());
-        sj.add(getExternalDataTitle());
-        sj.add(getGenoStatDataTitle());
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getExternalDataTitle());
+        sj.merge(getGenoStatDataTitle());
         sj.add("Child1 GT");
         sj.add("Child1 DP Bin");
         sj.add("Child2 GT");

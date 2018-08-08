@@ -83,15 +83,19 @@ public class Evs {
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
-
-    @Override
-    public String toString() {
+    
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getFloat(allMaf));
         sj.add(allGenotypeCount);
         sj.add(filterStatus);
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

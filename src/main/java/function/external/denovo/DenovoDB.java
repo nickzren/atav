@@ -61,13 +61,17 @@ public class DenovoDB {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getString(phenotyp));
         sj.add(FormatManager.getString(pubmedID));
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner() .toString();
     }
 }

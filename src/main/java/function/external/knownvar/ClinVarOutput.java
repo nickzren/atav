@@ -77,8 +77,7 @@ public class ClinVarOutput {
         return clinvar;
     }
     
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
         
         sj.add(FormatManager.getInteger(siteCount));
@@ -89,6 +88,11 @@ public class ClinVarOutput {
         sj.add(FormatManager.getInteger(pathogenicIndelsCount));
         sj.add(FormatManager.getInteger(allIndelsCount));
         
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {        
+        return getStringJoiner().toString();
     }
 }

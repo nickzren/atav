@@ -16,27 +16,30 @@ public class CompHetOutput extends CollapsingOutput {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family ID");
-        sj.add(initVarTitleStr("1"));
-        sj.add(initVarTitleStr("2"));
+        sj.merge(initVarTitleStr("1"));
+        sj.merge(initVarTitleStr("2"));
 
         return sj.toString();
     }
 
-    private static String initVarTitleStr(String var) {
-        String varTitle = getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getCarrierDataTitle()
-                + getGenoStatDataTitle()
-                + "LOO AF,"
-                + getExternalDataTitle();
-        
+    private static StringJoiner initVarTitleStr(String var) {
         StringJoiner sj = new StringJoiner(",");
 
-        for (String s : varTitle.split(",")) {
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getCarrierDataTitle());
+        sj.merge(getGenoStatDataTitle());
+        sj.add("LOO AF");
+        sj.merge(getExternalDataTitle());
+
+        String[] list = sj.toString().split(",");
+
+        sj = new StringJoiner(",");
+        for (String s : list) {
             sj.add(s + " (#" + var + ")");
         }
 
-        return sj.toString();
+        return sj;
     }
 
     public CompHetOutput(CalledVariant c) {

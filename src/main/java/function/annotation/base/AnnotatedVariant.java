@@ -326,11 +326,11 @@ public class AnnotatedVariant extends Variant {
 
     public void getExternalData(StringJoiner sj) {
         if (EvsCommand.isIncludeEvs) {
-            sj.add(getEvsStr());
+            sj.merge(getEvsStringJoiner());
         }
 
         if (ExacCommand.isIncludeExac) {
-            sj.add(getExacStr());
+            sj.merge(getExacStringJoiner());
         }
 
         if (ExacCommand.isIncludeExacGeneVariantCount) {
@@ -338,23 +338,23 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (GnomADCommand.isIncludeGnomADExome) {
-            sj.add(getGnomADExomeStr());
+            sj.merge(getGnomADExomeStringJoiner());
         }
 
         if (GnomADCommand.isIncludeGnomADGenome) {
-            sj.add(getGnomADGenomeStr());
+            sj.merge(getGnomADGenomeStringJoiner());
         }
 
         if (KnownVarCommand.isIncludeKnownVar) {
-            sj.add(getKnownVarStr());
+            sj.merge(getKnownVarStringJoiner());
         }
 
         if (KaviarCommand.isIncludeKaviar) {
-            sj.add(getKaviarStr());
+            sj.merge(getKaviarStringJoiner());
         }
 
         if (GenomesCommand.isInclude1000Genomes) {
-            sj.add(get1000Genomes());
+            sj.merge(get1000GenomesStringJoiner());
         }
 
         if (RvisCommand.isIncludeRvis) {
@@ -362,11 +362,11 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (SubRvisCommand.isIncludeSubRvis) {
-            sj.add(getSubRvis());
+            sj.merge(getSubRvisStringJoiner());
         }
 
         if (LIMBRCommand.isIncludeLIMBR) {
-            sj.add(getLIMBR());
+            sj.merge(getLIMBRStringJoiner());
         }
 
         if (GerpCommand.isIncludeGerp) {
@@ -382,7 +382,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (DenovoDBCommand.isIncludeDenovoDB) {
-            sj.add(getDenovoDB());
+            sj.merge(getDenovoDBStringJoiner());
         }
 
         if (DiscovEHRCommand.isIncludeDiscovEHR) {
@@ -394,48 +394,48 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
-    public String getEvsStr() {
-        return evs.toString();
+    public StringJoiner getEvsStringJoiner() {
+        return evs.getStringJoiner();
     }
 
-    public String getExacStr() {
-        return exac.toString();
+    public StringJoiner getExacStringJoiner() {
+        return exac.getStringJoiner();
     }
 
     public String getExacGeneVariantCount() {
         return exacGeneVariantCountStr;
     }
 
-    public String getGnomADExomeStr() {
-        return gnomADExome.toString();
+    public StringJoiner getGnomADExomeStringJoiner() {
+        return gnomADExome.getStringJoiner();
     }
 
-    public String getGnomADGenomeStr() {
-        return gnomADGenome.toString();
+    public StringJoiner getGnomADGenomeStringJoiner() {
+        return gnomADGenome.getStringJoiner();
     }
 
-    public String getKnownVarStr() {
-        return knownVarOutput.toString();
+    public StringJoiner getKnownVarStringJoiner() {
+        return knownVarOutput.getStringJoiner();
     }
 
-    public String getKaviarStr() {
-        return kaviar.toString();
+    public StringJoiner getKaviarStringJoiner() {
+        return kaviar.getStringJoiner();
     }
 
-    public String get1000Genomes() {
-        return genomes.toString();
+    public StringJoiner get1000GenomesStringJoiner() {
+        return genomes.getStringJoiner();
     }
 
     public String getRvis() {
         return rvisStr;
     }
 
-    public String getSubRvis() {
-        return subRvisOutput.toString();
+    public StringJoiner getSubRvisStringJoiner() {
+        return subRvisOutput.getStringJoiner();
     }
 
-    public String getLIMBR() {
-        return limbrOutput.toString();
+    public StringJoiner getLIMBRStringJoiner() {
+        return limbrOutput.getStringJoiner();
     }
 
     public String getGerpScore() {
@@ -450,8 +450,8 @@ public class AnnotatedVariant extends Variant {
         return mgiStr;
     }
 
-    public String getDenovoDB() {
-        return denovoDB.toString();
+    public StringJoiner getDenovoDBStringJoiner() {
+        return denovoDB.getStringJoiner();
     }
 
     public String getDiscovEHR() {

@@ -64,14 +64,18 @@ public class DBDSMOutput {
         return dbDSM;
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(dbDSM.getDiseaseName());
         sj.add(dbDSM.getClassification());
         sj.add(dbDSM.getPubmedID());
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

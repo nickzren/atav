@@ -76,15 +76,19 @@ public class MTR {
 
         return f;
     }
-
-    @Override
-    public String toString() {
+    
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getFloat(mtr));
         sj.add(FormatManager.getFloat(fdr));
         sj.add(FormatManager.getFloat(mtrCentile));
 
-        return sj.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

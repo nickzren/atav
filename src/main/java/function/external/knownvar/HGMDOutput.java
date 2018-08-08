@@ -82,9 +82,9 @@ public class HGMDOutput {
         return hgmd;
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
+        
         sj.add(m2Site);
         sj.add(m1Site);
         sj.add(FormatManager.getInteger(siteCount));
@@ -94,6 +94,12 @@ public class HGMDOutput {
         sj.add(p1Site);
         sj.add(p2Site);
         sj.add(FormatManager.getInteger(indel9bpflanks));
-        return sj.toString();
+        
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

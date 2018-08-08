@@ -15,9 +15,9 @@ public class VarAnnoOutput {
     public static String getTitle() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(Output.getVariantDataTitle());
-        sj.add(Output.getAnnotationDataTitle());
-        sj.add(Output.getExternalDataTitle());
+        sj.merge(Output.getVariantDataTitle());
+        sj.merge(Output.getAnnotationDataTitle());
+        sj.merge(Output.getExternalDataTitle());
 
         return sj.toString();
     }
@@ -26,14 +26,18 @@ public class VarAnnoOutput {
         annotatedVar = var;
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         annotatedVar.getVariantData(sj);
         annotatedVar.getAnnotationData(sj);
         annotatedVar.getExternalData(sj);
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

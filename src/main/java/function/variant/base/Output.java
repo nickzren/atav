@@ -46,7 +46,7 @@ import utils.FormatManager;
  */
 public class Output {
 
-    public static String getVariantDataTitle() {
+    public static StringJoiner getVariantDataTitle() {
         StringJoiner sj = new StringJoiner(",");
         
         sj.add("Variant ID");
@@ -55,10 +55,10 @@ public class Output {
         sj.add("Alt Allele");
         sj.add("Rs Number");
         
-        return sj.toString();
+        return sj;
     }
 
-    public static String getAnnotationDataTitle() {
+    public static StringJoiner getAnnotationDataTitle() {
         StringJoiner sj = new StringJoiner(",");
         
         sj.add("Transcript Stable Id");
@@ -77,10 +77,10 @@ public class Output {
         sj.add("Gene Name");
         sj.add("All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar");
         
-        return sj.toString();
+        return sj;
     }
 
-    public static String getExternalDataTitle() {
+    public static StringJoiner getExternalDataTitle() {
         StringJoiner sj = new StringJoiner(",");
         
         if (EvsCommand.isIncludeEvs) {
@@ -151,11 +151,11 @@ public class Output {
             sj.add(MTRManager.getTitle());
         }
         
-        return sj.toString();
+        return sj;
     }
 
     // quick hack here, eventually will get rid of min covered sample binomial p
-    public static String getGenoStatDataTitle() {
+    public static StringJoiner getGenoStatDataTitle() {
         StringJoiner sj = new StringJoiner(",");
         
         sj.add("Hom Case");
@@ -182,10 +182,10 @@ public class Output {
         sj.add("Case HWE_P");
         sj.add("Ctrl HWE_P");
         
-        return sj.toString();
+        return sj;
     }
 
-    public static String getCarrierDataTitle() {
+    public static StringJoiner getCarrierDataTitle() {
         StringJoiner sj = new StringJoiner(",");
         
         sj.add("Sample Name");
@@ -209,7 +209,7 @@ public class Output {
         sj.add("MQ Rank Sum");
         sj.add("FILTER");
         
-        return sj.toString();
+        return sj;
     }
 
     protected CalledVariant calledVar;

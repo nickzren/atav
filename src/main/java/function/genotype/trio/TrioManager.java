@@ -82,16 +82,16 @@ public class TrioManager {
     private static StringJoiner getTitleByVariant() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(Output.getVariantDataTitle());
-        sj.add(Output.getAnnotationDataTitle());
-        sj.add(Output.getCarrierDataTitle());
+        sj.merge(Output.getVariantDataTitle());
+        sj.merge(Output.getAnnotationDataTitle());
+        sj.merge(Output.getCarrierDataTitle());
         sj.add("GT (mother)");
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
         sj.add("Denovo Flag");
-        sj.add(Output.getGenoStatDataTitle());
-        sj.add(Output.getExternalDataTitle());
+        sj.merge(Output.getGenoStatDataTitle());
+        sj.merge(Output.getExternalDataTitle());
 
         return sj;
     }

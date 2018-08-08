@@ -55,8 +55,7 @@ public class SubRvisOutput {
         return exonOEratio;
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(domainName);
@@ -66,6 +65,11 @@ public class SubRvisOutput {
         sj.add(FormatManager.getFloat(exonScore));
         sj.add(FormatManager.getFloat(exonOEratio));
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

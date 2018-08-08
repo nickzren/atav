@@ -37,19 +37,23 @@ public class KnownVarOutput {
         dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(hgmdOutput.toString());
-        sj.add(clinVarOutput.toString());
-        sj.add(clinVarPathoratio.toString());
-        sj.add(clinGen.toString());
+        sj.merge(hgmdOutput.getStringJoiner());
+        sj.merge(clinVarOutput.getStringJoiner());
+        sj.merge(clinVarPathoratio.getStringJoiner());
+        sj.merge(clinGen.getStringJoiner());
         sj.add(omimDiseaseName);
         sj.add(FormatManager.getInteger(recessiveCarrier));
         sj.add(acmg);
-        sj.add(dbDSMOutput.toString());
+        sj.merge(dbDSMOutput.getStringJoiner());
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

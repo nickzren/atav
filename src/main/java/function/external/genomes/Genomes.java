@@ -95,14 +95,18 @@ public class Genomes {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));
         }
 
-        return sj.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

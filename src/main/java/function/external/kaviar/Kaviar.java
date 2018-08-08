@@ -106,14 +106,18 @@ public class Kaviar {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
-    @Override
-    public String toString() {
+    public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getFloat(maf));
         sj.add(FormatManager.getInteger(alleleCount));
         sj.add(FormatManager.getInteger(alleleNumber));
 
-        return sj.toString();
+        return sj;
+    }
+    
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }
