@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.ErrorManager;
 
 /**
@@ -20,22 +21,14 @@ public class MgiManager {
 
     public static String title;
     private static final HashMap<String, String> mgiMap = new HashMap<>();
-    public static String NA = "";
+    private static StringJoiner NA = new StringJoiner(",");
 
     public static String getTitle() {
-        if (MgiCommand.isIncludeMgi) {
-            return title + ",";
-        } else {
-            return "";
-        }
+        return title;
     }
 
     public static String getVersion() {
-        if (MgiCommand.isIncludeMgi) {
-            return "MGI: " + DataManager.getVersion(MGI_PATH) + "\n";
-        } else {
-            return "";
-        }
+        return "MGI: " + DataManager.getVersion(MGI_PATH) + "\n";
     }
 
     public static void init() {
@@ -61,10 +54,10 @@ public class MgiManager {
                     title = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
-                        NA += "NA,";
+                        NA.add("NA");
                     }
                 } else {
-                    mgiMap.put(geneName, values + ",");
+                    mgiMap.put(geneName, values);
                 }
             }
 
@@ -79,6 +72,6 @@ public class MgiManager {
     public static String getLine(String geneName) {
         String line = mgiMap.get(geneName);
 
-        return line == null ? NA : line;
+        return line == null ? NA.toString() : line;
     }
 }

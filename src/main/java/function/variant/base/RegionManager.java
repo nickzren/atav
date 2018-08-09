@@ -15,6 +15,7 @@ import java.util.Collections;
 public class RegionManager {
 
     private static ArrayList<Region> regionList = new ArrayList<>();
+    private static ArrayList<String> chrList = new ArrayList<>();
     private static boolean isUsed = false;
 
     public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
@@ -51,6 +52,7 @@ public class RegionManager {
 
     public static void clear() {
         regionList.clear();
+        chrList.clear();
     }
 
     public static boolean isUsed() {
@@ -67,6 +69,7 @@ public class RegionManager {
 
             if (!isRegionListContained(region)) {
                 regionList.add(region);
+                addChrList(region.getChrStr());
             }
         }
     }
@@ -86,6 +89,7 @@ public class RegionManager {
 
         if (!isRegionListContained(region)) {
             regionList.add(region);
+            addChrList(region.getChrStr());
         }
     }
 
@@ -200,5 +204,16 @@ public class RegionManager {
         String chr = values[0];
         int pos = Integer.valueOf(values[1]);
         regionList.add(new Region(chr, pos, pos));
+        addChrList(chr);
+    }
+
+    private static void addChrList(String chr) {
+        if (!chrList.contains(chr)) {
+            chrList.add(chr);
+        }
+    }
+    
+    public static ArrayList<String> getChrList(){
+        return chrList;
     }
 }

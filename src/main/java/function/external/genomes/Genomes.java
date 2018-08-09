@@ -2,6 +2,7 @@ package function.external.genomes;
 
 import global.Data;
 import java.sql.ResultSet;
+import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -94,14 +95,18 @@ public class Genomes {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
 
         for (int i = 0; i < GenomesManager.GENOMES_POP.length; i++) {
-            sb.append(FormatManager.getFloat(af[i])).append(",");
+            sj.add(FormatManager.getFloat(af[i]));
         }
 
-        return sb.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

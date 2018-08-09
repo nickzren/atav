@@ -3,6 +3,7 @@ package function.variant.base;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
+import java.util.StringJoiner;
 
 /**
  *
@@ -93,11 +94,11 @@ public class Variant extends Region {
         return getChrStr() + "-" + getStartPosition();
     }
 
-    public void getVariantData(StringBuilder sb) {
-        sb.append(variantIdStr).append(",");
-        sb.append(getType()).append(",");
-        sb.append(refAllele).append(",");
-        sb.append(allele).append(",");
-        sb.append(getRsNumberStr()).append(",");
+    public void getVariantData(StringJoiner sj) {
+        sj.add(variantIdStr);
+        sj.add(getType());
+        sj.add(refAllele);
+        sj.add(allele);
+        sj.add(getRsNumberStr());
     }
 }

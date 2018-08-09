@@ -17,23 +17,13 @@ public class GerpManager {
     private static Gerp gerp = new Gerp();
 
     public static String getTitle() {
-        String title = "";
-
-        if (GerpCommand.isIncludeGerp) {
-            title = "Gerp RS Score,";
-        }
-
-        return title;
+        return "Gerp RS Score";
     }
 
     public static String getVersion() {
-        if (GerpCommand.isIncludeGerp) {
-            return "Gerp: " + DataManager.getVersion(table) + "\n";
-        } else {
-            return "";
-        }
+        return "Gerp: " + DataManager.getVersion(table) + "\n";
     }
-    
+
     public static float getScore(String chr, int pos, String ref, String alt) {
         if (ref.length() > 1
                 || alt.length() > 1) { // indels

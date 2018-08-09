@@ -9,6 +9,7 @@ import global.Data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.FormatManager;
 import utils.LogManager;
 import utils.MathManager;
@@ -197,13 +198,13 @@ public class SiteClean {
 
         if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
                 && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-            StringBuilder sb = new StringBuilder();
+            StringJoiner sj = new StringJoiner(",");
 
-            sb.append(gene.getName()).append(",");
-            sb.append(gene.getChr()).append(",");
-            sb.append(gene.getLength()).append(",");
-            sb.append(FormatManager.getFloat(caseAvg)).append(",");
-            sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+            sj.add(gene.getName());
+            sj.add(gene.getChr());
+            sj.add(FormatManager.getInteger(gene.getLength()));
+            sj.add(FormatManager.getFloat(caseAvg));
+            sj.add(FormatManager.getFloat(ctrlAvg));
 
             float covDiff = Data.FLOAT_NA;
 
@@ -213,9 +214,9 @@ public class SiteClean {
                 covDiff = MathManager.abs(caseAvg, ctrlAvg);
             }
 
-            sb.append(FormatManager.getFloat(covDiff)).append(",");
-            sb.append(geneSize);
-            return sb.toString();
+            sj.add(FormatManager.getFloat(covDiff));
+            sj.add(FormatManager.getInteger(geneSize));
+            return sj.toString();
         } else {
             return "";
         }

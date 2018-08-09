@@ -1,5 +1,6 @@
 package function.external.knownvar;
 
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -24,18 +25,22 @@ public class ClinVarPathoratio {
         this.snvMissenseCount = snvMissenseCount;
         this.lastPathoLoc = lastPathoLoc;
     }
+    
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add(FormatManager.getInteger(indelCount));
+        sj.add(FormatManager.getInteger(copyCount));
+        sj.add(FormatManager.getInteger(snvSpliceCount));
+        sj.add(FormatManager.getInteger(snvNonsenseCount));
+        sj.add(FormatManager.getInteger(snvMissenseCount));
+        sj.add(FormatManager.getString(lastPathoLoc));
+
+        return sj;
+    }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(FormatManager.getInteger(indelCount)).append(",");
-        sb.append(FormatManager.getInteger(copyCount)).append(",");
-        sb.append(FormatManager.getInteger(snvSpliceCount)).append(",");
-        sb.append(FormatManager.getInteger(snvNonsenseCount)).append(",");
-        sb.append(FormatManager.getInteger(snvMissenseCount)).append(",");
-        sb.append(FormatManager.getString(lastPathoLoc)).append(",");
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }

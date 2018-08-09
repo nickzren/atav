@@ -1,19 +1,34 @@
 package function.variant.base;
 
+import function.external.denovo.DenovoDBCommand;
 import function.external.limbr.LIMBRManager;
 import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRCommand;
 import function.external.discovehr.DiscovEHRManager;
+import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
+import function.external.exac.ExacCommand;
 import function.external.exac.ExacManager;
+import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
+import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gnomad.GnomADCommand;
+import function.external.kaviar.KaviarCommand;
 import function.external.kaviar.KaviarManager;
+import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
+import function.external.limbr.LIMBRCommand;
+import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
+import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
+import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
+import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
+import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
@@ -22,6 +37,7 @@ import static function.genotype.base.GenotypeLevelFilterCommand.isIncludeHomRef;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -30,121 +46,170 @@ import utils.FormatManager;
  */
 public class Output {
 
-    public static String getVariantDataTitle() {
-        return "Variant ID,"
-                + "Variant Type,"
-                + "Ref Allele,"
-                + "Alt Allele,"
-                + "Rs Number,";
+    public static StringJoiner getVariantDataTitle() {
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.add("Variant ID");
+        sj.add("Variant Type");
+        sj.add("Ref Allele");
+        sj.add("Alt Allele");
+        sj.add("Rs Number");
+        
+        return sj;
     }
 
-    public static String getAnnotationDataTitle() {
-        return "Transcript Stable Id,"
-                + "Has CCDS Transcript,"
-                + "Effect,"
-                + "HGVS_c,"
-                + "HGVS_p,"
-                + "Polyphen Humdiv Score,"
-                + "Polyphen Humdiv Prediction,"
-                + "Polyphen Humdiv Score (CCDS),"
-                + "Polyphen Humdiv Prediction (CCDS),"
-                + "Polyphen Humvar Score,"
-                + "Polyphen Humvar Prediction,"
-                + "Polyphen Humvar Score (CCDS),"
-                + "Polyphen Humvar Prediction (CCDS),"
-                + "Gene Name,"
-                + "All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar,";
+    public static StringJoiner getAnnotationDataTitle() {
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.add("Transcript Stable Id");
+        sj.add("Has CCDS Transcript");
+        sj.add("Effect");
+        sj.add("HGVS_c");
+        sj.add("HGVS_p");
+        sj.add("Polyphen Humdiv Score");
+        sj.add("Polyphen Humdiv Prediction");
+        sj.add("Polyphen Humdiv Score (CCDS)");
+        sj.add("Polyphen Humdiv Prediction (CCDS)");
+        sj.add("Polyphen Humvar Score");
+        sj.add("Polyphen Humvar Prediction");
+        sj.add("Polyphen Humvar Score (CCDS)");
+        sj.add("Polyphen Humvar Prediction (CCDS)");
+        sj.add("Gene Name");
+        sj.add("All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar");
+        
+        return sj;
     }
 
-    public static String getExternalDataTitle() {
-        return EvsManager.getTitle()
-                + ExacManager.getTitle()
-                + ExacManager.getGeneVariantCountTitle()
-                + GnomADManager.getExomeTitle()
-                + GnomADManager.getGenomeTitle()
-                + KnownVarManager.getTitle()
-                + KaviarManager.getTitle()
-                + GenomesManager.getTitle()
-                + RvisManager.getTitle()
-                + SubRvisManager.getTitle()
-                + LIMBRManager.getTitle()
-                + GerpManager.getTitle()
-                + TrapManager.getTitle()
-                + MgiManager.getTitle()
-                + DenovoDBManager.getTitle()
-                + DiscovEHRManager.getTitle()
-                + MTRManager.getTitle();
+    public static StringJoiner getExternalDataTitle() {
+        StringJoiner sj = new StringJoiner(",");
+        
+        if (EvsCommand.isIncludeEvs) {
+            sj.add(EvsManager.getTitle());
+        }
+
+        if (ExacCommand.isIncludeExac) {
+            sj.add(ExacManager.getTitle());
+        }
+
+        if (ExacCommand.isIncludeExacGeneVariantCount) {
+            sj.add(ExacManager.getGeneVariantCountTitle());
+        }
+
+        if (GnomADCommand.isIncludeGnomADExome) {
+            sj.add(GnomADManager.getExomeTitle());
+        }
+
+        if (GnomADCommand.isIncludeGnomADGenome) {
+            sj.add(GnomADManager.getGenomeTitle());
+        }
+
+        if (KnownVarCommand.isIncludeKnownVar) {
+            sj.add(KnownVarManager.getTitle());
+        }
+
+        if (KaviarCommand.isIncludeKaviar) {
+            sj.add(KaviarManager.getTitle());
+        }
+
+        if (GenomesCommand.isInclude1000Genomes) {
+            sj.add(GenomesManager.getTitle());
+        }
+
+        if (RvisCommand.isIncludeRvis) {
+            sj.add(RvisManager.getTitle());
+        }
+
+        if (SubRvisCommand.isIncludeSubRvis) {
+            sj.add(SubRvisManager.getTitle());
+        }
+
+        if (LIMBRCommand.isIncludeLIMBR) {
+            sj.add(LIMBRManager.getTitle());
+        }
+
+        if (GerpCommand.isIncludeGerp) {
+            sj.add(GerpManager.getTitle());
+        }
+
+        if (TrapCommand.isIncludeTrap) {
+            sj.add(TrapManager.getTitle());
+        }
+
+        if (MgiCommand.isIncludeMgi) {
+            sj.add(MgiManager.getTitle());
+        }
+
+        if (DenovoDBCommand.isIncludeDenovoDB) {
+            sj.add(DenovoDBManager.getTitle());
+        }
+
+        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+            sj.add(DiscovEHRManager.getTitle());
+        }
+
+        if (MTRCommand.isIncludeMTR) {
+            sj.add(MTRManager.getTitle());
+        }
+        
+        return sj;
     }
 
     // quick hack here, eventually will get rid of min covered sample binomial p
-    public static String getGenoStatDataTitle() {
+    public static StringJoiner getGenoStatDataTitle() {
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.add("Hom Case");
+        sj.add("Het Case");
+        sj.add("Hom Ref Case");
+        sj.add("Hom Case Freq");
+        sj.add("Het Case Freq");
+        sj.add("Hom Ctrl");
+        sj.add("Het Ctrl");
+        sj.add("Hom Ref Ctrl");
+        sj.add("Hom Ctrl Freq");
+        sj.add("Het Ctrl Freq");
+        sj.add("QC Fail Case");
+        sj.add("QC Fail Ctrl");
+        sj.add("Covered Case");
+        sj.add("Covered Ctrl");
+        sj.add("Covered Case Percentage");
+        sj.add("Covered Ctrl Percentage");
         if (GenotypeLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
-            return "Hom Case,"
-                    + "Het Case,"
-                    + "Hom Ref Case,"
-                    + "Hom Case Freq,"
-                    + "Het Case Freq,"
-                    + "Hom Ctrl,"
-                    + "Het Ctrl,"
-                    + "Hom Ref Ctrl,"
-                    + "Hom Ctrl Freq,"
-                    + "Het Ctrl Freq,"
-                    + "QC Fail Case,"
-                    + "QC Fail Ctrl,"
-                    + "Covered Case,"
-                    + "Covered Ctrl,"
-                    + "Covered Case Percentage,"
-                    + "Covered Ctrl Percentage,"
-                    + "Covered Sample Binomial P (two sided),"
-                    + "Case AF,"
-                    + "Ctrl AF,"
-                    + "Case HWE_P,"
-                    + "Ctrl HWE_P,";
-        } else {
-            return "Hom Case,"
-                    + "Het Case,"
-                    + "Hom Ref Case,"
-                    + "Hom Case Freq,"
-                    + "Het Case Freq,"
-                    + "Hom Ctrl,"
-                    + "Het Ctrl,"
-                    + "Hom Ref Ctrl,"
-                    + "Hom Ctrl Freq,"
-                    + "Het Ctrl Freq,"
-                    + "QC Fail Case,"
-                    + "QC Fail Ctrl,"
-                    + "Covered Case,"
-                    + "Covered Ctrl,"
-                    + "Covered Case Percentage,"
-                    + "Covered Ctrl Percentage,"
-                    + "Case AF,"
-                    + "Ctrl AF,"
-                    + "Case HWE_P,"
-                    + "Ctrl HWE_P,";
+            sj.add("Covered Sample Binomial P (two sided)");
         }
+        sj.add("Case AF");
+        sj.add("Ctrl AF");
+        sj.add("Case HWE_P");
+        sj.add("Ctrl HWE_P");
+        
+        return sj;
     }
 
-    public static String getCarrierDataTitle() {
-        return "Sample Name,"
-                + "Sample Type,"
-                + "Sample Phenotype,"
-                + "GT,"
-                + "DP,"
-                + "DP Bin,"
-                + "AD REF,"
-                + "AD ALT,"
-                + "Percent Alt Read,"
-                + "Percent Alt Read Binomial P,"
-                + "GQ,"
-                + "VQSLOD,"
-                + "SOR,"
-                + "FS,"
-                + "MQ,"
-                + "QD,"
-                + "Qual,"
-                + "Read Pos Rank Sum,"
-                + "MQ Rank Sum,"
-                + "FILTER,";
+    public static StringJoiner getCarrierDataTitle() {
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.add("Sample Name");
+        sj.add("Sample Type");
+        sj.add("Sample Phenotype");
+        sj.add("GT");
+        sj.add("DP");
+        sj.add("DP Bin");
+        sj.add("AD REF");
+        sj.add("AD ALT");
+        sj.add("Percent Alt Read");
+        sj.add("Percent Alt Read Binomial P");
+        sj.add("GQ");
+        sj.add("VQSLOD");
+        sj.add("SOR");
+        sj.add("FS");
+        sj.add("MQ");
+        sj.add("QD");
+        sj.add("Qual");
+        sj.add("Read Pos Rank Sum");
+        sj.add("MQ Rank Sum");
+        sj.add("FILTER");
+        
+        return sj;
     }
 
     protected CalledVariant calledVar;
@@ -180,52 +245,52 @@ public class Output {
         return geno == Index.HOM || geno == Index.HET;
     }
 
-    public void getGenoStatData(StringBuilder sb) {
-        sb.append(calledVar.genoCount[Index.HOM][Index.CASE]).append(",");
-        sb.append(calledVar.genoCount[Index.HET][Index.CASE]).append(",");
-        sb.append(calledVar.genoCount[Index.REF][Index.CASE]).append(",");
-        sb.append(FormatManager.getFloat(calledVar.homFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getFloat(calledVar.hetFreq[Index.CASE])).append(",");
-        sb.append(calledVar.genoCount[Index.HOM][Index.CTRL]).append(",");
-        sb.append(calledVar.genoCount[Index.HET][Index.CTRL]).append(",");
-        sb.append(calledVar.genoCount[Index.REF][Index.CTRL]).append(",");
-        sb.append(FormatManager.getFloat(calledVar.homFreq[Index.CTRL])).append(",");
-        sb.append(FormatManager.getFloat(calledVar.hetFreq[Index.CTRL])).append(",");
-        sb.append(calledVar.getQcFailSample(Index.CASE)).append(",");
-        sb.append(calledVar.getQcFailSample(Index.CTRL)).append(",");
-        sb.append(calledVar.getCoveredSample(Index.CASE)).append(",");
-        sb.append(calledVar.getCoveredSample(Index.CTRL)).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getCoveredSamplePercentage(Index.CASE))).append(",");
-        sb.append(FormatManager.getFloat(calledVar.getCoveredSamplePercentage(Index.CTRL))).append(",");
+    public void getGenoStatData(StringJoiner sj) {
+        sj.add(FormatManager.getInteger(calledVar.genoCount[Index.HOM][Index.CASE]));
+        sj.add(FormatManager.getInteger(calledVar.genoCount[Index.HET][Index.CASE]));
+        sj.add(FormatManager.getInteger(calledVar.genoCount[Index.REF][Index.CASE]));
+        sj.add(FormatManager.getFloat(calledVar.homFreq[Index.CASE]));
+        sj.add(FormatManager.getFloat(calledVar.hetFreq[Index.CASE]));
+        sj.add(FormatManager.getInteger(calledVar.genoCount[Index.HOM][Index.CTRL]));
+        sj.add(FormatManager.getInteger(calledVar.genoCount[Index.HET][Index.CTRL]));
+        sj.add(FormatManager.getInteger(calledVar.genoCount[Index.REF][Index.CTRL]));
+        sj.add(FormatManager.getFloat(calledVar.homFreq[Index.CTRL]));
+        sj.add(FormatManager.getFloat(calledVar.hetFreq[Index.CTRL]));
+        sj.add(FormatManager.getInteger(calledVar.getQcFailSample(Index.CASE)));
+        sj.add(FormatManager.getInteger(calledVar.getQcFailSample(Index.CTRL)));
+        sj.add(FormatManager.getInteger(calledVar.getCoveredSample(Index.CASE)));
+        sj.add(FormatManager.getInteger(calledVar.getCoveredSample(Index.CTRL)));
+        sj.add(FormatManager.getFloat(calledVar.getCoveredSamplePercentage(Index.CASE)));
+        sj.add(FormatManager.getFloat(calledVar.getCoveredSamplePercentage(Index.CTRL)));
         if (GenotypeLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
-            sb.append(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP())).append(",");
+            sj.add(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP()));
         }
-        sb.append(FormatManager.getFloat(calledVar.af[Index.CASE])).append(",");
-        sb.append(FormatManager.getFloat(calledVar.af[Index.CTRL])).append(",");
-        sb.append(FormatManager.getDouble(calledVar.hweP[Index.CASE])).append(",");
-        sb.append(FormatManager.getDouble(calledVar.hweP[Index.CTRL])).append(",");
+        sj.add(FormatManager.getFloat(calledVar.af[Index.CASE]));
+        sj.add(FormatManager.getFloat(calledVar.af[Index.CTRL]));
+        sj.add(FormatManager.getDouble(calledVar.hweP[Index.CASE]));
+        sj.add(FormatManager.getDouble(calledVar.hweP[Index.CTRL]));
     }
 
-    public void getCarrierData(StringBuilder sb, Carrier carrier, Sample sample) {
-        sb.append(sample.getName()).append(",");
-        sb.append(sample.getType()).append(",");
-        sb.append(sample.getPhenotype()).append(",");
-        sb.append(getGenoStr(calledVar.getGT(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA)).append(",");
-        sb.append(FormatManager.getShort(calledVar.getDPBin(sample.getIndex()))).append(",");
-        sb.append(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA)).append(",");
-        sb.append(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA)).append(",");
-        sb.append(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA).append(",");
-        sb.append(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA).append(",");
-        sb.append(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getVQSLOD() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getSOR() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA)).append(",");
-        sb.append(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA)).append(",");
-        sb.append(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA)).append(",");
-        sb.append(carrier != null ? carrier.getFILTER() : Data.STRING_NA).append(",");
+    public void getCarrierData(StringJoiner sj, Carrier carrier, Sample sample) {
+        sj.add(sample.getName());
+        sj.add(sample.getType());
+        sj.add(sample.getPhenotype());
+        sj.add(getGenoStr(calledVar.getGT(sample.getIndex())));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA));
+        sj.add(FormatManager.getShort(calledVar.getDPBin(sample.getIndex())));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA));
+        sj.add(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA);
+        sj.add(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA);
+        sj.add(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA));
+        sj.add(FormatManager.getFloat(carrier != null ? carrier.getVQSLOD() : Data.FLOAT_NA));
+        sj.add(FormatManager.getFloat(carrier != null ? carrier.getSOR() : Data.FLOAT_NA));
+        sj.add(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA));
+        sj.add(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA));
+        sj.add(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA));
+        sj.add(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA));
+        sj.add(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA));
+        sj.add(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA));
+        sj.add(carrier != null ? carrier.getFILTER() : Data.STRING_NA);
     }
 }

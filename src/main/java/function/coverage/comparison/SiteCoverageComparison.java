@@ -13,6 +13,8 @@ import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.StringJoiner;
+import utils.FormatManager;
 import utils.MathManager;
 import utils.ThirdPartyToolManager;
 
@@ -97,20 +99,19 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     private void outputSiteSummary(Gene gene, Exon exon) {
         try {
             SiteCoverage siteCoverage = CoverageManager.getSiteCoverage(exon);
-            StringBuilder sb = new StringBuilder();
             for (int pos = 0; pos < exon.getLength(); pos++) {
+                StringJoiner sj = new StringJoiner(",");
                 int caseCoverage = siteCoverage.getCaseSiteCov(pos);
                 int ctrlCoverage = siteCoverage.getCtrlSiteCov(pos);
 
                 int start = exon.getStartPosition() + pos;
-                sb.append(gene.getName()).append(",");
-                sb.append(gene.getChr()).append(",");
-                sb.append(start).append(",");
-                sb.append(caseCoverage + ctrlCoverage).append(",");
-                sb.append(caseCoverage).append(",");
-                sb.append(ctrlCoverage);
-                writeToFile(sb.toString(), bwSiteSummary);
-                sb.setLength(0);
+                sj.add(gene.getName());
+                sj.add(gene.getChr());
+                sj.add(FormatManager.getInteger(start));
+                sj.add(FormatManager.getInteger(caseCoverage + ctrlCoverage));
+                sj.add(FormatManager.getInteger(caseCoverage));
+                sj.add(FormatManager.getInteger(ctrlCoverage));
+                writeToFile(sj.toString(), bwSiteSummary);
 
                 float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
                 float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());

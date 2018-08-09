@@ -1,5 +1,6 @@
 package function.genotype.statistics;
 
+import function.genotype.base.GenotypeLevelFilterCommand;
 import global.Data;
 
 import java.util.Iterator;
@@ -19,7 +20,6 @@ public class StatisticsCommand {
     public static double threshold4Sort = Data.NO_FILTER;
     public static String[] fisherModels = {"allelic", "dominant", "recessive", "genotypic"};
     public static String[] linearModels = {"allelic", "dominant", "recessive", "additive"};
-    public static boolean isCaseOnly = false;
     public static String covariateFile = "";
     public static String quantitativeFile = "";
 
@@ -32,9 +32,6 @@ public class StatisticsCommand {
                 case "--threshold-sort":
                     threshold4Sort = getValidDouble(option);
                     checkValueValid(1, 0, option);
-                    break;
-                case "--case-only":
-                    isCaseOnly = true;
                     break;
                 default:
                     continue;

@@ -6,6 +6,7 @@ import function.variant.base.Output;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -71,19 +72,19 @@ public class TrioOutput extends Output {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        getCarrierData(sb, cCarrier, child);
-        sb.append(getGenoStr(mGeno)).append(",");
-        sb.append(FormatManager.getShort(mDPBin)).append(",");
-        sb.append(getGenoStr(fGeno)).append(",");
-        sb.append(FormatManager.getShort(fDPBin)).append(",");
-        sb.append(denovoFlag).append(",");
-        getGenoStatData(sb);
-        calledVar.getExternalData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        getCarrierData(sj, cCarrier, child);
+        sj.add(getGenoStr(mGeno));
+        sj.add(FormatManager.getShort(mDPBin));
+        sj.add(getGenoStr(fGeno));
+        sj.add(FormatManager.getShort(fDPBin));
+        sj.add(denovoFlag);
+        getGenoStatData(sj);
+        calledVar.getExternalData(sj);
 
-        return sb.toString();
+        return sj.toString();
     }
 }

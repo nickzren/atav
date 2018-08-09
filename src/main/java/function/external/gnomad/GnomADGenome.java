@@ -5,6 +5,7 @@ import utils.ErrorManager;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.StringJoiner;
 import utils.DBManager;
 
 /**
@@ -125,26 +126,30 @@ public class GnomADGenome {
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
 
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-            sb.append(FormatManager.getFloat(maf[i])).append(",");
+            sj.add(FormatManager.getFloat(maf[i]));
 
             if (gts[i].equals("NA")) {
-                sb.append(gts[i]).append(",");
+                sj.add(gts[i]);
             } else {
-                sb.append("'").append(gts[i]).append("',");
+                sj.add("'" + gts[i] + "'");
             }
         }
 
-        sb.append(filter).append(",");
-        sb.append(FormatManager.getFloat(abMedian)).append(",");
-        sb.append(FormatManager.getInteger(gqMedian)).append(",");
-        sb.append(FormatManager.getFloat(asRf)).append(",");
+        sj.add(filter);
+        sj.add(FormatManager.getFloat(abMedian));
+        sj.add(FormatManager.getInteger(gqMedian));
+        sj.add(FormatManager.getFloat(asRf));
 
-        return sb.toString();
+        return sj;
+    }
+
+    @Override
+    public String toString() {
+        return getStringJoiner().toString();
     }
 }

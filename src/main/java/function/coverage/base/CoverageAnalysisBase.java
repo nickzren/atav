@@ -11,6 +11,7 @@ import global.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -120,22 +121,21 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     private void outputSampleGeneSummary(Gene gene) {
         try {
-            StringBuilder sb = new StringBuilder();
             for (Sample sample : SampleManager.getList()) {
-                sb.append(sample.getName()).append(",");
-                sb.append(gene.getName()).append(",");
-                sb.append(gene.getChr()).append(",");
-                sb.append(gene.getLength()).append(",");
-                sb.append(geneSampleCoverage[gene.getIndex()][sample.getIndex()]).append(",");
+                StringJoiner sj = new StringJoiner(",");
+                sj.add(sample.getName());
+                sj.add(gene.getName());
+                sj.add(gene.getChr());
+                sj.add(FormatManager.getInteger(gene.getLength()));
+                sj.add(FormatManager.getInteger(geneSampleCoverage[gene.getIndex()][sample.getIndex()]));
 
                 double ratio = MathManager.devide(geneSampleCoverage[gene.getIndex()][sample.getIndex()], gene.getLength());
-                sb.append(FormatManager.getDouble(ratio)).append(",");
+                sj.add(FormatManager.getDouble(ratio));
 
                 int pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
-                sb.append(pass);
+                sj.add(FormatManager.getInteger(pass));
 
-                writeToFile(sb.toString(), bwCoverageDetails);
-                sb.setLength(0);
+                writeToFile(sj.toString(), bwCoverageDetails);
 
                 // count region per sample
                 sampleCoverageCount[sample.getIndex()] += pass;
@@ -147,21 +147,20 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     private void outputSampleSummary() {
         try {
-            StringBuilder sb = new StringBuilder();
             for (Sample sample : SampleManager.getList()) {
-                sb.append(sample.getName()).append(",");
-                sb.append(GeneManager.getAllGeneBoundaryLength()).append(",");
+                StringJoiner sj = new StringJoiner(",");
+                sj.add(sample.getName());
+                sj.add(FormatManager.getInteger(GeneManager.getAllGeneBoundaryLength()));
                 int totalSampleCov = getSampleCoverageByIndex(sample.getIndex());
-                sb.append(totalSampleCov).append(",");
+                sj.add(FormatManager.getInteger(totalSampleCov));
                 double ratio = MathManager.devide(totalSampleCov, GeneManager.getAllGeneBoundaryLength());
-                sb.append(FormatManager.getDouble(ratio)).append(",");
-                sb.append(GeneManager.getGeneBoundaryList().size()).append(",");
+                sj.add(FormatManager.getDouble(ratio));
+                sj.add(FormatManager.getInteger(GeneManager.getGeneBoundaryList().size()));
                 int totalSampleRegionCovered = sampleCoverageCount[sample.getIndex()];
-                sb.append(totalSampleRegionCovered).append(",");
+                sj.add(FormatManager.getInteger(totalSampleRegionCovered));
                 ratio = MathManager.devide(totalSampleRegionCovered, GeneManager.getGeneBoundaryList().size());
-                sb.append(FormatManager.getDouble(ratio));
-                writeToFile(sb.toString(), bwSampleSummary);
-                sb.setLength(0);
+                sj.add(FormatManager.getDouble(ratio));
+                writeToFile(sj.toString(), bwSampleSummary);
             }
         } catch (Exception e) {
             ErrorManager.send(e);

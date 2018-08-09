@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import utils.FormatManager;
 import utils.ThirdPartyToolManager;
 
@@ -157,12 +158,12 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     private void outputDenovo(TrioOutput output) throws Exception {
         if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(output.child.getFamilyId()).append(",");
-            sb.append(output.motherName).append(",");
-            sb.append(output.fatherName).append(",");
-            sb.append(output.toString());
-            bwDenovo.write(sb.toString());
+            StringJoiner sj = new StringJoiner(",");
+            sj.add(output.child.getFamilyId());
+            sj.add(output.motherName);
+            sj.add(output.fatherName);
+            sj.add(output.toString());
+            bwDenovo.write(sj.toString());
             bwDenovo.newLine();
         }
     }
@@ -190,18 +191,17 @@ public class ListTrio extends AnalysisBase4CalledVar {
     private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
         float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(output1.child.getFamilyId()).append(",");
-        sb.append(output1.motherName).append(",");
-        sb.append(output1.fatherName).append(",");
-        sb.append(flag).append(",");
-        sb.append(FormatManager.getFloat(coFreq[Index.CASE])).append(",");
-        sb.append(FormatManager.getFloat(coFreq[Index.CTRL])).append(",");
+        StringJoiner sj = new StringJoiner(",");
+        sj.add(output1.child.getFamilyId());
+        sj.add(output1.motherName);
+        sj.add(output1.fatherName);
+        sj.add(flag);
+        sj.add(FormatManager.getFloat(coFreq[Index.CASE]));
+        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
+        sj.add(output1.toString());
+        sj.add(output2.toString());
 
-        sb.append(output1.toString());
-        sb.append(output2.toString());
-
-        bw.write(sb.toString());
+        bw.write(sj.toString());
         bw.newLine();
     }
 

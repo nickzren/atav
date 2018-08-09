@@ -23,21 +23,11 @@ public class TrapManager {
     private static float score = Data.FLOAT_NA;
 
     public static String getTitle() {
-        String title = "";
-
-        if (TrapCommand.isIncludeTrap) {
-            title = "TraP Score,";
-        }
-
-        return title;
+        return "TraP Score";
     }
 
     public static String getVersion() {
-        if (TrapCommand.isIncludeTrap) {
-            return "TraP: " + DataManager.getVersion(table) + "\n";
-        } else {
-            return "";
-        }
+        return "TraP: " + DataManager.getVersion(table) + "\n";
     }
 
     public static float getScore(String _chr, int _pos, String _alt, String _gene) {

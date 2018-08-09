@@ -2,6 +2,7 @@ package function.external.evs;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
+import java.util.StringJoiner;
 
 /**
  *
@@ -12,21 +13,17 @@ public class EvsManager {
     static final String variantTable = "evs.variant_2015_09_16";
 
     public static String getTitle() {
-        if (EvsCommand.isIncludeEvs) {
-            return "Evs All Maf,"
-                    + "Evs All Genotype Count,"
-                    + "Evs Filter Status,";
-        } else {
-            return "";
-        }
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Evs All Maf");
+        sj.add("Evs All Genotype Count");
+        sj.add("Evs Filter Status");
+
+        return sj.toString();
     }
 
     public static String getVersion() {
-        if (EvsCommand.isIncludeEvs) {
-            return "EVS: " + DataManager.getVersion(variantTable) + "\n";
-        } else {
-            return "";
-        }
+        return "EVS: " + DataManager.getVersion(variantTable) + "\n";
     }
 
     public static String getSqlByRegion(Region region) {

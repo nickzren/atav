@@ -2,6 +2,7 @@ package function.external.mtr;
 
 import global.Data;
 import java.sql.ResultSet;
+import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -75,15 +76,19 @@ public class MTR {
 
         return f;
     }
+    
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add(FormatManager.getFloat(mtr));
+        sj.add(FormatManager.getFloat(fdr));
+        sj.add(FormatManager.getFloat(mtrCentile));
+
+        return sj;
+    }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(FormatManager.getFloat(mtr)).append(",");
-        sb.append(FormatManager.getFloat(fdr)).append(",");
-        sb.append(FormatManager.getFloat(mtrCentile)).append(",");
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }

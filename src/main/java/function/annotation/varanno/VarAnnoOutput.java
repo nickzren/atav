@@ -2,6 +2,7 @@ package function.annotation.varanno;
 
 import function.annotation.base.AnnotatedVariant;
 import function.variant.base.Output;
+import java.util.StringJoiner;
 
 /**
  *
@@ -12,23 +13,31 @@ public class VarAnnoOutput {
     AnnotatedVariant annotatedVar;
 
     public static String getTitle() {
-        return Output.getVariantDataTitle()
-                + Output.getAnnotationDataTitle()
-                + Output.getExternalDataTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.merge(Output.getVariantDataTitle());
+        sj.merge(Output.getAnnotationDataTitle());
+        sj.merge(Output.getExternalDataTitle());
+
+        return sj.toString();
     }
 
     public VarAnnoOutput(AnnotatedVariant var) {
         annotatedVar = var;
     }
 
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        annotatedVar.getVariantData(sj);
+        annotatedVar.getAnnotationData(sj);
+        annotatedVar.getExternalData(sj);
+
+        return sj;
+    }
+    
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        annotatedVar.getVariantData(sb);
-        annotatedVar.getAnnotationData(sb);
-        annotatedVar.getExternalData(sb);
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }

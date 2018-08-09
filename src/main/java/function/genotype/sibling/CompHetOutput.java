@@ -3,6 +3,7 @@ package function.genotype.sibling;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -12,56 +13,61 @@ import utils.FormatManager;
 public class CompHetOutput extends Output {
 
     public static String getTitle() {
-        return "Family ID,"
-                + "Mother,"
-                + "Father,"
-                + "Flag,"
-                + "Child1,"
-                + "Child1 Trio Comp Het Flag,"
-                + "Child2,"
-                + "Child2 Trio Comp Het Flag,"
-                + initVarTitleStr("1")
-                + initVarTitleStr("2");
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Family ID");
+        sj.add("Mother");
+        sj.add("Father");
+        sj.add("Flag");
+        sj.add("Child1");
+        sj.add("Child1 Trio Comp Het Flag");
+        sj.add("Child2");
+        sj.add("Child2 Trio Comp Het Flag");
+        sj.merge(initVarTitleStr("1"));
+        sj.merge(initVarTitleStr("2"));
+
+        return sj.toString();
     }
 
-    private static String initVarTitleStr(String var) {
-        String varTitle = getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getExternalDataTitle()
-                + getGenoStatDataTitle()
-                + "Child1 GT,"
-                + "Child1 DP Bin,"
-                + "Child2 GT,"
-                + "Child2 DP Bin,";
+    private static StringJoiner initVarTitleStr(String var) {
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getExternalDataTitle());
+        sj.merge(getGenoStatDataTitle());
+        sj.add("Child1 GT");
+        sj.add("Child1 DP Bin");
+        sj.add("Child2 GT");
+        sj.add("Child2 DP Bin");
 
-        String[] list = varTitle.split(",");
-
-        varTitle = "";
-
+        String[] list = sj.toString().split(",");
+        
+        sj = new StringJoiner(",");
         for (String s : list) {
-            varTitle += s + " (#" + var + "),";
+            sj.add(s + " (#" + var + ")");
         }
 
-        return varTitle;
+        return sj;
     }
 
     public CompHetOutput(CalledVariant c) {
         super(c);
     }
 
-    public String getString(Sample child1, Sample child2) {
-        StringBuilder sb = new StringBuilder();
+    public StringJoiner getStringJoiner(Sample child1, Sample child2) {
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        calledVar.getExternalData(sj);
+        getGenoStatData(sj);
 
-        sb.append(getGenoStr(calledVar.getGT(child1.getIndex()))).append(",");
-        sb.append(FormatManager.getShort(calledVar.getDPBin(child1.getIndex()))).append(",");
-        sb.append(getGenoStr(calledVar.getGT(child2.getIndex()))).append(",");
-        sb.append(FormatManager.getShort(calledVar.getDPBin(child2.getIndex()))).append(",");
+        sj.add(getGenoStr(calledVar.getGT(child1.getIndex())));
+        sj.add(FormatManager.getShort(calledVar.getDPBin(child1.getIndex())));
+        sj.add(getGenoStr(calledVar.getGT(child2.getIndex())));
+        sj.add(FormatManager.getShort(calledVar.getDPBin(child2.getIndex())));
 
-        return sb.toString();
+        return sj;
     }
 }

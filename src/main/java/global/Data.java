@@ -8,16 +8,16 @@ public class Data {
 
     // software info
     public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String VERSION = "7.0.7";
-    public static String userName = System.getProperty("user.name");;
-
-    // system config file path
-    public static final String SYSTEM_CONFIG = "config/atav.dragen.system.config.properties";
-    public static final String SYSTEM_CONFIG_FOR_DEBUG = "config/atav.dragen.debug.system.config.properties";
+    public static String VERSION = "beta";
+    public static String userName = System.getProperty("user.name");
 
     // atav home path
-    public static final String ATAV_HOME = ""; // location of compiled Jar file
-    
+    public static final String ATAV_HOME = "/nfs/goldstein/software/atav_home/"; // location of compiled Jar file
+
+    // system config file path
+    public static final String SYSTEM_CONFIG = Data.ATAV_HOME +  "config/atav.dragen.system.config.properties";
+    public static final String SYSTEM_CONFIG_FOR_DEBUG = Data.ATAV_HOME +  "config/atav.dragen.debug.system.config.properties";
+
     // system default values
     public static final int NO_FILTER = Integer.MAX_VALUE;
     public static final String NO_FILTER_STR = "";

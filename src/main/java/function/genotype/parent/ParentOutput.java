@@ -4,6 +4,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
 import function.genotype.base.Sample;
 import function.variant.base.Output;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -25,36 +26,43 @@ public class ParentOutput extends Output {
     short fDPBin;
 
     public static String getTitle() {
-        return "Family ID,"
-                + "Parent,"
-                + "Comp Het Flag,"
-                + initVarTitleStr("1")
-                + initVarTitleStr("2");
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Family ID");
+        sj.add("Parent");
+        sj.add("Comp Het Flag");
+        sj.merge(initVarTitleStr("1"));
+        sj.merge(initVarTitleStr("2"));
+
+        return sj.toString();
     }
 
-    private static String initVarTitleStr(String var) {
+    private static StringJoiner initVarTitleStr(String var) {
         String[] columnList = getTitleByVariant().split(",");
-
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
         for (String column : columnList) {
-            sb.append(column).append(" (#").append(var).append(")" + ",");
+            sj.add(column + " (#" + var + ")");
         }
 
-        return sb.toString();
+        return sj;
     }
 
     private static String getTitleByVariant() {
-        return Output.getVariantDataTitle()
-                + Output.getAnnotationDataTitle()
-                + "GT (child),"
-                + "DP Bin (child),"
-                + "GT (mother),"
-                + "DP Bin (mother),"
-                + "GT (father),"
-                + "DP Bin (father),"
-                + Output.getGenoStatDataTitle()
-                + Output.getExternalDataTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.merge(Output.getVariantDataTitle());
+        sj.merge(Output.getAnnotationDataTitle());
+        sj.add("GT (child)");
+        sj.add("DP Bin (child)");
+        sj.add("GT (mother)");
+        sj.add("DP Bin (mother)");
+        sj.add("GT (father)");
+        sj.add("DP Bin (father)");
+        sj.merge(Output.getGenoStatDataTitle());
+        sj.merge(Output.getExternalDataTitle());
+
+        return sj.toString();
     }
 
     public ParentOutput(CalledVariant c) {
@@ -75,22 +83,26 @@ public class ParentOutput extends Output {
         fGeno = calledVar.getGT(family.getFatherIndex());
         fDPBin = calledVar.getDPBin(family.getFatherIndex());
     }
-    
+
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        sj.add(getGenoStr(cGeno));
+        sj.add(FormatManager.getShort(cDPBin));
+        sj.add(getGenoStr(mGeno));
+        sj.add(FormatManager.getShort(mDPBin));
+        sj.add(getGenoStr(fGeno));
+        sj.add(FormatManager.getShort(fDPBin));
+        getGenoStatData(sj);
+        calledVar.getExternalData(sj);
+
+        return sj;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        sb.append(getGenoStr(cGeno)).append(",");
-        sb.append(FormatManager.getShort(cDPBin)).append(",");
-        sb.append(getGenoStr(mGeno)).append(",");
-        sb.append(FormatManager.getShort(mDPBin)).append(",");
-        sb.append(getGenoStr(fGeno)).append(",");
-        sb.append(FormatManager.getShort(fDPBin)).append(",");
-        getGenoStatData(sb);
-        calledVar.getExternalData(sb);
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }

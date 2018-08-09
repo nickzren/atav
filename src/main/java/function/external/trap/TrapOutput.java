@@ -2,6 +2,8 @@ package function.external.trap;
 
 import global.Data;
 import java.util.ArrayList;
+import java.util.StringJoiner;
+import utils.FormatManager;
 
 /**
  *
@@ -9,17 +11,21 @@ import java.util.ArrayList;
  */
 public class TrapOutput {
 
-    String variantId;
+    String variantIdStr;
     ArrayList<Trap> trapList = new ArrayList<>();
 
     public static String getTitle() {
-        return "Variant ID,"
-                + "Gene,"
-                + TrapManager.getTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Variant ID");
+        sj.add("Gene");
+        sj.add(TrapManager.getTitle());
+
+        return sj.toString();
     }
 
     public TrapOutput(String id) throws Exception {
-        variantId = id;
+        variantIdStr = id;
 
         String[] tmp = id.split("-"); // chr-pos-ref-alt
 
@@ -28,22 +34,26 @@ public class TrapOutput {
         }
     }
 
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        if (trapList.isEmpty()) {
+            sj.add(variantIdStr);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+        } else {
+            for (Trap trap : trapList) {
+                sj.add(variantIdStr);
+                sj.add(trap.getGene());
+                sj.add(FormatManager.getFloat(trap.getScore()));
+            }
+        }
+
+        return sj;
+    }
+    
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        for (Trap trap : trapList) {
-            sb.append(variantId).append(",");
-            sb.append(trap.getGene()).append(",");
-            sb.append(trap.getScore()).append("\n");
-        }
-
-        if (sb.length() == 0) {
-            sb.append(variantId).append(",");
-            sb.append(Data.STRING_NA).append(",");
-            sb.append(Data.STRING_NA).append("\n");
-        }
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }
