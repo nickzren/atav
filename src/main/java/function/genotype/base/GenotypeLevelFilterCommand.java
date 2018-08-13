@@ -22,6 +22,7 @@ public class GenotypeLevelFilterCommand {
     public static String sampleFile = "";
     public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
+    public static boolean isAllExome = false;
     public static double maxCtrlAF = Data.NO_FILTER;
     public static double minCtrlAF = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
@@ -75,6 +76,9 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--all-sample":
                     isAllSample = true;
+                    break;
+                case "--all-exome":
+                    isAllExome = true;
                     break;
                 case "--disable-check-duplicate-sample":
                     isDisableCheckDuplicateSample = true;

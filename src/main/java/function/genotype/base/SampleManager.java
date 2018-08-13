@@ -76,7 +76,8 @@ public class SampleManager {
             initExistingSampleFile();
             initFromSampleFile();
             closeExistingSampleFile();
-        } else if (GenotypeLevelFilterCommand.isAllSample) {
+        } else if (GenotypeLevelFilterCommand.isAllSample
+                || GenotypeLevelFilterCommand.isAllExome) {
             initAllSampleFile();
             initAllSampleFromAnnoDB();
             closeAllSampleFile();
@@ -196,7 +197,8 @@ public class SampleManager {
 
     private static void checkSampleFile() {
         if (GenotypeLevelFilterCommand.sampleFile.isEmpty()
-                && !GenotypeLevelFilterCommand.isAllSample) {
+                && !GenotypeLevelFilterCommand.isAllSample 
+                && !GenotypeLevelFilterCommand.isAllExome) {
             ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
         }
     }
@@ -213,7 +215,13 @@ public class SampleManager {
 
     private static void initAllSampleFromAnnoDB() {
         String sqlCode = "SELECT * FROM sample "
-                + "WHERE sample_type != 'custom_capture' and sample_finished = 1 and sample_failure = 0";
+                + "WHERE sample_type != 'custom_capture' "
+                + "and sample_finished = 1 "
+                + "and sample_failure = 0 ";
+
+        if (GenotypeLevelFilterCommand.isAllExome) {
+            sqlCode += " and sample_type = 'Exome' and sample_name not like 'SRR%'";
+        }
 
         initSampleFromAnnoDB(sqlCode);
     }
