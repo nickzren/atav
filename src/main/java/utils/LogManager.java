@@ -21,11 +21,11 @@ public class LogManager {
     private static String runTime;
 
     // users command log file path
-    private static final String USERS_COMMAND_LOG = "log/users.command.log";
-    private static final String USERS_COMMAND_FAILED_LOG = "log/users.command.failed.log";
+    private static final String USERS_COMMAND_LOG = Data.ATAV_HOME + "log/users.command.log";
+    private static final String USERS_COMMAND_FAILED_LOG = Data.ATAV_HOME + "log/users.command.failed.log";
 
     // user sample file log path
-    private static final String SAMPLE_DIR_LOG = "log/sample/";
+    private static final String SAMPLE_DIR_LOG = Data.ATAV_HOME + "log/sample/";
     // program start date
     private static final Date date = new Date();
 
@@ -129,7 +129,7 @@ public class LogManager {
 
             long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
 
-            bufferWritter.write(Data.userName + "\t"
+            String logStr = Data.userName + "\t"
                     + date.toString() + "\t"
                     + DBManager.getHost() + "\t"
                     + System.getenv("HOSTNAME") + "\t"
@@ -138,10 +138,10 @@ public class LogManager {
                     + outputFolderSize + " bytes" + "\t"
                     + System.getenv("JOB_ID") + "\t"
                     + "\t"
-                    + exit);
+                    + exit;
 
+            bufferWritter.write(logStr);
             bufferWritter.newLine();
-
             bufferWritter.close();
         } catch (Exception e) { // not output error when writing to log file denied
 
