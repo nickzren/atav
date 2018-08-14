@@ -69,7 +69,7 @@ public class CalledVariant extends AnnotatedVariant {
             // single variant carriers data process
             CarrierBlockManager.initCarrierMap(carrierMap, this);
 
-            if (carrierMap.isEmpty() && GenotypeLevelFilterCommand.minVarPresent > 0) {
+            if (!GenotypeLevelFilterCommand.isMinVarPresentValid(carrierMap.size())) {
                 isValid = false;
             }
         } else {
@@ -80,10 +80,12 @@ public class CalledVariant extends AnnotatedVariant {
 
             if (carrierMap == null) {
                 carrierMap = new HashMap<>();
-                
+
                 if (GenotypeLevelFilterCommand.minVarPresent > 0) {
                     isValid = false;
                 }
+            } else if (!GenotypeLevelFilterCommand.isMinVarPresentValid(carrierMap.size())) {
+                isValid = false;
             }
         }
 
@@ -94,7 +96,6 @@ public class CalledVariant extends AnnotatedVariant {
         int totalQCFailSample = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
 
         isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample)
-                && GenotypeLevelFilterCommand.isMinVarPresentValid(getVarPresent())
                 && GenotypeLevelFilterCommand.isMinCaseCarrierValid(getCaseCarrier());
 
         return isValid;
@@ -119,13 +120,6 @@ public class CalledVariant extends AnnotatedVariant {
                 && GenotypeLevelFilterCommand.isMinCtrlAFValid(af[Index.CTRL]);
 
         return isValid;
-    }
-
-    private int getVarPresent() {
-        return genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HET][Index.CASE]
-                + genoCount[Index.HOM][Index.CTRL]
-                + genoCount[Index.HET][Index.CTRL];
     }
 
     private int getCaseCarrier() {
@@ -212,11 +206,9 @@ public class CalledVariant extends AnnotatedVariant {
                 return false;
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 return false;
             }
-        }
 
         return true;
     }
