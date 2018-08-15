@@ -3,6 +3,7 @@ package function.genotype.vargeno;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
+import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -71,13 +72,22 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             for (Sample sample : SampleManager.getList()) {
                 byte geno = output.getCalledVariant().getGT(sample.getIndex());
 
-                if (output.isQualifiedGeno(geno)) {
+                if (isCaseOnly(sample)
+                        && output.isQualifiedGeno(geno)) {
                     bwGenotypes.write(output.getString(sample));
                     bwGenotypes.newLine();
                 }
             }
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    private boolean isCaseOnly(Sample sample) {
+        if (GenotypeLevelFilterCommand.isCaseOnly) {
+            return sample.isCase();
+        } else {
+            return true;
         }
     }
 
