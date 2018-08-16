@@ -158,11 +158,11 @@ public class VariantLevelFilterCommand {
                     GerpCommand.minGerpScore = getValidFloat(option);
                     GerpCommand.isIncludeGerp = true;
                     break;
-//                case "--min-trap-score":
-//                    checkValueValid(Data.NO_FILTER, 0, option);
-//                    TrapCommand.minTrapScore = getValidFloat(option);
-//                    TrapCommand.isIncludeTrap = true;
-//                    break;
+                case "--min-trap-score":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    TrapCommand.minTrapScore = getValidFloat(option);
+                    TrapCommand.isIncludeTrap = true;
+                    break;
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
                     KaviarCommand.maxKaviarMaf = getValidFloat(option);
