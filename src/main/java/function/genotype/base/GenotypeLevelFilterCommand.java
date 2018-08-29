@@ -36,6 +36,8 @@ public class GenotypeLevelFilterCommand {
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
     public static double[] homPercentAltRead = null;
+    public static double minPercentAltReadBinomialP = Data.NO_FILTER;
+    public static double maxPercentAltReadBinomialP = Data.NO_FILTER;
     public static int snvGQ = Data.NO_FILTER;
     public static int indelGQ = Data.NO_FILTER;
     public static float snvSOR = Data.NO_FILTER;
@@ -142,6 +144,14 @@ public class GenotypeLevelFilterCommand {
                     checkRangeValid("0-1", option);
                     homPercentAltRead = getValidRange(option);
                     break;
+                case "--min-percent-alt-read-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minPercentAltReadBinomialP = getValidDouble(option);
+                    break;    
+                case "--max-percent-alt-read-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    maxPercentAltReadBinomialP = getValidDouble(option);
+                    break;     
                 case "--gq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     snvGQ = getValidInteger(option);
@@ -597,6 +607,22 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
+    public static boolean isMinPercentAltReadBinomialPValid(double value) {
+        if (minPercentAltReadBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minPercentAltReadBinomialP;
+    }
+    
+    public static boolean isMaxPercentAltReadBinomialPValid(double value) {
+        if (maxPercentAltReadBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxPercentAltReadBinomialP;
+    }
+    
     public static boolean isMaxQcFailSampleValid(int value) {
         if (maxQcFailSample == Data.NO_FILTER) {
             return true;
