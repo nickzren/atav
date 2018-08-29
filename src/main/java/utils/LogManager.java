@@ -115,9 +115,7 @@ public class LogManager {
 
     private static void logUserCommand(String logFilePath, int exit) {
         try {
-            if (isBioinfoTeam()
-                    || Data.VERSION.equals("trunk")
-                    || Data.VERSION.equals("beta")) {
+            if (isBioinfoTeam()) {
                 return;
             }
 

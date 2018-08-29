@@ -140,6 +140,17 @@ public class Carrier extends NonCarrier {
                 gt = Data.BYTE_NA;
             }
         }
+
+        if (gt != Data.BYTE_NA) {
+            double percentAltReadBinomialP = getPercentAltReadBinomialP();
+            if (!GenotypeLevelFilterCommand.isMinPercentAltReadBinomialPValid(percentAltReadBinomialP)) {
+                gt = Data.BYTE_NA;
+            }
+
+            if (!GenotypeLevelFilterCommand.isMaxPercentAltReadBinomialPValid(percentAltReadBinomialP)) {
+                gt = Data.BYTE_NA;
+            }
+        }
     }
 
     /*
