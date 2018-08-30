@@ -8,13 +8,17 @@ import utils.DBManager;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -63,6 +67,10 @@ public class SampleManager {
 
     private static StringJoiner caseIDSJ = new StringJoiner(",");
 
+    // igm gnomad sample
+    private static final String IGM_GNOMAD_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/igm_gnomad_sample.txt";
+    private static Set<String> excludeIGMGnomadSampleSet = new HashSet<>();
+
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
@@ -71,6 +79,8 @@ public class SampleManager {
         initSamplePermission();
 
         checkSampleFile();
+
+        initExcludeIGMGnomADSample();
 
         if (!GenotypeLevelFilterCommand.sampleFile.isEmpty()) {
             initExistingSampleFile();
@@ -197,9 +207,19 @@ public class SampleManager {
 
     private static void checkSampleFile() {
         if (GenotypeLevelFilterCommand.sampleFile.isEmpty()
-                && !GenotypeLevelFilterCommand.isAllSample 
+                && !GenotypeLevelFilterCommand.isAllSample
                 && !GenotypeLevelFilterCommand.isAllExome) {
             ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
+        }
+    }
+
+    private static void initExcludeIGMGnomADSample() {
+        if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample) {
+            try (BufferedReader br = Files.newBufferedReader(Paths.get(IGM_GNOMAD_SAMPLE_PATH))) {
+                excludeIGMGnomadSampleSet = br.lines().collect(Collectors.toSet());
+            } catch (IOException e) {
+                ErrorManager.print("Error: parsing IGM GnomAD Sample file", ErrorManager.INPUT_PARSING);
+            }
         }
     }
 
@@ -253,6 +273,12 @@ public class SampleManager {
                 }
 
                 String individualId = values[1];
+
+                if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample
+                        && excludeIGMGnomadSampleSet.contains((individualId))) {
+                    LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
+                    continue;
+                }
 
                 if (!GenotypeLevelFilterCommand.isDisableCheckDuplicateSample) {
                     if (!sampleNameSet.contains(individualId)) {
@@ -336,6 +362,13 @@ public class SampleManager {
                 int sampleId = rs.getInt("sample_id");
                 String familyId = rs.getString("sample_name").trim();
                 String individualId = rs.getString("sample_name").trim();
+                
+                if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample
+                        && excludeIGMGnomadSampleSet.contains((individualId))) {
+                    LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
+                    continue;
+                }
+                
                 String paternalId = "0";
                 String maternalId = "0";
                 byte sex = 1; // male
