@@ -38,7 +38,9 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             super.initOutput();
 
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
-            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,Site Coverage Case,Site Coverage Control");
+            bwSiteSummary.write("Gene,Chr,Pos,"
+                    + "Case DP Bin 10,Case DP Bin 20,Case DP Bin 30,Case DP Bin 50,Case DP Bin 200,"
+                    + "Ctrl DP Bin 10,Ctrl DP Bin 20,Ctrl DP Bin 30,Ctrl DP Bin 50,Ctrl DP Bin 200");
             bwSiteSummary.newLine();
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
@@ -104,19 +106,15 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
                 float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
 
-                // apply --min-coverage-fraction
-                if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                        && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-                    float covDiff = Data.FLOAT_NA;
+                float covDiff = Data.FLOAT_NA;
 
-                    if (CoverageCommand.isRelativeDifference) {
-                        covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-                    } else {
-                        covDiff = MathManager.abs(caseAvg, ctrlAvg);
-                    }
-
-                    siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
+                if (CoverageCommand.isRelativeDifference) {
+                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+                } else {
+                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
                 }
+
+                siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
             }
         } catch (Exception e) {
             ErrorManager.send(e);

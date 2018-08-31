@@ -137,8 +137,7 @@ public class SiteClean {
                     previousEndPosition = currentPosition;
                 } else //there are gaps within the exon, so record the previos discovered region if any
                 //need to record the new discovered region
-                {
-                    if (previouStartPosition != Data.INTEGER_NA) {
+                 if (previouStartPosition != Data.INTEGER_NA) {
                         if (isFirst) {
                             isFirst = false;
                         } else {
@@ -150,7 +149,6 @@ public class SiteClean {
                         previouStartPosition = Data.INTEGER_NA;
                         previousEndPosition = Data.INTEGER_NA;
                     }
-                }
             }
             //repeat the recoring for last potential region
             //make sure this code is consistent with the code in previous section
@@ -196,30 +194,25 @@ public class SiteClean {
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
 
-        if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-            StringJoiner sj = new StringJoiner(",");
+        StringJoiner sj = new StringJoiner(",");
 
-            sj.add(gene.getName());
-            sj.add(gene.getChr());
-            sj.add(FormatManager.getInteger(gene.getLength()));
-            sj.add(FormatManager.getFloat(caseAvg));
-            sj.add(FormatManager.getFloat(ctrlAvg));
+        sj.add(gene.getName());
+        sj.add(gene.getChr());
+        sj.add(FormatManager.getInteger(gene.getLength()));
+        sj.add(FormatManager.getFloat(caseAvg));
+        sj.add(FormatManager.getFloat(ctrlAvg));
 
-            float covDiff = Data.FLOAT_NA;
+        float covDiff = Data.FLOAT_NA;
 
-            if (CoverageCommand.isRelativeDifference) {
-                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-            } else {
-                covDiff = MathManager.abs(caseAvg, ctrlAvg);
-            }
-
-            sj.add(FormatManager.getFloat(covDiff));
-            sj.add(FormatManager.getInteger(geneSize));
-            return sj.toString();
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
         } else {
-            return "";
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
         }
+
+        sj.add(FormatManager.getFloat(covDiff));
+        sj.add(FormatManager.getInteger(geneSize));
+        return sj.toString();
     }
 
     public void outputLog() {

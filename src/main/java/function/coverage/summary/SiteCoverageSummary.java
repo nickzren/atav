@@ -28,9 +28,7 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
             super.initOutput();
 
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
-            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,"
-                    + "Case DP Bin 10,Case DP Bin 20,Case DP Bin 30,Case DP Bin 50,Case DP Bin 200,"
-                    + "Ctrl DP Bin 10,Ctrl DP Bin 20,Ctrl DP Bin 30,Ctrl DP Bin 50,Ctrl DP Bin 200");
+            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage");
             bwSiteSummary.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

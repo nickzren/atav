@@ -145,31 +145,26 @@ public class ExonCleanLinear {
     private String getGeneStr(Gene gene, int geneSize, float caseAvg, float ctrlAvg) {
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
-        
-        if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-            StringJoiner sj = new StringJoiner(",");
 
-            sj.add(gene.getName());
-            sj.add(gene.getChr());
-            sj.add(FormatManager.getInteger(gene.getLength()));
-            sj.add(FormatManager.getFloat(caseAvg));
-            sj.add(FormatManager.getFloat(ctrlAvg));
+        StringJoiner sj = new StringJoiner(",");
 
-            float covDiff = Data.FLOAT_NA;
+        sj.add(gene.getName());
+        sj.add(gene.getChr());
+        sj.add(FormatManager.getInteger(gene.getLength()));
+        sj.add(FormatManager.getFloat(caseAvg));
+        sj.add(FormatManager.getFloat(ctrlAvg));
 
-            if (CoverageCommand.isRelativeDifference) {
-                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-            } else {
-                covDiff = MathManager.abs(caseAvg, ctrlAvg);
-            }
+        float covDiff = Data.FLOAT_NA;
 
-            sj.add(FormatManager.getFloat(covDiff));
-            sj.add(FormatManager.getInteger(geneSize));
-            return sj.toString();
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
         } else {
-            return "";
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
         }
+
+        sj.add(FormatManager.getFloat(covDiff));
+        sj.add(FormatManager.getInteger(geneSize));
+        return sj.toString();
     }
 
     public void outputLog() {

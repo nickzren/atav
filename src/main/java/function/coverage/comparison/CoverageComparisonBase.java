@@ -90,26 +90,23 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             ctrlAvg = MathManager.devide(ctrlAvg, SampleManager.getCtrlNum());
             ctrlAvg = MathManager.devide(ctrlAvg, gene.getLength());
 
-            if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                    && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-                StringJoiner sj = new StringJoiner(",");
-                sj.add(gene.getName());
-                sj.add(gene.getChr());
-                sj.add(FormatManager.getFloat(caseAvg));
-                sj.add(FormatManager.getFloat(ctrlAvg));
+            StringJoiner sj = new StringJoiner(",");
+            sj.add(gene.getName());
+            sj.add(gene.getChr());
+            sj.add(FormatManager.getFloat(caseAvg));
+            sj.add(FormatManager.getFloat(ctrlAvg));
 
-                float covDiff = Data.FLOAT_NA;
+            float covDiff = Data.FLOAT_NA;
 
-                if (CoverageCommand.isRelativeDifference) {
-                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-                } else {
-                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
-                }
-
-                sj.add(FormatManager.getFloat(covDiff));
-                sj.add(FormatManager.getInteger(gene.getLength()));
-                writeToFile(sj.toString(), bwCoverageSummaryByGene);
+            if (CoverageCommand.isRelativeDifference) {
+                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+            } else {
+                covDiff = MathManager.abs(caseAvg, ctrlAvg);
             }
+
+            sj.add(FormatManager.getFloat(covDiff));
+            sj.add(FormatManager.getInteger(gene.getLength()));
+            writeToFile(sj.toString(), bwCoverageSummaryByGene);
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
