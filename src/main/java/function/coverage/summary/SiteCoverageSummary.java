@@ -5,6 +5,7 @@ import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.CoverageAnalysisBase;
 import function.coverage.base.SiteCoverage;
+import global.Index;
 import utils.CommonCommand;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -28,7 +29,9 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
             super.initOutput();
 
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
-            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage");
+            bwSiteSummary.write("Gene,Chr,Pos,"
+                    + "Case DP Bin 10,Case DP Bin 20,Case DP Bin 30,Case DP Bin 50,Case DP Bin 200,"
+                    + "Ctrl DP Bin 10,Ctrl DP Bin 20,Ctrl DP Bin 30,Ctrl DP Bin 50,Ctrl DP Bin 200");
             bwSiteSummary.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -60,9 +63,16 @@ public class SiteCoverageSummary extends CoverageAnalysisBase {
                 sj.add(gene.getName());
                 sj.add(exon.getChrStr());
                 sj.add(FormatManager.getInteger(exon.getStartPosition() + pos));
-                int siteTotalCov = siteCoverage.getCaseSiteCov(pos)
-                        + siteCoverage.getCtrlSiteCov(pos);
-                sj.add(FormatManager.getInteger(siteTotalCov));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_10, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_20, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_30, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_50, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_200, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_10, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_20, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_30, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_50, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_200, pos)));
                 writeToFile(sj.toString(), bwSiteSummary);
             }
         } catch (Exception e) {

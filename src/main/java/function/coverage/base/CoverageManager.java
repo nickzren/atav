@@ -1,6 +1,5 @@
 package function.coverage.base;
 
-import function.coverage.comparison.SiteCoverageComparison;
 import function.genotype.base.DPBinBlockManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
-import utils.FormatManager;
 
 /**
  *
@@ -68,8 +66,7 @@ public class CoverageManager {
                 int blockId = rs.getInt("block_id");
                 String dpStr = rs.getString("DP_string");
 
-                ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(
-                        rs.getInt("sample_id"), region.getChrStr(), blockId, dpStr);
+                ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(blockId, dpStr);
 
                 for (CoverageInterval ci : cilist) {
                     int overlap = region.intersectLength(ci.getStartPos(), ci.getEndPos());
@@ -100,13 +97,14 @@ public class CoverageManager {
                 String dpStr = rs.getString("DP_string");
                 int blockId = rs.getInt("block_id");
                 int sampleId = rs.getInt("sample_id");
-                ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(
-                        sampleId, region.getChrStr(), blockId, dpStr);
+                ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(blockId, dpStr);
                 for (CoverageInterval ci : cilist) {
                     Region cr = region.intersect(ci.getStartPos(), ci.getEndPos());
                     if (cr != null) {
                         for (int i = cr.getStartPosition(); i <= cr.getEndPosition(); i++) {
-                            siteCoverage.addValue(SampleManager.getMap().get(sampleId).isCase(),
+                            siteCoverage.addValue(
+                                    SampleManager.getMap().get(sampleId).isCase(),
+                                    ci.getDpBinIndex(),
                                     i - region.getStartPosition());
                         }
                     }
@@ -119,7 +117,7 @@ public class CoverageManager {
     }
 
     private static ArrayList<CoverageInterval> getCoverageIntervalListByMinCoverage(
-            int sampleId, String chr, int blockId, String dpBinStr) throws IOException {
+            int blockId, String dpBinStr) throws IOException {
         StringBuilder sb = new StringBuilder();
 
         ArrayList<CoverageInterval> list = new ArrayList<>();
@@ -139,7 +137,11 @@ public class CoverageManager {
                 short dpBin = DPBinBlockManager.getCoverageByBin(c);
 
                 if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
-                    list.add(new CoverageInterval(blockId, startIndex, endIndex));
+                    list.add(new CoverageInterval(
+                            blockId, 
+                            DPBinBlockManager.getCoverageByBinIndex(dpBin),
+                            startIndex, 
+                            endIndex));
                 }
 
                 sb.setLength(0);
