@@ -20,15 +20,6 @@ public class Revel {
     private String aaalt;
     private float revel;
     
-    public Revel(String chr, int pos, String ref, String alt) {
-        this.chr = chr;
-        this.pos = pos;
-        this.ref = ref;
-        this.alt = alt;
-        
-        initScore();
-    }
-    
     public Revel(ResultSet rs) {
         try {
             chr = rs.getString("chr");
@@ -38,22 +29,6 @@ public class Revel {
             aaref = rs.getString("aaref");
             aaalt = rs.getString("aaalt");
             revel = rs.getFloat("revel");
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-    
-    private void initScore() {
-        try {
-            String sql = RevelManager.getSqlByVariant(chr, pos, ref, alt);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            if (rs.next()) {
-                revel = rs.getFloat("revel");
-            } else {
-                revel = Data.FLOAT_NA;
-            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }

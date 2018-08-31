@@ -29,6 +29,9 @@ import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
+import function.external.revel.Revel;
+import function.external.revel.RevelCommand;
+import function.external.revel.RevelManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
@@ -81,6 +84,7 @@ public class AnnotatedVariant extends Variant {
     private DenovoDB denovoDB;
     private DiscovEHR discovEHR;
     private MTR mtr;
+    private float revel;
 
     public boolean isValid = true;
 
@@ -141,6 +145,12 @@ public class AnnotatedVariant extends Variant {
             discovEHR = new DiscovEHR(chrStr, startPosition, refAllele, allele);
 
             isValid = discovEHR.isValid();
+        }
+
+        if (isValid && RevelCommand.isIncludeRevel) {
+            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele);
+
+            isValid = RevelCommand.isRevelValid(revel);;
         }
     }
 
@@ -391,6 +401,10 @@ public class AnnotatedVariant extends Variant {
 
         if (MTRCommand.isIncludeMTR) {
             sj.add(getMTR());
+        }
+        
+        if (RevelCommand.isIncludeRevel) {
+            sj.add(FormatManager.getFloat(revel));
         }
     }
 
