@@ -80,6 +80,9 @@ public class GenotypeLevelFilterCommand {
                 case "--all-sample":
                     isAllSample = true;
                     break;
+                case "--all-exome":
+                    isAllExome = true;
+                    break;    
                 case "--exclude-igm-gnomad-sample":
                     isExcludeIGMGnomadSample = true;
                     break;
