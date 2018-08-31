@@ -24,6 +24,8 @@ import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
 import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
+import function.external.revel.RevelCommand;
+import function.external.revel.RevelManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
@@ -108,6 +110,10 @@ public class DataManager {
             sb.append(MTRManager.getVersion());
         }
 
+        if (RevelCommand.isIncludeRevel) {
+            sb.append(RevelManager.getVersion());
+        }
+        
         return sb.toString();
     }
 

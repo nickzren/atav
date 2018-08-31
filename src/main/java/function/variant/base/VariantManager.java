@@ -275,7 +275,6 @@ public class VariantManager {
             return true;
         } else {
             if (includeVariantSet.contains(varId)) {
-                includeVariantSet.remove(varId);
                 return true;
             }
 
