@@ -140,16 +140,6 @@ public class CoverageManager {
 
                 if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
                     list.add(new CoverageInterval(blockId, startIndex, endIndex));
-                } else if (CoverageCommand.isIncludePrunedSite) {
-                    StringJoiner sj = new StringJoiner(",");
-                    sj.add(FormatManager.getInteger(sampleId));
-                    sj.add(chr);
-                    sj.add(FormatManager.getInteger(blockId));
-                    sj.add(FormatManager.getInteger(blockId * 1000 + startIndex));
-                    sj.add(FormatManager.getInteger(endIndex));
-                    sj.add(FormatManager.getShort(dpBin));
-                    SiteCoverageComparison.bwSitePruned.write(sj.toString());
-                    SiteCoverageComparison.bwSitePruned.newLine();
                 }
 
                 sb.setLength(0);
