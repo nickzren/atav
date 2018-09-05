@@ -40,8 +40,8 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
             bwSiteSummary.write("Gene,Chr,Pos,"
-                    + "Case DP Bin 10,Case DP Bin 20,Case DP Bin 30,Case DP Bin 50,Case DP Bin 200,"
-                    + "Ctrl DP Bin 10,Ctrl DP Bin 20,Ctrl DP Bin 30,Ctrl DP Bin 50,Ctrl DP Bin 200");
+                    + "Case DP Bin 0,Case DP Bin 10,Case DP Bin 20,Case DP Bin 30,Case DP Bin 50,Case DP Bin 200,"
+                    + "Ctrl DP Bin 0,Ctrl DP Bin 10,Ctrl DP Bin 20,Ctrl DP Bin 30,Ctrl DP Bin 50,Ctrl DP Bin 200");
             bwSiteSummary.newLine();
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
@@ -94,23 +94,28 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
                 StringJoiner sj = new StringJoiner(",");
 
                 int start = exon.getStartPosition() + pos;
+
+                int caseSiteCov = siteCoverage.getCaseSiteCov(pos);
+                int ctrlSiteCov = siteCoverage.getCtrlSiteCov(pos);
+                float caseAvg = MathManager.devide(caseSiteCov, SampleManager.getCaseNum());
+                float ctrlAvg = MathManager.devide(ctrlSiteCov, SampleManager.getCtrlNum());
+
                 sj.add(gene.getName());
                 sj.add(gene.getChr());
                 sj.add(FormatManager.getInteger(start));
+                sj.add(FormatManager.getInteger(SampleManager.getCaseNum() - caseSiteCov));
                 sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_10, pos)));
                 sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_20, pos)));
                 sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_30, pos)));
                 sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_50, pos)));
                 sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_200, pos)));
+                sj.add(FormatManager.getInteger(SampleManager.getCtrlNum() - ctrlSiteCov));
                 sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_10, pos)));
                 sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_20, pos)));
                 sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_30, pos)));
                 sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_50, pos)));
                 sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_200, pos)));
                 writeToFile(sj.toString(), bwSiteSummary);
-
-                float caseAvg = MathManager.devide(siteCoverage.getCaseSiteCov(pos), SampleManager.getCaseNum());
-                float ctrlAvg = MathManager.devide(siteCoverage.getCtrlSiteCov(pos), SampleManager.getCtrlNum());
 
                 float covDiff = Data.FLOAT_NA;
 
