@@ -137,7 +137,8 @@ public class SiteClean {
                     previousEndPosition = currentPosition;
                 } else //there are gaps within the exon, so record the previos discovered region if any
                 //need to record the new discovered region
-                 if (previouStartPosition != Data.INTEGER_NA) {
+                {
+                    if (previouStartPosition != Data.INTEGER_NA) {
                         if (isFirst) {
                             isFirst = false;
                         } else {
@@ -149,6 +150,7 @@ public class SiteClean {
                         previouStartPosition = Data.INTEGER_NA;
                         previousEndPosition = Data.INTEGER_NA;
                     }
+                }
             }
             //repeat the recoring for last potential region
             //make sure this code is consistent with the code in previous section
@@ -178,11 +180,15 @@ public class SiteClean {
             int start = exon.getStartPosition();
             int end = exon.getEndPosition();
             for (int currentPosition = start; currentPosition <= end; currentPosition++) {
-                SortedSite sortedSite = cleanedSiteMap.get(gene.getChr()).get(currentPosition);
-                if (sortedSite != null) {
-                    geneSize++;
-                    caseAvg += sortedSite.getCaseAvg();
-                    ctrlAvg += sortedSite.getCtrlAvg();
+                HashMap<Integer, SortedSite> sortedSiteMap = cleanedSiteMap.get(gene.getChr());
+
+                if (sortedSiteMap != null) {
+                    SortedSite sortedSite = sortedSiteMap.get(currentPosition);
+                    if (sortedSite != null) {
+                        geneSize++;
+                        caseAvg += sortedSite.getCaseAvg();
+                        ctrlAvg += sortedSite.getCtrlAvg();
+                    }
                 }
             }
         }
