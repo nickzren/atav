@@ -7,7 +7,6 @@ import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import function.genotype.parent.ParentCommand;
 import function.genotype.trio.TrioCommand;
-import function.genotype.vargeno.VarGenoCommand;
 import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -17,7 +16,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
-import org.apache.commons.lang.StringEscapeUtils;
 import utils.DBManager;
 
 /**
@@ -62,7 +60,7 @@ public class VariantManager {
 
             resetRegionList();
         }
-        
+
         initCaseVariantTable();
     }
 
@@ -256,10 +254,16 @@ public class VariantManager {
         }
     }
 
-    public static boolean isValid(Variant var) {
+    public static boolean isValid(Variant var) throws Exception {
         if (VariantLevelFilterCommand.isExcludeSnv && var.isSnv()) {
+            // exclude snv
             return false;
         } else if (VariantLevelFilterCommand.isExcludeIndel && var.isIndel()) {
+            // exclude indel
+            return false;
+        } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
+                && VariantManager.isMultiallelicVariant(var.getChrStr(), var.getStartPosition())) {
+            // exclude multiallelic variant
             return false;
         }
 
@@ -325,6 +329,15 @@ public class VariantManager {
                 ErrorManager.send(e);
             }
         }
+    }
+
+    public static boolean isMultiallelicVariant(String chr, int pos) throws SQLException {
+        String sql = "select pos from multiallelic_variant_site "
+                + "where chr = '" + chr + "' and pos =" + pos + " limit 1";
+
+        ResultSet rset = DBManager.executeQuery(sql);
+
+        return rset.next();
     }
 
     public static boolean isUsed() {

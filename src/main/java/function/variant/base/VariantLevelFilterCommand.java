@@ -40,6 +40,7 @@ public class VariantLevelFilterCommand {
     public static String includeRsNumber = "";
     public static String excludeVariantId = "";
     public static boolean isExcludeArtifacts = false;
+    public static boolean isExcludeMultiallelicVariant = false;
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
 
@@ -64,6 +65,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--exclude-artifacts":
                     isExcludeArtifacts = true;
+                    break;
+                case "--exclude-multiallelic-variant":
+                    isExcludeMultiallelicVariant = true;
                     break;
                 case "--exclude-snv":
                     isExcludeSnv = true;
@@ -235,6 +239,7 @@ public class VariantLevelFilterCommand {
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--revel":
+                case "--min-revel-score":
                     checkValueValid(1, 0, option);
                     RevelCommand.revel = getValidFloat(option);
                     RevelCommand.isIncludeRevel = true;
