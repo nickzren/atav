@@ -1,9 +1,7 @@
 package function.external.revel;
 
-import global.Data;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
-import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -35,7 +33,7 @@ public class Revel {
     }
     
     public boolean isValid() {
-        return RevelCommand.isRevelValid(revel);
+        return RevelCommand.isMinRevelValid(revel);
     }
 
     public String getVariantId() {

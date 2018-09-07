@@ -28,6 +28,7 @@ import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -238,10 +239,9 @@ public class VariantLevelFilterCommand {
                     MTRCommand.mtrCentile = getValidFloat(option);
                     MTRCommand.isIncludeMTR = true;
                     break;
-                case "--revel":
                 case "--min-revel-score":
                     checkValueValid(1, 0, option);
-                    RevelCommand.revel = getValidFloat(option);
+                    RevelCommand.minRevel = getValidFloat(option);
                     RevelCommand.isIncludeRevel = true;
                     break;
                 case "--include-evs":

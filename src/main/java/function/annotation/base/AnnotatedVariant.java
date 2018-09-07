@@ -150,7 +150,7 @@ public class AnnotatedVariant extends Variant {
         if (isValid && RevelCommand.isIncludeRevel) {
             revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele);
 
-            isValid = RevelCommand.isRevelValid(revel);;
+            isValid = RevelCommand.isMinRevelValid(revel);
         }
     }
 

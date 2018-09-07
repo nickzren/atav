@@ -8,19 +8,19 @@ import global.Data;
  */
 public class RevelCommand {
 
-    // list revel
+    // list minRevel
     public static boolean isListRevel = false;
     public static boolean isIncludeRevel = false;
 
     // filter option
-    public static float revel = Data.NO_FILTER;
+    public static float minRevel = Data.NO_FILTER;
 
-    public static boolean isRevelValid(float value) {
-        if (revel == Data.NO_FILTER) {
+    public static boolean isMinRevelValid(float value) {
+        if (minRevel == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= revel
+        return value >= minRevel
                 || value == Data.FLOAT_NA;
     }
 }
