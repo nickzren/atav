@@ -28,30 +28,32 @@ public class SampleDPBin {
     }
 
     public short getDPBin(int varPosIndex) {
-        if (endPos != 0) {
-            if (varPosIndex <= endPos) {
-                return dpBin;
-            } else {
-                dpBinCursor = dpBinPos + 1; // move cursor for new variant
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-
-        for (int pos = dpBinCursor; pos < dpBinStr.length(); pos++) {
-            char bin = dpBinStr.charAt(pos);
-            if (!DPBinBlockManager.getCoverageBin().containsKey(bin)) {
-                sb.append(bin);
-            } else {
-                dpBinPos = pos;
-                endPos += Integer.parseInt(sb.toString(), 36); // add cov bin inteval
-                sb.setLength(0); // clear StringBuilder
-
+        if (dpBinStr != null) {
+            if (endPos != 0) {
                 if (varPosIndex <= endPos) {
-                    dpBin = DPBinBlockManager.getCoverageByBin(bin);
                     return dpBin;
                 } else {
-                    dpBinCursor = dpBinPos + 1; // move cursor for current variant
+                    dpBinCursor = dpBinPos + 1; // move cursor for new variant
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int pos = dpBinCursor; pos < dpBinStr.length(); pos++) {
+                char bin = dpBinStr.charAt(pos);
+                if (!DPBinBlockManager.getCoverageBin().containsKey(bin)) {
+                    sb.append(bin);
+                } else {
+                    dpBinPos = pos;
+                    endPos += Integer.parseInt(sb.toString(), 36); // add cov bin inteval
+                    sb.setLength(0); // clear StringBuilder
+
+                    if (varPosIndex <= endPos) {
+                        dpBin = DPBinBlockManager.getCoverageByBin(bin);
+                        return dpBin;
+                    } else {
+                        dpBinCursor = dpBinPos + 1; // move cursor for current variant
+                    }
                 }
             }
         }
