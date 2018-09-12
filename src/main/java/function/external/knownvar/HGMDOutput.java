@@ -3,6 +3,7 @@ package function.external.knownvar;
 import function.variant.base.Variant;
 import global.Data;
 import java.util.Collection;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -81,20 +82,24 @@ public class HGMDOutput {
         return hgmd;
     }
 
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.add(m2Site);
+        sj.add(m1Site);
+        sj.add(FormatManager.getInteger(siteCount));
+        sj.add(hgmd.getDiseaseName());
+        sj.add(hgmd.getPmid());
+        sj.add(hgmd.getVariantClass());
+        sj.add(p1Site);
+        sj.add(p2Site);
+        sj.add(FormatManager.getInteger(indel9bpflanks));
+        
+        return sj;
+    }
+    
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(m2Site).append(",");
-        sb.append(m1Site).append(",");
-        sb.append(FormatManager.getInteger(siteCount)).append(",");
-        sb.append(hgmd.getDiseaseName()).append(",");
-        sb.append(hgmd.getPmid()).append(",");
-        sb.append(hgmd.getVariantClass()).append(",");
-        sb.append(p1Site).append(",");
-        sb.append(p2Site).append(",");
-        sb.append(FormatManager.getInteger(indel9bpflanks)).append(",");
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }

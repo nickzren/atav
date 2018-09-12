@@ -6,6 +6,7 @@ import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import java.util.HashSet;
+import java.util.StringJoiner;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -16,12 +17,16 @@ import utils.MathManager;
 public class CollapsingOutput extends Output {
 
     public static String getTitle() {
-        return getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getCarrierDataTitle()
-                + getGenoStatDataTitle()
-                + "LOO AF,"
-                + getExternalDataTitle();
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getCarrierDataTitle());
+        sj.merge(getGenoStatDataTitle());
+        sj.add("LOO AF");
+        sj.merge(getExternalDataTitle());
+
+        return sj.toString();
     }
 
     double looAF = 0;
@@ -52,18 +57,14 @@ public class CollapsingOutput extends Output {
 
     private void calculateLooAF() {
         int alleleCount = 2 * calledVar.genoCount[Index.HOM][Index.CASE]
-                + calledVar.genoCount[Index.HOM_MALE][Index.CASE]
                 + calledVar.genoCount[Index.HET][Index.CASE]
                 + 2 * calledVar.genoCount[Index.HOM][Index.CTRL]
-                + calledVar.genoCount[Index.HOM_MALE][Index.CTRL]
                 + calledVar.genoCount[Index.HET][Index.CTRL];
         int totalCount = alleleCount
                 + calledVar.genoCount[Index.HET][Index.CASE]
                 + 2 * calledVar.genoCount[Index.REF][Index.CASE]
-                + calledVar.genoCount[Index.REF_MALE][Index.CASE]
                 + calledVar.genoCount[Index.HET][Index.CTRL]
-                + 2 * calledVar.genoCount[Index.REF][Index.CTRL]
-                + calledVar.genoCount[Index.REF_MALE][Index.CTRL];
+                + 2 * calledVar.genoCount[Index.REF][Index.CTRL];
 
         looAF = MathManager.devide(alleleCount, totalCount);
     }
@@ -85,38 +86,16 @@ public class CollapsingOutput extends Output {
         return super.isQualifiedGeno(geno);
     }
 
-    public String getString(Sample sample) {
-        StringBuilder sb = new StringBuilder();
+    public StringJoiner getStringJoiner(Sample sample) {
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        getCarrierData(sb, calledVar.getCarrier(sample.getId()), sample);
-        getGenoStatData(sb);
-        sb.append(FormatManager.getDouble(looAF)).append(",");
-        calledVar.getExternalData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
+        getGenoStatData(sj);
+        sj.add(FormatManager.getDouble(looAF));
+        calledVar.getExternalData(sj);
 
-        return sb.toString();
-    }
-
-    public String getJointedGenotypeString(String genoArrayStr) {
-        StringBuilder sb = new StringBuilder();
-
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-
-        // getCarrierData
-        sb.append("NA,NA,NA,");
-        sb.append(genoArrayStr).append(",");
-        sb.append("NA,");
-        sb.append("NA,"); // DP Bin
-        sb.append("NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,");
-
-        getGenoStatData(sb);
-        
-        sb.append(FormatManager.getDouble(looAF)).append(",");
-
-        calledVar.getExternalData(sb);
-
-        return sb.toString();
+        return sj;
     }
 }

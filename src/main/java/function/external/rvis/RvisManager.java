@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.ErrorManager;
 
 /**
@@ -20,22 +21,15 @@ public class RvisManager {
 
     private static String title;
     private static final HashMap<String, String> rvisMap = new HashMap<>();
-    private static String NA = "";
+    private static StringJoiner NA = new StringJoiner(",");
 
     public static String getTitle() {
-        if (RvisCommand.isIncludeRvis) {
-            return title + ",";
-        } else {
-            return "";
-        }
+        return title;
     }
 
     public static String getVersion() {
-        if (RvisCommand.isIncludeRvis) {
-            return "RVIS: " + DataManager.getVersion(RVIS_PATH) + "\n";
-        } else {
-            return "";
-        }
+        return "RVIS: " + DataManager.getVersion(RVIS_PATH) + "\n";
+
     }
 
     public static void init() {
@@ -61,10 +55,10 @@ public class RvisManager {
                     title = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
-                        NA += "NA,";
+                        NA.add("NA");
                     }
                 } else {
-                    rvisMap.put(geneName, values + ",");
+                    rvisMap.put(geneName, values);
                 }
             }
 
@@ -79,6 +73,6 @@ public class RvisManager {
     public static String getLine(String geneName) {
         String line = rvisMap.get(geneName);
 
-        return line == null ? NA : line;
+        return line == null ? NA.toString() : line;
     }
 }

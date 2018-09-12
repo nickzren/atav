@@ -8,6 +8,7 @@ import function.genotype.base.SampleManager;
 import global.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.StringJoiner;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -89,26 +90,23 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
             ctrlAvg = MathManager.devide(ctrlAvg, SampleManager.getCtrlNum());
             ctrlAvg = MathManager.devide(ctrlAvg, gene.getLength());
 
-            if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                    && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(gene.getName()).append(",");
-                sb.append(gene.getChr()).append(",");
-                sb.append(FormatManager.getFloat(caseAvg)).append(",");
-                sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+            StringJoiner sj = new StringJoiner(",");
+            sj.add(gene.getName());
+            sj.add(gene.getChr());
+            sj.add(FormatManager.getFloat(caseAvg));
+            sj.add(FormatManager.getFloat(ctrlAvg));
 
-                float covDiff = Data.FLOAT_NA;
+            float covDiff = Data.FLOAT_NA;
 
-                if (CoverageCommand.isRelativeDifference) {
-                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-                } else {
-                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
-                }
-
-                sb.append(FormatManager.getFloat(covDiff)).append(",");
-                sb.append(gene.getLength());
-                writeToFile(sb.toString(), bwCoverageSummaryByGene);
+            if (CoverageCommand.isRelativeDifference) {
+                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+            } else {
+                covDiff = MathManager.abs(caseAvg, ctrlAvg);
             }
+
+            sj.add(FormatManager.getFloat(covDiff));
+            sj.add(FormatManager.getInteger(gene.getLength()));
+            writeToFile(sj.toString(), bwCoverageSummaryByGene);
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }

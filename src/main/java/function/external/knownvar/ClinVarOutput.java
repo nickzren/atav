@@ -3,6 +3,7 @@ package function.external.knownvar;
 import function.variant.base.Variant;
 import global.Data;
 import java.util.Collection;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -76,18 +77,22 @@ public class ClinVarOutput {
         return clinvar;
     }
     
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.add(FormatManager.getInteger(siteCount));
+        sj.add(clinvar.getRsNumber());
+        sj.add(clinvar.getDiseaseName());
+        sj.add(clinvar.getClinicalSignificance());
+        sj.add(clinvar.getPubmedID());
+        sj.add(FormatManager.getInteger(pathogenicIndelsCount));
+        sj.add(FormatManager.getInteger(allIndelsCount));
+        
+        return sj;
+    }
+    
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        
-        sb.append(FormatManager.getInteger(siteCount)).append(",");
-        sb.append(clinvar.getRsNumber()).append(",");
-        sb.append(clinvar.getDiseaseName()).append(",");
-        sb.append(clinvar.getClinicalSignificance()).append(",");
-        sb.append(clinvar.getPubmedID()).append(",");
-        sb.append(FormatManager.getInteger(pathogenicIndelsCount)).append(",");
-        sb.append(FormatManager.getInteger(allIndelsCount)).append(",");
-        
-        return sb.toString();
+    public String toString() {        
+        return getStringJoiner().toString();
     }
 }

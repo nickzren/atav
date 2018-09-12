@@ -8,15 +8,19 @@ import utils.DBManager;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import utils.FormatManager;
 
 /**
  *
@@ -41,9 +45,6 @@ public class SampleManager {
     private static int caseNum = 0;
     private static int ctrlNum = 0;
 
-    // sample id StringBuilder is just temp used for creating temp tables
-    private static StringBuilder allSampleIdSb = new StringBuilder();
-
     private static ArrayList<Sample> failedSampleList = new ArrayList<>();
     private static ArrayList<Sample> diffTypeSampleList = new ArrayList<>();
     private static ArrayList<Sample> notExistSampleList = new ArrayList<>();
@@ -60,6 +61,16 @@ public class SampleManager {
     private static BufferedWriter bwExistingSample = null;
     private final static String existingSampleFile = CommonCommand.outputPath + "existing.sample.txt";
 
+    // output all existing samples
+    private static BufferedWriter bwAllSample = null;
+    private final static String allSampleFile = CommonCommand.outputPath + "all.sample.txt";
+
+    private static StringJoiner caseIDSJ = new StringJoiner(",");
+
+    // igm gnomad sample
+    private static final String IGM_GNOMAD_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/igm_gnomad_sample.txt";
+    private static Set<String> excludeIGMGnomadSampleSet = new HashSet<>();
+
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
@@ -69,12 +80,18 @@ public class SampleManager {
 
         checkSampleFile();
 
+        initExcludeIGMGnomADSample();
+
         if (!GenotypeLevelFilterCommand.sampleFile.isEmpty()) {
             initExistingSampleFile();
             initFromSampleFile();
             closeExistingSampleFile();
-        } else if (GenotypeLevelFilterCommand.isAllSample) {
+        } else if (GenotypeLevelFilterCommand.isAllSample
+                || GenotypeLevelFilterCommand.isAllExome) {
+            initAllSampleFile();
             initAllSampleFromAnnoDB();
+            closeAllSampleFile();
+            GenotypeLevelFilterCommand.sampleFile = allSampleFile;
         }
 
         initCovariate();
@@ -96,10 +113,27 @@ public class SampleManager {
         }
     }
 
+    private static void initAllSampleFile() {
+        try {
+            bwAllSample = new BufferedWriter(new FileWriter(allSampleFile));
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
+
     private static void closeExistingSampleFile() {
         try {
             bwExistingSample.flush();
             bwExistingSample.close();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
+
+    private static void closeAllSampleFile() {
+        try {
+            bwAllSample.flush();
+            bwAllSample.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -173,8 +207,19 @@ public class SampleManager {
 
     private static void checkSampleFile() {
         if (GenotypeLevelFilterCommand.sampleFile.isEmpty()
-                && !GenotypeLevelFilterCommand.isAllSample) {
+                && !GenotypeLevelFilterCommand.isAllSample
+                && !GenotypeLevelFilterCommand.isAllExome) {
             ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
+        }
+    }
+
+    private static void initExcludeIGMGnomADSample() {
+        if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample) {
+            try (BufferedReader br = Files.newBufferedReader(Paths.get(IGM_GNOMAD_SAMPLE_PATH))) {
+                excludeIGMGnomadSampleSet = br.lines().collect(Collectors.toSet());
+            } catch (IOException e) {
+                ErrorManager.print("Error: parsing IGM GnomAD Sample file", ErrorManager.INPUT_PARSING);
+            }
         }
     }
 
@@ -189,7 +234,14 @@ public class SampleManager {
     }
 
     private static void initAllSampleFromAnnoDB() {
-        String sqlCode = "SELECT * FROM sample WHERE sample_finished = 1 and sample_failure = 0";
+        String sqlCode = "SELECT * FROM sample "
+                + "WHERE sample_type != 'custom_capture' "
+                + "and sample_finished = 1 "
+                + "and sample_failure = 0 ";
+
+        if (GenotypeLevelFilterCommand.isAllExome) {
+            sqlCode += " and sample_type = 'Exome' and sample_name not like 'SRR%'";
+        }
 
         initSampleFromAnnoDB(sqlCode);
     }
@@ -214,13 +266,19 @@ public class SampleManager {
                 String[] values = lineStr.replaceAll("( )+", "").split("\t");
 
                 String familyId = values[0];
-                
+
                 if (familyId.equals("N/A")) {
                     ErrorManager.print("\nWrong FamilyID: " + familyId
                             + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
                 }
-                
+
                 String individualId = values[1];
+
+                if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample
+                        && excludeIGMGnomadSampleSet.contains((individualId))) {
+                    LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
+                    continue;
+                }
 
                 if (!GenotypeLevelFilterCommand.isDisableCheckDuplicateSample) {
                     if (!sampleNameSet.contains(individualId)) {
@@ -272,6 +330,10 @@ public class SampleManager {
                     continue;
                 }
 
+                if (sample.isCase()) {
+                    caseIDSJ.add(String.valueOf(sample.getId()));
+                }
+
                 sampleList.add(sample);
                 sampleMap.put(sampleId, sample);
 
@@ -300,6 +362,13 @@ public class SampleManager {
                 int sampleId = rs.getInt("sample_id");
                 String familyId = rs.getString("sample_name").trim();
                 String individualId = rs.getString("sample_name").trim();
+                
+                if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample
+                        && excludeIGMGnomadSampleSet.contains((individualId))) {
+                    LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
+                    continue;
+                }
+                
                 String paternalId = "0";
                 String maternalId = "0";
                 byte sex = 1; // male
@@ -319,6 +388,16 @@ public class SampleManager {
                 sampleMap.put(sampleId, sample);
 
                 countSampleNum(sample);
+
+                bwAllSample.write(familyId + "\t"
+                        + individualId + "\t"
+                        + paternalId + "\t"
+                        + maternalId + "\t"
+                        + sex + "\t"
+                        + pheno + "\t"
+                        + sampleType + "\t"
+                        + captureKit);
+                bwAllSample.newLine();
             }
 
             rs.close();
@@ -620,11 +699,12 @@ public class SampleManager {
     private static void initTempTables() {
         createTempTable(TMP_SAMPLE_ID_TABLE);
 
-        initSampleIdSbs();
+        StringJoiner allSampleIdSj = new StringJoiner(",");
+        for (Sample sample : sampleList) {
+            allSampleIdSj.add("(" + sample.getId() + ")");
+        }
 
-        insertId2Table(allSampleIdSb.toString(), TMP_SAMPLE_ID_TABLE);
-
-        allSampleIdSb.setLength(0); // free memory
+        insertId2Table(allSampleIdSj.toString(), TMP_SAMPLE_ID_TABLE);
     }
 
     private static void createTempTable(String sqlTable) {
@@ -639,18 +719,6 @@ public class SampleManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-    }
-
-    public static void initSampleIdSbs() {
-        for (Sample sample : sampleList) {
-            addToSampleIdSb(allSampleIdSb, sample.getId());
-        }
-
-        FormatManager.deleteLastComma(allSampleIdSb);
-    }
-
-    private static void addToSampleIdSb(StringBuilder sb, int id) {
-        sb.append("(").append(id).append(")").append(",");
     }
 
     private static void insertId2Table(String ids, String table) {
@@ -727,5 +795,9 @@ public class SampleManager {
 
         ctrlNum = sampleList.size();
         caseNum = 0;
+    }
+
+    public static StringJoiner getCaseIDSJ() {
+        return caseIDSJ;
     }
 }

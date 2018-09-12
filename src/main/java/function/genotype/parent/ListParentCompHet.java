@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -143,15 +144,14 @@ public class ListParentCompHet extends AnalysisBase4CalledVar {
     }
 
     private void doCompHetOutput(BufferedWriter bw, String parent, String flag, ParentOutput output1, ParentOutput output2) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        sb.append(output1.child.getFamilyId()).append(",");
-        sb.append(parent).append(",");
-        sb.append(flag).append(",");
+        StringJoiner sj = new StringJoiner(",");
+        sj.add(output1.child.getFamilyId());
+        sj.add(parent);
+        sj.add(flag);
+        sj.merge(output1.getStringJoiner());
+        sj.merge(output2.getStringJoiner());
 
-        sb.append(output1.toString());
-        sb.append(output2.toString());
-
-        bw.write(sb.toString());
+        bw.write(sj.toString());
         bw.newLine();
     }
 

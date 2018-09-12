@@ -1,7 +1,5 @@
 package function.coverage.comparison;
 
-import global.Data;
-
 /**
  *
  * @author quanli, nick

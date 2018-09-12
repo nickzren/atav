@@ -14,9 +14,7 @@ public class VarGenoCommand {
 
     public static boolean isListVarGeno = false;
     public static boolean isRunTier = false;
-    public static boolean isCaseOnly = false;
-    public static boolean isIncludeHomRef = false;
-    public static boolean isRunVariantCount = false;
+    public static boolean isMannWhitneyTest = false;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -24,20 +22,14 @@ public class VarGenoCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
-                case "--case-only":
-                    isCaseOnly = true;
-                    break;
                 case "--run-tier":
                     isRunTier = true;
                     EvsCommand.isIncludeEvs = true;
                     ExacCommand.isIncludeExac = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     break;
-                case "--include-hom-ref":
-                    isIncludeHomRef = true;
-                    break;
-                case "--run-variant-count":
-                    isRunVariantCount = true;
+                case "--mann-whitney-test":
+                    isMannWhitneyTest = true;
                     break;
                 default:
                     continue;

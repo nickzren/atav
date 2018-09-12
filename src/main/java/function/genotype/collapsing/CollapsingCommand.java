@@ -23,8 +23,7 @@ public class CollapsingCommand {
     public static boolean isCollapsingDoLinear = false;
     public static boolean isCollapsingDoLogistic = false;
     public static String regionBoundaryFile = "";
-    public static boolean isIncludeHomRef = false;
-    public static boolean isRunVariantCount = false;
+    public static boolean isMannWhitneyTest = false;
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -53,11 +52,8 @@ public class CollapsingCommand {
                 case "--region-boundary":
                     regionBoundaryFile = getValidPath(option);
                     break;
-                case "--include-hom-ref":
-                    isIncludeHomRef = true;
-                    break;
-                case "--run-variant-count":
-                    isRunVariantCount = true;
+                case "--mann-whitney-test":
+                    isMannWhitneyTest = true;
                     break;
                 default:
                     continue;
@@ -94,6 +90,9 @@ public class CollapsingCommand {
                 case "--quantitative":
                     StatisticsCommand.quantitativeFile = getValidPath(option);
                     isCollapsingDoLinear = true;
+                    break;
+                case "--mann-whitney-test":
+                    isMannWhitneyTest = true;
                     break;
                 default:
                     continue;

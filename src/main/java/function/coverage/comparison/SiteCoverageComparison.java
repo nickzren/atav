@@ -8,11 +8,14 @@ import function.annotation.base.Gene;
 import function.coverage.base.CoverageCommand;
 import function.genotype.base.SampleManager;
 import global.Data;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.StringJoiner;
+import utils.FormatManager;
 import utils.MathManager;
 import utils.ThirdPartyToolManager;
 
@@ -24,11 +27,9 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
 
     BufferedWriter bwSiteSummary = null;
     BufferedWriter bwSiteClean = null;
-    public static BufferedWriter bwSitePruned = null;
 
     final String siteSummaryFilePath = CommonCommand.outputPath + "site.summary.csv";
     final String cleanedSiteList = CommonCommand.outputPath + "site.clean.txt";
-    final String sitePrunedFilePath = CommonCommand.outputPath + "site.pruned.csv";
 
     SiteClean siteClean = new SiteClean();
 
@@ -38,16 +39,12 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             super.initOutput();
 
             bwSiteSummary = new BufferedWriter(new FileWriter(siteSummaryFilePath));
-            bwSiteSummary.write("Gene,Chr,Pos,Site Coverage,Site Coverage Case,Site Coverage Control");
+            bwSiteSummary.write("Gene,Chr,Pos,"
+                    + "Case DP Bin 0,Case DP Bin 10,Case DP Bin 20,Case DP Bin 30,Case DP Bin 50,Case DP Bin 200,"
+                    + "Ctrl DP Bin 0,Ctrl DP Bin 10,Ctrl DP Bin 20,Ctrl DP Bin 30,Ctrl DP Bin 50,Ctrl DP Bin 200");
             bwSiteSummary.newLine();
 
             bwSiteClean = new BufferedWriter(new FileWriter(cleanedSiteList));
-
-            if (CoverageCommand.isIncludePrunedSite) {
-                bwSitePruned = new BufferedWriter(new FileWriter(sitePrunedFilePath));
-                bwSitePruned.write("Sample ID,Chr,Block Id,Start,End,Value");
-                bwSitePruned.newLine();
-            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -62,10 +59,6 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
             bwSiteSummary.close();
             bwSiteClean.flush();
             bwSiteClean.close();
-            if (CoverageCommand.isIncludePrunedSite) {
-                bwSitePruned.flush();
-                bwSitePruned.close();
-            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -97,37 +90,42 @@ public class SiteCoverageComparison extends CoverageComparisonBase {
     private void outputSiteSummary(Gene gene, Exon exon) {
         try {
             SiteCoverage siteCoverage = CoverageManager.getSiteCoverage(exon);
-            StringBuilder sb = new StringBuilder();
             for (int pos = 0; pos < exon.getLength(); pos++) {
-                int caseCoverage = siteCoverage.getCaseSiteCov(pos);
-                int ctrlCoverage = siteCoverage.getCtrlSiteCov(pos);
+                StringJoiner sj = new StringJoiner(",");
 
                 int start = exon.getStartPosition() + pos;
-                sb.append(gene.getName()).append(",");
-                sb.append(gene.getChr()).append(",");
-                sb.append(start).append(",");
-                sb.append(caseCoverage + ctrlCoverage).append(",");
-                sb.append(caseCoverage).append(",");
-                sb.append(ctrlCoverage);
-                writeToFile(sb.toString(), bwSiteSummary);
-                sb.setLength(0);
 
-                float caseAvg = MathManager.devide(caseCoverage, SampleManager.getCaseNum());
-                float ctrlAvg = MathManager.devide(ctrlCoverage, SampleManager.getCtrlNum());
+                int caseSiteCov = siteCoverage.getCaseSiteCov(pos);
+                int ctrlSiteCov = siteCoverage.getCtrlSiteCov(pos);
+                float caseAvg = MathManager.devide(caseSiteCov, SampleManager.getCaseNum());
+                float ctrlAvg = MathManager.devide(ctrlSiteCov, SampleManager.getCtrlNum());
 
-                // apply --min-coverage-fraction
-                if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                        && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-                    float covDiff = Data.FLOAT_NA;
+                sj.add(gene.getName());
+                sj.add(gene.getChr());
+                sj.add(FormatManager.getInteger(start));
+                sj.add(FormatManager.getInteger(SampleManager.getCaseNum() - caseSiteCov));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_10, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_20, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_30, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_50, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCaseSiteCov(Index.DP_BIN_200, pos)));
+                sj.add(FormatManager.getInteger(SampleManager.getCtrlNum() - ctrlSiteCov));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_10, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_20, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_30, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_50, pos)));
+                sj.add(FormatManager.getInteger(siteCoverage.getCtrlSiteCov(Index.DP_BIN_200, pos)));
+                writeToFile(sj.toString(), bwSiteSummary);
 
-                    if (CoverageCommand.isRelativeDifference) {
-                        covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-                    } else {
-                        covDiff = MathManager.abs(caseAvg, ctrlAvg);
-                    }
+                float covDiff = Data.FLOAT_NA;
 
-                    siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
+                if (CoverageCommand.isRelativeDifference) {
+                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+                } else {
+                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
                 }
+
+                siteClean.addSite(gene.getChr(), pos + exon.getStartPosition(), caseAvg, ctrlAvg, covDiff);
             }
         } catch (Exception e) {
             ErrorManager.send(e);

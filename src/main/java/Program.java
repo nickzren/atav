@@ -56,6 +56,8 @@ import function.external.knownvar.ListKnownVar;
 import function.external.mgi.ListMgi;
 import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
+import function.external.revel.ListRevel;
+import function.external.revel.RevelCommand;
 import function.external.rvis.ListRvis;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
@@ -214,7 +216,10 @@ public class Program {
                 runAnalysis(new ListDenovoDB());
             } else if (DiscovEHRCommand.isListDiscovEHR) {
                 runAnalysis(new ListDiscovEHR());
-            } else if (TestCommand.isTest) { // Test Functions
+            } else if (RevelCommand.isListRevel) {
+                runAnalysis(new ListRevel());
+            } 
+            else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }
         } catch (Exception e) {

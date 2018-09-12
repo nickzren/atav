@@ -1,6 +1,7 @@
 package function.external.denovo;
 
 import java.sql.ResultSet;
+import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -60,13 +61,17 @@ public class DenovoDB {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
 
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add(FormatManager.getString(phenotyp));
+        sj.add(FormatManager.getString(pubmedID));
+
+        return sj;
+    }
+    
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(FormatManager.getString(phenotyp)).append(",");
-        sb.append(FormatManager.getString(pubmedID)).append(",");
-
-        return sb.toString();
+        return getStringJoiner() .toString();
     }
 }

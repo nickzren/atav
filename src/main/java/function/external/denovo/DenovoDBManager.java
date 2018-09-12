@@ -2,6 +2,7 @@ package function.external.denovo;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
+import java.util.StringJoiner;
 
 /**
  *
@@ -12,22 +13,16 @@ public class DenovoDBManager {
     static final String table = "knownvar.denovodb_2018_05_07";
 
     public static String getTitle() {
-        String title = "";
+        StringJoiner sj = new StringJoiner(",");
 
-        if (DenovoDBCommand.isIncludeDenovoDB) {
-            title = "DenovoDB Phenotype,"
-                    + "DenovoDB PubmedID,";
-        }
+        sj.add("DenovoDB Phenotype");
+        sj.add("DenovoDB PubmedID");
 
-        return title;
+        return sj.toString();
     }
 
     public static String getVersion() {
-        if (DenovoDBCommand.isIncludeDenovoDB) {
-            return "DenovoDB: " + DataManager.getVersion(table) + "\n";
-        } else {
-            return "";
-        }
+        return "DenovoDB: " + DataManager.getVersion(table) + "\n";
     }
 
     public static String getSql(String chr, int pos, String ref, String alt) {

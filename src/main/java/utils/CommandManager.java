@@ -17,12 +17,12 @@ import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mtr.MTRCommand;
+import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
-import function.genotype.parent.ParentCommand;
 import function.genotype.parental.ParentalCommand;
 import function.genotype.pedmap.PedMapCommand;
 import function.genotype.sibling.SiblingCommand;
@@ -94,11 +94,13 @@ public class CommandManager {
                 System.exit(0);
             }
         } else // init options from command file or command line
-         if (isCommandFileIncluded(options)) {
+        {
+            if (isCommandFileIncluded(options)) {
                 initCommandFromFile();
             } else {
                 optionArray = options;
             }
+        }
 
         cleanUpOddSymbol();
 
@@ -204,19 +206,32 @@ public class CommandManager {
     }
 
     /*
-     * get output value from ATAV command then init output path
+     * get outputPath value from ATAV command then init outputPath path
      */
     private static void initOutput() {
         Iterator<CommandOption> iterator = optionList.iterator();
         CommandOption option;
+        String outputPath = "";
+        boolean isTimestampEnabled = true;
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--out")) {
-                initOutputPath(option.getValue());
-                iterator.remove();
-                break;
+            switch (option.getName()) {
+                case "--out":
+                    outputPath = option.getValue();
+                    break;
+                case "--disable-timestamp-from-out-path":
+                    isTimestampEnabled = false;
+                    break;
+                default:
+                    continue;
             }
+            
+            iterator.remove();
+        }
+
+        if (!outputPath.isEmpty()) {
+            initOutputPath(outputPath, isTimestampEnabled);
         }
 
         if (CommonCommand.outputPath.isEmpty()) {
@@ -225,7 +240,7 @@ public class CommandManager {
         }
     }
 
-    private static void initOutputPath(String path) {
+    private static void initOutputPath(String path, boolean isTimestampEnabled) {
         try {
             File dir = new File(path);
             if (!dir.exists()) {
@@ -239,13 +254,17 @@ public class CommandManager {
 
             CommonCommand.realOutputPath = path;
             CommonCommand.outputDirName = dir.getName();
-            CommonCommand.outputPath
-                    = path
-                    + File.separator
-                    + LocalDateTime.now().format(formatter)
-                    + "_"
-                    + dir.getName()
-                    + "_";
+
+            StringBuilder outputPathSB = new StringBuilder();
+
+            outputPathSB.append(path);
+            outputPathSB.append(File.separator);
+            if (isTimestampEnabled) {
+                outputPathSB.append(LocalDateTime.now().format(formatter) + "_");
+            }
+            outputPathSB.append(dir.getName() + "_");
+
+            CommonCommand.outputPath = outputPathSB.toString().replaceAll(File.separator + File.separator, File.separator);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("\nError in creating an output directory. \n\nExit\n");
@@ -259,12 +278,15 @@ public class CommandManager {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--db-host")) {
-                DBManager.setDBHost(option.getValue());
-            } else if (option.getName().equals("--debug")) {
-                CommonCommand.isDebug = true;
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--db-host":
+                    DBManager.setDBHost(option.getValue());
+                    break;
+                case "--debug":
+                    CommonCommand.isDebug = true;
+                    break;
+                default:
+                    continue;
             }
 
             iterator.remove();
@@ -308,13 +330,14 @@ public class CommandManager {
                     break;
                 case "--list-trio":
                     TrioCommand.isListTrio = true;
-                    GenotypeLevelFilterCommand.minCaseCarrier = 1;
+                    GenotypeLevelFilterCommand.isCaseOnly = true;
                     break;
-                case "--list-parent-comp-het":
-                    ParentCommand.isListParentCompHet = true;
-                    break;    
+//                case "--list-parent-comp-het":
+//                    ParentCommand.isListParentCompHet = true;
+//                    break;    
                 case "--list-parental-mosaic":
                     ParentalCommand.isParentalMosaic = true;
+                    GenotypeLevelFilterCommand.isCaseOnly = true;
                     break;
                 case "--ped-map":
                     PedMapCommand.isPedMap = true;
@@ -339,6 +362,7 @@ public class CommandManager {
                     DenovoDBCommand.isIncludeDenovoDB = true;
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
                     MTRCommand.isIncludeMTR = true;
+                    RevelCommand.isIncludeRevel = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -434,6 +458,11 @@ public class CommandManager {
                     DiscovEHRCommand.isListDiscovEHR = true;
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
                     break;
+                case "--list-revel":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    RevelCommand.isListRevel = true;
+                    RevelCommand.isIncludeRevel = true;
+                    break;    
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;
@@ -527,7 +556,7 @@ public class CommandManager {
     }
 
     /*
-     * output invalid option & value if value > max or value < min ATAV stop
+     * outputPath invalid option & value if value > max or value < min ATAV stop
      */
     public static void checkValueValid(double max, double min, CommandOption option) {
         double value = Double.parseDouble(option.getValue());
@@ -545,7 +574,7 @@ public class CommandManager {
     }
 
     /*
-     * output invalid option & value if value is not in strList ATAV stop
+     * outputPath invalid option & value if value is not in strList ATAV stop
      */
     public static void checkValueValid(String[] strList, CommandOption option) {
         for (String str : strList) {
@@ -558,7 +587,7 @@ public class CommandManager {
     }
 
     /*
-     * output invalid option & value if value is not in strList ATAV stop
+     * outputPath invalid option & value if value is not in strList ATAV stop
      */
     public static void checkValuesValid(String[] array, CommandOption option) {
         HashSet<String> set = new HashSet<>();
@@ -575,7 +604,7 @@ public class CommandManager {
     }
 
     /*
-     * output invalid option & value if value is not a valid range
+     * outputPath invalid option & value if value is not a valid range
      */
     public static void checkRangeValid(String range, CommandOption option) {
         boolean isValid = false;
@@ -646,7 +675,7 @@ public class CommandManager {
     }
 
     /*
-     * output invalid option & value if value is a valid file path return either
+     * outputPath invalid option & value if value is a valid file path return either
      * a valid file path or a string value ATAV stop
      */
     public static String getValidPath(CommandOption option) {

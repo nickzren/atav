@@ -30,6 +30,7 @@ public class CalledVariant extends AnnotatedVariant {
     public double[] hweP = new double[2];
     private int[] coveredSample = new int[2];
     private double coveredSampleBinomialP;
+    private float[] coveredSamplePercentage = new float[2];
 
     public CalledVariant(String chr, int variantId, ResultSet rset) throws Exception {
         super(chr, variantId, rset);
@@ -50,7 +51,10 @@ public class CalledVariant extends AnnotatedVariant {
                 if (checkAlleleFreqValid()) {
                     initDPBinCoveredSampleBinomialP();
 
-                    if (checkCoveredSampleBinomialP()) {
+                    initCoveredSamplePercentage();
+
+                    if (checkCoveredSampleBinomialP()
+                            && checkCoveredSamplePercentage()) {
                         calculateGenotypeFreq();
 
                         calculateHweP();
@@ -65,7 +69,7 @@ public class CalledVariant extends AnnotatedVariant {
             // single variant carriers data process
             CarrierBlockManager.initCarrierMap(carrierMap, this);
 
-            if (carrierMap.isEmpty() && GenotypeLevelFilterCommand.minVarPresent > 0) {
+            if (!GenotypeLevelFilterCommand.isMinVarPresentValid(carrierMap.size())) {
                 isValid = false;
             }
         } else {
@@ -74,7 +78,13 @@ public class CalledVariant extends AnnotatedVariant {
 
             carrierMap = CarrierBlockManager.getVarCarrierMap(variantId);
 
-            if (carrierMap == null && GenotypeLevelFilterCommand.minVarPresent > 0) {
+            if (carrierMap == null) {
+                carrierMap = new HashMap<>();
+
+                if (GenotypeLevelFilterCommand.minVarPresent > 0) {
+                    isValid = false;
+                }
+            } else if (!GenotypeLevelFilterCommand.isMinVarPresentValid(carrierMap.size())) {
                 isValid = false;
             }
         }
@@ -86,7 +96,6 @@ public class CalledVariant extends AnnotatedVariant {
         int totalQCFailSample = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
 
         isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample)
-                && GenotypeLevelFilterCommand.isMinVarPresentValid(getVarPresent())
                 && GenotypeLevelFilterCommand.isMinCaseCarrierValid(getCaseCarrier());
 
         return isValid;
@@ -99,6 +108,13 @@ public class CalledVariant extends AnnotatedVariant {
         return isValid;
     }
 
+    private boolean checkCoveredSamplePercentage() {
+        isValid = GenotypeLevelFilterCommand.isMinCoveredCasePercentageValid(coveredSamplePercentage[Index.CASE])
+                && GenotypeLevelFilterCommand.isMinCoveredCtrlPercentageValid(coveredSamplePercentage[Index.CTRL]);
+
+        return isValid;
+    }
+
     private boolean checkAlleleFreqValid() {
         isValid = GenotypeLevelFilterCommand.isMaxCtrlAFValid(af[Index.CTRL])
                 && GenotypeLevelFilterCommand.isMinCtrlAFValid(af[Index.CTRL]);
@@ -106,18 +122,8 @@ public class CalledVariant extends AnnotatedVariant {
         return isValid;
     }
 
-    private int getVarPresent() {
-        return genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HOM_MALE][Index.CASE]
-                + genoCount[Index.HET][Index.CASE]
-                + genoCount[Index.HOM][Index.CTRL]
-                + genoCount[Index.HOM_MALE][Index.CTRL]
-                + genoCount[Index.HET][Index.CTRL];
-    }
-
     private int getCaseCarrier() {
         return genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HOM_MALE][Index.CASE]
                 + genoCount[Index.HET][Index.CASE];
     }
 
@@ -188,6 +194,11 @@ public class CalledVariant extends AnnotatedVariant {
         }
     }
 
+    public void initCoveredSamplePercentage() {
+        coveredSamplePercentage[Index.CASE] = MathManager.devide(coveredSample[Index.CASE], SampleManager.getCaseNum()) * 100;
+        coveredSamplePercentage[Index.CTRL] = MathManager.devide(coveredSample[Index.CTRL], SampleManager.getCtrlNum()) * 100;
+    }
+
     private boolean applyCoverageFilter(Sample sample, short dpBin, int minCaseCov, int minCtrlCov) {
         if (sample.isCase()) // --min-case-coverage-call or --min-case-coverage-no-call
         {
@@ -195,11 +206,9 @@ public class CalledVariant extends AnnotatedVariant {
                 return false;
             }
         } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
+         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 return false;
             }
-        }
 
         return true;
     }
@@ -211,30 +220,14 @@ public class CalledVariant extends AnnotatedVariant {
                 return;
             }
 
-            geno = getGenotype(geno, sample);
             genoCount[geno][sample.getPheno()]++;
         }
     }
 
     public void deleteSampleGeno(byte geno, Sample sample) {
         if (geno != Data.BYTE_NA) {
-            geno = getGenotype(geno, sample);
             genoCount[geno][sample.getPheno()]--;
         }
-    }
-
-    private byte getGenotype(byte geno, Sample sample) {
-        if (sample.isMale()
-                && !isInsideAutosomalOrPseudoautosomalRegions()) {
-
-            if (geno == Index.HOM) {
-                return Index.HOM_MALE;
-            } else if (geno == Index.REF) {
-                return Index.REF_MALE;
-            }
-        }
-
-        return geno;
     }
 
     private void setGenoDPBin(byte geno, short bin, int s) {
@@ -252,21 +245,17 @@ public class CalledVariant extends AnnotatedVariant {
 
     private void calculateAlleleFreq() {
         int caseAC = 2 * genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HOM_MALE][Index.CASE]
                 + genoCount[Index.HET][Index.CASE];
         int caseTotalAC = caseAC + genoCount[Index.HET][Index.CASE]
-                + 2 * genoCount[Index.REF][Index.CASE]
-                + genoCount[Index.REF_MALE][Index.CASE];
+                + 2 * genoCount[Index.REF][Index.CASE];
 
         // (2*hom + maleHom + het) / (2*hom + maleHom + 2*het + 2*ref + maleRef)
         af[Index.CASE] = MathManager.devide(caseAC, caseTotalAC);
 
         int ctrlAC = 2 * genoCount[Index.HOM][Index.CTRL]
-                + genoCount[Index.HOM_MALE][Index.CTRL]
                 + genoCount[Index.HET][Index.CTRL];
         int ctrlTotalAC = ctrlAC + genoCount[Index.HET][Index.CTRL]
-                + 2 * genoCount[Index.REF][Index.CTRL]
-                + genoCount[Index.REF_MALE][Index.CTRL];
+                + 2 * genoCount[Index.REF][Index.CTRL];
 
         af[Index.CTRL] = MathManager.devide(ctrlAC, ctrlTotalAC);
     }
@@ -274,36 +263,32 @@ public class CalledVariant extends AnnotatedVariant {
     private void calculateGenotypeFreq() {
         int totalCaseGenotypeCount
                 = genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HOM_MALE][Index.CASE]
                 + genoCount[Index.HET][Index.CASE]
-                + genoCount[Index.REF][Index.CASE]
-                + genoCount[Index.REF_MALE][Index.CASE];
+                + genoCount[Index.REF][Index.CASE];
 
         int totalCtrlGenotypeCount
                 = genoCount[Index.HOM][Index.CTRL]
-                + genoCount[Index.HOM_MALE][Index.CTRL]
                 + genoCount[Index.HET][Index.CTRL]
-                + genoCount[Index.REF][Index.CTRL]
-                + genoCount[Index.REF_MALE][Index.CTRL];
+                + genoCount[Index.REF][Index.CTRL];
 
         // hom / (hom + het + ref)
         homFreq[Index.CASE] = MathManager.devide(
-                genoCount[Index.HOM][Index.CASE] + genoCount[Index.HOM_MALE][Index.CASE], totalCaseGenotypeCount);
+                genoCount[Index.HOM][Index.CASE], totalCaseGenotypeCount);
         homFreq[Index.CTRL] = MathManager.devide(
-                genoCount[Index.HOM][Index.CTRL] + genoCount[Index.HOM_MALE][Index.CTRL], totalCtrlGenotypeCount);
+                genoCount[Index.HOM][Index.CTRL], totalCtrlGenotypeCount);
 
         hetFreq[Index.CASE] = MathManager.devide(genoCount[Index.HET][Index.CASE], totalCaseGenotypeCount);
         hetFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HET][Index.CTRL], totalCtrlGenotypeCount);
     }
 
     private void calculateHweP() {
-        hweP[Index.CASE] = HWEExact.getP(genoCount[Index.HOM][Index.CASE] + genoCount[Index.HOM_MALE][Index.CASE],
+        hweP[Index.CASE] = HWEExact.getP(genoCount[Index.HOM][Index.CASE],
                 genoCount[Index.HET][Index.CASE],
-                genoCount[Index.REF][Index.CASE] + genoCount[Index.REF_MALE][Index.CASE]);
+                genoCount[Index.REF][Index.CASE]);
 
-        hweP[Index.CTRL] = HWEExact.getP(genoCount[Index.HOM][Index.CTRL] + genoCount[Index.HOM_MALE][Index.CTRL],
+        hweP[Index.CTRL] = HWEExact.getP(genoCount[Index.HOM][Index.CTRL],
                 genoCount[Index.HET][Index.CTRL],
-                genoCount[Index.REF][Index.CTRL] + genoCount[Index.REF_MALE][Index.CTRL]);
+                genoCount[Index.REF][Index.CTRL]);
     }
 
     public short getDPBin(int index) {
@@ -332,6 +317,10 @@ public class CalledVariant extends AnnotatedVariant {
 
     public int getCoveredSample(byte pheno) {
         return coveredSample[pheno];
+    }
+
+    public float getCoveredSamplePercentage(byte pheno) {
+        return coveredSamplePercentage[pheno];
     }
 
     public double getCoveredSampleBinomialP() {

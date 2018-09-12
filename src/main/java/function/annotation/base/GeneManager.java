@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
 import java.sql.Statement;
+import java.util.StringJoiner;
 import utils.DBManager;
 
 /**
@@ -20,7 +21,7 @@ public class GeneManager {
     public static final String TMP_GENE_TABLE = "tmp_gene_chr"; // need to append chr in real time
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
-    private static HashMap<String, StringBuilder> chrAllGeneMap = new HashMap<>();
+    private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
     private static final HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<>();
 
@@ -28,6 +29,7 @@ public class GeneManager {
     private static int allGeneBoundaryLength;
 
     private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<>();
+    public static String geneCoverageSummaryTitle = "";
     private static boolean isUsed = false;
 
     private static boolean hasGeneDomainInput = false;
@@ -186,7 +188,7 @@ public class GeneManager {
             ArrayList<String> chrList = new ArrayList<>();
 
             for (String chr : RegionManager.ALL_CHR) {
-                chrAllGeneMap.put(chr, new StringBuilder());
+                chrAllGeneMap.put(chr, new StringJoiner(","));
             }
 
             geneMap.entrySet().stream().forEach((entry) -> {
@@ -196,12 +198,7 @@ public class GeneManager {
                         chrList.add(gene.getChr());
                     }
 
-                    StringBuilder sb = chrAllGeneMap.get(gene.getChr());
-                    if (sb.length() == 0) {
-                        sb.append("('").append(entry.getKey()).append("')");
-                    } else {
-                        sb.append(",('").append(entry.getKey()).append("')");
-                    }
+                    chrAllGeneMap.get(gene.getChr()).add("('" + entry.getKey() + "')");
                 }
             });
 
@@ -227,7 +224,7 @@ public class GeneManager {
                 if (chrAllGeneMap.get(chr).length() > 0) {
                     // insert values
                     stmt.executeUpdate("INSERT INTO " + TMP_GENE_TABLE + chr
-                            + " values " + chrAllGeneMap.get(chr));
+                            + " values " + chrAllGeneMap.get(chr).toString());
 
                     stmt.closeOnCompletion();
                 }
@@ -261,7 +258,7 @@ public class GeneManager {
                 if (isTitle) {
                     isTitle = false;
 
-                    geneCoverageSummaryMap.put("title", restRowValues);
+                    geneCoverageSummaryTitle = restRowValues;
                 }
 
                 if (!geneCoverageSummaryMap.containsKey(firstRowValue)) {
@@ -271,12 +268,10 @@ public class GeneManager {
         }
     }
 
-    public static String getCoverageSummary(String geneName) {
+    public static void addCoverageSummary(String geneName, StringJoiner sj) {
         if (geneCoverageSummaryMap.containsKey(geneName)) {
-            return geneCoverageSummaryMap.get(geneName) + ",";
-        } else {
-            return "";
-        }
+            sj.add(geneCoverageSummaryMap.get(geneName));
+        } 
     }
 
     public static HashMap<String, HashSet<Gene>> getMap() {

@@ -2,6 +2,7 @@ package function.external.evs;
 
 import global.Data;
 import java.sql.ResultSet;
+import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -82,15 +83,19 @@ public class Evs {
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
+    
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
 
+        sj.add(FormatManager.getFloat(allMaf));
+        sj.add(allGenotypeCount);
+        sj.add(filterStatus);
+
+        return sj;
+    }
+    
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(FormatManager.getFloat(allMaf)).append(",");
-        sb.append(allGenotypeCount).append(",");
-        sb.append(filterStatus).append(",");
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }

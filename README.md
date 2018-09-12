@@ -6,7 +6,7 @@ The AnnoDB database houses variants, variant calls, coverage depths, and sample 
 
 The slave servers host single-sample and cohort-level analysis queries, primarily as implemented in the ATAV.
 
-Any questions, please contact Nick Ren (zren@columbia.edu)
+Any questions, please contact Nick Ren (z.ren@columbia.edu)
 
 For more details, please visit:
 http://redmine.igm.cumc.columbia.edu/projects/atav/wiki

@@ -55,6 +55,7 @@ public class ListTrap extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
                 TrapOutput output = new TrapOutput(variantId);
                 bwTrap.write(output.toString());
+                bwTrap.newLine();
             }
         } catch (Exception e) {
             ErrorManager.send(e);

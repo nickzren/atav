@@ -2,6 +2,7 @@ package function.external.genomes;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
+import java.util.StringJoiner;
 
 /**
  *
@@ -15,23 +16,17 @@ public class GenomesManager {
     static String indelTable = "1000g.indel_20130502";
 
     public static String getTitle() {
-        String title = "";
+        StringJoiner sj = new StringJoiner(",");
 
-        if (GenomesCommand.isInclude1000Genomes) {
-            for (String str : GENOMES_POP) {
-                title += "1000 Genomes " + str.toUpperCase() + " af,";
-            }
+        for (String str : GENOMES_POP) {
+            sj.add("1000 Genomes " + str.toUpperCase() + " af");
         }
 
-        return title;
+        return sj.toString();
     }
 
     public static String getVersion() {
-        if (GenomesCommand.isInclude1000Genomes) {
-            return "1000 Genomes: " + DataManager.getVersion(snvTable) + "\n";
-        } else {
-            return "";
-        }
+        return "1000 Genomes: " + DataManager.getVersion(snvTable) + "\n";
     }
 
     public static String getSql4AF(boolean isSnv, String chr,

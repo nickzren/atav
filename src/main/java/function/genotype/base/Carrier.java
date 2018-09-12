@@ -115,6 +115,7 @@ public class Carrier extends NonCarrier {
         if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isGqValid(gq, isSnv)
+                    || !GenotypeLevelFilterCommand.isSorValid(sor, isSnv)
                     || !GenotypeLevelFilterCommand.isFsValid(fs, isSnv)
                     || !GenotypeLevelFilterCommand.isMqValid(mq, isSnv)
                     || !GenotypeLevelFilterCommand.isQdValid(qd, isSnv)
@@ -137,6 +138,17 @@ public class Carrier extends NonCarrier {
             float percAltRead = MathManager.devide(adAlt, dp);
 
             if (!GenotypeLevelFilterCommand.isHetPercentAltReadValid(percAltRead)) {
+                gt = Data.BYTE_NA;
+            }
+        }
+
+        if (gt != Data.BYTE_NA) {
+            double percentAltReadBinomialP = getPercentAltReadBinomialP();
+            if (!GenotypeLevelFilterCommand.isMinPercentAltReadBinomialPValid(percentAltReadBinomialP)) {
+                gt = Data.BYTE_NA;
+            }
+
+            if (!GenotypeLevelFilterCommand.isMaxPercentAltReadBinomialPValid(percentAltReadBinomialP)) {
                 gt = Data.BYTE_NA;
             }
         }

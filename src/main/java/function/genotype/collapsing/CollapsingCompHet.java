@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -55,6 +57,15 @@ public class CollapsingCompHet extends CollapsingBase {
             bwCompHet.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
+        }
+    }
+
+    @Override
+    public void doAfterCloseOutput() {
+        super.doAfterCloseOutput();
+
+        if (CollapsingCommand.isMannWhitneyTest) {
+            ThirdPartyToolManager.runMannWhitneyTest(comphetFilePath);
         }
     }
 
@@ -153,11 +164,11 @@ public class CollapsingCompHet extends CollapsingBase {
 
             updateSummaryVariantCount(output1, summary);
 
-            StringBuilder sb = new StringBuilder();
-            sb.append(sample.getFamilyId()).append(",");
-            sb.append(output1.getString(sample));
+            StringJoiner sj = new StringJoiner(",");
+            sj.add(sample.getFamilyId());
+            sj.merge(output1.getStringJoiner(sample));
 
-            bwCompHet.write(sb.toString());
+            bwCompHet.write(sj.toString());
             bwCompHet.newLine();
 
             return true;
@@ -183,12 +194,12 @@ public class CollapsingCompHet extends CollapsingBase {
                     updateSummaryVariantCount(output1, summary);
                     updateSummaryVariantCount(output2, summary);
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(sample.getFamilyId()).append(",");
-                    sb.append(output1.getString(sample));
-                    sb.append(output2.getString(sample));
+                    StringJoiner sj = new StringJoiner(",");
+                    sj.add(sample.getFamilyId());
+                    sj.merge(output1.getStringJoiner(sample));
+                    sj.merge(output2.getStringJoiner(sample));
 
-                    bwCompHet.write(sb.toString());
+                    bwCompHet.write(sj.toString());
                     bwCompHet.newLine();
                 }
             }

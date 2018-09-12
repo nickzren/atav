@@ -10,6 +10,7 @@ import utils.LogManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -151,32 +152,26 @@ public class ExonClean {
     private String getGeneStr(Gene gene, int geneSize, float caseAvg, float ctrlAvg) {
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
-        
-        if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
 
-            StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-            sb.append(gene.getName()).append(",");
-            sb.append(gene.getChr()).append(",");
-            sb.append(gene.getLength()).append(",");
-            sb.append(FormatManager.getFloat(caseAvg)).append(",");
-            sb.append(FormatManager.getFloat(ctrlAvg)).append(",");
+        sj.add(gene.getName());
+        sj.add(gene.getChr());
+        sj.add(FormatManager.getInteger(gene.getLength()));
+        sj.add(FormatManager.getFloat(caseAvg));
+        sj.add(FormatManager.getFloat(ctrlAvg));
 
-            float covDiff = Data.FLOAT_NA;
+        float covDiff = Data.FLOAT_NA;
 
-            if (CoverageCommand.isRelativeDifference) {
-                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-            } else {
-                covDiff = MathManager.abs(caseAvg, ctrlAvg);
-            }
-
-            sb.append(FormatManager.getFloat(covDiff)).append(",");
-            sb.append(geneSize);
-            return sb.toString();
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
         } else {
-            return "";
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
         }
+
+        sj.add(FormatManager.getFloat(covDiff));
+        sj.add(FormatManager.getInteger(geneSize));
+        return sj.toString();
     }
 
     public void outputLog() {

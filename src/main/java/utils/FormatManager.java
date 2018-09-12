@@ -154,14 +154,4 @@ public class FormatManager {
     public static double[] deepCopyArray(double[] original) {
         return Arrays.copyOf(original, original.length);
     }
-
-    public static void deleteLastComma(StringBuilder sb) {
-        if (sb.length() != 0) {
-            int lastCommaIndex = sb.lastIndexOf(",");
-
-            if (lastCommaIndex == (sb.length() - 1)) {
-                sb.deleteCharAt(lastCommaIndex);
-            }
-        }
-    }
 }

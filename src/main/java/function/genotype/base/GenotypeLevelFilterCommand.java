@@ -1,6 +1,7 @@
 package function.genotype.base;
 
 import global.Data;
+import global.Index;
 import java.util.Iterator;
 import static utils.CommandManager.checkRangeValid;
 import static utils.CommandManager.getValidDouble;
@@ -21,6 +22,8 @@ public class GenotypeLevelFilterCommand {
     public static String sampleFile = "";
     public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
+    public static boolean isAllExome = false;
+    public static boolean isExcludeIGMGnomadSample = false;
     public static double maxCtrlAF = Data.NO_FILTER;
     public static double minCtrlAF = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
@@ -30,9 +33,12 @@ public class GenotypeLevelFilterCommand {
     public static int minCtrlCoverageNoCall = Data.NO_FILTER;
     public static int minVarPresent = 1; // special case
     public static int minCaseCarrier = Data.NO_FILTER;
+    public static boolean isIncludeHomRef = false;
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
     public static double[] homPercentAltRead = null;
+    public static double minPercentAltReadBinomialP = Data.NO_FILTER;
+    public static double maxPercentAltReadBinomialP = Data.NO_FILTER;
     public static int snvGQ = Data.NO_FILTER;
     public static int indelGQ = Data.NO_FILTER;
     public static float snvSOR = Data.NO_FILTER;
@@ -54,6 +60,8 @@ public class GenotypeLevelFilterCommand {
     public static int maxQcFailSample = Data.NO_FILTER;
     public static double minCoveredSampleBinomialP = Data.NO_FILTER;
     public static boolean disableCheckOnSexChr = false;
+    public static float[] minCoveredSamplePercentage = {Data.NO_FILTER, Data.NO_FILTER};
+    public static boolean isCaseOnly = false;
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
@@ -71,6 +79,12 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--all-sample":
                     isAllSample = true;
+                    break;
+                case "--all-exome":
+                    isAllExome = true;
+                    break;    
+                case "--exclude-igm-gnomad-sample":
+                    isExcludeIGMGnomadSample = true;
                     break;
                 case "--disable-check-duplicate-sample":
                     isDisableCheckDuplicateSample = true;
@@ -112,6 +126,9 @@ public class GenotypeLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     minCaseCarrier = getValidInteger(option);
                     break;
+                case "--include-hom-ref":
+                    isIncludeHomRef = true;
+                    break;
                 case "--filter":
                     option.setValue(option.getValue().toUpperCase());
                     checkValuesValid(FILTER, option);
@@ -130,6 +147,14 @@ public class GenotypeLevelFilterCommand {
                 case "--hom-percent-alt-read":
                     checkRangeValid("0-1", option);
                     homPercentAltRead = getValidRange(option);
+                    break;
+                case "--min-percent-alt-read-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minPercentAltReadBinomialP = getValidDouble(option);
+                    break;
+                case "--max-percent-alt-read-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    maxPercentAltReadBinomialP = getValidDouble(option);
                     break;
                 case "--gq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
@@ -239,6 +264,17 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--disable-check-on-sex-chr":
                     disableCheckOnSexChr = true;
+                    break;
+                case "--min-covered-case-percentage":
+                    checkValueValid(100, 0, option);
+                    minCoveredSamplePercentage[Index.CASE] = getValidFloat(option);
+                    break;
+                case "--min-covered-ctrl-percentage":
+                    checkValueValid(100, 0, option);
+                    minCoveredSamplePercentage[Index.CTRL] = getValidFloat(option);
+                    break;
+                case "--case-only":
+                    isCaseOnly = true;
                     break;
                 default:
                     continue;
@@ -376,7 +412,7 @@ public class GenotypeLevelFilterCommand {
 
         return false;
     }
-    
+
     public static boolean isSorValid(float value, boolean isSnv) {
         if (isSnv) {
             return isSORValid(value, snvSOR);
@@ -575,6 +611,30 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
+    public static boolean isMinPercentAltReadBinomialPValid(double value) {
+        if (minPercentAltReadBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.DOUBLE_NA) {
+            return false;
+        }
+
+        return value >= minPercentAltReadBinomialP;
+    }
+
+    public static boolean isMaxPercentAltReadBinomialPValid(double value) {
+        if (maxPercentAltReadBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+        
+        if (value == Data.DOUBLE_NA) {
+            return false;
+        }
+
+        return value <= maxPercentAltReadBinomialP;
+    }
+
     public static boolean isMaxQcFailSampleValid(int value) {
         if (maxQcFailSample == Data.NO_FILTER) {
             return true;
@@ -587,7 +647,27 @@ public class GenotypeLevelFilterCommand {
         if (minCoveredSampleBinomialP == Data.NO_FILTER) {
             return true;
         }
+        
+        if (value == Data.DOUBLE_NA) {
+            return false;
+        }
 
         return value >= minCoveredSampleBinomialP;
+    }
+
+    public static boolean isMinCoveredCasePercentageValid(float value) {
+        if (minCoveredSamplePercentage[Index.CASE] == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minCoveredSamplePercentage[Index.CASE];
+    }
+
+    public static boolean isMinCoveredCtrlPercentageValid(float value) {
+        if (minCoveredSamplePercentage[Index.CTRL] == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minCoveredSamplePercentage[Index.CTRL];
     }
 }

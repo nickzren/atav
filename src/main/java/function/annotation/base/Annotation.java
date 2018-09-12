@@ -61,35 +61,30 @@ public class Annotation {
                     && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar);
 
             boolean isValid = isPolyphenValid;
-            
-            // trap filter apply to missense variants when it failed to pass polyphen filter
+
+            float trapScore = Data.FLOAT_NA;
+            if (TrapCommand.minTrapScore != Data.NO_FILTER) {
+                trapScore = TrapManager.getScore(chr, pos, allele, geneName);
+            }
+
+            // trap filter apply to missense variants when it failed to pass polyphen filter but exclude NA TraP
             // trap filter apply to missense variants when polyphen filter not applied
             // trap filter apply to annotation that effect less damaging than missense_variant
             if (effect.startsWith("missense_variant")) {
                 // when polyphen filter failed, to save variant needs to make sure trap filter used
                 if (!isPolyphenValid && TrapCommand.minTrapScore != Data.NO_FILTER) {
-                    isValid = isTrapValid();
+                    isValid = trapScore == Data.FLOAT_NA ? false : TrapCommand.isTrapScoreValid(trapScore);
                 } else if (AnnotationLevelFilterCommand.polyphenHumdiv.equals(Data.NO_FILTER_STR)
                         && AnnotationLevelFilterCommand.polyphenHumvar.equals(Data.NO_FILTER_STR)) {
-                    isValid = isTrapValid();
+                    isValid = TrapCommand.isTrapScoreValid(trapScore);
                 }
             } else if (effectID > EffectManager.MISSENSE_VARIANT_ID) {
-                isValid = isTrapValid();
+                isValid = TrapCommand.isTrapScoreValid(trapScore);
             }
-
+            
             return isValid;
         }
 
         return false;
-    }
-
-    private boolean isTrapValid() {
-        float trapScore = Data.FLOAT_NA;
-
-        if (TrapCommand.minTrapScore != Data.NO_FILTER) {
-            trapScore = TrapManager.getScore(chr, pos, allele, geneName);
-        }
-
-        return TrapCommand.isTrapScoreValid(trapScore);
     }
 }

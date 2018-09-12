@@ -127,12 +127,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             long rowLen = 2 * SampleManager.getTotalSampleNum() + 1L;
 
             for (Sample sample : SampleManager.getList()) {
-                String name = sample.getName();
-
                 byte pheno = (byte) (sample.getPheno() + 1);
 
                 bwPed.write(sample.getFamilyId() + " "
-                        + name + " "
+                        + sample.getName() + " "
                         + sample.getPaternalId() + " "
                         + sample.getMaternalId() + " "
                         + sample.getSex() + " "
@@ -226,7 +224,9 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         // Run KING to get kinship
         cmd = ThirdPartyToolManager.KING
                 + " -b " + CommonCommand.outputPath + "plink.bed"
-                + " --kinship --related --degree 3"
+                + " --kinship"
+                + " --related"
+                + " --degree 3"
                 + " --prefix " + CommonCommand.outputPath + "king";
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
@@ -237,7 +237,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 + " " + GenotypeLevelFilterCommand.sampleFile
                 + " " + CommonCommand.outputPath + "king.kin0"
                 + " " + CommonCommand.outputPath + "king.kin"
-                + " --seed " + PedMapCommand.seed
+                + " --relatedness_threshold " + PedMapCommand.kinshipRelatednessThreshold
+                + " --seed " + PedMapCommand.kinshipSeed
                 + " --output " + CommonCommand.outputPath + "kinship_pruned_sample.txt"
                 + " --verbose";
 

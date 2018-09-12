@@ -5,6 +5,7 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
+import java.util.StringJoiner;
 import utils.FormatManager;
 import utils.LogManager;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
@@ -18,12 +19,16 @@ public class LinearOutput extends StatisticOutput {
     double beta1 = 0;
 
     public static String getTitle() {
-        return getVariantDataTitle()
-                + getAnnotationDataTitle()
-                + getExternalDataTitle()
-                + getGenoStatDataTitle()
-                + "P Value,"
-                + "Beta1,";
+        StringJoiner sj = new StringJoiner(",");
+        
+        sj.merge(getVariantDataTitle());
+        sj.merge(getAnnotationDataTitle());
+        sj.merge(getExternalDataTitle());
+        sj.merge(getGenoStatDataTitle());
+        sj.add("P Value");
+        sj.add("Beta1");
+        
+        return sj.toString();
     }
 
     public LinearOutput(CalledVariant c) {
@@ -66,11 +71,7 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(1, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                        } 
                         break;
                     case "recessive":
                         if (geno == Index.REF) {
@@ -79,11 +80,7 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(0, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(1, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                        } 
                         break;
                     case "genotypic":
                         // not complete yet, to be finished a bit later
@@ -93,11 +90,7 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(2, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
-                        }
+                        } 
                         break;
                     case "additive":
                         if (geno == Index.REF) {
@@ -106,10 +99,6 @@ public class LinearOutput extends StatisticOutput {
                             sr.addData(1, y);
                         } else if (geno == Index.HOM) {
                             sr.addData(2, y);
-                        } else if (geno == Index.HOM_MALE) {
-                            sr.addData(1, y);
-                        } else if (geno == Index.REF_MALE) {
-                            sr.addData(0, y);
                         }
                         break;
                     default:
@@ -130,16 +119,16 @@ public class LinearOutput extends StatisticOutput {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
 
-        calledVar.getVariantData(sb);
-        calledVar.getAnnotationData(sb);
-        calledVar.getExternalData(sb);
-        getGenoStatData(sb);
+        calledVar.getVariantData(sj);
+        calledVar.getAnnotationData(sj);
+        calledVar.getExternalData(sj);
+        getGenoStatData(sj);
 
-        sb.append(FormatManager.getDouble(pValue)).append(",");
-        sb.append(FormatManager.getDouble(beta1)).append(",");
+        sj.add(FormatManager.getDouble(pValue));
+        sj.add(FormatManager.getDouble(beta1));
 
-        return sb.toString();
+        return sj.toString();
     }
 }

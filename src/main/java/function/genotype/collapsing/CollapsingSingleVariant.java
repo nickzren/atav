@@ -55,11 +55,11 @@ public class CollapsingSingleVariant extends CollapsingBase {
     }
 
     @Override
-    public void afterProcessDatabaseData() {
-        super.afterProcessDatabaseData();
+    public void doAfterCloseOutput() {
+        super.doAfterCloseOutput();
 
-        if (CollapsingCommand.isRunVariantCount) {
-            ThirdPartyToolManager.runVariantCount(genotypesFilePath);
+        if (CollapsingCommand.isMannWhitneyTest) {
+            ThirdPartyToolManager.runMannWhitneyTest(genotypesFilePath);
         }
     }
 
@@ -104,8 +104,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
             ArrayList<CollapsingSummary> summaryList) {
         try {
             boolean hasQualifiedVariant = false;
-            StringBuilder gtArraySB = new StringBuilder();
-            genoCount = 0;
 
             for (Sample sample : SampleManager.getList()) {
                 output.calculateLooFreq(sample);
@@ -121,19 +119,12 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
                     outputQualifiedVariant(output, sample);
                 }
-
-                add2GTArraySB(geno, gtArraySB);
             }
 
             // only count qualified variant once per gene or region
             if (hasQualifiedVariant) {
                 for (CollapsingSummary summary : summaryList) {
                     summary.updateVariantCount(output);
-                }
-
-                if (CollapsingCommand.isIncludeHomRef) {
-                    bwGenotypes.write(output.getJointedGenotypeString(gtArraySB.toString()));
-                    bwGenotypes.newLine();
                 }
             }
         } catch (Exception e) {
@@ -143,37 +134,17 @@ public class CollapsingSingleVariant extends CollapsingBase {
 
     private void outputQualifiedVariant(CollapsingOutput output,
             Sample sample) throws Exception {
-        bwGenotypes.write(output.getString(sample));
+        bwGenotypes.write(output.getStringJoiner(sample).toString());
         bwGenotypes.newLine();
-    }
-
-    private void add2GTArraySB(byte geno, StringBuilder gtArraySB) {
-        if (CollapsingCommand.isIncludeHomRef) {
-            currentGeno = getGeno(geno);
-
-            if (genoCount == 0) // first character geno
-            {
-                previousGeno = currentGeno;
-                genoCount++;
-            } else if (currentGeno == previousGeno) {
-                genoCount++;
-            } else {
-                gtArraySB.append(genoCount).append(previousGeno);
-                genoCount = 1;
-                previousGeno = currentGeno;
-            }
-        }
     }
 
     private char getGeno(byte geno) {
         switch (geno) {
             case Index.HOM:
-            case Index.HOM_MALE:
                 return 'H';
             case Index.HET:
                 return 'T';
             case Index.REF:
-            case Index.REF_MALE:
                 return 'R';
             default:
                 return 'N';

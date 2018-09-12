@@ -1,6 +1,7 @@
 package function.external.subrvis;
 
 import global.Data;
+import java.util.StringJoiner;
 import utils.FormatManager;
 
 /**
@@ -54,17 +55,21 @@ public class SubRvisOutput {
         return exonOEratio;
     }
 
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add(domainName);
+        sj.add(FormatManager.getFloat(domainScore));
+        sj.add(FormatManager.getFloat(domainOEratio));
+        sj.add(exonName);
+        sj.add(FormatManager.getFloat(exonScore));
+        sj.add(FormatManager.getFloat(exonOEratio));
+
+        return sj;
+    }
+    
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(domainName).append(",");
-        sb.append(FormatManager.getFloat(domainScore)).append(",");
-        sb.append(FormatManager.getFloat(domainOEratio)).append(",");
-        sb.append(exonName).append(",");
-        sb.append(FormatManager.getFloat(exonScore)).append(",");
-        sb.append(FormatManager.getFloat(exonOEratio)).append(",");
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }

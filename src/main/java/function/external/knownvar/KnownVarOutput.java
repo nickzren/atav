@@ -1,6 +1,8 @@
 package function.external.knownvar;
 
 import function.annotation.base.AnnotatedVariant;
+import java.util.StringJoiner;
+import utils.FormatManager;
 
 /**
  *
@@ -35,19 +37,23 @@ public class KnownVarOutput {
         dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
     }
 
+    public StringJoiner getStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.merge(hgmdOutput.getStringJoiner());
+        sj.merge(clinVarOutput.getStringJoiner());
+        sj.merge(clinVarPathoratio.getStringJoiner());
+        sj.merge(clinGen.getStringJoiner());
+        sj.add(omimDiseaseName);
+        sj.add(FormatManager.getInteger(recessiveCarrier));
+        sj.add(acmg);
+        sj.merge(dbDSMOutput.getStringJoiner());
+
+        return sj;
+    }
+    
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(hgmdOutput.toString());
-        sb.append(clinVarOutput.toString());
-        sb.append(clinVarPathoratio.toString());
-        sb.append(clinGen.toString());
-        sb.append(omimDiseaseName).append(",");
-        sb.append(recessiveCarrier).append(",");
-        sb.append(acmg).append(",");
-        sb.append(dbDSMOutput.toString());
-
-        return sb.toString();
+        return getStringJoiner().toString();
     }
 }

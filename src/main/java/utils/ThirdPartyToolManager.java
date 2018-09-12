@@ -1,7 +1,6 @@
 package utils;
 
 import com.google.common.base.Stopwatch;
-import function.annotation.base.GeneManager;
 import function.external.flanking.FlankingCommand;
 import global.Data;
 import function.genotype.base.SampleManager;
@@ -35,9 +34,8 @@ public class ThirdPartyToolManager {
     private static final String TRIO_DENOVO_TIER = Data.ATAV_HOME + "lib/r0.6_trio_denovo_tier.R";
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.6_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/r0.6_nonTrio_tier.R";
-    private static final String VARIANT_COUNT = Data.ATAV_HOME + "lib/variant_count.py";
-    private static final int nProcs = 4;
-
+    private static final String MANN_WHITNEY_TEST = Data.ATAV_HOME + "lib/mann_whitney_test.py";
+    
     public static void init() {
         initDataFromSystemConfig();
     }
@@ -192,16 +190,9 @@ public class ThirdPartyToolManager {
     }
 
     public static void generateQQPlot4CollapsingFetP(String summaryFilePath, String matrixFilePath, String outputPath) {
-        int n = nProcs;
-
-        // hack tweaks here, gene domain input usually too large, needs to review the code again
-        if (GeneManager.hasGeneDomainInput()) {
-            n = 1;
-        }
-
         String cmd = PYTHON + " "
                 + PERM_QQPLOT_FOR_COLLAPSING + " "
-                + "--nprocs " + n + " "
+                + "--nprocs 10 "
                 + summaryFilePath + " "
                 + matrixFilePath + " "
                 + outputPath; // output path
@@ -249,9 +240,9 @@ public class ThirdPartyToolManager {
     }
     
         
-    public static void runVariantCount(String genotypesFilePath) {
+    public static void runMannWhitneyTest(String genotypesFilePath) {
         String cmd = PYTHON + " "
-                + VARIANT_COUNT + " "
+                + MANN_WHITNEY_TEST + " "
                 + genotypesFilePath;
 
         systemCall(new String[]{cmd});

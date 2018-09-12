@@ -3,6 +3,8 @@ package function.variant.base;
 import function.external.knownvar.ClinVar;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
+import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.SampleManager;
 import function.genotype.parent.ParentCommand;
 import function.genotype.trio.TrioCommand;
 import global.Data;
@@ -11,6 +13,7 @@ import utils.LogManager;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import utils.DBManager;
@@ -35,8 +38,8 @@ public class VariantManager {
     private static int maxIncludeNum = 200000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
-        if (TrioCommand.isListTrio ||
-                ParentCommand.isListParentCompHet) {
+        if (TrioCommand.isListTrio
+                || ParentCommand.isListParentCompHet) {
             // disable process region as variant by varaint way
             maxIncludeNum = 0;
         }
@@ -57,6 +60,8 @@ public class VariantManager {
 
             resetRegionList();
         }
+
+        initCaseVariantTable();
     }
 
     public static void initByVariantId(String input, HashSet<String> variantSet, boolean isInclude)
@@ -249,10 +254,16 @@ public class VariantManager {
         }
     }
 
-    public static boolean isValid(Variant var) {
+    public static boolean isValid(Variant var) throws Exception {
         if (VariantLevelFilterCommand.isExcludeSnv && var.isSnv()) {
+            // exclude snv
             return false;
         } else if (VariantLevelFilterCommand.isExcludeIndel && var.isIndel()) {
+            // exclude indel
+            return false;
+        } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
+                && VariantManager.isMultiallelicVariant(var.getChrStr(), var.getStartPosition())) {
+            // exclude multiallelic variant
             return false;
         }
 
@@ -268,7 +279,6 @@ public class VariantManager {
             return true;
         } else {
             if (includeVariantSet.contains(varId)) {
-                includeVariantSet.remove(varId);
                 return true;
             }
 
@@ -298,6 +308,36 @@ public class VariantManager {
         includeRsNumberSet.clear();
         includeVariantPosList.clear();
         includeChrList.clear();
+    }
+
+    private static void initCaseVariantTable() {
+        if (GenotypeLevelFilterCommand.isCaseOnly) {
+            try {
+                Statement stmt = DBManager.createStatementByReadOnlyConn();
+
+                for (String chr : RegionManager.getChrList()) {
+                    String sqlQuery = "CREATE TEMPORARY TABLE tmp_case_variant_id_chr" + chr + " "
+                            + "(case_variant_id INT NOT NULL,PRIMARY KEY (case_variant_id)) "
+                            + "ENGINE=TokuDB "
+                            + "SELECT DISTINCT variant_id AS case_variant_id FROM called_variant_chr" + chr + " "
+                            + "WHERE sample_id IN (" + SampleManager.getCaseIDSJ().toString() + ")";
+
+                    stmt.executeUpdate(sqlQuery);
+                    stmt.closeOnCompletion();
+                }
+            } catch (Exception e) {
+                ErrorManager.send(e);
+            }
+        }
+    }
+
+    public static boolean isMultiallelicVariant(String chr, int pos) throws SQLException {
+        String sql = "select pos from multiallelic_variant_site "
+                + "where chr = '" + chr + "' and pos =" + pos + " limit 1";
+
+        ResultSet rset = DBManager.executeQuery(sql);
+
+        return rset.next();
     }
 
     public static boolean isUsed() {

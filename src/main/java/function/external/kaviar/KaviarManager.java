@@ -2,6 +2,7 @@ package function.external.kaviar;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
+import java.util.StringJoiner;
 
 /**
  *
@@ -13,23 +14,17 @@ public class KaviarManager {
     static final String indelTable = "kaviar.indel_maf_160113";
 
     public static String getTitle() {
-        String title = "";
+        StringJoiner sj = new StringJoiner(",");
 
-        if (KaviarCommand.isIncludeKaviar) {
-            title = "Kaviar Maf,"
-                    + "Kaviar Allele Count,"
-                    + "Kaviar Allele Number,";
-        }
+        sj.add("Kaviar Maf");
+        sj.add("Kaviar Allele Count");
+        sj.add("Kaviar Allele Number");
 
-        return title;
+        return sj.toString();
     }
 
     public static String getVersion() {
-        if (KaviarCommand.isIncludeKaviar) {
-            return "Kaviar: " + DataManager.getVersion(snvTable) + "\n";
-        } else {
-            return "";
-        }
+        return "Kaviar: " + DataManager.getVersion(snvTable) + "\n";
     }
 
     public static String getSql(boolean isSnv, String chr,

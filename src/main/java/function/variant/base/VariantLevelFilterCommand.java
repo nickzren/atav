@@ -15,6 +15,7 @@ import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mtr.MTRCommand;
+import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
@@ -26,6 +27,7 @@ import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
+import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.checkValueValid;
 
 /**
@@ -39,6 +41,7 @@ public class VariantLevelFilterCommand {
     public static String includeRsNumber = "";
     public static String excludeVariantId = "";
     public static boolean isExcludeArtifacts = false;
+    public static boolean isExcludeMultiallelicVariant = false;
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
 
@@ -63,6 +66,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--exclude-artifacts":
                     isExcludeArtifacts = true;
+                    break;
+                case "--exclude-multiallelic-variant":
+                    isExcludeMultiallelicVariant = true;
                     break;
                 case "--exclude-snv":
                     isExcludeSnv = true;
@@ -233,6 +239,11 @@ public class VariantLevelFilterCommand {
                     MTRCommand.mtrCentile = getValidFloat(option);
                     MTRCommand.isIncludeMTR = true;
                     break;
+                case "--min-revel-score":
+                    checkValueValid(1, 0, option);
+                    RevelCommand.minRevel = getValidFloat(option);
+                    RevelCommand.isIncludeRevel = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
@@ -283,6 +294,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-mtr":
                     MTRCommand.isIncludeMTR = true;
+                    break;
+                case "--include-revel":
+                    RevelCommand.isIncludeRevel = true;
                     break;
                 default:
                     continue;

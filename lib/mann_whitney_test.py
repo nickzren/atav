@@ -44,8 +44,12 @@ def getQVcounts(genotypesFilename):
 		for line in variants:
 
 			line = dict(zip(header, line.strip().split(",")))
-			caseOrControl = line["Sample Phenotype"]
-			name = line["Sample Name"]
+			if "_genotypes" in genotypesFilename:
+				caseOrControl = line["Sample Phenotype"]
+				name = line["Sample Name"]
+			elif "_comphet" in genotypesFilename:
+				caseOrControl = line["Sample Phenotype (#1)"]
+				name = line["Sample Name (#1)"]
 			counts[caseOrControl][name] += 1
 
 	return counts
@@ -63,9 +67,10 @@ def graphQVcounts(casesCounts, controlsCounts, outputName):
 	"""
 
 	plt.figure(1)
-	binAmount
-	caseBins = binAmount(casesCounts)
-	controlBins = binAmount(controlsCounts)
+	binwidth = 1.0
+	mostMin = min(min(casesCounts), min(controlsCounts))-0.5
+	mostMax = max(max(casesCounts), max(controlsCounts))-0.5
+	caseBins = controlBins = np.arange(mostMin, mostMax + binwidth, binwidth)
 	plt.hist(casesCounts, caseBins, facecolor='green', alpha=0.35, label="Cases", ec='white', normed=True)
 	plt.hist(controlsCounts, controlBins, facecolor='blue', alpha=0.35, label="Controls", ec='white', normed=True)
 	plt.title("QVCounts")
@@ -77,17 +82,6 @@ def graphQVcounts(casesCounts, controlsCounts, outputName):
 	plt.savefig(outputName, bbox_inches='tight')
 	plt.close()
 
-
-def binAmount(array):
-
-	"""
-	Quick helper function that gives a clean amount of bins for varying array sizes.
-	Created by playing around with the equations at http://www.statisticshowto.com/choose-bin-sizes-statistics/ .
-	"""
-	try:
-		return max(int(5*math.log(len(array))), max(array)/3)
-	except ValueError as e: # If the array is empty
-		return 1
 
 def writeToLog(logName, message, writeOrAppend):
 
@@ -134,6 +128,7 @@ def handler(genotypesFilename):
 	"""
 	Our main function, that works just from the path to a _genotypes file.
 	"""
+	fileName = genotypesFilename.split("/")[-1].replace(".csv", "")
 
 	folderWithoutFilename = genotypesFilename.split("/")[:-1]
 	folder = "/".join(folderWithoutFilename)
@@ -145,7 +140,8 @@ def handler(genotypesFilename):
 
 	counts = getQVcounts(genotypesFilename)
 
-	logName = folder + "variantsCountLog.txt"
+	suffix = fileName.split("_")[-1]
+	logName = folder + fileName.replace(suffix, "qv_counts.log")
 	initializeLog(logName, counts)
 
 	casesCounts = counts["case"].values()
@@ -158,7 +154,7 @@ def handler(genotypesFilename):
 		pvalue = None
 		writeToLog(logName, "The test could not be run. (You may have run with no cases, or no controls.)", writeOrAppend = "a")
 	
-	qvPlotName = folder + "qvCounts.png"
+	qvPlotName = folder + fileName.replace(suffix, "qv_counts.png")
 	graphQVcounts(casesCounts, controlsCounts, qvPlotName)
 	
 

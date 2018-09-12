@@ -2,6 +2,7 @@ package function.genotype.statistics;
 
 import function.genotype.base.CalledVariant;
 import function.genotype.base.AnalysisBase4CalledVar;
+import function.variant.base.VariantManager;
 import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
