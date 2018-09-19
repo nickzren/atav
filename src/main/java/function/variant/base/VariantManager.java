@@ -263,7 +263,11 @@ public class VariantManager {
             return false;
         } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
                 && VariantManager.isMultiallelicVariant(var.getChrStr(), var.getStartPosition())) {
-            // exclude multiallelic variant
+            // exclude Multiallelic site > 1 variant
+            return false;
+        } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant2
+                && VariantManager.isMultiallelicVariant2(var.getChrStr(), var.getStartPosition())) {
+            // exclude Multiallelic site > 2 variants
             return false;
         }
 
@@ -331,8 +335,19 @@ public class VariantManager {
         }
     }
 
+    // exclude Multiallelic site > 1 variant
     public static boolean isMultiallelicVariant(String chr, int pos) throws SQLException {
         String sql = "select pos from multiallelic_variant_site "
+                + "where chr = '" + chr + "' and pos =" + pos + " limit 1";
+
+        ResultSet rset = DBManager.executeQuery(sql);
+
+        return rset.next();
+    }
+    
+    // exclude Multiallelic site > 2 variants
+    public static boolean isMultiallelicVariant2(String chr, int pos) throws SQLException {
+        String sql = "select pos from multiallelic_variant_site_2 "
                 + "where chr = '" + chr + "' and pos =" + pos + " limit 1";
 
         ResultSet rset = DBManager.executeQuery(sql);

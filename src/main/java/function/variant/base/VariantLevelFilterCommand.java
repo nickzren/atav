@@ -28,7 +28,6 @@ import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -42,6 +41,7 @@ public class VariantLevelFilterCommand {
     public static String excludeVariantId = "";
     public static boolean isExcludeArtifacts = false;
     public static boolean isExcludeMultiallelicVariant = false;
+    public static boolean isExcludeMultiallelicVariant2 = false;
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
 
@@ -70,6 +70,9 @@ public class VariantLevelFilterCommand {
                 case "--exclude-multiallelic-variant":
                     isExcludeMultiallelicVariant = true;
                     break;
+                case "--exclude-multiallelic-variant-2":
+                    isExcludeMultiallelicVariant2 = true;
+                    break;    
                 case "--exclude-snv":
                     isExcludeSnv = true;
                     break;
