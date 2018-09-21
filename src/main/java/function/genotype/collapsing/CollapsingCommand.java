@@ -8,7 +8,6 @@ import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 import static utils.CommandManager.checkValueValid;
-import static utils.CommandManager.checkValueValid;
 
 /**
  *

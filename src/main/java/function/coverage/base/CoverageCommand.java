@@ -26,9 +26,7 @@ public class CoverageCommand {
     public static boolean isCoverageComparison = false;
     public static boolean isSiteCoverageComparison = false;
     public static boolean isRelativeDifference = false;
-    public static boolean isIncludePrunedSite = false;
     public static boolean isLinear = false;
-    public static float minCoverageFraction = Data.NO_FILTER;
 
     public static void initCoverageComparison(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -46,10 +44,6 @@ public class CoverageCommand {
                     break;
                 case "--relative-difference":
                     isRelativeDifference = true;
-                    break;
-                case "--min-coverage-fraction":
-                    checkValueValid(1, 0, option);
-                    minCoverageFraction = getValidFloat(option);
                     break;
                 default:
                     continue;
@@ -87,26 +81,10 @@ public class CoverageCommand {
                 case "--relative-difference":
                     isRelativeDifference = true;
                     break;
-                case "--include-pruned-site":
-                    isIncludePrunedSite = true;
-                    break;
-                case "--min-coverage-fraction":
-                    checkValueValid(1, 0, option);
-                    minCoverageFraction = getValidFloat(option);
-                    break;
                 default:
                     continue;
             }
             iterator.remove();
         }
-    }
-
-    public static boolean isMinCoverageFractionValid(float value) {
-        if (minCoverageFraction == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value >= minCoverageFraction
-                && value != Data.FLOAT_NA;
     }
 }

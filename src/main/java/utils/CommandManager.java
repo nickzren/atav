@@ -17,6 +17,7 @@ import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mtr.MTRCommand;
+import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
@@ -361,6 +362,7 @@ public class CommandManager {
                     DenovoDBCommand.isIncludeDenovoDB = true;
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
                     MTRCommand.isIncludeMTR = true;
+                    RevelCommand.isIncludeRevel = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -456,6 +458,11 @@ public class CommandManager {
                     DiscovEHRCommand.isListDiscovEHR = true;
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
                     break;
+                case "--list-revel":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    RevelCommand.isListRevel = true;
+                    RevelCommand.isIncludeRevel = true;
+                    break;    
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;

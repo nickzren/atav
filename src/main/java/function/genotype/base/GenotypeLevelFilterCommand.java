@@ -23,6 +23,7 @@ public class GenotypeLevelFilterCommand {
     public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
     public static boolean isAllExome = false;
+    public static boolean isExcludeIGMGnomadSample = false;
     public static double maxCtrlAF = Data.NO_FILTER;
     public static double minCtrlAF = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
@@ -36,6 +37,8 @@ public class GenotypeLevelFilterCommand {
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
     public static double[] homPercentAltRead = null;
+    public static double minPercentAltReadBinomialP = Data.NO_FILTER;
+    public static double maxPercentAltReadBinomialP = Data.NO_FILTER;
     public static int snvGQ = Data.NO_FILTER;
     public static int indelGQ = Data.NO_FILTER;
     public static float snvSOR = Data.NO_FILTER;
@@ -79,6 +82,9 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--all-exome":
                     isAllExome = true;
+                    break;    
+                case "--exclude-igm-gnomad-sample":
+                    isExcludeIGMGnomadSample = true;
                     break;
                 case "--disable-check-duplicate-sample":
                     isDisableCheckDuplicateSample = true;
@@ -141,6 +147,14 @@ public class GenotypeLevelFilterCommand {
                 case "--hom-percent-alt-read":
                     checkRangeValid("0-1", option);
                     homPercentAltRead = getValidRange(option);
+                    break;
+                case "--min-percent-alt-read-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minPercentAltReadBinomialP = getValidDouble(option);
+                    break;
+                case "--max-percent-alt-read-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    maxPercentAltReadBinomialP = getValidDouble(option);
                     break;
                 case "--gq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
@@ -597,6 +611,30 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
+    public static boolean isMinPercentAltReadBinomialPValid(double value) {
+        if (minPercentAltReadBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.DOUBLE_NA) {
+            return false;
+        }
+
+        return value >= minPercentAltReadBinomialP;
+    }
+
+    public static boolean isMaxPercentAltReadBinomialPValid(double value) {
+        if (maxPercentAltReadBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+        
+        if (value == Data.DOUBLE_NA) {
+            return false;
+        }
+
+        return value <= maxPercentAltReadBinomialP;
+    }
+
     public static boolean isMaxQcFailSampleValid(int value) {
         if (maxQcFailSample == Data.NO_FILTER) {
             return true;
@@ -608,6 +646,10 @@ public class GenotypeLevelFilterCommand {
     public static boolean isMinCoveredSampleBinomialPValid(double value) {
         if (minCoveredSampleBinomialP == Data.NO_FILTER) {
             return true;
+        }
+        
+        if (value == Data.DOUBLE_NA) {
+            return false;
         }
 
         return value >= minCoveredSampleBinomialP;

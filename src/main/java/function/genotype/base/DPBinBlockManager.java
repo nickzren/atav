@@ -2,6 +2,7 @@ package function.genotype.base;
 
 import function.variant.base.Variant;
 import global.Data;
+import global.Index;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class DPBinBlockManager {
     private static int currentBlockId = Data.INTEGER_NA;
 
     private static HashMap<Character, Short> dpBin = new HashMap<>();
+    private static HashMap<Short, Byte> dpBinIndex = new HashMap<>();
 
     public static void init() {
         dpBin.put('b', Data.SHORT_NA);
@@ -27,6 +29,13 @@ public class DPBinBlockManager {
         dpBin.put('e', (short) 30);
         dpBin.put('f', (short) 50);
         dpBin.put('g', (short) 200);
+
+        dpBinIndex.put(Data.SHORT_NA, Data.BYTE_NA);
+        dpBinIndex.put((short) 10, Index.DP_BIN_10);
+        dpBinIndex.put((short) 20, Index.DP_BIN_20);
+        dpBinIndex.put((short) 30, Index.DP_BIN_30);
+        dpBinIndex.put((short) 50, Index.DP_BIN_50);
+        dpBinIndex.put((short) 200, Index.DP_BIN_200);
     }
 
     public static void add(SampleDPBin sampleDPBin) {
@@ -45,6 +54,10 @@ public class DPBinBlockManager {
                 Carrier carrier = carrierMap.get(sampleDPBin.getSampleId());
 
                 if (carrier != null) {
+                    carrier.checkValidOnXY(var);
+
+                    carrier.applyQualityFilter(var.isSnv());
+
                     if (carrier.isValid()) {
                         carrier.setDPBin(sampleDPBin.getDPBin(posIndex));
 
@@ -88,9 +101,13 @@ public class DPBinBlockManager {
                 Carrier carrier = carrierMap.get(noncarrier.getSampleId());
 
                 if (carrier != null) {
+                    carrier.checkValidOnXY(var);
+
+                    carrier.applyQualityFilter(var.isSnv());
+                    
                     if (carrier.isValid()) {
                         carrier.setDPBin(noncarrier.getDPBin());
-                        
+
                         carrier.applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
                                 GenotypeLevelFilterCommand.minCtrlCoverageCall);
                     }
@@ -112,6 +129,10 @@ public class DPBinBlockManager {
 
     public static short getCoverageByBin(Character bin) {
         return dpBin.get(bin);
+    }
+
+    public static byte getCoverageByBinIndex(short bin) {
+        return dpBinIndex.get(bin);
     }
 
     public static HashMap<Character, Short> getCoverageBin() {

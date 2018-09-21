@@ -49,10 +49,6 @@ public class CarrierBlockManager {
             while (rs.next()) {
                 Carrier carrier = new Carrier(rs);
 
-                carrier.checkValidOnXY(var);
-
-                carrier.applyQualityFilter(var.isSnv());
-
                 int variantId = rs.getInt("variant_id");
 
                 HashMap<Integer, Carrier> varCarrierMap = blockCarrierMap.get(variantId);

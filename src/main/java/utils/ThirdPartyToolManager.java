@@ -1,7 +1,6 @@
 package utils;
 
 import com.google.common.base.Stopwatch;
-import function.annotation.base.GeneManager;
 import function.external.flanking.FlankingCommand;
 import global.Data;
 import function.genotype.base.SampleManager;

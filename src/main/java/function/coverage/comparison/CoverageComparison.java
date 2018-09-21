@@ -106,33 +106,30 @@ public class CoverageComparison extends CoverageComparisonBase {
             ctrlAvg = MathManager.devide(ctrlAvg, SampleManager.getCtrlNum());
             ctrlAvg = MathManager.devide(ctrlAvg, exon.getLength());
 
-            if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                    && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-                StringJoiner sj = new StringJoiner(",");
-                String name = gene.getName() + "_" + exon.getId();
-                sj.add(name);
-                sj.add(exon.getChrStr());
-                sj.add(FormatManager.getInteger(exon.getStartPosition()));
-                sj.add(FormatManager.getInteger(exon.getEndPosition()));
-                sj.add(FormatManager.getFloat(caseAvg));
-                sj.add(FormatManager.getFloat(ctrlAvg));
+            StringJoiner sj = new StringJoiner(",");
+            String name = gene.getName() + "_" + exon.getId();
+            sj.add(name);
+            sj.add(exon.getChrStr());
+            sj.add(FormatManager.getInteger(exon.getStartPosition()));
+            sj.add(FormatManager.getInteger(exon.getEndPosition()));
+            sj.add(FormatManager.getFloat(caseAvg));
+            sj.add(FormatManager.getFloat(ctrlAvg));
 
-                float covDiff = Data.FLOAT_NA;
+            float covDiff = Data.FLOAT_NA;
 
-                if (CoverageCommand.isRelativeDifference) {
-                    covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-                } else {
-                    covDiff = MathManager.abs(caseAvg, ctrlAvg);
-                }
-
-                sj.add(FormatManager.getFloat(covDiff));
-                sj.add(FormatManager.getInteger(exon.getLength()));
-
-                addExon(sj, name, caseAvg, ctrlAvg, covDiff, exon.getLength(), sr, lss);
-
-                bwCoverageSummaryByExon.write(sj.toString());
-                bwCoverageSummaryByExon.newLine();
+            if (CoverageCommand.isRelativeDifference) {
+                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
+            } else {
+                covDiff = MathManager.abs(caseAvg, ctrlAvg);
             }
+
+            sj.add(FormatManager.getFloat(covDiff));
+            sj.add(FormatManager.getInteger(exon.getLength()));
+
+            addExon(sj, name, caseAvg, ctrlAvg, covDiff, exon.getLength(), sr, lss);
+
+            bwCoverageSummaryByExon.write(sj.toString());
+            bwCoverageSummaryByExon.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

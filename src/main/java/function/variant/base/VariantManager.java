@@ -7,7 +7,6 @@ import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import function.genotype.parent.ParentCommand;
 import function.genotype.trio.TrioCommand;
-import function.genotype.vargeno.VarGenoCommand;
 import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -17,7 +16,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
-import org.apache.commons.lang.StringEscapeUtils;
 import utils.DBManager;
 
 /**
@@ -62,7 +60,7 @@ public class VariantManager {
 
             resetRegionList();
         }
-        
+
         initCaseVariantTable();
     }
 
@@ -256,10 +254,20 @@ public class VariantManager {
         }
     }
 
-    public static boolean isValid(Variant var) {
+    public static boolean isValid(Variant var) throws Exception {
         if (VariantLevelFilterCommand.isExcludeSnv && var.isSnv()) {
+            // exclude snv
             return false;
         } else if (VariantLevelFilterCommand.isExcludeIndel && var.isIndel()) {
+            // exclude indel
+            return false;
+        } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
+                && VariantManager.isMultiallelicVariant(var.getChrStr(), var.getStartPosition())) {
+            // exclude Multiallelic site > 1 variant
+            return false;
+        } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant2
+                && VariantManager.isMultiallelicVariant2(var.getChrStr(), var.getStartPosition())) {
+            // exclude Multiallelic site > 2 variants
             return false;
         }
 
@@ -275,7 +283,6 @@ public class VariantManager {
             return true;
         } else {
             if (includeVariantSet.contains(varId)) {
-                includeVariantSet.remove(varId);
                 return true;
             }
 
@@ -326,6 +333,26 @@ public class VariantManager {
                 ErrorManager.send(e);
             }
         }
+    }
+
+    // exclude Multiallelic site > 1 variant
+    public static boolean isMultiallelicVariant(String chr, int pos) throws SQLException {
+        String sql = "select pos from multiallelic_variant_site "
+                + "where chr = '" + chr + "' and pos =" + pos + " limit 1";
+
+        ResultSet rset = DBManager.executeQuery(sql);
+
+        return rset.next();
+    }
+    
+    // exclude Multiallelic site > 2 variants
+    public static boolean isMultiallelicVariant2(String chr, int pos) throws SQLException {
+        String sql = "select pos from multiallelic_variant_site_2 "
+                + "where chr = '" + chr + "' and pos =" + pos + " limit 1";
+
+        ResultSet rset = DBManager.executeQuery(sql);
+
+        return rset.next();
     }
 
     public static boolean isUsed() {

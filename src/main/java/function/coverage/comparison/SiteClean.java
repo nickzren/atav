@@ -180,11 +180,15 @@ public class SiteClean {
             int start = exon.getStartPosition();
             int end = exon.getEndPosition();
             for (int currentPosition = start; currentPosition <= end; currentPosition++) {
-                SortedSite sortedSite = cleanedSiteMap.get(gene.getChr()).get(currentPosition);
-                if (sortedSite != null) {
-                    geneSize++;
-                    caseAvg += sortedSite.getCaseAvg();
-                    ctrlAvg += sortedSite.getCtrlAvg();
+                HashMap<Integer, SortedSite> sortedSiteMap = cleanedSiteMap.get(gene.getChr());
+
+                if (sortedSiteMap != null) {
+                    SortedSite sortedSite = sortedSiteMap.get(currentPosition);
+                    if (sortedSite != null) {
+                        geneSize++;
+                        caseAvg += sortedSite.getCaseAvg();
+                        ctrlAvg += sortedSite.getCtrlAvg();
+                    }
                 }
             }
         }
@@ -196,30 +200,25 @@ public class SiteClean {
         caseAvg = MathManager.devide(caseAvg, geneSize);
         ctrlAvg = MathManager.devide(ctrlAvg, geneSize);
 
-        if (CoverageCommand.isMinCoverageFractionValid(caseAvg)
-                && CoverageCommand.isMinCoverageFractionValid(ctrlAvg)) {
-            StringJoiner sj = new StringJoiner(",");
+        StringJoiner sj = new StringJoiner(",");
 
-            sj.add(gene.getName());
-            sj.add(gene.getChr());
-            sj.add(FormatManager.getInteger(gene.getLength()));
-            sj.add(FormatManager.getFloat(caseAvg));
-            sj.add(FormatManager.getFloat(ctrlAvg));
+        sj.add(gene.getName());
+        sj.add(gene.getChr());
+        sj.add(FormatManager.getInteger(gene.getLength()));
+        sj.add(FormatManager.getFloat(caseAvg));
+        sj.add(FormatManager.getFloat(ctrlAvg));
 
-            float covDiff = Data.FLOAT_NA;
+        float covDiff = Data.FLOAT_NA;
 
-            if (CoverageCommand.isRelativeDifference) {
-                covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
-            } else {
-                covDiff = MathManager.abs(caseAvg, ctrlAvg);
-            }
-
-            sj.add(FormatManager.getFloat(covDiff));
-            sj.add(FormatManager.getInteger(geneSize));
-            return sj.toString();
+        if (CoverageCommand.isRelativeDifference) {
+            covDiff = MathManager.relativeDiff(caseAvg, ctrlAvg);
         } else {
-            return "";
+            covDiff = MathManager.abs(caseAvg, ctrlAvg);
         }
+
+        sj.add(FormatManager.getFloat(covDiff));
+        sj.add(FormatManager.getInteger(geneSize));
+        return sj.toString();
     }
 
     public void outputLog() {
