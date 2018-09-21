@@ -26,6 +26,7 @@ public class ThirdPartyToolManager {
     public static String PERL;
     public static String PLINK;
     public static String KING;
+    public static String FLASHPCA;
     private static String R_301_SCRIPT_SYSTEM_PATH;
     private static String R_325_SCRIPT_SYSTEM_PATH;
     private static final String COLLAPSED_REGRESSION_R = Data.ATAV_HOME + "lib/collapsed_regression_2.0.R";
@@ -57,6 +58,7 @@ public class ThirdPartyToolManager {
             PERL = prop.getProperty("perl");
             PLINK = prop.getProperty("plink");
             KING = prop.getProperty("king");
+            FLASHPCA = prop.getProperty("flashpca");
             R_301_SCRIPT_SYSTEM_PATH = prop.getProperty("R-3.0.1");
             R_325_SCRIPT_SYSTEM_PATH = prop.getProperty("R-3.2.5");
         } catch (IOException e) {
