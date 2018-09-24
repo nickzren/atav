@@ -6,7 +6,6 @@ import global.Data;
 import function.genotype.base.SampleManager;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +35,7 @@ public class ThirdPartyToolManager {
     private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/r0.6_trio_comp_het_tier.R";
     private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/r0.6_nonTrio_tier.R";
     private static final String MANN_WHITNEY_TEST = Data.ATAV_HOME + "lib/mann_whitney_test.py";
-    
+
     public static void init() {
         initDataFromSystemConfig();
     }
@@ -65,7 +64,7 @@ public class ThirdPartyToolManager {
         }
     }
 
-    public static int systemCall(String[] cmd) {
+    public static String systemCall(String[] cmd) {
         LogManager.writeAndPrintNoNewLine("System call start");
         Stopwatch stopwatch = Stopwatch.createUnstarted();
         stopwatch.start();
@@ -84,13 +83,15 @@ public class ThirdPartyToolManager {
                 process = Runtime.getRuntime().exec(cmd[0]);
             }
 
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
             String line;
-
-            while ((line = br.readLine()) != null) {
+            while ((line = stdInput.readLine()) != null) {
+                cmdReadLine.append(line).append("\n");
+            }
+            
+            while ((line = stdError.readLine()) != null) {
                 cmdReadLine.append(line).append("\n");
             }
 
@@ -101,15 +102,15 @@ public class ThirdPartyToolManager {
 
         stopwatch.stop();
         String runTime = getTotalRunTime(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-
+      
         if (exitValue != 0) {
             writeAndPrint("System call failed: " + runTime);
             ErrorManager.print(cmdReadLine.toString(), ErrorManager.UNEXPECTED_FAIL);
+            return Data.STRING_NA;
         } else {
             writeAndPrint("System call complete: " + runTime);
+            return cmdReadLine.toString();
         }
-
-        return exitValue;
     }
 
     private static String getTotalRunTime(long elapsedTime) {
@@ -134,14 +135,7 @@ public class ThirdPartyToolManager {
                 + "--transpose "
                 + "--log " + CommonCommand.outputPath + "regress.log";
 
-        int exitValue = systemCall(new String[]{cmd});
-
-        if (exitValue != 0) {
-            LogManager.writeAndPrint("\nwarning: the application failed to run Collapsed "
-                    + "Regression script (" + method + "). \n");
-
-            deleteFile(outputFile);
-        }
+        systemCall(new String[]{cmd});
     }
 
     public static void callFlankingSeq(String baseFlankingSeqFilePath) {
@@ -150,14 +144,7 @@ public class ThirdPartyToolManager {
                 + " --width " + FlankingCommand.width
                 + " --out " + baseFlankingSeqFilePath;
 
-        int exitValue = systemCall(new String[]{cmd});
-
-        if (exitValue != 0) {
-            LogManager.writeAndPrint("\nwarning: the application failed to run flanking "
-                    + "sequence script. \n");
-
-            deleteFile(baseFlankingSeqFilePath);
-        }
+        systemCall(new String[]{cmd});
     }
 
     public static void callPvalueQQPlot(String pvalueFile, int col, String outputPath) {
@@ -167,11 +154,7 @@ public class ThirdPartyToolManager {
                 + col + " "
                 + outputPath;
 
-        int exitValue = systemCall(new String[]{cmd});
-
-        if (exitValue != 0) {
-            deleteFile(outputPath);
-        }
+        systemCall(new String[]{cmd});
     }
 
     public static void generatePvaluesQQPlot(String title, String pvalueName,
@@ -199,16 +182,7 @@ public class ThirdPartyToolManager {
                 + matrixFilePath + " "
                 + outputPath; // output path
 
-        int exitValue = systemCall(new String[]{cmd});
-
-        if (exitValue != 0) {
-            deleteFile(outputPath);
-        }
-    }
-
-    private static void deleteFile(String filePath) {
-        File f = new File(filePath);
-        f.deleteOnExit();
+        systemCall(new String[]{cmd});
     }
 
     public static void gzipFile(String path) {
@@ -240,8 +214,7 @@ public class ThirdPartyToolManager {
 
         systemCall(new String[]{cmd});
     }
-    
-        
+
     public static void runMannWhitneyTest(String genotypesFilePath) {
         String cmd = PYTHON + " "
                 + MANN_WHITNEY_TEST + " "
