@@ -59,7 +59,7 @@ public class ListGnomADGenome extends AnalysisBase {
 
             Region region = RegionManager.getRegion(r);
 
-            String sqlCode = GnomADManager.getSql4MafGenome(region);
+            String sqlCode = GnomADManager.getSql4GenomeVariant(region);
 
             ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 
