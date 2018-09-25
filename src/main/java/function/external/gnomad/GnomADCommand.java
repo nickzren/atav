@@ -15,8 +15,8 @@ public class GnomADCommand {
 
     public static String gnomADExomePop = "global";
     public static String gnomADGenomePop = "global";
-    public static float gnomADExomeMaf = Data.NO_FILTER;
-    public static float gnomADGenomeMaf = Data.NO_FILTER;
+    public static float gnomADExomeAF = Data.NO_FILTER;
+    public static float gnomADGenomeAF = Data.NO_FILTER;
     public static float gnomADExomeAsRfSnv = Data.NO_FILTER;
     public static float gnomADGenomeAsRfSnv = Data.NO_FILTER;
     public static float gnomADExomeAsRfIndel = Data.NO_FILTER;
@@ -24,21 +24,21 @@ public class GnomADCommand {
     public static float gnomADExomeABMedian = Data.NO_FILTER;
     public static float gnomADGenomeABMedian = Data.NO_FILTER;
 
-    public static boolean isGnomADExomeMafValid(float value) {
-        if (gnomADExomeMaf == Data.NO_FILTER) {
+    public static boolean isGnomADExomeAFValid(float value) {
+        if (gnomADExomeAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= gnomADExomeMaf
+        return value <= gnomADExomeAF
                 || value == Data.FLOAT_NA;
     }
 
-    public static boolean isGnomADGenomeMafValid(float value) {
-        if (gnomADGenomeMaf == Data.NO_FILTER) {
+    public static boolean isGnomADGenomeAFValid(float value) {
+        if (gnomADGenomeAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= gnomADGenomeMaf
+        return value <= gnomADGenomeAF
                 || value == Data.FLOAT_NA;
     }
 

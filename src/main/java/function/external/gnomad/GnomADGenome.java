@@ -20,7 +20,7 @@ public class GnomADGenome {
     private String alt;
     private boolean isSnv;
 
-    private float[] maf;
+    private float[] af;
     private String[] gts;
     private String filter;
     private float abMedian;
@@ -35,7 +35,7 @@ public class GnomADGenome {
 
         isSnv = ref.length() == alt.length();
 
-        initMaf();
+        initAF();
     }
 
     public GnomADGenome(ResultSet rs) {
@@ -44,45 +44,39 @@ public class GnomADGenome {
             pos = rs.getInt("pos");
             ref = rs.getString("ref_allele");
             alt = rs.getString("alt_allele");
-            maf = new float[GnomADManager.GNOMAD_GENOME_POP.length];
+            af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
             gts = new String[GnomADManager.GNOMAD_GENOME_POP.length];
 
             isSnv = ref.length() == alt.length();
 
-            setMaf(rs);
+            setAF(rs);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    private void initMaf() {
-        maf = new float[GnomADManager.GNOMAD_GENOME_POP.length];
+    private void initAF() {
+        af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
         gts = new String[GnomADManager.GNOMAD_GENOME_POP.length];
 
         try {
-            String sql = GnomADManager.getSql4MafGenome(chr, pos, ref, alt);
+            String sql = GnomADManager.getSql4GenomeVariant(chr, pos, ref, alt);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
             if (rs.next()) {
-                setMaf(rs);
+                setAF(rs);
             } else {
-                resetMaf(Data.FLOAT_NA);
+                resetAF(Data.FLOAT_NA);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    private void setMaf(ResultSet rs) throws SQLException {
+    private void setAF(ResultSet rs) throws SQLException {
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-            float af = rs.getFloat(GnomADManager.GNOMAD_GENOME_POP[i] + "_af");
-
-            if (af > 0.5) {
-                af = 1 - af;
-            }
-
-            maf[i] = af;
+            af[i] = rs.getFloat(GnomADManager.GNOMAD_GENOME_POP[i] + "_af");
             gts[i] = rs.getString(GnomADManager.GNOMAD_GENOME_POP[i] + "_gts");
         }
 
@@ -92,9 +86,9 @@ public class GnomADGenome {
         asRf = rs.getFloat("AS_RF");
     }
 
-    private void resetMaf(float value) {
+    private void resetAF(float value) {
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-            maf[i] = value;
+            af[i] = value;
             gts[i] = "NA";
         }
 
@@ -104,13 +98,13 @@ public class GnomADGenome {
         asRf = Data.FLOAT_NA;
     }
 
-    private float getMaxMaf() {
+    private float getMaxAF() {
         float value = Data.FLOAT_NA;
 
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-            if (maf[i] != Data.FLOAT_NA
+            if (af[i] != Data.FLOAT_NA
                     && GnomADCommand.gnomADGenomePop.contains(GnomADManager.GNOMAD_GENOME_POP[i])) {
-                value = Math.max(value, maf[i]);
+                value = Math.max(value, af[i]);
             }
         }
 
@@ -118,7 +112,7 @@ public class GnomADGenome {
     }
 
     public boolean isValid() {
-        return GnomADCommand.isGnomADGenomeMafValid(getMaxMaf())
+        return GnomADCommand.isGnomADGenomeAFValid(getMaxAF())
                 && GnomADCommand.isGnomADGenomeAsRfValid(asRf, isSnv)
                 && GnomADCommand.isGnomADGenomeABMedianValid(abMedian);
     }
@@ -131,7 +125,7 @@ public class GnomADGenome {
         StringJoiner sj = new StringJoiner(",");
 
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-            sj.add(FormatManager.getFloat(maf[i]));
+            sj.add(FormatManager.getFloat(af[i]));
 
             if (gts[i].equals("NA")) {
                 sj.add(gts[i]);

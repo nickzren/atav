@@ -59,7 +59,7 @@ public class ListGnomADExome extends AnalysisBase {
 
             Region region = RegionManager.getRegion(r);
 
-            String sqlCode = GnomADManager.getSql4MafExome(region);
+            String sqlCode = GnomADManager.getSql4ExomeVariant(region);
 
             ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
 

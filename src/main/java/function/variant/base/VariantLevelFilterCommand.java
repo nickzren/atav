@@ -28,6 +28,9 @@ import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -118,14 +121,14 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.gnomADGenomePop = option.getValue();
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
-                case "--gnomad-exome-maf":
-                    checkValueValid(0.5, 0, option);
-                    GnomADCommand.gnomADExomeMaf = getValidFloat(option);
+                case "--gnomad-exome-af":
+                    checkValueValid(1, 0, option);
+                    GnomADCommand.gnomADExomeAF = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADExome = true;
                     break;
-                case "--gnomad-genome-maf":
-                    checkValueValid(0.5, 0, option);
-                    GnomADCommand.gnomADGenomeMaf = getValidFloat(option);
+                case "--gnomad-genome-af":
+                    checkValueValid(1, 0, option);
+                    GnomADCommand.gnomADGenomeAF = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
                 case "--gnomad-exome-as-rf-snv":
