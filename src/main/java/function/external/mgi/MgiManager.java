@@ -3,10 +3,8 @@ package function.external.mgi;
 import function.external.base.DataManager;
 import global.Data;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.StringJoiner;
 import utils.ErrorManager;
@@ -40,10 +38,8 @@ public class MgiManager {
     private static void initMgiMap() {
         try {
             File f = new File(Data.ATAV_HOME + MGI_PATH);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
                 int firstCommaIndex = lineStr.indexOf(",");
@@ -62,8 +58,7 @@ public class MgiManager {
             }
 
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

@@ -108,9 +108,8 @@ public class VariantManager {
         int lineNum = 0;
 
         try {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -121,6 +120,9 @@ public class VariantManager {
 
                 addVariantToList(lineStr, variantSet, isInclude);
             }
+            
+            br.close();
+            fr.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in variant file: " + lineStr);
@@ -135,9 +137,8 @@ public class VariantManager {
         int lineNum = 0;
 
         try {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -148,6 +149,9 @@ public class VariantManager {
 
                 addRsNumberToList(lineStr, rsNumberSet, isInclude);
             }
+            
+            br.close();
+            fr.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in rs number file: " + lineStr);

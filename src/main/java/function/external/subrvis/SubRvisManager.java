@@ -3,10 +3,8 @@ package function.external.subrvis;
 import function.external.base.DataManager;
 import global.Data;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringJoiner;
@@ -53,10 +51,9 @@ public class SubRvisManager {
     private static void initGeneMap(HashMap<String, ArrayList<SubRvisGene>> geneMap, String filePath) {
         try {
             File f = new File(filePath);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
+            
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
                 if (lineStr.startsWith("#")) {
@@ -83,10 +80,9 @@ public class SubRvisManager {
                     geneMap.put(geneName, idArray);
                 }
             }
-
+            
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

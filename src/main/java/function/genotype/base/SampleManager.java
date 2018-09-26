@@ -148,9 +148,8 @@ public class SampleManager {
     private static void initSampleGroup() {
         try {
             File f = new File(SAMPLE_GROUP_RESTRICTION_PATH);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
@@ -162,8 +161,7 @@ public class SampleManager {
             }
 
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -172,9 +170,8 @@ public class SampleManager {
     private static void initUserGroup() {
         try {
             File f = new File(USER_GROUP_RESTRICTION_PATH);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
@@ -198,8 +195,7 @@ public class SampleManager {
             }
 
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -252,9 +248,8 @@ public class SampleManager {
 
         try {
             File f = new File(GenotypeLevelFilterCommand.sampleFile);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -344,8 +339,7 @@ public class SampleManager {
             }
 
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in sample file: " + lineStr);
@@ -511,9 +505,8 @@ public class SampleManager {
 
         try {
             File f = new File(StatisticsCommand.covariateFile);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -541,6 +534,9 @@ public class SampleManager {
                     }
                 }
             }
+            
+            br.close();
+            fr.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in covariate file: " + lineStr);
@@ -576,9 +572,8 @@ public class SampleManager {
 
         try {
             File f = new File(StatisticsCommand.quantitativeFile);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -598,6 +593,9 @@ public class SampleManager {
                     sample.setQuantitativeTrait(value);
                 }
             }
+            
+            br.close();
+            fr.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in quantitative file: " + lineStr);

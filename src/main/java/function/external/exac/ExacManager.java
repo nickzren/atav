@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.StringJoiner;
@@ -106,10 +107,8 @@ public class ExacManager {
     private static void initGeneVariantCountMap() {
         try {
             File f = new File(Data.ATAV_HOME + GENE_VARIANT_COUNT_PATH);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
                 int firstCommaIndex = lineStr.indexOf(",");
@@ -126,10 +125,8 @@ public class ExacManager {
                     geneVariantCountMap.put(geneName, values);
                 }
             }
-
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
