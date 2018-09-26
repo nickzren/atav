@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,7 +20,7 @@ import utils.ErrorManager;
  */
 public class RegionBoundaryManager {
 
-    private static List<RegionBoundary> regionBoundaryList = new ArrayList<RegionBoundary>();
+    private static List<RegionBoundary> regionBoundaryList = new ArrayList<>();
 
     public static void init() {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
@@ -28,9 +29,8 @@ public class RegionBoundaryManager {
 
         try {
             File f = new File(CollapsingCommand.regionBoundaryFile);
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
@@ -40,8 +40,7 @@ public class RegionBoundaryManager {
             }
 
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
 
             resetRegionList();
         } catch (Exception e) {

@@ -78,10 +78,9 @@ public class GeneManager {
         int lineNum = 0;
 
         try {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
+            
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
 
@@ -99,6 +98,9 @@ public class GeneManager {
                     LogManager.writeAndPrint("Invalid gene: " + gene.getName());
                 }
             }
+            
+            br.close();
+            fr.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in gene file: " + lineStr);
@@ -114,15 +116,14 @@ public class GeneManager {
 
         isUsed = true;
 
-        File f = new File(AnnotationLevelFilterCommand.geneBoundaryFile);
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line;
-
         int geneIndex = 0;
         allGeneBoundaryLength = 0;
 
+        File f = new File(AnnotationLevelFilterCommand.geneBoundaryFile);
+        FileReader fr = new FileReader(f);
+        BufferedReader br = new BufferedReader(fr);
+        
+        String line;
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
                 line = line.replaceAll("\"", "").replaceAll("\t", " ");
@@ -157,6 +158,9 @@ public class GeneManager {
                 }
             }
         }
+        
+        br.close();
+        fr.close();
     }
 
     private static void initGeneMap() {
@@ -241,14 +245,12 @@ public class GeneManager {
             return;
         }
 
-        File f = new File(CollapsingCommand.coverageSummaryFile);
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line;
-
         boolean isTitle = true;
-
+        File f = new File(CollapsingCommand.coverageSummaryFile);
+        FileReader fr = new FileReader(f);
+        BufferedReader br = new BufferedReader(fr);
+        
+        String line;
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
                 int firstCommaIndex = line.indexOf(",");
@@ -266,12 +268,15 @@ public class GeneManager {
                 }
             }
         }
+        
+        br.close();
+        fr.close();
     }
 
     public static void addCoverageSummary(String geneName, StringJoiner sj) {
         if (geneCoverageSummaryMap.containsKey(geneName)) {
             sj.add(geneCoverageSummaryMap.get(geneName));
-        } 
+        }
     }
 
     public static HashMap<String, HashSet<Gene>> getMap() {

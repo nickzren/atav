@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.StringJoiner;
@@ -78,13 +79,11 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         File f = new File(outputFile);
 
         if (f.exists()) {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String line;
-
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
             br.readLine(); // ingore title
 
+            String line;
             while ((line = br.readLine()) != null) {
                 String[] temp = line.split(",");
 
@@ -96,6 +95,9 @@ public class CollapsingGeneSummary extends CollapsingSummary {
                     summaryMap.get(geneName).setLinearP(Double.valueOf(temp[1]));
                 }
             }
+            
+            br.close();
+            fr.close();
         }
     }
 

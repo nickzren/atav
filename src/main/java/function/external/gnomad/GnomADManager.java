@@ -24,7 +24,7 @@ public class GnomADManager {
         StringJoiner sj = new StringJoiner(",");
 
         for (String str : GNOMAD_EXOME_POP) {
-            sj.add("gnomAD Exome " + str + " maf");
+            sj.add("gnomAD Exome " + str + " af");
             sj.add("gnomAD Exome " + str + " gts");
         }
 
@@ -42,7 +42,7 @@ public class GnomADManager {
         StringJoiner sj = new StringJoiner(",");
 
         for (String str : GNOMAD_GENOME_POP) {
-            sj.add("gnomAD Genome " + str + " maf");
+            sj.add("gnomAD Genome " + str + " af");
             sj.add("gnomAD Genome " + str + " gts");
         }
 
@@ -71,7 +71,7 @@ public class GnomADManager {
         return sql;
     }
 
-    public static String getSql4MafExome(Region region) {
+    public static String getSql4ExomeVariant(Region region) {
         String result = "chr,pos,ref_allele,alt_allele,";
 
         for (String str : GNOMAD_EXOME_POP) {
@@ -88,7 +88,7 @@ public class GnomADManager {
         return sql;
     }
 
-    public static String getSql4MafGenome(Region region) {
+    public static String getSql4GenomeVariant(Region region) {
         String result = "chr,pos,ref_allele,alt_allele,";
 
         for (String str : GNOMAD_GENOME_POP) {
@@ -105,7 +105,7 @@ public class GnomADManager {
         return sql;
     }
 
-    public static String getSql4MafExome(String chr,
+    public static String getSql4ExomeVariant(String chr,
             int pos, String ref, String alt) {
         String result = "";
 
@@ -125,7 +125,7 @@ public class GnomADManager {
         return sql;
     }
 
-    public static String getSql4MafGenome(String chr,
+    public static String getSql4GenomeVariant(String chr,
             int pos, String ref, String alt) {
         String result = "";
 

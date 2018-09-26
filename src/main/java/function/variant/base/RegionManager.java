@@ -108,9 +108,8 @@ public class RegionManager {
         int lineNum = 0;
 
         try {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             ArrayList<String> chrList = new ArrayList<>();
 
@@ -137,8 +136,7 @@ public class RegionManager {
             }
 
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in region file: " + lineStr);
@@ -212,8 +210,8 @@ public class RegionManager {
             chrList.add(chr);
         }
     }
-    
-    public static ArrayList<String> getChrList(){
+
+    public static ArrayList<String> getChrList() {
         return chrList;
     }
 }

@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -141,17 +142,15 @@ public class CommandManager {
         String cmd = "";
 
         try {
-            FileInputStream fstream = new FileInputStream(f);
-            DataInputStream in = new DataInputStream(new FileInputStream(f));
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
 
             while ((lineStr = br.readLine()) != null) {
                 cmd += lineStr + " ";
             }
 
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

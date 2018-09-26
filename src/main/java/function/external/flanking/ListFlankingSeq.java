@@ -7,11 +7,9 @@ import utils.ErrorManager;
 import utils.ThirdPartyToolManager;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.sql.ResultSet;
 
 /**
@@ -60,14 +58,10 @@ public class ListFlankingSeq extends AnalysisBase {
     @Override
     public void processDatabaseData() throws Exception {
         File f = new File(baseFlankingSeqFilePath + "flanking_seq_base.csv");
-
-        FileInputStream fstream = new FileInputStream(f);
-        DataInputStream in = new DataInputStream(fstream);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line;
-
+        FileReader fr = new FileReader(f);
+        BufferedReader br = new BufferedReader(fr);
         bwUpdateFlankingSeq.write(br.readLine() + "\n"); // write title
-
+        String line;
         while ((line = br.readLine()) != null) {
             String[] lineStrArray = line.split(",");
 
@@ -81,6 +75,8 @@ public class ListFlankingSeq extends AnalysisBase {
                     + leftSeqSb + ","
                     + rightSeqSb + "\n");
         }
+        br.close();
+        fr.close();
     }
 
     private void updateFlankingSeq(String variantId, StringBuilder leftSeqSb,

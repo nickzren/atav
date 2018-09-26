@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -50,9 +51,8 @@ public class CoverageBlockTester {
         File files[] = dir.listFiles();
 
         for (File file : files) {
-            FileInputStream fstream = new FileInputStream(file);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
 
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
@@ -72,8 +72,7 @@ public class CoverageBlockTester {
             }
 
             br.close();
-            in.close();
-            fstream.close();
+            fr.close();
         }
 
         System.out.println(count);
