@@ -5,6 +5,7 @@ import function.annotation.base.Annotation;
 import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
 import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.SampleManager;
 import global.Data;
 import utils.DBManager;
 import java.sql.ResultSet;
@@ -27,7 +28,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
                 + "FROM variant_chr" + region.getChrStr() + " ";
 
         // case only filter - add tmp table
-        if (GenotypeLevelFilterCommand.isCaseOnly) {
+        if (GenotypeLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
             sql += ", tmp_case_variant_id_chr" + region.getChrStr() + " ";
         }
 
@@ -57,7 +58,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         }
 
         // case only filter - join tmp table
-        if (GenotypeLevelFilterCommand.isCaseOnly) {
+        if (GenotypeLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
             sql = addFilter2SQL(sql, " variant_id = case_variant_id ");
         }
 

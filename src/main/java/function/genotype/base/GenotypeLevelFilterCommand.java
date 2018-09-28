@@ -1,5 +1,6 @@
 package function.genotype.base;
 
+import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
 import java.util.Iterator;
@@ -62,6 +63,7 @@ public class GenotypeLevelFilterCommand {
     public static boolean disableCheckOnSexChr = false;
     public static float[] minCoveredSamplePercentage = {Data.NO_FILTER, Data.NO_FILTER};
     public static boolean isCaseOnly = false;
+    public static int maxCaseOnlyNumber = 500;
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
@@ -82,7 +84,7 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--all-exome":
                     isAllExome = true;
-                    break;    
+                    break;
                 case "--exclude-igm-gnomad-sample":
                     isExcludeIGMGnomadSample = true;
                     break;
@@ -627,7 +629,7 @@ public class GenotypeLevelFilterCommand {
         if (maxPercentAltReadBinomialP == Data.NO_FILTER) {
             return true;
         }
-        
+
         if (value == Data.DOUBLE_NA) {
             return false;
         }
@@ -647,7 +649,7 @@ public class GenotypeLevelFilterCommand {
         if (minCoveredSampleBinomialP == Data.NO_FILTER) {
             return true;
         }
-        
+
         if (value == Data.DOUBLE_NA) {
             return false;
         }
@@ -669,5 +671,13 @@ public class GenotypeLevelFilterCommand {
         }
 
         return value >= minCoveredSamplePercentage[Index.CTRL];
+    }
+
+    public static boolean isCaseOnlyValid2CreateTempTable() {
+        // only init case variants tmp tables when 1) total case# < 500 and 2) --variant not used
+
+        return GenotypeLevelFilterCommand.isCaseOnly
+                && SampleManager.getCaseNum() <= GenotypeLevelFilterCommand.maxCaseOnlyNumber
+                && !VariantManager.isUsed();
     }
 }
