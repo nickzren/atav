@@ -319,7 +319,7 @@ public class VariantManager {
     }
 
     private static void initCaseVariantTable() {
-        if (GenotypeLevelFilterCommand.isCaseOnly) {
+        if (GenotypeLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
             try {
                 Statement stmt = DBManager.createStatementByReadOnlyConn();
 

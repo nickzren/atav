@@ -74,6 +74,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         if (PedMapCommand.isKinship) {
             doKinship();
         }
+
+        if (PedMapCommand.isFlashPCA) {
+            doKinship();
+        }
     }
 
     @Override
@@ -245,6 +249,23 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         if (!PedMapCommand.sampleCoverageSummaryPath.isEmpty()) {
             cmd += " --sample_coverage_summary " + PedMapCommand.sampleCoverageSummaryPath;
         }
+
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+    }
+
+    public void doFlashPCA() {
+        // Convert PED & MAP to BED format with PLINK
+        String cmd = ThirdPartyToolManager.PLINK
+                + " --file " + CommonCommand.outputPath + "output"
+                + " --make-bed"
+                + " --out " + CommonCommand.outputPath + "plink";
+
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+
+        // Run flashpca
+        cmd = ThirdPartyToolManager.FLASHPCA
+                + " --bfile " + CommonCommand.outputPath + "plink.bed"
+                + " --suffix flashpca";
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }

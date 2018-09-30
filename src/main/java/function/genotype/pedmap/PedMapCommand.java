@@ -16,6 +16,7 @@ public class PedMapCommand {
     public static boolean isVariantIdOnly = false;
     public static boolean isEigenstrat = false;
     public static boolean isKinship = false;
+    public static boolean isFlashPCA = false;
     public static String pedMapPath = "";
     public static String sampleCoverageSummaryPath = "";
     public static int kinshipSeed = 42;
@@ -33,6 +34,9 @@ public class PedMapCommand {
                 case "--kinship":
                     isKinship = true;
                     break;
+                case "--flashpca":
+                    isFlashPCA = true;
+                    break;    
                 case "--sample-coverage-summary":
                     sampleCoverageSummaryPath = getValidPath(option);
                     break;
