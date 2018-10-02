@@ -197,9 +197,9 @@ public class VariantLevelFilterCommand {
                     SubRvisCommand.subRVISDomainScorePercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
-                case "--sub-rvis-domain-oeratio-percentile":
+                case "--mtr-domain-percentile":
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.subRVISDomainOEratioPercentile = getValidFloat(option);
+                    SubRvisCommand.mtrDomainPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--sub-rvis-exon-score-percentile":
@@ -207,9 +207,9 @@ public class VariantLevelFilterCommand {
                     SubRvisCommand.subRVISExonScorePercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
-                case "--sub-rvis-exon-oeratio-percentile":
+                case "--mtr-exon-percentile":
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.subRVISExonOEratioPercentile = getValidFloat(option);
+                    SubRvisCommand.mtrExonPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--limbr-domain-percentile":

@@ -12,9 +12,9 @@ public class SubRvisCommand {
     public static boolean isIncludeSubRvis = false;
 
     public static float subRVISDomainScorePercentile = Data.NO_FILTER;
-    public static float subRVISDomainOEratioPercentile = Data.NO_FILTER;
+    public static float mtrDomainPercentile = Data.NO_FILTER;
     public static float subRVISExonScorePercentile = Data.NO_FILTER;
-    public static float subRVISExonOEratioPercentile = Data.NO_FILTER;
+    public static float mtrExonPercentile = Data.NO_FILTER;
 
     public static boolean isSubRVISDomainScoreValid(float value) {
         if (subRVISDomainScorePercentile == Data.NO_FILTER) {
@@ -25,12 +25,12 @@ public class SubRvisCommand {
                 || value == Data.FLOAT_NA;
     }
 
-    public static boolean isSubRVISDomainOEratioValid(float value) {
-        if (subRVISDomainOEratioPercentile == Data.NO_FILTER) {
+    public static boolean isMTRDomainPercentileValid(float value) {
+        if (mtrDomainPercentile == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= subRVISDomainOEratioPercentile
+        return value <= mtrDomainPercentile
                 || value == Data.FLOAT_NA;
     }
 
@@ -43,12 +43,12 @@ public class SubRvisCommand {
                 || value == Data.FLOAT_NA;
     }
 
-    public static boolean isSubRVISExonOEratioValid(float value) {
-        if (subRVISExonOEratioPercentile == Data.NO_FILTER) {
+    public static boolean isMTRExonPercentileValid(float value) {
+        if (mtrExonPercentile == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= subRVISExonOEratioPercentile
+        return value <= mtrExonPercentile
                 || value == Data.FLOAT_NA;
     }
 }

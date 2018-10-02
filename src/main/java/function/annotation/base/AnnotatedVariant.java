@@ -29,7 +29,6 @@ import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
-import function.external.revel.Revel;
 import function.external.revel.RevelCommand;
 import function.external.revel.RevelManager;
 import function.external.rvis.RvisCommand;
@@ -229,9 +228,9 @@ public class AnnotatedVariant extends Variant {
             // sub rvis filters will only apply missense variants except gene boundary option at domain level used
             if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
                 return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
-                        && SubRvisCommand.isSubRVISDomainOEratioValid(subRvisOutput.getDomainOEratio())
+                        && SubRvisCommand.isMTRDomainPercentileValid(subRvisOutput.getMTRDomainPercentile())
                         && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
-                        && SubRvisCommand.isSubRVISExonOEratioValid(subRvisOutput.getExonOEratio());
+                        && SubRvisCommand.isMTRExonPercentileValid(subRvisOutput.getMTRExonPercentile());
             } else {
                 return true;
             }

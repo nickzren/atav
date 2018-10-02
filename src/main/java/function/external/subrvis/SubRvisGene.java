@@ -12,18 +12,18 @@ public class SubRvisGene {
     private String chr;
     private ArrayList<Region> regionList;
     private float score;
-    private float oEratio;
+    private float mtrPercentile;
 
     public SubRvisGene(String id,
             String chr,
             ArrayList<Region> regionList,
             float score, 
-            float oEratio) {
+            float mtrPercentile) {
         this.id = id;
         this.chr = chr;
         this.regionList = regionList;
         this.score = score;
-        this.oEratio = oEratio;
+        this.mtrPercentile = mtrPercentile;
     }
     
     public String getId(){
@@ -42,8 +42,8 @@ public class SubRvisGene {
         return score;
     }
     
-    public float getOEratio() {
-        return oEratio;
+    public float getMTRPercentile() {
+        return mtrPercentile;
     }
 
     public boolean isPositionIncluded(String chr, int pos) {
