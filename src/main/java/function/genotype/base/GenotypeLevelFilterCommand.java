@@ -677,6 +677,7 @@ public class GenotypeLevelFilterCommand {
         // only init case variants tmp tables when 1) total case# < 500 and 2) --variant not used
 
         return GenotypeLevelFilterCommand.isCaseOnly
+                && SampleManager.getCaseNum() > 0
                 && SampleManager.getCaseNum() <= GenotypeLevelFilterCommand.maxCaseOnlyNumber
                 && !VariantManager.isUsed();
     }
