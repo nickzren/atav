@@ -14,7 +14,8 @@ import utils.ErrorManager;
  */
 public class TrapManager {
 
-    static final String table = "trap.snv_chr";
+    static final String variantTable = "trap.snv_chr";
+    static final String mnvTable = "trap.mnv";
 
     private static String chr = Data.STRING_NA;
     private static int pos = Data.INTEGER_NA;
@@ -27,10 +28,11 @@ public class TrapManager {
     }
 
     public static String getVersion() {
-        return "TraP: " + DataManager.getVersion(table) + "\n";
+        return "TraP: " + DataManager.getVersion(variantTable) + "\n";
     }
 
-    public static float getScore(String _chr, int _pos, String _alt, String _gene) {
+    public static float getScore(String _chr, int _pos, String _alt, 
+            boolean isMNV, String _gene) {
         if (chr.equals(_chr) && pos == _pos && alt.equals(_alt) && gene.equals(_gene)) {
             return score;
         } else {
@@ -40,9 +42,14 @@ public class TrapManager {
             gene = _gene;
         }
 
+        String table = variantTable + chr;
+        if(isMNV) {
+            table = mnvTable;
+        }
+        
         try {
             String sql = "SELECT score "
-                    + "FROM " + table + chr + " "
+                    + "FROM " + table + " "
                     + "WHERE pos = " + pos + " "
                     + "AND alt ='" + alt + "' "
                     + "AND hgnc_gene = '" + gene + "'";
@@ -66,7 +73,7 @@ public class TrapManager {
 
         try {
             String sql = "SELECT hgnc_gene,score "
-                    + "FROM " + table + chr + " "
+                    + "FROM " + variantTable + chr + " "
                     + "WHERE pos = " + pos + " "
                     + "AND alt ='" + alt + "'";
 

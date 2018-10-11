@@ -19,6 +19,7 @@ public class Exac {
     private String ref;
     private String alt;
     private boolean isSnv;
+    private boolean isMNV;
 
     private float meanCoverage;
     private int sampleCovered10x;
@@ -33,7 +34,10 @@ public class Exac {
         this.alt = alt;
 
         isSnv = ref.length() == alt.length();
-
+        
+        isMNV = ref.length() > 1 && alt.length() > 1
+                && alt.length() == ref.length();
+        
         initCoverage();
 
         initAF();
@@ -81,7 +85,7 @@ public class Exac {
         gts = new String[ExacManager.EXAC_POP.length];
 
         try {
-            String sql = ExacManager.getSqlByVariant(chr, pos, ref, alt);
+            String sql = ExacManager.getSqlByVariant(chr, pos, ref, alt, isMNV);
 
             ResultSet rs = DBManager.executeQuery(sql);
 

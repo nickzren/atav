@@ -64,7 +64,8 @@ public class Annotation {
 
             float trapScore = Data.FLOAT_NA;
             if (TrapCommand.minTrapScore != Data.NO_FILTER) {
-                trapScore = TrapManager.getScore(chr, pos, allele, geneName);
+                
+                trapScore = TrapManager.getScore(chr, pos, allele, false, geneName);
             }
 
             // trap filter apply to missense variants when it failed to pass polyphen filter but exclude NA TraP

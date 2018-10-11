@@ -19,7 +19,8 @@ public class GnomADGenome {
     private String ref;
     private String alt;
     private boolean isSnv;
-
+    private boolean isMNV;
+    
     private float[] af;
     private String[] gts;
     private String filter;
@@ -35,6 +36,9 @@ public class GnomADGenome {
 
         isSnv = ref.length() == alt.length();
 
+        isMNV = ref.length() > 1 && alt.length() > 1
+                && alt.length() == ref.length();
+        
         initAF();
     }
 
@@ -60,7 +64,7 @@ public class GnomADGenome {
         gts = new String[GnomADManager.GNOMAD_GENOME_POP.length];
 
         try {
-            String sql = GnomADManager.getSql4GenomeVariant(chr, pos, ref, alt);
+            String sql = GnomADManager.getSql4GenomeVariant(chr, pos, ref, alt, isMNV);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
