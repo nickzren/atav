@@ -63,7 +63,7 @@ public class GenotypeLevelFilterCommand {
     public static boolean disableCheckOnSexChr = false;
     public static float[] minCoveredSamplePercentage = {Data.NO_FILTER, Data.NO_FILTER};
     public static boolean isCaseOnly = false;
-    public static int maxCaseOnlyNumber = 2000;
+    public static int maxCaseOnlyNumber = 3000;
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
