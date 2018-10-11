@@ -116,14 +116,14 @@ public class GnomADManager {
                     + str + "_gts,";
         }
 
-        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
+        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF";
 
         String table = exomeVariantTable;
         if (isMNV) {
             table = exomeMNVTable;
         }
 
-        String sql = "SELECT " + result + "FROM " + table + " "
+        String sql = "SELECT " + result + " FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "
@@ -141,14 +141,14 @@ public class GnomADManager {
                     + str + "_gts,";
         }
 
-        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
+        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF";
 
-        String table = "FROM gnomad.genome_variant_chr" + chr + "_170228 ";
+        String table = "gnomad.genome_variant_chr" + chr + "_170228";
         if(isMNV) {
             table = genomeMNVTable;
         }
 
-        String sql = "SELECT " + result + "FROM " + table + " "
+        String sql = "SELECT " + result + " FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "

@@ -347,6 +347,7 @@ public class CommandManager {
                     EvsCommand.isIncludeEvs = true;
                     ExacCommand.isIncludeExac = true;
                     GnomADCommand.isIncludeGnomADExome = true;
+                    GnomADCommand.isIncludeGnomADGenome = true;
                     GerpCommand.isIncludeGerp = true;
                     TrapCommand.isIncludeTrap = true;
 //                    KaviarCommand.isIncludeKaviar = true;
