@@ -19,6 +19,7 @@ public class GnomADExome {
     private String ref;
     private String alt;
     private boolean isSnv;
+    private boolean isMNV;
 
     private float meanCoverage;
     private int sampleCovered10x;
@@ -36,6 +37,9 @@ public class GnomADExome {
         this.alt = alt;
 
         isSnv = ref.length() == alt.length();
+        
+        isMNV = ref.length() > 1 && alt.length() > 1
+                && alt.length() == ref.length();
 
         initCoverage();
 
@@ -52,7 +56,7 @@ public class GnomADExome {
             gts = new String[GnomADManager.GNOMAD_EXOME_POP.length];
 
             isSnv = ref.length() == alt.length();
-
+            
             initCoverage();
 
             setAF(rs);
@@ -84,7 +88,7 @@ public class GnomADExome {
         gts = new String[GnomADManager.GNOMAD_EXOME_POP.length];
 
         try {
-            String sql = GnomADManager.getSql4ExomeVariant(chr, pos, ref, alt);
+            String sql = GnomADManager.getSql4ExomeVariant(chr, pos, ref, alt, isMNV);
 
             ResultSet rs = DBManager.executeQuery(sql);
 

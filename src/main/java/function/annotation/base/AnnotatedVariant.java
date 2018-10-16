@@ -147,7 +147,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (isValid && RevelCommand.isIncludeRevel) {
-            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele);
+            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
 
             isValid = RevelCommand.isMinRevelValid(revel);
         }
@@ -209,7 +209,8 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (TrapCommand.isIncludeTrap) {
-            trapScore = isIndel() ? Data.FLOAT_NA : TrapManager.getScore(chrStr, getStartPosition(), allele, geneName);
+            trapScore = isIndel() ? Data.FLOAT_NA : 
+                    TrapManager.getScore(chrStr, getStartPosition(), allele, isMNV(), geneName);
         }
     }
 

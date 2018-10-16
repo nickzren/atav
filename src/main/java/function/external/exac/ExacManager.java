@@ -4,11 +4,8 @@ import function.external.base.DataManager;
 import function.variant.base.Region;
 import global.Data;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.StringJoiner;
 import utils.ErrorManager;
@@ -23,6 +20,7 @@ public class ExacManager {
 
     private static final String coverageTable = "exac.coverage_03";
     private static String variantTable = "exac.variant_r03_2015_09_16";
+    private static String mnvTable = "exac.mnv_r03_2015_09_16";
 
     private static final String GENE_VARIANT_COUNT_PATH = "data/exac/ExAC.r0.3.damagingCounts.csv";
     private static final HashMap<String, String> geneVariantCountMap = new HashMap<>();
@@ -86,7 +84,7 @@ public class ExacManager {
     }
 
     public static String getSqlByVariant(String chr,
-            int pos, String ref, String alt) {
+            int pos, String ref, String alt, boolean isMNV) {
         String result = "";
 
         for (String str : EXAC_POP) {
@@ -95,9 +93,14 @@ public class ExacManager {
         }
 
         result += "vqslod ";
+        
+        String table = variantTable;
+        if(isMNV) {
+            table = mnvTable;
+        }
 
         return "SELECT " + result
-                + "FROM " + variantTable + " "
+                + "FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "

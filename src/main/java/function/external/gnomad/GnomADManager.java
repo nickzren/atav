@@ -15,7 +15,9 @@ public class GnomADManager {
 
     private static final String exomeCoverageTable = "gnomad.exome_coverage_170228";
     private static final String exomeVariantTable = "gnomad.exome_variant_170228";
+    private static final String exomeMNVTable = "gnomad.exome_mnv_170228";
     private static final String genomeVariantTable = "gnomad.genome_variant_chr1_170228";
+    private static final String genomeMNVTable = "gnomad.genome_mnv_170228";
 
     public static void init() {
     }
@@ -106,7 +108,7 @@ public class GnomADManager {
     }
 
     public static String getSql4ExomeVariant(String chr,
-            int pos, String ref, String alt) {
+            int pos, String ref, String alt, boolean isMNV) {
         String result = "";
 
         for (String str : GNOMAD_EXOME_POP) {
@@ -114,9 +116,14 @@ public class GnomADManager {
                     + str + "_gts,";
         }
 
-        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
+        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF";
 
-        String sql = "SELECT " + result + "FROM " + exomeVariantTable + " "
+        String table = exomeVariantTable;
+        if (isMNV) {
+            table = exomeMNVTable;
+        }
+
+        String sql = "SELECT " + result + " FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "
@@ -126,7 +133,7 @@ public class GnomADManager {
     }
 
     public static String getSql4GenomeVariant(String chr,
-            int pos, String ref, String alt) {
+            int pos, String ref, String alt, boolean isMNV) {
         String result = "";
 
         for (String str : GNOMAD_GENOME_POP) {
@@ -134,9 +141,14 @@ public class GnomADManager {
                     + str + "_gts,";
         }
 
-        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
+        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF";
 
-        String sql = "SELECT " + result + "FROM gnomad.genome_variant_chr" + chr + "_170228 "
+        String table = "gnomad.genome_variant_chr" + chr + "_170228";
+        if(isMNV) {
+            table = genomeMNVTable;
+        }
+
+        String sql = "SELECT " + result + " FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref_allele = '" + ref + "' "

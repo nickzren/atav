@@ -14,7 +14,8 @@ import utils.DBManager;
 public class RevelManager {
 
     static final String variantTable = "revel.variant_060316";
-
+    static final String mnvTable = "revel.mnv_060316";
+    
     public static String getTitle() {
         return "REVEL";
     }
@@ -30,8 +31,8 @@ public class RevelManager {
                 + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
     }
 
-    public static float getRevel(String chr, int pos, String ref, String alt) throws SQLException {
-        String sql = RevelManager.getSqlByVariant(chr, pos, ref, alt);
+    public static float getRevel(String chr, int pos, String ref, String alt, boolean isMNV) throws SQLException {
+        String sql = RevelManager.getSqlByVariant(chr, pos, ref, alt, isMNV);
 
         ResultSet rs = DBManager.executeQuery(sql);
 
@@ -43,9 +44,14 @@ public class RevelManager {
     }
 
     public static String getSqlByVariant(String chr,
-            int pos, String ref, String alt) {
+            int pos, String ref, String alt, boolean isMNV) {
+        String table = variantTable;
+        if(isMNV) {
+            table = mnvTable;
+        }
+        
         return "SELECT MAX(REVEL) as revel "
-                + "FROM " + variantTable + " "
+                + "FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref = '" + ref + "' "
