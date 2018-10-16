@@ -25,8 +25,7 @@ public class ThirdPartyToolManager {
     public static String PLINK;
     public static String KING;
     public static String FLASHPCA;
-    private static String R_301_SCRIPT_SYSTEM_PATH;
-    private static String R_325_SCRIPT_SYSTEM_PATH;
+    private static String RSCRIPT;
     private static final String COLLAPSED_REGRESSION_R = Data.ATAV_HOME + "lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = Data.ATAV_HOME + "lib/pvals_qqplot.R";
     private static final String PERM_QQPLOT_FOR_COLLAPSING = Data.ATAV_HOME + "lib/generate_qq.py";
@@ -57,8 +56,7 @@ public class ThirdPartyToolManager {
             PLINK = prop.getProperty("plink");
             KING = prop.getProperty("king");
             FLASHPCA = prop.getProperty("flashpca");
-            R_301_SCRIPT_SYSTEM_PATH = prop.getProperty("R-3.0.1");
-            R_325_SCRIPT_SYSTEM_PATH = prop.getProperty("R-3.2.5");
+            RSCRIPT = prop.getProperty("rscript");
         } catch (IOException e) {
             ErrorManager.send(e);
         }
@@ -126,7 +124,7 @@ public class ThirdPartyToolManager {
     public static void callCollapsedRegression(String outputFile,
             String geneSampleMatrixFilePath,
             String method) {
-        String cmd = R_301_SCRIPT_SYSTEM_PATH + " "
+        String cmd = RSCRIPT + " "
                 + COLLAPSED_REGRESSION_R + " "
                 + "--samples " + SampleManager.getTempCovarPath() + " "
                 + "--clps " + geneSampleMatrixFilePath + " "
@@ -148,7 +146,7 @@ public class ThirdPartyToolManager {
     }
 
     public static void callPvalueQQPlot(String pvalueFile, int col, String outputPath) {
-        String cmd = R_301_SCRIPT_SYSTEM_PATH + " "
+        String cmd = RSCRIPT + " "
                 + PVALS_QQPLOT_R + " "
                 + pvalueFile + " "
                 + col + " "
@@ -192,7 +190,7 @@ public class ThirdPartyToolManager {
     }
 
     public static void runTrioDenovoTier(String denovoFilePath) {
-        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
+        String cmd = RSCRIPT + " "
                 + TRIO_DENOVO_TIER + " "
                 + denovoFilePath;
 
@@ -200,7 +198,7 @@ public class ThirdPartyToolManager {
     }
 
     public static void runTrioCompHetTier(String compHetFilePath) {
-        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
+        String cmd = RSCRIPT + " "
                 + TRIO_COMP_HET_TIER + " "
                 + compHetFilePath;
 
@@ -208,7 +206,7 @@ public class ThirdPartyToolManager {
     }
 
     public static void runNonTrioTier(String variantFilePath) {
-        String cmd = R_325_SCRIPT_SYSTEM_PATH + " "
+        String cmd = RSCRIPT + " "
                 + NON_TRIO_TIER + " "
                 + variantFilePath;
 
