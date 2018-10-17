@@ -356,13 +356,13 @@ public class SampleManager {
                 int sampleId = rs.getInt("sample_id");
                 String familyId = rs.getString("sample_name").trim();
                 String individualId = rs.getString("sample_name").trim();
-                
+
                 if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample
                         && excludeIGMGnomadSampleSet.contains((individualId))) {
                     LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
                     continue;
                 }
-                
+
                 String paternalId = "0";
                 String maternalId = "0";
                 byte sex = 1; // male
@@ -534,7 +534,7 @@ public class SampleManager {
                     }
                 }
             }
-            
+
             br.close();
             fr.close();
         } catch (Exception e) {
@@ -558,6 +558,7 @@ public class SampleManager {
             if (sample.getCovariateList().isEmpty()) {
                 it.remove();
                 sampleMap.remove(sample.getId());
+                reduceSampleNum(sample);
             }
         }
     }
@@ -593,7 +594,7 @@ public class SampleManager {
                     sample.setQuantitativeTrait(value);
                 }
             }
-            
+
             br.close();
             fr.close();
         } catch (Exception e) {
@@ -615,6 +616,7 @@ public class SampleManager {
             if (sample.getQuantitativeTrait() == Data.FLOAT_NA) {
                 it.remove();
                 sampleMap.remove(sample.getId());
+                reduceSampleNum(sample);
             }
         }
     }
@@ -683,6 +685,14 @@ public class SampleManager {
             caseNum++;
         } else {
             ctrlNum++;
+        }
+    }
+    
+    private static void reduceSampleNum(Sample sample) {
+        if (sample.isCase()) {
+            caseNum--;
+        } else {
+            ctrlNum--;
         }
     }
 
