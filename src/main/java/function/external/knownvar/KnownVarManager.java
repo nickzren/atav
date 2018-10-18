@@ -108,7 +108,8 @@ public class KnownVarManager {
 
             initDBDSMMap();
 
-            if (KnownVarCommand.isKnownVarOnly) {
+            if (KnownVarCommand.isKnownVarOnly ||
+                    KnownVarCommand.isKnownVarPathogenicOnly) {
                 VariantManager.reset2KnownVarSet();
             }
         }
@@ -117,6 +118,11 @@ public class KnownVarManager {
     private static void initHGMDMap() {
         try {
             String sql = "SELECT * From " + hgmdTable;
+            
+            if(KnownVarCommand.isKnownVarPathogenicOnly) {
+                sql = "SELECT * From " + hgmdTable + 
+                        " WHERE variantClass like '%DM%'";
+            }
 
             ResultSet rs = DBManager.executeQuery(sql);
 
@@ -146,6 +152,11 @@ public class KnownVarManager {
     private static void initClinVarMap() {
         try {
             String sql = "SELECT * From " + clinVarTable;
+            
+            if(KnownVarCommand.isKnownVarPathogenicOnly) {
+                sql = "SELECT * From " + clinVarTable +
+                        " WHERE ClinSig like '%Pathogenic%' and ClinSig not like '%Conflicting_interpretations_of_pathogenicity%'";
+            }
 
             ResultSet rs = DBManager.executeQuery(sql);
 

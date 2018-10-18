@@ -162,6 +162,10 @@ public class VariantLevelFilterCommand {
                     KnownVarCommand.isKnownVarOnly = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     break;
+                case "--known-var-pathogenic-only":
+                    KnownVarCommand.isKnownVarPathogenicOnly = true;
+                    KnownVarCommand.isIncludeKnownVar = true;
+                    break;    
                 case "--min-gerp-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     GerpCommand.minGerpScore = getValidFloat(option);

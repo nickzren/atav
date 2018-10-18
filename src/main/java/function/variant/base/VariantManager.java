@@ -162,7 +162,7 @@ public class VariantManager {
 
     public static void reset2KnownVarSet() throws SQLException {
         clearIncludeVarSet();
-
+        
         // init ClinVar variants set
         for (ClinVar clinvar : KnownVarManager.getClinVarMultiMap().values()) {
             addVariantToList(clinvar.getVariantId(), includeVariantSet, true);
@@ -172,8 +172,6 @@ public class VariantManager {
         for (HGMD hgmd : KnownVarManager.getHGMDMultiMap().values()) {
             addVariantToList(hgmd.getVariantId(), includeVariantSet, true);
         }
-
-//        resetRegionList();
     }
 
     private static void addVariantToList(String str, HashSet<String> variantSet,
