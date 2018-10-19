@@ -122,7 +122,7 @@ public class KnownVarManager {
             if (KnownVarCommand.isKnownVarPathogenicOnly) {
                 sql = "SELECT * From " + hgmdTable + " "
                         + "WHERE variantClass = 'DM' "
-                        + "AND is_in_clinvar=0";
+                        + "AND is_in_clinvar = 0";
             }
 
             ResultSet rs = DBManager.executeQuery(sql);
