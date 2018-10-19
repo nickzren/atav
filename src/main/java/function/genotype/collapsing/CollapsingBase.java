@@ -177,14 +177,14 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     private void generatePvaluesQQPlot() {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
-            ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
-
             if (CollapsingCommand.isCollapsingDoLogistic) {
                 ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),
                         "Logistic P", summaryFilePath, geneLogisticPQQPlotPath);
             } else if (CollapsingCommand.isCollapsingDoLinear) {
                 ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),
                         "Linear P", summaryFilePath, geneLinearPQQPlotPath);
+            } else {
+                 ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
             }
         }
     }
