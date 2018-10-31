@@ -31,4 +31,4 @@ export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=256m"
 cd /home/ec2-user/atav
 echo "=============================="
 echo $JAVA_HOME
-mvn clean package assembly:single
+mvn clean compile assembly:single
