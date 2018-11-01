@@ -526,7 +526,7 @@ public class SampleManager {
 
                 Sample sample = getSampleByName(values[1]);
 
-                if (sample != null) {
+                if (sample != null && sample.getCovariateList().isEmpty()) {
                     sample.initCovariate(values);
 
                     if (covariateNum == Data.INTEGER_NA) {
