@@ -21,8 +21,6 @@ public class GnomADExome {
     private boolean isSnv;
     private boolean isMNV;
 
-    private float meanCoverage;
-    private int sampleCovered10x;
     private float[] af;
     private String[] gts;
     private String filter;
@@ -41,8 +39,6 @@ public class GnomADExome {
         isMNV = ref.length() > 1 && alt.length() > 1
                 && alt.length() == ref.length();
 
-        initCoverage();
-
         initAF();
     }
 
@@ -56,28 +52,8 @@ public class GnomADExome {
             gts = new String[GnomADManager.GNOMAD_EXOME_POP.length];
 
             isSnv = ref.length() == alt.length();
-            
-            initCoverage();
 
             setAF(rs);
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    private void initCoverage() {
-        try {
-            String sql = GnomADManager.getSql4CvgExome(chr, pos);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            if (rs.next()) {
-                meanCoverage = rs.getFloat("mean_cvg");
-                sampleCovered10x = rs.getInt("covered_10x");
-            } else {
-                meanCoverage = Data.FLOAT_NA;
-                sampleCovered10x = Data.INTEGER_NA;
-            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -94,8 +70,6 @@ public class GnomADExome {
 
             if (rs.next()) {
                 setAF(rs);
-            } else if (meanCoverage > 0) {
-                resetAF(0);
             } else {
                 resetAF(Data.FLOAT_NA);
             }
@@ -168,8 +142,6 @@ public class GnomADExome {
         sj.add(FormatManager.getFloat(abMedian));
         sj.add(FormatManager.getInteger(gqMedian));
         sj.add(FormatManager.getFloat(asRf));
-        sj.add(FormatManager.getFloat(meanCoverage));
-        sj.add(FormatManager.getInteger(sampleCovered10x));
 
         return sj;
     }
