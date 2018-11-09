@@ -21,12 +21,31 @@ public class GnomADExome {
     private boolean isSnv;
     private boolean isMNV;
 
-    private float[] af;
-    private String[] gts;
     private String filter;
-    private float abMedian;
-    private int gqMedian;
-    private float asRf;
+    private byte segdup;
+    private byte lcr;
+    private byte decoy;
+    private float rf_tp_probability;
+    private float qd;
+    private float pad_max;
+
+    private int global_AN;
+    private int global_nhet;
+    private int global_nhomalt;
+    private int global_nhemi;
+
+    private int controls_AN;
+    private int controls_nhet;
+    private int controls_nhomalt;
+    private int controls_nhemi;
+
+    private int non_neuro_AN;
+    private int non_neuro_nhet;
+    private int non_neuro_nhomalt;
+    private int non_neuro_nhemi;
+
+    private float[] af;
+    private float maxAF;
 
     public GnomADExome(String chr, int pos, String ref, String alt) {
         this.chr = chr;
@@ -35,7 +54,7 @@ public class GnomADExome {
         this.alt = alt;
 
         isSnv = ref.length() == alt.length();
-        
+
         isMNV = ref.length() > 1 && alt.length() > 1
                 && alt.length() == ref.length();
 
@@ -46,22 +65,20 @@ public class GnomADExome {
         try {
             chr = rs.getString("chr");
             pos = rs.getInt("pos");
-            ref = rs.getString("ref_allele");
-            alt = rs.getString("alt_allele");
+            ref = rs.getString("ref");
+            alt = rs.getString("alt");
             af = new float[GnomADManager.GNOMAD_EXOME_POP.length];
-            gts = new String[GnomADManager.GNOMAD_EXOME_POP.length];
 
             isSnv = ref.length() == alt.length();
 
             setAF(rs);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             ErrorManager.send(e);
         }
     }
 
     private void initAF() {
         af = new float[GnomADManager.GNOMAD_EXOME_POP.length];
-        gts = new String[GnomADManager.GNOMAD_EXOME_POP.length];
 
         try {
             String sql = GnomADManager.getSql4ExomeVariant(chr, pos, ref, alt, isMNV);
@@ -73,75 +90,119 @@ public class GnomADExome {
             } else {
                 resetAF(Data.FLOAT_NA);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             ErrorManager.send(e);
         }
     }
 
     private void setAF(ResultSet rs) throws SQLException {
-        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
-            af[i] = rs.getFloat(GnomADManager.GNOMAD_EXOME_POP[i] + "_af");
-            gts[i] = rs.getString(GnomADManager.GNOMAD_EXOME_POP[i] + "_gts");
-        }
-
         filter = rs.getString("filter");
-        abMedian = rs.getFloat("AB_MEDIAN");
-        gqMedian = rs.getInt("GQ_MEDIAN");
-        asRf = rs.getFloat("AS_RF");
+        segdup = FormatManager.getByte(rs, "segdup");
+        lcr = FormatManager.getByte(rs, "lcr");
+        decoy = FormatManager.getByte(rs, "decoy");
+        rf_tp_probability = FormatManager.getFloat(rs, "rf_tp_probability");
+        qd = FormatManager.getFloat(rs, "qd");
+        pad_max = FormatManager.getFloat(rs, "pad_max");
+
+        global_AN = FormatManager.getInt(rs, "global_AN");
+        global_nhet = FormatManager.getInt(rs, "global_nhet");
+        global_nhomalt = FormatManager.getInt(rs, "global_nhomalt");
+        global_nhemi = FormatManager.getInt(rs, "global_nhemi");
+
+        controls_AN = FormatManager.getInt(rs, "controls_AN");
+        controls_nhet = FormatManager.getInt(rs, "controls_nhet");
+        controls_nhomalt = FormatManager.getInt(rs, "controls_nhomalt");
+        controls_nhemi = FormatManager.getInt(rs, "controls_nhemi");
+
+        non_neuro_AN = FormatManager.getInt(rs, "non_neuro_AN");
+        non_neuro_nhet = FormatManager.getInt(rs, "non_neuro_nhet");
+        non_neuro_nhomalt = FormatManager.getInt(rs, "non_neuro_nhomalt");
+        non_neuro_nhemi = FormatManager.getInt(rs, "non_neuro_nhemi");
+
+        maxAF = Data.FLOAT_NA;
+        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
+            af[i] = FormatManager.getFloat(rs, GnomADManager.GNOMAD_EXOME_POP[i] + "_af");
+            if (af[i] != Data.FLOAT_NA
+                    && GnomADCommand.gnomADExomePopSet.contains(GnomADManager.GNOMAD_EXOME_POP[i])) {
+                maxAF = Math.max(maxAF, af[i]);
+            }
+        }
     }
 
     private void resetAF(float value) {
         for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
             af[i] = value;
-            gts[i] = "NA";
         }
 
         filter = "NA";
-        abMedian = Data.FLOAT_NA;
-        gqMedian = Data.INTEGER_NA;
-        asRf = Data.FLOAT_NA;
-    }
+        segdup = Data.BYTE_NA;
+        lcr = Data.BYTE_NA;
+        decoy = Data.BYTE_NA;
+        rf_tp_probability = Data.FLOAT_NA;
+        qd = Data.FLOAT_NA;
+        pad_max = Data.FLOAT_NA;
 
-    private float getMaxAF() {
-        float value = Data.FLOAT_NA;
+        global_AN = Data.INTEGER_NA;
+        global_nhet = Data.INTEGER_NA;
+        global_nhomalt = Data.INTEGER_NA;
+        global_nhemi = Data.INTEGER_NA;
 
-        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
-            if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.gnomADExomePop.contains(GnomADManager.GNOMAD_EXOME_POP[i])) {
-                value = Math.max(value, af[i]);
-            }
-        }
+        controls_AN = Data.INTEGER_NA;
+        controls_nhet = Data.INTEGER_NA;
+        controls_nhomalt = Data.INTEGER_NA;
+        controls_nhemi = Data.INTEGER_NA;
 
-        return value;
+        non_neuro_AN = Data.INTEGER_NA;
+        non_neuro_nhet = Data.INTEGER_NA;
+        non_neuro_nhomalt = Data.INTEGER_NA;
+        non_neuro_nhemi = Data.INTEGER_NA;
     }
 
     public boolean isValid() {
-        return GnomADCommand.isGnomADExomeAFValid(getMaxAF())
-                && GnomADCommand.isGnomADExomeAsRfValid(asRf, isSnv)
-                && GnomADCommand.isGnomADExomeABMedianValid(abMedian);
+        return GnomADCommand.isGnomADExomeAFValid(maxAF);
     }
 
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
-    
+
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
+
+        sj.add(filter);
+        sj.add(FormatManager.getByte(segdup));
+        sj.add(FormatManager.getByte(lcr));
+        sj.add(FormatManager.getByte(decoy));
+        sj.add(FormatManager.getFloat(rf_tp_probability));
+        sj.add(FormatManager.getFloat(qd));
+        sj.add(FormatManager.getFloat(pad_max));
 
         for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));
 
-            if (gts[i].equals("NA")) {
-                sj.add(gts[i]);
-            } else {
-                sj.add("'" + gts[i] + "'");
+            switch (i) {
+                case 0:
+                    sj.add(FormatManager.getInteger(global_AN));
+                    sj.add(FormatManager.getInteger(global_nhet));
+                    sj.add(FormatManager.getInteger(global_nhomalt));
+                    sj.add(FormatManager.getInteger(global_nhemi));
+                    break;
+                case 1:
+                    sj.add(FormatManager.getInteger(controls_AN));
+                    sj.add(FormatManager.getInteger(controls_nhet));
+                    sj.add(FormatManager.getInteger(controls_nhomalt));
+                    sj.add(FormatManager.getInteger(controls_nhemi));
+                    break;
+                case 2:
+                    sj.add(FormatManager.getInteger(non_neuro_AN));
+                    sj.add(FormatManager.getInteger(non_neuro_nhet));
+                    sj.add(FormatManager.getInteger(non_neuro_nhomalt));
+                    sj.add(FormatManager.getInteger(non_neuro_nhemi));
+                    break;
+                default:
+                    break;
             }
         }
-
-        sj.add(filter);
-        sj.add(FormatManager.getFloat(abMedian));
-        sj.add(FormatManager.getInteger(gqMedian));
-        sj.add(FormatManager.getFloat(asRf));
 
         return sj;
     }

@@ -11,10 +11,12 @@ import java.util.StringJoiner;
 public class GnomADManager {
 
     public static final String[] GNOMAD_EXOME_POP = {
-        "global", 
-        "afr", "amr", "asj", "eas", "sas", "fin", "nfe", "oth"
+        "global", "controls", "non_neuro",
+        "afr", "amr", "asj", "eas", "sas", "fin", "nfe", "nfemax", "easmax",
+        "controls_afr", "controls_amr", "controls_asj", "controls_eas", "controls_sas", "controls_fin", "controls_nfe", "controls_nfemax", "controls_easmax",
+        "non_neuro_afr", "non_neuro_amr", "non_neuro_asj", "non_neuro_eas", "non_neuro_sas", "non_neuro_fin", "non_neuro_nfe", "non_neuro_nfemax", "non_neuro_easmax"
     };
-    
+
     public static final String[] GNOMAD_GENOME_POP = {"global", "afr", "amr", "asj", "eas", "fin", "nfe", "oth"};
 
     private static final String exomeVariantTable = "gnomad_2_1.exome_variant";
@@ -28,15 +30,30 @@ public class GnomADManager {
     public static String getExomeTitle() {
         StringJoiner sj = new StringJoiner(",");
 
-        for (String str : GNOMAD_EXOME_POP) {
-            sj.add("gnomAD Exome " + str + " af");
-            sj.add("gnomAD Exome " + str + " gts");
-        }
+        sj.add("gnomAD Exome FILTER");
+        sj.add("gnomAD Exome segdup");
+        sj.add("gnomAD Exome lcr");
+        sj.add("gnomAD Exome decoy");
+        sj.add("gnomAD Exome rf_tp_probability");
+        sj.add("gnomAD Exome qd");
 
-        sj.add("gnomAD Exome filter");
-        sj.add("gnomAD Exome AB MEDIAN");
-        sj.add("gnomAD Exome GQ MEDIAN");
-        sj.add("gnomAD Exome AS RF");
+        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
+            String pop = GnomADManager.GNOMAD_EXOME_POP[i];
+            sj.add("gnomAD Exome " + pop + "_AF");
+            
+            switch (i) {
+                case 0: // global
+                case 1: // controls
+                case 2: // non_neuro
+                    sj.add("gnomAD Exome " + pop + "_AN");
+                    sj.add("gnomAD Exome " + pop + "_nhet");
+                    sj.add("gnomAD Exome " + pop + "_nhomalt");
+                    sj.add("gnomAD Exome " + pop + "_nhemi");
+                    break;
+                default:
+                    break;
+            }
+        }
 
         return sj.toString();
     }
@@ -136,7 +153,7 @@ public class GnomADManager {
         result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF";
 
         String table = "gnomad.genome_variant_chr" + chr + "_170228";
-        if(isMNV) {
+        if (isMNV) {
             table = genomeMNVTable;
         }
 

@@ -588,14 +588,12 @@ public class CommandManager {
      * outputPath invalid option & value if value is not in strList ATAV stop
      */
     public static void checkValuesValid(String[] array, CommandOption option) {
-        HashSet<String> set = new HashSet<>();
-
-        set.addAll(Arrays.asList(array));
+        HashSet<String> set = new HashSet<>(Arrays.asList(array));
 
         String[] values = option.getValue().split(",");
 
-        for (String str : values) {
-            if (!set.contains(str)) {
+        for (String value : values) {
+            if (!set.contains(value)) {
                 outputInvalidOptionValue(option);
             }
         }
