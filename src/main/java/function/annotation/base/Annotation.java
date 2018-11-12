@@ -63,8 +63,9 @@ public class Annotation {
             boolean isValid = isPolyphenValid;
 
             float trapScore = Data.FLOAT_NA;
-            if (TrapCommand.minTrapScore != Data.NO_FILTER) {
-                
+            if (TrapCommand.minTrapScore != Data.NO_FILTER
+                    || TrapCommand.minTrapScore2 != Data.NO_FILTER) {
+
                 trapScore = TrapManager.getScore(chr, pos, allele, false, geneName);
             }
 
@@ -80,9 +81,10 @@ public class Annotation {
                     isValid = TrapCommand.isTrapScoreValid(trapScore);
                 }
             } else if (effectID > EffectManager.MISSENSE_VARIANT_ID) {
-                isValid = TrapCommand.isTrapScoreValid(trapScore);
+                isValid = TrapCommand.isTrapScoreValid(trapScore)
+                        && TrapCommand.isTrapScore2Valid(trapScore);
             }
-            
+
             return isValid;
         }
 

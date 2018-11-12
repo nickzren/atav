@@ -12,13 +12,21 @@ public class TrapCommand {
     public static boolean isIncludeTrap = false;
 
     public static float minTrapScore = Data.NO_FILTER;
+    public static float minTrapScore2 = Data.NO_FILTER;
 
     public static boolean isTrapScoreValid(float value) {
-        if (value == Data.FLOAT_NA
-                || minTrapScore == Data.NO_FILTER) {
+        if (minTrapScore == Data.NO_FILTER) {
             return true;
         }
 
         return value >= minTrapScore;
+    }
+    
+    public static boolean isTrapScore2Valid(float value) {
+        if (minTrapScore2 == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minTrapScore2;
     }
 }

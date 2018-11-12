@@ -164,6 +164,11 @@ public class VariantLevelFilterCommand {
                     TrapCommand.minTrapScore = getValidFloat(option);
                     TrapCommand.isIncludeTrap = true;
                     break;
+                case "--min-trap-score-2":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    TrapCommand.minTrapScore2 = getValidFloat(option);
+                    TrapCommand.isIncludeTrap = true;
+                    break;    
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
                     KaviarCommand.maxKaviarMaf = getValidFloat(option);
