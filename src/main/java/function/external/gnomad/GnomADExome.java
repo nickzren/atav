@@ -134,7 +134,7 @@ public class GnomADExome {
             af[i] = value;
         }
 
-        filter = "NA";
+        filter = Data.STRING_NA;
         segdup = Data.BYTE_NA;
         lcr = Data.BYTE_NA;
         decoy = Data.BYTE_NA;

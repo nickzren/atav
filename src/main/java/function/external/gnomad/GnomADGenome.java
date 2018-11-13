@@ -93,10 +93,10 @@ public class GnomADGenome {
     private void resetAF(float value) {
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
             af[i] = value;
-            gts[i] = "NA";
+            gts[i] = Data.STRING_NA;
         }
 
-        filter = "NA";
+        filter = Data.STRING_NA;
         abMedian = Data.FLOAT_NA;
         gqMedian = Data.INTEGER_NA;
         asRf = Data.FLOAT_NA;
@@ -131,7 +131,7 @@ public class GnomADGenome {
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));
 
-            if (gts[i].equals("NA")) {
+            if (gts[i].equals(Data.STRING_NA)) {
                 sj.add(gts[i]);
             } else {
                 sj.add("'" + gts[i] + "'");

@@ -122,7 +122,7 @@ public class ExacManager {
                     geneVariantCountTitle = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
-                        NA.add("NA");
+                        NA.add(Data.STRING_NA);
                     }
                 } else {
                     geneVariantCountMap.put(geneName, values);

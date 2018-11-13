@@ -1,5 +1,6 @@
 package function.external.denovo;
 
+import global.Data;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
 import utils.DBManager;
@@ -35,8 +36,8 @@ public class DenovoDB {
                 phenotyp = rs.getString("Phenotype");
                 pubmedID = rs.getString("PubmedID");
             } else {
-                phenotyp = "NA";
-                pubmedID = "NA";
+                phenotyp = Data.STRING_NA;
+                pubmedID = Data.STRING_NA;
             }
         } catch (Exception e) {
             ErrorManager.send(e);
