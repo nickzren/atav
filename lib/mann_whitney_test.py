@@ -20,7 +20,35 @@ from scipy import stats
 import datetime
 import math
 
- 
+
+def getTotalCaseAndControlCounts(genotypesFilename):
+	"""
+	Read through the first two lines of a _genotypes file and calculate
+	how many total cases and controls were in the initial ATAV job.
+	(If a sample does not have a variant, they won't show up in the file, so this
+	total needs to be calculated separately.)
+
+	Args:
+		genotypesFilename (str): path to the _genotypes file.
+
+	Returns:
+		totalCases and totalControls (both ints)
+	"""
+	with open(genotypesFilename, "r") as variants:
+		header = variants.readline().strip().split(",")
+		variant = dict(zip(header, variants.readline().strip().split(",")))
+
+		someCases = int(variant["Covered Case"])
+		casePercentage = float(variant["Covered Case Percentage"])/100.0
+		totalCases = int(round(someCases/casePercentage))
+
+		someControls = int(variant["Covered Ctrl"])
+		controlPercentage = float(variant["Covered Ctrl Percentage"])/100.0
+		totalControls = int(round(someControls/controlPercentage))
+	return totalCases, totalControls
+
+
+
 def getQVcounts(genotypesFilename):
 
 	"""
@@ -92,14 +120,11 @@ def writeToLog(logName, message, writeOrAppend):
 	with open(logName, writeOrAppend) as out:
 		out.write(message)
 
-def initializeLog(logName, counts):
+def initializeLog(logName, casesCounts, controlsCounts):
 	
 	"""
 	Our first logging function, which we always want run.
 	"""
-
-	casesCounts = counts["case"].values()
-	controlsCounts = counts["ctrl"].values()
 	log = ""
 	log += "Checking amounts of called variant for cases vs. controls. Date: {}.\n".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 	log += "Cases (n = {}): Median: {}; mean: {}.\n".format(len(casesCounts), np.median(casesCounts), np.mean(casesCounts))
@@ -139,23 +164,34 @@ def handler(genotypesFilename):
 		folder += "./"
 
 	counts = getQVcounts(genotypesFilename)
+	totalCases, totalControls = getTotalCaseAndControlCounts(genotypesFilename)
+
+	# These don't include the zero-counts. (Samples that had no variants.)
+	qvsPerCase = counts["case"].values()
+	qvsPerControl = counts["ctrl"].values()
+
+	# Add on the zero-counts.
+	numCasesWithoutQV = totalCases - len(qvsPerCase)
+	casesWithoutQV = [0] * numCasesWithoutQV
+	qvsPerCase += casesWithoutQV
+
+	numControlsWithoutQV = totalControls - len(qvsPerControl)
+	controlsWithoutQV = [0] * numControlsWithoutQV
+	qvsPerControl += controlsWithoutQV
 
 	suffix = fileName.split("_")[-1]
 	logName = folder + fileName.replace(suffix, "qv_counts.log")
-	initializeLog(logName, counts)
+	initializeLog(logName, qvsPerCase, qvsPerControl)
 
-	casesCounts = counts["case"].values()
-	controlsCounts = counts["ctrl"].values()
-	
 	try:
-		value, pvalue = stats.mannwhitneyu(casesCounts, controlsCounts)
+		value, pvalue = stats.mannwhitneyu(qvsPerCase, qvsPerControl)
 		writeMannWhitneyResultsToLog(logName, pvalue)
 	except ValueError as e: # If either array is empty.
 		pvalue = None
 		writeToLog(logName, "The test could not be run. (You may have run with no cases, or no controls.)", writeOrAppend = "a")
 	
 	qvPlotName = folder + fileName.replace(suffix, "qv_counts.png")
-	graphQVcounts(casesCounts, controlsCounts, qvPlotName)
+	graphQVcounts(qvsPerCase, qvsPerControl, qvPlotName)
 	
 
 
