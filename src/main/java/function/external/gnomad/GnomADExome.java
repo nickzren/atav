@@ -27,7 +27,7 @@ public class GnomADExome {
     private byte decoy;
     private float rf_tp_probability;
     private float qd;
-    private float pad_max;
+    private float pab_max;
 
     private int global_AN;
     private int global_nhet;
@@ -102,7 +102,7 @@ public class GnomADExome {
         decoy = FormatManager.getByte(rs, "decoy");
         rf_tp_probability = FormatManager.getFloat(rs, "rf_tp_probability");
         qd = FormatManager.getFloat(rs, "qd");
-        pad_max = FormatManager.getFloat(rs, "pad_max");
+        pab_max = FormatManager.getFloat(rs, "pab_max");
 
         global_AN = FormatManager.getInt(rs, "global_AN");
         global_nhet = FormatManager.getInt(rs, "global_nhet");
@@ -140,7 +140,7 @@ public class GnomADExome {
         decoy = Data.BYTE_NA;
         rf_tp_probability = Data.FLOAT_NA;
         qd = Data.FLOAT_NA;
-        pad_max = Data.FLOAT_NA;
+        pab_max = Data.FLOAT_NA;
 
         global_AN = Data.INTEGER_NA;
         global_nhet = Data.INTEGER_NA;
@@ -175,7 +175,7 @@ public class GnomADExome {
         sj.add(FormatManager.getByte(decoy));
         sj.add(FormatManager.getFloat(rf_tp_probability));
         sj.add(FormatManager.getFloat(qd));
-        sj.add(FormatManager.getFloat(pad_max));
+        sj.add(FormatManager.getFloat(pab_max));
 
         for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));

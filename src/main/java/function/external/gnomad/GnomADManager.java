@@ -36,6 +36,7 @@ public class GnomADManager {
         sj.add("gnomAD Exome decoy");
         sj.add("gnomAD Exome rf_tp_probability");
         sj.add("gnomAD Exome qd");
+        sj.add("gnomAD Exome pab_max");
 
         for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
             String pop = GnomADManager.GNOMAD_EXOME_POP[i];
@@ -83,16 +84,7 @@ public class GnomADManager {
     }
 
     public static String getSql4ExomeVariant(Region region) {
-        String result = "chr,pos,ref_allele,alt_allele,";
-
-        for (String str : GNOMAD_EXOME_POP) {
-            result += str + "_af,"
-                    + str + "_gts,";
-        }
-
-        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF ";
-
-        String sql = "SELECT " + result + "FROM " + exomeVariantTable + " "
+        String sql = "SELECT * FROM " + exomeVariantTable + " "
                 + "WHERE chr = '" + region.getChrStr() + "' "
                 + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
 
@@ -118,25 +110,16 @@ public class GnomADManager {
 
     public static String getSql4ExomeVariant(String chr,
             int pos, String ref, String alt, boolean isMNV) {
-        String result = "";
-
-        for (String str : GNOMAD_EXOME_POP) {
-            result += str + "_af,"
-                    + str + "_gts,";
-        }
-
-        result += "filter,AB_MEDIAN,GQ_MEDIAN,AS_RF";
-
         String table = exomeVariantTable;
         if (isMNV) {
             table = exomeMNVTable;
         }
 
-        String sql = "SELECT " + result + " FROM " + table + " "
+        String sql = "SELECT * FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
-                + "AND ref_allele = '" + ref + "' "
-                + "AND alt_allele = '" + alt + "'";
+                + "AND ref = '" + ref + "' "
+                + "AND alt = '" + alt + "'";
 
         return sql;
     }
