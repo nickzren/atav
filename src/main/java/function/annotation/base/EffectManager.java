@@ -127,7 +127,7 @@ public class EffectManager {
                 continue;
             }
 
-            stmt.executeUpdate("INSERT INTO tmp_effect_id values ("
+            stmt.executeUpdate("INSERT IGNORE INTO tmp_effect_id values ("
                     + impactEffect2IdMap.get(impactEffect) + ");");
 
             inputImpactSet.add(Impact.valueOf(impactEffect.split(":")[0]));
@@ -181,7 +181,7 @@ public class EffectManager {
                     + "PRIMARY KEY (input_impact)) ENGINE=TokuDB;");
 
             // insert values
-            stmt.executeUpdate("INSERT INTO tmp_impact values " + impactList4SQL);
+            stmt.executeUpdate("INSERT IGNORE INTO tmp_impact values " + impactList4SQL);
 
             stmt.closeOnCompletion();
         } catch (Exception e) {

@@ -227,7 +227,7 @@ public class GeneManager {
 
                 if (chrAllGeneMap.get(chr).length() > 0) {
                     // insert values
-                    stmt.executeUpdate("INSERT INTO " + TMP_GENE_TABLE + chr
+                    stmt.executeUpdate("INSERT IGNORE INTO " + TMP_GENE_TABLE + chr
                             + " values " + chrAllGeneMap.get(chr).toString());
 
                     stmt.closeOnCompletion();
