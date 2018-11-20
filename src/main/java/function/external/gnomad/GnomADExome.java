@@ -130,10 +130,6 @@ public class GnomADExome {
     }
 
     private void resetAF(float value) {
-        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
-            af[i] = value;
-        }
-
         filter = Data.STRING_NA;
         segdup = Data.BYTE_NA;
         lcr = Data.BYTE_NA;
@@ -156,6 +152,10 @@ public class GnomADExome {
         non_neuro_nhet = Data.INTEGER_NA;
         non_neuro_nhomalt = Data.INTEGER_NA;
         non_neuro_nhemi = Data.INTEGER_NA;
+
+        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
+            af[i] = value;
+        }
     }
 
     public boolean isValid() {
