@@ -71,6 +71,8 @@ public class EmailManager {
             msg.setText(body, "UTF-8");
 
             msg.setSentDate(new Date());
+
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(EMAIL_TO, false));
             
             Transport.send(msg);
         } catch (UnsupportedEncodingException | MessagingException e) {
