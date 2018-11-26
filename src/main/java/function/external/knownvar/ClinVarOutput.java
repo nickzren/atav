@@ -11,20 +11,20 @@ import utils.FormatManager;
  * @author nick
  */
 public class ClinVarOutput {
-    
+
     private Variant var;
-    
+
     private ClinVar clinvar;
-    
+
     private int siteCount;
     private int pathogenicIndelsCount;
     private int allIndelsCount;
-    
+
     public ClinVarOutput(Variant var, Collection<ClinVar> collection) {
         this.var = var;
-        
+
         clinvar = getClinVar(collection);
-        
+
         siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
         pathogenicIndelsCount = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var) : Data.INTEGER_NA; // only for INDELs
@@ -44,55 +44,83 @@ public class ClinVarOutput {
                 Data.STRING_NA,
                 Data.STRING_NA,
                 Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA,
+                Data.STRING_NA,
                 Data.STRING_NA);
-        
+
         boolean isFirstSite = true;
-        
+
         for (ClinVar tmpClinvar : collection) {
             String idStr = var.getVariantIdStr();
-            
+
             if (idStr.equals(tmpClinvar.getVariantId())) {
                 return tmpClinvar;
             }
-            
+
             if (var.isIndel()) { // site values only for SNVs
                 continue;
             }
-            
+
             if (isFirstSite) {
                 isFirstSite = false;
-                clinvar.setRsNumber(tmpClinvar.getRsNumber());
+                clinvar.setHGVS(tmpClinvar.getHGVS());
+                clinvar.setClinSource(tmpClinvar.getClinSource());
+                clinvar.setAlleleOrigin(tmpClinvar.getAlleleOrigin());
+                clinvar.setClinRevStat(tmpClinvar.getClinRevStat());
+                clinvar.setClinRevStar(tmpClinvar.getClinRevStar());
+                clinvar.setClinSig(tmpClinvar.getClinSig());
+                clinvar.setClinSigIncl(tmpClinvar.getClinSigIncl());
+                clinvar.setDiseaseDB(tmpClinvar.getDiseaseDB());
                 clinvar.setDiseaseName("?Site - " + tmpClinvar.getDiseaseName());
-                clinvar.setClinicalSignificance(tmpClinvar.getClinicalSignificance());
                 clinvar.setPubmedID(tmpClinvar.getPubmedID());
+                clinvar.setRSID(tmpClinvar.getRSID());
             } else {
                 clinvar.append(
-                        tmpClinvar.getRsNumber(),
-                        tmpClinvar.getClinicalSignificance(),
+                        tmpClinvar.getHGVS(),
+                        tmpClinvar.getClinSource(),
+                        tmpClinvar.getAlleleOrigin(),
+                        tmpClinvar.getClinRevStat(),
+                        tmpClinvar.getClinRevStar(),
+                        tmpClinvar.getClinSig(),
+                        tmpClinvar.getClinSigIncl(),
+                        tmpClinvar.getDiseaseDB(),
                         tmpClinvar.getDiseaseName(),
-                        tmpClinvar.getPubmedID());
+                        tmpClinvar.getPubmedID(),
+                        tmpClinvar.getRSID());
             }
         }
-        
+
         return clinvar;
     }
-    
+
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add(FormatManager.getInteger(siteCount));
-        sj.add(clinvar.getRsNumber());
+        sj.add(clinvar.getHGVS());
+        sj.add(clinvar.getClinSource());
+        sj.add(clinvar.getAlleleOrigin());
+        sj.add(clinvar.getClinRevStat());
+        sj.add(clinvar.getClinRevStar());
+        sj.add(clinvar.getClinSig());
+        sj.add(clinvar.getClinSigIncl());
+        sj.add(clinvar.getDiseaseDB());
         sj.add(clinvar.getDiseaseName());
-        sj.add(clinvar.getClinicalSignificance());
         sj.add(clinvar.getPubmedID());
+        sj.add(clinvar.getRSID());
         sj.add(FormatManager.getInteger(pathogenicIndelsCount));
         sj.add(FormatManager.getInteger(allIndelsCount));
-        
+
         return sj;
     }
-    
+
     @Override
-    public String toString() {        
+    public String toString() {
         return getStringJoiner().toString();
     }
 }

@@ -23,7 +23,7 @@ import utils.FormatManager;
 public class KnownVarManager {
 
     public static final String hgmdTable = "knownvar.hgmd_2018_3";
-    public static final String clinVarTable = "knownvar.clinvar_2018_05_08";
+    public static final String clinVarTable = "knownvar.clinvar_2018_10_28";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2018_11_12";
     public static final String clinGenTable = "knownvar.clingen_2018_10_23";
     public static final String omimTable = "knownvar.omim_2018_10_29";
@@ -53,10 +53,17 @@ public class KnownVarManager {
         sj.add("HGMDp2site");
         sj.add("HGMD indel 9bpflanks");
         sj.add("ClinVar");
-        sj.add("ClinVar RS Number");
-        sj.add("ClinVar Disease");
-        sj.add("ClinVar Clinical Significance");
-        sj.add("ClinVar PMID");
+        sj.add("ClinVar HGVS");
+        sj.add("ClinVar ClinSource");
+        sj.add("ClinVar AlleleOrigin");
+        sj.add("ClinVar ClinRevStat");
+        sj.add("ClinVar ClinRevStar");
+        sj.add("ClinVar ClinSig");
+        sj.add("ClinVar ClinSigIncl");
+        sj.add("ClinVar DiseaseDB");
+        sj.add("ClinVar DiseaseName");
+        sj.add("ClinVar PubmedID");
+        sj.add("ClinVar rsID");
         sj.add("ClinVar pathogenic indels");
         sj.add("ClinVar all indels");
         sj.add("ClinVar Pathogenic Indel Count");
@@ -166,13 +173,31 @@ public class KnownVarManager {
                 int pos = rs.getInt("pos");
                 String ref = rs.getString("ref");
                 String alt = rs.getString("alt");
-                String rsNumber = FormatManager.getString(rs.getString("rsID"));
-                String clinicalSignificance = FormatManager.getString(rs.getString("ClinSig"));
-                String diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
-                String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
+
+                String HGVS = FormatManager.getString(rs.getString("HGVS"));
+                String ClinSource = FormatManager.getString(rs.getString("ClinSource"));
+                String AlleleOrigin = FormatManager.getInteger(FormatManager.getInt(rs, "AlleleOrigin"));
+                String ClinRevStat = FormatManager.getString(rs.getString("ClinRevStat"));
+                String ClinRevStar = FormatManager.getInteger(FormatManager.getInt(rs, "ClinRevStar"));
+                String ClinSig = FormatManager.getString(rs.getString("ClinSig"));
+                String ClinSigIncl = FormatManager.getString(rs.getString("ClinSigIncl"));
+                String DiseaseDB = FormatManager.getString(rs.getString("DiseaseDB"));
+                String DiseaseName = FormatManager.getString(rs.getString("DiseaseName"));
+                String PubmedID = FormatManager.getString(rs.getString("PubmedID"));
+                String rsID = FormatManager.getString(rs.getString("rsID"));
 
                 ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
-                        rsNumber, clinicalSignificance, diseaseName, pubmedID);
+                        HGVS,
+                        ClinSource,
+                        AlleleOrigin,
+                        ClinRevStat,
+                        ClinRevStar,
+                        ClinSig,
+                        ClinSigIncl,
+                        DiseaseDB,
+                        DiseaseName,
+                        PubmedID,
+                        rsID);
 
                 clinVarMultiMap.put(clinVar.getSiteId(), clinVar);
             }
