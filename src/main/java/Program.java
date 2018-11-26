@@ -80,6 +80,7 @@ import function.genotype.var.VarCommand;
 import function.genotype.vargeno.VarGenoCommand;
 import function.test.Test;
 import function.test.TestCommand;
+import utils.EmailManager;
 import utils.RunTimeManager;
 import utils.ThirdPartyToolManager;
 
@@ -111,6 +112,8 @@ public class Program {
         try {
             CommandManager.initOptions(options);
 
+            EmailManager.init();
+            
             DBManager.init();
 
             ThirdPartyToolManager.init();

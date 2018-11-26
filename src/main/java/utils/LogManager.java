@@ -125,9 +125,20 @@ public class LogManager {
 
             BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
 
-            long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
+            String cmdLogStr = getCommandLogStr(exit);
 
-            String logStr = Data.userName + "\t"
+            bufferWritter.write(cmdLogStr);
+            bufferWritter.newLine();
+            bufferWritter.close();
+        } catch (Exception e) { // not output error when writing to log file denied
+
+        }
+    }
+    
+    public static String getCommandLogStr(int exit) {
+        long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
+        
+        return Data.userName + "\t"
                     + date.toString() + "\t"
                     + DBManager.getHost() + "\t"
                     + System.getenv("HOSTNAME") + "\t"
@@ -137,13 +148,6 @@ public class LogManager {
                     + System.getenv("JOB_ID") + "\t"
                     + "\t"
                     + exit;
-
-            bufferWritter.write(logStr);
-            bufferWritter.newLine();
-            bufferWritter.close();
-        } catch (Exception e) { // not output error when writing to log file denied
-
-        }
     }
 
     private static boolean isBioinfoTeam() throws Exception {
