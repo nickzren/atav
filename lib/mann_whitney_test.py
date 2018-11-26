@@ -34,26 +34,32 @@ def getTotalCaseAndControlCounts(genotypesFilename):
 	Returns:
 		totalCases and totalControls (both ints)
 	"""
+
+	comphetSuffix = ""
+	if "comphet" in genotypesFilename:
+		comphetSuffix = " (#1)"
 	with open(genotypesFilename, "r") as variants:
 		header = variants.readline().strip().split(",")
 		variant = dict(zip(header, variants.readline().strip().split(",")))
 
-		someCases = int(variant["Covered Case"])
-		casePercentage = float(variant["Covered Case Percentage"])/100.0
+		someCases = int(variant["Covered Case" + comphetSuffix])
+		casePercentage = float(variant["Covered Case Percentage" + comphetSuffix])/100.0
 		totalCases = int(round(someCases/casePercentage))
 
-		someControls = int(variant["Covered Ctrl"])
-		controlPercentage = float(variant["Covered Ctrl Percentage"])/100.0
+		someControls = int(variant["Covered Ctrl" + comphetSuffix])
+		controlPercentage = float(variant["Covered Ctrl Percentage" + comphetSuffix])/100.0
 		totalControls = int(round(someControls/controlPercentage))
 	return totalCases, totalControls
 
 
 
-def getQVcounts(genotypesFilename):
+def getQVcountsForDominantModel(genotypesFilename):
 
 	"""
 	Read through a _genotypes file and get the variant counts for all samples,
 	broken down into cases and controls.
+	We keep a tally of how many lines each sample's ID shows up in; keeping track
+	of all their variant IDs would take up too much space.
 
 	Args:
 		genotypesFilename (str): path to the _genotypes file.
@@ -72,16 +78,53 @@ def getQVcounts(genotypesFilename):
 		for line in variants:
 
 			line = dict(zip(header, line.strip().split(",")))
-			if "_genotypes" in genotypesFilename:
-				caseOrControl = line["Sample Phenotype"]
-				name = line["Sample Name"]
-			elif "_comphet" in genotypesFilename:
-				caseOrControl = line["Sample Phenotype (#1)"]
-				name = line["Sample Name (#1)"]
+			caseOrControl = line["Sample Phenotype"]
+			name = line["Sample Name"]
 			counts[caseOrControl][name] += 1
 
 	return counts
 
+def getQVsForComphetModel(comphetVariantsFilename):
+
+	"""
+	Read through a _comphet file and get the variant counts for all samples,
+	broken down into cases and controls.
+	If a sample has 2 variants in one gene, they'll be printed to the same line as
+	"Variant (#1)" and "Variant (#2)".
+	If a sample has 3 variants in one gene, three lines will be printed: 1 with 2,
+	1 with 3, and 2 with 3.
+	If a sample has 2 variants in one gene and 2 variants in another gene, they'll
+	be printed as two separate lines.
+	We therefore have to keep track of all variant IDs, in order to get the true
+	count of how many variants the sample has.
+
+	Args:
+		comphetVariantsFilename (str): path to the _genotypes file.
+
+	Returns:
+		variantIDs (dict of dicts): In this format: 
+			{"case": {"sample1": set(variant1, variant2), "sample2": set(), ...}, "ctrl": {"sample1": set(), ...}}
+	"""
+
+	variantIDs = defaultdict(lambda: defaultdict(set))
+
+	with open(comphetVariantsFilename, "r") as variants:
+		# Awesome way of using header names, provided by Brett Copeland.
+		header = variants.readline().strip().split(",")
+
+		for line in variants:
+
+			line = dict(zip(header, line.strip().split(",")))
+			caseOrControl = line["Sample Phenotype (#1)"]
+			name = line["Sample Name (#1)"]
+			variantID1 = line["Variant ID (#1)"]
+			variantIDs[caseOrControl][name].add(variantID1)
+			# The comphet file also includes homozygous mutations, in which case there is no Variant #2.
+			if line["Sample Phenotype (#1)"] == "het":
+				variantID2 = line["Variant ID (#2)"]
+				variantIDs[caseOrControl][name].add(variantID2)
+
+	return variantIDs
 
 def graphQVcounts(casesCounts, controlsCounts, outputName):
 
@@ -163,12 +206,23 @@ def handler(genotypesFilename):
 	else:
 		folder += "./"
 
-	counts = getQVcounts(genotypesFilename)
+	# Get the number of QVs per sample.
+	# These don't include the zero-counts. (Samples that had no variants.)
+
+	# The dominant model returns the actual counts.
+	if "genotypes" in genotypesFilename:
+		counts = getQVcountsForDominantModel(genotypesFilename)
+		qvsPerCase = counts["case"].values()
+		qvsPerControl = counts["ctrl"].values()
+	# The comphet model returns the variantIDs, which we need to count up.
+	if "comphet" in genotypesFilename:
+		qvs = getQVsForComphetModel(genotypesFilename)
+		qvsPerCase = [len(setOfVariants) for setOfVariants in qvs["case"].values()]
+		qvsPerControl = [len(setOfVariants) for setOfVariants in qvs["ctrl"].values()]
+
 	totalCases, totalControls = getTotalCaseAndControlCounts(genotypesFilename)
 
-	# These don't include the zero-counts. (Samples that had no variants.)
-	qvsPerCase = counts["case"].values()
-	qvsPerControl = counts["ctrl"].values()
+
 
 	# Add on the zero-counts.
 	numCasesWithoutQV = totalCases - len(qvsPerCase)
