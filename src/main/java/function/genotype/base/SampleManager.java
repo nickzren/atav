@@ -362,6 +362,13 @@ public class SampleManager {
                     LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
                     continue;
                 }
+                
+                if (!sampleNameSet.contains(individualId)) {
+                    sampleNameSet.add(individualId);
+                } else {
+                    // do not allow duplicate samples
+                    continue;
+                }
 
                 String paternalId = "0";
                 String maternalId = "0";
