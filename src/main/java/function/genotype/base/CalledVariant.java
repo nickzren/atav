@@ -117,7 +117,8 @@ public class CalledVariant extends AnnotatedVariant {
 
     private boolean checkAlleleFreqValid() {
         isValid = GenotypeLevelFilterCommand.isMaxCtrlAFValid(af[Index.CTRL])
-                && GenotypeLevelFilterCommand.isMinCtrlAFValid(af[Index.CTRL]);
+                && GenotypeLevelFilterCommand.isMinCtrlAFValid(af[Index.CTRL])
+                && GenotypeLevelFilterCommand.isMaxCaseAFValid(af[Index.CASE]);
 
         return isValid;
     }

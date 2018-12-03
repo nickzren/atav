@@ -26,6 +26,7 @@ public class GenotypeLevelFilterCommand {
     public static boolean isAllExome = false;
     public static boolean isExcludeIGMGnomadSample = false;
     public static double maxCtrlAF = Data.NO_FILTER;
+    public static double maxCaseAF = Data.NO_FILTER;
     public static double minCtrlAF = Data.NO_FILTER;
     public static int minCoverage = Data.NO_FILTER;
     public static int minCaseCoverageCall = Data.NO_FILTER;
@@ -100,6 +101,11 @@ public class GenotypeLevelFilterCommand {
                     checkValueValid(1, 0, option);
                     minCtrlAF = getValidDouble(option);
                     break;
+                case "--case-af":
+                case "--max-case-af":
+                    checkValueValid(1, 0, option);
+                    maxCaseAF = getValidDouble(option);
+                    break;    
                 case "--min-coverage":
                     checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
                     minCoverage = getValidInteger(option);
@@ -344,6 +350,15 @@ public class GenotypeLevelFilterCommand {
 
         return value <= maxCtrlAF;
     }
+    
+    public static boolean isMaxCaseAFValid(double value) {
+        if (maxCaseAF == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxCaseAF;
+    }
+
 
     public static boolean isMinCtrlAFValid(double value) {
         if (minCtrlAF == Data.NO_FILTER) {
