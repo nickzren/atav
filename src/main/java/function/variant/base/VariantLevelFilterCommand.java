@@ -118,7 +118,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--gnomad-genome-pop":
                     checkValuesValid(GnomADManager.GNOMAD_GENOME_POP, option);
-                    GnomADCommand.gnomADGenomePop = option.getValue();
+                    GnomADCommand.gnomADGenomePopSet = getSet(option);
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
                 case "--gnomad-exome-af":

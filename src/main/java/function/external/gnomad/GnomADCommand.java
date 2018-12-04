@@ -17,7 +17,7 @@ public class GnomADCommand {
     public static boolean isIncludeGnomADGenome = false;
 
     public static Set<String> gnomADExomePopSet = new HashSet<String>(Arrays.asList("global"));
-    public static String gnomADGenomePop = "global";
+    public static Set<String> gnomADGenomePopSet = new HashSet<String>(Arrays.asList("global"));
     public static float gnomADExomeAF = Data.NO_FILTER;
     public static float gnomADGenomeAF = Data.NO_FILTER;
     public static float gnomADExomeRfTpProbabilitySnv = Data.NO_FILTER;

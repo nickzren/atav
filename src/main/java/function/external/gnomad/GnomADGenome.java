@@ -123,7 +123,7 @@ public class GnomADGenome {
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(rs, GnomADManager.GNOMAD_GENOME_POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.gnomADExomePopSet.contains(GnomADManager.GNOMAD_GENOME_POP[i])) {
+                    && GnomADCommand.gnomADGenomePopSet.contains(GnomADManager.GNOMAD_GENOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
             }
         }
