@@ -15,14 +15,16 @@ public class GnomADCommand {
     public static boolean isListGnomADGenome = false;
     public static boolean isIncludeGnomADExome = false;
     public static boolean isIncludeGnomADGenome = false;
-    
+
     public static Set<String> gnomADExomePopSet = new HashSet<String>(Arrays.asList("global"));
-    
     public static String gnomADGenomePop = "global";
     public static float gnomADExomeAF = Data.NO_FILTER;
     public static float gnomADGenomeAF = Data.NO_FILTER;
-    public static float gnomADGenomeAsRfSnv = Data.NO_FILTER;
-    public static float gnomADGenomeAsRfIndel = Data.NO_FILTER;
+    public static float gnomADExomeRfTpProbabilitySnv = Data.NO_FILTER;
+    public static float gnomADExomeRfTpProbabilityIndel = Data.NO_FILTER;
+    public static float gnomADGenomeRfTpProbabilitySnv = Data.NO_FILTER;
+    public static float gnomADGenomeRfTpProbabilityIndel = Data.NO_FILTER;
+
     public static float gnomADGenomeABMedian = Data.NO_FILTER;
 
     public static boolean isGnomADExomeAFValid(float value) {
@@ -43,30 +45,55 @@ public class GnomADCommand {
                 || value == Data.FLOAT_NA;
     }
 
-
-    public static boolean isGnomADGenomeAsRfValid(float value, boolean isSnv) {
+    public static boolean isGnomADExomeRfTpProbabilityValid(float value, boolean isSnv) {
         if (isSnv) {
-            return isGnomADGenomeAsRfSnvValid(value);
+            return isGnomADExomeRfTpProbabilitySnvValid(value);
         } else {
-            return isGnomADGenomeAsRfIndelValid(value);
+            return isGnomADExomeRfTpProbabilityIndelValid(value);
         }
     }
 
-    private static boolean isGnomADGenomeAsRfSnvValid(float value) {
-        if (gnomADGenomeAsRfSnv == Data.NO_FILTER) {
+    public static boolean isGnomADGenomeRfTpProbabilityValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isGnomADGenomeRfTpProbabilitySnvValid(value);
+        } else {
+            return isGnomADGenomeRfTpProbabilityIndelValid(value);
+        }
+    }
+
+    private static boolean isGnomADExomeRfTpProbabilitySnvValid(float value) {
+        if (gnomADExomeRfTpProbabilitySnv == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= gnomADGenomeAsRfSnv
+        return value >= gnomADExomeRfTpProbabilitySnv
                 || value == Data.FLOAT_NA;
     }
 
-    private static boolean isGnomADGenomeAsRfIndelValid(float value) {
-        if (gnomADGenomeAsRfIndel == Data.NO_FILTER) {
+    private static boolean isGnomADExomeRfTpProbabilityIndelValid(float value) {
+        if (gnomADExomeRfTpProbabilityIndel == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= gnomADGenomeAsRfIndel
+        return value >= gnomADExomeRfTpProbabilityIndel
+                || value == Data.FLOAT_NA;
+    }
+
+    private static boolean isGnomADGenomeRfTpProbabilitySnvValid(float value) {
+        if (gnomADGenomeRfTpProbabilitySnv == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= gnomADGenomeRfTpProbabilitySnv
+                || value == Data.FLOAT_NA;
+    }
+
+    private static boolean isGnomADGenomeRfTpProbabilityIndelValid(float value) {
+        if (gnomADGenomeRfTpProbabilityIndel == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= gnomADGenomeRfTpProbabilityIndel
                 || value == Data.FLOAT_NA;
     }
 

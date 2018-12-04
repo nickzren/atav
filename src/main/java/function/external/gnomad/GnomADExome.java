@@ -159,7 +159,8 @@ public class GnomADExome {
     }
 
     public boolean isValid() {
-        return GnomADCommand.isGnomADExomeAFValid(maxAF);
+        return GnomADCommand.isGnomADExomeAFValid(maxAF) &&
+                GnomADCommand.isGnomADExomeRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 
     public String getVariantId() {

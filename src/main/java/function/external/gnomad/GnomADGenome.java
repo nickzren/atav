@@ -159,7 +159,8 @@ public class GnomADGenome {
     }
 
     public boolean isValid() {
-        return GnomADCommand.isGnomADGenomeAFValid(maxAF);
+        return GnomADCommand.isGnomADGenomeAFValid(maxAF) &&
+                GnomADCommand.isGnomADGenomeRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 
     public String getVariantId() {

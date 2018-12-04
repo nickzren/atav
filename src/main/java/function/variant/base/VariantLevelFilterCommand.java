@@ -131,14 +131,24 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.gnomADGenomeAF = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
-                case "--gnomad-genome-as-rf-snv":
+                case "--gnomad-exome-rf-tp-probability-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADCommand.gnomADGenomeAsRfSnv = getValidFloat(option);
+                    GnomADCommand.gnomADExomeRfTpProbabilitySnv = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADExome = true;
+                    break;
+                case "--gnomad-exome-rf-tp-probability-indel":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    GnomADCommand.gnomADExomeRfTpProbabilityIndel = getValidFloat(option);
+                    GnomADCommand.isIncludeGnomADExome = true;
+                    break;    
+                case "--gnomad-genome-rf-tp-probability-snv":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    GnomADCommand.gnomADGenomeRfTpProbabilitySnv = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
-                case "--gnomad-genome-as-rf-indel":
+                case "--gnomad-genome-rf-tp-probability-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADCommand.gnomADGenomeAsRfIndel = getValidFloat(option);
+                    GnomADCommand.gnomADGenomeRfTpProbabilityIndel = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
                 case "--gnomad-genome-ab-median":
