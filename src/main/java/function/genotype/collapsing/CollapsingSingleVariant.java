@@ -138,19 +138,6 @@ public class CollapsingSingleVariant extends CollapsingBase {
         bwGenotypes.newLine();
     }
 
-    private char getGeno(byte geno) {
-        switch (geno) {
-            case Index.HOM:
-                return 'H';
-            case Index.HET:
-                return 'T';
-            case Index.REF:
-                return 'R';
-            default:
-                return 'N';
-        }
-    }
-
     @Override
     public String toString() {
         return "Start running collapsing function";
