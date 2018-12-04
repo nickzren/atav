@@ -151,11 +151,6 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.gnomADGenomeRfTpProbabilityIndel = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
-                case "--gnomad-genome-ab-median":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADCommand.gnomADGenomeABMedian = getValidFloat(option);
-                    GnomADCommand.isIncludeGnomADGenome = true;
-                    break;
                 case "--known-var-only":
                     KnownVarCommand.isKnownVarOnly = true;
                     KnownVarCommand.isIncludeKnownVar = true;
