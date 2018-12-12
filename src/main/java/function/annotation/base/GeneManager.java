@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
+import global.Data;
 import java.sql.Statement;
 import java.util.StringJoiner;
 import utils.DBManager;
@@ -19,11 +20,14 @@ import utils.DBManager;
 public class GeneManager {
 
     public static final String TMP_GENE_TABLE = "tmp_gene_chr"; // need to append chr in real time
+    public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_121118.tsv";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
     private static final HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<>();
+    // key: existing dragendb gene name, value: up to date gene name
+    private static HashMap<String, String> hgncGeneMap = new HashMap<>();
 
     private static ArrayList<Gene> geneBoundaryList = new ArrayList<>();
     private static int allGeneBoundaryLength;
@@ -35,6 +39,8 @@ public class GeneManager {
     private static boolean hasGeneDomainInput = false;
 
     public static void init() throws Exception {
+        initHgncGeneMap();
+
         initGeneName();
 
         initGeneBoundaries();
@@ -44,6 +50,26 @@ public class GeneManager {
         resetRegionList();
 
         initTempTable();
+    }
+
+    private static void initHgncGeneMap() {
+        try {
+            File file = new File(Data.ATAV_HOME + HGNC_GENE_MAP_PATH);
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("#")) {
+                    String[] tmp = line.split("\t");
+
+                    hgncGeneMap.put(tmp[0], tmp[1]);
+                }
+            }
+            br.close();
+            fr.close();
+        } catch (IOException ex) {
+            ErrorManager.send(ex);
+        }
     }
 
     private static void initGeneName() throws Exception {
@@ -80,7 +106,7 @@ public class GeneManager {
         try {
             FileReader fr = new FileReader(f);
             BufferedReader br = new BufferedReader(fr);
-            
+
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
 
@@ -98,7 +124,7 @@ public class GeneManager {
                     LogManager.writeAndPrint("Invalid gene: " + gene.getName());
                 }
             }
-            
+
             br.close();
             fr.close();
         } catch (Exception e) {
@@ -122,7 +148,7 @@ public class GeneManager {
         File f = new File(AnnotationLevelFilterCommand.geneBoundaryFile);
         FileReader fr = new FileReader(f);
         BufferedReader br = new BufferedReader(fr);
-        
+
         String line;
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
@@ -158,7 +184,7 @@ public class GeneManager {
                 }
             }
         }
-        
+
         br.close();
         fr.close();
     }
@@ -249,7 +275,7 @@ public class GeneManager {
         File f = new File(CollapsingCommand.coverageSummaryFile);
         FileReader fr = new FileReader(f);
         BufferedReader br = new BufferedReader(fr);
-        
+
         String line;
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty()) {
@@ -268,7 +294,7 @@ public class GeneManager {
                 }
             }
         }
-        
+
         br.close();
         fr.close();
     }
@@ -320,5 +346,10 @@ public class GeneManager {
 
     public static boolean hasGeneDomainInput() {
         return hasGeneDomainInput;
+    }
+
+    public static String getUpToDateGene(String dragendbGene) {
+        String upToDateGene = hgncGeneMap.get(dragendbGene);
+        return upToDateGene == null ? dragendbGene : upToDateGene;
     }
 }

@@ -289,6 +289,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(FormatManager.getFloat(polyphenHumvarCCDS));
         sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
+        sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
         sj.add(allGeneTranscriptSB.toString());
     }
 

@@ -77,6 +77,7 @@ public class Output {
         sj.add("Polyphen Humvar Score (CCDS)");
         sj.add("Polyphen Humvar Prediction (CCDS)");
         sj.add("Gene Name");
+        sj.add("UpToDate Gene Name");
         sj.add("All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar");
         
         return sj;

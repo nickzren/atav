@@ -77,7 +77,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         }
 
         sql += "ORDER BY POS,variant_id,effect_id,transcript_stable_id;";
-
+        
         return DBManager.executeReadOnlyQuery(sql);
     }
 
