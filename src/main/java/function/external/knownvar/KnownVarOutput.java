@@ -1,6 +1,7 @@
 package function.external.knownvar;
 
 import function.annotation.base.AnnotatedVariant;
+import function.annotation.base.GeneManager;
 import java.util.StringJoiner;
 import utils.FormatManager;
 
@@ -26,7 +27,7 @@ public class KnownVarOutput {
     }
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
-        String geneName = annotatedVar.getGeneName().toUpperCase();
+        String geneName = GeneManager.getUpToDateGene(annotatedVar.getGeneName()).toUpperCase();
         hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
         clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
         clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
