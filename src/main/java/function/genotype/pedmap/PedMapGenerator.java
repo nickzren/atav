@@ -335,7 +335,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 }              
                 double rms_val = Double.parseDouble(rms_str[rms_str.length -1].split("\\(")[0].trim());
                 if (rms_val > 0.0001){
-                    LogManager.writeAndPrint("WARNING: the root mean sq error of flashpca is very high " + Double.toString(rms_val));
+                    ErrorManager.print("The root mean sq error of flashpca is very high " + Double.toString(rms_val),1);
                 }
         }catch (Exception e){
             ErrorManager.send(e);
