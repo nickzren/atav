@@ -379,33 +379,36 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         
         LogManager.writeAndPrint("finding outliers using plink ibs clustering");
                 
-        findOutliers();
+        if(! PedMapCommand.isKeepOutliers){
+            findOutliers();
         
-        //read each line of outlier nearest file and filter based on Z-score, prop_diff parameters 
-        HashSet<String> outlierSet = getOutliers(CommonCommand.outputPath + "plink_outlier.nearest", CommonCommand.outputPath + "outlier_file.txt");
+            //read each line of outlier nearest file and filter based on Z-score, prop_diff parameters 
+            HashSet<String> outlierSet = getOutliers(CommonCommand.outputPath + "plink_outlier.nearest", CommonCommand.outputPath + "outlier_file.txt");
         
-        generateNewSampleFile(outlierSet,GenotypeLevelFilterCommand.sampleFile,"pruned_sample_file.txt");//generate new sample file, can't simly change fam file
+            generateNewSampleFile(outlierSet,GenotypeLevelFilterCommand.sampleFile,"pruned_sample_file.txt");//generate new sample file, can't simly change fam file
                 
-        LogManager.writeAndPrint("redo flashpca with outliers removed");
+            LogManager.writeAndPrint("redo flashpca with outliers removed");
         
-        String remove_cmd = " --remove " + CommonCommand.outputPath + "outlier_file.txt";
+            String remove_cmd = " --remove " + CommonCommand.outputPath + "outlier_file.txt";
         
-        sample_map.entrySet().stream().forEach(e->e.getValue().setOutlier(outlierSet));
-        Plot2DData(ndim,true,CommonCommand.outputPath + "plot_eigenvectors_flashpca_color_outliers.pdf");//cases,controls.outliers - 3 colors
+            sample_map.entrySet().stream().forEach(e->e.getValue().setOutlier(outlierSet));
+            Plot2DData(ndim,true,CommonCommand.outputPath + "plot_eigenvectors_flashpca_color_outliers.pdf");//cases,controls.outliers - 3 colors
         
-        runPlinkPedToBed("output","plink_outlier_removed",remove_cmd);
-        out_ext = "_flashpca_outliers_removed";                
-        runFlashPCA("plink_outlier_removed",out_ext,"flashpca.log");
+            runPlinkPedToBed("output","plink_outlier_removed",remove_cmd);
+            out_ext = "_flashpca_outliers_removed";                
+            runFlashPCA("plink_outlier_removed",out_ext,"flashpca.log");
         
-        //making plots with / without outlier
-        getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + out_ext,CommonCommand.outputPath + "eigenvalues_flashpca_outliers_removed.pdf",PedMapCommand.numEvec,"eigenvalues no outliers","plot of eigenvalues","eigenvalue number","eigenvalue");         
+            //making plots with / without outlier
+            getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + out_ext,CommonCommand.outputPath + "eigenvalues_flashpca_outliers_removed.pdf",PedMapCommand.numEvec,"eigenvalues no outliers","plot of eigenvalues","eigenvalue number","eigenvalue");         
                 
-        getevecDatafor1DPlot(CommonCommand.outputPath + "pve" + out_ext,CommonCommand.outputPath + "pve_flashpca_outliers_removed.pdf",PedMapCommand.numEvec,"percent variance no outliers","percent variance explained by eigval","eigenvalue number","per_var_explained");
+            getevecDatafor1DPlot(CommonCommand.outputPath + "pve" + out_ext,CommonCommand.outputPath + "pve_flashpca_outliers_removed.pdf",PedMapCommand.numEvec,"percent variance no outliers","percent variance explained by eigval","eigenvalue number","per_var_explained");
         
-        sample_info = sample_map.values().stream().filter(s->!s.isOutlier()).map(SamplePCAInfo::getSample).collect(Collectors.toCollection(ArrayList::new));
+            sample_info = sample_map.values().stream().filter(s->!s.isOutlier()).map(SamplePCAInfo::getSample).collect(Collectors.toCollection(ArrayList::new));
        
-        getdata_dim123(ndim,CommonCommand.outputPath + "eigenvectors" + out_ext,CommonCommand.outputPath + "pcs" + out_ext,sample_info);
-        Plot2DData(ndim, false,CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
+            getdata_dim123(ndim,CommonCommand.outputPath + "eigenvectors" + out_ext,CommonCommand.outputPath + "pcs" + out_ext,sample_info);
+            Plot2DData(ndim, false,CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
+    
+        }
     }
     
     public void Plot2DData(int ndim, boolean with_out, String pdf_name){
