@@ -1,16 +1,18 @@
 package function.genotype.pedmap;
- import java.util.Iterator;
+
+import java.util.Iterator;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
-import utils.LogManager;
- /**
+
+/**
  *
  * @author nick
  */
 public class PedMapCommand {
-     public static boolean isPedMap = false;
+
+    public static boolean isPedMap = false;
     public static boolean isVariantIdOnly = false; //what's this where are we using it ? 
     public static boolean isEigenstrat = false;
     public static boolean isKinship = false;
@@ -19,21 +21,21 @@ public class PedMapCommand {
     public static String sampleCoverageSummaryPath = "";
     public static int kinshipSeed = 42;
     public static float kinshipRelatednessThreshold = 0.0884f;
-     //for flashpca, plink outlier removal
+    //for flashpca, plink outlier removal
     public static boolean isKeepOutliers = false;
     public static boolean isNoPlots = false;
     public static int numEvec = 10;
     public static int numNeighbor = 5;//nearest neighbor for outlier detection
     public static float z_thresh = -2.4f;//Z value per nearest neghbor
-    
+
     //removed ppc and prop_diff filter
     //public static boolean isppc = false; //use ppc value in outlier detection
     //public static float ppc = 0.05f;//assumes snps in linkage equilibrium
     //public static boolean isProp_Diff = false;//use prop_diff value in outlier detection; requires ppc to be used too
     //public static float prop_diff = 0.99f;//Proportion of significantly different others samples
-     public static void initOptions(Iterator<CommandOption> iterator) {
+    public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
-         while (iterator.hasNext()) {
+        while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--eigenstrat":
@@ -73,7 +75,7 @@ public class PedMapCommand {
                 default:
                     continue;
             }
-             iterator.remove();
+            iterator.remove();
         }
     }
 }
