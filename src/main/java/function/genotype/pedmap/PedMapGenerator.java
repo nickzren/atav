@@ -258,10 +258,9 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             nDim = PedMapCommand.numEvec;
         }
         ArrayList<Sample> sampleList = SampleManager.getList();
-        FlashPCAManager.getDataDim123(nDim,
+        sampleMap = FlashPCAManager.getSampleMap(nDim,
                 CommonCommand.outputPath + "eigenvectors" + outExt,
                 CommonCommand.outputPath + "pcs" + outExt,
-                sampleMap,
                 sampleList);
 
         FlashPCAManager.plot2DData(sampleMap, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca.pdf");
@@ -312,12 +311,12 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                     .filter(s -> !s.isOutlier())
                     .map(SamplePCAInfo::getSample)
                     .collect(Collectors.toCollection(ArrayList::new));
-
-            FlashPCAManager.getDataDim123(nDim,
+            
+            sampleMap = FlashPCAManager.getSampleMap(nDim,
                     CommonCommand.outputPath + "eigenvectors" + outExt,
                     CommonCommand.outputPath + "pcs" + outExt,
-                    sampleMap,
                     sampleList);
+            
             FlashPCAManager.plot2DData(sampleMap, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
         }
     }

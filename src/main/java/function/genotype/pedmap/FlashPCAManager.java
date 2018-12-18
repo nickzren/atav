@@ -70,7 +70,7 @@ public class FlashPCAManager {
         cmd = ThirdPartyToolManager.FLASHPCA
                 + " -v" 
                 + " --bfile " + CommonCommand.outputPath + inputName
-                + " --check "
+                + " --check"
                 + " --outvec " + CommonCommand.outputPath + "eigenvectors" + outExt
                 + " --outval " + CommonCommand.outputPath + "eigenvalues" + outExt
                 + " 2>&1 >> " + CommonCommand.outputPath + logName;
@@ -139,7 +139,7 @@ public class FlashPCAManager {
         saveChartAsPDF(pdfName, charts, 630, 1100);
     }
 
-    private static JFreeChart buildChartPcs(Map<String, SamplePCAInfo> sampleMap, boolean includeOutlier, int dim1, int dim2) {
+    private static JFreeChart buildChartPcs(Map<String, SamplePCAInfo> sampleMap, boolean includeOutlier, int dim1, int dim2) {        
         XYSeries outlierSeries = new XYSeries("outlier");
         XYSeries caseSeries = new XYSeries("case");
         XYSeries ctrlSeries = new XYSeries("control");
@@ -335,9 +335,9 @@ public class FlashPCAManager {
         return outlierSet;
     }
 
-    public static void getDataDim123(int ndim, String evecFileName, String pcsFileName,
-            Map<String, SamplePCAInfo> sampleMap, ArrayList<Sample> sampleList) {
-        sampleMap = sampleList.stream().collect(Collectors.toMap(Sample::getName, s -> new SamplePCAInfo(s, ndim)));
+    public static Map<String, SamplePCAInfo> getSampleMap(int ndim, String evecFileName, 
+            String pcsFileName, ArrayList<Sample> sampleList) {
+        Map<String, SamplePCAInfo> sampleMap = sampleList.stream().collect(Collectors.toMap(Sample::getName, s -> new SamplePCAInfo(s, ndim)));
         System.out.println("Files from which we're reading; evec: " + evecFileName + " pcs: " + pcsFileName);
 
         try {
@@ -359,6 +359,8 @@ public class FlashPCAManager {
         } catch (IOException e) {
             ErrorManager.send(e);
         }
+        
+        return sampleMap;
     }
 
     private static void saveChartAsPDF(String fileName, List<JFreeChart> charts, float ht, float wth) {
