@@ -8,6 +8,7 @@ import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
+import global.Index;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -16,6 +17,7 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -39,57 +41,58 @@ import utils.ThirdPartyToolManager;
 
 /**
  *
- * @author nick
+ * @author macrina
  */
 public class FlashPCAManager {
 
-    public static void runFlashPCA(String ip_name, String out_ext, String logname) {
+    public static void runFlashPCA(String inputName, String outExt, String logName) {
         LogManager.writeAndPrint("flashpca for eigenvalues, vectors, pcs and percent variance explained by each pc. #dimenions = " + PedMapCommand.numEvec);
 
         try {
             if (PedMapCommand.numEvec <= 0) {
-                throw new IllegalArgumentException("number of eigenvectors as input to flashpca cant be 0");
+                throw new IllegalArgumentException("Number of eigenvectors as input to flashpca cant be 0");
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             ErrorManager.send(e);
         }
 
         String cmd = ThirdPartyToolManager.FLASHPCA
-                + " --bfile " + CommonCommand.outputPath + ip_name
+                + " --bfile " + CommonCommand.outputPath + inputName
                 + " --ndim " + PedMapCommand.numEvec
-                + " --outpc " + CommonCommand.outputPath + "pcs" + out_ext
-                + " --outvec " + CommonCommand.outputPath + "eigenvectors" + out_ext
-                + " --outval " + CommonCommand.outputPath + "eigenvalues" + out_ext
-                + " --outpve " + CommonCommand.outputPath + "pve" + out_ext
-                + " 2>&1 >> " + CommonCommand.outputPath + logname;
+                + " --outpc " + CommonCommand.outputPath + "pcs" + outExt
+                + " --outvec " + CommonCommand.outputPath + "eigenvectors" + outExt
+                + " --outval " + CommonCommand.outputPath + "eigenvalues" + outExt
+                + " --outpve " + CommonCommand.outputPath + "pve" + outExt
+                + " 2>&1 >> " + CommonCommand.outputPath + logName;
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
 
-        LogManager.writeAndPrint("verify flashpca mean square errors");
+        LogManager.writeAndPrint("Verify flashpca mean square errors");
         cmd = ThirdPartyToolManager.FLASHPCA
-                + " -v" + " --bfile " + CommonCommand.outputPath + ip_name
+                + " -v" 
+                + " --bfile " + CommonCommand.outputPath + inputName
                 + " --check "
-                + " --outvec " + CommonCommand.outputPath + "eigenvectors" + out_ext
-                + " --outval " + CommonCommand.outputPath + "eigenvalues" + out_ext
-                + " 2>&1 >> " + CommonCommand.outputPath + logname;
+                + " --outvec " + CommonCommand.outputPath + "eigenvectors" + outExt
+                + " --outval " + CommonCommand.outputPath + "eigenvalues" + outExt
+                + " 2>&1 >> " + CommonCommand.outputPath + logName;
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
 
         //if condition on rms ; print a  warning
         try {
             Charset charset = Charset.defaultCharset();
-            List<String> log_lines = Files.readAllLines(Paths.get(CommonCommand.outputPath + logname), charset);
+            List<String> log_lines = Files.readAllLines(Paths.get(CommonCommand.outputPath + logName), charset);
             String text = log_lines.get(log_lines.size() - 2);
-            String[] rms_str;
+            String[] rmsStr;
             if (text.contains("Root mean squared error")) {
-                rms_str = text.split(":");
+                rmsStr = text.split(":");
             } else {
                 throw new NoSuchFieldException("root mean squared error could not be read from flashpca.log file");
             }
-            double rms_val = Double.parseDouble(rms_str[rms_str.length - 1].split("\\(")[0].trim());
-            if (rms_val > 0.0001) {
-                ErrorManager.print("The root mean sq error of flashpca is very high " + Double.toString(rms_val), 1);
+            double rmsVal = Double.parseDouble(rmsStr[rmsStr.length - 1].split("\\(")[0].trim());
+            if (rmsVal > 0.0001) {
+                ErrorManager.print("The root mean sq error of flashpca is very high " + Double.toString(rmsVal), 1);
             }
-        } catch (Exception e) {
+        } catch (IOException | NoSuchFieldException | NumberFormatException e) {
             ErrorManager.send(e);
         }
     }
@@ -105,72 +108,77 @@ public class FlashPCAManager {
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
 
-    public static void Plot2DData(Map<String, SamplePCAInfo> sample_map, int ndim, boolean with_out, String pdf_name) {
+    public static void plot2DData(Map<String, SamplePCAInfo> sampleMap, int nDim, boolean includeOutlier, String pdfName) {
         int numCharts = 2;
-        if (ndim == 3) {
+        if (nDim == 3) {
             numCharts = 6;
         }
 
         List<JFreeChart> charts = new ArrayList<>(numCharts);
-        if (ndim == 1) {
-            charts.add(buildChartPcs(sample_map, with_out, -1, 0));
-            charts.add(buildChartEvec(sample_map, with_out, -1, 0));
-        } else if (ndim == 2) {
-            //numCharts = 2;//4 or 6 2D series
-            charts.add(buildChartPcs(sample_map, with_out, 0, 1));
-            charts.add(buildChartEvec(sample_map, with_out, 0, 1));
-        } else {
-            //numCharts = 6;//12 or 18 2D series
-            charts.add(buildChartPcs(sample_map, with_out, 0, 1));
-            charts.add(buildChartEvec(sample_map, with_out, 0, 1));
-            charts.add(buildChartPcs(sample_map, with_out, 1, 2));
-            charts.add(buildChartEvec(sample_map, with_out, 1, 2));
-            charts.add(buildChartPcs(sample_map, with_out, 0, 2));
-            charts.add(buildChartEvec(sample_map, with_out, 0, 2));
+        switch (nDim) {
+            case 1:
+                charts.add(buildChartPcs(sampleMap, includeOutlier, -1, 0));
+                charts.add(buildChartEvec(sampleMap, includeOutlier, -1, 0));
+                break;
+            case 2:
+                //numCharts = 2;//4 or 6 2D series
+                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 1));
+                charts.add(buildChartEvec(sampleMap, includeOutlier, 0, 1));
+                break;
+            default:
+                //numCharts = 6;//12 or 18 2D series
+                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 1));
+                charts.add(buildChartEvec(sampleMap, includeOutlier, 0, 1));
+                charts.add(buildChartPcs(sampleMap, includeOutlier, 1, 2));
+                charts.add(buildChartEvec(sampleMap, includeOutlier, 1, 2));
+                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 2));
+                charts.add(buildChartEvec(sampleMap, includeOutlier, 0, 2));
+                break;
         }
-        saveChartAsPDF(pdf_name, charts, 630, 1100);
+        
+        saveChartAsPDF(pdfName, charts, 630, 1100);
     }
 
-    public static JFreeChart buildChartPcs(Map<String, SamplePCAInfo> sample_map, boolean with_out, int dim1, int dim2) {
-        XYSeries outlier_series = new XYSeries("outlier");
-        XYSeries case_series = new XYSeries("case");
-        XYSeries ctrl_series = new XYSeries("control");
-        String plotName, xlabel, ylabel;
-        int count_case, count_ctrl, count_out;
-        count_out = count_ctrl = count_case = 0;
+    private static JFreeChart buildChartPcs(Map<String, SamplePCAInfo> sampleMap, boolean includeOutlier, int dim1, int dim2) {
+        XYSeries outlierSeries = new XYSeries("outlier");
+        XYSeries caseSeries = new XYSeries("case");
+        XYSeries ctrlSeries = new XYSeries("control");
+        String plotName, xLabel, yLabel;
+        int countCase, countCtrl, countOut;
+        countOut = countCtrl = countCase = 0;
 
         if (dim1 == -1) {
             plotName = "principal components (pc) 1D scatter plot";
 
-            xlabel = "sample number";
-            ylabel = "pc in 1D";
-            for (SamplePCAInfo map_val : sample_map.values()) {
-                if (with_out && map_val.isOutlier()) {
-                    outlier_series.add(count_out++, map_val.getPCAInfoPcs(dim2));
+            xLabel = "sample number";
+            yLabel = "pc in 1D";
+            for (SamplePCAInfo samplePCAInfo : sampleMap.values()) {
+                if (includeOutlier && samplePCAInfo.isOutlier()) {
+                    outlierSeries.add(countOut++, samplePCAInfo.getPCAInfoPcs(dim2));
                 } else {
-                    if (map_val.getPheno() == 0) {
-                        ctrl_series.add(count_ctrl++, map_val.getPCAInfoPcs(dim2));
+                    if (samplePCAInfo.getPheno() == Index.CTRL) {
+                        ctrlSeries.add(countCtrl++, samplePCAInfo.getPCAInfoPcs(dim2));
                     } else {
-                        case_series.add(count_case++, map_val.getPCAInfoPcs(dim2));
+                        caseSeries.add(countCase++, samplePCAInfo.getPCAInfoPcs(dim2));
                     }
                 }
             }
         } else {
             plotName = "principal components (pc) 2D scatter plot";
-            xlabel = "pc dim " + Integer.toString(dim1 + 1);
-            ylabel = "pc dim " + Integer.toString(dim2 + 1);
-            for (SamplePCAInfo map_val : sample_map.values()) {
-                double[] pcs_data = map_val.getPCAInfoPcs(dim1, dim2);
-                if (with_out && map_val.isOutlier()) {
-                    outlier_series.add(pcs_data[0], pcs_data[1]);
-                    count_out++;
+            xLabel = "pc dim " + Integer.toString(dim1 + 1);
+            yLabel = "pc dim " + Integer.toString(dim2 + 1);
+            for (SamplePCAInfo samplePCAInfo : sampleMap.values()) {
+                double[] pcsData = samplePCAInfo.getPCAInfoPcs(dim1, dim2);
+                if (includeOutlier && samplePCAInfo.isOutlier()) {
+                    outlierSeries.add(pcsData[0], pcsData[1]);
+                    countOut++;
                 } else {
-                    if (map_val.getPheno() == 0) {
-                        ctrl_series.add(pcs_data[0], pcs_data[1]);
-                        count_ctrl++;
+                    if (samplePCAInfo.getPheno() == Index.CTRL) {
+                        ctrlSeries.add(pcsData[0], pcsData[1]);
+                        countCtrl++;
                     } else {
-                        case_series.add(pcs_data[0], pcs_data[1]);
-                        count_case++;
+                        caseSeries.add(pcsData[0], pcsData[1]);
+                        countCase++;
                     }
                 }
             }
@@ -178,100 +186,100 @@ public class FlashPCAManager {
 
         System.out.println("original number of cases :" + SampleManager.getCaseNum());
         System.out.println("original number of controls :" + SampleManager.getCtrlNum());
-        System.out.println("number of cases :" + count_case);
-        System.out.println("number of controls :" + count_ctrl);
-        System.out.println("number of outliers :" + count_out);
+        System.out.println("number of cases :" + countCase);
+        System.out.println("number of controls :" + countCtrl);
+        System.out.println("number of outliers :" + countOut);
 
-        XYSeriesCollection data_collection = new XYSeriesCollection();
-        data_collection.addSeries(ctrl_series);
-        data_collection.addSeries(case_series);
-        if (with_out) {
-            data_collection.addSeries(outlier_series);
+        XYSeriesCollection dataCollection = new XYSeriesCollection();
+        dataCollection.addSeries(ctrlSeries);
+        dataCollection.addSeries(caseSeries);
+        if (includeOutlier) {
+            dataCollection.addSeries(outlierSeries);
         }
 
-        JFreeChart chart_op = ChartFactory.createScatterPlot(plotName, xlabel, ylabel, data_collection, PlotOrientation.HORIZONTAL, true, true, false);
+        JFreeChart chartOp = ChartFactory.createScatterPlot(plotName, xLabel, yLabel, dataCollection, PlotOrientation.HORIZONTAL, true, true, false);
 
         //setting series colors - blue = case, green = control, red = outliers if they exist
-        XYPlot plot_op = (XYPlot) chart_op.getPlot();
-        plot_op.getRenderer().setSeriesPaint(0, new Color(0x00, 0xFF, 0x00)); //ctrl = green
-        plot_op.getRenderer().setSeriesPaint(1, new Color(0x00, 0x00, 0xFF)); //case = blue
-        if (with_out) {
-            plot_op.getRenderer().setSeriesPaint(2, new Color(0xFF, 0x00, 0x00)); //outlier = red
+        XYPlot plotOp = (XYPlot) chartOp.getPlot();
+        plotOp.getRenderer().setSeriesPaint(0, new Color(0x00, 0xFF, 0x00)); //ctrl = green
+        plotOp.getRenderer().setSeriesPaint(1, new Color(0x00, 0x00, 0xFF)); //case = blue
+        if (includeOutlier) {
+            plotOp.getRenderer().setSeriesPaint(2, new Color(0xFF, 0x00, 0x00)); //outlier = red
         }
-        plot_op.setSeriesRenderingOrder(SeriesRenderingOrder.FORWARD);
-        return chart_op;
+        plotOp.setSeriesRenderingOrder(SeriesRenderingOrder.FORWARD);
+        return chartOp;
     }
 
-    public static JFreeChart buildChartEvec(Map<String, SamplePCAInfo> sample_map, boolean with_out, int dim1, int dim2) {
-        XYSeries outlier_series = new XYSeries("outlier");
-        XYSeries case_series = new XYSeries("case");
-        XYSeries ctrl_series = new XYSeries("control");
+    public static JFreeChart buildChartEvec(Map<String, SamplePCAInfo> sample_map, boolean includeOutlier, int dim1, int dim2) {
+        XYSeries outlierSeries = new XYSeries("outlier");
+        XYSeries caseSeries = new XYSeries("case");
+        XYSeries ctrlSeries = new XYSeries("control");
 
-        String plotName, xlabel, ylabel;
+        String plotName, xLabel, yLabel;
 
         if (dim1 == -1) {
             plotName = "eigenvector (ev) 1D scatter plot";
-            int count_out = 0;
-            int count_case = 0;
-            int count_ctrl = 0;
-            xlabel = "sample number";
-            ylabel = "ev in 1D";
-            for (SamplePCAInfo map_val : sample_map.values()) {
-                if (with_out && map_val.isOutlier()) {
-                    outlier_series.add(count_out++, map_val.getPCAInfoEvec(dim2));
+            int countOut = 0;
+            int countCase = 0;
+            int countCtrl = 0;
+            xLabel = "sample number";
+            yLabel = "ev in 1D";
+            for (SamplePCAInfo samplePCAInfo : sample_map.values()) {
+                if (includeOutlier && samplePCAInfo.isOutlier()) {
+                    outlierSeries.add(countOut++, samplePCAInfo.getPCAInfoEvec(dim2));
                 } else {
-                    if (map_val.getPheno() == 0) {
-                        ctrl_series.add(count_ctrl++, map_val.getPCAInfoEvec(dim2));
+                    if (samplePCAInfo.getPheno() == Index.CTRL) {
+                        ctrlSeries.add(countCtrl++, samplePCAInfo.getPCAInfoEvec(dim2));
                     } else {
-                        case_series.add(count_case++, map_val.getPCAInfoEvec(dim2));
+                        caseSeries.add(countCase++, samplePCAInfo.getPCAInfoEvec(dim2));
                     }
                 }
             }
         } else {
             plotName = "eigenvector (ev) 2D scatter plot";
-            xlabel = "ev dim " + Integer.toString(dim1 + 1);
-            ylabel = "ev dim " + Integer.toString(dim2 + 1);
-            for (SamplePCAInfo map_val : sample_map.values()) {
-                double[] evec_data = map_val.getPCAInfoEvec(dim1, dim2);
-                if (with_out && map_val.isOutlier()) {
-                    outlier_series.add(evec_data[0], evec_data[1]);
+            xLabel = "ev dim " + Integer.toString(dim1 + 1);
+            yLabel = "ev dim " + Integer.toString(dim2 + 1);
+            for (SamplePCAInfo samplePCAInfo : sample_map.values()) {
+                double[] evecData = samplePCAInfo.getPCAInfoEvec(dim1, dim2);
+                if (includeOutlier && samplePCAInfo.isOutlier()) {
+                    outlierSeries.add(evecData[0], evecData[1]);
                 } else {
-                    if (map_val.getPheno() == 0) {
-                        ctrl_series.add(evec_data[0], evec_data[1]);
+                    if (samplePCAInfo.getPheno() == Index.CTRL) {
+                        ctrlSeries.add(evecData[0], evecData[1]);
                     } else {
-                        case_series.add(evec_data[0], evec_data[1]);
+                        caseSeries.add(evecData[0], evecData[1]);
                     }
                 }
             }
         }
-        XYSeriesCollection data_collection = new XYSeriesCollection();
-        data_collection.addSeries(ctrl_series);
-        data_collection.addSeries(case_series);
-        if (with_out) {
-            data_collection.addSeries(outlier_series);
+        XYSeriesCollection dataCollection = new XYSeriesCollection();
+        dataCollection.addSeries(ctrlSeries);
+        dataCollection.addSeries(caseSeries);
+        if (includeOutlier) {
+            dataCollection.addSeries(outlierSeries);
         }
 
-        JFreeChart chart_op = ChartFactory.createScatterPlot(plotName, xlabel, ylabel, data_collection, PlotOrientation.HORIZONTAL, true, true, false);
+        JFreeChart chart_op = ChartFactory.createScatterPlot(plotName, xLabel, yLabel, dataCollection, PlotOrientation.HORIZONTAL, true, true, false);
 
         //setting series colors - blue = case, green = control, red = outliers if they exist
         XYPlot plot_op = (XYPlot) chart_op.getPlot();
         plot_op.getRenderer().setSeriesPaint(0, new Color(0x00, 0xFF, 0x00)); //ctrl = green
         plot_op.getRenderer().setSeriesPaint(1, new Color(0x00, 0x00, 0xFF)); //case = blue
-        if (with_out) {
+        if (includeOutlier) {
             plot_op.getRenderer().setSeriesPaint(2, new Color(0xFF, 0x00, 0x00)); //outlier = red
         }
         plot_op.setSeriesRenderingOrder(SeriesRenderingOrder.FORWARD);
         return chart_op;
     }
 
-    public static void generateNewSampleFile(HashSet<String> outlierSet, String sample_file, String output_file) {
+    public static void generateNewSampleFile(HashSet<String> outlierSet, String sampleFile, String outputFile) {
         try {
-            FileWriter fw = new FileWriter(CommonCommand.outputPath + output_file);
-            Files.lines(Paths.get(sample_file))
+            FileWriter fw = new FileWriter(CommonCommand.outputPath + outputFile);
+            Files.lines(Paths.get(sampleFile))
                     .map(line -> line.split("\\t"))
                     .filter(line -> !outlierSet.contains(line[1]))
                     .forEach(line -> printLine(fw, line));
-        } catch (Exception e) {
+        } catch (IOException e) {
             ErrorManager.send(e);
         }
     }
@@ -279,121 +287,120 @@ public class FlashPCAManager {
     private static void printLine(FileWriter fw, String[] line) {
         try {
             fw.write(String.join("\\t", line) + "\n");
-        } catch (Exception e) {
+        } catch (IOException e) {
             ErrorManager.send(e);
         }
     }
 
-    public static HashSet<String> getOutliers(String filename, String outlierFile) {
+    public static HashSet<String> getOutliers(String fileName, String outlierFile) {
         HashSet<String> outlierSet = new HashSet<>();
-        float z_thresh_sum = PedMapCommand.z_thresh * PedMapCommand.numNeighbor;
-        try (BufferedReader br = new BufferedReader(new FileReader(filename));
+        float zThreshSum = PedMapCommand.zThresh * PedMapCommand.numNeighbor;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outlierFile))) {
             String[] header = br.readLine().replaceAll("^\\s+", "").split(" +");
 
             if (!"Z".equals(header[4])) {
-                throw new IllegalArgumentException("column names in nearest neighbor file " + filename + " are incorrect");
+                throw new IllegalArgumentException("Column names in nearest neighbor file " + fileName + " are incorrect");
             }
             writer.write(header[0] + "\t" + header[1] + "\n");
             String line;
-            int count_line = 1;
-            String iid_curr = "";
-            String fid_curr = "";
-            float sum_z = 0.0f;
+            int countLine = 1;
+            String iidCurr = "";
+            String fidCurr = "";
+            float sumZ = 0.0f;
             while ((line = br.readLine()) != null) {
-                String[] data_str_line = line.replaceAll("^\\s+", "").split(" +");
+                String[] dataStrLine = line.replaceAll("^\\s+", "").split(" +");
 
-                if (!data_str_line[0].equals(fid_curr) || !data_str_line[1].equals(iid_curr) || count_line == 1) {
+                if (!dataStrLine[0].equals(fidCurr) || !dataStrLine[1].equals(iidCurr) || countLine == 1) {
 
-                    if (sum_z < z_thresh_sum) {
-
-                        System.out.println(data_str_line[0] + "\t" + data_str_line[1]);
-                        writer.write(data_str_line[0] + "\t" + data_str_line[1] + "\n");
-                        outlierSet.add(data_str_line[1]);
+                    if (sumZ < zThreshSum) {
+                        System.out.println(dataStrLine[0] + "\t" + dataStrLine[1]);
+                        writer.write(dataStrLine[0] + "\t" + dataStrLine[1] + "\n");
+                        outlierSet.add(dataStrLine[1]);
                     }
-                    count_line = PedMapCommand.numNeighbor;
-                    fid_curr = data_str_line[0];
-                    iid_curr = data_str_line[1];
-                    sum_z = Float.valueOf(data_str_line[4]);
+                    countLine = PedMapCommand.numNeighbor;
+                    fidCurr = dataStrLine[0];
+                    iidCurr = dataStrLine[1];
+                    sumZ = Float.valueOf(dataStrLine[4]);
                 } else {
-                    count_line = count_line - 1;
-                    sum_z = sum_z + Float.valueOf(data_str_line[4]);
+                    countLine = countLine - 1;
+                    sumZ = sumZ + Float.valueOf(dataStrLine[4]);
                 }
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
 
-        System.out.println("size of outlier set: " + outlierSet.size());
+        System.out.println("Size of outlier set: " + outlierSet.size());
         return outlierSet;
     }
 
-    public static void getdata_dim123(Map<String, SamplePCAInfo> sample_map, int ndim, String evec_fileName, String pcs_fileName, ArrayList<Sample> sample_info) {
-        sample_map = sample_info.stream().collect(Collectors.toMap(Sample::getName, s -> new SamplePCAInfo(s, ndim)));
-        System.out.println("files from which we're reading; evec: " + evec_fileName + " pcs: " + pcs_fileName);
+    public static void getDataDim123(int ndim, String evecFileName, String pcsFileName,
+            Map<String, SamplePCAInfo> sampleMap, ArrayList<Sample> sampleList) {
+        sampleMap = sampleList.stream().collect(Collectors.toMap(Sample::getName, s -> new SamplePCAInfo(s, ndim)));
+        System.out.println("Files from which we're reading; evec: " + evecFileName + " pcs: " + pcsFileName);
 
         try {
+            BufferedReader brEvec = new BufferedReader(new FileReader(evecFileName));
+            BufferedReader brPcs = new BufferedReader(new FileReader(pcsFileName));
+            brEvec.readLine();
+            brPcs.readLine();
+            String evecLine;
+            String pcsLine;
 
-            BufferedReader br_evec = new BufferedReader(new FileReader(evec_fileName));
-            BufferedReader br_pcs = new BufferedReader(new FileReader(pcs_fileName));
-            br_evec.readLine();
-            br_pcs.readLine();
-            String evec_line;
-            String pcs_line;
-
-            while ((evec_line = br_evec.readLine()) != null && (pcs_line = br_pcs.readLine()) != null) {
-                String[] evec_str_line = evec_line.split("\\t");
-                String[] pcs_str_line = pcs_line.split("\\t");
-                if (sample_map.containsKey(evec_str_line[1])) {
-                    sample_map.get(evec_str_line[1]).setEvec(ndim, evec_str_line);
-                    sample_map.get(evec_str_line[1]).setPcs(ndim, pcs_str_line);
+            while ((evecLine = brEvec.readLine()) != null && (pcsLine = brPcs.readLine()) != null) {
+                String[] evecStrLine = evecLine.split("\\t");
+                String[] pcsStrLine = pcsLine.split("\\t");
+                if (sampleMap.containsKey(evecStrLine[1])) {
+                    sampleMap.get(evecStrLine[1]).setEvec(ndim, evecStrLine);
+                    sampleMap.get(evecStrLine[1]).setPcs(ndim, pcsStrLine);
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             ErrorManager.send(e);
         }
     }
 
-    public static void saveChartAsPDF(String filename, List<JFreeChart> charts, float ht, float wth) {
+    private static void saveChartAsPDF(String fileName, List<JFreeChart> charts, float ht, float wth) {
         try {
             Document document = new Document(new Rectangle(wth, ht), 0, 0, 0, 0);
             //Document document = new Document(PageSize.A0);
             document.addAuthor("atav");
             document.addSubject("flashpca_plot");
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filename));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileName));
             document.open();
             PdfContentByte cb = writer.getDirectContent();
             //writeChartAsPDF(cb, chart, PageSize.LETTER.getWidth(), PageSize.LETTER.getHeight(),true);
-            float ind_width = wth;
-            float ind_ht = ht;
-            int num_charts_x = 1;
-            int num_charts_y = 1;
+            float indWidth = wth;
+            float indHt = ht;
+            int numChartsX = 1;
+            int numChartsY = 1;
             if (charts.size() > 2) {
-                ind_width = wth / 3;
-                num_charts_x = 3;
+                indWidth = wth / 3;
+                numChartsX = 3;
             }
             if (charts.size() > 1) {
-                ind_ht = ht / 2;
-                num_charts_y = 2;
+                indHt = ht / 2;
+                numChartsY = 2;
             }
 
             int counter = 0;
-            float curr_ht = 0;
-            float curr_wth = 0;
-            for (int i = 0; i < num_charts_x; i++) {
-                for (int j = 0; j < num_charts_y; j++) {
-                    PdfTemplate tp = cb.createTemplate(ind_width, ind_ht);
-                    Graphics2D g2 = new PdfGraphics2D(tp, ind_width, ind_ht);
-                    Rectangle2D r2D = new Rectangle2D.Double(0, 0, ind_width, ind_ht);
+            float currHt = 0;
+            float currWth = 0;
+            for (int i = 0; i < numChartsX; i++) {
+                for (int j = 0; j < numChartsY; j++) {
+                    PdfTemplate tp = cb.createTemplate(indWidth, indHt);
+                    Graphics2D g2 = new PdfGraphics2D(tp, indWidth, indHt);
+                    Rectangle2D r2D = new Rectangle2D.Double(0, 0, indWidth, indHt);
                     charts.get(counter).draw(g2, r2D, null);
                     g2.dispose();
-                    cb.addTemplate(tp, curr_wth, curr_ht);
-                    //curr_wth = curr_wth +  ind_width;
-                    curr_ht = curr_ht + ind_ht;
+                    cb.addTemplate(tp, currWth, currHt);
+                    //curr_wth = currWth +  indWidth;
+                    currHt = currHt + indHt;
                     counter = counter + 1;
                 }
-                curr_ht = 0;
-                curr_wth = curr_wth + ind_width;
+                currHt = 0;
+                currWth = currWth + indWidth;
             }
             document.close();
         } catch (Exception e) {
@@ -401,29 +408,30 @@ public class FlashPCAManager {
         }
     }
 
-    public static void getevecDatafor1DPlot(String input_filename, String pdf_filename, int ndim, String plotname, String plot_title, String x_name, String y_name) {
+    public static void getevecDatafor1DPlot(String inputFileName, String pdfFileName, 
+            String plotName, String plotTitle, String xName, String yName) {
         Charset charset = Charset.defaultCharset();
         //double[] xdata = new double[ndim];  
-        XYSeries xydata = new XYSeries(plotname);
+        XYSeries xyData = new XYSeries(plotName);
         try {
             List<String> fileLines;
-            fileLines = Files.readAllLines(Paths.get(input_filename), charset);
-            if (fileLines.size() != ndim) {
+            fileLines = Files.readAllLines(Paths.get(inputFileName), charset);
+            if (fileLines.size() != PedMapCommand.numEvec) {
                 String message;
-                message = String.format("File %s has too many lines. #lines must equal #pcs!", input_filename);
+                message = String.format("File %s has too many lines. #lines must equal #pcs!", inputFileName);
                 throw new IllegalArgumentException(message);
             }
 
             for (int i = 0; i < fileLines.size(); i++) {
-                xydata.add(i + 1, Double.parseDouble(fileLines.get(i)));
+                xyData.add(i + 1, Double.parseDouble(fileLines.get(i)));
             }
 
             XYSeriesCollection dataset = new XYSeriesCollection();
-            dataset.addSeries(xydata);
+            dataset.addSeries(xyData);
             List<JFreeChart> charts = new ArrayList<>(1);
-            charts.add(ChartFactory.createXYLineChart(plot_title, x_name, y_name, (XYDataset) dataset, PlotOrientation.VERTICAL, true, true, false));
+            charts.add(ChartFactory.createXYLineChart(plotTitle, xName, yName, (XYDataset) dataset, PlotOrientation.VERTICAL, true, true, false));
 
-            saveChartAsPDF(pdf_filename, charts, 630, 1100);
+            saveChartAsPDF(pdfFileName, charts, 630, 1100);
 
         } catch (IllegalArgumentException e) {
             ErrorManager.send(e);

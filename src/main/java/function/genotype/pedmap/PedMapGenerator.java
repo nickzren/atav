@@ -22,7 +22,7 @@ import utils.ErrorManager;
 
 /**
  *
- * @author nick
+ * @author nick, macrina
  */
 public class PedMapGenerator extends AnalysisBase4CalledVar {
 
@@ -38,8 +38,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     // --kinship
     private static final String KINSHIP_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_kinship.py";
 
-    //flashpca
-    Map<String, SamplePCAInfo> sample_map;
+    // flashpca
+    Map<String, SamplePCAInfo> sampleMap;
 
     @Override
     public void initOutput() {
@@ -236,55 +236,93 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     public void doFlashPCA() {
         runPlinkPedToBed("output", "plink", "");
 
-        String out_ext = "_flashpca";
-        FlashPCAManager.runFlashPCA("plink", out_ext, "flashpca.log");
-        FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + out_ext, CommonCommand.outputPath + "plot_eigenvalues_flashpca.pdf", PedMapCommand.numEvec, "eigenvalues", "plot of eigenvalues", "eigenvalue number", "eigenvalue");
+        String outExt = "_flashpca";
+        FlashPCAManager.runFlashPCA("plink", outExt, "flashpca.log");
+        FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + outExt,
+                CommonCommand.outputPath + "plot_eigenvalues_flashpca.pdf",
+                "eigenvalues",
+                "plot of eigenvalues",
+                "eigenvalue number",
+                "eigenvalue");
 
-        FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "pve" + out_ext, CommonCommand.outputPath + "plot_pve_flashpca.pdf", PedMapCommand.numEvec, "percent variance", "percent_variance explained by eigval", "eigenvalue number", "per_var_explained");
+        FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "pve" + outExt,
+                CommonCommand.outputPath + "plot_pve_flashpca.pdf",
+                "percent variance",
+                "percent_variance explained by eigval",
+                "eigenvalue number",
+                "per_var_explained");
 
-        int ndim = 3;
+        int nDim = 3;
         if (PedMapCommand.numEvec < 3) {
-            LogManager.writeAndPrint("number of dimensions to plot can't be greater than total number of eigenvectors");
-            ndim = PedMapCommand.numEvec;
+            LogManager.writeAndPrint("Number of dimensions to plot can't be greater than total number of eigenvectors");
+            nDim = PedMapCommand.numEvec;
         }
-        ArrayList<Sample> sample_info = SampleManager.getList();
-        FlashPCAManager.getdata_dim123(sample_map, ndim, CommonCommand.outputPath + "eigenvectors" + out_ext, CommonCommand.outputPath + "pcs" + out_ext, sample_info);
-        FlashPCAManager.Plot2DData(sample_map, ndim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca.pdf");
+        ArrayList<Sample> sampleList = SampleManager.getList();
+        FlashPCAManager.getDataDim123(nDim,
+                CommonCommand.outputPath + "eigenvectors" + outExt,
+                CommonCommand.outputPath + "pcs" + outExt,
+                sampleMap,
+                sampleList);
 
-        LogManager.writeAndPrint("finding outliers using plink ibs clustering");
+        FlashPCAManager.plot2DData(sampleMap, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca.pdf");
+
+        LogManager.writeAndPrint("Finding outliers using plink ibs clustering");
 
         if (!PedMapCommand.isKeepOutliers) {
             FlashPCAManager.findOutliers();
 
             //read each line of outlier nearest file and filter based on Z-score, prop_diff parameters 
-            HashSet<String> outlierSet = FlashPCAManager.getOutliers(CommonCommand.outputPath + "plink_outlier.nearest", CommonCommand.outputPath + "outlier_file.txt");
+            HashSet<String> outlierSet = FlashPCAManager.getOutliers(
+                    CommonCommand.outputPath + "plink_outlier.nearest",
+                    CommonCommand.outputPath + "outlier_file.txt");
 
-            FlashPCAManager.generateNewSampleFile(outlierSet, GenotypeLevelFilterCommand.sampleFile, "pruned_sample_file.txt");//generate new sample file, can't simly change fam file
+            FlashPCAManager.generateNewSampleFile(
+                    outlierSet,
+                    GenotypeLevelFilterCommand.sampleFile,
+                    "pruned_sample_file.txt");//generate new sample file, can't simly change fam file
 
-            LogManager.writeAndPrint("redo flashpca with outliers removed");
+            LogManager.writeAndPrint("Redo flashpca with outliers removed");
 
             String remove_cmd = " --remove " + CommonCommand.outputPath + "outlier_file.txt";
 
-            sample_map.entrySet().stream().forEach(e -> e.getValue().setOutlier(outlierSet));
-            FlashPCAManager.Plot2DData(sample_map, ndim, true, CommonCommand.outputPath + "plot_eigenvectors_flashpca_color_outliers.pdf");//cases,controls.outliers - 3 colors
+            sampleMap.entrySet().stream().forEach(e -> e.getValue().setOutlier(outlierSet));
+            FlashPCAManager.plot2DData(sampleMap,
+                    nDim, true,
+                    CommonCommand.outputPath + "plot_eigenvectors_flashpca_color_outliers.pdf");//cases,controls.outliers - 3 colors
 
             runPlinkPedToBed("output", "plink_outlier_removed", remove_cmd);
-            out_ext = "_flashpca_outliers_removed";
-            FlashPCAManager.runFlashPCA("plink_outlier_removed", out_ext, "flashpca.log");
+            outExt = "_flashpca_outliers_removed";
+            FlashPCAManager.runFlashPCA("plink_outlier_removed", outExt, "flashpca.log");
 
             //making plots with / without outlier
-            FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + out_ext, CommonCommand.outputPath + "eigenvalues_flashpca_outliers_removed.pdf", PedMapCommand.numEvec, "eigenvalues no outliers", "plot of eigenvalues", "eigenvalue number", "eigenvalue");
+            FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + outExt,
+                    CommonCommand.outputPath + "eigenvalues_flashpca_outliers_removed.pdf",
+                    "eigenvalues no outliers", "plot of eigenvalues",
+                    "eigenvalue number",
+                    "eigenvalue");
 
-            FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "pve" + out_ext, CommonCommand.outputPath + "pve_flashpca_outliers_removed.pdf", PedMapCommand.numEvec, "percent variance no outliers", "percent variance explained by eigval", "eigenvalue number", "per_var_explained");
+            FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "pve" + outExt,
+                    CommonCommand.outputPath + "pve_flashpca_outliers_removed.pdf",
+                    "percent variance no outliers",
+                    "percent variance explained by eigval",
+                    "eigenvalue number",
+                    "per_var_explained");
 
-            sample_info = sample_map.values().stream().filter(s -> !s.isOutlier()).map(SamplePCAInfo::getSample).collect(Collectors.toCollection(ArrayList::new));
+            sampleList = sampleMap.values().stream()
+                    .filter(s -> !s.isOutlier())
+                    .map(SamplePCAInfo::getSample)
+                    .collect(Collectors.toCollection(ArrayList::new));
 
-            FlashPCAManager.getdata_dim123(sample_map, ndim, CommonCommand.outputPath + "eigenvectors" + out_ext, CommonCommand.outputPath + "pcs" + out_ext, sample_info);
-            FlashPCAManager.Plot2DData(sample_map, ndim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
+            FlashPCAManager.getDataDim123(nDim,
+                    CommonCommand.outputPath + "eigenvectors" + outExt,
+                    CommonCommand.outputPath + "pcs" + outExt,
+                    sampleMap,
+                    sampleList);
+            FlashPCAManager.plot2DData(sampleMap, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
         }
     }
 
-    public static void runPlinkPedToBed(String inputName, String outputName, String remove_cmd) {
+    private static void runPlinkPedToBed(String inputName, String outputName, String remove_cmd) {
         LogManager.writeAndPrint("Creating bed file with plink for flashpca");
         // Convert PED & MAP to BED format with PLINK
         String cmd = ThirdPartyToolManager.PLINK

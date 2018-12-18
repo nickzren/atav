@@ -6,7 +6,7 @@ import utils.ErrorManager;
 
 /**
  *
- * @author mml2204
+ * @author macrina
  */
 public class SamplePCAInfo {
 
@@ -14,13 +14,11 @@ public class SamplePCAInfo {
     private double[] pcs;
     private boolean outlier = false;
     private Sample sample;
-    //private boolean isDup = false;
 
-    SamplePCAInfo(Sample parent_sample, int ndim) {
-        sample = parent_sample;
-        evec = new double[ndim];
-        pcs = new double[ndim];
-        //setOutlier(outlierSet);
+    SamplePCAInfo(Sample sample, int nDim) {
+        this.sample = sample;
+        this.evec = new double[nDim];
+        this.pcs = new double[nDim];
     }
 
     public void setEvec(int ndim, String[] evecVal) {
@@ -57,7 +55,7 @@ public class SamplePCAInfo {
             if (dim > evec.length) {
                 throw new IllegalArgumentException("dimension " + dim + " accessed is greater than eigvec length " + evec.length);
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             ErrorManager.send(e);
         }
         return (evec[dim]);
@@ -68,7 +66,7 @@ public class SamplePCAInfo {
             if (dim > evec.length) {
                 throw new IllegalArgumentException("dimension " + dim + " accessed is greater than eigvec length " + evec.length);
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             ErrorManager.send(e);
         }
         return (pcs[dim]);
@@ -79,7 +77,7 @@ public class SamplePCAInfo {
             if (dim1 > evec.length || dim2 > evec.length) {
                 throw new IllegalArgumentException("dimensions " + dim1 + ", " + dim2 + " accessed is greater than eigvec length " + evec.length);
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             ErrorManager.send(e);
         }
         return (new double[]{evec[dim1], evec[dim2]});
@@ -90,7 +88,7 @@ public class SamplePCAInfo {
             if (dim1 > evec.length || dim2 > evec.length) {
                 throw new IllegalArgumentException("dimensions " + dim1 + ", " + dim2 + " accessed is greater than eigvec length " + evec.length);
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             ErrorManager.send(e);
         }
         return (new double[]{pcs[dim1], pcs[dim2]});
