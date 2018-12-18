@@ -326,7 +326,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         LogManager.writeAndPrint("Creating bed file with plink for flashpca");
         // Convert PED & MAP to BED format with PLINK
         String cmd = ThirdPartyToolManager.PLINK
-                + " --noweb "
                 + " --file " + CommonCommand.outputPath + inputName
                 + " --make-bed"
                 + " --out " + CommonCommand.outputPath + outputName
