@@ -26,7 +26,7 @@ public class PedMapCommand {
     public static boolean isNoPlots = false;
     public static int numEvec = 10;
     public static int numNeighbor = 5;//nearest neighbor for outlier detection
-    public static float zThresh = -2.4f;//Z value per nearest neghbor
+    public static float zThresh = -3f;//Z value per nearest neghbor
 
     //removed ppc and prop_diff filter
     //public static boolean isppc = false; //use ppc value in outlier detection
