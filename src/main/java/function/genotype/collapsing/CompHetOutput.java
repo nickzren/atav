@@ -54,7 +54,7 @@ public class CompHetOutput extends CollapsingOutput {
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
         getGenoStatData(sj);
-        sj.add(FormatManager.getDouble(looAF));
+        sj.add(FormatManager.getDouble(getLooAf()));
         calledVar.getExternalData(sj);
 
         return sj;
