@@ -43,30 +43,29 @@ public class CollapsingOutput extends Output {
                 calledVar.getStartPosition());
     }
 
-    public void calculateLooFreq(Sample sample) {
+    public void calculateLooAF(Sample sample) {
         if (sample.getId() != Data.INTEGER_NA) {
             byte geno = calledVar.getGT(sample.getIndex());
 
+            // delete current sample geno as 'leave one out' concept
             calledVar.deleteSampleGeno(geno, sample);
 
-            calculateLooAF();
+            // calculateLooAF
+            int alleleCount = 2 * calledVar.genoCount[Index.HOM][Index.CASE]
+                    + calledVar.genoCount[Index.HET][Index.CASE]
+                    + 2 * calledVar.genoCount[Index.HOM][Index.CTRL]
+                    + calledVar.genoCount[Index.HET][Index.CTRL];
+            int totalCount = alleleCount
+                    + calledVar.genoCount[Index.HET][Index.CASE]
+                    + 2 * calledVar.genoCount[Index.REF][Index.CASE]
+                    + calledVar.genoCount[Index.HET][Index.CTRL]
+                    + 2 * calledVar.genoCount[Index.REF][Index.CTRL];
 
+            looAF = MathManager.devide(alleleCount, totalCount);
+
+            // add deleted sample geno back
             calledVar.addSampleGeno(geno, sample);
         }
-    }
-
-    private void calculateLooAF() {
-        int alleleCount = 2 * calledVar.genoCount[Index.HOM][Index.CASE]
-                + calledVar.genoCount[Index.HET][Index.CASE]
-                + 2 * calledVar.genoCount[Index.HOM][Index.CTRL]
-                + calledVar.genoCount[Index.HET][Index.CTRL];
-        int totalCount = alleleCount
-                + calledVar.genoCount[Index.HET][Index.CASE]
-                + 2 * calledVar.genoCount[Index.REF][Index.CASE]
-                + calledVar.genoCount[Index.HET][Index.CTRL]
-                + 2 * calledVar.genoCount[Index.REF][Index.CTRL];
-
-        looAF = MathManager.devide(alleleCount, totalCount);
     }
 
     public boolean isMaxLooAFValid() {
