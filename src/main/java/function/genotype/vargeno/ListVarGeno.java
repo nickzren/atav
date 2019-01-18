@@ -70,12 +70,19 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
             VarGenoOutput output = new VarGenoOutput(calledVar);
 
             for (Sample sample : SampleManager.getList()) {
-                byte geno = output.getCalledVariant().getGT(sample.getIndex());
+                // --case-only
+                if (isCaseOnly(sample)) {
+                    byte geno = output.getCalledVariant().getGT(sample.getIndex());
 
-                if (isCaseOnly(sample)
-                        && output.isQualifiedGeno(geno)) {
-                    bwGenotypes.write(output.getString(sample));
-                    bwGenotypes.newLine();
+                    if (output.isQualifiedGeno(geno)) {
+                        output.calculateLooAF(sample);
+
+                        // --loo-af
+                        if (output.isMaxLooAFValid()) {
+                            bwGenotypes.write(output.getString(sample));
+                            bwGenotypes.newLine();
+                        }
+                    }
                 }
             }
         } catch (Exception e) {

@@ -35,9 +35,7 @@ import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
 import function.genotype.base.GenotypeLevelFilterCommand;
-import static function.genotype.base.GenotypeLevelFilterCommand.isIncludeHomRef;
 import function.genotype.base.Sample;
-import function.genotype.collapsing.CollapsingCommand;
 import global.Data;
 import global.Index;
 import java.util.StringJoiner;
@@ -249,7 +247,7 @@ public class Output {
     }
 
     public boolean isQualifiedGeno(byte geno) {
-        if (isIncludeHomRef && geno == Index.REF) {
+        if (GenotypeLevelFilterCommand.isIncludeHomRef && geno == Index.REF) {
             return true;
         }
 
@@ -331,7 +329,7 @@ public class Output {
     }
 
     public boolean isMaxLooAFValid() {
-        return CollapsingCommand.isMaxLooAFValid(looAF);
+        return GenotypeLevelFilterCommand.isMaxLooAFValid(looAF);
     }
 
     public double getLooAf() {
