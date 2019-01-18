@@ -4,6 +4,7 @@ import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
 import java.util.StringJoiner;
+import utils.FormatManager;
 
 /**
  *
@@ -18,6 +19,7 @@ public class VarGenoOutput extends Output {
         sj.merge(getAnnotationDataTitle());
         sj.merge(getCarrierDataTitle());
         sj.merge(getGenoStatDataTitle());
+        sj.add("LOO AF");
         sj.merge(getExternalDataTitle());
         
         return sj.toString();
@@ -34,6 +36,7 @@ public class VarGenoOutput extends Output {
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
         getGenoStatData(sj);
+        sj.add(FormatManager.getDouble(getLooAf()));
         calledVar.getExternalData(sj);
 
         return sj.toString();

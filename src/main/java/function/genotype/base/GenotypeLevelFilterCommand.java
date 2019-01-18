@@ -65,6 +65,7 @@ public class GenotypeLevelFilterCommand {
     public static float[] minCoveredSamplePercentage = {Data.NO_FILTER, Data.NO_FILTER};
     public static boolean isCaseOnly = false;
     public static int maxCaseOnlyNumber = 3000;
+    public static double maxLooAF = Data.NO_FILTER;
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
@@ -105,7 +106,12 @@ public class GenotypeLevelFilterCommand {
                 case "--max-case-af":
                     checkValueValid(1, 0, option);
                     maxCaseAF = getValidDouble(option);
-                    break;    
+                    break;
+                case "--loo-af":
+                case "--max-loo-af":
+                    checkValueValid(1, 0, option);
+                    maxLooAF = getValidDouble(option);
+                    break;
                 case "--min-coverage":
                     checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
                     minCoverage = getValidInteger(option);
@@ -350,7 +356,7 @@ public class GenotypeLevelFilterCommand {
 
         return value <= maxCtrlAF;
     }
-    
+
     public static boolean isMaxCaseAFValid(double value) {
         if (maxCaseAF == Data.NO_FILTER) {
             return true;
@@ -358,7 +364,6 @@ public class GenotypeLevelFilterCommand {
 
         return value <= maxCaseAF;
     }
-
 
     public static boolean isMinCtrlAFValid(double value) {
         if (minCtrlAF == Data.NO_FILTER) {
@@ -695,5 +700,13 @@ public class GenotypeLevelFilterCommand {
                 && SampleManager.getCaseNum() > 0
                 && SampleManager.getCaseNum() <= GenotypeLevelFilterCommand.maxCaseOnlyNumber
                 && !VariantManager.isUsed();
+    }
+
+    public static boolean isMaxLooAFValid(double value) {
+        if (maxLooAF == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxLooAF;
     }
 }

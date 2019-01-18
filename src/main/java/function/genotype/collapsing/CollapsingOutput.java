@@ -29,8 +29,6 @@ public class CollapsingOutput extends Output {
         return sj.toString();
     }
 
-    double looAF = 0;
-
     HashSet<String> regionBoundaryNameSet; // for --region-boundary only
 
     public CollapsingOutput(CalledVariant c) {
@@ -42,37 +40,7 @@ public class CollapsingOutput extends Output {
                 calledVar.getChrStr(),
                 calledVar.getStartPosition());
     }
-
-    public void calculateLooFreq(Sample sample) {
-        if (sample.getId() != Data.INTEGER_NA) {
-            byte geno = calledVar.getGT(sample.getIndex());
-
-            calledVar.deleteSampleGeno(geno, sample);
-
-            calculateLooAF();
-
-            calledVar.addSampleGeno(geno, sample);
-        }
-    }
-
-    private void calculateLooAF() {
-        int alleleCount = 2 * calledVar.genoCount[Index.HOM][Index.CASE]
-                + calledVar.genoCount[Index.HET][Index.CASE]
-                + 2 * calledVar.genoCount[Index.HOM][Index.CTRL]
-                + calledVar.genoCount[Index.HET][Index.CTRL];
-        int totalCount = alleleCount
-                + calledVar.genoCount[Index.HET][Index.CASE]
-                + 2 * calledVar.genoCount[Index.REF][Index.CASE]
-                + calledVar.genoCount[Index.HET][Index.CTRL]
-                + 2 * calledVar.genoCount[Index.REF][Index.CTRL];
-
-        looAF = MathManager.devide(alleleCount, totalCount);
-    }
-
-    public boolean isMaxLooAFValid() {
-        return CollapsingCommand.isMaxLooAFValid(looAF);
-    }
-
+    
     /*
      * if ref is minor then only het & ref are qualified samples. If ref is
      * major then only hom & het are qualified samples.
@@ -93,7 +61,7 @@ public class CollapsingOutput extends Output {
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
         getGenoStatData(sj);
-        sj.add(FormatManager.getDouble(looAF));
+        sj.add(FormatManager.getDouble(getLooAf()));
         calledVar.getExternalData(sj);
 
         return sj;

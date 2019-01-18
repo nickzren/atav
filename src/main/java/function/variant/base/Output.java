@@ -35,12 +35,12 @@ import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
 import function.genotype.base.GenotypeLevelFilterCommand;
-import static function.genotype.base.GenotypeLevelFilterCommand.isIncludeHomRef;
 import function.genotype.base.Sample;
 import global.Data;
 import global.Index;
 import java.util.StringJoiner;
 import utils.FormatManager;
+import utils.MathManager;
 
 /**
  *
@@ -50,19 +50,19 @@ public class Output {
 
     public static StringJoiner getVariantDataTitle() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add("Variant ID");
         sj.add("Variant Type");
         sj.add("Ref Allele");
         sj.add("Alt Allele");
         sj.add("Rs Number");
-        
+
         return sj;
     }
 
     public static StringJoiner getAnnotationDataTitle() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add("Transcript Stable Id");
         sj.add("Has CCDS Transcript");
         sj.add("Effect");
@@ -79,13 +79,13 @@ public class Output {
         sj.add("Gene Name");
         sj.add("UpToDate Gene Name");
         sj.add("All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar");
-        
+
         return sj;
     }
 
     public static StringJoiner getExternalDataTitle() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         if (EvsCommand.isIncludeEvs) {
             sj.add(EvsManager.getTitle());
         }
@@ -153,18 +153,18 @@ public class Output {
         if (MTRCommand.isIncludeMTR) {
             sj.add(MTRManager.getTitle());
         }
-        
+
         if (RevelCommand.isIncludeRevel) {
             sj.add(RevelManager.getTitle());
         }
-        
+
         return sj;
     }
 
     // quick hack here, eventually will get rid of min covered sample binomial p
     public static StringJoiner getGenoStatDataTitle() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add("Hom Case");
         sj.add("Het Case");
         sj.add("Hom Ref Case");
@@ -188,13 +188,13 @@ public class Output {
         sj.add("Ctrl AF");
         sj.add("Case HWE_P");
         sj.add("Ctrl HWE_P");
-        
+
         return sj;
     }
 
     public static StringJoiner getCarrierDataTitle() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add("Sample Name");
         sj.add("Sample Type");
         sj.add("Sample Phenotype");
@@ -215,11 +215,13 @@ public class Output {
         sj.add("Read Pos Rank Sum");
         sj.add("MQ Rank Sum");
         sj.add("FILTER");
-        
+
         return sj;
     }
 
     protected CalledVariant calledVar;
+    // The value will be dynamically updated per sample
+    private double looAF = 0;
 
     public Output(CalledVariant c) {
         calledVar = c;
@@ -245,7 +247,7 @@ public class Output {
     }
 
     public boolean isQualifiedGeno(byte geno) {
-        if (isIncludeHomRef && geno == Index.REF) {
+        if (GenotypeLevelFilterCommand.isIncludeHomRef && geno == Index.REF) {
             return true;
         }
 
@@ -299,5 +301,38 @@ public class Output {
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA));
         sj.add(carrier != null ? carrier.getFILTER() : Data.STRING_NA);
+    }
+
+    public void calculateLooAF(Sample sample) {
+        if (sample.getId() != Data.INTEGER_NA) {
+            byte geno = calledVar.getGT(sample.getIndex());
+
+            // delete current sample geno as 'leave one out' concept
+            calledVar.deleteSampleGeno(geno, sample);
+
+            // calculateLooAF
+            int alleleCount = 2 * calledVar.genoCount[Index.HOM][Index.CASE]
+                    + calledVar.genoCount[Index.HET][Index.CASE]
+                    + 2 * calledVar.genoCount[Index.HOM][Index.CTRL]
+                    + calledVar.genoCount[Index.HET][Index.CTRL];
+            int totalCount = alleleCount
+                    + calledVar.genoCount[Index.HET][Index.CASE]
+                    + 2 * calledVar.genoCount[Index.REF][Index.CASE]
+                    + calledVar.genoCount[Index.HET][Index.CTRL]
+                    + 2 * calledVar.genoCount[Index.REF][Index.CTRL];
+
+            looAF = MathManager.devide(alleleCount, totalCount);
+
+            // add deleted sample geno back
+            calledVar.addSampleGeno(geno, sample);
+        }
+    }
+
+    public boolean isMaxLooAFValid() {
+        return GenotypeLevelFilterCommand.isMaxLooAFValid(looAF);
+    }
+
+    public double getLooAf() {
+        return looAF;
     }
 }

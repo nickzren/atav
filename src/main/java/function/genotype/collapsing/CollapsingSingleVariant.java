@@ -106,7 +106,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             boolean hasQualifiedVariant = false;
 
             for (Sample sample : SampleManager.getList()) {
-                output.calculateLooFreq(sample);
+                output.calculateLooAF(sample);
                 byte geno = output.getCalledVariant().getGT(sample.getIndex());
 
                 if (output.isMaxLooAFValid()
