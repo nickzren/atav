@@ -3,10 +3,8 @@ package function.genotype.collapsing;
 import function.annotation.base.GeneManager;
 import function.genotype.statistics.StatisticsCommand;
 import java.util.Iterator;
-import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
-import static utils.CommandManager.checkValueValid;
 
 /**
  *
@@ -93,6 +91,4 @@ public class CollapsingCommand {
             isCollapsingDoLogistic = false;
         }
     }
-
-
 }
