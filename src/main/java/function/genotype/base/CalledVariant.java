@@ -88,7 +88,7 @@ public class CalledVariant extends AnnotatedVariant {
                 isValid = false;
             }
         }
-
+        
         return isValid;
     }
 
@@ -96,7 +96,8 @@ public class CalledVariant extends AnnotatedVariant {
         int totalQCFailSample = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
 
         isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample)
-                && GenotypeLevelFilterCommand.isMinCaseCarrierValid(getCaseCarrier());
+                && GenotypeLevelFilterCommand.isMinCaseCarrierValid(getCaseCarrier())
+                && GenotypeLevelFilterCommand.isMinVarPresentValid(carrierMap.size());
 
         return isValid;
     }
