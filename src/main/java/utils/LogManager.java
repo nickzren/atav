@@ -24,8 +24,6 @@ public class LogManager {
     private static final String USERS_COMMAND_LOG = Data.ATAV_HOME + "log/users.command.log";
     private static final String USERS_COMMAND_FAILED_LOG = Data.ATAV_HOME + "log/users.command.failed.log";
 
-    // user sample file log path
-    private static final String SAMPLE_DIR_LOG = Data.ATAV_HOME + "log/sample/";
     // program start date
     private static final Date date = new Date();
 
@@ -33,8 +31,6 @@ public class LogManager {
         logRunTime();
 
         writeUserCommand2Log();
-
-        logSampleFile();
 
         close();
     }
@@ -176,30 +172,6 @@ public class LogManager {
             }
         }
         return length;
-    }
-
-    private static void logSampleFile() {
-        try {
-            if (CommonCommand.isNonSampleAnalysis
-                    || isBioinfoTeam()
-                    || Data.VERSION.equals("trunk")
-                    || Data.VERSION.equals("beta")) {
-                return;
-            }
-
-            File sampleFile = new File(GenotypeLevelFilterCommand.sampleFile);
-
-            File logSampleFile = new File(
-                    SAMPLE_DIR_LOG
-                    + Data.userName
-                    + "."
-                    + date.toString()
-                    + "."
-                    + sampleFile.getName());
-
-            Files.copy(sampleFile, logSampleFile);
-        } catch (Exception e) {
-        }
     }
 
     public static void logExternalDataVersion() {
