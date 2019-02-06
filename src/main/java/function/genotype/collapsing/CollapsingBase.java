@@ -183,9 +183,11 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
             } else if (CollapsingCommand.isCollapsingDoLinear) {
                 ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),
                         "Linear P", summaryFilePath, geneLinearPQQPlotPath);
-            } else {
-                 ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
-            }
+                // linear regression does not have cases and controls, so it skip to run fet p qq-plot script
+                return;
+            } 
+            
+            ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
         }
     }
 
