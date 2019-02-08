@@ -99,7 +99,6 @@ public class FlashPCAManager {
 
     public static void findOutliers() {
         String cmd = ThirdPartyToolManager.PLINK
-                + " --noweb "
                 + " --bfile " + CommonCommand.outputPath + "plink"
                 + " --neighbour 1 " + String.valueOf(PedMapCommand.numNeighbor)
                 + " --out " + CommonCommand.outputPath + "plink_outlier"

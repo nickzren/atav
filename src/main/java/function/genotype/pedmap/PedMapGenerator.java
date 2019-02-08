@@ -326,6 +326,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         // Convert PED & MAP to BED format with PLINK
         String cmd = ThirdPartyToolManager.PLINK
                 + " --file " + CommonCommand.outputPath + inputName
+                + " --mind 0.99"
                 + " --make-bed"
                 + " --out " + CommonCommand.outputPath + outputName
                 + remove_cmd;
