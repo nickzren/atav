@@ -443,6 +443,7 @@ public class KnownVarManager {
                     + "WHERE chr='" + var.getChrStr() + "' "
                     + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
                     + "AND ClinSig like '%pathogenic%' "
+                    + "AND ClinSig not like '%conflicting%' "
                     + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
 
             ResultSet rs = DBManager.executeQuery(sql);
