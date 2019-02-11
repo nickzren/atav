@@ -34,7 +34,7 @@ public class FamilyManager {
                     && !sample.getPaternalId().equals(sample.getMaternalId())) {
 
                 Family family = new Family(sample);
-
+                
                 if (family.isValid()) {
                     familyList.add(family);
                 }

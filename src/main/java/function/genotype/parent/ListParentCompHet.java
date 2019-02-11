@@ -120,20 +120,20 @@ public class ListParentCompHet extends AnalysisBase4CalledVar {
 
                         // find comp het for mother
                         String compHetFlag = FamilyManager.getParentCompHetFlag(
-                                output1.cGeno, output1.mGeno, output1.fGeno,
-                                output2.cGeno, output2.mGeno, output2.fGeno);
+                                output1.getChildGeno(), output1.getMotherGeno(), output1.getFatherGeno(),
+                                output2.getChildGeno(), output2.getMotherGeno(), output2.getFatherGeno());
 
                         if (!compHetFlag.equals(COMP_HET_FLAG[2])) {
-                            doCompHetOutput(bwCompHet, output1.motherName, compHetFlag, output1, output2);
+                            doCompHetOutput(bwCompHet, output1.mother.getName(), compHetFlag, output1, output2);
                         }
 
                         // find comp het for father
                         compHetFlag = FamilyManager.getParentCompHetFlag(
-                                output1.cGeno, output1.fGeno, output1.mGeno,
-                                output2.cGeno, output2.fGeno, output2.mGeno);
+                                output1.getChildGeno(), output1.getFatherGeno(), output1.getMotherGeno(),
+                                output2.getChildGeno(), output2.getFatherGeno(), output2.getMotherGeno());
 
                         if (!compHetFlag.equals(COMP_HET_FLAG[2])) {
-                            doCompHetOutput(bwCompHet, output1.fatherName, compHetFlag, output1, output2);
+                            doCompHetOutput(bwCompHet, output1.father.getName(), compHetFlag, output1, output2);
                         }
                     }
                 }

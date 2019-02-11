@@ -4,8 +4,8 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
 import function.genotype.base.Sample;
 import function.variant.base.Output;
+import global.Data;
 import java.util.StringJoiner;
-import utils.FormatManager;
 
 /**
  *
@@ -15,15 +15,11 @@ public class ParentOutput extends Output {
 
     // Family data
     Sample child;
+    Sample mother;
+    Sample father;
     Carrier cCarrier;
-    byte cGeno;
-    short cDPBin;
-    String motherName;
-    byte mGeno;
-    short mDPBin;
-    String fatherName;
-    byte fGeno;
-    short fDPBin;
+    Carrier mCarrier;
+    Carrier fCarrier;
 
     public static String getTitle() {
         StringJoiner sj = new StringJoiner(",");
@@ -53,16 +49,26 @@ public class ParentOutput extends Output {
 
         sj.merge(Output.getVariantDataTitle());
         sj.merge(Output.getAnnotationDataTitle());
-        sj.add("GT (child)");
-        sj.add("DP Bin (child)");
-        sj.add("GT (mother)");
-        sj.add("DP Bin (mother)");
-        sj.add("GT (father)");
-        sj.add("DP Bin (father)");
+
+        sj.merge(initCarrierTitle("child"));
+        sj.merge(initCarrierTitle("mother"));
+        sj.merge(initCarrierTitle("father"));
+
         sj.merge(Output.getGenoStatDataTitle());
         sj.merge(Output.getExternalDataTitle());
 
         return sj.toString();
+    }
+
+    private static StringJoiner initCarrierTitle(String str) {
+        String[] columnList = Output.getCarrierDataTitle().toString().split(",");
+        StringJoiner sj = new StringJoiner(",");
+
+        for (String column : columnList) {
+            sj.add(column + " (" + str + ")");
+        }
+
+        return sj;
     }
 
     public ParentOutput(CalledVariant c) {
@@ -71,17 +77,13 @@ public class ParentOutput extends Output {
 
     public void initFamilyData(Family family) {
         child = family.getChild();
-        cGeno = calledVar.getGT(child.getIndex());
-        cDPBin = calledVar.getDPBin(child.getIndex());
-        cCarrier = calledVar.getCarrier(family.getChild().getId());
+        cCarrier = calledVar.getCarrier(child.getId());
 
-        motherName = family.getMotherName();
-        mGeno = calledVar.getGT(family.getMotherIndex());
-        mDPBin = calledVar.getDPBin(family.getMotherIndex());
+        mother = family.getMother();
+        mCarrier = calledVar.getCarrier(mother.getId());
 
-        fatherName = family.getFatherName();
-        fGeno = calledVar.getGT(family.getFatherIndex());
-        fDPBin = calledVar.getDPBin(family.getFatherIndex());
+        father = family.getFather();
+        fCarrier = calledVar.getCarrier(father.getId());
     }
 
     public StringJoiner getStringJoiner() {
@@ -89,16 +91,35 @@ public class ParentOutput extends Output {
 
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
-        sj.add(getGenoStr(cGeno));
-        sj.add(FormatManager.getShort(cDPBin));
-        sj.add(getGenoStr(mGeno));
-        sj.add(FormatManager.getShort(mDPBin));
-        sj.add(getGenoStr(fGeno));
-        sj.add(FormatManager.getShort(fDPBin));
+
+        getCarrierData(sj, cCarrier, child);
+        getCarrierData(sj, mCarrier, mother);
+        getCarrierData(sj, fCarrier, father);
+
         getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
         return sj;
+    }
+
+    public byte getChildGeno() {
+        return getGeno(cCarrier);
+    }
+
+    public byte getMotherGeno() {
+        return getGeno(mCarrier);
+    }
+
+    public byte getFatherGeno() {
+        return getGeno(fCarrier);
+    }
+
+    private byte getGeno(Carrier carrier) {
+        if (carrier == null) {
+            return Data.BYTE_NA;
+        }
+
+        return carrier.getGT();
     }
 
     @Override
