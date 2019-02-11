@@ -2,70 +2,39 @@ package function.genotype.parent;
 
 import function.genotype.base.Sample;
 import function.genotype.base.SampleManager;
-import global.Data;
 
 /**
  *
  * @author nick
  */
 public class Family {
-    private Sample child;
 
-    private int fatherId;
-    private int fatherIndex;
-    private String fatherName;
-    private int motherId;
-    private int motherIndex;
-    private String motherName;
+    private Sample child;
+    private Sample mother;
+    private Sample father;
 
     public Family(Sample sample) {
         child = sample;
-
-        fatherName = child.getPaternalId();
-        fatherId = SampleManager.getIdByName(fatherName);
-        fatherIndex = SampleManager.getIndexById(fatherId);
-
-        motherName = child.getMaternalId();
-        motherId = SampleManager.getIdByName(motherName);
-        motherIndex = SampleManager.getIndexById(motherId);
+        mother = SampleManager.getSampleByName(child.getMaternalId());
+        father = SampleManager.getSampleByName(child.getPaternalId());
     }
 
     public boolean isValid() {
-        if (fatherId != Data.INTEGER_NA
-                && !SampleManager.getMap().get(fatherId).isCase()
-                && motherId != Data.INTEGER_NA
-                && !SampleManager.getMap().get(motherId).isCase()) {
-            return true;
-        }
-
-        return false;
+        return father != null
+                && !father.isCase()
+                && mother != null
+                && !mother.isCase();
     }
 
-    public Sample getChild(){
+    public Sample getChild() {
         return child;
     }
 
-    public int getFatherId() {
-        return fatherId;
+    public Sample getMother() {
+        return mother;
     }
 
-    public int getFatherIndex() {
-        return fatherIndex;
-    }
-
-    public String getFatherName() {
-        return fatherName;
-    }
-
-    public int getMotherId() {
-        return motherId;
-    }
-
-    public int getMotherIndex() {
-        return motherIndex;
-    }
-
-    public String getMotherName() {
-        return motherName;
+    public Sample getFather() {
+        return father;
     }
 }

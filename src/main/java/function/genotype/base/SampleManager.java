@@ -677,7 +677,7 @@ public class SampleManager {
         return tempCovarFile;
     }
 
-    private static Sample getSampleByName(String name) {
+    public static Sample getSampleByName(String name) {
         for (Sample sample : sampleList) {
             if (sample.getName().equalsIgnoreCase(name)) {
                 return sample;

@@ -9,9 +9,9 @@ import global.Index;
  */
 public class NonCarrier {
 
-    public int sampleId;
-    public byte gt;
-    public short dpBin;
+    protected int sampleId;
+    protected byte gt;
+    protected short dpBin;
 
     public NonCarrier() {
     }
