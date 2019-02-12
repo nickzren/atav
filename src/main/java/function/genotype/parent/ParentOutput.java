@@ -4,7 +4,6 @@ import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
 import function.genotype.base.Sample;
 import function.variant.base.Output;
-import global.Data;
 import java.util.StringJoiner;
 
 /**
@@ -102,24 +101,16 @@ public class ParentOutput extends Output {
         return sj;
     }
 
-    public byte getChildGeno() {
-        return getGeno(cCarrier);
+    public byte getChildGT() {
+        return calledVar.getGT(child.getIndex());
     }
 
-    public byte getMotherGeno() {
-        return getGeno(mCarrier);
+    public byte getMotherGT() {
+        return calledVar.getGT(mother.getIndex());
     }
 
-    public byte getFatherGeno() {
-        return getGeno(fCarrier);
-    }
-
-    private byte getGeno(Carrier carrier) {
-        if (carrier == null) {
-            return Data.BYTE_NA;
-        }
-
-        return carrier.getGT();
+    public byte getFatherGT() {
+        return calledVar.getGT(father.getIndex());
     }
 
     @Override
