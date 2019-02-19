@@ -3,6 +3,7 @@ package function.genotype.collapsing;
 import function.annotation.base.GeneManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
+import global.Data;
 import utils.CommonCommand;
 import utils.FormatManager;
 import utils.ThirdPartyToolManager;
@@ -86,10 +87,12 @@ public class CollapsingGeneSummary extends CollapsingSummary {
 
                 String geneName = temp[0].replaceAll("'", "");
 
+                double p = Double.valueOf(temp[1]);
+                
                 if (method.equals("logistf")) {
-                    summaryMap.get(geneName).setLogisticP(Double.valueOf(temp[1]));
+                    summaryMap.get(geneName).setLogisticP(p);
                 } else { // linear
-                    summaryMap.get(geneName).setLinearP(Double.valueOf(temp[1]));
+                    summaryMap.get(geneName).setLinearP(p);
                 }
             }
             
@@ -106,6 +109,14 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         }
 
         return RvisManager.getLine(geneName);
+    }
+    
+    private String getLogisticP() {
+        if(logisticP == 0) {
+            return Data.STRING_NAN;
+        } else {
+            return FormatManager.getDouble(logisticP);
+        }
     }
 
     @Override
@@ -125,7 +136,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         sj.add(enrichedDirection);
         sj.add(FormatManager.getDouble(fetP));
         sj.add(FormatManager.getDouble(linearP));
-        sj.add(FormatManager.getDouble(logisticP));
+        sj.add(getLogisticP());
         GeneManager.addCoverageSummary(name, sj);
         if (RvisCommand.isIncludeRvis) {
             sj.add(getRvis());

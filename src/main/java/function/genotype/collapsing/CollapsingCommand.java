@@ -2,6 +2,7 @@ package function.genotype.collapsing;
 
 import function.annotation.base.GeneManager;
 import function.genotype.statistics.StatisticsCommand;
+import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
@@ -46,6 +47,9 @@ public class CollapsingCommand {
                 case "--mann-whitney-test":
                     isMannWhitneyTest = true;
                     break;
+                case "--convert-nan":
+                    Data.STRING_NAN = option.getValue();
+                    break;    
                 default:
                     continue;
             }
@@ -79,6 +83,9 @@ public class CollapsingCommand {
                     break;
                 case "--mann-whitney-test":
                     isMannWhitneyTest = true;
+                    break;
+                case "--convert-nan":
+                    Data.STRING_NAN = option.getValue();
                     break;
                 default:
                     continue;

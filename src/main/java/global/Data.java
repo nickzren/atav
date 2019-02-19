@@ -28,4 +28,5 @@ public class Data {
     public static final float FLOAT_NA = Float.MIN_VALUE;
     public static final double DOUBLE_NA = Double.MIN_VALUE;
     public static final String STRING_NA = "NA";
+    public static String STRING_NAN = "NaN";
 }

@@ -3,12 +3,10 @@ package function.genotype.collapsing;
 import function.genotype.base.CalledVariant;
 import function.variant.base.Output;
 import function.genotype.base.Sample;
-import global.Data;
 import global.Index;
 import java.util.HashSet;
 import java.util.StringJoiner;
 import utils.FormatManager;
-import utils.MathManager;
 
 /**
  *
