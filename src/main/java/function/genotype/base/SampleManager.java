@@ -3,6 +3,7 @@ package function.genotype.base;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.statistics.StatisticsCommand;
 import global.Data;
+import global.Index;
 import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -103,6 +104,8 @@ public class SampleManager {
         initTempTables();
 
         outputSampleListSummary();
+
+        checkCaseCtrlOptions();
     }
 
     private static void initExistingSampleFile() {
@@ -362,7 +365,7 @@ public class SampleManager {
                     LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
                     continue;
                 }
-                
+
                 if (!sampleNameSet.contains(individualId)) {
                     sampleNameSet.add(individualId);
                 } else {
@@ -479,6 +482,24 @@ public class SampleManager {
             // no need to keep existing samples file since there are no problems
             File file = new File(existingSampleFile);
             file.delete();
+        }
+    }
+
+    private static void checkCaseCtrlOptions() {
+        if (caseNum == 0) {
+            if (GenotypeLevelFilterCommand.maxCaseAF != Data.NO_FILTER
+                    || GenotypeLevelFilterCommand.minCaseCarrier != Data.NO_FILTER
+                    || GenotypeLevelFilterCommand.minCoveredSamplePercentage[Index.CASE] != Data.NO_FILTER
+                    || GenotypeLevelFilterCommand.isCaseOnly == true) {
+                ErrorManager.print("You used case filters but your sample file has no cases.",
+                        ErrorManager.INPUT_PARSING);
+            }
+        } else if (ctrlNum == 0) {
+            if (GenotypeLevelFilterCommand.maxCtrlAF != Data.NO_FILTER
+                    || GenotypeLevelFilterCommand.minCoveredSamplePercentage[Index.CTRL] != Data.NO_FILTER) {
+                ErrorManager.print("You used control filters but your sample file has no controls.",
+                        ErrorManager.INPUT_PARSING);
+            }
         }
     }
 
@@ -694,7 +715,7 @@ public class SampleManager {
             ctrlNum++;
         }
     }
-    
+
     private static void reduceSampleNum(Sample sample) {
         if (sample.isCase()) {
             caseNum--;
