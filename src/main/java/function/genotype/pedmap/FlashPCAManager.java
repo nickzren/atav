@@ -1,5 +1,6 @@
 package function.genotype.pedmap;
 
+import java.io.OutputStreamWriter;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
@@ -108,37 +109,30 @@ public class FlashPCAManager {
     }
 
     public static void plot2DData(Map<String, SamplePCAInfo> sampleMap, int nDim, boolean includeOutlier, String pdfName) {
-        int numCharts = 2;
+        int numCharts = 1;
         if (nDim == 3) {
-            numCharts = 6;
+            numCharts = 3;
         }
 
         List<JFreeChart> charts = new ArrayList<>(numCharts);
         switch (nDim) {
             case 1:
-                charts.add(buildChartPcs(sampleMap, includeOutlier, -1, 0));
-                charts.add(buildChartEvec(sampleMap, includeOutlier, -1, 0));
+                charts.add(buildChartPcs(sampleMap, includeOutlier, -1, 0,true));
                 break;
             case 2:
-                //numCharts = 2;//4 or 6 2D series
-                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 1));
-                charts.add(buildChartEvec(sampleMap, includeOutlier, 0, 1));
+                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 1,true));
                 break;
             default:
-                //numCharts = 6;//12 or 18 2D series
-                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 1));
-                charts.add(buildChartEvec(sampleMap, includeOutlier, 0, 1));
-                charts.add(buildChartPcs(sampleMap, includeOutlier, 1, 2));
-                charts.add(buildChartEvec(sampleMap, includeOutlier, 1, 2));
-                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 2));
-                charts.add(buildChartEvec(sampleMap, includeOutlier, 0, 2));
+                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 1, true));
+                charts.add(buildChartPcs(sampleMap, includeOutlier, 1, 2, false));
+                charts.add(buildChartPcs(sampleMap, includeOutlier, 0, 2, false));
                 break;
         }
         
         saveChartAsPDF(pdfName, charts, 630, 1100);
     }
 
-    private static JFreeChart buildChartPcs(Map<String, SamplePCAInfo> sampleMap, boolean includeOutlier, int dim1, int dim2) {        
+    private static JFreeChart buildChartPcs(Map<String, SamplePCAInfo> sampleMap, boolean includeOutlier, int dim1, int dim2, boolean printInfo) {        
         XYSeries outlierSeries = new XYSeries("outlier");
         XYSeries caseSeries = new XYSeries("case");
         XYSeries ctrlSeries = new XYSeries("control");
@@ -183,11 +177,13 @@ public class FlashPCAManager {
             }
         }
 
-        System.out.println("original number of cases :" + SampleManager.getCaseNum());
-        System.out.println("original number of controls :" + SampleManager.getCtrlNum());
-        System.out.println("number of cases :" + countCase);
-        System.out.println("number of controls :" + countCtrl);
-        System.out.println("number of outliers :" + countOut);
+        if(printInfo){
+            System.out.println("original number of cases :" + SampleManager.getCaseNum());
+            System.out.println("original number of controls :" + SampleManager.getCtrlNum());
+            System.out.println("number of cases :" + countCase);
+            System.out.println("number of controls :" + countCtrl);
+            System.out.println("number of outliers :" + countOut);
+        }
 
         XYSeriesCollection dataCollection = new XYSeriesCollection();
         dataCollection.addSeries(ctrlSeries);
@@ -209,83 +205,22 @@ public class FlashPCAManager {
         return chartOp;
     }
 
-    public static JFreeChart buildChartEvec(Map<String, SamplePCAInfo> sample_map, boolean includeOutlier, int dim1, int dim2) {
-        XYSeries outlierSeries = new XYSeries("outlier");
-        XYSeries caseSeries = new XYSeries("case");
-        XYSeries ctrlSeries = new XYSeries("control");
-
-        String plotName, xLabel, yLabel;
-
-        if (dim1 == -1) {
-            plotName = "eigenvector (ev) 1D scatter plot";
-            int countOut = 0;
-            int countCase = 0;
-            int countCtrl = 0;
-            xLabel = "sample number";
-            yLabel = "ev in 1D";
-            for (SamplePCAInfo samplePCAInfo : sample_map.values()) {
-                if (includeOutlier && samplePCAInfo.isOutlier()) {
-                    outlierSeries.add(countOut++, samplePCAInfo.getPCAInfoEvec(dim2));
-                } else {
-                    if (samplePCAInfo.getPheno() == Index.CTRL) {
-                        ctrlSeries.add(countCtrl++, samplePCAInfo.getPCAInfoEvec(dim2));
-                    } else {
-                        caseSeries.add(countCase++, samplePCAInfo.getPCAInfoEvec(dim2));
-                    }
-                }
-            }
-        } else {
-            plotName = "eigenvector (ev) 2D scatter plot";
-            xLabel = "ev dim " + Integer.toString(dim1 + 1);
-            yLabel = "ev dim " + Integer.toString(dim2 + 1);
-            for (SamplePCAInfo samplePCAInfo : sample_map.values()) {
-                double[] evecData = samplePCAInfo.getPCAInfoEvec(dim1, dim2);
-                if (includeOutlier && samplePCAInfo.isOutlier()) {
-                    outlierSeries.add(evecData[0], evecData[1]);
-                } else {
-                    if (samplePCAInfo.getPheno() == Index.CTRL) {
-                        ctrlSeries.add(evecData[0], evecData[1]);
-                    } else {
-                        caseSeries.add(evecData[0], evecData[1]);
-                    }
-                }
-            }
-        }
-        XYSeriesCollection dataCollection = new XYSeriesCollection();
-        dataCollection.addSeries(ctrlSeries);
-        dataCollection.addSeries(caseSeries);
-        if (includeOutlier) {
-            dataCollection.addSeries(outlierSeries);
-        }
-
-        JFreeChart chart_op = ChartFactory.createScatterPlot(plotName, xLabel, yLabel, dataCollection, PlotOrientation.HORIZONTAL, true, true, false);
-
-        //setting series colors - blue = case, green = control, red = outliers if they exist
-        XYPlot plot_op = (XYPlot) chart_op.getPlot();
-        plot_op.getRenderer().setSeriesPaint(0, new Color(0x00, 0xFF, 0x00)); //ctrl = green
-        plot_op.getRenderer().setSeriesPaint(1, new Color(0x00, 0x00, 0xFF)); //case = blue
-        if (includeOutlier) {
-            plot_op.getRenderer().setSeriesPaint(2, new Color(0xFF, 0x00, 0x00)); //outlier = red
-        }
-        plot_op.setSeriesRenderingOrder(SeriesRenderingOrder.FORWARD);
-        return chart_op;
-    }
-
-    public static void generateNewSampleFile(HashSet<String> outlierSet, String sampleFile, String outputFile) {
-        try {
-            FileWriter fw = new FileWriter(CommonCommand.outputPath + outputFile);
+    public static void generateNewSampleFile(Map<String, SamplePCAInfo> sampleMap, String sampleFile, String outputFile) {    
+        try ( BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(CommonCommand.outputPath + outputFile))) ) {
             Files.lines(Paths.get(sampleFile))
                     .map(line -> line.split("\\t"))
-                    .filter(line -> !outlierSet.contains(line[1]))
+                    .filter( line -> sampleMap.containsKey( line[1]) )
                     .forEach(line -> printLine(fw, line));
+            fw.flush();
+            fw.close();
         } catch (IOException e) {
             ErrorManager.send(e);
         }
     }
 
-    private static void printLine(FileWriter fw, String[] line) {
+    private static void printLine(BufferedWriter fw, String[] line) {
         try {
-            fw.write(String.join("\\t", line) + "\n");
+            fw.write(String.join("\t", line) + "\n");
         } catch (IOException e) {
             ErrorManager.send(e);
         }
@@ -353,6 +288,7 @@ public class FlashPCAManager {
                 if (sampleMap.containsKey(evecStrLine[1])) {
                     sampleMap.get(evecStrLine[1]).setEvec(ndim, evecStrLine);
                     sampleMap.get(evecStrLine[1]).setPcs(ndim, pcsStrLine);
+                    sampleMap.get(evecStrLine[1]).setToFilter(false);
                 }
             }
         } catch (IOException e) {
@@ -365,54 +301,39 @@ public class FlashPCAManager {
     private static void saveChartAsPDF(String fileName, List<JFreeChart> charts, float ht, float wth) {
         try {
             Document document = new Document(new Rectangle(wth, ht), 0, 0, 0, 0);
-            //Document document = new Document(PageSize.A0);
             document.addAuthor("atav");
             document.addSubject("flashpca_plot");
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileName));
             document.open();
             PdfContentByte cb = writer.getDirectContent();
-            //writeChartAsPDF(cb, chart, PageSize.LETTER.getWidth(), PageSize.LETTER.getHeight(),true);
             float indWidth = wth;
-            float indHt = ht;
             int numChartsX = 1;
-            int numChartsY = 1;
-            if (charts.size() > 2) {
+            if (charts.size() == 3) {
                 indWidth = wth / 3;
                 numChartsX = 3;
             }
-            if (charts.size() > 1) {
-                indHt = ht / 2;
-                numChartsY = 2;
-            }
 
             int counter = 0;
-            float currHt = 0;
             float currWth = 0;
             for (int i = 0; i < numChartsX; i++) {
-                for (int j = 0; j < numChartsY; j++) {
-                    PdfTemplate tp = cb.createTemplate(indWidth, indHt);
-                    Graphics2D g2 = new PdfGraphics2D(tp, indWidth, indHt);
-                    Rectangle2D r2D = new Rectangle2D.Double(0, 0, indWidth, indHt);
+                    PdfTemplate tp = cb.createTemplate(indWidth, ht);
+                    Graphics2D g2 = new PdfGraphics2D(tp, indWidth, ht);
+                    Rectangle2D r2D = new Rectangle2D.Double(0, 0, indWidth, ht);
                     charts.get(counter).draw(g2, r2D, null);
                     g2.dispose();
-                    cb.addTemplate(tp, currWth, currHt);
-                    //curr_wth = currWth +  indWidth;
-                    currHt = currHt + indHt;
+                    cb.addTemplate(tp, currWth, 0);
                     counter = counter + 1;
-                }
-                currHt = 0;
-                currWth = currWth + indWidth;
+                    currWth = currWth + indWidth;
             }
             document.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-
+    
     public static void getevecDatafor1DPlot(String inputFileName, String pdfFileName, 
             String plotName, String plotTitle, String xName, String yName) {
-        Charset charset = Charset.defaultCharset();
-        //double[] xdata = new double[ndim];  
+        Charset charset = Charset.defaultCharset(); 
         XYSeries xyData = new XYSeries(plotName);
         try {
             List<String> fileLines;

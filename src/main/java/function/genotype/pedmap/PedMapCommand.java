@@ -48,7 +48,7 @@ public class PedMapCommand {
                 case "--flashpca":
                     isFlashPCA = true;
                     break;
-                case "--keep-outliers":
+                case "--include-outlier":
                     isKeepOutliers = true;
                     break;
                 case "--num-eigvec":

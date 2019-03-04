@@ -14,7 +14,8 @@ public class SamplePCAInfo {
     private double[] pcs;
     private boolean outlier = false;
     private Sample sample;
-
+    private boolean toFilter = true;
+    
     SamplePCAInfo(Sample sample, int nDim) {
         this.sample = sample;
         this.evec = new double[nDim];
@@ -45,6 +46,14 @@ public class SamplePCAInfo {
         return outlier;
     }
 
+    public void setToFilter(boolean toFilter_ip){
+        toFilter = toFilter_ip;
+    }
+    
+    public boolean getToFilter(){
+        return toFilter;
+    }
+    
     public void setOutlier(HashSet<String> outlierSet) {
         //check if outlier according to its presence in hashset
         outlier = outlierSet.contains(sample.getName());

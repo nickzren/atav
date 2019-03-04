@@ -263,6 +263,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 CommonCommand.outputPath + "pcs" + outExt,
                 sampleList);
 
+        sampleMap.entrySet().removeIf(entry -> (entry.getValue().getToFilter()));
+        
         FlashPCAManager.plot2DData(sampleMap, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca.pdf");
 
         LogManager.writeAndPrint("Finding outliers using plink ibs clustering");
@@ -270,15 +272,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         if (!PedMapCommand.isKeepOutliers) {
             FlashPCAManager.findOutliers();
 
-            //read each line of outlier nearest file and filter based on Z-score, prop_diff parameters 
+            //read each line of outlier nearest file and filter based on Z-score
             HashSet<String> outlierSet = FlashPCAManager.getOutliers(
                     CommonCommand.outputPath + "plink_outlier.nearest",
                     CommonCommand.outputPath + "outlier_file.txt");
-
-            FlashPCAManager.generateNewSampleFile(
-                    outlierSet,
-                    GenotypeLevelFilterCommand.sampleFile,
-                    "pruned_sample_file.txt");//generate new sample file, can't simly change fam file
 
             LogManager.writeAndPrint("Redo flashpca with outliers removed");
 
@@ -319,6 +316,12 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             
             FlashPCAManager.plot2DData(sampleMap, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
         }
+        
+        FlashPCAManager.generateNewSampleFile(
+                    sampleMap,
+                    //outlierSet,
+                    GenotypeLevelFilterCommand.sampleFile,
+                    "pruned_sample_file.txt");//generate new sample file, can't simly change fam file
     }
 
     private static void runPlinkPedToBed(String inputName, String outputName, String remove_cmd) {
