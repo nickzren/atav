@@ -48,18 +48,18 @@ public class PedMapCommand {
                 case "--flashpca":
                     isFlashPCA = true;
                     break;
-                case "--include-outlier":
+                case "--flashpca-include-outlier":
                     isKeepOutliers = true;
                     break;
-                case "--num-eigvec":
+                case "--flashpca-num-eigvec":
                     numEvec = getValidInteger(option);
                     break;
-                case "--num-nearest-neighbor":
+                case "--flashpca-num-nearest-neighbor":
                     numNeighbor = getValidInteger(option);
                     break;
-                case "--no-plots":
+                case "--flashpca-no-plots":
                     isNoPlots = true;
-                case "--z-score-thresh":
+                case "--flashpca-z-score-thresh":
                     zThresh = getValidFloat(option);
                     break;
                 //flashpca args end   
