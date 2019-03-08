@@ -248,9 +248,9 @@ public class FlashPCAManager {
                 if (!dataStrLine[0].equals(fidCurr) || !dataStrLine[1].equals(iidCurr) || countLine == 1) {
 
                     if (sumZ < zThreshSum) {
-                        System.out.println(dataStrLine[0] + "\t" + dataStrLine[1]);
-                        writer.write(dataStrLine[0] + "\t" + dataStrLine[1] + "\n");
-                        outlierSet.add(dataStrLine[1]);
+                        System.out.println(fidCurr + "\t" + iidCurr);
+                        writer.write(fidCurr + "\t" + iidCurr + "\n");
+                        outlierSet.add(iidCurr);
                     }
                     countLine = PedMapCommand.numNeighbor;
                     fidCurr = dataStrLine[0];
@@ -261,6 +261,9 @@ public class FlashPCAManager {
                     sumZ = sumZ + Float.valueOf(dataStrLine[4]);
                 }
             }
+            br.close();
+            writer.flush();
+            writer.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
