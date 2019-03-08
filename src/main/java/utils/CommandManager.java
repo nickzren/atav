@@ -522,7 +522,7 @@ public class CommandManager {
         } else if (FlankingCommand.isListFlankingSeq) {
             FlankingCommand.initOptions(optionList.iterator());
         } else if (TestCommand.isTest) { // Test Functions
-
+            TestCommand.initOptions(optionList.iterator());
         }
     }
 
