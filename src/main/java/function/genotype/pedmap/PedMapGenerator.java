@@ -253,9 +253,9 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 "per_var_explained");
 
         int nDim = 3;
-        if (PedMapCommand.numEvec < 3) {
+        if (PedMapCommand.flashPCANumEvec < 3) {
             LogManager.writeAndPrint("Number of dimensions to plot can't be greater than total number of eigenvectors");
-            nDim = PedMapCommand.numEvec;
+            nDim = PedMapCommand.flashPCANumEvec;
         }
         ArrayList<Sample> sampleList = SampleManager.getList();
         sampleMap = FlashPCAManager.getSampleMap(nDim,
@@ -269,7 +269,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
         LogManager.writeAndPrint("Finding outliers using plink ibs clustering");
 
-        if (!PedMapCommand.isKeepOutliers) {
+        if (!PedMapCommand.isFlashPCAKeepOutliers) {
             FlashPCAManager.findOutliers();
 
             //read each line of outlier nearest file and filter based on Z-score

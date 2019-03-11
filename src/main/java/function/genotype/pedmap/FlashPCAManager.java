@@ -47,10 +47,10 @@ import utils.ThirdPartyToolManager;
 public class FlashPCAManager {
 
     public static void runFlashPCA(String inputName, String outExt, String logName) {
-        LogManager.writeAndPrint("flashpca for eigenvalues, vectors, pcs and percent variance explained by each pc. #dimenions = " + PedMapCommand.numEvec);
+        LogManager.writeAndPrint("flashpca for eigenvalues, vectors, pcs and percent variance explained by each pc. #dimenions = " + PedMapCommand.flashPCANumEvec);
 
         try {
-            if (PedMapCommand.numEvec <= 0) {
+            if (PedMapCommand.flashPCANumEvec <= 0) {
                 throw new IllegalArgumentException("Number of eigenvectors as input to flashpca cant be 0");
             }
         } catch (IllegalArgumentException e) {
@@ -59,7 +59,7 @@ public class FlashPCAManager {
 
         String cmd = ThirdPartyToolManager.FLASHPCA
                 + " --bfile " + CommonCommand.outputPath + inputName
-                + " --ndim " + PedMapCommand.numEvec
+                + " --ndim " + PedMapCommand.flashPCANumEvec
                 + " --outpc " + CommonCommand.outputPath + "pcs" + outExt
                 + " --outvec " + CommonCommand.outputPath + "eigenvectors" + outExt
                 + " --outval " + CommonCommand.outputPath + "eigenvalues" + outExt
@@ -101,7 +101,7 @@ public class FlashPCAManager {
     public static void findOutliers() {
         String cmd = ThirdPartyToolManager.PLINK
                 + " --bfile " + CommonCommand.outputPath + "plink"
-                + " --neighbour 1 " + String.valueOf(PedMapCommand.numNeighbor)
+                + " --neighbour 1 " + String.valueOf(PedMapCommand.flashPCANumNeighbor)
                 + " --out " + CommonCommand.outputPath + "plink_outlier"
                 + " 2>&1 >> " + CommonCommand.outputPath + "flashpca.log";
 
@@ -228,7 +228,7 @@ public class FlashPCAManager {
 
     public static HashSet<String> getOutliers(String fileName, String outlierFile) {
         HashSet<String> outlierSet = new HashSet<>();
-        float zThreshSum = PedMapCommand.zThresh * PedMapCommand.numNeighbor;
+        float zThreshSum = PedMapCommand.flashPCAzThresh * PedMapCommand.flashPCANumNeighbor;
         try (BufferedReader br = new BufferedReader(new FileReader(fileName));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outlierFile))) {
             String[] header = br.readLine().replaceAll("^\\s+", "").split(" +");
@@ -252,7 +252,7 @@ public class FlashPCAManager {
                         writer.write(fidCurr + "\t" + iidCurr + "\n");
                         outlierSet.add(iidCurr);
                     }
-                    countLine = PedMapCommand.numNeighbor;
+                    countLine = PedMapCommand.flashPCANumNeighbor;
                     fidCurr = dataStrLine[0];
                     iidCurr = dataStrLine[1];
                     sumZ = Float.valueOf(dataStrLine[4]);
@@ -341,7 +341,7 @@ public class FlashPCAManager {
         try {
             List<String> fileLines;
             fileLines = Files.readAllLines(Paths.get(inputFileName), charset);
-            if (fileLines.size() != PedMapCommand.numEvec) {
+            if (fileLines.size() != PedMapCommand.flashPCANumEvec) {
                 String message;
                 message = String.format("File %s has too many lines. #lines must equal #pcs!", inputFileName);
                 throw new IllegalArgumentException(message);
