@@ -71,7 +71,7 @@ public class Annotation {
 
             // trap filter apply to missense variants when it failed to pass polyphen filter but exclude NA TraP
             // trap filter apply to missense variants when polyphen filter not applied
-            // trap filter apply to annotation that effect less damaging than missense_variant
+            // trap filter apply to annotation that effect less damaging than missense_variant and not 5_prime_UTR_premature_start_codon_gain_variant
             if (effect.startsWith("missense_variant")) {
                 // when polyphen filter failed, to save variant needs to make sure trap filter used
                 if (!isPolyphenValid && TrapCommand.minTrapScore != Data.NO_FILTER) {
@@ -80,7 +80,8 @@ public class Annotation {
                         && AnnotationLevelFilterCommand.polyphenHumvar.equals(Data.NO_FILTER_STR)) {
                     isValid = TrapCommand.isTrapScoreValid(trapScore);
                 }
-            } else if (effectID > EffectManager.MISSENSE_VARIANT_ID) {
+            } else if (effectID > EffectManager.MISSENSE_VARIANT_ID &&
+                    !effect.equals("5_prime_UTR_premature_start_codon_gain_variant")) {
                 isValid = TrapCommand.isTrapScoreValid(trapScore)
                         && TrapCommand.isTrapScoreNonCodingValid(trapScore);
             }
