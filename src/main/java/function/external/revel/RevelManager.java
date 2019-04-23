@@ -32,7 +32,7 @@ public class RevelManager {
     }
 
     public static float getRevel(String chr, int pos, String ref, String alt, boolean isMNV) throws SQLException {
-        String sql = RevelManager.getSqlByVariant(chr, pos, ref, alt, isMNV);
+        String sql = getSqlByVariant(chr, pos, ref, alt, isMNV);
 
         ResultSet rs = DBManager.executeQuery(sql);
 

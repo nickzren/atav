@@ -17,6 +17,7 @@ import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mtr.MTRCommand;
+import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
@@ -461,6 +462,11 @@ public class CommandManager {
                     RevelCommand.isListRevel = true;
                     RevelCommand.isIncludeRevel = true;
                     break;    
+                case "--list-primate-ai":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    PrimateAICommand.isListPrimateAI = true;
+                    PrimateAICommand.isIncludePrimateAI = true;
+                    break; 
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;

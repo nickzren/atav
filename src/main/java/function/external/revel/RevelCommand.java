@@ -8,7 +8,6 @@ import global.Data;
  */
 public class RevelCommand {
 
-    // list minRevel
     public static boolean isListRevel = false;
     public static boolean isIncludeRevel = false;
 

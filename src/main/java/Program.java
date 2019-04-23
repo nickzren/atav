@@ -56,6 +56,8 @@ import function.external.knownvar.ListKnownVar;
 import function.external.mgi.ListMgi;
 import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
+import function.external.primateai.ListPrimateAI;
+import function.external.primateai.PrimateAICommand;
 import function.external.revel.ListRevel;
 import function.external.revel.RevelCommand;
 import function.external.rvis.ListRvis;
@@ -221,6 +223,8 @@ public class Program {
                 runAnalysis(new ListDiscovEHR());
             } else if (RevelCommand.isListRevel) {
                 runAnalysis(new ListRevel());
+            } else if (PrimateAICommand.isListPrimateAI) {
+                runAnalysis(new ListPrimateAI());
             } 
             else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());

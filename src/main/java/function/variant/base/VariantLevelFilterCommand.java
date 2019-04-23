@@ -15,6 +15,7 @@ import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mtr.MTRCommand;
+import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
@@ -249,6 +250,11 @@ public class VariantLevelFilterCommand {
                     RevelCommand.minRevel = getValidFloat(option);
                     RevelCommand.isIncludeRevel = true;
                     break;
+                case "--min-primate-dl-score":
+                    checkValueValid(1, 0, option);
+                    PrimateAICommand.minPrimateDLScore = getValidFloat(option);
+                    PrimateAICommand.isIncludePrimateAI = true;
+                    break;    
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
