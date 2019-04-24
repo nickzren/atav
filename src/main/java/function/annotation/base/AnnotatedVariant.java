@@ -1,5 +1,8 @@
 package function.annotation.base;
 
+import function.external.ccr.CCRCommand;
+import function.external.ccr.CCRGene;
+import function.external.ccr.CCROutput;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBRGene;
 import function.external.limbr.LIMBROutput;
@@ -87,6 +90,7 @@ public class AnnotatedVariant extends Variant {
     private MTR mtr;
     private float revel;
     private float primateDL;
+    private CCROutput ccrOutput;
 
     public boolean isValid = true;
 
@@ -227,6 +231,7 @@ public class AnnotatedVariant extends Variant {
         return isValid
                 && isSubRVISValid()
                 && isLIMBRValid()
+                && isCCRValid()
                 && isMTRValid();
     }
 
@@ -264,6 +269,17 @@ public class AnnotatedVariant extends Variant {
             } else {
                 return true;
             }
+        }
+
+        return true;
+    }
+    
+    // init CCR score and applied filter
+    private boolean isCCRValid() {
+        if (CCRCommand.isIncludeCCR) {
+            ccrOutput = new CCROutput(getGeneName(), getChrStr(), getStartPosition());
+
+            return CCRCommand.isCCRPercentileValid(ccrOutput.getGene() == null ? Data.FLOAT_NA : ccrOutput.getGene().getPercentiles());
         }
 
         return true;
@@ -389,6 +405,10 @@ public class AnnotatedVariant extends Variant {
             sj.merge(getLIMBRStringJoiner());
         }
 
+        if (CCRCommand.isIncludeCCR) {
+            sj.merge(getCCRStringJoiner());
+        }
+        
         if (GerpCommand.isIncludeGerp) {
             sj.add(getGerpScore());
         }
@@ -464,6 +484,10 @@ public class AnnotatedVariant extends Variant {
 
     public StringJoiner getLIMBRStringJoiner() {
         return limbrOutput.getStringJoiner();
+    }
+    
+    public StringJoiner getCCRStringJoiner() {
+        return ccrOutput.getStringJoiner();
     }
 
     public String getGerpScore() {

@@ -4,6 +4,7 @@ import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
+import function.external.ccr.CCRCommand;
 import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
@@ -356,6 +357,7 @@ public class CommandManager {
                     RvisCommand.isIncludeRvis = true;
                     SubRvisCommand.isIncludeSubRvis = true;
                     LIMBRCommand.isIncludeLIMBR = true;
+                    CCRCommand.isIncludeCCR = true;
 //                    GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isIncludeMgi = true;
                     DenovoDBCommand.isIncludeDenovoDB = true;
@@ -433,6 +435,11 @@ public class CommandManager {
                     LIMBRCommand.isListLIMBR = true;
                     LIMBRCommand.isIncludeLIMBR = true;
                     break;
+                case "--list-ccr":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    CCRCommand.isListCCR = true;
+                    CCRCommand.isIncludeCCR = true;
+                    break;     
                 case "--list-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
                     RvisCommand.isListRvis = true;
@@ -467,7 +474,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     PrimateAICommand.isListPrimateAI = true;
                     PrimateAICommand.isIncludePrimateAI = true;
-                    break; 
+                    break;    
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;

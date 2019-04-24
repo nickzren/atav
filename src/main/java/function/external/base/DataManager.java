@@ -1,5 +1,7 @@
 package function.external.base;
 
+import function.external.ccr.CCRCommand;
+import function.external.ccr.CCRManager;
 import function.external.denovo.DenovoDBCommand;
 import function.external.limbr.LIMBRManager;
 import function.external.denovo.DenovoDBManager;
@@ -86,6 +88,10 @@ public class DataManager {
 
         if (LIMBRCommand.isIncludeLIMBR) {
             sb.append(LIMBRManager.getVersion());
+        }
+        
+        if (CCRCommand.isIncludeCCR) {
+            sb.append(CCRManager.getVersion());
         }
 
         if (GerpCommand.isIncludeGerp) {

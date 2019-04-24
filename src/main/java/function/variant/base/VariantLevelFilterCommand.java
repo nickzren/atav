@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.external.ccr.CCRCommand;
 import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
@@ -225,6 +226,11 @@ public class VariantLevelFilterCommand {
                     LIMBRCommand.limbrExonPercentile = getValidFloat(option);
                     LIMBRCommand.isIncludeLIMBR = true;
                     break;
+                case "--ccr-percentile":
+                    checkValueValid(100, 0, option);
+                    CCRCommand.ccrPercentile = getValidFloat(option);
+                    CCRCommand.isIncludeCCR = true;
+                    break;
                 case "--discovehr-af":
                     checkValueValid(1, 0, option);
                     DiscovEHRCommand.discovEHRAF = getValidFloat(option);
@@ -291,6 +297,9 @@ public class VariantLevelFilterCommand {
                 case "--include-limbr":
                     LIMBRCommand.isIncludeLIMBR = true;
                     break;
+                case "--include-ccr":
+                    CCRCommand.isIncludeCCR = true;
+                    break;    
 //                case "--include-1000-genomes":
 //                    GenomesCommand.isInclude1000Genomes = true;
 //                    break;

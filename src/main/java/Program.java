@@ -25,6 +25,9 @@ import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
 import function.coverage.base.CoverageCommand;
 import function.coverage.comparison.SiteCoverageComparison;
+import function.external.ccr.CCRCommand;
+import function.external.ccr.CCRManager;
+import function.external.ccr.ListCCR;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBRManager;
 import function.external.limbr.ListLIMBR;
@@ -147,6 +150,8 @@ public class Program {
             MgiManager.init();
 
             GnomADManager.init();
+            
+            CCRManager.init();
 
             // output external data version
             LogManager.logExternalDataVersion();
@@ -225,6 +230,8 @@ public class Program {
                 runAnalysis(new ListRevel());
             } else if (PrimateAICommand.isListPrimateAI) {
                 runAnalysis(new ListPrimateAI());
+            } else if (CCRCommand.isListCCR) {
+                runAnalysis(new ListCCR());
             } 
             else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());

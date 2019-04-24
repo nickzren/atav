@@ -1,5 +1,7 @@
 package function.variant.base;
 
+import function.external.ccr.CCRCommand;
+import function.external.ccr.CCRManager;
 import function.external.denovo.DenovoDBCommand;
 import function.external.limbr.LIMBRManager;
 import function.external.denovo.DenovoDBManager;
@@ -130,6 +132,10 @@ public class Output {
 
         if (LIMBRCommand.isIncludeLIMBR) {
             sj.add(LIMBRManager.getTitle());
+        }
+        
+        if (CCRCommand.isIncludeCCR) {
+            sj.add(CCRManager.getTitle());
         }
 
         if (GerpCommand.isIncludeGerp) {
