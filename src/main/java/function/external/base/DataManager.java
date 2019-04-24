@@ -24,6 +24,8 @@ import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
 import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
+import function.external.primateai.PrimateAICommand;
+import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
 import function.external.revel.RevelManager;
 import function.external.rvis.RvisCommand;
@@ -112,6 +114,10 @@ public class DataManager {
 
         if (RevelCommand.isIncludeRevel) {
             sb.append(RevelManager.getVersion());
+        }
+        
+        if (PrimateAICommand.isIncludePrimateAI) {
+            sb.append(PrimateAIManager.getVersion());
         }
         
         return sb.toString();

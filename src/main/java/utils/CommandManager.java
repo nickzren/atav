@@ -362,6 +362,7 @@ public class CommandManager {
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
                     MTRCommand.isIncludeMTR = true;
                     RevelCommand.isIncludeRevel = true;
+                    PrimateAICommand.isIncludePrimateAI = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":

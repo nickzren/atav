@@ -29,6 +29,8 @@ import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
+import function.external.primateai.PrimateAICommand;
+import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
 import function.external.revel.RevelManager;
 import function.external.rvis.RvisCommand;
@@ -84,6 +86,7 @@ public class AnnotatedVariant extends Variant {
     private DiscovEHR discovEHR;
     private MTR mtr;
     private float revel;
+    private float primateDL;
 
     public boolean isValid = true;
 
@@ -150,6 +153,12 @@ public class AnnotatedVariant extends Variant {
             revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
 
             isValid = RevelCommand.isMinRevelValid(revel);
+        }
+        
+        if (isValid && PrimateAICommand.isIncludePrimateAI) {
+            primateDL = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele);
+
+            isValid = PrimateAICommand.isMinPrimateDLScoreValid(primateDL);
         }
     }
 
@@ -406,6 +415,10 @@ public class AnnotatedVariant extends Variant {
         
         if (RevelCommand.isIncludeRevel) {
             sj.add(FormatManager.getFloat(revel));
+        }
+        
+        if (PrimateAICommand.isIncludePrimateAI) {
+            sj.add(FormatManager.getFloat(primateDL));
         }
     }
 

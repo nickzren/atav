@@ -37,7 +37,7 @@ public class PrimateAI {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
     
-    public String getPrimateAI() {
+    public String getPrimateDLScore() {
         return FormatManager.getFloat(score);
     }
     
@@ -46,7 +46,7 @@ public class PrimateAI {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(getVariantId());
-        sj.add(getPrimateAI());
+        sj.add(getPrimateDLScore());
 
         return sj.toString();
     }

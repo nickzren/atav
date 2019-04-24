@@ -24,6 +24,8 @@ import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
 import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
+import function.external.primateai.PrimateAICommand;
+import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
 import function.external.revel.RevelManager;
 import function.external.rvis.RvisCommand;
@@ -156,6 +158,10 @@ public class Output {
 
         if (RevelCommand.isIncludeRevel) {
             sj.add(RevelManager.getTitle());
+        }
+        
+        if (PrimateAICommand.isIncludePrimateAI) {
+            sj.add(PrimateAIManager.getTitle());
         }
 
         return sj;

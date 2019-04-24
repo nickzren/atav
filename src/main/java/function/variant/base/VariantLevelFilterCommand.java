@@ -309,6 +309,9 @@ public class VariantLevelFilterCommand {
                 case "--include-revel":
                     RevelCommand.isIncludeRevel = true;
                     break;
+                case "--include-primate-ai":
+                    PrimateAICommand.isIncludePrimateAI = true;
+                    break;    
                 default:
                     continue;
             }
