@@ -58,6 +58,7 @@ public class AnnotatedVariant extends Variant {
     // AnnoDB annotations / most damaging effect annotations
     private int stableId;
     private String effect = "";
+    private int effectID;
     private String HGVS_c = "";
     private String HGVS_p = "";
     private float polyphenHumdiv = Data.FLOAT_NA;
@@ -171,6 +172,7 @@ public class AnnotatedVariant extends Variant {
             if (effect.isEmpty()) { // init most damaging effect annotations
                 stableId = annotation.stableId;
                 effect = annotation.effect;
+                effectID = annotation.effectID;
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
                 geneName = annotation.geneName;
@@ -277,9 +279,11 @@ public class AnnotatedVariant extends Variant {
     // init CCR score and applied filter
     private boolean isCCRValid() {
         if (CCRCommand.isIncludeCCR) {
-            ccrOutput = new CCROutput(getGeneName(), getChrStr(), getStartPosition());
+            if(!EffectManager.isLOF(effectID)) {
+                ccrOutput = new CCROutput(getGeneName(), getChrStr(), getStartPosition());
 
-            return CCRCommand.isCCRPercentileValid(ccrOutput.getGene() == null ? Data.FLOAT_NA : ccrOutput.getGene().getPercentiles());
+                return CCRCommand.isCCRPercentileValid(ccrOutput.getGene() == null ? Data.FLOAT_NA : ccrOutput.getGene().getPercentiles());
+            }
         }
 
         return true;

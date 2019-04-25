@@ -1,6 +1,7 @@
 package function.annotation.base;
 
 import function.annotation.base.Enum.Impact;
+import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -25,6 +26,8 @@ public class EffectManager {
     public static final String TMP_EFFECT_ID_TABLE = "tmp_effect_id";
     public static final String TMP_IMPACT_TABLE = "tmp_impact";
 
+    public static final String LOF_EFFECT_FILE_PATH = Data.ATAV_HOME + "data/effect/lof.txt";
+    
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
     private static HashMap<String, Integer> impactEffect2IdMap = new HashMap<>();
@@ -38,11 +41,14 @@ public class EffectManager {
     private static final String MODIFIER_IMPACT = "('HIGH'),('MODERATE'),('LOW'),('MODIFIER')";
 
     public static int MISSENSE_VARIANT_ID;
-
+    public static HashSet<Integer> LOF_EFFECT_ID_SET = new HashSet<>();
+    
     private static boolean isUsed = false;
 
     public static void init() throws SQLException {
         initDefaultEffectSet();
+        
+        initLOFEffectIDSet();
 
         initInputEffectSet();
     }
@@ -84,6 +90,14 @@ public class EffectManager {
             }
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+    
+    private static void initLOFEffectIDSet() {
+        String lofEffect = initEffectFromFile(LOF_EFFECT_FILE_PATH);
+        
+        for (String impactEffect : lofEffect.split(",")) {
+            LOF_EFFECT_ID_SET.add(impactEffect2IdMap.get(impactEffect));
         }
     }
 
@@ -193,6 +207,10 @@ public class EffectManager {
         return id2EffectMap.get(id);
     }
 
+    public static boolean isLOF(int effectID) {
+        return LOF_EFFECT_ID_SET.contains(effectID);
+    }
+    
     public static boolean isUsed() {
         return isUsed;
     }
