@@ -18,7 +18,6 @@ public class CCRCommand {
             return true;
         }
 
-        return value >= ccrPercentile
-                || value == Data.FLOAT_NA;
+        return value >= ccrPercentile;
     }
 }
