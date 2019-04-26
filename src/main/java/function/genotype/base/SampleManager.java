@@ -83,16 +83,16 @@ public class SampleManager {
 
         initExcludeIGMGnomADSample();
 
-        if (!GenotypeLevelFilterCommand.sampleFile.isEmpty()) {
+        if (!CohortLevelFilterCommand.sampleFile.isEmpty()) {
             initExistingSampleFile();
             initFromSampleFile();
             closeExistingSampleFile();
-        } else if (GenotypeLevelFilterCommand.isAllSample
-                || GenotypeLevelFilterCommand.isAllExome) {
+        } else if (CohortLevelFilterCommand.isAllSample
+                || CohortLevelFilterCommand.isAllExome) {
             initAllSampleFile();
             initAllSampleFromAnnoDB();
             closeAllSampleFile();
-            GenotypeLevelFilterCommand.sampleFile = allSampleFile;
+            CohortLevelFilterCommand.sampleFile = allSampleFile;
         }
 
         initCovariate();
@@ -205,15 +205,15 @@ public class SampleManager {
     }
 
     private static void checkSampleFile() {
-        if (GenotypeLevelFilterCommand.sampleFile.isEmpty()
-                && !GenotypeLevelFilterCommand.isAllSample
-                && !GenotypeLevelFilterCommand.isAllExome) {
+        if (CohortLevelFilterCommand.sampleFile.isEmpty()
+                && !CohortLevelFilterCommand.isAllSample
+                && !CohortLevelFilterCommand.isAllExome) {
             ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
         }
     }
 
     private static void initExcludeIGMGnomADSample() {
-        if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample) {
+        if (CohortLevelFilterCommand.isExcludeIGMGnomadSample) {
             try (BufferedReader br = Files.newBufferedReader(Paths.get(IGM_GNOMAD_SAMPLE_PATH))) {
                 excludeIGMGnomadSampleSet = br.lines().collect(Collectors.toSet());
             } catch (IOException e) {
@@ -238,7 +238,7 @@ public class SampleManager {
                 + "and sample_finished = 1 "
                 + "and sample_failure = 0 ";
 
-        if (GenotypeLevelFilterCommand.isAllExome) {
+        if (CohortLevelFilterCommand.isAllExome) {
             sqlCode += " and sample_type = 'Exome' and sample_name not like 'SRR%'";
         }
 
@@ -250,7 +250,7 @@ public class SampleManager {
         int lineNum = 0;
 
         try {
-            File f = new File(GenotypeLevelFilterCommand.sampleFile);
+            File f = new File(CohortLevelFilterCommand.sampleFile);
             FileReader fr = new FileReader(f);
             BufferedReader br = new BufferedReader(fr);
 
@@ -272,13 +272,13 @@ public class SampleManager {
 
                 String individualId = values[1];
 
-                if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample
+                if (CohortLevelFilterCommand.isExcludeIGMGnomadSample
                         && excludeIGMGnomadSampleSet.contains((individualId))) {
                     LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
                     continue;
                 }
 
-                if (!GenotypeLevelFilterCommand.isDisableCheckDuplicateSample) {
+                if (!CohortLevelFilterCommand.isDisableCheckDuplicateSample) {
                     if (!sampleNameSet.contains(individualId)) {
                         sampleNameSet.add(individualId);
                     } else {
@@ -360,7 +360,7 @@ public class SampleManager {
                 String familyId = rs.getString("sample_name").trim();
                 String individualId = rs.getString("sample_name").trim();
 
-                if (GenotypeLevelFilterCommand.isExcludeIGMGnomadSample
+                if (CohortLevelFilterCommand.isExcludeIGMGnomadSample
                         && excludeIGMGnomadSampleSet.contains((individualId))) {
                     LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
                     continue;
@@ -487,16 +487,16 @@ public class SampleManager {
 
     private static void checkCaseCtrlOptions() {
         if (caseNum == 0) {
-            if (GenotypeLevelFilterCommand.maxCaseAF != Data.NO_FILTER
-                    || GenotypeLevelFilterCommand.minCaseCarrier != Data.NO_FILTER
-                    || GenotypeLevelFilterCommand.minCoveredSamplePercentage[Index.CASE] != Data.NO_FILTER
-                    || GenotypeLevelFilterCommand.isCaseOnly == true) {
+            if (CohortLevelFilterCommand.maxCaseAF != Data.NO_FILTER
+                    || CohortLevelFilterCommand.minCaseCarrier != Data.NO_FILTER
+                    || CohortLevelFilterCommand.minCoveredSamplePercentage[Index.CASE] != Data.NO_FILTER
+                    || CohortLevelFilterCommand.isCaseOnly == true) {
                 ErrorManager.print("You used case filters but your sample file has no cases.",
                         ErrorManager.INPUT_PARSING);
             }
         } else if (ctrlNum == 0) {
-            if (GenotypeLevelFilterCommand.maxCtrlAF != Data.NO_FILTER
-                    || GenotypeLevelFilterCommand.minCoveredSamplePercentage[Index.CTRL] != Data.NO_FILTER) {
+            if (CohortLevelFilterCommand.maxCtrlAF != Data.NO_FILTER
+                    || CohortLevelFilterCommand.minCoveredSamplePercentage[Index.CTRL] != Data.NO_FILTER) {
                 ErrorManager.print("You used control filters but your sample file has no controls.",
                         ErrorManager.INPUT_PARSING);
             }

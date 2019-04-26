@@ -1,7 +1,7 @@
 package function.genotype.statistics;
 
 import function.genotype.base.CalledVariant;
-import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.CohortLevelFilterCommand;
 import global.Data;
 import global.Index;
 import utils.FormatManager;
@@ -45,7 +45,7 @@ public class FisherOutput extends StatisticOutput {
     }
 
     boolean isCaseOnlyValid() {
-        if (GenotypeLevelFilterCommand.isCaseOnly) {
+        if (CohortLevelFilterCommand.isCaseOnly) {
             if ((calledVar.genoCount[Index.HET][Index.CASE]
                     + calledVar.genoCount[Index.HOM][Index.CASE]) > 0) {
                 return true;

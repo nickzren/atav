@@ -38,6 +38,7 @@ import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Carrier;
+import function.genotype.base.CohortLevelFilterCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
@@ -193,7 +194,7 @@ public class Output {
         sj.add("Covered Ctrl");
         sj.add("Covered Case Percentage");
         sj.add("Covered Ctrl Percentage");
-        if (GenotypeLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
+        if (CohortLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
             sj.add("Covered Sample Binomial P (two sided)");
         }
         sj.add("Case AF");
@@ -283,7 +284,7 @@ public class Output {
         sj.add(FormatManager.getInteger(calledVar.getCoveredSample(Index.CTRL)));
         sj.add(FormatManager.getFloat(calledVar.getCoveredSamplePercentage(Index.CASE)));
         sj.add(FormatManager.getFloat(calledVar.getCoveredSamplePercentage(Index.CTRL)));
-        if (GenotypeLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
+        if (CohortLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
             sj.add(FormatManager.getDouble(calledVar.getCoveredSampleBinomialP()));
         }
         sj.add(FormatManager.getFloat(calledVar.af[Index.CASE]));
@@ -341,7 +342,7 @@ public class Output {
     }
 
     public boolean isMaxLooAFValid() {
-        return GenotypeLevelFilterCommand.isMaxLooAFValid(looAF);
+        return CohortLevelFilterCommand.isMaxLooAFValid(looAF);
     }
 
     public double getLooAf() {

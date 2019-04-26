@@ -3,7 +3,7 @@ package function.genotype.vargeno;
 import function.genotype.base.CalledVariant;
 import function.genotype.base.Sample;
 import function.genotype.base.AnalysisBase4CalledVar;
-import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.CohortLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -91,7 +91,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     }
 
     private boolean isCaseOnly(Sample sample) {
-        if (GenotypeLevelFilterCommand.isCaseOnly) {
+        if (CohortLevelFilterCommand.isCaseOnly) {
             return sample.isCase();
         } else {
             return true;

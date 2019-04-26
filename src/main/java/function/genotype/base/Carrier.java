@@ -2,6 +2,7 @@ package function.genotype.base;
 
 import function.genotype.trio.TrioCommand;
 import function.variant.base.Region;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
 import java.sql.ResultSet;
@@ -170,7 +171,7 @@ public class Carrier extends NonCarrier {
     protected void checkValidOnXY(Region r) {
         if (gt != Data.BYTE_NA
                 && !TrioCommand.isListTrio
-                && !GenotypeLevelFilterCommand.disableCheckOnSexChr) {
+                && !VariantLevelFilterCommand.disableCheckOnSexChr) {
             boolean isValid = true;
 
             if (SampleManager.getMap().get(sampleId).isMale()) {

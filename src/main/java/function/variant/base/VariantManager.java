@@ -3,7 +3,7 @@ package function.variant.base;
 import function.external.knownvar.ClinVar;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
-import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.CohortLevelFilterCommand;
 import function.genotype.base.SampleManager;
 import function.genotype.parent.ParentCommand;
 import function.genotype.trio.TrioCommand;
@@ -317,7 +317,7 @@ public class VariantManager {
     }
 
     private static void initCaseVariantTable() {
-        if (GenotypeLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
+        if (CohortLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
             try {
                 Statement stmt = DBManager.createStatementByReadOnlyConn();
 

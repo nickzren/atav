@@ -49,6 +49,7 @@ public class VariantLevelFilterCommand {
     public static boolean isExcludeMultiallelicVariant2 = false;
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
+    public static boolean disableCheckOnSexChr = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -84,6 +85,9 @@ public class VariantLevelFilterCommand {
                 case "--exclude-indel":
                     isExcludeIndel = true;
                     break;
+                case "--disable-check-on-sex-chr":
+                    disableCheckOnSexChr = true;
+                    break;    
                 case "--evs-maf":
                     checkValueValid(0.5, 0, option);
                     EvsCommand.evsMaf = getValidDouble(option);

@@ -69,7 +69,7 @@ public class CalledVariant extends AnnotatedVariant {
             // single variant carriers data process
             CarrierBlockManager.initCarrierMap(carrierMap, this);
 
-            if (!GenotypeLevelFilterCommand.isMinVarPresentValid(carrierMap.size())) {
+            if (!CohortLevelFilterCommand.isMinVarPresentValid(carrierMap.size())) {
                 isValid = false;
             }
         } else {
@@ -81,10 +81,10 @@ public class CalledVariant extends AnnotatedVariant {
             if (carrierMap == null) {
                 carrierMap = new HashMap<>();
 
-                if (GenotypeLevelFilterCommand.minVarPresent > 0) {
+                if (CohortLevelFilterCommand.minVarPresent > 0) {
                     isValid = false;
                 }
-            } else if (!GenotypeLevelFilterCommand.isMinVarPresentValid(carrierMap.size())) {
+            } else if (!CohortLevelFilterCommand.isMinVarPresentValid(carrierMap.size())) {
                 isValid = false;
             }
         }
@@ -95,31 +95,30 @@ public class CalledVariant extends AnnotatedVariant {
     private boolean checkGenoCountValid() {
         int totalQCFailSample = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
 
-        isValid = GenotypeLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample)
-                && GenotypeLevelFilterCommand.isMinCaseCarrierValid(getCaseCarrier())
-                && GenotypeLevelFilterCommand.isMinVarPresentValid(carrierMap.size());
+        isValid = CohortLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample)
+                && CohortLevelFilterCommand.isMinCaseCarrierValid(getCaseCarrier())
+                && CohortLevelFilterCommand.isMinVarPresentValid(carrierMap.size());
 
         return isValid;
     }
 
     private boolean checkCoveredSampleBinomialP() {
-        isValid = GenotypeLevelFilterCommand
-                .isMinCoveredSampleBinomialPValid(coveredSampleBinomialP);
+        isValid = CohortLevelFilterCommand.isMinCoveredSampleBinomialPValid(coveredSampleBinomialP);
 
         return isValid;
     }
 
     private boolean checkCoveredSamplePercentage() {
-        isValid = GenotypeLevelFilterCommand.isMinCoveredCasePercentageValid(coveredSamplePercentage[Index.CASE])
-                && GenotypeLevelFilterCommand.isMinCoveredCtrlPercentageValid(coveredSamplePercentage[Index.CTRL]);
+        isValid = CohortLevelFilterCommand.isMinCoveredCasePercentageValid(coveredSamplePercentage[Index.CASE])
+                && CohortLevelFilterCommand.isMinCoveredCtrlPercentageValid(coveredSamplePercentage[Index.CTRL]);
 
         return isValid;
     }
 
     private boolean checkAlleleFreqValid() {
-        isValid = GenotypeLevelFilterCommand.isMaxCtrlAFValid(af[Index.CTRL])
-                && GenotypeLevelFilterCommand.isMinCtrlAFValid(af[Index.CTRL])
-                && GenotypeLevelFilterCommand.isMaxCaseAFValid(af[Index.CASE]);
+        isValid = CohortLevelFilterCommand.isMaxCtrlAFValid(af[Index.CTRL])
+                && CohortLevelFilterCommand.isMinCtrlAFValid(af[Index.CTRL])
+                && CohortLevelFilterCommand.isMaxCaseAFValid(af[Index.CASE]);
 
         return isValid;
     }
@@ -184,7 +183,7 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     public void initDPBinCoveredSampleBinomialP() {
-        if (GenotypeLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
+        if (CohortLevelFilterCommand.minCoveredSampleBinomialP != Data.NO_FILTER) {
             if (coveredSample[Index.CASE] == 0
                     || coveredSample[Index.CTRL] == 0) {
                 coveredSampleBinomialP = Data.DOUBLE_NA;

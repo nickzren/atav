@@ -2,7 +2,7 @@ package function.genotype.pedmap;
 
 import function.genotype.base.AnalysisBase4CalledVar;
 import function.genotype.base.CalledVariant;
-import function.genotype.base.GenotypeLevelFilterCommand;
+import function.genotype.base.CohortLevelFilterCommand;
 import function.genotype.base.Sample;
 import global.Data;
 import function.genotype.base.SampleManager;
@@ -194,7 +194,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     public void doEigesntrat() {
         String cmd = ThirdPartyToolManager.PYTHON
                 + " " + EIGENSTRAT_SCRIPT_PATH
-                + " --sample " + GenotypeLevelFilterCommand.sampleFile
+                + " --sample " + CohortLevelFilterCommand.sampleFile
                 + " --prune-sample"
                 + " --genotypefile " + pedFile
                 + " --snpfile " + mapFile
@@ -220,7 +220,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         // Run kinship pruning script
         cmd = ThirdPartyToolManager.PYTHON
                 + " " + KINSHIP_SCRIPT_PATH
-                + " " + GenotypeLevelFilterCommand.sampleFile
+                + " " + CohortLevelFilterCommand.sampleFile
                 + " " + CommonCommand.outputPath + "king.kin0"
                 + " " + CommonCommand.outputPath + "king.kin"
                 + " --relatedness_threshold " + PedMapCommand.kinshipRelatednessThreshold
@@ -320,7 +320,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         FlashPCAManager.generateNewSampleFile(
                     sampleMap,
                     //outlierSet,
-                    GenotypeLevelFilterCommand.sampleFile,
+                    CohortLevelFilterCommand.sampleFile,
                     "pruned_sample_file.txt");//generate new sample file, can't simly change fam file
     }
 

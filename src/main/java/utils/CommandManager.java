@@ -23,6 +23,7 @@ import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
+import function.genotype.base.CohortLevelFilterCommand;
 import function.genotype.base.GenotypeLevelFilterCommand;
 import function.genotype.collapsing.CollapsingCommand;
 import function.genotype.parent.ParentCommand;
@@ -329,14 +330,14 @@ public class CommandManager {
                     break;
                 case "--list-trio":
                     TrioCommand.isListTrio = true;
-                    GenotypeLevelFilterCommand.isCaseOnly = true;
+                    CohortLevelFilterCommand.isCaseOnly = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isListParentCompHet = true;
                     break;
                 case "--list-parental-mosaic":
                     ParentalCommand.isParentalMosaic = true;
-                    GenotypeLevelFilterCommand.isCaseOnly = true;
+                    CohortLevelFilterCommand.isCaseOnly = true;
                     break;
                 case "--ped-map":
                     PedMapCommand.isPedMap = true;
