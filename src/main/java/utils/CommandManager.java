@@ -547,6 +547,8 @@ public class CommandManager {
         AnnotationLevelFilterCommand.initOptions(optionList.iterator());
 
         GenotypeLevelFilterCommand.initOptions(optionList.iterator());
+        
+        CohortLevelFilterCommand.initOptions(optionList.iterator());
     }
 
     public static void outputInvalidOptions() {
