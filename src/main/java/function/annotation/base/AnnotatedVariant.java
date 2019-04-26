@@ -276,7 +276,7 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
     
-    // init CCR score and applied filter
+    // init CCR score and applied filter only to non-LOF variants
     private boolean isCCRValid() {
         if (CCRCommand.isIncludeCCR) {
             if(!EffectManager.isLOF(effectID)) {
