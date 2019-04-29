@@ -1,13 +1,10 @@
 package function.genotype.base;
 
-import function.variant.base.VariantManager;
 import global.Data;
-import global.Index;
 import java.util.Iterator;
 import static utils.CommandManager.checkRangeValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidInteger;
-import static utils.CommandManager.getValidPath;
 import static utils.CommandManager.getValidRange;
 import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;

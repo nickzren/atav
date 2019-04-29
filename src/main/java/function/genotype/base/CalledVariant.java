@@ -134,17 +134,16 @@ public class CalledVariant extends AnnotatedVariant {
             Carrier carrier = carrierMap.get(sample.getId());
             NonCarrier noncarrier = noncarrierMap.get(sample.getId());
 
-            boolean isDPBinValid;
+            boolean isCoveredSampleValid;
 
             if (carrier != null) {
-                isDPBinValid = applyCoverageFilter(sample,
-                        carrier.getDPBin(),
+                isCoveredSampleValid = applyCoverageFilter(sample,
+                        carrier.getDP(),
                         GenotypeLevelFilterCommand.minCaseCoverageCall,
                         GenotypeLevelFilterCommand.minCtrlCoverageCall);
 
-                if (!isDPBinValid) {
+                if (!isCoveredSampleValid) {
                     carrier.setGT(Data.BYTE_NA);
-                    carrier.setDPBin(Data.SHORT_NA);
                 }
 
                 setGenoDPBin(carrier.getGT(), carrier.getDPBin(), sample.getIndex());
@@ -157,12 +156,12 @@ public class CalledVariant extends AnnotatedVariant {
                 }
 
             } else if (noncarrier != null) {
-                isDPBinValid = applyCoverageFilter(sample,
+                isCoveredSampleValid = applyCoverageFilter(sample,
                         noncarrier.getDPBin(),
                         GenotypeLevelFilterCommand.minCaseCoverageNoCall,
                         GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
 
-                if (!isDPBinValid) {
+                if (!isCoveredSampleValid) {
                     noncarrier.setGT(Data.BYTE_NA);
                     noncarrier.setDPBin(Data.SHORT_NA);
                 }
@@ -171,10 +170,10 @@ public class CalledVariant extends AnnotatedVariant {
                 addSampleGeno(noncarrier.getGT(), sample);
             } else {
                 setGenoDPBin(Data.BYTE_NA, Data.SHORT_NA, sample.getIndex());
-                isDPBinValid = false;
+                isCoveredSampleValid = false;
             }
 
-            if (isDPBinValid) {
+            if (isCoveredSampleValid) {
                 coveredSample[sample.getPheno()]++;
             }
         }
