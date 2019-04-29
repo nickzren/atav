@@ -63,12 +63,12 @@ public class NonCarrier {
     public void applyCoverageFilter(int minCaseCov, int minCtrlCov) {
         Sample sample = SampleManager.getMap().get(sampleId);
 
-        if (sample.isCase()) // --min-case-coverage-call or --min-case-coverage-no-call
+        if (sample.isCase()) // --min-case-coverage-no-call
         {
             if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCaseCov)) {
                 gt = Data.BYTE_NA;
             }
-        } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
+        } else // --min-ctrl-coverage-no-call
         {
             if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
                 gt = Data.BYTE_NA;
