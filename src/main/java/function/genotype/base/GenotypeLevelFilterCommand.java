@@ -18,10 +18,6 @@ import static utils.CommandManager.checkValueValid;
 public class GenotypeLevelFilterCommand {
 
     public static int minCoverage = Data.NO_FILTER;
-    public static int minCaseCoverageCall = Data.NO_FILTER;
-    public static int minCaseCoverageNoCall = Data.NO_FILTER;
-    public static int minCtrlCoverageCall = Data.NO_FILTER;
-    public static int minCtrlCoverageNoCall = Data.NO_FILTER;
     public static boolean isIncludeHomRef = false;
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
@@ -61,22 +57,6 @@ public class GenotypeLevelFilterCommand {
                 case "--min-coverage":
                     checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
                     minCoverage = getValidInteger(option);
-                    break;
-                case "--min-case-coverage-call":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    minCaseCoverageCall = getValidInteger(option);
-                    break;
-                case "--min-case-coverage-no-call":
-                    checkValueValid(new String[]{"3", "10", "20", "30", "50", "200"}, option);
-                    minCaseCoverageNoCall = getValidInteger(option);
-                    break;
-                case "--min-ctrl-coverage-call":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    minCtrlCoverageCall = getValidInteger(option);
-                    break;
-                case "--min-ctrl-coverage-no-call":
-                    checkValueValid(new String[]{"3", "10", "20", "30", "50", "200"}, option);
-                    minCtrlCoverageNoCall = getValidInteger(option);
                     break;
                 case "--include-hom-ref":
                     isIncludeHomRef = true;
@@ -213,29 +193,7 @@ public class GenotypeLevelFilterCommand {
             iterator.remove();
         }
 
-        initMinCoverage();
-
         initIsHighQualityVariantOnly();
-    }
-
-    private static void initMinCoverage() {
-        if (minCoverage != Data.NO_FILTER) {
-            if (minCaseCoverageCall == Data.NO_FILTER) {
-                minCaseCoverageCall = minCoverage;
-            }
-
-            if (minCaseCoverageNoCall == Data.NO_FILTER) {
-                minCaseCoverageNoCall = minCoverage;
-            }
-
-            if (minCtrlCoverageCall == Data.NO_FILTER) {
-                minCtrlCoverageCall = minCoverage;
-            }
-
-            if (minCtrlCoverageNoCall == Data.NO_FILTER) {
-                minCtrlCoverageNoCall = minCoverage;
-            }
-        }
     }
 
     private static void initIsHighQualityVariantOnly() {
@@ -265,12 +223,12 @@ public class GenotypeLevelFilterCommand {
         return isHighQualityCallVariantOnly;
     }
 
-    public static boolean isMinCoverageValid(short value, int minCov) {
-        if (minCov == Data.NO_FILTER) {
+    public static boolean isMinCoverageValid(short value) {
+        if (minCoverage == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= minCov;
+        return value >= minCoverage;
     }
 
     public static boolean isFilterValid(byte value) {

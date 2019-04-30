@@ -61,15 +61,13 @@ public class DPBinBlockManager {
                     if (carrier.isValid()) {
                         carrier.setDPBin(sampleDPBin.getDPBin(posIndex));
 
-                        carrier.applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
-                                GenotypeLevelFilterCommand.minCtrlCoverageCall);
+                        carrier.applyCoverageFilter();
                     }
                 } else {
                     NonCarrier noncarrier = new NonCarrier(sampleDPBin.getSampleId(),
                             sampleDPBin.getDPBin(posIndex));
 
-                    noncarrier.applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
-                            GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
+                    noncarrier.applyCoverageFilter();
 
                     if (noncarrier.isValid()) {
                         noncarrierMap.put(noncarrier.getSampleId(), noncarrier);
@@ -108,12 +106,10 @@ public class DPBinBlockManager {
                     if (carrier.isValid()) {
                         carrier.setDPBin(noncarrier.getDPBin());
 
-                        carrier.applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageCall,
-                                GenotypeLevelFilterCommand.minCtrlCoverageCall);
+                        carrier.applyCoverageFilter();
                     }
                 } else {
-                    noncarrier.applyCoverageFilter(GenotypeLevelFilterCommand.minCaseCoverageNoCall,
-                            GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
+                    noncarrier.applyCoverageFilter();
 
                     if (noncarrier.isValid()) {
                         noncarrierMap.put(noncarrier.getSampleId(), noncarrier);

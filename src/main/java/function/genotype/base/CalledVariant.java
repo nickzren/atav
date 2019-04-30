@@ -137,13 +137,11 @@ public class CalledVariant extends AnnotatedVariant {
             boolean isCoveredSampleValid;
 
             if (carrier != null) {
-                isCoveredSampleValid = applyCoverageFilter(sample,
-                        carrier.getDP(),
-                        GenotypeLevelFilterCommand.minCaseCoverageCall,
-                        GenotypeLevelFilterCommand.minCtrlCoverageCall);
+                isCoveredSampleValid = GenotypeLevelFilterCommand.isMinCoverageValid(carrier.getDPBin());
 
                 if (!isCoveredSampleValid) {
                     carrier.setGT(Data.BYTE_NA);
+                    carrier.setDPBin(Data.SHORT_NA);
                 }
 
                 setGenoDPBin(carrier.getGT(), carrier.getDPBin(), sample.getIndex());
@@ -156,11 +154,8 @@ public class CalledVariant extends AnnotatedVariant {
                 }
 
             } else if (noncarrier != null) {
-                isCoveredSampleValid = applyCoverageFilter(sample,
-                        noncarrier.getDPBin(),
-                        GenotypeLevelFilterCommand.minCaseCoverageNoCall,
-                        GenotypeLevelFilterCommand.minCtrlCoverageNoCall);
-
+                isCoveredSampleValid = GenotypeLevelFilterCommand.isMinCoverageValid(noncarrier.getDPBin());
+                
                 if (!isCoveredSampleValid) {
                     noncarrier.setGT(Data.BYTE_NA);
                     noncarrier.setDPBin(Data.SHORT_NA);
@@ -197,20 +192,6 @@ public class CalledVariant extends AnnotatedVariant {
     public void initCoveredSamplePercentage() {
         coveredSamplePercentage[Index.CASE] = MathManager.devide(coveredSample[Index.CASE], SampleManager.getCaseNum()) * 100;
         coveredSamplePercentage[Index.CTRL] = MathManager.devide(coveredSample[Index.CTRL], SampleManager.getCtrlNum()) * 100;
-    }
-
-    private boolean applyCoverageFilter(Sample sample, short dpBin, int minCaseCov, int minCtrlCov) {
-        if (sample.isCase()) // --min-case-coverage-call or --min-case-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCaseCov)) {
-                return false;
-            }
-        } else // --min-ctrl-coverage-call or --min-ctrl-coverage-no-call
-         if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
-                return false;
-            }
-
-        return true;
     }
 
     public void addSampleGeno(byte geno, Sample sample) {

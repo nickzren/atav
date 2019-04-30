@@ -60,19 +60,9 @@ public class NonCarrier {
         return dpBin;
     }
 
-    public void applyCoverageFilter(int minCaseCov, int minCtrlCov) {
-        Sample sample = SampleManager.getMap().get(sampleId);
-
-        if (sample.isCase()) // --min-case-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCaseCov)) {
-                gt = Data.BYTE_NA;
-            }
-        } else // --min-ctrl-coverage-no-call
-        {
-            if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin, minCtrlCov)) {
-                gt = Data.BYTE_NA;
-            }
+    public void applyCoverageFilter() {
+        if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin)) {
+            gt = Data.BYTE_NA;
         }
     }
 
