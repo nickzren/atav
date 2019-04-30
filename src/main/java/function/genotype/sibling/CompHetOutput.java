@@ -35,7 +35,7 @@ public class CompHetOutput extends Output {
         sj.merge(getVariantDataTitle());
         sj.merge(getAnnotationDataTitle());
         sj.merge(getExternalDataTitle());
-        sj.merge(getGenoStatDataTitle());
+        sj.merge(getCohortLevelTitle());
         sj.add("Child1 GT");
         sj.add("Child1 DP Bin");
         sj.add("Child2 GT");

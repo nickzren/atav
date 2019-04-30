@@ -175,7 +175,7 @@ public class Output {
     }
 
     // quick hack here, eventually will get rid of min covered sample binomial p
-    public static StringJoiner getGenoStatDataTitle() {
+    public static StringJoiner getCohortLevelTitle() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Hom Case");

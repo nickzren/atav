@@ -53,7 +53,7 @@ public class ParentOutput extends Output {
         sj.merge(initCarrierTitle("mother"));
         sj.merge(initCarrierTitle("father"));
 
-        sj.merge(Output.getGenoStatDataTitle());
+        sj.merge(Output.getCohortLevelTitle());
         sj.merge(Output.getExternalDataTitle());
 
         return sj.toString();

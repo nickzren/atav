@@ -16,7 +16,7 @@ public class VarOutput extends Output {
         sj.merge(getVariantDataTitle());
         sj.merge(getAnnotationDataTitle());
         sj.merge(getExternalDataTitle());
-        sj.merge(getGenoStatDataTitle());
+        sj.merge(getCohortLevelTitle());
 
         return sj.toString();
     }

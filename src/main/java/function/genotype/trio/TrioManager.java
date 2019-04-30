@@ -90,7 +90,7 @@ public class TrioManager {
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
         sj.add("Denovo Flag");
-        sj.merge(Output.getGenoStatDataTitle());
+        sj.merge(Output.getCohortLevelTitle());
         sj.merge(Output.getExternalDataTitle());
 
         return sj;

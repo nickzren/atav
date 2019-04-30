@@ -28,7 +28,7 @@ public class CompHetOutput extends CollapsingOutput {
         sj.merge(getVariantDataTitle());
         sj.merge(getAnnotationDataTitle());
         sj.merge(getCarrierDataTitle());
-        sj.merge(getGenoStatDataTitle());
+        sj.merge(getCohortLevelTitle());
         sj.add("LOO AF");
         sj.merge(getExternalDataTitle());
 

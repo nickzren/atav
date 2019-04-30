@@ -34,7 +34,7 @@ public class ParentalOutput extends Output {
         sj.merge(getVariantDataTitle());
         sj.merge(getAnnotationDataTitle());
         sj.merge(getCarrierDataTitle());
-        sj.merge(getGenoStatDataTitle());
+        sj.merge(getCohortLevelTitle());
         sj.merge(getExternalDataTitle());
 
         return sj.toString();

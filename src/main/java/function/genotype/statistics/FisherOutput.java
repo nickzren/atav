@@ -23,7 +23,7 @@ public class FisherOutput extends StatisticOutput {
         sj.merge(getVariantDataTitle());
         sj.merge(getAnnotationDataTitle());
         sj.merge(getExternalDataTitle());
-        sj.merge(getGenoStatDataTitle());
+        sj.merge(getCohortLevelTitle());
         sj.add("P Value");
         sj.add("Odds Ratio");
         
