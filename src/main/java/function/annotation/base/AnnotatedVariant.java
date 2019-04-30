@@ -279,9 +279,9 @@ public class AnnotatedVariant extends Variant {
     // init CCR score and applied filter only to non-LOF variants
     private boolean isCCRValid() {
         if (CCRCommand.isIncludeCCR) {
+            ccrOutput = new CCROutput(getGeneName(), getChrStr(), getStartPosition());
+            
             if(!EffectManager.isLOF(effectID)) {
-                ccrOutput = new CCROutput(getGeneName(), getChrStr(), getStartPosition());
-
                 return CCRCommand.isCCRPercentileValid(ccrOutput.getGene() == null ? Data.FLOAT_NA : ccrOutput.getGene().getPercentiles());
             }
         }
