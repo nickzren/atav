@@ -1,7 +1,6 @@
 package function.annotation.base;
 
 import function.external.ccr.CCRCommand;
-import function.external.ccr.CCRGene;
 import function.external.ccr.CCROutput;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBRGene;

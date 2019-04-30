@@ -24,6 +24,7 @@ public class GenotypeLevelFilterCommand {
     public static double[] homPercentAltRead = null;
     public static double minPercentAltReadBinomialP = Data.NO_FILTER;
     public static double maxPercentAltReadBinomialP = Data.NO_FILTER;
+    public static int adAlt = Data.NO_FILTER;
     public static int snvGQ = Data.NO_FILTER;
     public static int indelGQ = Data.NO_FILTER;
     public static float snvSOR = Data.NO_FILTER;
@@ -87,6 +88,10 @@ public class GenotypeLevelFilterCommand {
                 case "--max-percent-alt-read-binomial-p":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     maxPercentAltReadBinomialP = getValidDouble(option);
+                    break;
+                case "--ad-alt":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    adAlt = getValidInteger(option);
                     break;
                 case "--gq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
@@ -245,6 +250,22 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
+    public static boolean isAdAltValid(short value) {
+        if (adAlt == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.SHORT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= adAlt) {
+            return true;
+        }
+
+        return false;
+    }
+    
     public static boolean isGqValid(byte value, boolean isSnv) {
         if (isSnv) {
             return isGqValid(value, snvGQ);
