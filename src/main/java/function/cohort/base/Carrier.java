@@ -115,7 +115,7 @@ public class Carrier extends NonCarrier {
     public void applyQualityFilter(boolean isSnv) {
         if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
-                    || !GenotypeLevelFilterCommand.isAdAltValid(adAlt)
+                    || !GenotypeLevelFilterCommand.isMinAdAltValid(adAlt)
                     || !GenotypeLevelFilterCommand.isGqValid(gq, isSnv)
                     || !GenotypeLevelFilterCommand.isSorValid(sor, isSnv)
                     || !GenotypeLevelFilterCommand.isFsValid(fs, isSnv)
