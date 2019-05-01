@@ -3,7 +3,7 @@ package utils;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Files;
 import function.external.base.DataManager;
-import function.genotype.base.GenotypeLevelFilterCommand;
+import function.cohort.base.GenotypeLevelFilterCommand;
 import global.Data;
 import java.io.*;
 import java.util.Date;

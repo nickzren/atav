@@ -1,6 +1,6 @@
 package function.coverage.base;
 
-import function.genotype.base.DPBinBlockManager;
+import function.cohort.base.DPBinBlockManager;
 
 /**
  *

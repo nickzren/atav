@@ -1,7 +1,7 @@
 package function.test;
 
-import function.genotype.base.Sample;
-import function.genotype.base.SampleManager;
+import function.cohort.base.Sample;
+import function.cohort.base.SampleManager;
 import function.variant.base.RegionManager;
 import java.sql.ResultSet;
 import java.util.HashSet;

@@ -1,7 +1,7 @@
 package function.test;
 
-import function.genotype.base.DPBinBlockManager;
-import static function.genotype.base.DPBinBlockManager.getCoverageByBin;
+import function.cohort.base.DPBinBlockManager;
+import static function.cohort.base.DPBinBlockManager.getCoverageByBin;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;

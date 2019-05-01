@@ -3,7 +3,7 @@ package utils;
 import com.google.common.base.Stopwatch;
 import function.external.flanking.FlankingCommand;
 import global.Data;
-import function.genotype.base.SampleManager;
+import function.cohort.base.SampleManager;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
 import java.io.FileInputStream;

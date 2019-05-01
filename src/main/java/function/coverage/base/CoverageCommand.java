@@ -1,6 +1,6 @@
 package function.coverage.base;
 
-import function.genotype.statistics.StatisticsCommand;
+import function.cohort.statistics.StatisticsCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValueValid;

@@ -1,0 +1,514 @@
+package function.cohort.base;
+
+import global.Data;
+import java.util.Iterator;
+import static utils.CommandManager.checkRangeValid;
+import static utils.CommandManager.getValidDouble;
+import static utils.CommandManager.getValidInteger;
+import static utils.CommandManager.getValidRange;
+import utils.CommandOption;
+import static utils.CommandManager.checkValuesValid;
+import static utils.CommandManager.getValidFloat;
+import static utils.CommandManager.checkValueValid;
+
+/**
+ *
+ * @author nick
+ */
+public class GenotypeLevelFilterCommand {
+
+    public static int minCoverage = Data.NO_FILTER;
+    public static boolean isIncludeHomRef = false;
+    public static int[] filter; // null - no filer 
+    public static double[] hetPercentAltRead = null; // {min, max}
+    public static double[] homPercentAltRead = null;
+    public static double minPercentAltReadBinomialP = Data.NO_FILTER;
+    public static double maxPercentAltReadBinomialP = Data.NO_FILTER;
+    public static int adAlt = Data.NO_FILTER;
+    public static int snvGQ = Data.NO_FILTER;
+    public static int indelGQ = Data.NO_FILTER;
+    public static float snvSOR = Data.NO_FILTER;
+    public static float indelSOR = Data.NO_FILTER;
+    public static float snvFS = Data.NO_FILTER;
+    public static float indelFS = Data.NO_FILTER;
+    public static int snvMQ = Data.NO_FILTER;
+    public static int indelMQ = Data.NO_FILTER;
+    public static int snvQD = Data.NO_FILTER;
+    public static int indelQD = Data.NO_FILTER;
+    public static int snvQual = Data.NO_FILTER;
+    public static int indelQual = Data.NO_FILTER;
+    public static float snvRPRS = Data.NO_FILTER;
+    public static float indelRPRS = Data.NO_FILTER;
+    public static float snvMQRS = Data.NO_FILTER;
+    public static float indelMQRS = Data.NO_FILTER;
+    public static final String[] FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
+    public static boolean isQcMissingIncluded = false;
+
+    // below variables all true will trigger ATAV only retrive high quality variants
+    // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
+    private static boolean isHighQualityCallVariantOnly = false;
+
+    public static void initOptions(Iterator<CommandOption> iterator)
+            throws Exception {
+        CommandOption option;
+
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            switch (option.getName()) {
+                case "--min-coverage":
+                    checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
+                    minCoverage = getValidInteger(option);
+                    break;
+                case "--include-hom-ref":
+                    isIncludeHomRef = true;
+                    break;
+                case "--filter":
+                    option.setValue(option.getValue().toUpperCase());
+                    checkValuesValid(FILTER, option);
+                    String[] tmp = option.getValue().split(",");
+
+                    filter = new int[tmp.length];
+
+                    for (int i = 0; i < tmp.length; i++) {
+                        filter[i] = Enum.FILTER.valueOf(tmp[i]).getValue();
+                    }
+                    break;
+                case "--het-percent-alt-read":
+                    checkRangeValid("0-1", option);
+                    hetPercentAltRead = getValidRange(option);
+                    break;
+                case "--hom-percent-alt-read":
+                    checkRangeValid("0-1", option);
+                    homPercentAltRead = getValidRange(option);
+                    break;
+                case "--min-percent-alt-read-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minPercentAltReadBinomialP = getValidDouble(option);
+                    break;
+                case "--max-percent-alt-read-binomial-p":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    maxPercentAltReadBinomialP = getValidDouble(option);
+                    break;
+                case "--ad-alt":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    adAlt = getValidInteger(option);
+                    break;
+                case "--gq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvGQ = getValidInteger(option);
+                    indelGQ = getValidInteger(option);
+                    break;
+                case "--snv-gq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvGQ = getValidInteger(option);
+                    break;
+                case "--indel-gq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelGQ = getValidInteger(option);
+                    break;
+                case "--sor":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvSOR = getValidFloat(option);
+                    indelSOR = getValidFloat(option);
+                    break;
+                case "--snv-sor":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvSOR = getValidFloat(option);
+                    break;
+                case "--indel-sor":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelSOR = getValidFloat(option);
+                    break;
+                case "--fs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvFS = getValidFloat(option);
+                    indelFS = getValidFloat(option);
+                    break;
+                case "--snv-fs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvFS = getValidFloat(option);
+                    break;
+                case "--indel-fs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelFS = getValidFloat(option);
+                    break;
+                case "--mq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvMQ = getValidInteger(option);
+                    indelMQ = getValidInteger(option);
+                    break;
+                case "--snv-mq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvMQ = getValidInteger(option);
+                    break;
+                case "--indel-mq":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelMQ = getValidInteger(option);
+                    break;
+                case "--qd":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvQD = getValidInteger(option);
+                    break;
+                case "--qual":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvQual = getValidInteger(option);
+                    indelQual = getValidInteger(option);
+                    break;
+                case "--snv-qual":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvQual = getValidInteger(option);
+                    break;
+                case "--indel-qual":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelQual = getValidInteger(option);
+                    break;
+                case "--rprs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvRPRS = getValidFloat(option);
+                    indelRPRS = getValidFloat(option);
+                    break;
+                case "--snv-rprs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvRPRS = getValidFloat(option);
+                    break;
+                case "--indel-rprs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelRPRS = getValidFloat(option);
+                    break;
+                case "--mqrs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvMQRS = getValidFloat(option);
+                    indelMQRS = getValidFloat(option);
+                    break;
+                case "--snv-mqrs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    snvMQRS = getValidFloat(option);
+                    break;
+                case "--indel-mqrs":
+                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
+                    indelMQRS = getValidFloat(option);
+                    break;
+                case "--include-qc-missing":
+                    isQcMissingIncluded = true;
+                    break;
+                default:
+                    continue;
+            }
+
+            iterator.remove();
+        }
+
+        initIsHighQualityVariantOnly();
+    }
+
+    private static void initIsHighQualityVariantOnly() {
+        // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
+        if ((snvQual >= 30 & indelQual >= 30)
+                && (snvMQ >= 40 && indelMQ >= 40)
+                && minCoverage >= 3
+                && filter != null) {
+
+            int qualifiedFilterCount = 0;
+
+            for (int filterIndex : filter) {
+                if (filterIndex == Enum.FILTER.PASS.getValue()
+                        || filterIndex == Enum.FILTER.LIKELY.getValue()
+                        || filterIndex == Enum.FILTER.INTERMEDIATE.getValue()) {
+                    qualifiedFilterCount++;
+                }
+            }
+
+            if (qualifiedFilterCount == 3) {
+                isHighQualityCallVariantOnly = true;
+            }
+        }
+    }
+
+    public static boolean isHighQualityCallVariantOnly() {
+        return isHighQualityCallVariantOnly;
+    }
+
+    public static boolean isMinCoverageValid(short value) {
+        if (minCoverage == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minCoverage;
+    }
+
+    public static boolean isFilterValid(byte value) {
+        if (filter == null) { // no filter
+            return true;
+        }
+
+        for (int tmp : filter) {
+            if (value == tmp) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isAdAltValid(short value) {
+        if (adAlt == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.SHORT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= adAlt) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    public static boolean isGqValid(byte value, boolean isSnv) {
+        if (isSnv) {
+            return isGqValid(value, snvGQ);
+        } else {
+            return isGqValid(value, indelGQ);
+        }
+    }
+
+    private static boolean isGqValid(byte value, int gq) {
+        if (gq == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.BYTE_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= gq) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isSorValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isSORValid(value, snvSOR);
+        } else {
+            return isSORValid(value, indelSOR);
+        }
+    }
+
+    private static boolean isSORValid(float value, float sor) {
+        if (sor == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.FLOAT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value <= sor) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isFsValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isFsValid(value, snvFS);
+        } else {
+            return isFsValid(value, indelFS);
+        }
+    }
+
+    private static boolean isFsValid(float value, float fs) {
+        if (fs == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.FLOAT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value <= fs) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isMqValid(byte value, boolean isSnv) {
+        if (isSnv) {
+            return isMqValid(value, snvMQ);
+        } else {
+            return isMqValid(value, indelMQ);
+        }
+    }
+
+    private static boolean isMqValid(byte value, int mq) {
+        if (mq == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.BYTE_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= mq) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isQdValid(byte value, boolean isSnv) {
+        if (isSnv) {
+            return isQdValid(value, snvQD);
+        } else {
+            return isQdValid(value, indelQD);
+        }
+    }
+
+    private static boolean isQdValid(byte value, int qd) {
+        if (qd == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.BYTE_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= qd) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isQualValid(int value, boolean isSnv) {
+        if (isSnv) {
+            return isQualValid(value, snvQual);
+        } else {
+            return isQualValid(value, indelQual);
+        }
+    }
+
+    private static boolean isQualValid(int value, int qual) {
+        if (qual == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.INTEGER_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= qual) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isRprsValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isRprsValid(value, snvRPRS);
+        } else {
+            return isRprsValid(value, indelRPRS);
+        }
+    }
+
+    private static boolean isRprsValid(float value, float readPosRankSum) {
+        if (readPosRankSum == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.FLOAT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= readPosRankSum) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isMqrsValid(float value, boolean isSnv) {
+        if (isSnv) {
+            return isMqrsValid(value, snvMQRS);
+        } else {
+            return isMqrsValid(value, indelMQRS);
+        }
+    }
+
+    private static boolean isMqrsValid(float value, float mqRankSum) {
+        if (mqRankSum == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.FLOAT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= mqRankSum) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isHetPercentAltReadValid(float value) {
+        if (hetPercentAltRead == null) {
+            return true;
+        }
+
+        if (value != Data.FLOAT_NA) {
+            if (value >= hetPercentAltRead[0]
+                    && value <= hetPercentAltRead[1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isHomPercentAltReadValid(float value) {
+        if (homPercentAltRead == null) {
+            return true;
+        }
+
+        if (value != Data.FLOAT_NA) {
+            if (value >= homPercentAltRead[0]
+                    && value <= homPercentAltRead[1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isMinPercentAltReadBinomialPValid(double value) {
+        if (minPercentAltReadBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.DOUBLE_NA) {
+            return false;
+        }
+
+        return value >= minPercentAltReadBinomialP;
+    }
+
+    public static boolean isMaxPercentAltReadBinomialPValid(double value) {
+        if (maxPercentAltReadBinomialP == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.DOUBLE_NA) {
+            return false;
+        }
+
+        return value <= maxPercentAltReadBinomialP;
+    }
+}

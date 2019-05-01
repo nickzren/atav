@@ -1,8 +1,8 @@
 package function.coverage.base;
 
-import function.genotype.base.DPBinBlockManager;
-import function.genotype.base.GenotypeLevelFilterCommand;
-import function.genotype.base.SampleManager;
+import function.cohort.base.DPBinBlockManager;
+import function.cohort.base.GenotypeLevelFilterCommand;
+import function.cohort.base.SampleManager;
 import function.variant.base.Region;
 import java.io.IOException;
 import java.sql.ResultSet;

@@ -1,6 +1,6 @@
 package function.annotation.base;
 
-import function.genotype.collapsing.CollapsingCommand;
+import function.cohort.collapsing.CollapsingCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;

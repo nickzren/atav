@@ -23,17 +23,17 @@ import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.external.trap.TrapCommand;
-import function.genotype.base.CohortLevelFilterCommand;
-import function.genotype.base.GenotypeLevelFilterCommand;
-import function.genotype.collapsing.CollapsingCommand;
-import function.genotype.parent.ParentCommand;
-import function.genotype.parental.ParentalCommand;
-import function.genotype.pedmap.PedMapCommand;
-import function.genotype.sibling.SiblingCommand;
-import function.genotype.statistics.StatisticsCommand;
-import function.genotype.trio.TrioCommand;
-import function.genotype.var.VarCommand;
-import function.genotype.vargeno.VarGenoCommand;
+import function.cohort.base.CohortLevelFilterCommand;
+import function.cohort.base.GenotypeLevelFilterCommand;
+import function.cohort.collapsing.CollapsingCommand;
+import function.cohort.parent.ParentCommand;
+import function.cohort.parental.ParentalCommand;
+import function.cohort.pedmap.PedMapCommand;
+import function.cohort.sibling.SiblingCommand;
+import function.cohort.statistics.StatisticsCommand;
+import function.cohort.trio.TrioCommand;
+import function.cohort.var.VarCommand;
+import function.cohort.vargeno.VarGenoCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
@@ -284,7 +284,7 @@ public class CommandManager {
                     break;
                 case "--debug":
                     CommonCommand.isDebug = true;
-                    break;
+                    break; 
                 default:
                     continue;
             }

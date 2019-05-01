@@ -4,7 +4,7 @@ import function.annotation.base.Gene;
 import function.annotation.base.Exon;
 import function.annotation.base.GeneManager;
 import function.coverage.base.CoverageCommand;
-import function.genotype.base.SampleManager;
+import function.cohort.base.SampleManager;
 import global.Data;
 import utils.LogManager;
 import java.util.ArrayList;

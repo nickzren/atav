@@ -6,7 +6,7 @@ import function.coverage.base.CoverageManager;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.coverage.base.CoverageCommand;
-import function.genotype.base.SampleManager;
+import function.cohort.base.SampleManager;
 import global.Data;
 import global.Index;
 import utils.CommonCommand;
