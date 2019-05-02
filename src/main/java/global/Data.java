@@ -13,7 +13,7 @@ public class Data {
 
     // atav home path
     public static final String ATAV_HOME = "/nfs/goldstein/software/atav_home/"; // location of compiled Jar file
-//    public static final String ATAV_HOME = "/Users/nick/github/atav/"; 
+//    public static final String ATAV_HOME = ""; // local testing
 
     // system config file path
     public static final String SYSTEM_CONFIG = Data.ATAV_HOME +  "config/atav.dragen.system.config.properties";
