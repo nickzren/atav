@@ -116,14 +116,14 @@ public class Carrier extends NonCarrier {
         if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isMinAdAltValid(adAlt)
-                    || !GenotypeLevelFilterCommand.isGqValid(gq, isSnv)
-                    || !GenotypeLevelFilterCommand.isSorValid(sor, isSnv)
-                    || !GenotypeLevelFilterCommand.isFsValid(fs, isSnv)
-                    || !GenotypeLevelFilterCommand.isMqValid(mq, isSnv)
-                    || !GenotypeLevelFilterCommand.isQdValid(qd, isSnv)
-                    || !GenotypeLevelFilterCommand.isQualValid(qual, isSnv)
-                    || !GenotypeLevelFilterCommand.isRprsValid(readPosRankSum, isSnv)
-                    || !GenotypeLevelFilterCommand.isMqrsValid(mqRankSum, isSnv)) {
+                    || !GenotypeLevelFilterCommand.isMinGqValid(gq)
+                    || !GenotypeLevelFilterCommand.isMaxSorValid(sor, isSnv)
+                    || !GenotypeLevelFilterCommand.isMaxFsValid(fs, isSnv)
+                    || !GenotypeLevelFilterCommand.isMinMqValid(mq)
+                    || !GenotypeLevelFilterCommand.isMinQdValid(qd)
+                    || !GenotypeLevelFilterCommand.isMinQualValid(qual)
+                    || !GenotypeLevelFilterCommand.isMinRprsValid(readPosRankSum)
+                    || !GenotypeLevelFilterCommand.isMinMqrsValid(mqRankSum)) {
                 gt = Data.BYTE_NA;
             }
         }

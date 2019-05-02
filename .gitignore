@@ -10,3 +10,6 @@ spark-warehouse
 .project
 
 *.prefs
+
+data/sample/*
+config/atav.dragen.debug.system.config.properties

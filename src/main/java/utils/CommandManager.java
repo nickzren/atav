@@ -58,7 +58,15 @@ public class CommandManager {
     private static String commandFile = "";
 
     private static void initCommand4Debug() {
-        String cmd = "";
+        String cmd = "--disable-timestamp-from-out-path --sample data/sample/trio_sample.txt "
+                + "--effect data/effect/functional.txt "
+                + "--variant 21-34635094-TA-T "
+                + "--out list_var_geno "
+                + "--list-var-geno --min-coverage 10 --include-qc-missing "
+                + "--qd 5 --qual 50 --mq 40 --gq 20 --snv-sor 3 --indel-sor 10 "
+                + "--snv-fs 60 --indel-fs 200 --rprs -3 --mqrs -10 "
+                + "--filter pass,likely,intermediate --het-percent-alt-read 0.3-1 "
+                + "--ctrl-af 0.01 --ccds-only --evs-maf 0.1";
 
         optionArray = cmd.split("\\s+");
     }

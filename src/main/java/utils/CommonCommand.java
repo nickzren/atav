@@ -8,7 +8,7 @@ public class CommonCommand {
 
     // common values
     public static boolean isDebug = false;
-//     public static boolean isDebug = true;
+//    public static boolean isDebug = true;
 
     public static boolean isNonDBAnalysis = false;
     public static boolean isNonSampleAnalysis = false;

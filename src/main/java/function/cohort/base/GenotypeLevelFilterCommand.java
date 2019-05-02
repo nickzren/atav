@@ -25,22 +25,16 @@ public class GenotypeLevelFilterCommand {
     public static double minPercentAltReadBinomialP = Data.NO_FILTER;
     public static double maxPercentAltReadBinomialP = Data.NO_FILTER;
     public static int minAdAlt = Data.NO_FILTER;
-    public static int snvGQ = Data.NO_FILTER;
-    public static int indelGQ = Data.NO_FILTER;
-    public static float snvSOR = Data.NO_FILTER;
-    public static float indelSOR = Data.NO_FILTER;
-    public static float snvFS = Data.NO_FILTER;
-    public static float indelFS = Data.NO_FILTER;
-    public static int snvMQ = Data.NO_FILTER;
-    public static int indelMQ = Data.NO_FILTER;
-    public static int snvQD = Data.NO_FILTER;
-    public static int indelQD = Data.NO_FILTER;
-    public static int snvQual = Data.NO_FILTER;
-    public static int indelQual = Data.NO_FILTER;
-    public static float snvRPRS = Data.NO_FILTER;
-    public static float indelRPRS = Data.NO_FILTER;
-    public static float snvMQRS = Data.NO_FILTER;
-    public static float indelMQRS = Data.NO_FILTER;
+    public static int minGQ = Data.NO_FILTER;
+    public static float maxSnvSOR = Data.NO_FILTER;
+    public static float maxIndelSOR = Data.NO_FILTER;
+    public static float maxSnvFS = Data.NO_FILTER;
+    public static float maxIndelFS = Data.NO_FILTER;
+    public static int minMQ = Data.NO_FILTER;
+    public static int minQD = Data.NO_FILTER;
+    public static int minQual = Data.NO_FILTER;
+    public static float minRPRS = Data.NO_FILTER;
+    public static float minMQRS = Data.NO_FILTER;
     public static final String[] FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
     public static boolean isQcMissingIncluded = false;
 
@@ -94,99 +88,66 @@ public class GenotypeLevelFilterCommand {
                     minAdAlt = getValidInteger(option);
                     break;
                 case "--gq":
+                case "--min-gq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvGQ = getValidInteger(option);
-                    indelGQ = getValidInteger(option);
-                    break;
-                case "--snv-gq":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvGQ = getValidInteger(option);
-                    break;
-                case "--indel-gq":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    indelGQ = getValidInteger(option);
+                    minGQ = getValidInteger(option);
                     break;
                 case "--sor":
+                case "--max-sor":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvSOR = getValidFloat(option);
-                    indelSOR = getValidFloat(option);
+                    maxSnvSOR = getValidFloat(option);
+                    maxIndelSOR = getValidFloat(option);
                     break;
                 case "--snv-sor":
+                case "--max-snv-sor":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvSOR = getValidFloat(option);
+                    maxSnvSOR = getValidFloat(option);
                     break;
                 case "--indel-sor":
+                case "--max-indel-sor":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    indelSOR = getValidFloat(option);
+                    maxIndelSOR = getValidFloat(option);
                     break;
                 case "--fs":
+                case "--max-fs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvFS = getValidFloat(option);
-                    indelFS = getValidFloat(option);
+                    maxSnvFS = getValidFloat(option);
+                    maxIndelFS = getValidFloat(option);
                     break;
                 case "--snv-fs":
+                case "--max-snv-fs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvFS = getValidFloat(option);
+                    maxSnvFS = getValidFloat(option);
                     break;
                 case "--indel-fs":
+                case "--max-indel-fs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    indelFS = getValidFloat(option);
+                    maxIndelFS = getValidFloat(option);
                     break;
                 case "--mq":
+                case "--min-mq":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvMQ = getValidInteger(option);
-                    indelMQ = getValidInteger(option);
-                    break;
-                case "--snv-mq":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvMQ = getValidInteger(option);
-                    break;
-                case "--indel-mq":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    indelMQ = getValidInteger(option);
+                    minMQ = getValidInteger(option);
                     break;
                 case "--qd":
+                case "--min-qd":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvQD = getValidInteger(option);
+                    minQD = getValidInteger(option);
                     break;
                 case "--qual":
+                case "--min-qual":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvQual = getValidInteger(option);
-                    indelQual = getValidInteger(option);
-                    break;
-                case "--snv-qual":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvQual = getValidInteger(option);
-                    break;
-                case "--indel-qual":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    indelQual = getValidInteger(option);
+                    minQual = getValidInteger(option);
                     break;
                 case "--rprs":
+                case "--min-rprs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvRPRS = getValidFloat(option);
-                    indelRPRS = getValidFloat(option);
-                    break;
-                case "--snv-rprs":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvRPRS = getValidFloat(option);
-                    break;
-                case "--indel-rprs":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    indelRPRS = getValidFloat(option);
+                    minRPRS = getValidFloat(option);
                     break;
                 case "--mqrs":
+                case "--min-mqrs":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvMQRS = getValidFloat(option);
-                    indelMQRS = getValidFloat(option);
-                    break;
-                case "--snv-mqrs":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    snvMQRS = getValidFloat(option);
-                    break;
-                case "--indel-mqrs":
-                    checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    indelMQRS = getValidFloat(option);
+                    minMQRS = getValidFloat(option);
                     break;
                 case "--include-qc-missing":
                     isQcMissingIncluded = true;
@@ -203,8 +164,8 @@ public class GenotypeLevelFilterCommand {
 
     private static void initIsHighQualityVariantOnly() {
         // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
-        if ((snvQual >= 30 & indelQual >= 30)
-                && (snvMQ >= 40 && indelMQ >= 40)
+        if (minQual >= 30
+                && minMQ >= 40
                 && minCoverage >= 3
                 && filter != null) {
 
@@ -265,17 +226,9 @@ public class GenotypeLevelFilterCommand {
 
         return false;
     }
-    
-    public static boolean isGqValid(byte value, boolean isSnv) {
-        if (isSnv) {
-            return isGqValid(value, snvGQ);
-        } else {
-            return isGqValid(value, indelGQ);
-        }
-    }
 
-    private static boolean isGqValid(byte value, int gq) {
-        if (gq == Data.NO_FILTER) {
+    public static boolean isMinGqValid(byte value) {
+        if (minGQ == Data.NO_FILTER) {
             return true;
         }
 
@@ -283,22 +236,22 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= gq) {
+        } else if (value >= minGQ) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isSorValid(float value, boolean isSnv) {
+    public static boolean isMaxSorValid(float value, boolean isSnv) {
         if (isSnv) {
-            return isSORValid(value, snvSOR);
+            return isMaxSORValid(value, maxSnvSOR);
         } else {
-            return isSORValid(value, indelSOR);
+            return isMaxSORValid(value, maxIndelSOR);
         }
     }
 
-    private static boolean isSORValid(float value, float sor) {
+    private static boolean isMaxSORValid(float value, float sor) {
         if (sor == Data.NO_FILTER) {
             return true;
         }
@@ -314,15 +267,15 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isFsValid(float value, boolean isSnv) {
+    public static boolean isMaxFsValid(float value, boolean isSnv) {
         if (isSnv) {
-            return isFsValid(value, snvFS);
+            return isMaxFsValid(value, maxSnvFS);
         } else {
-            return isFsValid(value, indelFS);
+            return isMaxFsValid(value, maxIndelFS);
         }
     }
 
-    private static boolean isFsValid(float value, float fs) {
+    private static boolean isMaxFsValid(float value, float fs) {
         if (fs == Data.NO_FILTER) {
             return true;
         }
@@ -338,16 +291,8 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isMqValid(byte value, boolean isSnv) {
-        if (isSnv) {
-            return isMqValid(value, snvMQ);
-        } else {
-            return isMqValid(value, indelMQ);
-        }
-    }
-
-    private static boolean isMqValid(byte value, int mq) {
-        if (mq == Data.NO_FILTER) {
+    public static boolean isMinMqValid(byte value) {
+        if (minMQ == Data.NO_FILTER) {
             return true;
         }
 
@@ -355,23 +300,15 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= mq) {
+        } else if (value >= minMQ) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isQdValid(byte value, boolean isSnv) {
-        if (isSnv) {
-            return isQdValid(value, snvQD);
-        } else {
-            return isQdValid(value, indelQD);
-        }
-    }
-
-    private static boolean isQdValid(byte value, int qd) {
-        if (qd == Data.NO_FILTER) {
+    public static boolean isMinQdValid(byte value) {
+        if (minQD == Data.NO_FILTER) {
             return true;
         }
 
@@ -379,23 +316,15 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= qd) {
+        } else if (value >= minQD) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isQualValid(int value, boolean isSnv) {
-        if (isSnv) {
-            return isQualValid(value, snvQual);
-        } else {
-            return isQualValid(value, indelQual);
-        }
-    }
-
-    private static boolean isQualValid(int value, int qual) {
-        if (qual == Data.NO_FILTER) {
+    public static boolean isMinQualValid(int value) {
+        if (minQual == Data.NO_FILTER) {
             return true;
         }
 
@@ -403,23 +332,15 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= qual) {
+        } else if (value >= minQual) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isRprsValid(float value, boolean isSnv) {
-        if (isSnv) {
-            return isRprsValid(value, snvRPRS);
-        } else {
-            return isRprsValid(value, indelRPRS);
-        }
-    }
-
-    private static boolean isRprsValid(float value, float readPosRankSum) {
-        if (readPosRankSum == Data.NO_FILTER) {
+    public static boolean isMinRprsValid(float value) {
+        if (minRPRS == Data.NO_FILTER) {
             return true;
         }
 
@@ -427,23 +348,15 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= readPosRankSum) {
+        } else if (value >= minRPRS) {
             return true;
         }
 
         return false;
     }
 
-    public static boolean isMqrsValid(float value, boolean isSnv) {
-        if (isSnv) {
-            return isMqrsValid(value, snvMQRS);
-        } else {
-            return isMqrsValid(value, indelMQRS);
-        }
-    }
-
-    private static boolean isMqrsValid(float value, float mqRankSum) {
-        if (mqRankSum == Data.NO_FILTER) {
+    public static boolean isMinMqrsValid(float value) {
+        if (minMQRS == Data.NO_FILTER) {
             return true;
         }
 
@@ -451,7 +364,7 @@ public class GenotypeLevelFilterCommand {
             if (isQcMissingIncluded) {
                 return true;
             }
-        } else if (value >= mqRankSum) {
+        } else if (value >= minMQRS) {
             return true;
         }
 
