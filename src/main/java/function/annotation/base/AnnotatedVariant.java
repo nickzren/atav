@@ -160,7 +160,7 @@ public class AnnotatedVariant extends Variant {
         }
         
         if (isValid && PrimateAICommand.isIncludePrimateAI) {
-            primateDL = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele);
+            primateDL = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
 
             isValid = PrimateAICommand.isMinPrimateDLScoreValid(primateDL);
         }

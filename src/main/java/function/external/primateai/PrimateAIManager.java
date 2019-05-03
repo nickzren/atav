@@ -13,6 +13,7 @@ import utils.DBManager;
  */
 public class PrimateAIManager {
     static final String variantTable = "PrimateAI.variant_042319";
+    static final String mnvTable = "PrimateAI.mnv_042319";
     
     public static String getTitle() {
         return "primateDL_score";
@@ -29,8 +30,8 @@ public class PrimateAIManager {
                 + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
     }
 
-    public static float getPrimateAI(String chr, int pos, String ref, String alt) throws SQLException {
-        String sql = PrimateAIManager.getSqlByVariant(chr, pos, ref, alt);
+    public static float getPrimateAI(String chr, int pos, String ref, String alt, boolean isMNV) throws SQLException {
+        String sql = PrimateAIManager.getSqlByVariant(chr, pos, ref, alt, isMNV);
 
         ResultSet rs = DBManager.executeQuery(sql);
 
@@ -42,9 +43,14 @@ public class PrimateAIManager {
     }
 
     public static String getSqlByVariant(String chr,
-            int pos, String ref, String alt) {        
+            int pos, String ref, String alt, boolean isMNV) {
+        String table = variantTable;
+        if(isMNV) {
+            table = mnvTable;
+        }
+        
         return "SELECT primateDL_score as score "
-                + "FROM " + variantTable + " "
+                + "FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "
                 + "AND pos = " + pos + " "
                 + "AND ref = '" + ref + "' "
