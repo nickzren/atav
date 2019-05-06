@@ -1,5 +1,7 @@
 package function.external.ccr;
 
+import java.sql.SQLException;
+import java.util.List;
 import java.util.StringJoiner;
 import utils.FormatManager;
 
@@ -17,8 +19,17 @@ public class CCROutput {
 
     private CCRGene gene;
 
-    public CCROutput(String geneName, String chr, int pos) {
-        gene = CCRManager.getGene(geneName, chr, pos);
+    public CCROutput(int variantID, String chr, int pos) {
+        List<String> geneList = CCRManager.getGeneListByVariantID(variantID, chr);
+        
+        // go through all existing genes per variant
+        for(String geneName : geneList) {
+            gene = CCRManager.getGene(geneName, chr, pos);
+            
+            if(gene != null) {
+                break;
+            }
+        }
     }
 
     public CCRGene getGene() {

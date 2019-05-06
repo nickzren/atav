@@ -19,7 +19,7 @@ public class ListCCR extends AnalysisBase4AnnotatedVar {
     @Override
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
-            CCROutput ccrOutput = new CCROutput(annotatedVar.getGeneName(),
+            CCROutput ccrOutput = new CCROutput(annotatedVar.getVariantId(),
                     annotatedVar.getChrStr(),
                     annotatedVar.getStartPosition());
 

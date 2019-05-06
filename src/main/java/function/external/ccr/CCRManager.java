@@ -6,9 +6,15 @@ import global.Data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringJoiner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -110,5 +116,28 @@ public class CCRManager {
         }
 
         return null;
+    }
+    
+    public static List<String> getGeneListByVariantID(int id, String chr) {
+        List<String> list = new ArrayList();
+        
+        String sqlCode = "SELECT distinct gene "
+                + "FROM variant_chr"+chr+ " "
+                + "WHERE variant_id="+id;
+
+        ResultSet rset;
+        try {
+            rset = DBManager.executeQuery(sqlCode);
+            
+            while (rset.next()) {
+                list.add(rset.getString("gene"));
+            }
+
+            rset.close();
+        } catch (SQLException ex) {
+            ErrorManager.send(ex);
+        }
+        
+        return list;
     }
 }
