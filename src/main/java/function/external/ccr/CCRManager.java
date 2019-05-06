@@ -1,6 +1,5 @@
 package function.external.ccr;
 
-import function.external.limbr.*;
 import function.external.base.DataManager;
 import global.Data;
 import java.io.BufferedReader;
@@ -12,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;

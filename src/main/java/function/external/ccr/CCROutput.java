@@ -1,6 +1,5 @@
 package function.external.ccr;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.StringJoiner;
 import utils.FormatManager;
@@ -22,7 +21,7 @@ public class CCROutput {
     public CCROutput(int variantID, String chr, int pos) {
         List<String> geneList = CCRManager.getGeneListByVariantID(variantID, chr);
         
-        // go through all existing genes per variant
+        // go through all annoated genes per variant
         for(String geneName : geneList) {
             gene = CCRManager.getGene(geneName, chr, pos);
             
