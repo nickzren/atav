@@ -89,7 +89,7 @@ public class AnnotatedVariant extends Variant {
     private DiscovEHR discovEHR;
     private MTR mtr;
     private float revel;
-    private float primateDL;
+    private float primateAI;
     private CCROutput ccrOutput;
 
     public boolean isValid = true;
@@ -160,9 +160,9 @@ public class AnnotatedVariant extends Variant {
         }
         
         if (isValid && PrimateAICommand.isIncludePrimateAI) {
-            primateDL = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
+            primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
 
-            isValid = PrimateAICommand.isMinPrimateDLScoreValid(primateDL);
+            isValid = PrimateAICommand.isMinPrimateAIValid(primateAI);
         }
     }
 
@@ -441,7 +441,7 @@ public class AnnotatedVariant extends Variant {
         }
         
         if (PrimateAICommand.isIncludePrimateAI) {
-            sj.add(FormatManager.getFloat(primateDL));
+            sj.add(FormatManager.getFloat(primateAI));
         }
     }
 

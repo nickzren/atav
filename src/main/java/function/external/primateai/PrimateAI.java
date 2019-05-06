@@ -30,7 +30,7 @@ public class PrimateAI {
     }
     
     public boolean isValid() {
-        return PrimateAICommand.isMinPrimateDLScoreValid(score);
+        return PrimateAICommand.isMinPrimateAIValid(score);
     }
 
     public String getVariantId() {

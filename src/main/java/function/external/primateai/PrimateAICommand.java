@@ -12,14 +12,14 @@ public class PrimateAICommand {
     public static boolean isIncludePrimateAI = false;
 
     // filter option
-    public static float minPrimateDLScore = Data.NO_FILTER;
+    public static float minPrimateAI = Data.NO_FILTER;
 
-    public static boolean isMinPrimateDLScoreValid(float value) {
-        if (minPrimateDLScore == Data.NO_FILTER) {
+    public static boolean isMinPrimateAIValid(float value) {
+        if (minPrimateAI == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= minPrimateDLScore
+        return value >= minPrimateAI
                 || value == Data.FLOAT_NA;
     }
 }

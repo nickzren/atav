@@ -260,9 +260,9 @@ public class VariantLevelFilterCommand {
                     RevelCommand.minRevel = getValidFloat(option);
                     RevelCommand.isIncludeRevel = true;
                     break;
-                case "--min-primate-dl-score":
+                case "--min-primate-ai":
                     checkValueValid(1, 0, option);
-                    PrimateAICommand.minPrimateDLScore = getValidFloat(option);
+                    PrimateAICommand.minPrimateAI = getValidFloat(option);
                     PrimateAICommand.isIncludePrimateAI = true;
                     break;    
                 case "--include-evs":
