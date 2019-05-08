@@ -16,7 +16,7 @@ public class PrimateAIManager {
     static final String mnvTable = "PrimateAI.mnv_042319";
     
     public static String getTitle() {
-        return "primateAI";
+        return "PrimateAI";
     }
 
     public static String getVersion() {
