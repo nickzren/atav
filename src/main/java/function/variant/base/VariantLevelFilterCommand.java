@@ -201,38 +201,44 @@ public class VariantLevelFilterCommand {
                     GenomesCommand.isInclude1000Genomes = true;
                     break;
                 case "--sub-rvis-domain-score-percentile":
+                case "--max-sub-rvis-domain-score-percentile":
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.subRVISDomainScorePercentile = getValidFloat(option);
+                    SubRvisCommand.maxSubRVISDomainScorePercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--mtr-domain-percentile":
+                case "--max-mtr-domain-percentile":    
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.mtrDomainPercentile = getValidFloat(option);
+                    SubRvisCommand.maxMtrDomainPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--sub-rvis-exon-score-percentile":
+                case "--max-sub-rvis-exon-score-percentile":    
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.subRVISExonScorePercentile = getValidFloat(option);
+                    SubRvisCommand.maxSubRVISExonScorePercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--mtr-exon-percentile":
+                case "--max-mtr-exon-percentile":    
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.mtrExonPercentile = getValidFloat(option);
+                    SubRvisCommand.maxMtrExonPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--limbr-domain-percentile":
+                case "--max-limbr-domain-percentile":
                     checkValueValid(100, 0, option);
-                    LIMBRCommand.limbrDomainPercentile = getValidFloat(option);
+                    LIMBRCommand.maxLimbrDomainPercentile = getValidFloat(option);
                     LIMBRCommand.isIncludeLIMBR = true;
                     break;
                 case "--limbr-exon-percentile":
+                case "--max-limbr-exon-percentile":
                     checkValueValid(100, 0, option);
-                    LIMBRCommand.limbrExonPercentile = getValidFloat(option);
+                    LIMBRCommand.maxLimbrExonPercentile = getValidFloat(option);
                     LIMBRCommand.isIncludeLIMBR = true;
                     break;
-                case "--ccr-percentile":
+                case "--min-ccr-percentile":
                     checkValueValid(100, 0, option);
-                    CCRCommand.ccrPercentile = getValidFloat(option);
+                    CCRCommand.minCCRPercentile = getValidFloat(option);
                     CCRCommand.isIncludeCCR = true;
                     break;
                 case "--discovehr-af":

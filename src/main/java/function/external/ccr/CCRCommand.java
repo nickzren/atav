@@ -11,13 +11,13 @@ public class CCRCommand {
     public static boolean isListCCR = false;
     public static boolean isIncludeCCR = false;
 
-    public static float ccrPercentile = Data.NO_FILTER;
+    public static float minCCRPercentile = Data.NO_FILTER;
     
     public static boolean isCCRPercentileValid(float value) {
-        if (ccrPercentile == Data.NO_FILTER) {
+        if (minCCRPercentile == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= ccrPercentile;
+        return value >= minCCRPercentile;
     }
 }

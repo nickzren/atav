@@ -11,44 +11,44 @@ public class SubRvisCommand {
     public static boolean isListSubRvis = false;
     public static boolean isIncludeSubRvis = false;
 
-    public static float subRVISDomainScorePercentile = Data.NO_FILTER;
-    public static float mtrDomainPercentile = Data.NO_FILTER;
-    public static float subRVISExonScorePercentile = Data.NO_FILTER;
-    public static float mtrExonPercentile = Data.NO_FILTER;
+    public static float maxSubRVISDomainScorePercentile = Data.NO_FILTER;
+    public static float maxMtrDomainPercentile = Data.NO_FILTER;
+    public static float maxSubRVISExonScorePercentile = Data.NO_FILTER;
+    public static float maxMtrExonPercentile = Data.NO_FILTER;
 
     public static boolean isSubRVISDomainScoreValid(float value) {
-        if (subRVISDomainScorePercentile == Data.NO_FILTER) {
+        if (maxSubRVISDomainScorePercentile == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= subRVISDomainScorePercentile
+        return value <= maxSubRVISDomainScorePercentile
                 || value == Data.FLOAT_NA;
     }
 
     public static boolean isMTRDomainPercentileValid(float value) {
-        if (mtrDomainPercentile == Data.NO_FILTER) {
+        if (maxMtrDomainPercentile == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= mtrDomainPercentile
+        return value <= maxMtrDomainPercentile
                 || value == Data.FLOAT_NA;
     }
 
     public static boolean isSubRVISExonScoreValid(float value) {
-        if (subRVISExonScorePercentile == Data.NO_FILTER) {
+        if (maxSubRVISExonScorePercentile == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= subRVISExonScorePercentile
+        return value <= maxSubRVISExonScorePercentile
                 || value == Data.FLOAT_NA;
     }
 
     public static boolean isMTRExonPercentileValid(float value) {
-        if (mtrExonPercentile == Data.NO_FILTER) {
+        if (maxMtrExonPercentile == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= mtrExonPercentile
+        return value <= maxMtrExonPercentile
                 || value == Data.FLOAT_NA;
     }
 }
