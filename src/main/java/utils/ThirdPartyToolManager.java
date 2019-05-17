@@ -30,9 +30,6 @@ public class ThirdPartyToolManager {
     private static final String PVALS_QQPLOT_R = Data.ATAV_HOME + "lib/pvals_qqplot.R";
     private static final String PERM_QQPLOT_FOR_COLLAPSING = Data.ATAV_HOME + "lib/generate_qq.py";
     private static final String FLANKING_SEQ_PERL = Data.ATAV_HOME + "lib/flanking_seq.pl";
-    private static final String TRIO_DENOVO_TIER = Data.ATAV_HOME + "lib/trio_denovo_tier.R";
-    private static final String TRIO_COMP_HET_TIER = Data.ATAV_HOME + "lib/trio_comp_het_tier.R";
-    private static final String NON_TRIO_TIER = Data.ATAV_HOME + "lib/nonTrio_tier.R";
     private static final String MANN_WHITNEY_TEST = Data.ATAV_HOME + "lib/mann_whitney_test.py";
 
     public static void init() {
@@ -185,30 +182,6 @@ public class ThirdPartyToolManager {
 
     public static void gzipFile(String path) {
         String cmd = "gzip -9 " + path;
-
-        systemCall(new String[]{cmd});
-    }
-
-    public static void runTrioDenovoTier(String denovoFilePath) {
-        String cmd = RSCRIPT + " "
-                + TRIO_DENOVO_TIER + " "
-                + denovoFilePath;
-
-        systemCall(new String[]{cmd});
-    }
-
-    public static void runTrioCompHetTier(String compHetFilePath) {
-        String cmd = RSCRIPT + " "
-                + TRIO_COMP_HET_TIER + " "
-                + compHetFilePath;
-
-        systemCall(new String[]{cmd});
-    }
-
-    public static void runNonTrioTier(String variantFilePath) {
-        String cmd = RSCRIPT + " "
-                + NON_TRIO_TIER + " "
-                + variantFilePath;
 
         systemCall(new String[]{cmd});
     }

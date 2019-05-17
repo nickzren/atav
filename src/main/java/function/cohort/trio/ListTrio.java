@@ -69,11 +69,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        if (TrioCommand.isRunTier) {
-            ThirdPartyToolManager.runTrioDenovoTier(denovoFilePath);
-
-            ThirdPartyToolManager.runTrioCompHetTier(compHetFilePath);
-        }
     }
 
     @Override

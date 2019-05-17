@@ -47,10 +47,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        if (VarGenoCommand.isRunTier) {
-            ThirdPartyToolManager.runNonTrioTier(genotypesFilePath);
-        }
-
         if (VarGenoCommand.isMannWhitneyTest) {
             ThirdPartyToolManager.runMannWhitneyTest(genotypesFilePath);
         }
