@@ -44,8 +44,6 @@ import function.external.exac.ListExac;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.gnomad.ListGnomADExome;
-import function.external.flanking.FlankingCommand;
-import function.external.flanking.ListFlankingSeq;
 import function.external.genomes.GenomesCommand;
 import function.external.genomes.List1000Genomes;
 import function.external.gerp.GerpCommand;
@@ -204,8 +202,6 @@ public class Program {
                 runAnalysis(new ListGnomADGenome());
             } else if (KnownVarCommand.isListKnownVar) {
                 runAnalysis(new ListKnownVar());
-            } else if (FlankingCommand.isListFlankingSeq) {
-                runAnalysis(new ListFlankingSeq());
             } else if (KaviarCommand.isListKaviar) {
                 runAnalysis(new ListKaviar());
             } else if (GerpCommand.isListGerp) {

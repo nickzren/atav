@@ -11,7 +11,6 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExacCommand;
 import function.external.gnomad.GnomADCommand;
-import function.external.flanking.FlankingCommand;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
@@ -415,10 +414,6 @@ public class CommandManager {
                     KnownVarCommand.isListKnownVar = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     break;
-                case "--list-flanking-seq":
-                    CommonCommand.isNonSampleAnalysis = true;
-                    FlankingCommand.isListFlankingSeq = true;
-                    break;
                 case "--list-kaviar":
                     CommonCommand.isNonSampleAnalysis = true;
                     KaviarCommand.isListKaviar = true;
@@ -542,8 +537,6 @@ public class CommandManager {
 
         } else if (KnownVarCommand.isListKnownVar) {
 
-        } else if (FlankingCommand.isListFlankingSeq) {
-            FlankingCommand.initOptions(optionList.iterator());
         } else if (TestCommand.isTest) { // Test Functions
             TestCommand.initOptions(optionList.iterator());
         }

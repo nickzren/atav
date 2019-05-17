@@ -1,10 +1,8 @@
 package utils;
 
 import com.google.common.base.Stopwatch;
-import function.external.flanking.FlankingCommand;
 import global.Data;
 import function.cohort.base.SampleManager;
-import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -129,15 +127,6 @@ public class ThirdPartyToolManager {
                 + "--method " + method + " "
                 + "--transpose "
                 + "--log " + CommonCommand.outputPath + "regress.log";
-
-        systemCall(new String[]{cmd});
-    }
-
-    public static void callFlankingSeq(String baseFlankingSeqFilePath) {
-        String cmd = PERL + " " + FLANKING_SEQ_PERL
-                + " --variant " + VariantLevelFilterCommand.includeVariantId
-                + " --width " + FlankingCommand.width
-                + " --out " + baseFlankingSeqFilePath;
 
         systemCall(new String[]{cmd});
     }
