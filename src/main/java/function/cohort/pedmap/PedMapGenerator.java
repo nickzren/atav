@@ -250,17 +250,17 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     private void doFlashPCA(String inputName, String sampleFile) {
         runPlinkPedToBed(inputName, "flashpca_plink", "");
 
-        String outExt = "_flashpca";
-        FlashPCAManager.runFlashPCA("flashpca_plink", outExt, "flashpca.log");
-        FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + outExt,
-                CommonCommand.outputPath + "plot_eigenvalues_flashpca.pdf",
+        String label = "flashpca_";
+        FlashPCAManager.runFlashPCA("flashpca_plink", label, "flashpca.log");
+        FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + label + "eigenvalues",
+                CommonCommand.outputPath + label + "plot_eigenvalues.pdf",
                 "eigenvalues",
                 "plot of eigenvalues",
                 "eigenvalue number",
                 "eigenvalue");
 
-        FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "pve" + outExt,
-                CommonCommand.outputPath + "plot_pve_flashpca.pdf",
+        FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + label + "pve",
+                CommonCommand.outputPath + label + "plot_pve.pdf",
                 "percent variance",
                 "percent_variance explained by eigval",
                 "eigenvalue number",
@@ -273,8 +273,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         }
         ArrayList<Sample> sampleList = SampleManager.getList();
         sampleMap4FlashPCA = FlashPCAManager.getSampleMap(nDim,
-                CommonCommand.outputPath + "eigenvectors" + outExt,
-                CommonCommand.outputPath + "pcs" + outExt,
+                CommonCommand.outputPath + label + "eigenvectors",
+                CommonCommand.outputPath + label + "pcs",
                 sampleList);
 
         sampleMap4FlashPCA.entrySet().removeIf(entry -> (entry.getValue().getToFilter()));
@@ -301,17 +301,17 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                     CommonCommand.outputPath + "plot_eigenvectors_flashpca_color_outliers.pdf");//cases,controls.outliers - 3 colors
 
             runPlinkPedToBed("output", "plink_outlier_removed", remove_cmd);
-            outExt = "_flashpca_outliers_removed";
-            FlashPCAManager.runFlashPCA("plink_outlier_removed", outExt, "flashpca.log");
+            label = "flashpca_outliers_removed_";
+            FlashPCAManager.runFlashPCA("plink_outlier_removed", label, "flashpca.log");
 
             //making plots with / without outlier
-            FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + outExt,
+            FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + label + "eigenvalues",
                     CommonCommand.outputPath + "eigenvalues_flashpca_outliers_removed.pdf",
                     "eigenvalues no outliers", "plot of eigenvalues",
                     "eigenvalue number",
                     "eigenvalue");
 
-            FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "pve" + outExt,
+            FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + label + "pve",
                     CommonCommand.outputPath + "pve_flashpca_outliers_removed.pdf",
                     "percent variance no outliers",
                     "percent variance explained by eigval",
@@ -324,11 +324,11 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                     .collect(Collectors.toCollection(ArrayList::new));
 
             sampleMap4FlashPCA = FlashPCAManager.getSampleMap(nDim,
-                    CommonCommand.outputPath + "eigenvectors" + outExt,
-                    CommonCommand.outputPath + "pcs" + outExt,
+                    CommonCommand.outputPath + label + "eigenvectors",
+                    CommonCommand.outputPath + label + "pcs",
                     sampleList);
 
-            FlashPCAManager.plot2DData(sampleMap4FlashPCA, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
+            FlashPCAManager.plot2DData(sampleMap4FlashPCA, nDim, false, CommonCommand.outputPath + label + "plot_eigenvectors.pdf");
         }
 
         FlashPCAManager.generateNewSampleFile(sampleMap4FlashPCA,

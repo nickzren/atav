@@ -46,7 +46,7 @@ import utils.ThirdPartyToolManager;
  */
 public class FlashPCAManager {
 
-    public static void runFlashPCA(String inputName, String outExt, String logName) {
+    public static void runFlashPCA(String inputName, String label, String logName) {
         LogManager.writeAndPrint("flashpca for eigenvalues, vectors, pcs and percent variance explained by each pc. #dimenions = " + PedMapCommand.flashPCANumEvec);
 
         try {
@@ -60,10 +60,10 @@ public class FlashPCAManager {
         String cmd = ThirdPartyToolManager.FLASHPCA
                 + " --bfile " + CommonCommand.outputPath + inputName
                 + " --ndim " + PedMapCommand.flashPCANumEvec
-                + " --outpc " + CommonCommand.outputPath + "pcs" + outExt
-                + " --outvec " + CommonCommand.outputPath + "eigenvectors" + outExt
-                + " --outval " + CommonCommand.outputPath + "eigenvalues" + outExt
-                + " --outpve " + CommonCommand.outputPath + "pve" + outExt
+                + " --outpc " + CommonCommand.outputPath + label + "pcs"
+                + " --outvec " + CommonCommand.outputPath + label + "eigenvectors"
+                + " --outval " + CommonCommand.outputPath + label + "eigenvalues"
+                + " --outpve " + CommonCommand.outputPath + label + "pve"
                 + " 2>&1 >> " + CommonCommand.outputPath + logName;
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
 
@@ -72,8 +72,8 @@ public class FlashPCAManager {
                 + " -v" 
                 + " --bfile " + CommonCommand.outputPath + inputName
                 + " --check"
-                + " --outvec " + CommonCommand.outputPath + "eigenvectors" + outExt
-                + " --outval " + CommonCommand.outputPath + "eigenvalues" + outExt
+                + " --outvec " + CommonCommand.outputPath + label + "eigenvectors"
+                + " --outval " + CommonCommand.outputPath + label + "eigenvalues"
                 + " 2>&1 >> " + CommonCommand.outputPath + logName;
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
