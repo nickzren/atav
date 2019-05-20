@@ -21,7 +21,6 @@ public class PedMapCommand {
     public static float kinshipRelatednessThreshold = 0.0884f;
     //for flashpca, plink outlier removal
     public static boolean isFlashPCAKeepOutliers = false;
-    public static boolean isFlashPCANoPlots = false;
     public static int flashPCANumEvec = 10;
     public static int flashPCANumNeighbor = 5;//nearest neighbor for outlier detection
     public static float flashPCAzThresh = -3f;//Z value per nearest neghbor
@@ -50,8 +49,6 @@ public class PedMapCommand {
                 case "--flashpca-num-nearest-neighbor":
                     flashPCANumNeighbor = getValidInteger(option);
                     break;
-                case "--flashpca-no-plots":
-                    isFlashPCANoPlots = true;
                 case "--flashpca-z-score-thresh":
                     flashPCAzThresh = getValidFloat(option);
                     break;

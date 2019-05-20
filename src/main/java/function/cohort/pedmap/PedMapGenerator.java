@@ -29,9 +29,11 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     BufferedWriter bwPed = null;
     BufferedWriter bwMap = null;
     BufferedWriter bwTmpPed = null;
-    final String pedFile = CommonCommand.outputPath + "output.ped";
-    final String mapFile = CommonCommand.outputPath + "output.map";
+    String outputName = "output";
+    String pedFile = CommonCommand.outputPath + outputName + ".ped";
+    String mapFile = CommonCommand.outputPath + outputName + ".map";
     final String tmpPedFile = CommonCommand.outputPath + "output_tmp.ped";
+    final String kinshipPrunedSampleFile = CommonCommand.outputPath + "kinship_pruned_sample.txt";
     int qualifiedVariants = 0;
     // --eigenstrat
     private static final String EIGENSTRAT_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_eigenstrat.py";
@@ -39,7 +41,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     private static final String KINSHIP_SCRIPT_PATH = Data.ATAV_HOME + "lib/run_kinship.py";
 
     // flashpca
-    Map<String, SamplePCAInfo> sampleMap;
+    Map<String, SamplePCAInfo> sampleMap4FlashPCA;
 
     @Override
     public void initOutput() {
@@ -70,14 +72,26 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        if (PedMapCommand.isEigenstrat) {
-            doEigesntrat();
-        }
+        String sampleFile = CohortLevelFilterCommand.sampleFile;
+        
         if (PedMapCommand.isKinship) {
             doKinship();
+            
+            String newOutputName = "flashpca_plink_pruned_sample";
+            runPlinkToPrunePed(outputName, kinshipPrunedSampleFile, newOutputName);
+            
+            outputName = newOutputName;
+            pedFile = CommonCommand.outputPath + outputName + ".ped";
+            mapFile = CommonCommand.outputPath + outputName + ".map";
+            sampleFile = CommonCommand.outputPath + outputName + ".txt";
         }
+
+        if (PedMapCommand.isEigenstrat) {
+            doEigesntrat(pedFile, mapFile, sampleFile);
+        }
+
         if (PedMapCommand.isFlashPCA) {
-            doFlashPCA();
+            doFlashPCA(outputName);
         }
     }
 
@@ -191,10 +205,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         bwTmpPed.newLine();
     }
 
-    public void doEigesntrat() {
+    private void doEigesntrat(String pedFile, String mapFile, String sampleFile) {
         String cmd = ThirdPartyToolManager.PYTHON
                 + " " + EIGENSTRAT_SCRIPT_PATH
-                + " --sample " + CohortLevelFilterCommand.sampleFile
+                + " --sample " + sampleFile
                 + " --prune-sample"
                 + " --genotypefile " + pedFile
                 + " --snpfile " + mapFile
@@ -205,12 +219,12 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
 
-    public void doKinship() {
-        runPlinkPedToBed("output", "plink", "");
+    private void doKinship() {
+        runPlinkPedToBed("output", "kinship_plink", "");
 
         // Run KING to get kinship
         String cmd = ThirdPartyToolManager.KING
-                + " -b " + CommonCommand.outputPath + "plink.bed"
+                + " -b " + CommonCommand.outputPath + "kinship_plink.bed"
                 + " --kinship"
                 + " --related"
                 + " --degree 3"
@@ -225,7 +239,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 + " " + CommonCommand.outputPath + "king.kin"
                 + " --relatedness_threshold " + PedMapCommand.kinshipRelatednessThreshold
                 + " --seed " + PedMapCommand.kinshipSeed
-                + " --output " + CommonCommand.outputPath + "kinship_pruned_sample.txt"
+                + " --output " + kinshipPrunedSampleFile
                 + " --verbose";
         if (!PedMapCommand.sampleCoverageSummaryPath.isEmpty()) {
             cmd += " --sample_coverage_summary " + PedMapCommand.sampleCoverageSummaryPath;
@@ -233,11 +247,11 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
 
-    public void doFlashPCA() {
-        runPlinkPedToBed("output", "plink", "");
+    private void doFlashPCA(String inputName) {
+        runPlinkPedToBed(inputName, "flashpca_plink", "");
 
         String outExt = "_flashpca";
-        FlashPCAManager.runFlashPCA("plink", outExt, "flashpca.log");
+        FlashPCAManager.runFlashPCA("flashpca_plink", outExt, "flashpca.log");
         FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + "eigenvalues" + outExt,
                 CommonCommand.outputPath + "plot_eigenvalues_flashpca.pdf",
                 "eigenvalues",
@@ -258,14 +272,14 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             nDim = PedMapCommand.flashPCANumEvec;
         }
         ArrayList<Sample> sampleList = SampleManager.getList();
-        sampleMap = FlashPCAManager.getSampleMap(nDim,
+        sampleMap4FlashPCA = FlashPCAManager.getSampleMap(nDim,
                 CommonCommand.outputPath + "eigenvectors" + outExt,
                 CommonCommand.outputPath + "pcs" + outExt,
                 sampleList);
 
-        sampleMap.entrySet().removeIf(entry -> (entry.getValue().getToFilter()));
-        
-        FlashPCAManager.plot2DData(sampleMap, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca.pdf");
+        sampleMap4FlashPCA.entrySet().removeIf(entry -> (entry.getValue().getToFilter()));
+
+        FlashPCAManager.plot2DData(sampleMap4FlashPCA, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca.pdf");
 
         LogManager.writeAndPrint("Finding outliers using plink ibs clustering");
 
@@ -281,8 +295,8 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
             String remove_cmd = " --remove " + CommonCommand.outputPath + "outlier_file.txt";
 
-            sampleMap.entrySet().stream().forEach(e -> e.getValue().setOutlier(outlierSet));
-            FlashPCAManager.plot2DData(sampleMap,
+            sampleMap4FlashPCA.entrySet().stream().forEach(e -> e.getValue().setOutlier(outlierSet));
+            FlashPCAManager.plot2DData(sampleMap4FlashPCA,
                     nDim, true,
                     CommonCommand.outputPath + "plot_eigenvectors_flashpca_color_outliers.pdf");//cases,controls.outliers - 3 colors
 
@@ -304,27 +318,26 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                     "eigenvalue number",
                     "per_var_explained");
 
-            sampleList = sampleMap.values().stream()
+            sampleList = sampleMap4FlashPCA.values().stream()
                     .filter(s -> !s.isOutlier())
                     .map(SamplePCAInfo::getSample)
                     .collect(Collectors.toCollection(ArrayList::new));
-            
-            sampleMap = FlashPCAManager.getSampleMap(nDim,
+
+            sampleMap4FlashPCA = FlashPCAManager.getSampleMap(nDim,
                     CommonCommand.outputPath + "eigenvectors" + outExt,
                     CommonCommand.outputPath + "pcs" + outExt,
                     sampleList);
-            
-            FlashPCAManager.plot2DData(sampleMap, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
+
+            FlashPCAManager.plot2DData(sampleMap4FlashPCA, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca_outliers_removed.pdf");
         }
-        
-        FlashPCAManager.generateNewSampleFile(
-                    sampleMap,
-                    //outlierSet,
-                    CohortLevelFilterCommand.sampleFile,
-                    "pruned_sample_file.txt");//generate new sample file, can't simly change fam file
+
+        FlashPCAManager.generateNewSampleFile(sampleMap4FlashPCA,
+                //outlierSet,
+                CohortLevelFilterCommand.sampleFile,
+                "flashpca_pruned_sample_file.txt");//generate new sample file, can't simly change fam file
     }
 
-    private static void runPlinkPedToBed(String inputName, String outputName, String remove_cmd) {
+    private void runPlinkPedToBed(String inputName, String outputName, String remove_cmd) {
         LogManager.writeAndPrint("Creating bed file with plink for flashpca");
         // Convert PED & MAP to BED format with PLINK
         String cmd = ThirdPartyToolManager.PLINK
@@ -336,7 +349,19 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
         //plink output is automatically stored in <outputPath+plink>.log
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+    }
 
+    private void runPlinkToPrunePed(String inputName, String prunedSampleFile, String outputName) {
+        LogManager.writeAndPrint("Pruning ped file with plink");
+        // Convert PED & MAP to BED format with PLINK
+        String cmd = ThirdPartyToolManager.PLINK
+                + " --file " + CommonCommand.outputPath + inputName
+                + " --keep " + prunedSampleFile
+                + " --recode"
+                + " --out " + CommonCommand.outputPath + outputName;
+
+        //plink output is automatically stored in <outputPath+plink>.log
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
 
     @Override
