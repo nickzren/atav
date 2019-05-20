@@ -91,7 +91,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         }
 
         if (PedMapCommand.isFlashPCA) {
-            doFlashPCA(outputName);
+            doFlashPCA(outputName, sampleFile);
         }
     }
 
@@ -247,7 +247,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
 
-    private void doFlashPCA(String inputName) {
+    private void doFlashPCA(String inputName, String sampleFile) {
         runPlinkPedToBed(inputName, "flashpca_plink", "");
 
         String outExt = "_flashpca";
@@ -333,7 +333,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
         FlashPCAManager.generateNewSampleFile(sampleMap4FlashPCA,
                 //outlierSet,
-                CohortLevelFilterCommand.sampleFile,
+                sampleFile,
                 "flashpca_pruned_sample_file.txt");//generate new sample file, can't simly change fam file
     }
 
