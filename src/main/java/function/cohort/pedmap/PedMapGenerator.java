@@ -83,7 +83,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             outputName = newOutputName;
             pedFile = CommonCommand.outputPath + outputName + ".ped";
             mapFile = CommonCommand.outputPath + outputName + ".map";
-            sampleFile = CommonCommand.outputPath + outputName + ".txt";
+            sampleFile = kinshipPrunedSampleFile;
         }
 
         if (PedMapCommand.isEigenstrat) {
