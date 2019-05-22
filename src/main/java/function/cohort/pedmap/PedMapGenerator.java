@@ -77,7 +77,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         if (PedMapCommand.isKinship) {
             doKinship();
             
-            String newOutputName = "flashpca_plink_pruned_sample";
+            String newOutputName = "kinship_plink_pruned_sample";
             runPlinkToPrunePed(outputName, kinshipPrunedSampleFile, newOutputName);
             
             outputName = newOutputName;
