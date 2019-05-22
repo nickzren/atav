@@ -288,31 +288,31 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
             //read each line of outlier nearest file and filter based on Z-score
             HashSet<String> outlierSet = FlashPCAManager.getOutliers(
-                    CommonCommand.outputPath + "plink_outlier.nearest",
-                    CommonCommand.outputPath + "outlier_file.txt");
+                    CommonCommand.outputPath + label + "plink_outlier.nearest",
+                    CommonCommand.outputPath + label + "outlier_file.txt");
 
             LogManager.writeAndPrint("Redo flashpca with outliers removed");
 
-            String remove_cmd = " --remove " + CommonCommand.outputPath + "outlier_file.txt";
+            String remove_cmd = " --remove " + CommonCommand.outputPath + label + "outlier_file.txt";
 
             sampleMap4FlashPCA.entrySet().stream().forEach(e -> e.getValue().setOutlier(outlierSet));
             FlashPCAManager.plot2DData(sampleMap4FlashPCA,
                     nDim, true,
                     CommonCommand.outputPath + "plot_eigenvectors_flashpca_color_outliers.pdf");//cases,controls.outliers - 3 colors
 
-            runPlinkPedToBed("output", "plink_outlier_removed", remove_cmd);
+            runPlinkPedToBed("output", "flashpca_plink_outlier_removed", remove_cmd);
             label = "flashpca_outliers_removed_";
-            FlashPCAManager.runFlashPCA("plink_outlier_removed", label, "flashpca.log");
+            FlashPCAManager.runFlashPCA("flashpca_plink_outlier_removed", label, "flashpca.log");
 
             //making plots with / without outlier
             FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + label + "eigenvalues",
-                    CommonCommand.outputPath + "eigenvalues_flashpca_outliers_removed.pdf",
+                    CommonCommand.outputPath + label + "eigenvalues_outliers_removed.pdf",
                     "eigenvalues no outliers", "plot of eigenvalues",
                     "eigenvalue number",
                     "eigenvalue");
 
             FlashPCAManager.getevecDatafor1DPlot(CommonCommand.outputPath + label + "pve",
-                    CommonCommand.outputPath + "pve_flashpca_outliers_removed.pdf",
+                    CommonCommand.outputPath + label + "pve_outliers_removed.pdf",
                     "percent variance no outliers",
                     "percent variance explained by eigval",
                     "eigenvalue number",

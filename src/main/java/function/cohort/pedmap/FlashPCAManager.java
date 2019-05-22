@@ -100,9 +100,9 @@ public class FlashPCAManager {
 
     public static void findOutliers() {
         String cmd = ThirdPartyToolManager.PLINK
-                + " --bfile " + CommonCommand.outputPath + "plink"
+                + " --bfile " + CommonCommand.outputPath + "flashpca_plink"
                 + " --neighbour 1 " + String.valueOf(PedMapCommand.flashPCANumNeighbor)
-                + " --out " + CommonCommand.outputPath + "plink_outlier"
+                + " --out " + CommonCommand.outputPath + "flashpca_plink_outlier"
                 + " 2>&1 >> " + CommonCommand.outputPath + "flashpca.log";
 
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
@@ -178,11 +178,11 @@ public class FlashPCAManager {
         }
 
         if(printInfo){
-            System.out.println("original number of cases :" + SampleManager.getCaseNum());
-            System.out.println("original number of controls :" + SampleManager.getCtrlNum());
-            System.out.println("number of cases :" + countCase);
-            System.out.println("number of controls :" + countCtrl);
-            System.out.println("number of outliers :" + countOut);
+            System.out.println("original number of cases: " + SampleManager.getCaseNum());
+            System.out.println("original number of controls: " + SampleManager.getCtrlNum());
+            System.out.println("number of cases: " + countCase);
+            System.out.println("number of controls: " + countCtrl);
+            System.out.println("number of outliers: " + countOut + "\n");
         }
 
         XYSeriesCollection dataCollection = new XYSeriesCollection();
