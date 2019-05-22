@@ -268,7 +268,7 @@ public class FlashPCAManager {
             ErrorManager.send(e);
         }
 
-        System.out.println("Size of outlier set: " + outlierSet.size());
+        System.out.println("Size of outlier set: " + outlierSet.size() + "\n");
         return outlierSet;
     }
 
