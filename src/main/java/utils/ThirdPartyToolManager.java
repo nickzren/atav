@@ -27,7 +27,6 @@ public class ThirdPartyToolManager {
     private static final String COLLAPSED_REGRESSION_R = Data.ATAV_HOME + "lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = Data.ATAV_HOME + "lib/pvals_qqplot.R";
     private static final String PERM_QQPLOT_FOR_COLLAPSING = Data.ATAV_HOME + "lib/generate_qq.py";
-    private static final String FLANKING_SEQ_PERL = Data.ATAV_HOME + "lib/flanking_seq.pl";
     private static final String MANN_WHITNEY_TEST = Data.ATAV_HOME + "lib/mann_whitney_test.py";
 
     public static void init() {

@@ -73,25 +73,25 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     @Override
     public void doAfterCloseOutput() {
         String sampleFile = CohortLevelFilterCommand.sampleFile;
-        
+
         if (PedMapCommand.isKinship) {
             doKinship();
-            
+
             String newOutputName = "kinship_plink_pruned_sample";
             runPlinkToPrunePed(outputName, kinshipPrunedSampleFile, newOutputName);
-            
+
             outputName = newOutputName;
             pedFile = CommonCommand.outputPath + outputName + ".ped";
             mapFile = CommonCommand.outputPath + outputName + ".map";
             sampleFile = kinshipPrunedSampleFile;
         }
 
-        if (PedMapCommand.isEigenstrat) {
-            doEigesntrat(pedFile, mapFile, sampleFile);
-        }
-
         if (PedMapCommand.isFlashPCA) {
             doFlashPCA(outputName, sampleFile);
+        }
+
+        if (PedMapCommand.isEigenstrat) {
+            doEigesntrat(pedFile, mapFile, sampleFile);
         }
     }
 
