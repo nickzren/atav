@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import utils.DBManager;
+import utils.FormatManager;
 
 /**
  *
@@ -120,7 +121,7 @@ public class VariantManager {
 
                 addVariantToList(lineStr, variantSet, isInclude);
             }
-            
+
             br.close();
             fr.close();
         } catch (Exception e) {
@@ -149,7 +150,7 @@ public class VariantManager {
 
                 addRsNumberToList(lineStr, rsNumberSet, isInclude);
             }
-            
+
             br.close();
             fr.close();
         } catch (Exception e) {
@@ -162,7 +163,7 @@ public class VariantManager {
 
     public static void reset2KnownVarSet() throws SQLException {
         clearIncludeVarSet();
-        
+
         // init ClinVar variants set
         for (ClinVar clinvar : KnownVarManager.getClinVarMultiMap().values()) {
             addVariantToList(clinvar.getVariantId(), includeVariantSet, true);
@@ -346,7 +347,7 @@ public class VariantManager {
 
         return rset.next();
     }
-    
+
     // exclude Multiallelic site > 2 variants
     public static boolean isMultiallelicVariant2(String chr, int pos) throws SQLException {
         String sql = "select pos from multiallelic_variant_site_2 "
@@ -355,6 +356,20 @@ public class VariantManager {
         ResultSet rset = DBManager.executeQuery(sql);
 
         return rset.next();
+    }
+
+    // get LOFTEE HC in CCDS
+    public static Boolean getLOFTEEHCinCCDS(String chr, int pos, String ref, String alt) throws SQLException {
+        String sql = "select is_hc_in_ccds from loftee "
+                + "where chr = '" + chr + "' and pos =" + pos + " and ref='" + ref + "' and alt='" + alt + "'";
+
+        ResultSet rset = DBManager.executeQuery(sql);
+
+        if (rset.next()) {
+            return rset.getBoolean("is_hc_in_ccds");
+        }
+
+        return null;
     }
 
     public static boolean isUsed() {

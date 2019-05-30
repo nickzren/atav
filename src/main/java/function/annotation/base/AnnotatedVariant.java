@@ -41,9 +41,11 @@ import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.StringJoiner;
 import utils.MathManager;
@@ -91,6 +93,7 @@ public class AnnotatedVariant extends Variant {
     private float revel;
     private float primateAI;
     private CCROutput ccrOutput;
+    private Boolean isLOFTEEHCinCCDS;
 
     public boolean isValid = true;
 
@@ -163,6 +166,12 @@ public class AnnotatedVariant extends Variant {
             primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
 
             isValid = PrimateAICommand.isMinPrimateAIValid(primateAI);
+        }
+        
+        if (isValid && VariantLevelFilterCommand.isIncludeLOFTEE) {
+            isLOFTEEHCinCCDS = VariantManager.getLOFTEEHCinCCDS(chrStr, startPosition, refAllele, allele);
+            
+            isValid = VariantLevelFilterCommand.isLOFTEEValid(isLOFTEEHCinCCDS);
         }
     }
 
@@ -442,6 +451,10 @@ public class AnnotatedVariant extends Variant {
         
         if (PrimateAICommand.isIncludePrimateAI) {
             sj.add(FormatManager.getFloat(primateAI));
+        }
+        
+        if(VariantLevelFilterCommand.isIncludeLOFTEE) {
+            sj.add(FormatManager.getBoolean(isLOFTEEHCinCCDS));
         }
     }
 

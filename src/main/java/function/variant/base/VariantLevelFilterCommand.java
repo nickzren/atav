@@ -50,6 +50,8 @@ public class VariantLevelFilterCommand {
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
     public static boolean disableCheckOnSexChr = false;
+    public static boolean isIncludeLOFTEE = false;
+    public static boolean isExcludeFalseLOFTEE = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -78,7 +80,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--exclude-multiallelic-variant-2":
                     isExcludeMultiallelicVariant2 = true;
-                    break;    
+                    break;
                 case "--exclude-snv":
                     isExcludeSnv = true;
                     break;
@@ -87,7 +89,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--disable-check-on-sex-chr":
                     disableCheckOnSexChr = true;
-                    break;    
+                    break;
                 case "--evs-maf":
                     checkValueValid(0.5, 0, option);
                     EvsCommand.evsMaf = getValidDouble(option);
@@ -146,7 +148,7 @@ public class VariantLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     GnomADCommand.gnomADExomeRfTpProbabilityIndel = getValidFloat(option);
                     GnomADCommand.isIncludeGnomADExome = true;
-                    break;    
+                    break;
                 case "--gnomad-genome-rf-tp-probability-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     GnomADCommand.gnomADGenomeRfTpProbabilitySnv = getValidFloat(option);
@@ -164,7 +166,7 @@ public class VariantLevelFilterCommand {
                 case "--known-var-pathogenic-only":
                     KnownVarCommand.isKnownVarPathogenicOnly = true;
                     KnownVarCommand.isIncludeKnownVar = true;
-                    break;    
+                    break;
                 case "--min-gerp-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     GerpCommand.minGerpScore = getValidFloat(option);
@@ -179,7 +181,7 @@ public class VariantLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     TrapCommand.minTrapScoreNonCoding = getValidFloat(option);
                     TrapCommand.isIncludeTrap = true;
-                    break;    
+                    break;
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
                     KaviarCommand.maxKaviarMaf = getValidFloat(option);
@@ -207,19 +209,19 @@ public class VariantLevelFilterCommand {
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--mtr-domain-percentile":
-                case "--max-mtr-domain-percentile":    
+                case "--max-mtr-domain-percentile":
                     checkValueValid(100, 0, option);
                     SubRvisCommand.maxMtrDomainPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--sub-rvis-exon-score-percentile":
-                case "--max-sub-rvis-exon-score-percentile":    
+                case "--max-sub-rvis-exon-score-percentile":
                     checkValueValid(100, 0, option);
                     SubRvisCommand.maxSubRVISExonScorePercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--mtr-exon-percentile":
-                case "--max-mtr-exon-percentile":    
+                case "--max-mtr-exon-percentile":
                     checkValueValid(100, 0, option);
                     SubRvisCommand.maxMtrExonPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
@@ -270,7 +272,7 @@ public class VariantLevelFilterCommand {
                     checkValueValid(1, 0, option);
                     PrimateAICommand.minPrimateAI = getValidFloat(option);
                     PrimateAICommand.isIncludePrimateAI = true;
-                    break;    
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
@@ -309,7 +311,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-ccr":
                     CCRCommand.isIncludeCCR = true;
-                    break;    
+                    break;
 //                case "--include-1000-genomes":
 //                    GenomesCommand.isInclude1000Genomes = true;
 //                    break;
@@ -330,7 +332,14 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-primate-ai":
                     PrimateAICommand.isIncludePrimateAI = true;
-                    break;    
+                    break;
+                case "--include-loftee":
+                    isIncludeLOFTEE = true;
+                    break;
+                case "--exclude-false-loftee":
+                    isExcludeFalseLOFTEE = true;
+                    isIncludeLOFTEE = true;
+                    break;
                 default:
                     continue;
             }
@@ -338,7 +347,17 @@ public class VariantLevelFilterCommand {
             iterator.remove();
         }
     }
-    
+
+    // only true or null valid when applied --exclude-false-loftee
+    public static boolean isLOFTEEValid(Boolean value) {
+        if (!isExcludeFalseLOFTEE) {
+            return true;
+        }
+
+        return value == null ||
+                value == true;
+    }
+
     private static Set<String> getSet(CommandOption option) {
         String[] values = option.getValue().split(",");
 

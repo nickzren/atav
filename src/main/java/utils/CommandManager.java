@@ -373,6 +373,7 @@ public class CommandManager {
                     MTRCommand.isIncludeMTR = true;
                     RevelCommand.isIncludeRevel = true;
                     PrimateAICommand.isIncludePrimateAI = true;
+                    VariantLevelFilterCommand.isIncludeLOFTEE = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":

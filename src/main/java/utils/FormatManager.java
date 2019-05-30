@@ -98,6 +98,14 @@ public class FormatManager {
         float nValue = rs.getFloat(strColName);
         return rs.wasNull() ? Data.FLOAT_NA : nValue;
     }
+    
+    public static String getBoolean(Boolean value) {
+        if(value == null) {
+            return "NA";
+        }
+        
+        return String.valueOf(value);
+    }
 
     public static String getFunction(String str) {
         if (str == null) {

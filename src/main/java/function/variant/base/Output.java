@@ -170,6 +170,10 @@ public class Output {
         if (PrimateAICommand.isIncludePrimateAI) {
             sj.add(PrimateAIManager.getTitle());
         }
+        
+        if(VariantLevelFilterCommand.isIncludeLOFTEE) {
+            sj.add("LOFTEE-HC in CCDS");
+        }
 
         return sj;
     }
