@@ -60,7 +60,7 @@ public class ListPrimateAI extends AnalysisBase {
 
             String sqlCode = PrimateAIManager.getSqlByRegion(region);
 
-            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
                 PrimateAIOutput output = new PrimateAIOutput(rset);

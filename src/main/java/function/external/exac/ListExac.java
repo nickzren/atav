@@ -61,7 +61,7 @@ public class ListExac extends AnalysisBase {
 
             String sqlCode = ExacManager.getSqlByRegion(region);
 
-            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
                 ExacOutput output = new ExacOutput(rset);

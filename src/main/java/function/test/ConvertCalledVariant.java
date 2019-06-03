@@ -27,7 +27,7 @@ public class ConvertCalledVariant {
 //                    + " variant_id int(10) unsigned NOT NULL,"
 //                    + " POS int(10) unsigned NOT NULL,"
 //                    + " PRIMARY KEY (variant_id)"
-//                    + ") ENGINE=TokuDB;";
+//                    + ") ENGINE=MEMORY;";
 //            updateSQL(sql);
 //
 //            // load variant id, pos into table

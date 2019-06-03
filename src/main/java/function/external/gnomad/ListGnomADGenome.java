@@ -61,7 +61,7 @@ public class ListGnomADGenome extends AnalysisBase {
 
             String sqlCode = GnomADManager.getSql4GenomeVariant(region);
 
-            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
                 GnomADGenomeOutput output = new GnomADGenomeOutput(rset);

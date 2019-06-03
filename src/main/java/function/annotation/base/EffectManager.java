@@ -55,12 +55,12 @@ public class EffectManager {
 
     private static void initTempTable() {
         try {
-            Statement stmt = DBManager.createStatementByReadOnlyConn();
+            Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
 
             // create table
             String sqlQuery = "CREATE TEMPORARY TABLE " + TMP_EFFECT_ID_TABLE + " ("
                     + "input_effect_id tinyint(3) NOT NULL, "
-                    + "PRIMARY KEY (input_effect_id)) ENGINE=TokuDB;";
+                    + "PRIMARY KEY (input_effect_id)) ENGINE=MEMORY;";
 
             stmt.executeUpdate(sqlQuery);
             stmt.closeOnCompletion();
@@ -133,7 +133,7 @@ public class EffectManager {
 
         initTempTable();
 
-        Statement stmt = DBManager.createStatementByReadOnlyConn();
+        Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
 
         for (String impactEffect : inputEffect.split(",")) { // input impactEffect format: lowestImpact:effect
             if (!impactEffect2IdMap.containsKey(impactEffect)) {
@@ -192,7 +192,7 @@ public class EffectManager {
             stmt.executeUpdate(
                     "CREATE TEMPORARY TABLE " + TMP_IMPACT_TABLE + " ("
                     + "input_impact enum('HIGH','MODERATE','LOW','MODIFIER') NOT NULL, "
-                    + "PRIMARY KEY (input_impact)) ENGINE=TokuDB;");
+                    + "PRIMARY KEY (input_impact)) ENGINE=MEMORY;");
 
             // insert values
             stmt.executeUpdate("INSERT IGNORE INTO tmp_impact values " + impactList4SQL);

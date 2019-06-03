@@ -243,13 +243,13 @@ public class GeneManager {
     private static void initTempTable() {
         try {
             for (String chr : chrAllGeneMap.keySet()) {
-                Statement stmt = DBManager.createStatementByReadOnlyConn();
+                Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
 
                 // create table
                 stmt.executeUpdate(
                         "CREATE TEMPORARY TABLE " + TMP_GENE_TABLE + chr + "("
                         + "input_gene varchar(128) NOT NULL, "
-                        + "PRIMARY KEY (input_gene)) ENGINE=TokuDB;");
+                        + "PRIMARY KEY (input_gene)) ENGINE=MEMORY;");
 
                 if (chrAllGeneMap.get(chr).length() > 0) {
                     // insert values

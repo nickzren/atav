@@ -61,7 +61,7 @@ public class ListGnomADExome extends AnalysisBase {
 
             String sqlCode = GnomADManager.getSql4ExomeVariant(region);
 
-            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
                 GnomADExomeOutput output = new GnomADExomeOutput(rset);

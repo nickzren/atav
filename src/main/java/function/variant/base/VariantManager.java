@@ -61,8 +61,6 @@ public class VariantManager {
 
             resetRegionList();
         }
-
-        initCaseVariantTable();
     }
 
     public static void initByVariantId(String input, HashSet<String> variantSet, boolean isInclude)
@@ -317,22 +315,35 @@ public class VariantManager {
         includeChrList.clear();
     }
 
-    private static void initCaseVariantTable() {
+    public static void initCaseVariantTable(String chr) {
         if (CohortLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
             try {
-                Statement stmt = DBManager.createStatementByReadOnlyConn();
+                Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
 
-                for (String chr : RegionManager.getChrList()) {
-                    String sqlQuery = "CREATE TEMPORARY TABLE tmp_case_variant_id_chr" + chr + " "
-                            + "(case_variant_id INT NOT NULL,PRIMARY KEY (case_variant_id)) "
-                            + "ENGINE=TokuDB "
-                            + "SELECT DISTINCT variant_id AS case_variant_id FROM called_variant_chr" + chr + " "
-                            + "WHERE sample_id IN (" + SampleManager.getCaseIDSJ().toString() + ")";
+                String sqlQuery = "CREATE TEMPORARY TABLE tmp_case_variant_id_chr" + chr + " "
+                        + "(case_variant_id INT NOT NULL,PRIMARY KEY (case_variant_id)) "
+                        + "ENGINE=MEMORY "
+                        + "SELECT DISTINCT variant_id AS case_variant_id FROM called_variant_chr" + chr + " "
+                        + "WHERE sample_id IN (" + SampleManager.getCaseIDSJ().toString() + ")";
 
-                    stmt.executeUpdate(sqlQuery);
-                    stmt.closeOnCompletion();
-                }
-            } catch (Exception e) {
+                stmt.executeUpdate(sqlQuery);
+                stmt.closeOnCompletion();
+            } catch (SQLException e) {
+                ErrorManager.send(e);
+            }
+        }
+    }
+    
+    public static void dropCaseVariantTable(String chr) {
+        if (CohortLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
+            try {
+                Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
+
+                String sqlQuery = "DROP TABLE tmp_case_variant_id_chr" + chr;
+
+                stmt.executeUpdate(sqlQuery);
+                stmt.closeOnCompletion();
+            } catch (SQLException e) {
                 ErrorManager.send(e);
             }
         }

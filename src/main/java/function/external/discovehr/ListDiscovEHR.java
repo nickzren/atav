@@ -61,7 +61,7 @@ public class ListDiscovEHR extends AnalysisBase {
             
             String sqlCode = DiscovEHRManager.getSql4AF(region);
 
-            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
                 DiscovEHROutput output = new DiscovEHROutput(rset);

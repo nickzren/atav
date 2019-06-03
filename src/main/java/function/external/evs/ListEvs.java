@@ -61,7 +61,7 @@ public class ListEvs extends AnalysisBase {
 
             String sqlCode = EvsManager.getSqlByRegion(region);
 
-            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
                 EvsOutput output = new EvsOutput(rset);

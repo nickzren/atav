@@ -30,8 +30,9 @@ public class DBManager {
 
     private static Connection conn;
     private static Statement stmt;
-    private static Connection readOnlyConn;
-    private static Statement readOnlyStmt; // this is just for collecting annotation data
+    // this is just for collecting annotation data
+    private static Connection concurReadOnlyConn;
+    private static Statement concurReadOnlyStmt; 
 
     public static void init() {
         try {
@@ -48,11 +49,11 @@ public class DBManager {
             conn = getConnection();
             stmt = conn.createStatement();
 
-            readOnlyConn = getConnection();
-            readOnlyStmt = readOnlyConn.createStatement(
+            concurReadOnlyConn = getConnection();
+            concurReadOnlyStmt = concurReadOnlyConn.createStatement(
                     java.sql.ResultSet.TYPE_FORWARD_ONLY,
-                    java.sql.ResultSet.CONCUR_READ_ONLY);
-            readOnlyStmt.setFetchSize(Integer.MIN_VALUE);
+                    java.sql.ResultSet.CONCUR_READ_ONLY); // The ResultSet object cannot be updated using the ResultSet interface.
+            concurReadOnlyStmt.setFetchSize(Integer.MIN_VALUE);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -117,9 +118,9 @@ public class DBManager {
         return null;
     }
 
-    public static Statement createStatementByReadOnlyConn() {
+    public static Statement createStatementByConcurReadOnlyConn() {
         try {
-            return readOnlyConn.createStatement();
+            return concurReadOnlyConn.createStatement();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -127,8 +128,8 @@ public class DBManager {
         return null;
     }
 
-    public static ResultSet executeReadOnlyQuery(String sqlQuery) throws SQLException {
-        return readOnlyStmt.executeQuery(sqlQuery);
+    public static ResultSet executeConcurReadOnlyQuery(String sqlQuery) throws SQLException {
+        return concurReadOnlyStmt.executeQuery(sqlQuery);
     }
 
     public static ResultSet executeQuery(String sqlQuery) throws SQLException {

@@ -61,7 +61,7 @@ public class ListDenovoDB extends AnalysisBase {
 
             String sqlCode = DenovoDBManager.getSql(region);
 
-            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
                 DenovoDBOutput output = new DenovoDBOutput(rset);

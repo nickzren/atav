@@ -33,7 +33,7 @@ public class CreateVDSDB {
 //                    + "  ensg_gene varchar(64) NOT NULL,"
 //                    + "  score float NOT NULL,"
 //                    + "  PRIMARY KEY (pos,alt,ensg_gene)"
-//                    + ") ENGINE=TokuDB;";
+//                    + ") ENGINE=MEMORY;";
 //
 //            LogManager.writeAndPrint(sql);
 //            DBManager.executeUpdate(sql);

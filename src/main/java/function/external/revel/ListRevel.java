@@ -60,7 +60,7 @@ public class ListRevel extends AnalysisBase {
 
             String sqlCode = RevelManager.getSqlByRegion(region);
 
-            ResultSet rset = DBManager.executeReadOnlyQuery(sqlCode);
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
                 RevelOutput output = new RevelOutput(rset);

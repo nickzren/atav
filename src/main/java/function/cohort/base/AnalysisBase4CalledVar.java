@@ -2,6 +2,7 @@ package function.cohort.base;
 
 import function.variant.base.AnalysisBase4Variant;
 import function.variant.base.RegionManager;
+import function.variant.base.VariantManager;
 
 /**
  *
@@ -23,9 +24,12 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
             calledVar = null;
 
             region = RegionManager.getRegion(r);
+            
+            // when --case-only used and case num > 0
+            VariantManager.initCaseVariantTable(region.getChrStr());
 
             rset = getAnnotationList(region);
-
+            
             while (rset.next()) {
                 annotation.init(rset, region.getChrStr());
 
@@ -44,11 +48,16 @@ public abstract class AnalysisBase4CalledVar extends AnalysisBase4Variant {
                 }
             }
 
-            processVariant(); // only for the last qualified variant
+            // only for the last qualified variant
+            processVariant(); 
 
             rset.close();
+            
+            // clear temp case variant able
+            VariantManager.dropCaseVariantTable(region.getChrStr()); 
 
-            doOutput(); // only comphet function support it
+            // only comphet function support it
+            doOutput(); 
         }
     }
 

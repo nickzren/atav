@@ -62,7 +62,7 @@ public class OutputSubsetSample {
             sql = "CREATE temporary TABLE WalDB.variant_id_chr" + chr + " ("
                     + " variant_id int(10) unsigned NOT NULL,"
                     + " PRIMARY KEY (variant_id)"
-                    + ") ENGINE=TokuDB;";
+                    + ") ENGINE=MEMORY;";
             updateSQL(sql);
 
             // load variant id into table
@@ -95,7 +95,7 @@ public class OutputSubsetSample {
                     + " REF varchar(255) NOT NULL,"
                     + " ALT varchar(255) NOT NULL,"
                     + " PRIMARY KEY (variant_id)"
-                    + ") ENGINE=TokuDB;";
+                    + ") ENGINE=MEMORY;";
             updateSQL(sql);
 //
 //            // load variant id, pos, ref, alt into table
