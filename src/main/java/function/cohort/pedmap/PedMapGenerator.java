@@ -300,7 +300,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                     nDim, true,
                     CommonCommand.outputPath + "plot_eigenvectors_flashpca_color_outliers.pdf");//cases,controls.outliers - 3 colors
 
-            runPlinkPedToBed("output", "flashpca_plink_outlier_removed", remove_cmd);
+            runPlinkPedToBed(inputName, "flashpca_plink_outlier_removed", remove_cmd);
             label = "flashpca_outliers_removed_";
             FlashPCAManager.runFlashPCA("flashpca_plink_outlier_removed", label, "flashpca.log");
 
@@ -332,7 +332,6 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         }
 
         FlashPCAManager.generateNewSampleFile(sampleMap4FlashPCA,
-                //outlierSet,
                 sampleFile,
                 "flashpca_pruned_sample_file.txt");//generate new sample file, can't simly change fam file
     }
