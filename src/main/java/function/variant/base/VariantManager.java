@@ -185,11 +185,15 @@ public class VariantManager {
         if (str.startsWith("chr")) {
             str = str.substring(3, str.length());
         }
+        
+        String[] values = str.split("-");
+        String chr = values[0];
+        String pos = values[1];
+        RegionManager.checkChrValid(chr);
 
         if (!variantSet.contains(str)) {
             if (isInclude) {
-                String[] values = str.split("-");
-                String varPos = values[0] + "-" + values[1];
+                String varPos = chr + "-" + pos;
 
                 add2IncludeVariantPosSet(varPos);
             }
