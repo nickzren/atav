@@ -65,6 +65,9 @@ public class CoverageManager {
             while (rs.next()) {
                 int blockId = rs.getInt("block_id");
                 String dpStr = rs.getString("DP_string");
+                if(dpStr == null) {
+                    continue;
+                }
 
                 ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(blockId, dpStr);
 
@@ -95,6 +98,9 @@ public class CoverageManager {
             ResultSet rs = DBManager.executeQuery(strQuery);
             while (rs.next()) {
                 String dpStr = rs.getString("DP_string");
+                if(dpStr == null) {
+                    continue;
+                }
                 int blockId = rs.getInt("block_id");
                 int sampleId = rs.getInt("sample_id");
                 ArrayList<CoverageInterval> cilist = getCoverageIntervalListByMinCoverage(blockId, dpStr);
