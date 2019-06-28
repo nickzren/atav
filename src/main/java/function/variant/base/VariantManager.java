@@ -380,11 +380,15 @@ public class VariantManager {
 
         ResultSet rset = DBManager.executeQuery(sql);
 
+        Boolean value = null;
         if (rset.next()) {
-            return rset.getBoolean("is_hc_in_ccds");
+            value = rset.getBoolean("is_hc_in_ccds");
+            if (rset.wasNull()) {
+                value = null;
+            }
         }
 
-        return null;
+        return value;
     }
 
     public static boolean isUsed() {
