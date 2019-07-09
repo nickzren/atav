@@ -17,7 +17,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import utils.DBManager;
-import utils.FormatManager;
 
 /**
  *

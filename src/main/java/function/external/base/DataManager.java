@@ -65,6 +65,10 @@ public class DataManager {
         if (GnomADCommand.isIncludeGnomADGenome) {
             sb.append(GnomADManager.getGenomeVersion());
         }
+        
+        if (GnomADCommand.isIncludeGnomADGeneMetrics) {
+            sb.append(GnomADManager.getGeneMetricsVersion());
+        }
 
         if (KnownVarCommand.isIncludeKnownVar) {
             sb.append(KnownVarManager.getVersion());

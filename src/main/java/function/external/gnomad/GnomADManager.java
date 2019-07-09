@@ -2,7 +2,13 @@ package function.external.gnomad;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
+import global.Data;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
 import java.util.StringJoiner;
+import utils.ErrorManager;
 
 /**
  *
@@ -29,7 +35,16 @@ public class GnomADManager {
     private static final String genomeVariantTable = "gnomad_2_1.genome_variant_chr";
     private static final String genomeMNVTable = "gnomad_2_1.genome_mnv";
 
+    // gene metrics
+    private static final String GENE_METRICS_PATH = "data/gnomad/gnomad.v2.1.1.lof_metrics.subset.by_gene.csv";
+    private static StringJoiner geneMetricsTitle = new StringJoiner(",");
+    private static final HashMap<String, String> geneMap = new HashMap<>();
+    private static StringJoiner NA = new StringJoiner(",");
+    
     public static void init() {
+        if(GnomADCommand.isIncludeGnomADGeneMetrics) {
+            initGeneMap();
+        }
     }
 
     public static String getExomeTitle() {
@@ -95,6 +110,10 @@ public class GnomADManager {
 
         return sj.toString();
     }
+    
+    public static String getGeneMetricsTitle() {
+        return geneMetricsTitle.toString();
+    }
 
     public static String getExomeVersion() {
         return "gnomAD Exome: " + DataManager.getVersion(exomeVariantTable) + "\n";
@@ -102,6 +121,10 @@ public class GnomADManager {
 
     public static String getGenomeVersion() {
         return "gnomAD Genome: " + DataManager.getVersion(genomeVariantTable) + "\n";
+    }
+    
+    public static String getGeneMetricsVersion() {
+        return "gnomAD Gene Metrics: " + DataManager.getVersion(GENE_METRICS_PATH) + "\n";
     }
 
     public static String getSql4ExomeVariant(Region region) {
@@ -150,5 +173,44 @@ public class GnomADManager {
                 + "AND alt = '" + alt + "'";
 
         return sql;
+    }
+    
+    private static void initGeneMap() {
+        try {
+            File f = new File(Data.ATAV_HOME + GENE_METRICS_PATH);
+            FileReader fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
+            
+            String lineStr = "";
+            boolean isFirstLine = true;
+            while ((lineStr = br.readLine()) != null) {
+                int firstCommaIndex = lineStr.indexOf(",");
+                String geneName = lineStr.substring(0, firstCommaIndex);
+                String values = lineStr.substring(firstCommaIndex + 1);
+                
+                if (isFirstLine) {
+                    for (String str : values.split(",")) {
+                        geneMetricsTitle.add("gnomAD Gene " + str);
+                        
+                        NA.add(Data.STRING_NA);
+                    }
+                    
+                    isFirstLine = false;
+                } else {
+                    geneMap.put(geneName, values);
+                }
+            }
+            
+            br.close();
+            fr.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+    
+    public static String getGeneMetricsLine(String geneName) {
+        String line = geneMap.get(geneName);
+
+        return line == null ? NA.toString() : line;
     }
 }

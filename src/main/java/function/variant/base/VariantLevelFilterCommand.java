@@ -288,6 +288,9 @@ public class VariantLevelFilterCommand {
                 case "--include-gnomad-genome":
                     GnomADCommand.isIncludeGnomADGenome = true;
                     break;
+                case "--include-gnomad-gene-metrics":
+                    GnomADCommand.isIncludeGnomADGeneMetrics = true;
+                    break;    
                 case "--include-gerp":
                     GerpCommand.isIncludeGerp = true;
                     break;

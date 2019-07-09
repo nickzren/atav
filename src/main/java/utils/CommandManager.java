@@ -358,6 +358,7 @@ public class CommandManager {
                     ExacCommand.isIncludeExac = true;
                     GnomADCommand.isIncludeGnomADExome = true;
                     GnomADCommand.isIncludeGnomADGenome = true;
+                    GnomADCommand.isIncludeGnomADGeneMetrics = true;
                     GerpCommand.isIncludeGerp = true;
                     TrapCommand.isIncludeTrap = true;
 //                    KaviarCommand.isIncludeKaviar = true;

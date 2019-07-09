@@ -27,7 +27,6 @@ public class RvisManager {
 
     public static String getVersion() {
         return "RVIS: " + DataManager.getVersion(RVIS_PATH) + "\n";
-
     }
 
     public static void init() {
@@ -43,17 +42,20 @@ public class RvisManager {
             BufferedReader br = new BufferedReader(fr);
             
             String lineStr = "";
+            boolean isFirstLine = true;
             while ((lineStr = br.readLine()) != null) {
                 int firstCommaIndex = lineStr.indexOf(",");
                 String geneName = lineStr.substring(0, firstCommaIndex);
                 String values = lineStr.substring(firstCommaIndex + 1);
 
-                if (geneName.equals("Gene")) {
+                if (isFirstLine) {
                     title = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
                         NA.add(Data.STRING_NA);
                     }
+                    
+                    isFirstLine = false;
                 } else {
                     rvisMap.put(geneName, values);
                 }

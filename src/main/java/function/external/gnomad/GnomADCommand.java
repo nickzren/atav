@@ -15,6 +15,7 @@ public class GnomADCommand {
     public static boolean isListGnomADGenome = false;
     public static boolean isIncludeGnomADExome = false;
     public static boolean isIncludeGnomADGenome = false;
+    public static boolean isIncludeGnomADGeneMetrics = false;
 
     public static Set<String> gnomADExomePopSet = new HashSet<String>(Arrays.asList("global"));
     public static Set<String> gnomADGenomePopSet = new HashSet<String>(Arrays.asList("global"));

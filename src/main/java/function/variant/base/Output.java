@@ -111,6 +111,10 @@ public class Output {
             sj.add(GnomADManager.getGenomeTitle());
         }
 
+        if (GnomADCommand.isIncludeGnomADGeneMetrics) {
+            sj.add(GnomADManager.getGeneMetricsTitle());
+        }
+        
         if (KnownVarCommand.isIncludeKnownVar) {
             sj.add(KnownVarManager.getTitle());
         }

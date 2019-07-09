@@ -21,6 +21,7 @@ import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.external.gnomad.GnomADGenome;
+import function.external.gnomad.GnomADManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import function.external.kaviar.Kaviar;
@@ -45,7 +46,6 @@ import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.StringJoiner;
 import utils.MathManager;
@@ -82,7 +82,6 @@ public class AnnotatedVariant extends Variant {
     private float gerpScore;
     private float trapScore;
     private KnownVarOutput knownVarOutput;
-    private String rvisStr;
     private SubRvisOutput subRvisOutput;
     private LIMBROutput limbrOutput;
     private Genomes genomes;
@@ -213,10 +212,6 @@ public class AnnotatedVariant extends Variant {
     public void initExternalData() {
         if (KnownVarCommand.isIncludeKnownVar) {
             knownVarOutput = new KnownVarOutput(this);
-        }
-
-        if (RvisCommand.isIncludeRvis) {
-            rvisStr = RvisManager.getLine(getGeneName());
         }
 
         if (MgiCommand.isIncludeMgi) {
@@ -392,6 +387,10 @@ public class AnnotatedVariant extends Variant {
         if (GnomADCommand.isIncludeGnomADGenome) {
             sj.merge(getGnomADGenomeStringJoiner());
         }
+        
+        if (GnomADCommand.isIncludeGnomADGeneMetrics) {
+            sj.add(getGnomADGeneMetrics());
+        }
 
         if (KnownVarCommand.isIncludeKnownVar) {
             sj.merge(getKnownVarStringJoiner());
@@ -478,6 +477,10 @@ public class AnnotatedVariant extends Variant {
         return gnomADGenome.getStringJoiner();
     }
 
+    public String getGnomADGeneMetrics() {
+        return GnomADManager.getGeneMetricsLine(getGeneName());
+    }
+    
     public StringJoiner getKnownVarStringJoiner() {
         return knownVarOutput.getStringJoiner();
     }
@@ -491,7 +494,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     public String getRvis() {
-        return rvisStr;
+        return RvisManager.getLine(getGeneName());
     }
 
     public StringJoiner getSubRvisStringJoiner() {
