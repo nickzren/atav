@@ -162,7 +162,7 @@ public class DBManager {
 
             if (minNum > maxATAVJobNum && !priorityUsers.contains(Data.userName)) {
                 ErrorManager.print("All AnnoDB servers "
-                        + "reached to max concurrent jobs, please submit your ATAV job latter.", ErrorManager.MAX_CONNECTION);
+                        + "reached to max concurrent jobs, please submit your ATAV job later.", ErrorManager.MAX_CONNECTION);
             }
         }
 
