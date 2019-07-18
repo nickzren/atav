@@ -16,6 +16,7 @@ import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mtr.MTRCommand;
+import function.external.pext.PextCommand;
 import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
@@ -182,6 +183,11 @@ public class VariantLevelFilterCommand {
                     TrapCommand.minTrapScoreNonCoding = getValidFloat(option);
                     TrapCommand.isIncludeTrap = true;
                     break;
+                case "--min-pext-score":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    PextCommand.minPextScore = getValidFloat(option);
+                    PextCommand.isIncludePext = true;
+                    break;    
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
                     KaviarCommand.maxKaviarMaf = getValidFloat(option);
@@ -297,6 +303,9 @@ public class VariantLevelFilterCommand {
                 case "--include-trap":
                     TrapCommand.isIncludeTrap = true;
                     break;
+                case "--include-pext":
+                    PextCommand.isIncludePext = true;
+                    break;    
 //                case "--include-kaviar":
 //                    KaviarCommand.isIncludeKaviar = true;
 //                    break;

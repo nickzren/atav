@@ -81,6 +81,8 @@ import function.cohort.trio.TrioCommand;
 import function.cohort.var.ListVar;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
+import function.external.pext.ListPext;
+import function.external.pext.PextCommand;
 import function.test.Test;
 import function.test.TestCommand;
 import utils.EmailManager;
@@ -228,6 +230,8 @@ public class Program {
                 runAnalysis(new ListPrimateAI());
             } else if (CCRCommand.isListCCR) {
                 runAnalysis(new ListCCR());
+            } else if (PextCommand.isListPext) {
+                runAnalysis(new ListPext());
             } 
             else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());

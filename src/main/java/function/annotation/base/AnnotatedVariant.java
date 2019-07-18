@@ -32,6 +32,8 @@ import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
+import function.external.pext.PextCommand;
+import function.external.pext.PextManager;
 import function.external.primateai.PrimateAICommand;
 import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
@@ -81,6 +83,7 @@ public class AnnotatedVariant extends Variant {
     private Evs evs;
     private float gerpScore;
     private float trapScore;
+    private float pextScore;
     private KnownVarOutput knownVarOutput;
     private SubRvisOutput subRvisOutput;
     private LIMBROutput limbrOutput;
@@ -237,7 +240,8 @@ public class AnnotatedVariant extends Variant {
                 && isSubRVISValid()
                 && isLIMBRValid()
                 && isCCRValid()
-                && isMTRValid();
+                && isMTRValid()
+                && isPextValid();
     }
 
     // init sub rvis score base on most damaging gene and applied filter
@@ -301,6 +305,17 @@ public class AnnotatedVariant extends Variant {
 
                 return mtr.isValid();
             }
+        }
+
+        return true;
+    }
+    
+    // init PEXT score and applied filter 
+    private boolean isPextValid() {
+        if (PextCommand.isIncludePext) {
+            pextScore = isIndel() ? Data.FLOAT_NA : PextManager.getScore(chrStr, getStartPosition(), allele, geneName);
+
+            return PextCommand.isPextScoreValid(pextScore);
         }
 
         return true;
@@ -427,6 +442,10 @@ public class AnnotatedVariant extends Variant {
         if (TrapCommand.isIncludeTrap) {
             sj.add(getTrapScore());
         }
+        
+        if (PextCommand.isIncludePext) {
+            sj.add(getPextScore());
+        }
 
         if (MgiCommand.isIncludeMgi) {
             sj.add(getMgi());
@@ -515,6 +534,10 @@ public class AnnotatedVariant extends Variant {
 
     public String getTrapScore() {
         return FormatManager.getFloat(trapScore);
+    }
+    
+    public String getPextScore() {
+        return FormatManager.getFloat(pextScore);
     }
 
     public String getMgi() {

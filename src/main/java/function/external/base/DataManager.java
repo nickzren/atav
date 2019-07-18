@@ -26,6 +26,8 @@ import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
 import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
+import function.external.pext.PextCommand;
+import function.external.pext.PextManager;
 import function.external.primateai.PrimateAICommand;
 import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
@@ -104,6 +106,10 @@ public class DataManager {
 
         if (TrapCommand.isIncludeTrap) {
             sb.append(TrapManager.getVersion());
+        }
+        
+        if (PextCommand.isIncludePext) {
+            sb.append(PextManager.getVersion());
         }
 
         if (MgiCommand.isIncludeMgi) {

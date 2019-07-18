@@ -41,6 +41,8 @@ import function.cohort.base.Carrier;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
+import function.external.pext.PextCommand;
+import function.external.pext.PextManager;
 import global.Data;
 import global.Index;
 import java.util.StringJoiner;
@@ -149,6 +151,10 @@ public class Output {
 
         if (TrapCommand.isIncludeTrap) {
             sj.add(TrapManager.getTitle());
+        }
+        
+        if (PextCommand.isIncludePext) {
+            sj.add(PextManager.getTitle());
         }
 
         if (MgiCommand.isIncludeMgi) {

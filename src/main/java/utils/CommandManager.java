@@ -33,6 +33,7 @@ import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
+import function.external.pext.PextCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
@@ -361,6 +362,7 @@ public class CommandManager {
                     GnomADCommand.isIncludeGnomADGeneMetrics = true;
                     GerpCommand.isIncludeGerp = true;
                     TrapCommand.isIncludeTrap = true;
+                    PextCommand.isIncludePext = true;
 //                    KaviarCommand.isIncludeKaviar = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     RvisCommand.isIncludeRvis = true;
@@ -431,6 +433,11 @@ public class CommandManager {
                     TrapCommand.isListTrap = true;
                     TrapCommand.isIncludeTrap = true;
                     break;
+                case "--list-pext":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    PextCommand.isListPext = true;
+                    PextCommand.isIncludePext = true;
+                    break;      
                 case "--list-sub-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
                     SubRvisCommand.isListSubRvis = true;
@@ -480,7 +487,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     PrimateAICommand.isListPrimateAI = true;
                     PrimateAICommand.isIncludePrimateAI = true;
-                    break;    
+                    break;  
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;
