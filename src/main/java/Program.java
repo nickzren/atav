@@ -81,6 +81,8 @@ import function.cohort.trio.TrioCommand;
 import function.cohort.var.ListVar;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
+import function.cohort.vcf.ListVCF;
+import function.cohort.vcf.VCFCommand;
 import function.external.pext.ListPext;
 import function.external.pext.PextCommand;
 import function.test.Test;
@@ -166,6 +168,8 @@ public class Program {
                 runAnalysis(new ListVarGeno());
             } else if (VarCommand.isListVar) {
                 runAnalysis(new ListVar());
+            } else if (VCFCommand.isListVCF) {
+                runAnalysis(new ListVCF());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
                 runAnalysis(new CollapsingSingleVariant());
             } else if (CollapsingCommand.isCollapsingCompHet) {

@@ -33,6 +33,7 @@ import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
+import function.cohort.vcf.VCFCommand;
 import function.external.pext.PextCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
@@ -317,6 +318,10 @@ public class CommandManager {
                 case "--list-var":
                     VarCommand.isListVar = true;
                     break;
+                case "--list-vcf":
+                    Data.STRING_NA = ".";
+                    VCFCommand.isListVCF = true;
+                    break;
                 case "--collapsing-dom":
                     CollapsingCommand.isCollapsingSingleVariant = true;
                     break;
@@ -513,6 +518,8 @@ public class CommandManager {
         if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
         } else if (VarCommand.isListVar) {
+
+        } else if (VCFCommand.isListVCF) {
 
         } else if (CollapsingCommand.isCollapsingSingleVariant) {
             CollapsingCommand.initSingleVarOptions(optionList.iterator());
