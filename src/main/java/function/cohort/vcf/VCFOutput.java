@@ -14,7 +14,7 @@ import utils.FormatManager;
  *
  * @author nick
  */
-public class VCF extends Output {
+public class VCFOutput extends Output {
     
     public static String getTitle() {
         StringJoiner sj = new StringJoiner("\t");
@@ -34,7 +34,7 @@ public class VCF extends Output {
         return sj.toString();
     }
 
-    public VCF(CalledVariant c) {
+    public VCFOutput(CalledVariant c) {
         super(c);
     }
 

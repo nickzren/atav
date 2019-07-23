@@ -20,7 +20,7 @@ public class ListVCF extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwVCF = new BufferedWriter(new FileWriter(vcfFilePath));
-            bwVCF.write(VCF.getTitle());
+            bwVCF.write(VCFOutput.getTitle());
             bwVCF.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -56,7 +56,7 @@ public class ListVCF extends AnalysisBase4CalledVar {
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
-            VCF output = new VCF(calledVar);
+            VCFOutput output = new VCFOutput(calledVar);
 
             bwVCF.write(output.toString());
             bwVCF.newLine();
