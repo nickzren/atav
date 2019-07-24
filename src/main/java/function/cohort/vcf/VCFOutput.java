@@ -73,7 +73,7 @@ public class VCFOutput extends Output {
             Carrier carrier = calledVar.getCarrier(sample.getId());
             
             formatSJ = new StringJoiner(":");
-            formatSJ.add(FormatManager.getInteger(calledVar.getGT(sample.getIndex())));
+            formatSJ.add(FormatManager.getByte(calledVar.getGT(sample.getIndex())));
             formatSJ.add(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA));
             formatSJ.add(FormatManager.getShort(calledVar.getDPBin(sample.getIndex())));
             formatSJ.add(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA));
