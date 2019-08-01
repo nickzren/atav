@@ -186,7 +186,7 @@ public class VariantLevelFilterCommand {
                 case "--min-pext-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     PextCommand.minPextScore = getValidFloat(option);
-                    PextCommand.isIncludePext = true;
+//                    PextCommand.isIncludePext = true;
                     break;    
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
@@ -304,7 +304,7 @@ public class VariantLevelFilterCommand {
                     TrapCommand.isIncludeTrap = true;
                     break;
                 case "--include-pext":
-                    PextCommand.isIncludePext = true;
+//                    PextCommand.isIncludePext = true;
                     break;    
 //                case "--include-kaviar":
 //                    KaviarCommand.isIncludeKaviar = true;

@@ -362,7 +362,7 @@ public class CommandManager {
                     GnomADCommand.isIncludeGnomADGeneMetrics = true;
                     GerpCommand.isIncludeGerp = true;
                     TrapCommand.isIncludeTrap = true;
-                    PextCommand.isIncludePext = true;
+//                    PextCommand.isIncludePext = true;
 //                    KaviarCommand.isIncludeKaviar = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     RvisCommand.isIncludeRvis = true;
@@ -436,7 +436,7 @@ public class CommandManager {
                 case "--list-pext":
                     CommonCommand.isNonSampleAnalysis = true;
                     PextCommand.isListPext = true;
-                    PextCommand.isIncludePext = true;
+//                    PextCommand.isIncludePext = true;
                     break;      
                 case "--list-sub-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
