@@ -50,7 +50,7 @@ public class EmailManager {
      * @param subject
      * @param body
      */
-    public static void sendEmail(String subject, String body) {
+    private static void sendEmail(String subject, String body, String to) {
         try {
             Properties props = System.getProperties();
             props.put("mail.smtp.host", MAIL_SERVER);
@@ -64,7 +64,7 @@ public class EmailManager {
 
             msg.setFrom(new InternetAddress(EMAIL_FROM, "IGM BIOINFO"));
 
-            msg.setReplyTo(InternetAddress.parse(EMAIL_TO, false));
+            msg.setReplyTo(InternetAddress.parse(to, false));
 
             msg.setSubject(subject, "UTF-8");
 
@@ -73,9 +73,18 @@ public class EmailManager {
             msg.setSentDate(new Date());
 
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(EMAIL_TO, false));
-            
+
             Transport.send(msg);
         } catch (UnsupportedEncodingException | MessagingException e) {
         }
+    }
+    
+    public static void sendEmailToBioinfo(String subject, String body) {
+        sendEmail(subject, body, EMAIL_TO);
+    }
+    
+    public static void sendEmailToUser(String subject, String body) {
+        String to = Data.userName + "@cumc.columbia.edu";
+        sendEmail(subject, body, to);
     }
 }

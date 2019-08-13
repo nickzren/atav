@@ -21,21 +21,24 @@ public class ErrorManager {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
-        
+
         int exit = UNEXPECTED_FAIL;
         if (sw.toString().contains("net_write_timeout")) { // hack here since we have no clues yet how it happened
             exit = NET_WRITE_TIMEOUT;
         } else if (sw.toString().contains("Communications link failure")) { // hack here since we have no clues yet how it happened
             exit = COMMUNICATIONS_LINK_FAILURE;
-        } 
+        }
 
-        String cmdLogStr = LogManager.getCommandLogStr(exit);        
-        EmailManager.sendEmail("ATAV Error Report", 
+        String cmdLogStr = LogManager.getCommandLogStr(exit);
+        EmailManager.sendEmailToBioinfo("ATAV Job Error",
                 cmdLogStr + "\n\n" + sw.toString());
         print("\n" + sw.toString(), exit);
     }
 
     public static void print(String msg, int exit) {
+        String cmdLogStr = LogManager.getCommandLogStr(exit);
+        EmailManager.sendEmailToUser("ATAV Job (" + LogManager.getJobID() + ") Error", cmdLogStr + "\n\n" + msg);
+
         LogManager.writeUserCommand2FailedLog(exit);
         LogManager.writeAndPrint(msg + "\n\nExit\n");
         LogManager.close();

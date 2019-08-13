@@ -115,9 +115,9 @@ public class Program {
 
     private static void init(String[] options) {
         try {
-            CommandManager.initOptions(options);
-
             EmailManager.init();
+            
+            CommandManager.initOptions(options);
             
             DBManager.init();
 
