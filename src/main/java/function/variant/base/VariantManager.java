@@ -5,6 +5,7 @@ import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.SampleManager;
+import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.parent.ParentCommand;
 import function.cohort.trio.TrioCommand;
 import global.Data;
@@ -39,7 +40,8 @@ public class VariantManager {
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
         if (TrioCommand.isListTrio
-                || ParentCommand.isListParentCompHet) {
+                || ParentCommand.isListParentCompHet
+                || CollapsingCommand.isCollapsingCompHet) {
             // disable process region as variant by varaint way
             maxIncludeNum = 0;
         }

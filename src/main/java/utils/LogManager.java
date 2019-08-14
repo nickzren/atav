@@ -104,19 +104,18 @@ public class LogManager {
 
     private static void writeUserCommand2Log() {
         logUserCommand(USERS_COMMAND_LOG, ErrorManager.SUCCESS);
+        
+        emailUserJobComplete("", ErrorManager.SUCCESS);
     }
 
-    public static void writeUserCommand2FailedLog(int exit) {
+    public static void writeUserCommand2FailedLog(String error, int exit) {
         logUserCommand(USERS_COMMAND_FAILED_LOG, exit);
+        
+        emailUserJobComplete(error, exit);
     }
 
     private static void logUserCommand(String logFilePath, int exit) {
         try {
-            String cmdLogStr = getCommandLogStr(exit);
-
-            // email user job complete
-            EmailManager.sendEmailToUser("ATAV Job (" + LogManager.getJobID() + ") Complete", cmdLogStr);
-
             if (isBioinfoTeam()) {
                 return;
             }
@@ -127,12 +126,25 @@ public class LogManager {
 
             BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
 
+            String cmdLogStr = getCommandLogStr(exit);
             bufferWritter.write(cmdLogStr);
             bufferWritter.newLine();
             bufferWritter.close();
         } catch (Exception e) { // not output error when writing to log file denied
 
         }
+    }
+
+    private static void emailUserJobComplete(String error, int exit) {
+        String cmdLogStr = getCommandLogStr(exit);
+
+        String str = "Completed";
+        if (exit != ErrorManager.SUCCESS) {
+            str = "Failed";
+        }
+
+        // email user job complete
+        EmailManager.sendEmailToUser("ATAV Job (" + LogManager.getJobID() + ") " + str, cmdLogStr + "\n\n" + error);
     }
 
     public static String getCommandLogStr(int exit) {

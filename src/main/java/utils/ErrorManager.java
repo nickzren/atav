@@ -37,9 +37,9 @@ public class ErrorManager {
 
     public static void print(String msg, int exit) {
         String cmdLogStr = LogManager.getCommandLogStr(exit);
-        EmailManager.sendEmailToUser("ATAV Job (" + LogManager.getJobID() + ") Error", cmdLogStr + "\n\n" + msg);
+        EmailManager.sendEmailToUser("ATAV Job (" + LogManager.getJobID() + ") Failed", cmdLogStr + "\n\n" + msg);
 
-        LogManager.writeUserCommand2FailedLog(exit);
+        LogManager.writeUserCommand2FailedLog(msg, exit);
         LogManager.writeAndPrint(msg + "\n\nExit\n");
         LogManager.close();
         System.exit(exit);
