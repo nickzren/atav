@@ -29,16 +29,16 @@ public class ErrorManager {
             exit = COMMUNICATIONS_LINK_FAILURE;
         }
 
-        String cmdLogStr = LogManager.getCommandLogStr(exit);
-        EmailManager.sendEmailToBioinfo("ATAV Job Error",
-                cmdLogStr + "\n\n" + sw.toString());
+        if (!LogManager.isBioinfoTeam()) {
+            String cmdLogStr = LogManager.getCommandLogStr(exit);
+            EmailManager.sendEmailToBioinfo("ATAV Job Failed",
+                    cmdLogStr + "\n\n" + sw.toString());
+        }
+        
         print("\n" + sw.toString(), exit);
     }
 
     public static void print(String msg, int exit) {
-        String cmdLogStr = LogManager.getCommandLogStr(exit);
-        EmailManager.sendEmailToUser("ATAV Job (" + LogManager.getJobID() + ") Failed", cmdLogStr + "\n\n" + msg);
-
         LogManager.writeUserCommand2FailedLog(msg, exit);
         LogManager.writeAndPrint(msg + "\n\nExit\n");
         LogManager.close();

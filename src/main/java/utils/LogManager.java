@@ -104,13 +104,13 @@ public class LogManager {
 
     private static void writeUserCommand2Log() {
         logUserCommand(USERS_COMMAND_LOG, ErrorManager.SUCCESS);
-        
+
         emailUserJobComplete("", ErrorManager.SUCCESS);
     }
 
     public static void writeUserCommand2FailedLog(String error, int exit) {
         logUserCommand(USERS_COMMAND_FAILED_LOG, exit);
-        
+
         emailUserJobComplete(error, exit);
     }
 
@@ -165,20 +165,24 @@ public class LogManager {
         return System.getenv("JOB_ID");
     }
 
-    private static boolean isBioinfoTeam() throws Exception {
-        String configPath = Data.SYSTEM_CONFIG;
+    public static boolean isBioinfoTeam() {
+        try {
+            String configPath = Data.SYSTEM_CONFIG;
 
-        if (CommonCommand.isDebug) {
-            configPath = Data.SYSTEM_CONFIG_FOR_DEBUG;
+            if (CommonCommand.isDebug) {
+                configPath = Data.SYSTEM_CONFIG_FOR_DEBUG;
+            }
+
+            InputStream input = new FileInputStream(configPath);
+            Properties prop = new Properties();
+            prop.load(input);
+
+            String members = prop.getProperty("bioinfo-team");
+
+            return members.contains(Data.userName);
+        } catch (Exception e) {
+            return false;
         }
-
-        InputStream input = new FileInputStream(configPath);
-        Properties prop = new Properties();
-        prop.load(input);
-
-        String members = prop.getProperty("bioinfo-team");
-
-        return members.contains(Data.userName);
     }
 
     private static long folderSize(File directory) {

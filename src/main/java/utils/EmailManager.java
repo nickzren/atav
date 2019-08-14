@@ -64,7 +64,7 @@ public class EmailManager {
 
             msg.setFrom(new InternetAddress(EMAIL_FROM, "IGM BIOINFO"));
 
-            msg.setReplyTo(InternetAddress.parse(to, false));
+            msg.setReplyTo(InternetAddress.parse(EMAIL_FROM, false));
 
             msg.setSubject(subject, "UTF-8");
 
@@ -72,7 +72,7 @@ public class EmailManager {
 
             msg.setSentDate(new Date());
 
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(EMAIL_TO, false));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
 
             Transport.send(msg);
         } catch (UnsupportedEncodingException | MessagingException e) {
