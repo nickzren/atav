@@ -234,7 +234,7 @@ public class CommandManager {
                 default:
                     continue;
             }
-            
+
             iterator.remove();
         }
 
@@ -292,7 +292,7 @@ public class CommandManager {
                     break;
                 case "--debug":
                     CommonCommand.isDebug = true;
-                    break; 
+                    break;
                 default:
                     continue;
             }
@@ -437,7 +437,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     PextCommand.isListPext = true;
 //                    PextCommand.isIncludePext = true;
-                    break;      
+                    break;
                 case "--list-sub-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
                     SubRvisCommand.isListSubRvis = true;
@@ -452,7 +452,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     CCRCommand.isListCCR = true;
                     CCRCommand.isIncludeCCR = true;
-                    break;     
+                    break;
                 case "--list-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
                     RvisCommand.isListRvis = true;
@@ -482,12 +482,12 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     RevelCommand.isListRevel = true;
                     RevelCommand.isIncludeRevel = true;
-                    break;    
+                    break;
                 case "--list-primate-ai":
                     CommonCommand.isNonSampleAnalysis = true;
                     PrimateAICommand.isListPrimateAI = true;
                     PrimateAICommand.isIncludePrimateAI = true;
-                    break;  
+                    break;
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;
@@ -557,7 +557,7 @@ public class CommandManager {
         AnnotationLevelFilterCommand.initOptions(optionList.iterator());
 
         GenotypeLevelFilterCommand.initOptions(optionList.iterator());
-        
+
         CohortLevelFilterCommand.initOptions(optionList.iterator());
     }
 
@@ -584,7 +584,7 @@ public class CommandManager {
      * outputPath invalid option & value if value > max or value < min ATAV stop
      */
     public static void checkValueValid(double max, double min, CommandOption option) {
-        double value = Double.parseDouble(option.getValue());
+        double value = getValidDouble(option);
         if (max != Data.NO_FILTER) {
             if (value > max) {
                 outputInvalidOptionValue(option);
@@ -727,6 +727,6 @@ public class CommandManager {
 
     public static void outputInvalidOptionValue(CommandOption option) {
         ErrorManager.print("\nInvalid value '" + option.getValue()
-                + "' for '" + option.getName() + "' option.", ErrorManager.COMMAND_PARSING);
+                + "' for option '" + option.getName() + "'", ErrorManager.COMMAND_PARSING);
     }
 }
