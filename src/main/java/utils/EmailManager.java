@@ -1,5 +1,6 @@
 package utils;
 
+import com.sun.security.auth.module.UnixSystem;
 import global.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class EmailManager {
     private static String MAIL_SERVER;
     private static String EMAIL_FROM;
     private static String EMAIL_TO;
+    private static final long EXTERNAL_ANALYSTS_GROUP_ID = 1000018;
 
     public static void init() {
         try {
@@ -78,13 +80,25 @@ public class EmailManager {
         } catch (UnsupportedEncodingException | MessagingException e) {
         }
     }
-    
+
     public static void sendEmailToBioinfo(String subject, String body) {
         sendEmail(subject, body, EMAIL_TO);
     }
-    
+
     public static void sendEmailToUser(String subject, String body) {
-        String to = Data.userName + "@cumc.columbia.edu";
-        sendEmail(subject, body, to);
+        UnixSystem sys = new UnixSystem();
+
+        boolean hasExternalGroup = false;
+        for (long value : sys.getGroups()) {
+            if (value == EXTERNAL_ANALYSTS_GROUP_ID) {
+                hasExternalGroup = true;
+                break;
+            }
+        }
+
+        if (!hasExternalGroup) {
+            String to = Data.userName + "@cumc.columbia.edu";
+            sendEmail(subject, body, to);
+        }
     }
 }
