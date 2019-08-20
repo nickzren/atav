@@ -12,8 +12,8 @@ public class Data {
     public static String userName = System.getProperty("user.name");
 
     // system config file path
-    public static final String SYSTEM_CONFIG = "/nfs/goldstein/software/config/atav.pgl.system.config.properties";
-    public static final String SYSTEM_CONFIG_FOR_DEBUG = "/nfs/goldstein/software/config/atav.pgl.system.config.properties";
+    public static final String SYSTEM_CONFIG = "config/atav.pgl.system.config.properties";
+    public static final String SYSTEM_CONFIG_FOR_DEBUG = "config/atav.pgl.system.config.properties";
 
     // atav home path
     public static final String ATAV_HOME = "/nfs/goldstein/software/atav_home/";
