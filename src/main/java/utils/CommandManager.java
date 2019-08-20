@@ -58,15 +58,15 @@ public class CommandManager {
     private static String commandFile = "";
 
     private static void initCommand4Debug() {
-        String cmd = "--disable-timestamp-from-out-path --sample data/sample/trio_sample.txt "
-                + "--effect data/effect/functional.txt "
-                + "--variant 21-34635094-TA-T "
-                + "--out list_var_geno "
-                + "--list-var-geno --min-coverage 10 --include-qc-missing "
-                + "--qd 5 --qual 50 --mq 40 --gq 20 --snv-sor 3 --indel-sor 10 "
-                + "--snv-fs 60 --indel-fs 200 --rprs -3 --mqrs -10 "
-                + "--filter pass,likely,intermediate --het-percent-alt-read 0.3-1 "
-                + "--ctrl-af 0.01 --ccds-only --evs-maf 0.1";
+        String cmd = "--disable-timestamp-from-out-path --sample data/sample/eigenstrat_pruned_sample.txt "
+                + "--collapsing-dom --mann-whitney-test --gene-boundaries data/ccds/addjusted.CCDS.genes.index.r20.hg19.txt --include-rvis --include-known-var --effect HIGH:exon_lo" +
+"ss_variant,HIGH:frameshift_variant,HIGH:rare_amino_acid_variant,HIGH:stop_gained,HIGH:start_lost,HIGH:stop_lost,HIGH:splice_acceptor_variant,HIGH:splice_donor_variant,HIGH:gene_fusion,HIGH:bidirectional_gene_fu" +
+"sion,MODERATE:3_prime_UTR_truncation+exon_loss_variant,MODERATE:5_prime_UTR_truncation+exon_loss_variant,MODERATE:coding_sequence_variant,MODERATE:disruptive_inframe_deletion,MODERATE:disruptive_inframe_inserti" +
+"on,MODERATE:conservative_inframe_deletion,MODERATE:conservative_inframe_insertion,MODERATE:missense_variant+splice_region_variant,MODERATE:missense_variant --exclude-artifacts --filter pass,likely,intermediate " +
+"--exclude-evs-qc-failed --ccds-only --min-coverage 10 --include-qc-missing --qd 5 --qual 50 --mq 40 --gq 20 --snv-sor 3 --indel-sor 10 --snv-fs 60 --indel-fs 200 --rprs -3 --mqrs -10 --het-percent-alt-read 0.3-" +
+"1 --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-exome-af 0.001 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-exome-pop afr,amr,nfe,fin,eas," +
+"asj,sas --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --include-qc-missing --include-known-var --include-evs --include-exac --include-gnomad-genome --include-gnomad-ex" +
+"ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
 
         optionArray = cmd.split("\\s+");
     }
