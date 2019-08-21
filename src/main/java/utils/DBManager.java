@@ -94,7 +94,7 @@ public class DBManager {
 
     private static Connection getConnection() {
         try {
-            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + annodbName;
+            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + annodbName + "?serverTimezone=UTC";
 
             return DriverManager.getConnection(url, dbUser, dbPassword);
         } catch (Exception e) {
@@ -178,7 +178,7 @@ public class DBManager {
                 + "information_schema.processlist where USER='atav'";
 
         try {
-            String url = "jdbc:mysql://" + hostIp + ":" + DB_PORT;
+            String url = "jdbc:mysql://" + hostIp + ":" + DB_PORT+ "?serverTimezone=UTC";
 
             Connection conn = DriverManager.getConnection(url,
                     dbUser,
@@ -193,7 +193,7 @@ public class DBManager {
             rs.close();
             stmt.close();
             conn.close();
-        } catch (Exception e) {
+        } catch (SQLException ex) {
             return Integer.MAX_VALUE;
         }
 

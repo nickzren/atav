@@ -68,7 +68,7 @@ public class SampleManager {
             return;
         }
 
-        initSamplePermission();
+//        initSamplePermission();
 
         checkSampleFile();
 
@@ -624,7 +624,7 @@ public class SampleManager {
 
             String sqlQuery = "CREATE TEMPORARY TABLE "
                     + sqlTable
-                    + "(id int, PRIMARY KEY (id)) ENGINE=TokuDB";
+                    + "(id int, PRIMARY KEY (id)) ENGINE=MEMORY";
 
             stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
         } catch (Exception e) {
