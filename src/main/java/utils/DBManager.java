@@ -16,7 +16,7 @@ public class DBManager {
     private static int maxATAVJobNum; // using this to control max connections to AnnoDB server
     private static String priorityUsers;
 
-    private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_PORT = "3306";
 
     // init from config

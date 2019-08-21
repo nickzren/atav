@@ -29,7 +29,7 @@ public class SearchSample {
             e.printStackTrace();
         }
 
-        File dir = new File("/nfs/goldstein/software/atav_home/log/sample");
+        File dir = new File("log/sample");
         File[] directoryListing = dir.listFiles();
 
         for (String sample : list) {

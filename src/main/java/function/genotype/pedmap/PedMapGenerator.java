@@ -34,10 +34,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     int qualifiedVariants = 0;
 
     // --eigenstrat
-    private static final String EIGENSTRAT_SCRIPT_PATH = "/nfs/goldstein/software/atav_home/lib/run_eigenstrat.py";
+    private static final String EIGENSTRAT_SCRIPT_PATH = "lib/run_eigenstrat.py";
 
     // --kinship
-    private static final String KINSHIP_SCRIPT_PATH = "/nfs/goldstein/software/atav_home/lib/run_kinship.py";
+    private static final String KINSHIP_SCRIPT_PATH = "lib/run_kinship.py";
 
     @Override
     public void initOutput() {

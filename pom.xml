@@ -23,18 +23,18 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.39</version>
+            <version>8.0.17</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>19.0</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>renjin-script-engine</artifactId>
             <version>0.8.1582</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.github.lalyos</groupId>
             <artifactId>jfiglet</artifactId>

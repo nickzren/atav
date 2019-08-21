@@ -16,7 +16,7 @@ public class Data {
     public static final String SYSTEM_CONFIG_FOR_DEBUG = "config/atav.pgl.system.config.properties";
 
     // atav home path
-    public static final String ATAV_HOME = "/nfs/goldstein/software/atav_home/";
+    public static final String ATAV_HOME = "";
 
     public static final int NO_FILTER = Integer.MAX_VALUE;
     public static final int NA = Integer.MIN_VALUE;
