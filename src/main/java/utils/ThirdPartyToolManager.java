@@ -1,6 +1,7 @@
 package utils;
 
 import com.google.common.base.Stopwatch;
+import function.cohort.base.CohortLevelFilterCommand;
 import global.Data;
 import function.cohort.base.SampleManager;
 import java.io.BufferedReader;
@@ -177,7 +178,8 @@ public class ThirdPartyToolManager {
     public static void runMannWhitneyTest(String genotypesFilePath) {
         String cmd = PYTHON + " "
                 + MANN_WHITNEY_TEST + " "
-                + genotypesFilePath;
+                + genotypesFilePath + " "
+                + CohortLevelFilterCommand.sampleFile;
 
         systemCall(new String[]{cmd});
     }
