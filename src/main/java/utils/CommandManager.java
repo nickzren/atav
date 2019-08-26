@@ -58,7 +58,7 @@ public class CommandManager {
     private static String commandFile = "";
 
     private static void initCommand4Debug() {
-        String cmd = "--disable-timestamp-from-out-path --sample data/sample/eigenstrat_pruned_sample.txt "
+        String cmd = "--region 21 --disable-timestamp-from-out-path --sample data/sample/sample.txt "
                 + "--collapsing-dom --mann-whitney-test --gene-boundaries data/ccds/addjusted.CCDS.genes.index.r20.hg19.txt --include-rvis --include-known-var --effect HIGH:exon_lo" +
 "ss_variant,HIGH:frameshift_variant,HIGH:rare_amino_acid_variant,HIGH:stop_gained,HIGH:start_lost,HIGH:stop_lost,HIGH:splice_acceptor_variant,HIGH:splice_donor_variant,HIGH:gene_fusion,HIGH:bidirectional_gene_fu" +
 "sion,MODERATE:3_prime_UTR_truncation+exon_loss_variant,MODERATE:5_prime_UTR_truncation+exon_loss_variant,MODERATE:coding_sequence_variant,MODERATE:disruptive_inframe_deletion,MODERATE:disruptive_inframe_inserti" +

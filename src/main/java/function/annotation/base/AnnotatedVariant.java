@@ -48,7 +48,9 @@ import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.StringJoiner;
 import utils.MathManager;
 
@@ -71,7 +73,7 @@ public class AnnotatedVariant extends Variant {
     private boolean hasCCDS = false;
     private String geneName = "";
 
-    private HashSet<String> geneSet = new HashSet<>();
+    private List<String> geneList = new ArrayList<>();
     private StringBuilder allGeneTranscriptSB = new StringBuilder();
 
     // external db annotations
@@ -208,7 +210,9 @@ public class AnnotatedVariant extends Variant {
                 hasCCDS = true;
             }
 
-            geneSet.add(annotation.geneName);
+            if(!geneList.contains(annotation.geneName)) {
+                geneList.add(annotation.geneName);
+            }
         }
     }
 
@@ -286,7 +290,7 @@ public class AnnotatedVariant extends Variant {
     // init CCR score and applied filter only to non-LOF variants
     private boolean isCCRValid() {
         if (CCRCommand.isIncludeCCR) {
-            ccrOutput = new CCROutput(getVariantId(), getChrStr(), getStartPosition());
+            ccrOutput = new CCROutput(geneList, getChrStr(), getStartPosition());
             
             if(!EffectManager.isLOF(effectID)) {
                 return CCRCommand.isCCRPercentileValid(ccrOutput.getGene() == null ? Data.FLOAT_NA : ccrOutput.getGene().getPercentiles());
@@ -378,8 +382,8 @@ public class AnnotatedVariant extends Variant {
         return geneName;
     }
 
-    public HashSet<String> getGeneSet() {
-        return geneSet;
+    public List<String> getGeneList() {
+        return geneList;
     }
 
     public void getExternalData(StringJoiner sj) {

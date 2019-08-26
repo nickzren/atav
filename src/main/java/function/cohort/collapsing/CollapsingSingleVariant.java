@@ -83,7 +83,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
     private void initSummaryList(CollapsingOutput output, ArrayList<CollapsingSummary> summaryList) {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
             // gene summary
-            for (String geneName : output.getCalledVariant().getGeneSet()) {
+            for (String geneName : output.getCalledVariant().getGeneList()) {
                 if (!geneName.equals(Data.STRING_NA)) {
                     updateGeneSummaryMap(geneName);
                     summaryList.add(summaryMap.get(geneName));
