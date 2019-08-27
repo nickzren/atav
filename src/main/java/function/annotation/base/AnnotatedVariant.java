@@ -30,6 +30,8 @@ import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
 import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCManager;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
 import function.external.pext.PextCommand;
@@ -49,7 +51,6 @@ import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.StringJoiner;
 import utils.MathManager;
@@ -98,6 +99,7 @@ public class AnnotatedVariant extends Variant {
     private float primateAI;
     private CCROutput ccrOutput;
     private Boolean isLOFTEEHCinCCDS;
+    private float mpc;
 
     public boolean isValid = true;
 
@@ -236,6 +238,10 @@ public class AnnotatedVariant extends Variant {
         if (TrapCommand.isIncludeTrap) {
             trapScore = isIndel() ? Data.FLOAT_NA : 
                     TrapManager.getScore(chrStr, getStartPosition(), allele, isMNV(), geneName);
+        }
+        
+        if (MPCCommand.isIncludeMPC) {
+            mpc = MPCManager.getScore(chrStr, getStartPosition(), refAllele, allele);
         }
     }
 
@@ -478,6 +484,10 @@ public class AnnotatedVariant extends Variant {
         if(VariantLevelFilterCommand.isIncludeLOFTEE) {
             sj.add(FormatManager.getBoolean(isLOFTEEHCinCCDS));
         }
+        
+        if (MPCCommand.isIncludeMPC) {
+            sj.add(getMPC());
+        }
     }
 
     public StringJoiner getEvsStringJoiner() {
@@ -562,5 +572,9 @@ public class AnnotatedVariant extends Variant {
         } else {
             return "NA,NA,NA";
         }
+    }
+    
+    public String getMPC() {
+        return FormatManager.getFloat(mpc);
     }
 }

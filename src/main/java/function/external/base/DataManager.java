@@ -24,6 +24,8 @@ import function.external.knownvar.KnownVarManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCManager;
 import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
 import function.external.pext.PextCommand;
@@ -134,6 +136,10 @@ public class DataManager {
         
         if (PrimateAICommand.isIncludePrimateAI) {
             sb.append(PrimateAIManager.getVersion());
+        }
+        
+        if (MPCCommand.isIncludeMPC) {
+            sb.append(MPCManager.getVersion());
         }
         
         return sb.toString();

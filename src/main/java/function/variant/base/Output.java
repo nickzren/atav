@@ -41,6 +41,8 @@ import function.cohort.base.Carrier;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCManager;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
 import global.Data;
@@ -183,6 +185,10 @@ public class Output {
         
         if(VariantLevelFilterCommand.isIncludeLOFTEE) {
             sj.add("LOFTEE-HC in CCDS");
+        }
+        
+        if (MPCCommand.isIncludeMPC) {
+            sj.add(MPCManager.getTitle());
         }
 
         return sj;

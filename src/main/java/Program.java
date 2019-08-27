@@ -81,6 +81,8 @@ import function.cohort.trio.TrioCommand;
 import function.cohort.var.ListVar;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
+import function.external.mpc.ListMPC;
+import function.external.mpc.MPCCommand;
 import function.external.pext.ListPext;
 import function.external.pext.PextCommand;
 import function.test.Test;
@@ -232,6 +234,8 @@ public class Program {
                 runAnalysis(new ListCCR());
             } else if (PextCommand.isListPext) {
                 runAnalysis(new ListPext());
+            } else if (MPCCommand.isListMPC) {
+                runAnalysis(new ListMPC());
             } 
             else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());

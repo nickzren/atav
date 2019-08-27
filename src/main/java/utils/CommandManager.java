@@ -33,6 +33,7 @@ import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
+import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
@@ -377,6 +378,7 @@ public class CommandManager {
                     RevelCommand.isIncludeRevel = true;
                     PrimateAICommand.isIncludePrimateAI = true;
                     VariantLevelFilterCommand.isIncludeLOFTEE = true;
+                    MPCCommand.isIncludeMPC = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -488,6 +490,11 @@ public class CommandManager {
                     PrimateAICommand.isListPrimateAI = true;
                     PrimateAICommand.isIncludePrimateAI = true;
                     break;
+                case "--list-mpc":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    MPCCommand.isListMPC = true;
+                    MPCCommand.isIncludeMPC = true;
+                    break;    
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;

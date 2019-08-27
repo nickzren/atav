@@ -15,6 +15,7 @@ import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
+import function.external.mpc.MPCCommand;
 import function.external.mtr.MTRCommand;
 import function.external.pext.PextCommand;
 import function.external.primateai.PrimateAICommand;
@@ -351,6 +352,9 @@ public class VariantLevelFilterCommand {
                 case "--exclude-false-loftee":
                     isExcludeFalseLOFTEE = true;
                     isIncludeLOFTEE = true;
+                    break;
+                case "--include-mpc":
+                    MPCCommand.isIncludeMPC = true;
                     break;
                 default:
                     continue;
