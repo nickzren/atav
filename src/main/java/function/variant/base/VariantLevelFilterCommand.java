@@ -280,6 +280,11 @@ public class VariantLevelFilterCommand {
                     PrimateAICommand.minPrimateAI = getValidFloat(option);
                     PrimateAICommand.isIncludePrimateAI = true;
                     break;
+                case "--min-mpc":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    MPCCommand.minMPC = getValidFloat(option);
+                    MPCCommand.isIncludeMPC = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;

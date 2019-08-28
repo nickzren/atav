@@ -239,10 +239,6 @@ public class AnnotatedVariant extends Variant {
             trapScore = isIndel() ? Data.FLOAT_NA : 
                     TrapManager.getScore(chrStr, getStartPosition(), allele, isMNV(), geneName);
         }
-        
-        if (MPCCommand.isIncludeMPC) {
-            mpc = MPCManager.getScore(chrStr, getStartPosition(), refAllele, allele);
-        }
     }
 
     public boolean isValid() {
@@ -251,7 +247,8 @@ public class AnnotatedVariant extends Variant {
                 && isLIMBRValid()
                 && isCCRValid()
                 && isMTRValid()
-                && isPextValid();
+                && isPextValid()
+                && isMPCValid();
     }
 
     // init sub rvis score base on most damaging gene and applied filter
@@ -331,6 +328,22 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
+    // init MPC score base on most damaging gene and applied filter
+    private boolean isMPCValid() {
+        if (MPCCommand.isIncludeMPC) {
+            mpc = MPCManager.getScore(chrStr, getStartPosition(), refAllele, allele);
+            
+            // MPC filters will only apply missense variants
+            if (effect.startsWith("missense_variant")) {
+                return MPCCommand.isMPCValid(mpc);
+            } else {
+                return true;
+            }
+        }
+
+        return true;
+    }
+    
     public void getAnnotationData(StringJoiner sj) {
         sj.add(getStableId());
         sj.add(Boolean.toString(hasCCDS));

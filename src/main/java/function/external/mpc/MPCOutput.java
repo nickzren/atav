@@ -20,6 +20,10 @@ public class MPCOutput {
         mpc = MPCManager.getScore(tmp[0], Integer.parseInt(tmp[1]), tmp[2], tmp[3]);
     }
     
+    public boolean isValid() {
+        return MPCCommand.isMPCValid(mpc);
+    }
+    
     @Override
     public String toString() {
         return FormatManager.getFloat(mpc);

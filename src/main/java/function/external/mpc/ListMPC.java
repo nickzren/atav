@@ -55,18 +55,20 @@ public class ListMPC extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
                 MPCOutput output = new MPCOutput(variantId);
 
-                bwMPC.write(variantId + ",");
-                bwMPC.write(output.toString());
-                bwMPC.newLine();
+                if (output.isValid()) {
+                    bwMPC.write(variantId + ",");
+                    bwMPC.write(output.toString());
+                    bwMPC.newLine();
+                }
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-    
+
     @Override
     public String toString() {
         return "Start running list mpc function";
     }
-    
+
 }
