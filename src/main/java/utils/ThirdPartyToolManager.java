@@ -179,7 +179,7 @@ public class ThirdPartyToolManager {
         String cmd = PYTHON + " "
                 + MANN_WHITNEY_TEST + " "
                 + genotypesFilePath + " "
-                + CohortLevelFilterCommand.sampleFile;
+                + SampleManager.getExistingSampleFile();
 
         systemCall(new String[]{cmd});
     }
