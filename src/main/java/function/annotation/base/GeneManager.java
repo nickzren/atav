@@ -330,7 +330,31 @@ public class GeneManager {
             } else {
                 for (Gene gene : set) {
                     if (gene.contains(chr, pos)) {
+                        // reset gene name to gene domain name so the downstream procedure could match correctly
+                        // only for gene boundary input
                         annotation.geneName = gene.getName();
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+    
+    public static boolean isValid(String geneName, String chr, int pos) {
+        if (geneMap.isEmpty()) {
+            return true;
+        }
+
+        HashSet<Gene> set = geneMap.get(geneName);
+
+        if (set != null) {
+            if (GeneManager.getGeneBoundaryList().isEmpty()) {
+                return true;
+            } else {
+                for (Gene gene : set) {
+                    if (gene.contains(chr, pos)) {
                         return true;
                     }
                 }

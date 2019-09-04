@@ -4,7 +4,6 @@ import function.cohort.base.CalledVariant;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import global.Data;
-import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -124,7 +123,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             // only count qualified variant once per gene or region
             if (hasQualifiedVariant) {
                 for (CollapsingSummary summary : summaryList) {
-                    summary.updateVariantCount(output);
+                    summary.updateVariantCount(output.getCalledVariant().isSnv());
                 }
             }
         } catch (Exception e) {

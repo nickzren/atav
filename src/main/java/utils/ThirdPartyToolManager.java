@@ -1,7 +1,6 @@
 package utils;
 
 import com.google.common.base.Stopwatch;
-import function.cohort.base.CohortLevelFilterCommand;
 import global.Data;
 import function.cohort.base.SampleManager;
 import java.io.BufferedReader;
@@ -171,6 +170,12 @@ public class ThirdPartyToolManager {
 
     public static void gzipFile(String path) {
         String cmd = "gzip -9 " + path;
+
+        systemCall(new String[]{cmd});
+    }
+    
+    public static void copyFile(String from, String to) {
+        String cmd = "cp " + from + " " + to;
 
         systemCall(new String[]{cmd});
     }
