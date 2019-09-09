@@ -1,6 +1,7 @@
 package function.cohort.collapsing;
 
 import function.annotation.base.GeneManager;
+import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import java.io.BufferedWriter;
@@ -12,10 +13,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringJoiner;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import utils.CommonCommand;
 import utils.ErrorManager;
+import utils.FormatManager;
 import utils.LogManager;
 import utils.ThirdPartyToolManager;
 
@@ -25,6 +28,7 @@ import utils.ThirdPartyToolManager;
  */
 public class CollapsingLite {
 
+    private static BufferedWriter bwGenotypes = null;
     private static BufferedWriter bwSampleMatrix = null;
     private static BufferedWriter bwSummary = null;
 
@@ -36,22 +40,22 @@ public class CollapsingLite {
     private static final String VARIANT_ID_HEADER = "Variant ID";
     private static final String ALL_ANNOTATION_HEADER = "All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar";
     private static final String SAMPLE_NAME_HEADER = "Sample Name";
+    private static final String LOO_AF_HEADER = "LOO AF";
 
     private static final String[] HEADERS = {
         VARIANT_ID_HEADER,
         ALL_ANNOTATION_HEADER,
-        SAMPLE_NAME_HEADER
+        SAMPLE_NAME_HEADER,
+        LOO_AF_HEADER
     };
 
     private static ArrayList<CollapsingSummary> summaryList = new ArrayList<>();
     private static HashMap<String, CollapsingSummary> summaryMap = new HashMap<>();
-    
-    public static void initInput() {
-        ThirdPartyToolManager.copyFile(CollapsingCommand.genotypeFile, genotypeFilePath);
-    }
 
     public static void initOutput() {
         try {
+            bwGenotypes = new BufferedWriter(new FileWriter(genotypeFilePath));
+            
             bwSampleMatrix = new BufferedWriter(new FileWriter(matrixFilePath));
             bwSummary = new BufferedWriter(new FileWriter(summaryFilePath));
 
@@ -70,6 +74,9 @@ public class CollapsingLite {
 
     public static void closeOutput() {
         try {
+            bwGenotypes.flush();
+            bwGenotypes.close();
+
             bwSummary.flush();
             bwSummary.close();
         } catch (IOException ex) {
@@ -81,21 +88,28 @@ public class CollapsingLite {
         try {
             LogManager.writeAndPrint("Start running collapsing lite function");
 
-            initInput();
-            
             initOutput();
 
             initGeneSummaryMap();
 
-            Reader in = new FileReader(genotypeFilePath);
+            Reader in = new FileReader(CollapsingCommand.genotypeFile);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT
                     .withHeader(HEADERS)
                     .withFirstRecordAsHeader()
                     .parse(in);
 
             String processedVariantID = "";
+            
+            boolean isHeader = true;
 
             for (CSVRecord record : records) {
+                // applied filters first
+                float looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
+                
+                if(!CohortLevelFilterCommand.isMaxLooAFValid(looAF)) {
+                    continue;
+                }
+                
                 String variantID = record.get(VARIANT_ID_HEADER);
                 String[] tmp = variantID.split("-");
                 String chr = tmp[0];
@@ -103,7 +117,7 @@ public class CollapsingLite {
                 String ref = tmp[2];
                 String alt = tmp[3];
                 boolean isSnv = ref.length() == alt.length();
-
+                
                 List<String> geneList = getGeneList(record);
 
                 for (String geneName : geneList) {
@@ -128,6 +142,13 @@ public class CollapsingLite {
                     }
                 }
 
+                // output qualifed record to genotypes file
+                outputGenotype(record, isHeader);
+                
+                if(isHeader) {
+                    isHeader = false;
+                }
+
                 processedVariantID = variantID;
             }
 
@@ -145,6 +166,23 @@ public class CollapsingLite {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void outputGenotype(CSVRecord record, boolean isHeader) throws IOException {
+        StringJoiner sj = new StringJoiner(",");
+
+        if (isHeader) {
+            for (String value : record.getParser().getHeaderNames()) {
+                sj.add(value);
+            }
+        } else {
+            for (String value : record) {
+                sj.add(value);
+            }
+        }
+
+        bwGenotypes.write(sj.toString());
+        bwGenotypes.newLine();
     }
 
     private static List<String> getGeneList(CSVRecord record) {

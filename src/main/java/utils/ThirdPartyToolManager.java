@@ -173,12 +173,6 @@ public class ThirdPartyToolManager {
 
         systemCall(new String[]{cmd});
     }
-    
-    public static void copyFile(String from, String to) {
-        String cmd = "cp " + from + " " + to;
-
-        systemCall(new String[]{cmd});
-    }
 
     public static void runMannWhitneyTest(String genotypesFilePath) {
         String cmd = PYTHON + " "

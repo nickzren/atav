@@ -69,7 +69,7 @@ public class CommandManager {
 "asj,sas --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --include-qc-missing --include-known-var --include-evs --include-exac --include-gnomad-genome --include-gnomad-ex" +
 "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
         
-        cmd = "--sample /Users/nick/Desktop/trio_sample.txt --genotype /Users/nick/Desktop/genotypes.csv --collapsing-lite --out /Users/nick/Desktop/collapsing_lite";
+        cmd = "--sample /Users/nick/Desktop/sample.txt --genotype /Users/nick/Desktop/genotypes.csv --collapsing-lite --out /Users/nick/Desktop/collapsing_lite --loo-af 0";
         
         optionArray = cmd.split("\\s+");
     }
