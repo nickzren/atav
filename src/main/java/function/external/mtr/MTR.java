@@ -15,15 +15,13 @@ public class MTR {
 
     private String chr;
     private int pos;
-    private String feature; // transcript stable id
     private float mtr;
     private float fdr;
     private float mtrCentile;
 
-    public MTR(String chr, int pos, String transcript) {
+    public MTR(String chr, int pos) {
         this.chr = chr;
         this.pos = pos;
-        this.feature = transcript;
 
         initMTR();
     }
@@ -31,7 +29,7 @@ public class MTR {
     public MTR(ResultSet rs) {
         try {
             chr = rs.getString("chr");
-            pos = rs.getInt("Genomic_position");
+            pos = rs.getInt("pos");
 
             initMTR();
         } catch (Exception e) {
@@ -41,7 +39,7 @@ public class MTR {
 
     private void initMTR() {
         try {
-            String sql = MTRManager.getSql4MTR(chr, pos, feature);
+            String sql = MTRManager.getSql4MTR(chr, pos);
 
             ResultSet rs = DBManager.executeQuery(sql);
 

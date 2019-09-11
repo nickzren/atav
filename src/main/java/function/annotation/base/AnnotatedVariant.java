@@ -308,7 +308,7 @@ public class AnnotatedVariant extends Variant {
         if (MTRCommand.isIncludeMTR) {
             // MTR filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
-                mtr = new MTR(chrStr, startPosition, getStableId());
+                mtr = new MTR(chrStr, startPosition);
 
                 return mtr.isValid();
             }
