@@ -45,14 +45,14 @@ public class KnownVarOutput {
         sj.merge(clinVarOutput.getStringJoiner());
         sj.merge(clinVarPathoratio.getStringJoiner());
         sj.merge(clinGen.getStringJoiner());
-        sj.add(omimDiseaseName);
+        sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));
         sj.add(FormatManager.getInteger(recessiveCarrier));
         sj.add(acmg);
         sj.merge(dbDSMOutput.getStringJoiner());
 
         return sj;
     }
-    
+
     @Override
     public String toString() {
         return getStringJoiner().toString();

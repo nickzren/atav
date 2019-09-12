@@ -162,4 +162,13 @@ public class FormatManager {
     public static double[] deepCopyArray(double[] original) {
         return Arrays.copyOf(original, original.length);
     }
+    
+    public static String appendDoubleQuote(String value) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"");
+        sb.append(value);
+        sb.append("\"");
+        
+        return sb.toString();
+    }
 }
