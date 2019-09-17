@@ -57,20 +57,10 @@ public class CollapsingSummary implements Comparable {
         }
     }
 
-    public void updateVariantCount(CollapsingOutput output) {
+    public void updateVariantCount(boolean isSnv) {
         totalVariant++;
 
-        if (output.getCalledVariant().isSnv()) {
-            totalSnv++;
-        } else {
-            totalIndel++;
-        }
-    }
-
-    public void updateVariantCount(CompHetOutput output) {
-        totalVariant++;
-
-        if (output.getCalledVariant().isSnv()) {
+        if (isSnv) {
             totalSnv++;
         } else {
             totalIndel++;
@@ -92,7 +82,7 @@ public class CollapsingSummary implements Comparable {
 
         unqualifiedCase = totalCase - qualifiedCase;
         unqualifiedCtrl = totalCtrl - qualifiedCtrl;
-
+        
         qualifiedCaseFreq = MathManager.devide(qualifiedCase, totalCase);
         qualifiedCtrlFreq = MathManager.devide(qualifiedCtrl, totalCtrl);
 

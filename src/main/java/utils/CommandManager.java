@@ -68,7 +68,9 @@ public class CommandManager {
 "1 --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-exome-af 0.001 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-exome-pop afr,amr,nfe,fin,eas," +
 "asj,sas --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --include-qc-missing --include-known-var --include-evs --include-exac --include-gnomad-genome --include-gnomad-ex" +
 "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
-
+        
+        cmd = "--sample /Users/nick/Desktop/sample.txt --genotype /Users/nick/Desktop/genotypes.csv --collapsing-lite --out /Users/nick/Desktop/collapsing_lite --loo-af 0";
+        
         optionArray = cmd.split("\\s+");
     }
 
@@ -90,6 +92,8 @@ public class CommandManager {
 
             initOptions4Debug();
 
+            checkOptionDependency();
+            
             outputInvalidOptions();
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -328,6 +332,9 @@ public class CommandManager {
                 case "--collapsing-comp-het":
                     CollapsingCommand.isCollapsingCompHet = true;
                     break;
+                case "--collapsing-lite":
+                    CollapsingCommand.isCollapsingLite = true;
+                    break;    
                 case "--fisher":
                     StatisticsCommand.isFisher = true;
                     break;
@@ -525,6 +532,8 @@ public class CommandManager {
             CollapsingCommand.initSingleVarOptions(optionList.iterator());
         } else if (CollapsingCommand.isCollapsingCompHet) {
             CollapsingCommand.initCompHetOptions(optionList.iterator());
+        } else if (CollapsingCommand.isCollapsingLite) {
+            CollapsingCommand.initLiteOptions(optionList.iterator());
         } else if (StatisticsCommand.isFisher) {
             StatisticsCommand.initFisherOptions(optionList.iterator());
         } else if (StatisticsCommand.isLinear) {
@@ -568,6 +577,16 @@ public class CommandManager {
         CohortLevelFilterCommand.initOptions(optionList.iterator());
     }
 
+    public static void checkOptionDependency() {
+        if(CollapsingCommand.isCollapsingLite) {
+            if(CohortLevelFilterCommand.sampleFile.isEmpty()) {
+                ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
+            } else if(CollapsingCommand.genotypeFile.isEmpty()){
+                ErrorManager.print("Please specify your genotype file: --genotype $PATH", ErrorManager.INPUT_PARSING);
+            }
+        }
+    }
+    
     public static void outputInvalidOptions() {
         Iterator<CommandOption> iterator = optionList.iterator();
         CommandOption option;

@@ -1,7 +1,6 @@
 package utils;
 
 import com.google.common.base.Stopwatch;
-import function.cohort.base.CohortLevelFilterCommand;
 import global.Data;
 import function.cohort.base.SampleManager;
 import java.io.BufferedReader;

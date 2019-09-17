@@ -71,6 +71,7 @@ import function.external.trap.ListTrap;
 import function.external.trap.TrapCommand;
 import function.cohort.base.DPBinBlockManager;
 import function.cohort.collapsing.CollapsingCommand;
+import function.cohort.collapsing.CollapsingLite;
 import function.cohort.parent.ListParentCompHet;
 import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
@@ -172,6 +173,8 @@ public class Program {
                 runAnalysis(new CollapsingSingleVariant());
             } else if (CollapsingCommand.isCollapsingCompHet) {
                 runAnalysis(new CollapsingCompHet());
+            } else if (CollapsingCommand.isCollapsingLite) {
+                CollapsingLite.run();
             } else if (StatisticsCommand.isFisher) {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {

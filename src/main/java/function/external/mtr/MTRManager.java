@@ -10,7 +10,7 @@ import java.util.StringJoiner;
  */
 public class MTRManager {
 
-    static final String table = "mtr.variant_chr";
+    static final String table = "mtr.variant_v2";
 
     public static String getTitle() {
         StringJoiner sj = new StringJoiner(",");
@@ -28,13 +28,13 @@ public class MTRManager {
 
     public static String getSql4MTR(Region region) {
         return "SELECT * "
-                + "FROM " + MTRManager.table + region.getChrStr() + " "
-                + "WHERE Genomic_position BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
+                + "FROM " + MTRManager.table + " "
+                + "WHERE chr = '" + region.getChrStr() + "' AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
     }
 
-    public static String getSql4MTR(String chr, int pos, String transcript) {
+    public static String getSql4MTR(String chr, int pos) {
         return "SELECT MTR,FDR,MTR_centile "
-                + "FROM " + MTRManager.table + chr + " "
-                + "WHERE Genomic_position = " + pos + " AND Feature ='" + transcript + "'";
+                + "FROM " + MTRManager.table + " "
+                + "WHERE chr = '" + chr + "' AND pos = " + pos;
     }
 }

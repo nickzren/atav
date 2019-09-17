@@ -53,6 +53,11 @@ public class EmailManager {
      * @param body
      */
     private static void sendEmail(String subject, String body, String to) {
+        if(CommonCommand.isDebug) {
+            // no email sending if it is in debug mode
+            return;
+        }
+        
         try {
             Properties props = System.getProperties();
             props.put("mail.smtp.host", MAIL_SERVER);
