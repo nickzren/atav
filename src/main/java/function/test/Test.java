@@ -34,7 +34,7 @@ public class Test extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-//            MTRConvert.run();  
+//            ConvertDPBins.run();  
         } catch (Exception ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }
