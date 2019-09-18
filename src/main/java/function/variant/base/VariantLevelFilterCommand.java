@@ -184,11 +184,6 @@ public class VariantLevelFilterCommand {
                     TrapCommand.minTrapScoreNonCoding = getValidFloat(option);
                     TrapCommand.isIncludeTrap = true;
                     break;
-                case "--min-pext-score":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    PextCommand.minPextScore = getValidFloat(option);
-//                    PextCommand.isIncludePext = true;
-                    break;    
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
                     KaviarCommand.maxKaviarMaf = getValidFloat(option);
@@ -285,6 +280,11 @@ public class VariantLevelFilterCommand {
                     MPCCommand.minMPC = getValidFloat(option);
                     MPCCommand.isIncludeMPC = true;
                     break;
+                case "--min-pext-ratio":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    PextCommand.minPextRatio = getValidFloat(option);
+                    PextCommand.isIncludePext = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
@@ -302,16 +302,13 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-gnomad-gene-metrics":
                     GnomADCommand.isIncludeGnomADGeneMetrics = true;
-                    break;    
+                    break;
                 case "--include-gerp":
                     GerpCommand.isIncludeGerp = true;
                     break;
                 case "--include-trap":
                     TrapCommand.isIncludeTrap = true;
                     break;
-                case "--include-pext":
-//                    PextCommand.isIncludePext = true;
-                    break;    
 //                case "--include-kaviar":
 //                    KaviarCommand.isIncludeKaviar = true;
 //                    break;
@@ -361,6 +358,9 @@ public class VariantLevelFilterCommand {
                 case "--include-mpc":
                     MPCCommand.isIncludeMPC = true;
                     break;
+                case "--include-pext":
+                    PextCommand.isIncludePext = true;
+                    break;
                 default:
                     continue;
             }
@@ -375,8 +375,8 @@ public class VariantLevelFilterCommand {
             return true;
         }
 
-        return value == null ||
-                value == true;
+        return value == null
+                || value == true;
     }
 
     private static Set<String> getSet(CommandOption option) {

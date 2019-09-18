@@ -69,7 +69,7 @@ public class DataManager {
         if (GnomADCommand.isIncludeGnomADGenome) {
             sb.append(GnomADManager.getGenomeVersion());
         }
-        
+
         if (GnomADCommand.isIncludeGnomADGeneMetrics) {
             sb.append(GnomADManager.getGeneMetricsVersion());
         }
@@ -97,7 +97,7 @@ public class DataManager {
         if (LIMBRCommand.isIncludeLIMBR) {
             sb.append(LIMBRManager.getVersion());
         }
-        
+
         if (CCRCommand.isIncludeCCR) {
             sb.append(CCRManager.getVersion());
         }
@@ -108,10 +108,6 @@ public class DataManager {
 
         if (TrapCommand.isIncludeTrap) {
             sb.append(TrapManager.getVersion());
-        }
-        
-        if (PextCommand.isIncludePext) {
-            sb.append(PextManager.getVersion());
         }
 
         if (MgiCommand.isIncludeMgi) {
@@ -133,15 +129,19 @@ public class DataManager {
         if (RevelCommand.isIncludeRevel) {
             sb.append(RevelManager.getVersion());
         }
-        
+
         if (PrimateAICommand.isIncludePrimateAI) {
             sb.append(PrimateAIManager.getVersion());
         }
-        
+
         if (MPCCommand.isIncludeMPC) {
             sb.append(MPCManager.getVersion());
         }
-        
+
+        if (PextCommand.isIncludePext) {
+            sb.append(PextManager.getVersion());
+        }
+
         return sb.toString();
     }
 

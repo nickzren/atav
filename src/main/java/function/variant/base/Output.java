@@ -118,7 +118,7 @@ public class Output {
         if (GnomADCommand.isIncludeGnomADGeneMetrics) {
             sj.add(GnomADManager.getGeneMetricsTitle());
         }
-        
+
         if (KnownVarCommand.isIncludeKnownVar) {
             sj.add(KnownVarManager.getTitle());
         }
@@ -142,7 +142,7 @@ public class Output {
         if (LIMBRCommand.isIncludeLIMBR) {
             sj.add(LIMBRManager.getTitle());
         }
-        
+
         if (CCRCommand.isIncludeCCR) {
             sj.add(CCRManager.getTitle());
         }
@@ -153,10 +153,6 @@ public class Output {
 
         if (TrapCommand.isIncludeTrap) {
             sj.add(TrapManager.getTitle());
-        }
-        
-        if (PextCommand.isIncludePext) {
-            sj.add(PextManager.getTitle());
         }
 
         if (MgiCommand.isIncludeMgi) {
@@ -178,17 +174,21 @@ public class Output {
         if (RevelCommand.isIncludeRevel) {
             sj.add(RevelManager.getTitle());
         }
-        
+
         if (PrimateAICommand.isIncludePrimateAI) {
             sj.add(PrimateAIManager.getTitle());
         }
-        
-        if(VariantLevelFilterCommand.isIncludeLOFTEE) {
+
+        if (VariantLevelFilterCommand.isIncludeLOFTEE) {
             sj.add("LOFTEE-HC in CCDS");
         }
-        
+
         if (MPCCommand.isIncludeMPC) {
             sj.add(MPCManager.getTitle());
+        }
+
+        if (PextCommand.isIncludePext) {
+            sj.add(PextManager.getTitle());
         }
 
         return sj;

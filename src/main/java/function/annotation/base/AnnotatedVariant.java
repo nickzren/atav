@@ -86,7 +86,7 @@ public class AnnotatedVariant extends Variant {
     private Evs evs;
     private float gerpScore;
     private float trapScore;
-    private float pextScore;
+    private float pextRatio;
     private KnownVarOutput knownVarOutput;
     private SubRvisOutput subRvisOutput;
     private LIMBROutput limbrOutput;
@@ -167,16 +167,16 @@ public class AnnotatedVariant extends Variant {
 
             isValid = RevelCommand.isMinRevelValid(revel);
         }
-        
+
         if (isValid && PrimateAICommand.isIncludePrimateAI) {
             primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
 
             isValid = PrimateAICommand.isMinPrimateAIValid(primateAI);
         }
-        
+
         if (isValid && VariantLevelFilterCommand.isIncludeLOFTEE) {
             isLOFTEEHCinCCDS = VariantManager.getLOFTEEHCinCCDS(chrStr, startPosition, refAllele, allele);
-            
+
             isValid = VariantLevelFilterCommand.isLOFTEEValid(isLOFTEEHCinCCDS);
         }
     }
@@ -212,7 +212,7 @@ public class AnnotatedVariant extends Variant {
                 hasCCDS = true;
             }
 
-            if(!geneList.contains(annotation.geneName)) {
+            if (!geneList.contains(annotation.geneName)) {
                 geneList.add(annotation.geneName);
             }
         }
@@ -236,8 +236,8 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (TrapCommand.isIncludeTrap) {
-            trapScore = isIndel() ? Data.FLOAT_NA : 
-                    TrapManager.getScore(chrStr, getStartPosition(), allele, isMNV(), geneName);
+            trapScore = isIndel() ? Data.FLOAT_NA
+                    : TrapManager.getScore(chrStr, getStartPosition(), allele, isMNV(), geneName);
         }
     }
 
@@ -289,13 +289,13 @@ public class AnnotatedVariant extends Variant {
 
         return true;
     }
-    
+
     // init CCR score and applied filter only to non-LOF variants
     private boolean isCCRValid() {
         if (CCRCommand.isIncludeCCR) {
             ccrOutput = new CCROutput(geneList, getChrStr(), getStartPosition());
-            
-            if(!EffectManager.isLOF(effectID)) {
+
+            if (!EffectManager.isLOF(effectID)) {
                 return CCRCommand.isCCRPercentileValid(ccrOutput.getGene() == null ? Data.FLOAT_NA : ccrOutput.getGene().getPercentiles());
             }
         }
@@ -316,13 +316,13 @@ public class AnnotatedVariant extends Variant {
 
         return true;
     }
-    
+
     // init PEXT score and applied filter 
     private boolean isPextValid() {
         if (PextCommand.isIncludePext) {
-            pextScore = isIndel() ? Data.FLOAT_NA : PextManager.getScore(chrStr, getStartPosition(), allele, geneName);
+            pextRatio = PextManager.getRatio(chrStr, getStartPosition());
 
-            return PextCommand.isPextScoreValid(pextScore);
+            return PextCommand.isPextRatioValid(pextRatio);
         }
 
         return true;
@@ -332,7 +332,7 @@ public class AnnotatedVariant extends Variant {
     private boolean isMPCValid() {
         if (MPCCommand.isIncludeMPC) {
             mpc = MPCManager.getScore(chrStr, getStartPosition(), refAllele, allele);
-            
+
             // MPC filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
                 return MPCCommand.isMPCValid(mpc);
@@ -343,7 +343,7 @@ public class AnnotatedVariant extends Variant {
 
         return true;
     }
-    
+
     public void getAnnotationData(StringJoiner sj) {
         sj.add(getStableId());
         sj.add(Boolean.toString(hasCCDS));
@@ -425,7 +425,7 @@ public class AnnotatedVariant extends Variant {
         if (GnomADCommand.isIncludeGnomADGenome) {
             sj.merge(getGnomADGenomeStringJoiner());
         }
-        
+
         if (GnomADCommand.isIncludeGnomADGeneMetrics) {
             sj.add(getGnomADGeneMetrics());
         }
@@ -457,17 +457,13 @@ public class AnnotatedVariant extends Variant {
         if (CCRCommand.isIncludeCCR) {
             sj.merge(getCCRStringJoiner());
         }
-        
+
         if (GerpCommand.isIncludeGerp) {
             sj.add(getGerpScore());
         }
 
         if (TrapCommand.isIncludeTrap) {
             sj.add(getTrapScore());
-        }
-        
-        if (PextCommand.isIncludePext) {
-            sj.add(getPextScore());
         }
 
         if (MgiCommand.isIncludeMgi) {
@@ -485,21 +481,25 @@ public class AnnotatedVariant extends Variant {
         if (MTRCommand.isIncludeMTR) {
             sj.add(getMTR());
         }
-        
+
         if (RevelCommand.isIncludeRevel) {
             sj.add(FormatManager.getFloat(revel));
         }
-        
+
         if (PrimateAICommand.isIncludePrimateAI) {
             sj.add(FormatManager.getFloat(primateAI));
         }
-        
-        if(VariantLevelFilterCommand.isIncludeLOFTEE) {
+
+        if (VariantLevelFilterCommand.isIncludeLOFTEE) {
             sj.add(FormatManager.getBoolean(isLOFTEEHCinCCDS));
         }
-        
+
         if (MPCCommand.isIncludeMPC) {
             sj.add(getMPC());
+        }
+
+        if (PextCommand.isIncludePext) {
+            sj.add(getPextRatio());
         }
     }
 
@@ -526,7 +526,7 @@ public class AnnotatedVariant extends Variant {
     public String getGnomADGeneMetrics() {
         return GnomADManager.getGeneMetricsLine(getGeneName());
     }
-    
+
     public StringJoiner getKnownVarStringJoiner() {
         return knownVarOutput.getStringJoiner();
     }
@@ -550,7 +550,7 @@ public class AnnotatedVariant extends Variant {
     public StringJoiner getLIMBRStringJoiner() {
         return limbrOutput.getStringJoiner();
     }
-    
+
     public StringJoiner getCCRStringJoiner() {
         return ccrOutput.getStringJoiner();
     }
@@ -562,9 +562,9 @@ public class AnnotatedVariant extends Variant {
     public String getTrapScore() {
         return FormatManager.getFloat(trapScore);
     }
-    
-    public String getPextScore() {
-        return FormatManager.getFloat(pextScore);
+
+    public String getPextRatio() {
+        return FormatManager.getFloat(pextRatio);
     }
 
     public String getMgi() {
@@ -586,7 +586,7 @@ public class AnnotatedVariant extends Variant {
             return "NA,NA,NA";
         }
     }
-    
+
     public String getMPC() {
         return FormatManager.getFloat(mpc);
     }

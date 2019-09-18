@@ -54,8 +54,10 @@ public class ListPext extends AnalysisBase {
         try {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
                 PextOutput output = new PextOutput(variantId);
-                bwPext.write(output.toString());
-                bwPext.newLine();
+                if (output.isValid()) {
+                    bwPext.write(output.toString());
+                    bwPext.newLine();
+                }
             }
         } catch (Exception e) {
             ErrorManager.send(e);

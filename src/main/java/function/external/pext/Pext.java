@@ -1,24 +1,35 @@
 package function.external.pext;
 
+import global.Data;
+
 /**
  *
  * @author nick
  */
 public class Pext {
 
-    private String gene;
-    private float score;
+    private String chr;
+    private int pos;
+    private float ratio;
 
-    public Pext(String gene, float score) {
-        this.gene = gene;
-        this.score = score;
+    public Pext() {
+        chr = Data.STRING_NA;
+        pos = Data.INTEGER_NA;
+        ratio = Data.FLOAT_NA;
     }
 
-    public String getGene() {
-        return gene;
+    public void setValues(String chr, int pos, float ratio) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ratio = ratio;
     }
 
-    public float getScore() {
-        return score;
+    public boolean isSameSite(String chr, int pos) {
+        return this.chr.equalsIgnoreCase(chr)
+                && this.pos == pos;
+    }
+
+    public float getRatio() {
+        return ratio;
     }
 }
