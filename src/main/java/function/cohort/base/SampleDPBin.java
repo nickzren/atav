@@ -44,7 +44,7 @@ public class SampleDPBin {
                 if (!DPBinBlockManager.getCoverageBin().containsKey(bin)) {
                     sb.append(bin);
                 } else {
-                    dpBinPos = pos;
+                    dpBinPos = pos;           
                     endPos += Integer.parseInt(sb.toString(), 36); // add cov bin inteval
                     sb.setLength(0); // clear StringBuilder
 

@@ -76,20 +76,20 @@ public class ConvertDPBins {
 
                                 // when it reach to the end pos and bin = previous bin
                                 if (pos == DP_string.length() - 1) {
-                                    sbLine.append(Integer.toString(previousInterval, BASE));
+                                    sbLine.append(getBaseStr(previousInterval));
                                     sbLine.append(previousBin);
                                     totalInterval += previousInterval;
                                 }
 
                                 continue;
                             } else if (previousInterval != Character.MIN_VALUE) {
-                                sbLine.append(Integer.toString(previousInterval, BASE));
+                                sbLine.append(getBaseStr(previousInterval));
                                 sbLine.append(previousBin);
                                 totalInterval += previousInterval;
 
                                 // when it reach to the end pos and bin != previous bin
                                 if (pos == DP_string.length() - 1) {
-                                    sbLine.append(Integer.toString(inteval, BASE));
+                                    sbLine.append(getBaseStr(inteval));
                                     sbLine.append(bin);
                                     totalInterval += inteval;
                                 }
@@ -97,13 +97,13 @@ public class ConvertDPBins {
                         } else // bin >= c
                         {
                             if (previousBin == 'b') {
-                                sbLine.append(Integer.toString(previousInterval, BASE));
+                                sbLine.append(getBaseStr(previousInterval));
                                 sbLine.append(previousBin);
                                 totalInterval += previousInterval;
 
                                 // when it reach to the end pos and bin != previous bin
                                 if (pos == DP_string.length() - 1) {
-                                    sbLine.append(Integer.toString(inteval, BASE));
+                                    sbLine.append(getBaseStr(inteval));
                                     sbLine.append(bin);
                                     totalInterval += inteval;
                                 }
@@ -113,7 +113,7 @@ public class ConvertDPBins {
 
                                 // when it reach to the end pos and bin = previous bin
                                 if (pos == DP_string.length() - 1) {
-                                    sbLine.append(Integer.toString(previousInterval, BASE));
+                                    sbLine.append(getBaseStr(previousInterval));
                                     sbLine.append(previousBin);
                                     totalInterval += previousInterval;
                                 }
@@ -143,5 +143,9 @@ public class ConvertDPBins {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+    
+    private static String getBaseStr(int value) {
+        return Integer.toString(value, BASE).toUpperCase();
     }
 }
