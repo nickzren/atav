@@ -154,6 +154,11 @@ public class GeneManager {
             if (!line.isEmpty()) {
                 line = line.replaceAll("\"", "").replaceAll("\t", " ");
 
+                String[] fields = line.split("( )+");
+                if (!RegionManager.isChrValid(fields[1])) {
+                    ErrorManager.print("Invalid gene boundary: " + line, ErrorManager.INPUT_PARSING);
+                }
+
                 Gene gene = new Gene(line);
 
                 if (gene.isValid()) {
@@ -341,7 +346,7 @@ public class GeneManager {
 
         return false;
     }
-    
+
     public static boolean isValid(String geneName, String chr, int pos) {
         if (geneMap.isEmpty()) {
             return true;
