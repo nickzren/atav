@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +29,8 @@ public class TraPGeneMapping {
     private static HashMap<String, BufferedReader> brMap = new HashMap();
     private static HashMap<String, BufferedWriter> bwMap = new HashMap();
     private static HashMap<String, String> ensgHGNCMap = new HashMap();
+    
+    private static HashSet<String> idSet = new HashSet();
     
     private static final String TSV = ".tsv";
     
@@ -52,7 +55,7 @@ public class TraPGeneMapping {
             init();
             
             for (String chr : RegionManager.ALL_CHR) {
-                LogManager.writeAndPrint("Start processing " + chr + "...");
+                LogManager.writeAndPrint("Start processing chr" + chr + "...");
                 
                 String lineStr = "";
                 
@@ -66,11 +69,23 @@ public class TraPGeneMapping {
                     sj.add(tmp[0]);
                     sj.add(tmp[2]);
                     sj.add(ensgHGNCMap.get(tmp[3]));
+                    
+                    String id = sj.toString();
+                    
+                    if(!idSet.contains(id)) {
+                        idSet.add(id);
+                    } else {
+                        LogManager.writeAndPrint("Chr: " + chr);
+                        LogManager.writeAndPrint(lineStr);
+                    }
+                    
                     sj.add(tmp[4]);
                     
                     bw.write(sj.toString());
                     bw.newLine();
                 }
+                
+                idSet.clear();
                 
                 bw.flush();
                 bw.close();
