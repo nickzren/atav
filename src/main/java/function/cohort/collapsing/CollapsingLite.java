@@ -1,6 +1,9 @@
 package function.cohort.collapsing;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
+import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
+import function.annotation.base.PolyphenManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
@@ -39,6 +42,7 @@ public class CollapsingLite {
 
     private static final String VARIANT_ID_HEADER = "Variant ID";
     private static final String ALL_ANNOTATION_HEADER = "All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar";
+    private static int ALL_ANNOTATION_HEADER_INDEX;
     private static final String SAMPLE_NAME_HEADER = "Sample Name";
     private static final String LOO_AF_HEADER = "LOO AF";
 
@@ -55,7 +59,7 @@ public class CollapsingLite {
     public static void initOutput() {
         try {
             bwGenotypes = new BufferedWriter(new FileWriter(genotypeFilePath));
-            
+
             bwSampleMatrix = new BufferedWriter(new FileWriter(matrixFilePath));
             bwSummary = new BufferedWriter(new FileWriter(summaryFilePath));
 
@@ -99,17 +103,10 @@ public class CollapsingLite {
                     .parse(in);
 
             String processedVariantID = "";
-            
+
             boolean isHeader = true;
 
             for (CSVRecord record : records) {
-                // applied filters first
-                float looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
-                
-                if(!CohortLevelFilterCommand.isMaxLooAFValid(looAF)) {
-                    continue;
-                }
-                
                 String variantID = record.get(VARIANT_ID_HEADER);
                 String[] tmp = variantID.split("-");
                 String chr = tmp[0];
@@ -117,15 +114,52 @@ public class CollapsingLite {
                 String ref = tmp[2];
                 String alt = tmp[3];
                 boolean isSnv = ref.length() == alt.length();
-                
-                List<String> geneList = getGeneList(record);
+
+                // loo af filter
+                float looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
+                if (!CohortLevelFilterCommand.isMaxLooAFValid(looAF)) {
+                    continue;
+                }
+
+                StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
+                List<String> geneList = new ArrayList();
+
+                String allAnnotation = record.get(ALL_ANNOTATION_HEADER);
+                for (String annotation : allAnnotation.split(";")) {
+                    String[] values = annotation.split("\\|");
+                    String effect = values[0];
+                    String geneName = values[1];
+                    String stableId = values[2];
+                    String HGVS_p = values[3];
+                    String polyphenHumdiv = values[4];
+                    String polyphenHumvar = values[5];
+
+                    // --effect filter applied
+                    // --polyphen-humdiv filter applied
+                    // --gene or --gene-boundary filter applied
+                    if (EffectManager.isEffectContained(effect)
+                            && PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
+                            && GeneManager.isValid(geneName, chr, pos)) {
+                        StringJoiner geneTranscriptSJ = new StringJoiner("|");
+                        geneTranscriptSJ.add(effect);
+                        geneTranscriptSJ.add(geneName);
+                        geneTranscriptSJ.add(stableId);
+                        geneTranscriptSJ.add(HGVS_p);
+                        geneTranscriptSJ.add(polyphenHumdiv);
+                        geneTranscriptSJ.add(polyphenHumvar);
+
+                        allGeneTranscriptSJ.add(geneTranscriptSJ.toString());
+                        if (!geneList.contains(geneName)) {
+                            geneList.add(geneName);
+                        }
+                    }
+                }
+
+                if (geneList.isEmpty()) {
+                    continue;
+                }
 
                 for (String geneName : geneList) {
-                    // --gene or --gene-boundary filter applied
-                    if (!GeneManager.isValid(geneName, chr, pos)) {
-                        continue;
-                    }
-
                     String sampleName = record.get(SAMPLE_NAME_HEADER);
                     Sample sample = SampleManager.getSampleByName(sampleName);
 
@@ -143,9 +177,9 @@ public class CollapsingLite {
                 }
 
                 // output qualifed record to genotypes file
-                outputGenotype(record, isHeader);
-                
-                if(isHeader) {
+                outputGenotype(record, allGeneTranscriptSJ.toString(), isHeader);
+
+                if (isHeader) {
                     isHeader = false;
                 }
 
@@ -168,36 +202,32 @@ public class CollapsingLite {
         }
     }
 
-    private static void outputGenotype(CSVRecord record, boolean isHeader) throws IOException {
+    private static void outputGenotype(CSVRecord record, String allAnnotation, boolean isHeader) throws IOException {
         StringJoiner sj = new StringJoiner(",");
 
         if (isHeader) {
-            for (String value : record.getParser().getHeaderNames()) {
+            for (int headerIndex = 0; headerIndex < record.getParser().getHeaderNames().size(); headerIndex++) {
+                String value = record.getParser().getHeaderNames().get(headerIndex);
+                if (value.equals(ALL_ANNOTATION_HEADER)) {
+                    ALL_ANNOTATION_HEADER_INDEX = headerIndex;
+                }
+
                 sj.add(value);
             }
         } else {
-            for (String value : record) {
+            for (int headerIndex = 0; headerIndex < record.size(); headerIndex++) {
+                String value = record.get(headerIndex);
+
+                if (headerIndex != ALL_ANNOTATION_HEADER_INDEX) {
+                    value = allAnnotation;
+                }
+
                 sj.add(value);
             }
         }
 
         bwGenotypes.write(sj.toString());
         bwGenotypes.newLine();
-    }
-
-    private static List<String> getGeneList(CSVRecord record) {
-        List<String> geneList = new ArrayList();
-
-        String allAnnotation = record.get(ALL_ANNOTATION_HEADER);
-
-        for (String annotation : allAnnotation.split(";")) {
-            String geneName = annotation.split("\\|")[1];
-            if (!geneList.contains(geneName)) {
-                geneList.add(geneName);
-            }
-        }
-
-        return geneList;
     }
 
     private static void initGeneSummaryMap() {

@@ -75,7 +75,7 @@ public class AnnotatedVariant extends Variant {
     private String geneName = "";
 
     private List<String> geneList = new ArrayList<>();
-    private StringBuilder allGeneTranscriptSB = new StringBuilder();
+    private StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
 
     // external db annotations
     private Exac exac;
@@ -190,17 +190,17 @@ public class AnnotatedVariant extends Variant {
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
                 geneName = annotation.geneName;
-            } else {
-                allGeneTranscriptSB.append(";");
-            }
+            } 
 
-            allGeneTranscriptSB
-                    .append(annotation.effect).append("|")
-                    .append(annotation.geneName).append("|")
-                    .append(annotation.stableId).append("|")
-                    .append(annotation.HGVS_p).append("|")
-                    .append(PolyphenManager.getPrediction(annotation.polyphenHumdiv, annotation.effect)).append("|")
-                    .append(PolyphenManager.getPrediction(annotation.polyphenHumvar, annotation.effect));
+            StringJoiner geneTranscriptSJ = new StringJoiner("|");
+            geneTranscriptSJ.add(annotation.effect);
+            geneTranscriptSJ.add(annotation.geneName);
+            geneTranscriptSJ.add(FormatManager.getInteger(annotation.stableId));
+            geneTranscriptSJ.add(annotation.HGVS_p);
+            geneTranscriptSJ.add(PolyphenManager.getPrediction(annotation.polyphenHumdiv, annotation.effect));
+            geneTranscriptSJ.add(PolyphenManager.getPrediction(annotation.polyphenHumvar, annotation.effect));
+            
+            allGeneTranscriptSJ.add(geneTranscriptSJ.toString());
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
             polyphenHumvar = MathManager.max(polyphenHumvar, annotation.polyphenHumvar);
@@ -360,7 +360,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(allGeneTranscriptSB.toString());
+        sj.add(allGeneTranscriptSJ.toString());
     }
 
     public String getStableId() {
