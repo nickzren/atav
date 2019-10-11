@@ -21,13 +21,12 @@ public class Annotation {
     public int effectID;
     public String geneName;
     public int stableId;
-    public String stableIdStr;
     public String HGVS_c;
     public String HGVS_p;
-    public float polyphenHumdiv;
-    public float polyphenHumdivCCDS;
-    public float polyphenHumvar;
-    public float polyphenHumvarCCDS;
+    public float polyphenHumdiv = Data.FLOAT_NA;
+    public float polyphenHumdivCCDS = Data.FLOAT_NA;
+    public float polyphenHumvar = Data.FLOAT_NA;
+    public float polyphenHumvarCCDS = Data.FLOAT_NA;
     public boolean isCCDS;
 
     public void init(ResultSet rset, String chr) throws SQLException {
@@ -91,5 +90,23 @@ public class Annotation {
         }
 
         return false;
+    }
+    
+    public String getStableId() {
+        if (stableId == Data.INTEGER_NA) {
+            return Data.STRING_NA;
+        }
+
+        StringBuilder idSB = new StringBuilder(String.valueOf(stableId));
+
+        int zeroStringLength = TranscriptManager.TRANSCRIPT_LENGTH - idSB.length() - 4;
+
+        for (int i = 0; i < zeroStringLength; i++) {
+            idSB.insert(0, 0);
+        }
+
+        idSB.insert(0, "ENST");
+
+        return idSB.toString();
     }
 }

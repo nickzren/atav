@@ -147,11 +147,15 @@ public class CollapsingLite {
                     .withFirstRecordAsHeader()
                     .parse(in);
 
+            boolean isHeaderOutput = false;
+
             String processedVariantID = "";
-
-            boolean isHeader = true;
-
             for (CSVRecord record : records) {
+                if (!isHeaderOutput) {
+                    outputHeader(record);
+                    isHeaderOutput = true;
+                }
+
                 String variantID = record.get(VARIANT_ID_HEADER);
                 String[] tmp = variantID.split("-");
                 String chr = tmp[0];
@@ -192,7 +196,6 @@ public class CollapsingLite {
                         if (mostDamagingAnnotation.effect == null) {
                             mostDamagingAnnotation.effect = effect;
                             mostDamagingAnnotation.stableId = FormatManager.getInteger(stableId);
-                            mostDamagingAnnotation.stableIdStr = stableId;
                             mostDamagingAnnotation.HGVS_c = HGVS_c;
                             mostDamagingAnnotation.HGVS_p = HGVS_p;
                             mostDamagingAnnotation.geneName = geneName;
@@ -218,7 +221,7 @@ public class CollapsingLite {
                         boolean isCCDS = TranscriptManager.isCCDSTranscript(chr, FormatManager.getInteger(stableId));
 
                         if (isCCDS) {
-                            mostDamagingAnnotation.polyphenHumdivCCDS = MathManager.max(mostDamagingAnnotation.polyphenHumdivCCDS, polyphenHumvar);
+                            mostDamagingAnnotation.polyphenHumdivCCDS = MathManager.max(mostDamagingAnnotation.polyphenHumdivCCDS, polyphenHumdiv);
                             mostDamagingAnnotation.polyphenHumvarCCDS = MathManager.max(mostDamagingAnnotation.polyphenHumvarCCDS, polyphenHumvar);
 
                             hasCCDS = true;
@@ -248,133 +251,131 @@ public class CollapsingLite {
                 }
 
                 // output qualifed record to genotypes file
-                outputGenotype(record, mostDamagingAnnotation, allGeneTranscriptSJ.toString(), hasCCDS, isHeader);
-
-                if (isHeader) {
-                    isHeader = false;
-                }
+                outputGenotype(record, mostDamagingAnnotation, allGeneTranscriptSJ.toString(), hasCCDS);
 
                 processedVariantID = variantID;
             }
 
             outputSummary();
-
             closeOutput();
 
             if (CollapsingCommand.isMannWhitneyTest) {
                 ThirdPartyToolManager.runMannWhitneyTest(genotypeFilePath);
             }
-
             generatePvaluesQQPlot();
-
             gzipFiles();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void outputGenotype(CSVRecord record, Annotation mostDamagingAnnotation, String allAnnotation, boolean hasCCDS, boolean isHeader) throws IOException {
+    private static void outputHeader(CSVRecord record) throws IOException {
         StringJoiner sj = new StringJoiner(",");
 
-        if (isHeader) {
-            for (int headerIndex = 0; headerIndex < record.getParser().getHeaderNames().size(); headerIndex++) {
-                String value = record.getParser().getHeaderNames().get(headerIndex);
-                switch (value) {
-                    case STABLE_ID_HEADER:
-                        STABLE_ID_HEADER_INDEX = headerIndex;
-                        break;
-                    case EFFECT_HEADER:
-                        EFFECT_HEADER_INDEX = headerIndex;
-                        break;
-                    case HAS_CCDS_HEADER:
-                        HAS_CCDS_HEADER_INDEX = headerIndex;
-                        break;
-                    case HGVS_c_HEADER:
-                        HGVS_c_HEADER_INDEX = headerIndex;
-                        break;
-                    case HGVS_p_HEADER:
-                        HGVS_p_HEADER_INDEX = headerIndex;
-                        break;
-                    case POLYPHEN_HUMDIV_SCORE_HEADER:
-                        POLYPHEN_HUMDIV_SCORE_HEADER_INDEX = headerIndex;
-                        break;
-                    case POLYPHEN_HUMDIV_PREDICTION_HEADER:
-                        POLYPHEN_HUMDIV_PREDICTION_HEADER_INDEX = headerIndex;
-                        break;
-                     case POLYPHEN_HUMDIV_SCORE_CCDS_HEADER:
-                        POLYPHEN_HUMDIV_SCORE_CCDS_HEADER_INDEX = headerIndex;
-                        break;
-                    case POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER:
-                        POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER_INDEX = headerIndex;
-                        break;   
-                    case POLYPHEN_HUMVAR_SCORE_HEADER:
-                        POLYPHEN_HUMVAR_SCORE_HEADER_INDEX = headerIndex;
-                        break;
-                    case POLYPHEN_HUMVAR_PREDICTION_HEADER:
-                        POLYPHEN_HUMVAR_PREDICTION_HEADER_INDEX = headerIndex;
-                        break;
-                    case POLYPHEN_HUMVAR_SCORE_CCDS_HEADER:
-                        POLYPHEN_HUMVAR_SCORE_CCDS_HEADER_INDEX = headerIndex;
-                        break;
-                    case POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER:
-                        POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER_INDEX = headerIndex;
-                        break;
-                    case GENE_NAME_HEADER:
-                        GENE_NAME_HEADER_INDEX = headerIndex;
-                        break;
-                    case ALL_ANNOTATION_HEADER:
-                        ALL_ANNOTATION_HEADER_INDEX = headerIndex;
-                        break;
-                    default:
-                        break;
-                }
-
-                sj.add(value);
-            }
-        } else {
-            for (int headerIndex = 0; headerIndex < record.size(); headerIndex++) {
-                String value = "";
-
-                if (headerIndex == STABLE_ID_HEADER_INDEX) {
-                    value = mostDamagingAnnotation.stableIdStr;
-                } else if (headerIndex == EFFECT_HEADER_INDEX) {
-                    value = mostDamagingAnnotation.effect;
-                } else if (headerIndex == HAS_CCDS_HEADER_INDEX) {
-                    value = Boolean.toString(hasCCDS);
-                } else if (headerIndex == HGVS_c_HEADER_INDEX) {
-                    value = mostDamagingAnnotation.HGVS_c;
-                } else if (headerIndex == HGVS_p_HEADER_INDEX) {
-                    value = mostDamagingAnnotation.HGVS_p;
-                } else if (headerIndex == POLYPHEN_HUMDIV_SCORE_HEADER_INDEX) {
-                    value = FormatManager.getFloat(mostDamagingAnnotation.polyphenHumdiv);
-                } else if (headerIndex == POLYPHEN_HUMDIV_PREDICTION_HEADER_INDEX) {
-                    value = PolyphenManager.getPrediction(mostDamagingAnnotation.polyphenHumdiv, mostDamagingAnnotation.effect);
-                } else if (headerIndex == POLYPHEN_HUMDIV_SCORE_CCDS_HEADER_INDEX) {
-                    value = FormatManager.getFloat(mostDamagingAnnotation.polyphenHumdivCCDS);
-                } else if (headerIndex == POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER_INDEX) {
-                    value = PolyphenManager.getPrediction(mostDamagingAnnotation.polyphenHumdivCCDS, mostDamagingAnnotation.effect);
-                } else if (headerIndex == POLYPHEN_HUMVAR_SCORE_HEADER_INDEX) {
-                    value = FormatManager.getFloat(mostDamagingAnnotation.polyphenHumvar);
-                } else if (headerIndex == POLYPHEN_HUMVAR_PREDICTION_HEADER_INDEX) {
-                    value = PolyphenManager.getPrediction(mostDamagingAnnotation.polyphenHumvar, mostDamagingAnnotation.effect);
-                } else if (headerIndex == POLYPHEN_HUMVAR_SCORE_CCDS_HEADER_INDEX) {
-                    value = FormatManager.getFloat(mostDamagingAnnotation.polyphenHumvarCCDS);
-                } else if (headerIndex == POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER_INDEX) {
-                    value = PolyphenManager.getPrediction(mostDamagingAnnotation.polyphenHumvarCCDS, mostDamagingAnnotation.effect);
-                } else if (headerIndex == GENE_NAME_HEADER_INDEX) {
-                    value = mostDamagingAnnotation.geneName;
-                } else if (headerIndex == ALL_ANNOTATION_HEADER_INDEX) {
-                    value = allAnnotation;
-                } else {
-                    value = record.get(headerIndex);
-                }
-
-                sj.add(value);
+        for (int headerIndex = 0; headerIndex < record.getParser().getHeaderNames().size(); headerIndex++) {
+            String value = record.getParser().getHeaderNames().get(headerIndex);
+            switch (value) {
+                case STABLE_ID_HEADER:
+                    STABLE_ID_HEADER_INDEX = headerIndex;
+                    break;
+                case EFFECT_HEADER:
+                    EFFECT_HEADER_INDEX = headerIndex;
+                    break;
+                case HAS_CCDS_HEADER:
+                    HAS_CCDS_HEADER_INDEX = headerIndex;
+                    break;
+                case HGVS_c_HEADER:
+                    HGVS_c_HEADER_INDEX = headerIndex;
+                    break;
+                case HGVS_p_HEADER:
+                    HGVS_p_HEADER_INDEX = headerIndex;
+                    break;
+                case POLYPHEN_HUMDIV_SCORE_HEADER:
+                    POLYPHEN_HUMDIV_SCORE_HEADER_INDEX = headerIndex;
+                    break;
+                case POLYPHEN_HUMDIV_PREDICTION_HEADER:
+                    POLYPHEN_HUMDIV_PREDICTION_HEADER_INDEX = headerIndex;
+                    break;
+                case POLYPHEN_HUMDIV_SCORE_CCDS_HEADER:
+                    POLYPHEN_HUMDIV_SCORE_CCDS_HEADER_INDEX = headerIndex;
+                    break;
+                case POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER:
+                    POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER_INDEX = headerIndex;
+                    break;
+                case POLYPHEN_HUMVAR_SCORE_HEADER:
+                    POLYPHEN_HUMVAR_SCORE_HEADER_INDEX = headerIndex;
+                    break;
+                case POLYPHEN_HUMVAR_PREDICTION_HEADER:
+                    POLYPHEN_HUMVAR_PREDICTION_HEADER_INDEX = headerIndex;
+                    break;
+                case POLYPHEN_HUMVAR_SCORE_CCDS_HEADER:
+                    POLYPHEN_HUMVAR_SCORE_CCDS_HEADER_INDEX = headerIndex;
+                    break;
+                case POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER:
+                    POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER_INDEX = headerIndex;
+                    break;
+                case GENE_NAME_HEADER:
+                    GENE_NAME_HEADER_INDEX = headerIndex;
+                    break;
+                case ALL_ANNOTATION_HEADER:
+                    ALL_ANNOTATION_HEADER_INDEX = headerIndex;
+                    break;
+                default:
+                    break;
             }
 
-            bwGenotypes.write(sj.toString());
-            bwGenotypes.newLine();
+            sj.add(value);
         }
+
+        bwGenotypes.write(sj.toString());
+        bwGenotypes.newLine();
+    }
+
+    private static void outputGenotype(CSVRecord record, Annotation mostDamagingAnnotation, String allAnnotation, boolean hasCCDS) throws IOException {
+        StringJoiner sj = new StringJoiner(",");
+
+        for (int headerIndex = 0; headerIndex < record.size(); headerIndex++) {
+            String value = "";
+
+            if (headerIndex == STABLE_ID_HEADER_INDEX) {
+                value = mostDamagingAnnotation.getStableId();
+            } else if (headerIndex == EFFECT_HEADER_INDEX) {
+                value = mostDamagingAnnotation.effect;
+            } else if (headerIndex == HAS_CCDS_HEADER_INDEX) {
+                value = Boolean.toString(hasCCDS);
+            } else if (headerIndex == HGVS_c_HEADER_INDEX) {
+                value = mostDamagingAnnotation.HGVS_c;
+            } else if (headerIndex == HGVS_p_HEADER_INDEX) {
+                value = mostDamagingAnnotation.HGVS_p;
+            } else if (headerIndex == POLYPHEN_HUMDIV_SCORE_HEADER_INDEX) {
+                value = FormatManager.getFloat(mostDamagingAnnotation.polyphenHumdiv);
+            } else if (headerIndex == POLYPHEN_HUMDIV_PREDICTION_HEADER_INDEX) {
+                value = PolyphenManager.getPrediction(mostDamagingAnnotation.polyphenHumdiv, mostDamagingAnnotation.effect);
+            } else if (headerIndex == POLYPHEN_HUMDIV_SCORE_CCDS_HEADER_INDEX) {
+                value = FormatManager.getFloat(mostDamagingAnnotation.polyphenHumdivCCDS);
+            } else if (headerIndex == POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER_INDEX) {
+                value = PolyphenManager.getPrediction(mostDamagingAnnotation.polyphenHumdivCCDS, mostDamagingAnnotation.effect);
+            } else if (headerIndex == POLYPHEN_HUMVAR_SCORE_HEADER_INDEX) {
+                value = FormatManager.getFloat(mostDamagingAnnotation.polyphenHumvar);
+            } else if (headerIndex == POLYPHEN_HUMVAR_PREDICTION_HEADER_INDEX) {
+                value = PolyphenManager.getPrediction(mostDamagingAnnotation.polyphenHumvar, mostDamagingAnnotation.effect);
+            } else if (headerIndex == POLYPHEN_HUMVAR_SCORE_CCDS_HEADER_INDEX) {
+                value = FormatManager.getFloat(mostDamagingAnnotation.polyphenHumvarCCDS);
+            } else if (headerIndex == POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER_INDEX) {
+                value = PolyphenManager.getPrediction(mostDamagingAnnotation.polyphenHumvarCCDS, mostDamagingAnnotation.effect);
+            } else if (headerIndex == GENE_NAME_HEADER_INDEX) {
+                value = "'" + mostDamagingAnnotation.geneName + "'";
+            } else if (headerIndex == ALL_ANNOTATION_HEADER_INDEX) {
+                value = allAnnotation;
+            } else {
+                value = record.get(headerIndex);
+            }
+
+            sj.add(value);
+        }
+
+        bwGenotypes.write(sj.toString());
+        bwGenotypes.newLine();
     }
 
     private static void initGeneSummaryMap() {

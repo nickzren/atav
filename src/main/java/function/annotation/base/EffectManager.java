@@ -214,7 +214,7 @@ public class EffectManager {
     }
     
     public static boolean isEffectContained(String effect) {
-        return inputEffectSet.contains(effect);
+        return inputEffectSet.isEmpty() || inputEffectSet.contains(effect);
     }
     
     public static boolean isUsed() {
