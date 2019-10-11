@@ -30,16 +30,12 @@ public class PolyphenManager {
     }
 
     public static boolean isValid(float score, String effect, String inputPrediction) {
-        String prediction = getPrediction(score, effect);
-        
-        return isValid(prediction, effect, inputPrediction);
-    }
-    
-    public static boolean isValid(String prediction, String effect, String inputPrediction) {
         if(inputPrediction.equals(Data.NO_FILTER_STR)) {
             return true;
         }
-
+        
+        String prediction = getPrediction(score, effect);
+        
         if (effect.startsWith("missense_variant")
                 || effect.equals("splice_region_variant")) {
             return inputPrediction.contains(prediction);

@@ -21,6 +21,7 @@ public class Annotation {
     public int effectID;
     public String geneName;
     public int stableId;
+    public String stableIdStr;
     public String HGVS_c;
     public String HGVS_p;
     public float polyphenHumdiv;
@@ -80,8 +81,8 @@ public class Annotation {
                         && AnnotationLevelFilterCommand.polyphenHumvar.equals(Data.NO_FILTER_STR)) {
                     isValid = TrapCommand.isTrapScoreValid(trapScore);
                 }
-            } else if (effectID > EffectManager.MISSENSE_VARIANT_ID &&
-                    !effect.equals("5_prime_UTR_premature_start_codon_gain_variant")) {
+            } else if (effectID > EffectManager.MISSENSE_VARIANT_ID
+                    && !effect.equals("5_prime_UTR_premature_start_codon_gain_variant")) {
                 isValid = TrapCommand.isTrapScoreValid(trapScore)
                         && TrapCommand.isTrapScoreNonCodingValid(trapScore);
             }

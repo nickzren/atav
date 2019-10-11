@@ -196,9 +196,10 @@ public class AnnotatedVariant extends Variant {
             geneTranscriptSJ.add(annotation.effect);
             geneTranscriptSJ.add(annotation.geneName);
             geneTranscriptSJ.add(FormatManager.getInteger(annotation.stableId));
+            geneTranscriptSJ.add(annotation.HGVS_c);
             geneTranscriptSJ.add(annotation.HGVS_p);
-            geneTranscriptSJ.add(PolyphenManager.getPrediction(annotation.polyphenHumdiv, annotation.effect));
-            geneTranscriptSJ.add(PolyphenManager.getPrediction(annotation.polyphenHumvar, annotation.effect));
+            geneTranscriptSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
+            geneTranscriptSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
             
             allGeneTranscriptSJ.add(geneTranscriptSJ.toString());
 
