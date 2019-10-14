@@ -174,7 +174,8 @@ public class Program {
             } else if (CollapsingCommand.isCollapsingCompHet) {
                 runAnalysis(new CollapsingCompHet());
             } else if (CollapsingCommand.isCollapsingLite) {
-                CollapsingLite.run();
+                CollapsingLite collapsingLite = new CollapsingLite();
+                collapsingLite.run();
             } else if (StatisticsCommand.isFisher) {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {

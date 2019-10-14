@@ -28,6 +28,7 @@ public class Annotation {
     public float polyphenHumvar = Data.FLOAT_NA;
     public float polyphenHumvarCCDS = Data.FLOAT_NA;
     public boolean isCCDS;
+    public boolean hasCCDS;
 
     public void init(ResultSet rset, String chr) throws SQLException {
         this.chr = chr;
