@@ -9,8 +9,8 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
 import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
@@ -99,12 +99,12 @@ public class Output {
             sj.add(EvsManager.getTitle());
         }
 
-        if (ExacCommand.isIncludeExac) {
-            sj.add(ExacManager.getTitle());
+        if (ExACCommand.isIncludeExac) {
+            sj.add(ExACManager.getTitle());
         }
 
-        if (ExacCommand.isIncludeExacGeneVariantCount) {
-            sj.add(ExacManager.getGeneVariantCountTitle());
+        if (ExACCommand.isIncludeExacGeneVariantCount) {
+            sj.add(ExACManager.getGeneVariantCountTitle());
         }
 
         if (GnomADCommand.isIncludeGnomADExome) {

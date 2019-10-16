@@ -7,6 +7,7 @@ import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.cohort.vargeno.ListVarGenoLite;
+import function.external.exac.ExAC;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -108,6 +109,12 @@ public class CollapsingLite extends ListVarGenoLite {
                 // loo af filter
                 float looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
                 if (!CohortLevelFilterCommand.isMaxLooAFValid(looAF)) {
+                    continue;
+                }
+                
+                // ExAC filter
+                ExAC exac = new ExAC(chr, pos, ref, alt, record);
+                if(!exac.isValid()) {
                     continue;
                 }
 

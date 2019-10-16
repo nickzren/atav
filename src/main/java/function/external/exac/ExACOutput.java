@@ -6,17 +6,17 @@ import java.sql.ResultSet;
  *
  * @author nick
  */
-public class ExacOutput {
+public class ExACOutput {
 
-    Exac exac;
+    ExAC exac;
 
     public static String getTitle() {
         return "Variant ID,"
-                + ExacManager.getTitle();
+                + ExACManager.getTitle();
     }
 
-    public ExacOutput(ResultSet rs) {
-        exac = new Exac(rs);
+    public ExACOutput(ResultSet rs) {
+        exac = new ExAC(rs);
     }
 
     public boolean isValid() {

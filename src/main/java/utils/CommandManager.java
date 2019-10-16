@@ -9,7 +9,7 @@ import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
-import function.external.exac.ExacCommand;
+import function.external.exac.ExACCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
@@ -371,7 +371,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isListVarAnno = true;
                     EvsCommand.isIncludeEvs = true;
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.isIncludeExac = true;
                     GnomADCommand.isIncludeGnomADExome = true;
                     GnomADCommand.isIncludeGnomADGenome = true;
                     GnomADCommand.isIncludeGnomADGeneMetrics = true;
@@ -416,8 +416,8 @@ public class CommandManager {
                     break;
                 case "--list-exac":
                     CommonCommand.isNonSampleAnalysis = true;
-                    ExacCommand.isListExac = true;
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.isListExac = true;
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--list-gnomad-exome":
                     CommonCommand.isNonSampleAnalysis = true;

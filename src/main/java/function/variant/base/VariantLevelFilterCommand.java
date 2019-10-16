@@ -5,8 +5,8 @@ import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesCommand;
@@ -102,24 +102,24 @@ public class VariantLevelFilterCommand {
                     EvsCommand.isIncludeEvs = true;
                     break;
                 case "--exac-pop":
-                    checkValuesValid(ExacManager.EXAC_POP, option);
-                    ExacCommand.exacPop = option.getValue();
-                    ExacCommand.isIncludeExac = true;
+                    checkValuesValid(ExACManager.EXAC_POP, option);
+                    ExACCommand.exacPop = option.getValue();
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--exac-af":
                     checkValueValid(1, 0, option);
-                    ExacCommand.exacAF = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.exacAF = getValidFloat(option);
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--min-exac-vqslod-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    ExacCommand.exacVqslodSnv = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.exacVqslodSnv = getValidFloat(option);
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--min-exac-vqslod-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    ExacCommand.exacVqslodIndel = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.exacVqslodIndel = getValidFloat(option);
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--gnomad-exome-pop":
                     checkValuesValid(GnomADManager.GNOMAD_EXOME_POP, option);
@@ -289,10 +289,10 @@ public class VariantLevelFilterCommand {
                     EvsCommand.isIncludeEvs = true;
                     break;
                 case "--include-exac":
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--include-exac-gene-variant-count":
-                    ExacCommand.isIncludeExacGeneVariantCount = true;
+                    ExACCommand.isIncludeExacGeneVariantCount = true;
                     break;
                 case "--include-gnomad-exome":
                     GnomADCommand.isIncludeGnomADExome = true;

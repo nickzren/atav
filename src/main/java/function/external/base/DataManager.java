@@ -9,8 +9,8 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
 import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
@@ -58,8 +58,8 @@ public class DataManager {
             sb.append(EvsManager.getVersion());
         }
 
-        if (ExacCommand.isIncludeExac) {
-            sb.append(ExacManager.getVersion());
+        if (ExACCommand.isIncludeExac) {
+            sb.append(ExACManager.getVersion());
         }
 
         if (GnomADCommand.isIncludeGnomADExome) {

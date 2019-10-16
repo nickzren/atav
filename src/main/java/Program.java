@@ -38,9 +38,9 @@ import function.external.discovehr.ListDiscovEHR;
 import function.external.evs.EvsCommand;
 import function.cohort.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
-import function.external.exac.ListExac;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
+import function.external.exac.ListExAC;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.gnomad.ListGnomADExome;
@@ -141,7 +141,7 @@ public class Program {
 
             DPBinBlockManager.init();
             
-            ExacManager.init();
+            ExACManager.init();
 
             KnownVarManager.init();
 
@@ -206,8 +206,8 @@ public class Program {
                 runAnalysis(new SiteCoverageComparison());
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
-            } else if (ExacCommand.isListExac) {
-                runAnalysis(new ListExac());
+            } else if (ExACCommand.isListExac) {
+                runAnalysis(new ListExAC());
             } else if (GnomADCommand.isListGnomADExome) {
                 runAnalysis(new ListGnomADExome());
             } else if (GnomADCommand.isListGnomADGenome) {

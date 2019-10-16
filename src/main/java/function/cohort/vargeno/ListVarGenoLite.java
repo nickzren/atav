@@ -8,6 +8,7 @@ import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
+import function.external.exac.ExAC;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -130,13 +131,21 @@ public class ListVarGenoLite {
                 String[] tmp = variantID.split("-");
                 String chr = tmp[0];
                 int pos = Integer.valueOf(tmp[1]);
-
+                String ref = tmp[2];
+                String alt = tmp[3];
+                
                 // loo af filter
                 float looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
                 if (!CohortLevelFilterCommand.isMaxLooAFValid(looAF)) {
                     continue;
                 }
-
+                
+                // ExAC filter
+                ExAC exac = new ExAC(chr, pos, ref, alt, record);
+                if(!exac.isValid()) {
+                    continue;
+                }
+                
                 StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
                 List<String> geneList = new ArrayList();
                 Annotation mostDamagingAnnotation = new Annotation();
