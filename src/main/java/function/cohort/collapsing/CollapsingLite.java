@@ -1,28 +1,19 @@
 package function.cohort.collapsing;
 
-import function.annotation.base.Annotation;
 import function.annotation.base.GeneManager;
-import function.cohort.base.CohortLevelFilterCommand;
-import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.cohort.vargeno.ListVarGenoLite;
-import function.external.exac.ExAC;
+import function.cohort.vargeno.VariantLite;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.StringJoiner;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import utils.CommonCommand;
 import utils.ErrorManager;
-import utils.FormatManager;
 import utils.LogManager;
 import utils.ThirdPartyToolManager;
 
@@ -84,78 +75,25 @@ public class CollapsingLite extends ListVarGenoLite {
 
             initGeneSummaryMap();
 
-            Reader in = new FileReader(GenotypeLevelFilterCommand.genotypeFile);
-            Iterable<CSVRecord> records = CSVFormat.DEFAULT
-                    .withHeader(HEADERS)
-                    .withFirstRecordAsHeader()
-                    .parse(in);
-
             boolean isHeaderOutput = false;
-
-            String processedVariantID = "";
+            String previousVariantID = "";
+            Iterable<CSVRecord> records = getRecords();
             for (CSVRecord record : records) {
                 if (!isHeaderOutput) {
                     outputHeader(record);
                     isHeaderOutput = true;
                 }
 
-                String variantID = record.get(VARIANT_ID_HEADER);
-                String[] tmp = variantID.split("-");
-                String chr = tmp[0];
-                int pos = Integer.valueOf(tmp[1]);
-                String ref = tmp[2];
-                String alt = tmp[3];
-                
-                // loo af filter
-                float looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
-                if (!CohortLevelFilterCommand.isMaxLooAFValid(looAF)) {
-                    continue;
-                }
-                
-                // ExAC filter
-                ExAC exac = new ExAC(chr, pos, ref, alt, record);
-                if(!exac.isValid()) {
-                    continue;
+                VariantLite variantLite = new VariantLite(record);
+
+                if (variantLite.isValid()) {
+                    updateGeneSummary(variantLite, previousVariantID);
+                    
+                    // output qualifed record to genotypes file
+                    outputGenotype(variantLite);
                 }
 
-                StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
-                List<String> geneList = new ArrayList();
-                Annotation mostDamagingAnnotation = new Annotation();
-                String allAnnotation = record.get(ALL_ANNOTATION_HEADER);
-                processAnnotation(
-                        allAnnotation,
-                        chr,
-                        pos,
-                        allGeneTranscriptSJ,
-                        geneList,
-                        mostDamagingAnnotation);
-
-                if (geneList.isEmpty()) {
-                    continue;
-                }
-
-                for (String geneName : geneList) {
-                    String sampleName = record.get(SAMPLE_NAME_HEADER);
-                    Sample sample = SampleManager.getSampleByName(sampleName);
-
-                    if (!summaryMap.containsKey(geneName)) {
-                        summaryMap.put(geneName, new CollapsingGeneSummary(geneName));
-                    }
-
-                    CollapsingSummary summary = summaryMap.get(geneName);
-                    summary.updateSampleVariantCount4SingleVar(sample.getIndex());
-
-                    // only count variant once per gene
-                    if (!processedVariantID.equals(variantID)) {
-                        boolean isSnv = ref.length() == alt.length();
-                        summary.updateVariantCount(isSnv);
-                    }
-                }
-
-                // output qualifed record to genotypes file
-                outputGenotype(record, mostDamagingAnnotation, allGeneTranscriptSJ.toString());
-
-                processedVariantID = variantID;
+                previousVariantID = variantLite.getVariantID();
             }
 
             outputSummary();
@@ -167,11 +105,11 @@ public class CollapsingLite extends ListVarGenoLite {
             generatePvaluesQQPlot();
             gzipFiles();
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorManager.send(e);
         }
     }
 
-    public void initGeneSummaryMap() {
+    private void initGeneSummaryMap() {
         GeneManager.getMap().values().stream().forEach((geneSet) -> {
             geneSet.stream().forEach((gene) -> {
                 if (!summaryMap.containsKey(gene.getName())) {
@@ -181,7 +119,26 @@ public class CollapsingLite extends ListVarGenoLite {
         });
     }
 
-    public void outputSummary() {
+    private void updateGeneSummary(VariantLite variantLite, String previousVariantID) {
+        for (String geneName : variantLite.getGeneList()) {
+            String sampleName = variantLite.getRecord().get(SAMPLE_NAME_HEADER);
+            Sample sample = SampleManager.getSampleByName(sampleName);
+
+            if (!summaryMap.containsKey(geneName)) {
+                summaryMap.put(geneName, new CollapsingGeneSummary(geneName));
+            }
+
+            CollapsingSummary summary = summaryMap.get(geneName);
+            summary.updateSampleVariantCount4SingleVar(sample.getIndex());
+
+            // only count variant once per gene
+            if (!previousVariantID.equals(variantLite.getVariantID())) {
+                summary.updateVariantCount(variantLite.isSNV());
+            }
+        }
+    }
+
+    private void outputSummary() {
         LogManager.writeAndPrint("Output the data to matrix & summary file");
 
         try {
@@ -202,7 +159,7 @@ public class CollapsingLite extends ListVarGenoLite {
         }
     }
 
-    public void outputMatrix() throws Exception {
+    private void outputMatrix() throws Exception {
         for (CollapsingSummary summary : summaryList) {
             bwSampleMatrix.write(summary.name + "\t");
 
@@ -225,11 +182,11 @@ public class CollapsingLite extends ListVarGenoLite {
         bwSampleMatrix.close();
     }
 
-    public void generatePvaluesQQPlot() {
+    private void generatePvaluesQQPlot() {
         ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
     }
 
-    public void gzipFiles() {
+    private void gzipFiles() {
         ThirdPartyToolManager.gzipFile(matrixFilePath);
     }
 }
