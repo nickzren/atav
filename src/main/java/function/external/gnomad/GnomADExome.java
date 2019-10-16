@@ -6,6 +6,7 @@ import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 
 /**
@@ -67,14 +68,26 @@ public class GnomADExome {
             pos = rs.getInt("pos");
             ref = rs.getString("ref");
             alt = rs.getString("alt");
-            af = new float[GnomADManager.GNOMAD_EXOME_POP.length];
 
             isSnv = ref.length() == alt.length();
+
+            af = new float[GnomADManager.GNOMAD_EXOME_POP.length];
 
             setAF(rs);
         } catch (SQLException e) {
             ErrorManager.send(e);
         }
+    }
+
+    public GnomADExome(String chr, int pos, String ref_allele, String alt_allele, CSVRecord record) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref_allele;
+        this.alt = alt_allele;
+
+        isSnv = ref.length() == alt.length();
+
+        initDataFromCSVRecord(record);
     }
 
     private void initAF() {
@@ -158,9 +171,23 @@ public class GnomADExome {
         }
     }
 
+    private void initDataFromCSVRecord(CSVRecord record) {
+        rf_tp_probability = FormatManager.getFloat(record.get("gnomAD Exome rf_tp_probability"));
+
+        maxAF = Data.FLOAT_NA;
+        af = new float[GnomADManager.GNOMAD_EXOME_POP.length];
+        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
+            af[i] = FormatManager.getFloat(record.get("gnomAD Exome " + GnomADManager.GNOMAD_EXOME_POP[i] + "_AF"));
+            if (af[i] != Data.FLOAT_NA
+                    && GnomADCommand.gnomADExomePopSet.contains(GnomADManager.GNOMAD_EXOME_POP[i])) {
+                maxAF = Math.max(maxAF, af[i]);
+            }
+        }
+    }
+
     public boolean isValid() {
-        return GnomADCommand.isGnomADExomeAFValid(maxAF) &&
-                GnomADCommand.isGnomADExomeRfTpProbabilityValid(rf_tp_probability, isSnv);
+        return GnomADCommand.isGnomADExomeAFValid(maxAF)
+                && GnomADCommand.isGnomADExomeRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 
     public String getVariantId() {

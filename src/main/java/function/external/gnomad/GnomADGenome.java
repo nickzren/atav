@@ -6,6 +6,7 @@ import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 
 /**
@@ -75,6 +76,17 @@ public class GnomADGenome {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+
+    public GnomADGenome(String chr, int pos, String ref_allele, String alt_allele, CSVRecord record) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref_allele;
+        this.alt = alt_allele;
+
+        isSnv = ref.length() == alt.length();
+
+        initDataFromCSVRecord(record);
     }
 
     private void initAF() {
@@ -157,10 +169,24 @@ public class GnomADGenome {
             af[i] = value;
         }
     }
+    
+    private void initDataFromCSVRecord(CSVRecord record) {
+        rf_tp_probability = FormatManager.getFloat(record.get("gnomAD Genome rf_tp_probability"));
+
+        maxAF = Data.FLOAT_NA;
+        af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
+        for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
+            af[i] = FormatManager.getFloat(record.get("gnomAD Genome " + GnomADManager.GNOMAD_GENOME_POP[i] + "_AF"));
+            if (af[i] != Data.FLOAT_NA
+                    && GnomADCommand.gnomADGenomePopSet.contains(GnomADManager.GNOMAD_GENOME_POP[i])) {
+                maxAF = Math.max(maxAF, af[i]);
+            }
+        }
+    }
 
     public boolean isValid() {
-        return GnomADCommand.isGnomADGenomeAFValid(maxAF) &&
-                GnomADCommand.isGnomADGenomeRfTpProbabilityValid(rf_tp_probability, isSnv);
+        return GnomADCommand.isGnomADGenomeAFValid(maxAF)
+                && GnomADCommand.isGnomADGenomeRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 
     public String getVariantId() {

@@ -9,6 +9,8 @@ import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import static function.cohort.vargeno.ListVarGenoLite.LOO_AF_HEADER;
 import function.external.exac.ExAC;
+import function.external.gnomad.GnomADExome;
+import function.external.gnomad.GnomADGenome;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -28,11 +30,13 @@ public class VariantLite {
     private String ref;
     private String alt;
     private boolean isSNV;
+    private ExAC exac;
+    private GnomADExome gnomADExome;
+    private GnomADGenome gnomADGenome;
     private StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
     private List<String> geneList = new ArrayList();
     private Annotation mostDamagingAnnotation = new Annotation();
     private float looAF;
-    private ExAC exac;
     private CSVRecord record;
 
     public VariantLite(CSVRecord record) {
@@ -47,7 +51,8 @@ public class VariantLite {
         isSNV = ref.length() == alt.length();
 
         exac = new ExAC(chr, pos, ref, alt, record);
-        looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
+        gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
+        gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
 
         String allAnnotation = record.get(ListVarGenoLite.ALL_ANNOTATION_HEADER);
         processAnnotation(
@@ -57,6 +62,8 @@ public class VariantLite {
                 allGeneTranscriptSJ,
                 geneList,
                 mostDamagingAnnotation);
+        
+        looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
     }
 
     private void processAnnotation(
@@ -120,10 +127,11 @@ public class VariantLite {
     }
 
     public boolean isValid() {
-        return CohortLevelFilterCommand.isMaxLooAFValid(looAF)
-                && exac.isValid()
-                && !geneList.isEmpty();
-
+        return exac.isValid()
+                && gnomADExome.isValid()
+                && gnomADGenome.isValid()
+                && !geneList.isEmpty()
+                && CohortLevelFilterCommand.isMaxLooAFValid(looAF);
     }
     
     public String getVariantID() {
