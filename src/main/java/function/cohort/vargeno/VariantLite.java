@@ -9,6 +9,7 @@ import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import static function.cohort.vargeno.ListVarGenoLite.LOO_AF_HEADER;
 import function.external.exac.ExAC;
+import function.external.exac.ExACCommand;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class VariantLite {
         alt = tmp[3];
 
         isSNV = ref.length() == alt.length();
-
+        
         exac = new ExAC(chr, pos, ref, alt, record);
         gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
         gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);

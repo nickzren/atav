@@ -70,8 +70,8 @@ public class CommandManager {
                 + "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
 
         cmd = "--disable-timestamp-from-out-path "
-                + "--sample /Users/nick/Desktop/list-var-geno/2019-10-11_10-52-44_list-var-geno_existing.sample.txt "
-                + "--genotype /Users/nick/Desktop/list-var-geno/2019-10-11_10-52-44_list-var-geno_genotypes.csv "
+                + "--sample /Users/nick/Desktop/list-var-geno/list-var-geno_existing.sample.txt "
+                + "--genotype /Users/nick/Desktop/list-var-geno/list-var-geno_genotypes.csv "
                 + "--list-var-geno-lite "
                 + "--out /Users/nick/Desktop/list-var-geno_lite";
 

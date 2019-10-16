@@ -1,8 +1,13 @@
 package function.cohort.vargeno;
 
+import com.google.common.collect.ObjectArrays;
 import function.annotation.base.Annotation;
 import function.annotation.base.PolyphenManager;
 import function.cohort.base.GenotypeLevelFilterCommand;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
+import function.external.gnomad.GnomADCommand;
+import function.external.gnomad.GnomADManager;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,6 +17,7 @@ import java.io.Reader;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang.ArrayUtils;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -61,27 +67,6 @@ public class ListVarGenoLite {
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
     public static final String LOO_AF_HEADER = "LOO AF";
 
-    public static final String[] HEADERS = {
-        VARIANT_ID_HEADER,
-        STABLE_ID_HEADER,
-        EFFECT_HEADER,
-        HAS_CCDS_HEADER,
-        HGVS_c_HEADER,
-        HGVS_p_HEADER,
-        POLYPHEN_HUMDIV_SCORE_HEADER,
-        POLYPHEN_HUMDIV_PREDICTION_HEADER,
-        POLYPHEN_HUMDIV_SCORE_CCDS_HEADER,
-        POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER,
-        POLYPHEN_HUMVAR_SCORE_HEADER,
-        POLYPHEN_HUMVAR_PREDICTION_HEADER,
-        POLYPHEN_HUMVAR_SCORE_CCDS_HEADER,
-        POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER,
-        GENE_NAME_HEADER,
-        ALL_ANNOTATION_HEADER,
-        SAMPLE_NAME_HEADER,
-        LOO_AF_HEADER
-    };
-
     public void initOutput() {
         try {
             bwGenotypes = new BufferedWriter(new FileWriter(genotypeFilePath));
@@ -127,10 +112,47 @@ public class ListVarGenoLite {
         }
     }
 
+    private static String[] getHeaders() {
+        String[] headers = {
+            VARIANT_ID_HEADER,
+            STABLE_ID_HEADER,
+            EFFECT_HEADER,
+            HAS_CCDS_HEADER,
+            HGVS_c_HEADER,
+            HGVS_p_HEADER,
+            POLYPHEN_HUMDIV_SCORE_HEADER,
+            POLYPHEN_HUMDIV_PREDICTION_HEADER,
+            POLYPHEN_HUMDIV_SCORE_CCDS_HEADER,
+            POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER,
+            POLYPHEN_HUMVAR_SCORE_HEADER,
+            POLYPHEN_HUMVAR_PREDICTION_HEADER,
+            POLYPHEN_HUMVAR_SCORE_CCDS_HEADER,
+            POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER,
+            GENE_NAME_HEADER,
+            ALL_ANNOTATION_HEADER,
+            SAMPLE_NAME_HEADER,
+            LOO_AF_HEADER
+        };
+
+        if (ExACCommand.isIncludeExac) {
+            headers = (String[]) ArrayUtils.addAll(headers, ExACManager.getTitle().split(","));
+        }
+
+        if (GnomADCommand.isIncludeGnomADExome) {
+            headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getExomeTitle().split(","));
+        }
+
+        if (GnomADCommand.isIncludeGnomADGenome) {
+            headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeTitle().split(","));
+        }
+
+        return headers;
+    }
+
     public Iterable<CSVRecord> getRecords() throws FileNotFoundException, IOException {
         Reader in = new FileReader(GenotypeLevelFilterCommand.genotypeFile);
         Iterable<CSVRecord> records = CSVFormat.DEFAULT
-                .withHeader(HEADERS)
+                .withHeader(getHeaders())
                 .withFirstRecordAsHeader()
                 .parse(in);
 

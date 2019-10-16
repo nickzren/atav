@@ -172,15 +172,17 @@ public class GnomADExome {
     }
 
     private void initDataFromCSVRecord(CSVRecord record) {
-        rf_tp_probability = FormatManager.getFloat(record.get("gnomAD Exome rf_tp_probability"));
+        if (GnomADCommand.isIncludeGnomADExome) {
+            rf_tp_probability = FormatManager.getFloat(record.get("gnomAD Exome rf_tp_probability"));
 
-        maxAF = Data.FLOAT_NA;
-        af = new float[GnomADManager.GNOMAD_EXOME_POP.length];
-        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
-            af[i] = FormatManager.getFloat(record.get("gnomAD Exome " + GnomADManager.GNOMAD_EXOME_POP[i] + "_AF"));
-            if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.gnomADExomePopSet.contains(GnomADManager.GNOMAD_EXOME_POP[i])) {
-                maxAF = Math.max(maxAF, af[i]);
+            maxAF = Data.FLOAT_NA;
+            af = new float[GnomADManager.GNOMAD_EXOME_POP.length];
+            for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
+                af[i] = FormatManager.getFloat(record.get("gnomAD Exome " + GnomADManager.GNOMAD_EXOME_POP[i] + "_AF"));
+                if (af[i] != Data.FLOAT_NA
+                        && GnomADCommand.gnomADExomePopSet.contains(GnomADManager.GNOMAD_EXOME_POP[i])) {
+                    maxAF = Math.max(maxAF, af[i]);
+                }
             }
         }
     }
