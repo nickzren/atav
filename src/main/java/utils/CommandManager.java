@@ -72,8 +72,8 @@ public class CommandManager {
         cmd = "--disable-timestamp-from-out-path "
                 + "--sample /Users/nick/Desktop/list-var-geno/2019-10-11_10-52-44_list-var-geno_existing.sample.txt "
                 + "--genotype /Users/nick/Desktop/list-var-geno/2019-10-11_10-52-44_list-var-geno_genotypes.csv "
-                + "--collapsing-lite "
-                + "--out /Users/nick/Desktop/collapsing_lite";
+                + "--list-var-geno-lite "
+                + "--out /Users/nick/Desktop/list-var-geno_lite";
 
         optionArray = cmd.split("\\s+");
     }
@@ -323,6 +323,9 @@ public class CommandManager {
                 case "--list-var-geno":
                     VarGenoCommand.isListVarGeno = true;
                     break;
+                case "--list-var-geno-lite":
+                    VarGenoCommand.isListVarGenoLite = true;
+                    break;
                 case "--list-var":
                     VarCommand.isListVar = true;
                     break;
@@ -529,6 +532,8 @@ public class CommandManager {
 
     private static void initSubOptions() throws Exception {
         if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
+            VarGenoCommand.initOptions(optionList.iterator());
+        } else if (VarGenoCommand.isListVarGenoLite) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
         } else if (VarCommand.isListVar) {
 

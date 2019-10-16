@@ -81,6 +81,7 @@ import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.var.ListVar;
 import function.cohort.var.VarCommand;
+import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VarGenoCommand;
 import function.external.mpc.ListMPC;
 import function.external.mpc.MPCCommand;
@@ -167,6 +168,9 @@ public class Program {
         try {
             if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
                 runAnalysis(new ListVarGeno());
+            } else if (VarGenoCommand.isListVarGenoLite) {
+                ListVarGenoLite listVarGenoLite = new ListVarGenoLite();
+                listVarGenoLite.run();
             } else if (VarCommand.isListVar) {
                 runAnalysis(new ListVar());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
