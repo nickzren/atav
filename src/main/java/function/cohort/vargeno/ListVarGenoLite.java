@@ -1,6 +1,5 @@
 package function.cohort.vargeno;
 
-import com.google.common.collect.ObjectArrays;
 import function.annotation.base.Annotation;
 import function.annotation.base.PolyphenManager;
 import function.cohort.base.GenotypeLevelFilterCommand;

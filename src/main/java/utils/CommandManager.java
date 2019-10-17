@@ -70,10 +70,11 @@ public class CommandManager {
                 + "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
 
         cmd = "--disable-timestamp-from-out-path "
-                + "--sample /Users/nick/Desktop/list-var-geno/list-var-geno_existing.sample.txt "
-                + "--genotype /Users/nick/Desktop/list-var-geno/list-var-geno_genotypes.csv "
-                + "--list-var-geno-lite "
-                + "--out /Users/nick/Desktop/list-var-geno_lite";
+                + "--sample /Users/nick/Desktop/collapsing/collapsing_existing.sample.txt "
+                + "--genotype /Users/nick/Desktop/collapsing/collapsing_genotypes.csv "
+                + "--collapsing-lite "
+                + "--exac-af 0 "
+                + "--out /Users/nick/Desktop/collapsing_lite_1";
 
         optionArray = cmd.split("\\s+");
     }

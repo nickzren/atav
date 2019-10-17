@@ -9,7 +9,6 @@ import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import static function.cohort.vargeno.ListVarGenoLite.LOO_AF_HEADER;
 import function.external.exac.ExAC;
-import function.external.exac.ExACCommand;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
 import java.util.ArrayList;
