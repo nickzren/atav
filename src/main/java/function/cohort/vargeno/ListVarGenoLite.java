@@ -64,6 +64,8 @@ public class ListVarGenoLite {
     public static final String ALL_ANNOTATION_HEADER = "All Effect Gene Transcript HGVS_c HGVS_p Polyphen_Humdiv Polyphen_Humvar";
     public static int ALL_ANNOTATION_HEADER_INDEX;
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
+    public static final String QC_FAIL_CASE_HEADER = "QC Fail Case";
+    public static final String QC_FAIL_CTRL_HEADER = "QC Fail Ctrl";
     public static final String LOO_AF_HEADER = "LOO AF";
 
     public void initOutput() {
@@ -130,6 +132,8 @@ public class ListVarGenoLite {
             GENE_NAME_HEADER,
             ALL_ANNOTATION_HEADER,
             SAMPLE_NAME_HEADER,
+            QC_FAIL_CASE_HEADER,
+            QC_FAIL_CTRL_HEADER,
             LOO_AF_HEADER
         };
 

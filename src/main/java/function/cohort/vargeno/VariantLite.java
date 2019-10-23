@@ -7,10 +7,10 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
-import static function.cohort.vargeno.ListVarGenoLite.LOO_AF_HEADER;
 import function.external.exac.ExAC;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
+import global.Index;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -36,6 +36,7 @@ public class VariantLite {
     private StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
     private List<String> geneList = new ArrayList();
     private Annotation mostDamagingAnnotation = new Annotation();
+    private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
 
@@ -63,7 +64,10 @@ public class VariantLite {
                 geneList,
                 mostDamagingAnnotation);
         
-        looAF = FormatManager.getFloat(record.get(LOO_AF_HEADER));
+        qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
+        qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
+        
+        looAF = FormatManager.getFloat(record.get(ListVarGenoLite.LOO_AF_HEADER));
     }
 
     private void processAnnotation(
@@ -131,7 +135,14 @@ public class VariantLite {
                 && gnomADExome.isValid()
                 && gnomADGenome.isValid()
                 && !geneList.isEmpty()
-                && CohortLevelFilterCommand.isMaxLooAFValid(looAF);
+                && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
+                && isMaxQcFailSampleValid();
+    }
+    
+    private boolean isMaxQcFailSampleValid() {
+        int totalQCFailSample = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
+        
+        return CohortLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample);
     }
     
     public String getVariantID() {
