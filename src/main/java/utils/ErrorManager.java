@@ -16,6 +16,7 @@ public class ErrorManager {
     public final static int MAX_CONNECTION = 4;
     public final static int NET_WRITE_TIMEOUT = 99;
     public final static int COMMUNICATIONS_LINK_FAILURE = 99;
+    public final static int LOCK_WAIT_TIMEOUT = 99;
 
     public static void send(Exception e) {
         StringWriter sw = new StringWriter();
@@ -27,6 +28,8 @@ public class ErrorManager {
             exit = NET_WRITE_TIMEOUT;
         } else if (sw.toString().contains("Communications link failure")) { // hack here since we have no clues yet how it happened
             exit = COMMUNICATIONS_LINK_FAILURE;
+        } else if (sw.toString().contains("Lock wait timeout ")) { // hack here since we have no clues yet how it happened
+            exit = LOCK_WAIT_TIMEOUT;
         }
 
         if (!LogManager.isBioinfoTeam()) {
@@ -34,7 +37,7 @@ public class ErrorManager {
             EmailManager.sendEmailToBioinfo("ATAV Job Failed",
                     cmdLogStr + "\n\n" + sw.toString());
         }
-        
+
         print("\n" + sw.toString(), exit);
     }
 
