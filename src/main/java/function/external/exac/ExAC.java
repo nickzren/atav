@@ -6,13 +6,14 @@ import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 
 /**
  *
  * @author nick
  */
-public class Exac {
+public class ExAC {
 
     private String chr;
     private int pos;
@@ -24,37 +25,39 @@ public class Exac {
     private float meanCoverage;
     private int sampleCovered10x;
     private float[] af;
+    private float maxAF;
     private String[] gts;
     private float vqslod;
 
-    public Exac(String chr, int pos, String ref, String alt) {
+    public ExAC(String chr, int pos, String ref, String alt) {
         this.chr = chr;
         this.pos = pos;
         this.ref = ref;
         this.alt = alt;
 
         isSnv = ref.length() == alt.length();
-        
+
         isMNV = ref.length() > 1 && alt.length() > 1
                 && alt.length() == ref.length();
-        
+
         initCoverage();
 
         initAF();
     }
 
-    public Exac(ResultSet rs) {
+    public ExAC(ResultSet rs) {
         try {
             chr = rs.getString("chr");
             pos = rs.getInt("pos");
             ref = rs.getString("ref_allele");
             alt = rs.getString("alt_allele");
-            af = new float[ExacManager.EXAC_POP.length];
-            gts = new String[ExacManager.EXAC_POP.length];
 
             isSnv = ref.length() == alt.length();
 
             initCoverage();
+
+            af = new float[ExACManager.EXAC_POP.length];
+            gts = new String[ExACManager.EXAC_POP.length];
 
             setAF(rs);
         } catch (Exception e) {
@@ -62,9 +65,21 @@ public class Exac {
         }
     }
 
+    public ExAC(String chr, int pos, String ref_allele, String alt_allele, CSVRecord record) {
+        this.chr = chr;
+        this.pos = pos;
+        this.ref = ref_allele;
+        this.alt = alt_allele;
+
+        isSnv = ref.length() == alt.length();
+
+        initDataFromCSVRecord(record);
+
+    }
+
     private void initCoverage() {
         try {
-            String sql = ExacManager.getSql4Cvg(chr, pos);
+            String sql = ExACManager.getSql4Cvg(chr, pos);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
@@ -80,12 +95,29 @@ public class Exac {
         }
     }
 
+    private void initDataFromCSVRecord(CSVRecord record) {
+        if (ExACCommand.isIncludeExac) {
+            maxAF = Data.FLOAT_NA;
+            this.af = new float[ExACManager.EXAC_POP.length];
+            for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
+                af[i] = FormatManager.getFloat(record.get("ExAC " + ExACManager.EXAC_POP[i] + " af"));
+                if (af[i] != Data.FLOAT_NA
+                        && ExACCommand.exacPop.contains(ExACManager.EXAC_POP[i])) {
+                    maxAF = Math.max(maxAF, af[i]);
+                }
+            }
+
+            vqslod = FormatManager.getFloat(record.get("ExAC vqslod"));
+            meanCoverage = FormatManager.getFloat(record.get("ExAC Mean Coverage"));
+        }
+    }
+
     private void initAF() {
-        af = new float[ExacManager.EXAC_POP.length];
-        gts = new String[ExacManager.EXAC_POP.length];
+        af = new float[ExACManager.EXAC_POP.length];
+        gts = new String[ExACManager.EXAC_POP.length];
 
         try {
-            String sql = ExacManager.getSqlByVariant(chr, pos, ref, alt, isMNV);
+            String sql = ExACManager.getSqlByVariant(chr, pos, ref, alt, isMNV);
 
             ResultSet rs = DBManager.executeQuery(sql);
 
@@ -102,18 +134,21 @@ public class Exac {
     }
 
     private void setAF(ResultSet rs) throws SQLException {
-        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            float af = rs.getFloat(ExacManager.EXAC_POP[i] + "_af");
-
-            this.af[i] = af;
-            gts[i] = rs.getString(ExacManager.EXAC_POP[i] + "_gts");
+        maxAF = Data.FLOAT_NA;
+        for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
+            af[i] = rs.getFloat(ExACManager.EXAC_POP[i] + "_af");
+            if (af[i] != Data.FLOAT_NA
+                    && ExACCommand.exacPop.contains(ExACManager.EXAC_POP[i])) {
+                maxAF = Math.max(maxAF, af[i]);
+            }
+            gts[i] = rs.getString(ExACManager.EXAC_POP[i] + "_gts");
         }
 
         vqslod = rs.getFloat("vqslod");
     }
 
     private void resetAF(float value) {
-        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
+        for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
             af[i] = value;
             gts[i] = Data.STRING_NA;
         }
@@ -121,23 +156,10 @@ public class Exac {
         vqslod = Data.FLOAT_NA;
     }
 
-    private float getMaxAF() {
-        float value = Data.FLOAT_NA;
-
-        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
-            if (af[i] != Data.FLOAT_NA
-                    && ExacCommand.exacPop.contains(ExacManager.EXAC_POP[i])) {
-                value = Math.max(value, af[i]);
-            }
-        }
-
-        return value;
-    }
-
     public boolean isValid() {
-        return ExacCommand.isExacAFValid(getMaxAF())
-                && ExacCommand.isExacVqslodValid(vqslod, isSnv)
-                && ExacCommand.isExacMeanCoverageValid(meanCoverage);
+        return ExACCommand.isExacAFValid(maxAF)
+                && ExACCommand.isExacVqslodValid(vqslod, isSnv)
+                && ExACCommand.isExacMeanCoverageValid(meanCoverage);
     }
 
     public String getVariantId() {
@@ -147,7 +169,7 @@ public class Exac {
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        for (int i = 0; i < ExacManager.EXAC_POP.length; i++) {
+        for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));
 
             if (gts[i].equals(Data.STRING_NA)) {

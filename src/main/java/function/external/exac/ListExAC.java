@@ -15,7 +15,7 @@ import utils.DBManager;
  *
  * @author nick
  */
-public class ListExac extends AnalysisBase {
+public class ListExAC extends AnalysisBase {
 
     BufferedWriter bwExac = null;
     final String exacFilePath = CommonCommand.outputPath + "exac.csv";
@@ -24,7 +24,7 @@ public class ListExac extends AnalysisBase {
     public void initOutput() {
         try {
             bwExac = new BufferedWriter(new FileWriter(exacFilePath));
-            bwExac.write(ExacOutput.getTitle());
+            bwExac.write(ExACOutput.getTitle());
             bwExac.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -59,12 +59,12 @@ public class ListExac extends AnalysisBase {
 
             Region region = RegionManager.getRegion(r);
 
-            String sqlCode = ExacManager.getSqlByRegion(region);
+            String sqlCode = ExACManager.getSqlByRegion(region);
 
             ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
 
             while (rset.next()) {
-                ExacOutput output = new ExacOutput(rset);
+                ExACOutput output = new ExACOutput(rset);
 
                 if (VariantManager.isVariantIdIncluded(output.exac.getVariantId())
                         && output.isValid()) {

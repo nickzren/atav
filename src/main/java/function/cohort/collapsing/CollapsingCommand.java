@@ -22,7 +22,6 @@ public class CollapsingCommand {
     public static boolean isCollapsingDoLogistic = false;
     public static String regionBoundaryFile = "";
     public static boolean isMannWhitneyTest = false;
-    public static String genotypeFile = "";
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -108,9 +107,6 @@ public class CollapsingCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
-                case "--genotype":
-                    genotypeFile = getValidPath(option);
-                    break;
                 case "--mann-whitney-test":
                     isMannWhitneyTest = true;
                     break;

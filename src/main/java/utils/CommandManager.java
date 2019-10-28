@@ -9,7 +9,7 @@ import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
-import function.external.exac.ExacCommand;
+import function.external.exac.ExACCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
@@ -69,7 +69,12 @@ public class CommandManager {
                 + "asj,sas --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --include-qc-missing --include-known-var --include-evs --include-exac --include-gnomad-genome --include-gnomad-ex"
                 + "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
 
-//        cmd = "--sample /Users/nick/Desktop/sample.txt --genotype /Users/nick/Desktop/genotypes.csv --collapsing-lite --out /Users/nick/Desktop/collapsing_lite --loo-af 0";
+        cmd = "--disable-timestamp-from-out-path "
+                + "--sample /Users/nick/Desktop/collapsing/collapsing_existing.sample.txt "
+                + "--genotype /Users/nick/Desktop/collapsing/collapsing_genotypes.csv "
+                + "--collapsing-lite "
+                + "--exac-af 0 "
+                + "--out /Users/nick/Desktop/collapsing_lite_1";
 
         optionArray = cmd.split("\\s+");
     }
@@ -319,6 +324,9 @@ public class CommandManager {
                 case "--list-var-geno":
                     VarGenoCommand.isListVarGeno = true;
                     break;
+                case "--list-var-geno-lite":
+                    VarGenoCommand.isListVarGenoLite = true;
+                    break;
                 case "--list-var":
                     VarCommand.isListVar = true;
                     break;
@@ -364,7 +372,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isListVarAnno = true;
                     EvsCommand.isIncludeEvs = true;
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.isIncludeExac = true;
                     GnomADCommand.isIncludeGnomADExome = true;
                     GnomADCommand.isIncludeGnomADGenome = true;
                     GnomADCommand.isIncludeGnomADGeneMetrics = true;
@@ -409,8 +417,8 @@ public class CommandManager {
                     break;
                 case "--list-exac":
                     CommonCommand.isNonSampleAnalysis = true;
-                    ExacCommand.isListExac = true;
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.isListExac = true;
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--list-gnomad-exome":
                     CommonCommand.isNonSampleAnalysis = true;
@@ -526,6 +534,8 @@ public class CommandManager {
     private static void initSubOptions() throws Exception {
         if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
+        } else if (VarGenoCommand.isListVarGenoLite) { // Genotype Analysis Functions
+            VarGenoCommand.initOptions(optionList.iterator());
         } else if (VarCommand.isListVar) {
 
         } else if (CollapsingCommand.isCollapsingSingleVariant) {
@@ -581,7 +591,7 @@ public class CommandManager {
         if (CollapsingCommand.isCollapsingLite) {
             if (CohortLevelFilterCommand.sampleFile.isEmpty()) {
                 ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
-            } else if (CollapsingCommand.genotypeFile.isEmpty()) {
+            } else if (GenotypeLevelFilterCommand.genotypeFile.isEmpty()) {
                 ErrorManager.print("Please specify your genotype file: --genotype $PATH", ErrorManager.INPUT_PARSING);
             }
         }

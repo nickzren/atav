@@ -35,7 +35,7 @@ public class PolyphenManager {
         }
         
         String prediction = getPrediction(score, effect);
-
+        
         if (effect.startsWith("missense_variant")
                 || effect.equals("splice_region_variant")) {
             return inputPrediction.contains(prediction);

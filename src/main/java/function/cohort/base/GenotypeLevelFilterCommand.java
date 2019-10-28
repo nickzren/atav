@@ -10,6 +10,7 @@ import utils.CommandOption;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.getValidPath;
 
 /**
  *
@@ -37,6 +38,7 @@ public class GenotypeLevelFilterCommand {
     public static float minMQRS = Data.NO_FILTER;
     public static final String[] FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
     public static boolean isQcMissingIncluded = false;
+    public static String genotypeFile = "";
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
@@ -152,6 +154,9 @@ public class GenotypeLevelFilterCommand {
                 case "--include-qc-missing":
                     isQcMissingIncluded = true;
                     break;
+                case "--genotype":
+                    genotypeFile = getValidPath(option);
+                    break;    
                 default:
                     continue;
             }

@@ -11,9 +11,9 @@ import function.external.discovehr.DiscovEHR;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
-import function.external.exac.Exac;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.exac.ExAC;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADCommand;
 import function.external.genomes.Genomes;
@@ -75,10 +75,10 @@ public class AnnotatedVariant extends Variant {
     private String geneName = "";
 
     private List<String> geneList = new ArrayList<>();
-    private StringBuilder allGeneTranscriptSB = new StringBuilder();
+    private StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
 
     // external db annotations
-    private Exac exac;
+    private ExAC exac;
     private String exacGeneVariantCountStr;
     private GnomADExome gnomADExome;
     private GnomADGenome gnomADGenome;
@@ -126,8 +126,8 @@ public class AnnotatedVariant extends Variant {
             isValid = gnomADGenome.isValid();
         }
 
-        if (isValid && ExacCommand.isIncludeExac) {
-            exac = new Exac(chrStr, startPosition, refAllele, allele);
+        if (isValid && ExACCommand.isIncludeExac) {
+            exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
         }
@@ -190,17 +190,18 @@ public class AnnotatedVariant extends Variant {
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
                 geneName = annotation.geneName;
-            } else {
-                allGeneTranscriptSB.append(";");
-            }
+            } 
 
-            allGeneTranscriptSB
-                    .append(annotation.effect).append("|")
-                    .append(annotation.geneName).append("|")
-                    .append(annotation.stableId).append("|")
-                    .append(annotation.HGVS_p).append("|")
-                    .append(PolyphenManager.getPrediction(annotation.polyphenHumdiv, annotation.effect)).append("|")
-                    .append(PolyphenManager.getPrediction(annotation.polyphenHumvar, annotation.effect));
+            StringJoiner geneTranscriptSJ = new StringJoiner("|");
+            geneTranscriptSJ.add(annotation.effect);
+            geneTranscriptSJ.add(annotation.geneName);
+            geneTranscriptSJ.add(FormatManager.getInteger(annotation.stableId));
+            geneTranscriptSJ.add(annotation.HGVS_c);
+            geneTranscriptSJ.add(annotation.HGVS_p);
+            geneTranscriptSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
+            geneTranscriptSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
+            
+            allGeneTranscriptSJ.add(geneTranscriptSJ.toString());
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
             polyphenHumvar = MathManager.max(polyphenHumvar, annotation.polyphenHumvar);
@@ -231,8 +232,8 @@ public class AnnotatedVariant extends Variant {
             denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
         }
 
-        if (ExacCommand.isIncludeExacGeneVariantCount) {
-            exacGeneVariantCountStr = ExacManager.getLine(getGeneName());
+        if (ExACCommand.isIncludeExacGeneVariantCount) {
+            exacGeneVariantCountStr = ExACManager.getLine(getGeneName());
         }
 
         if (TrapCommand.isIncludeTrap) {
@@ -360,7 +361,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(allGeneTranscriptSB.toString());
+        sj.add(allGeneTranscriptSJ.toString());
     }
 
     public String getStableId() {
@@ -410,11 +411,11 @@ public class AnnotatedVariant extends Variant {
             sj.merge(getEvsStringJoiner());
         }
 
-        if (ExacCommand.isIncludeExac) {
+        if (ExACCommand.isIncludeExac) {
             sj.merge(getExacStringJoiner());
         }
 
-        if (ExacCommand.isIncludeExacGeneVariantCount) {
+        if (ExACCommand.isIncludeExacGeneVariantCount) {
             sj.add(getExacGeneVariantCount());
         }
 
