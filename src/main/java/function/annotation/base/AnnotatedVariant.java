@@ -195,7 +195,7 @@ public class AnnotatedVariant extends Variant {
             StringJoiner geneTranscriptSJ = new StringJoiner("|");
             geneTranscriptSJ.add(annotation.effect);
             geneTranscriptSJ.add(annotation.geneName);
-            geneTranscriptSJ.add(FormatManager.getInteger(annotation.stableId));
+            geneTranscriptSJ.add(getStableId(annotation.stableId));
             geneTranscriptSJ.add(annotation.HGVS_c);
             geneTranscriptSJ.add(annotation.HGVS_p);
             geneTranscriptSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
@@ -217,6 +217,10 @@ public class AnnotatedVariant extends Variant {
                 geneList.add(annotation.geneName);
             }
         }
+    }
+    
+    public String getAllAnnotation() {
+        return allGeneTranscriptSJ.toString();
     }
 
     public void initExternalData() {
@@ -346,7 +350,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getAnnotationData(StringJoiner sj) {
-        sj.add(getStableId());
+        sj.add(getStableId(stableId));
         sj.add(Boolean.toString(hasCCDS));
         sj.add(effect);
         sj.add(HGVS_c);
@@ -361,10 +365,10 @@ public class AnnotatedVariant extends Variant {
         sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(allGeneTranscriptSJ.toString());
+        sj.add(getAllAnnotation());
     }
 
-    public String getStableId() {
+    private String getStableId(int stableId) {
         if (stableId == Data.INTEGER_NA) {
             return Data.STRING_NA;
         }
