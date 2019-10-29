@@ -38,9 +38,9 @@ import function.external.discovehr.ListDiscovEHR;
 import function.external.evs.EvsCommand;
 import function.cohort.vargeno.ListVarGeno;
 import function.external.evs.ListEvs;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
-import function.external.exac.ListExac;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
+import function.external.exac.ListExAC;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.gnomad.ListGnomADExome;
@@ -71,6 +71,7 @@ import function.external.trap.ListTrap;
 import function.external.trap.TrapCommand;
 import function.cohort.base.DPBinBlockManager;
 import function.cohort.collapsing.CollapsingCommand;
+import function.cohort.collapsing.CollapsingLite;
 import function.cohort.parent.ListParentCompHet;
 import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
@@ -80,9 +81,12 @@ import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.var.ListVar;
 import function.cohort.var.VarCommand;
+import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
 import function.cohort.vcf.VCFCommand;
+import function.external.mpc.ListMPC;
+import function.external.mpc.MPCCommand;
 import function.external.pext.ListPext;
 import function.external.pext.PextCommand;
 import function.test.Test;
@@ -117,9 +121,9 @@ public class Program {
 
     private static void init(String[] options) {
         try {
-            CommandManager.initOptions(options);
-
             EmailManager.init();
+            
+            CommandManager.initOptions(options);
             
             DBManager.init();
 
@@ -139,7 +143,7 @@ public class Program {
 
             DPBinBlockManager.init();
             
-            ExacManager.init();
+            ExACManager.init();
 
             KnownVarManager.init();
 
@@ -166,6 +170,9 @@ public class Program {
         try {
             if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
                 runAnalysis(new ListVarGeno());
+            } else if (VarGenoCommand.isListVarGenoLite) {
+                ListVarGenoLite listVarGenoLite = new ListVarGenoLite();
+                listVarGenoLite.run();
             } else if (VarCommand.isListVar) {
                 runAnalysis(new ListVar());
             } else if (VCFCommand.isListVCF) {
@@ -174,6 +181,9 @@ public class Program {
                 runAnalysis(new CollapsingSingleVariant());
             } else if (CollapsingCommand.isCollapsingCompHet) {
                 runAnalysis(new CollapsingCompHet());
+            } else if (CollapsingCommand.isCollapsingLite) {
+                CollapsingLite collapsingLite = new CollapsingLite();
+                collapsingLite.run();
             } else if (StatisticsCommand.isFisher) {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {
@@ -200,8 +210,8 @@ public class Program {
                 runAnalysis(new SiteCoverageComparison());
             } else if (EvsCommand.isListEvs) { // External Datasets Functions
                 runAnalysis(new ListEvs());
-            } else if (ExacCommand.isListExac) {
-                runAnalysis(new ListExac());
+            } else if (ExACCommand.isListExac) {
+                runAnalysis(new ListExAC());
             } else if (GnomADCommand.isListGnomADExome) {
                 runAnalysis(new ListGnomADExome());
             } else if (GnomADCommand.isListGnomADGenome) {
@@ -236,6 +246,8 @@ public class Program {
                 runAnalysis(new ListCCR());
             } else if (PextCommand.isListPext) {
                 runAnalysis(new ListPext());
+            } else if (MPCCommand.isListMPC) {
+                runAnalysis(new ListMPC());
             } 
             else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());

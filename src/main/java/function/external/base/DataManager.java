@@ -9,8 +9,8 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
 import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
@@ -24,6 +24,8 @@ import function.external.knownvar.KnownVarManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mgi.MgiManager;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCManager;
 import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
 import function.external.pext.PextCommand;
@@ -56,8 +58,8 @@ public class DataManager {
             sb.append(EvsManager.getVersion());
         }
 
-        if (ExacCommand.isIncludeExac) {
-            sb.append(ExacManager.getVersion());
+        if (ExACCommand.isIncludeExac) {
+            sb.append(ExACManager.getVersion());
         }
 
         if (GnomADCommand.isIncludeGnomADExome) {
@@ -67,7 +69,7 @@ public class DataManager {
         if (GnomADCommand.isIncludeGnomADGenome) {
             sb.append(GnomADManager.getGenomeVersion());
         }
-        
+
         if (GnomADCommand.isIncludeGnomADGeneMetrics) {
             sb.append(GnomADManager.getGeneMetricsVersion());
         }
@@ -95,7 +97,7 @@ public class DataManager {
         if (LIMBRCommand.isIncludeLIMBR) {
             sb.append(LIMBRManager.getVersion());
         }
-        
+
         if (CCRCommand.isIncludeCCR) {
             sb.append(CCRManager.getVersion());
         }
@@ -106,10 +108,6 @@ public class DataManager {
 
         if (TrapCommand.isIncludeTrap) {
             sb.append(TrapManager.getVersion());
-        }
-        
-        if (PextCommand.isIncludePext) {
-            sb.append(PextManager.getVersion());
         }
 
         if (MgiCommand.isIncludeMgi) {
@@ -131,11 +129,19 @@ public class DataManager {
         if (RevelCommand.isIncludeRevel) {
             sb.append(RevelManager.getVersion());
         }
-        
+
         if (PrimateAICommand.isIncludePrimateAI) {
             sb.append(PrimateAIManager.getVersion());
         }
-        
+
+        if (MPCCommand.isIncludeMPC) {
+            sb.append(MPCManager.getVersion());
+        }
+
+        if (PextCommand.isIncludePext) {
+            sb.append(PextManager.getVersion());
+        }
+
         return sb.toString();
     }
 

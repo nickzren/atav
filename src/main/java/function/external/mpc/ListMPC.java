@@ -1,4 +1,4 @@
-package function.external.pext;
+package function.external.mpc;
 
 import function.AnalysisBase;
 import function.variant.base.VariantManager;
@@ -11,17 +11,17 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class ListPext extends AnalysisBase {
+public class ListMPC extends AnalysisBase {
 
-    BufferedWriter bwPext = null;
-    final String pextFilePath = CommonCommand.outputPath + "pext.csv";
+    BufferedWriter bwMPC = null;
+    final String gerpFilePath = CommonCommand.outputPath + "mpc.csv";
 
     @Override
     public void initOutput() {
         try {
-            bwPext = new BufferedWriter(new FileWriter(pextFilePath));
-            bwPext.write(PextOutput.getTitle());
-            bwPext.newLine();
+            bwMPC = new BufferedWriter(new FileWriter(gerpFilePath));
+            bwMPC.write(MPCOutput.getTitle());
+            bwMPC.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -30,8 +30,8 @@ public class ListPext extends AnalysisBase {
     @Override
     public void closeOutput() {
         try {
-            bwPext.flush();
-            bwPext.close();
+            bwMPC.flush();
+            bwMPC.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -53,10 +53,12 @@ public class ListPext extends AnalysisBase {
     public void processDatabaseData() {
         try {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
-                PextOutput output = new PextOutput(variantId);
+                MPCOutput output = new MPCOutput(variantId);
+
                 if (output.isValid()) {
-                    bwPext.write(output.toString());
-                    bwPext.newLine();
+                    bwMPC.write(variantId + ",");
+                    bwMPC.write(output.toString());
+                    bwMPC.newLine();
                 }
             }
         } catch (Exception e) {
@@ -66,6 +68,7 @@ public class ListPext extends AnalysisBase {
 
     @Override
     public String toString() {
-        return "Start running list pext function";
+        return "Start running list mpc function";
     }
+
 }

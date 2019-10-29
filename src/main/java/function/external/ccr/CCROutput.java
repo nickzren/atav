@@ -18,10 +18,8 @@ public class CCROutput {
 
     private CCRGene gene;
 
-    public CCROutput(int variantID, String chr, int pos) {
-        List<String> geneList = CCRManager.getGeneListByVariantID(variantID, chr);
-        
-        // go through all annoated genes per variant
+    public CCROutput(List<String> geneList, String chr, int pos) {        
+        // go through all qualified genes per variant
         for(String geneName : geneList) {
             gene = CCRManager.getGene(geneName, chr, pos);
             

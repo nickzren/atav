@@ -94,7 +94,7 @@ public class DBManager {
 
     private static Connection getConnection() {
         try {
-            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + annodbName + "?useSSL=false";
+            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + annodbName + "?useSSL=false&autoReconnect=true";
             
             if (CommonCommand.isDebug) {
                 System.out.println(url);

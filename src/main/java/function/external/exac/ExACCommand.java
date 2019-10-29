@@ -6,7 +6,7 @@ import global.Data;
  *
  * @author nick
  */
-public class ExacCommand {
+public class ExACCommand {
 
     public static boolean isListExac = false;
     public static boolean isIncludeExac = false;

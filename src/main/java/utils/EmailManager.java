@@ -1,5 +1,6 @@
 package utils;
 
+import com.sun.security.auth.module.UnixSystem;
 import global.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class EmailManager {
     private static String MAIL_SERVER;
     private static String EMAIL_FROM;
     private static String EMAIL_TO;
+    private static final long EXTERNAL_ANALYSTS_GROUP_ID = 1000018;
 
     public static void init() {
         try {
@@ -50,7 +52,12 @@ public class EmailManager {
      * @param subject
      * @param body
      */
-    public static void sendEmail(String subject, String body) {
+    private static void sendEmail(String subject, String body, String to) {
+        if(CommonCommand.isDebug) {
+            // no email sending if it is in debug mode
+            return;
+        }
+        
         try {
             Properties props = System.getProperties();
             props.put("mail.smtp.host", MAIL_SERVER);
@@ -64,7 +71,7 @@ public class EmailManager {
 
             msg.setFrom(new InternetAddress(EMAIL_FROM, "IGM BIOINFO"));
 
-            msg.setReplyTo(InternetAddress.parse(EMAIL_TO, false));
+            msg.setReplyTo(InternetAddress.parse(EMAIL_FROM, false));
 
             msg.setSubject(subject, "UTF-8");
 
@@ -72,10 +79,31 @@ public class EmailManager {
 
             msg.setSentDate(new Date());
 
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(EMAIL_TO, false));
-            
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+
             Transport.send(msg);
         } catch (UnsupportedEncodingException | MessagingException e) {
+        }
+    }
+
+    public static void sendEmailToBioinfo(String subject, String body) {
+        sendEmail(subject, body, EMAIL_TO);
+    }
+
+    public static void sendEmailToUser(String subject, String body) {
+        UnixSystem sys = new UnixSystem();
+
+        boolean hasExternalGroup = false;
+        for (long value : sys.getGroups()) {
+            if (value == EXTERNAL_ANALYSTS_GROUP_ID) {
+                hasExternalGroup = true;
+                break;
+            }
+        }
+
+        if (!hasExternalGroup) {
+            String to = Data.userName + "@cumc.columbia.edu";
+            sendEmail(subject, body, to);
         }
     }
 }

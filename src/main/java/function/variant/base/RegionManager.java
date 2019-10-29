@@ -178,15 +178,18 @@ public class RegionManager {
         return chr;
     }
 
-    public static void checkChrValid(String chr) {
-        boolean isValid = false;
+    public static boolean isChrValid(String chr) {
         for (String str : ALL_CHR) {
             if (chr.equalsIgnoreCase(str)) {
-                isValid = true;
+                return true;
             }
         }
-
-        if (!isValid) {
+        
+        return false;
+    }
+    
+    public static void checkChrValid(String chr) {
+        if (!isChrValid(chr)) {
             ErrorManager.print("Invalid chr: " + chr, ErrorManager.INPUT_PARSING);
         }
     }

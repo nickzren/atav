@@ -1,9 +1,7 @@
 package utils;
 
 import com.github.lalyos.jfiglet.FigletFont;
-import com.google.common.io.Files;
 import function.external.base.DataManager;
-import function.cohort.base.GenotypeLevelFilterCommand;
 import global.Data;
 import java.io.*;
 import java.util.Date;
@@ -53,6 +51,9 @@ public class LogManager {
             writeLog(CommandManager.command + "\n");
 
             userLog.flush();
+
+            // email user job running
+            EmailManager.sendEmailToUser("ATAV Job (" + LogManager.getJobID() + ") Running", CommandManager.command);
         } catch (Exception e) {
             ErrorManager.print("Error in writing log file: " + e.toString(), ErrorManager.UNEXPECTED_FAIL);
         }
@@ -103,10 +104,14 @@ public class LogManager {
 
     private static void writeUserCommand2Log() {
         logUserCommand(USERS_COMMAND_LOG, ErrorManager.SUCCESS);
+
+        emailUserJobComplete("", ErrorManager.SUCCESS);
     }
 
-    public static void writeUserCommand2FailedLog(int exit) {
+    public static void writeUserCommand2FailedLog(String error, int exit) {
         logUserCommand(USERS_COMMAND_FAILED_LOG, exit);
+
+        emailUserJobComplete(error, exit);
     }
 
     private static void logUserCommand(String logFilePath, int exit) {
@@ -122,7 +127,6 @@ public class LogManager {
             BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
 
             String cmdLogStr = getCommandLogStr(exit);
-
             bufferWritter.write(cmdLogStr);
             bufferWritter.newLine();
             bufferWritter.close();
@@ -130,36 +134,55 @@ public class LogManager {
 
         }
     }
-    
-    public static String getCommandLogStr(int exit) {
-        long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
-        
-        return Data.userName + "\t"
-                    + date.toString() + "\t"
-                    + DBManager.getHost() + "\t"
-                    + System.getenv("HOSTNAME") + "\t"
-                    + CommandManager.command + "\t"
-                    + runTime + "\t"
-                    + outputFolderSize + " bytes" + "\t"
-                    + System.getenv("JOB_ID") + "\t"
-                    + "\t"
-                    + exit;
-    }
 
-    private static boolean isBioinfoTeam() throws Exception {
-        String configPath = Data.SYSTEM_CONFIG;
+    private static void emailUserJobComplete(String error, int exit) {
+        String cmdLogStr = getCommandLogStr(exit);
 
-        if (CommonCommand.isDebug) {
-            configPath = Data.SYSTEM_CONFIG_FOR_DEBUG;
+        String str = "Completed";
+        if (exit != ErrorManager.SUCCESS) {
+            str = "Failed";
         }
 
-        InputStream input = new FileInputStream(configPath);
-        Properties prop = new Properties();
-        prop.load(input);
+        // email user job complete
+        EmailManager.sendEmailToUser("ATAV Job (" + LogManager.getJobID() + ") " + str, cmdLogStr + "\n\n" + error);
+    }
 
-        String members = prop.getProperty("bioinfo-team");
+    public static String getCommandLogStr(int exit) {
+        long outputFolderSize = folderSize(new File(CommonCommand.realOutputPath));
 
-        return members.contains(Data.userName);
+        return Data.userName + "\t"
+                + date.toString() + "\t"
+                + DBManager.getHost() + "\t"
+                + System.getenv("HOSTNAME") + "\t"
+                + CommandManager.command + "\t"
+                + runTime + "\t"
+                + outputFolderSize + " bytes" + "\t"
+                + System.getenv("JOB_ID") + "\t"
+                + exit;
+    }
+
+    public static String getJobID() {
+        return System.getenv("JOB_ID");
+    }
+
+    public static boolean isBioinfoTeam() {
+        try {
+            String configPath = Data.SYSTEM_CONFIG;
+
+            if (CommonCommand.isDebug) {
+                configPath = Data.SYSTEM_CONFIG_FOR_DEBUG;
+            }
+
+            InputStream input = new FileInputStream(configPath);
+            Properties prop = new Properties();
+            prop.load(input);
+
+            String members = prop.getProperty("bioinfo-team");
+
+            return members.contains(Data.userName);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private static long folderSize(File directory) {

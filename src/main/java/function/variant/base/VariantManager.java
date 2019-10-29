@@ -5,6 +5,7 @@ import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.SampleManager;
+import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.parent.ParentCommand;
 import function.cohort.trio.TrioCommand;
 import global.Data;
@@ -39,7 +40,8 @@ public class VariantManager {
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
         if (TrioCommand.isListTrio
-                || ParentCommand.isListParentCompHet) {
+                || ParentCommand.isListParentCompHet
+                || CollapsingCommand.isCollapsingCompHet) {
             // disable process region as variant by varaint way
             maxIncludeNum = 0;
         }
@@ -266,11 +268,11 @@ public class VariantManager {
             // exclude indel
             return false;
         } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
-                && VariantManager.isMultiallelicVariant(var.getChrStr(), var.getStartPosition())) {
+                && isMultiallelicVariant(var.getChrStr(), var.getStartPosition())) {
             // exclude Multiallelic site > 1 variant
             return false;
         } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant2
-                && VariantManager.isMultiallelicVariant2(var.getChrStr(), var.getStartPosition())) {
+                && isMultiallelicVariant2(var.getChrStr(), var.getStartPosition())) {
             // exclude Multiallelic site > 2 variants
             return false;
         }
@@ -303,7 +305,7 @@ public class VariantManager {
         }
     }
 
-    private static boolean isExcluded(String varId) {
+    public static boolean isExcluded(String varId) {
         return excludeVariantSet.contains(varId);
     }
 

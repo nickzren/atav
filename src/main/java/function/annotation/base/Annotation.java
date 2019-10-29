@@ -23,11 +23,12 @@ public class Annotation {
     public int stableId;
     public String HGVS_c;
     public String HGVS_p;
-    public float polyphenHumdiv;
-    public float polyphenHumdivCCDS;
-    public float polyphenHumvar;
-    public float polyphenHumvarCCDS;
+    public float polyphenHumdiv = Data.FLOAT_NA;
+    public float polyphenHumdivCCDS = Data.FLOAT_NA;
+    public float polyphenHumvar = Data.FLOAT_NA;
+    public float polyphenHumvarCCDS = Data.FLOAT_NA;
     public boolean isCCDS;
+    public boolean hasCCDS;
 
     public void init(ResultSet rset, String chr) throws SQLException {
         this.chr = chr;
@@ -80,8 +81,8 @@ public class Annotation {
                         && AnnotationLevelFilterCommand.polyphenHumvar.equals(Data.NO_FILTER_STR)) {
                     isValid = TrapCommand.isTrapScoreValid(trapScore);
                 }
-            } else if (effectID > EffectManager.MISSENSE_VARIANT_ID &&
-                    !effect.equals("5_prime_UTR_premature_start_codon_gain_variant")) {
+            } else if (effectID > EffectManager.MISSENSE_VARIANT_ID
+                    && !effect.equals("5_prime_UTR_premature_start_codon_gain_variant")) {
                 isValid = TrapCommand.isTrapScoreValid(trapScore)
                         && TrapCommand.isTrapScoreNonCodingValid(trapScore);
             }
@@ -90,5 +91,23 @@ public class Annotation {
         }
 
         return false;
+    }
+    
+    public String getStableId() {
+        if (stableId == Data.INTEGER_NA) {
+            return Data.STRING_NA;
+        }
+
+        StringBuilder idSB = new StringBuilder(String.valueOf(stableId));
+
+        int zeroStringLength = TranscriptManager.TRANSCRIPT_LENGTH - idSB.length() - 4;
+
+        for (int i = 0; i < zeroStringLength; i++) {
+            idSB.insert(0, 0);
+        }
+
+        idSB.insert(0, "ENST");
+
+        return idSB.toString();
     }
 }

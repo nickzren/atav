@@ -9,7 +9,7 @@ import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
-import function.external.exac.ExacCommand;
+import function.external.exac.ExACCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
@@ -34,6 +34,7 @@ import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
+import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
@@ -59,15 +60,22 @@ public class CommandManager {
     private static String commandFile = "";
 
     private static void initCommand4Debug() {
-        String cmd = "--disable-timestamp-from-out-path --sample data/sample/trio_sample.txt "
-                + "--effect data/effect/functional.txt "
-                + "--variant 21-34635094-TA-T "
-                + "--out list_var_geno "
-                + "--list-var-geno --min-coverage 10 --include-qc-missing "
-                + "--qd 5 --qual 50 --mq 40 --gq 20 --snv-sor 3 --indel-sor 10 "
-                + "--snv-fs 60 --indel-fs 200 --rprs -3 --mqrs -10 "
-                + "--filter pass,likely,intermediate --het-percent-alt-read 0.3-1 "
-                + "--ctrl-af 0.01 --ccds-only --evs-maf 0.1";
+        String cmd = "--region 21 --disable-timestamp-from-out-path --sample data/sample/sample.txt "
+                + "--collapsing-dom --mann-whitney-test --gene-boundaries data/ccds/addjusted.CCDS.genes.index.r20.hg19.txt --include-rvis --include-known-var --effect HIGH:exon_lo"
+                + "ss_variant,HIGH:frameshift_variant,HIGH:rare_amino_acid_variant,HIGH:stop_gained,HIGH:start_lost,HIGH:stop_lost,HIGH:splice_acceptor_variant,HIGH:splice_donor_variant,HIGH:gene_fusion,HIGH:bidirectional_gene_fu"
+                + "sion,MODERATE:3_prime_UTR_truncation+exon_loss_variant,MODERATE:5_prime_UTR_truncation+exon_loss_variant,MODERATE:coding_sequence_variant,MODERATE:disruptive_inframe_deletion,MODERATE:disruptive_inframe_inserti"
+                + "on,MODERATE:conservative_inframe_deletion,MODERATE:conservative_inframe_insertion,MODERATE:missense_variant+splice_region_variant,MODERATE:missense_variant --exclude-artifacts --filter pass,likely,intermediate "
+                + "--exclude-evs-qc-failed --ccds-only --min-coverage 10 --include-qc-missing --qd 5 --qual 50 --mq 40 --gq 20 --snv-sor 3 --indel-sor 10 --snv-fs 60 --indel-fs 200 --rprs -3 --mqrs -10 --het-percent-alt-read 0.3-"
+                + "1 --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-exome-af 0.001 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-exome-pop afr,amr,nfe,fin,eas,"
+                + "asj,sas --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --include-qc-missing --include-known-var --include-evs --include-exac --include-gnomad-genome --include-gnomad-ex"
+                + "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
+
+        cmd = "--disable-timestamp-from-out-path "
+                + "--sample /Users/nick/Desktop/collapsing/collapsing_existing.sample.txt "
+                + "--genotype /Users/nick/Desktop/collapsing/collapsing_genotypes.csv "
+                + "--collapsing-lite "
+                + "--exac-af 0 "
+                + "--out /Users/nick/Desktop/collapsing_lite_1";
 
         optionArray = cmd.split("\\s+");
     }
@@ -89,6 +97,8 @@ public class CommandManager {
             initCommonOptions();
 
             initOptions4Debug();
+
+            checkOptionDependency();
 
             outputInvalidOptions();
         } catch (Exception e) {
@@ -235,7 +245,7 @@ public class CommandManager {
                 default:
                     continue;
             }
-            
+
             iterator.remove();
         }
 
@@ -293,7 +303,7 @@ public class CommandManager {
                     break;
                 case "--debug":
                     CommonCommand.isDebug = true;
-                    break; 
+                    break;
                 default:
                     continue;
             }
@@ -315,6 +325,9 @@ public class CommandManager {
                 case "--list-var-geno":
                     VarGenoCommand.isListVarGeno = true;
                     break;
+                case "--list-var-geno-lite":
+                    VarGenoCommand.isListVarGenoLite = true;
+                    break;
                 case "--list-var":
                     VarCommand.isListVar = true;
                     break;
@@ -331,6 +344,9 @@ public class CommandManager {
                     break;
                 case "--collapsing-comp-het":
                     CollapsingCommand.isCollapsingCompHet = true;
+                    break;
+                case "--collapsing-lite":
+                    CollapsingCommand.isCollapsingLite = true;
                     break;
                 case "--fisher":
                     StatisticsCommand.isFisher = true;
@@ -361,13 +377,12 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isListVarAnno = true;
                     EvsCommand.isIncludeEvs = true;
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.isIncludeExac = true;
                     GnomADCommand.isIncludeGnomADExome = true;
                     GnomADCommand.isIncludeGnomADGenome = true;
                     GnomADCommand.isIncludeGnomADGeneMetrics = true;
                     GerpCommand.isIncludeGerp = true;
                     TrapCommand.isIncludeTrap = true;
-                    PextCommand.isIncludePext = true;
 //                    KaviarCommand.isIncludeKaviar = true;
                     KnownVarCommand.isIncludeKnownVar = true;
                     RvisCommand.isIncludeRvis = true;
@@ -382,6 +397,8 @@ public class CommandManager {
                     RevelCommand.isIncludeRevel = true;
                     PrimateAICommand.isIncludePrimateAI = true;
                     VariantLevelFilterCommand.isIncludeLOFTEE = true;
+                    MPCCommand.isIncludeMPC = true;
+                    PextCommand.isIncludePext = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -405,8 +422,8 @@ public class CommandManager {
                     break;
                 case "--list-exac":
                     CommonCommand.isNonSampleAnalysis = true;
-                    ExacCommand.isListExac = true;
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.isListExac = true;
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--list-gnomad-exome":
                     CommonCommand.isNonSampleAnalysis = true;
@@ -438,11 +455,6 @@ public class CommandManager {
                     TrapCommand.isListTrap = true;
                     TrapCommand.isIncludeTrap = true;
                     break;
-                case "--list-pext":
-                    CommonCommand.isNonSampleAnalysis = true;
-                    PextCommand.isListPext = true;
-                    PextCommand.isIncludePext = true;
-                    break;      
                 case "--list-sub-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
                     SubRvisCommand.isListSubRvis = true;
@@ -457,7 +469,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     CCRCommand.isListCCR = true;
                     CCRCommand.isIncludeCCR = true;
-                    break;     
+                    break;
                 case "--list-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
                     RvisCommand.isListRvis = true;
@@ -487,12 +499,22 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     RevelCommand.isListRevel = true;
                     RevelCommand.isIncludeRevel = true;
-                    break;    
+                    break;
                 case "--list-primate-ai":
                     CommonCommand.isNonSampleAnalysis = true;
                     PrimateAICommand.isListPrimateAI = true;
                     PrimateAICommand.isIncludePrimateAI = true;
-                    break;  
+                    break;
+                case "--list-mpc":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    MPCCommand.isListMPC = true;
+                    MPCCommand.isIncludeMPC = true;
+                    break;
+                case "--list-pext":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    PextCommand.isListPext = true;
+                    PextCommand.isIncludePext = true;
+                    break;
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;
@@ -517,6 +539,8 @@ public class CommandManager {
     private static void initSubOptions() throws Exception {
         if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
+        } else if (VarGenoCommand.isListVarGenoLite) { // Genotype Analysis Functions
+            VarGenoCommand.initOptions(optionList.iterator());
         } else if (VarCommand.isListVar) {
 
         } else if (VCFCommand.isListVCF) {
@@ -525,6 +549,8 @@ public class CommandManager {
             CollapsingCommand.initSingleVarOptions(optionList.iterator());
         } else if (CollapsingCommand.isCollapsingCompHet) {
             CollapsingCommand.initCompHetOptions(optionList.iterator());
+        } else if (CollapsingCommand.isCollapsingLite) {
+            CollapsingCommand.initLiteOptions(optionList.iterator());
         } else if (StatisticsCommand.isFisher) {
             StatisticsCommand.initFisherOptions(optionList.iterator());
         } else if (StatisticsCommand.isLinear) {
@@ -564,8 +590,18 @@ public class CommandManager {
         AnnotationLevelFilterCommand.initOptions(optionList.iterator());
 
         GenotypeLevelFilterCommand.initOptions(optionList.iterator());
-        
+
         CohortLevelFilterCommand.initOptions(optionList.iterator());
+    }
+
+    public static void checkOptionDependency() {
+        if (CollapsingCommand.isCollapsingLite) {
+            if (CohortLevelFilterCommand.sampleFile.isEmpty()) {
+                ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
+            } else if (GenotypeLevelFilterCommand.genotypeFile.isEmpty()) {
+                ErrorManager.print("Please specify your genotype file: --genotype $PATH", ErrorManager.INPUT_PARSING);
+            }
+        }
     }
 
     public static void outputInvalidOptions() {
@@ -591,7 +627,7 @@ public class CommandManager {
      * outputPath invalid option & value if value > max or value < min ATAV stop
      */
     public static void checkValueValid(double max, double min, CommandOption option) {
-        double value = Double.parseDouble(option.getValue());
+        double value = getValidDouble(option);
         if (max != Data.NO_FILTER) {
             if (value > max) {
                 outputInvalidOptionValue(option);
@@ -734,6 +770,6 @@ public class CommandManager {
 
     public static void outputInvalidOptionValue(CommandOption option) {
         ErrorManager.print("\nInvalid value '" + option.getValue()
-                + "' for '" + option.getName() + "' option.", ErrorManager.COMMAND_PARSING);
+                + "' for option '" + option.getName() + "'", ErrorManager.COMMAND_PARSING);
     }
 }

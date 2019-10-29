@@ -4,7 +4,6 @@ import function.cohort.base.CalledVariant;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import global.Data;
-import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -83,7 +82,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
     private void initSummaryList(CollapsingOutput output, ArrayList<CollapsingSummary> summaryList) {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
             // gene summary
-            for (String geneName : output.getCalledVariant().getGeneSet()) {
+            for (String geneName : output.getCalledVariant().getGeneList()) {
                 if (!geneName.equals(Data.STRING_NA)) {
                     updateGeneSummaryMap(geneName);
                     summaryList.add(summaryMap.get(geneName));
@@ -124,7 +123,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             // only count qualified variant once per gene or region
             if (hasQualifiedVariant) {
                 for (CollapsingSummary summary : summaryList) {
-                    summary.updateVariantCount(output);
+                    summary.updateVariantCount(output.getCalledVariant().isSnv());
                 }
             }
         } catch (Exception e) {

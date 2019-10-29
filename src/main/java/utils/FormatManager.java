@@ -51,6 +51,14 @@ public class FormatManager {
 
         return String.valueOf(value);
     }
+    
+    public static int getInteger(String value) {
+        if (value.equals(Data.STRING_NA)) {
+            return Data.INTEGER_NA;
+        }
+
+        return Integer.valueOf(value);
+    }
 
     public static byte getByte(ResultSet rs, String strColName) throws SQLException {
         byte nValue = rs.getByte(strColName);
@@ -161,5 +169,14 @@ public class FormatManager {
 
     public static double[] deepCopyArray(double[] original) {
         return Arrays.copyOf(original, original.length);
+    }
+    
+    public static String appendDoubleQuote(String value) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"");
+        sb.append(value);
+        sb.append("\"");
+        
+        return sb.toString();
     }
 }

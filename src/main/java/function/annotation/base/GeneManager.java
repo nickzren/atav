@@ -154,6 +154,11 @@ public class GeneManager {
             if (!line.isEmpty()) {
                 line = line.replaceAll("\"", "").replaceAll("\t", " ");
 
+                String[] fields = line.split("( )+");
+                if (!RegionManager.isChrValid(fields[1])) {
+                    ErrorManager.print("Invalid gene boundary: " + line, ErrorManager.INPUT_PARSING);
+                }
+
                 Gene gene = new Gene(line);
 
                 if (gene.isValid()) {
@@ -330,7 +335,31 @@ public class GeneManager {
             } else {
                 for (Gene gene : set) {
                     if (gene.contains(chr, pos)) {
+                        // reset gene name to gene domain name so the downstream procedure could match correctly
+                        // only for gene boundary input
                         annotation.geneName = gene.getName();
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isValid(String geneName, String chr, int pos) {
+        if (geneMap.isEmpty()) {
+            return true;
+        }
+
+        HashSet<Gene> set = geneMap.get(geneName);
+
+        if (set != null) {
+            if (GeneManager.getGeneBoundaryList().isEmpty()) {
+                return true;
+            } else {
+                for (Gene gene : set) {
+                    if (gene.contains(chr, pos)) {
                         return true;
                     }
                 }

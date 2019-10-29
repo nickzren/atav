@@ -9,8 +9,8 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
 import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
@@ -41,6 +41,8 @@ import function.cohort.base.Carrier;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCManager;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
 import global.Data;
@@ -85,7 +87,7 @@ public class Output {
         sj.add("Polyphen Humvar Prediction (CCDS)");
         sj.add("Gene Name");
         sj.add("UpToDate Gene Name");
-        sj.add("All Effect Gene Transcript HGVS_p Polyphen_Humdiv Polyphen_Humvar");
+        sj.add("All Effect Gene Transcript HGVS_c HGVS_p Polyphen_Humdiv Polyphen_Humvar");
 
         return sj;
     }
@@ -97,12 +99,12 @@ public class Output {
             sj.add(EvsManager.getTitle());
         }
 
-        if (ExacCommand.isIncludeExac) {
-            sj.add(ExacManager.getTitle());
+        if (ExACCommand.isIncludeExac) {
+            sj.add(ExACManager.getTitle());
         }
 
-        if (ExacCommand.isIncludeExacGeneVariantCount) {
-            sj.add(ExacManager.getGeneVariantCountTitle());
+        if (ExACCommand.isIncludeExacGeneVariantCount) {
+            sj.add(ExACManager.getGeneVariantCountTitle());
         }
 
         if (GnomADCommand.isIncludeGnomADExome) {
@@ -116,7 +118,7 @@ public class Output {
         if (GnomADCommand.isIncludeGnomADGeneMetrics) {
             sj.add(GnomADManager.getGeneMetricsTitle());
         }
-        
+
         if (KnownVarCommand.isIncludeKnownVar) {
             sj.add(KnownVarManager.getTitle());
         }
@@ -140,7 +142,7 @@ public class Output {
         if (LIMBRCommand.isIncludeLIMBR) {
             sj.add(LIMBRManager.getTitle());
         }
-        
+
         if (CCRCommand.isIncludeCCR) {
             sj.add(CCRManager.getTitle());
         }
@@ -151,10 +153,6 @@ public class Output {
 
         if (TrapCommand.isIncludeTrap) {
             sj.add(TrapManager.getTitle());
-        }
-        
-        if (PextCommand.isIncludePext) {
-            sj.add(PextManager.getTitle());
         }
 
         if (MgiCommand.isIncludeMgi) {
@@ -176,13 +174,21 @@ public class Output {
         if (RevelCommand.isIncludeRevel) {
             sj.add(RevelManager.getTitle());
         }
-        
+
         if (PrimateAICommand.isIncludePrimateAI) {
             sj.add(PrimateAIManager.getTitle());
         }
-        
-        if(VariantLevelFilterCommand.isIncludeLOFTEE) {
+
+        if (VariantLevelFilterCommand.isIncludeLOFTEE) {
             sj.add("LOFTEE-HC in CCDS");
+        }
+
+        if (MPCCommand.isIncludeMPC) {
+            sj.add(MPCManager.getTitle());
+        }
+
+        if (PextCommand.isIncludePext) {
+            sj.add(PextManager.getTitle());
         }
 
         return sj;

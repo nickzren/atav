@@ -1,11 +1,25 @@
 #!/usr/bin/env python
 
-## Check differences between cases' and controls' QV counts.
+'''
+Mann-Whitney Test.
+~~ Check differences between cases' and controls' QV counts.
+~~ 2018-6-11
+~~ Joseph Hostyk
 
-## 2018-6-11
+Usage:
+	mann_whitney_test.py <genotypesFileName> [<pedFilePath>]
 
-## Joseph Hostyk
+# [(--total_cases=<cases> --total_controls=<controls>)]
 
+Requirements:
+	docopt is installed on this version of Python:
+		/nfs/goldstein/software/python2.7.9-x86_64_shared/python2.7.9_shared-ENV.sh
+
+Options:
+	genotypesFileName   Path to the file.
+	pedFilePath   		(Optional, but recommended) path to the sample/ped file.
+	-h --help           Show these options.
+  '''
 
 
 import sys
@@ -19,7 +33,30 @@ import sys
 from scipy import stats
 import datetime
 import math
+from docopt import docopt
 
+
+def getCaseAndControlListsFromPedFile(pedFilePath):
+	"""
+	Read through a ped/samples file and get the names of the cases and controls.
+
+	Args:
+		pedFilePath (str): path to the ped file.
+
+	Returns:
+		total cases, total controls (ints)
+	"""	
+	CASE = "2"
+	CONTROL = "1"
+	statusIndex = 5
+	nameIndex = 1
+	names = defaultdict(list)
+	with open(pedFilePath, "r") as samples:
+
+		for sample in samples:
+			names[sample.split("\t")[statusIndex]].append(sample.split("\t")[nameIndex]) # The second spot is the ID/name.
+
+	return names[CASE], names[CONTROL]
 
 def getTotalCaseAndControlCounts(genotypesFilename):
 	"""
@@ -27,10 +64,8 @@ def getTotalCaseAndControlCounts(genotypesFilename):
 	how many total cases and controls were in the initial ATAV job.
 	(If a sample does not have a variant, they won't show up in the file, so this
 	total needs to be calculated separately.)
-
 	Args:
 		genotypesFilename (str): path to the _genotypes file.
-
 	Returns:
 		totalCases and totalControls (both ints)
 	"""
@@ -38,41 +73,73 @@ def getTotalCaseAndControlCounts(genotypesFilename):
 	comphetSuffix = ""
 	if "comphet" in genotypesFilename:
 		comphetSuffix = " (#1)"
+
+	# We read through the whole file. Might take a while, but easier than dealing with all edge cases.
+	maxCoveredCasePercentage = 0
+	maxCoveredControlPercentage = 0
 	with open(genotypesFilename, "r") as variants:
 		header = variants.readline().strip().split(",")
-		variant = dict(zip(header, variants.readline().strip().split(",")))
 
-		someCases = int(variant["Covered Case" + comphetSuffix])
-		casePercentage = float(variant["Covered Case Percentage" + comphetSuffix])/100.0
-		totalCases = int(round(someCases/casePercentage))
+		for variant in variants:
+			variant = dict(zip(header, variant.strip().split(",")))
 
-		someControls = int(variant["Covered Ctrl" + comphetSuffix])
-		controlPercentage = float(variant["Covered Ctrl Percentage" + comphetSuffix])/100.0
-		totalControls = int(round(someControls/controlPercentage))
+			casePercentage = float(variant["Covered Case Percentage" + comphetSuffix])/100.0
+			if casePercentage > maxCoveredCasePercentage:
+				maxCoveredCasePercentage = casePercentage
+				coveredCases = int(variant["Covered Case" + comphetSuffix])
+				totalCases = int(round(coveredCases/casePercentage))
+
+			controlPercentage = float(variant["Covered Ctrl Percentage" + comphetSuffix])/100.0
+			if controlPercentage > maxCoveredControlPercentage:
+				maxCoveredControlPercentage = controlPercentage
+				coveredControls = int(variant["Covered Ctrl" + comphetSuffix])
+				totalControls = int(round(coveredControls/controlPercentage))
 	return totalCases, totalControls
 
 
+def getQVcounts(genotypesFilename, caseNames, controlNames):
+	"""
+	Read through a genotypes file and get the number of QVs per sample.
+	
+	Args:
+		genotypesFilename (str): path to the _genotypes file.
+	Returns:
+		caseNames, controlNames (lists of strings): the actual names/IDs of the cases/controls.
+	"""
 
-def getQVcountsForDominantModel(genotypesFilename):
+	if "genotypes" in genotypesFilename:
+		caseCounts, controlCounts = getQVcountsForDominantModel(genotypesFilename, caseNames, controlNames)
+	if "comphet" in genotypesFilename:
+		caseCounts, controlCounts = getQVsForComphetModel(genotypesFilename, caseNames, controlNames)
+		
+	return caseCounts, controlCounts
+
+def getQVcountsForDominantModel(genotypesFilename, caseNames, controlNames):
 
 	"""
 	Read through a _genotypes file and get the variant counts for all samples,
 	broken down into cases and controls.
-	We keep a tally of how many lines each sample's ID shows up in; keeping track
-	of all their variant IDs would take up too much space.
 
 	Args:
 		genotypesFilename (str): path to the _genotypes file.
+		caseNames, controlNames (lists of strings): the actual names/IDs of the cases/controls.
 
 	Returns:
-		counts (dict of dicts): In this format: 
-			{"case": {"sample1": numVariants, "sample2": numVariants, ...}, "ctrl": {"sample1": numVariants, ...}}
+		caseCounts, controlCounts (dicts): In this format: {id1: numQVs, id2: numQvs, ...}
 	"""
 
-	counts = defaultdict(Counter)
+	# If we have a sample file, then we have everyone's names:
+	if len(caseNames) != 0 or len(controlNames) != 0:
+		caseCounts = {name: 0 for name in caseNames}
+		controlCounts = {name: 0 for name in controlNames}
+
+		counts = {"case": caseCounts, "ctrl": controlCounts}
+
+	# Otherwise, we work just from the genotypes file and get names from there as we go.
+	else:
+		counts = defaultdict(Counter)
 
 	with open(genotypesFilename, "r") as variants:
-		# Awesome way of using header names, provided by Brett Copeland.
 		header = variants.readline().strip().split(",")
 
 		for line in variants:
@@ -82,9 +149,9 @@ def getQVcountsForDominantModel(genotypesFilename):
 			name = line["Sample Name"]
 			counts[caseOrControl][name] += 1
 
-	return counts
+	return counts["case"], counts["ctrl"]
 
-def getQVsForComphetModel(comphetVariantsFilename):
+def getQVsForComphetModel(comphetVariantsFilename, caseNames, controlNames):
 
 	"""
 	Read through a _comphet file and get the variant counts for all samples,
@@ -99,17 +166,26 @@ def getQVsForComphetModel(comphetVariantsFilename):
 	count of how many variants the sample has.
 
 	Args:
-		comphetVariantsFilename (str): path to the _genotypes file.
+		genotypesFilename (str): path to the _genotypes file.
+		caseNames, controlNames (lists of strings): the actual names/IDs of the cases/controls.
 
 	Returns:
-		variantIDs (dict of dicts): In this format: 
-			{"case": {"sample1": set(variant1, variant2), "sample2": set(), ...}, "ctrl": {"sample1": set(), ...}}
+		caseCounts, controlCounts (dicts): In this format: {id1: numQVs, id2: numQvs, ...}
 	"""
 
-	variantIDs = defaultdict(lambda: defaultdict(set))
+	# If we have a sample file, then we have everyone's names:
+	if len(caseNames) != 0 or len(controlNames) != 0:
+
+		caseCounts = {name: set() for name in caseNames}
+		controlCounts = {name: set() for name in controlNames}
+
+		variantIDs = {"case": caseCounts, "ctrl": controlCounts}
+
+	# Otherwise, we work just from the genotypes file and get names from there as we go.
+	else:
+		variantIDs = {"case": defaultdict(set), "ctrl": defaultdict(set)}
 
 	with open(comphetVariantsFilename, "r") as variants:
-		# Awesome way of using header names, provided by Brett Copeland.
 		header = variants.readline().strip().split(",")
 
 		for line in variants:
@@ -124,34 +200,9 @@ def getQVsForComphetModel(comphetVariantsFilename):
 				variantID2 = line["Variant ID (#2)"]
 				variantIDs[caseOrControl][name].add(variantID2)
 
-	return variantIDs
-
-def graphQVcounts(casesCounts, controlsCounts, outputName):
-
-	"""
-	Create and plot a histogram of variant counts, broken into cases and controls.
-	
-	Args:
-		casesCounts and controlsCounts (dict): In this format:
-			{"sample1": numVariants, "sample2": numVariants, ...}
-		outputName (str): Path to which the graph will be written.
-	"""
-
-	plt.figure(1)
-	binwidth = 1.0
-	mostMin = min(min(casesCounts), min(controlsCounts))-0.5
-	mostMax = max(max(casesCounts), max(controlsCounts))-0.5
-	caseBins = controlBins = np.arange(mostMin, mostMax + binwidth, binwidth)
-	plt.hist(casesCounts, caseBins, facecolor='green', alpha=0.35, label="Cases", ec='white', normed=True)
-	plt.hist(controlsCounts, controlBins, facecolor='blue', alpha=0.35, label="Controls", ec='white', normed=True)
-	plt.title("QVCounts")
-	plt.xlabel('QV Amounts')
-	plt.ylabel('Percentage of [Case/Control] that\nhave this amount of QVs')
-	plt.legend(loc='upper right')
-	plt.grid(True)
-
-	plt.savefig(outputName, bbox_inches='tight')
-	plt.close()
+	caseCounts = {name: len(variants) for name, variants in variantIDs["case"].items()}
+	controlCounts = {name: len(variants) for name, variants in variantIDs["ctrl"].items()}
+	return caseCounts, controlCounts
 
 
 def writeToLog(logName, message, writeOrAppend):
@@ -163,38 +214,100 @@ def writeToLog(logName, message, writeOrAppend):
 	with open(logName, writeOrAppend) as out:
 		out.write(message)
 
-def initializeLog(logName, casesCounts, controlsCounts):
-	
+
+def writeOutQVcounts(qvCountsLogName, casesToTheirQVcounts, controlsToTheirQVcounts, missingCases, missingControls):
+
 	"""
-	Our first logging function, which we always want run.
+	Write out the sample name and the number of QVs they have to a log.
+	Args:
+		qvCountsLogName (str): full path to the log file.
+		casesToTheirQVcounts, controlsToTheirQVcounts (dicts): Sample names and their counts.
+		missingCases, missingControls (ints): the number of cases/controls that were included in the run,
+			but aren't in the genotypes file. Necessary if no sample file was submitted.
+
 	"""
+
+	log = ""
+	if missingCases > 0 or missingControls > 0:
+		log += "A sample file may have not been submitted, and so there are some samples that do not have\n"
+		log += "any QVs, but we don't know their IDs.\n"
+		if missingCases > 0:
+			log += "There are {} unknown cases with no QVs.\n".format(missingCases)
+		if missingControls > 0:
+			log += "There are {} unknown controls with no QVs.\n".format(missingControls)
+	log += "Name\tCount\tCase/Control\n"
+	log += "\n".join("{name}\t{count}\tCase".format(name = name, count = count) for name, count in casesToTheirQVcounts.items())
+	log += "\n"
+	log += "\n".join("{name}\t{count}\tControl".format(name = name, count = count) for name, count in controlsToTheirQVcounts.items())
+
+	writeToLog(qvCountsLogName, log, writeOrAppend = "w")
+
+
+def runMannWhitney(mannWhitneyLogName, qvsPerCase, qvsPerControl):
+
+	"""
+	Run Mann Whitney and write out the results.
+	Args:
+		qvsPerCase, qvsPerControl (lists of ints): The lists of the actual counts of qvs.
+
+	"""
+
 	log = ""
 	log += "Checking amounts of called variant for cases vs. controls. Date: {}.\n".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
-	log += "Cases (n = {}): Median: {}; mean: {}.\n".format(len(casesCounts), np.median(casesCounts), np.mean(casesCounts))
-	log += "Controls (n = {}): Median: {}; mean: {}.\n".format(len(controlsCounts), np.median(controlsCounts), np.mean(controlsCounts))
-	writeToLog(logName, log, writeOrAppend = "w")
+	log += "Cases (n = {}): Median: {}; mean: {}.\n".format(len(qvsPerCase), np.median(qvsPerCase), np.mean(qvsPerCase))
+	log += "Controls (n = {}): Median: {}; mean: {}.\n".format(len(qvsPerControl), np.median(qvsPerControl), np.mean(qvsPerControl))
 
-def writeMannWhitneyResultsToLog(logName, pvalue):
-
-	"""
-	If the Mann Whitney function didn't error out, we log the results.
-	"""
-	log = ""
 	log += "Null hypothesis: the cases' variants and controls' variants follow the same distribution.\n"
-	if pvalue < 0.05:
+	
+	value, pvalue = stats.mannwhitneyu(qvsPerCase, qvsPerControl)
+	if pvalue == 0.0:
+		log += "The test could not be run. (You may have run with no cases, or no controls.)"
+	elif pvalue < 0.05:
 		log += "The p-value ({0:.3}) is less than 0.05. We reject the null, meaning there's a significant difference\n".format(pvalue)
 		log += "between the number of variants that the cases have than do the controls."
 	else:
 		log += "The p-value ({0:.3}) is greater than 0.05. We do not reject the null, meaning that there's no significant\n".format(pvalue)
 		log += "difference between the number of variants that the cases have than do the controls."
-	writeToLog(logName, log, writeOrAppend = "a")
+	writeToLog(mannWhitneyLogName, log, writeOrAppend = "w")
 
 	return
 
-def handler(genotypesFilename):
+
+def graphQVcounts(caseCounts, controlCounts, outputName):
 
 	"""
-	Our main function, that works just from the path to a _genotypes file.
+	Create and plot a histogram of variant counts, broken into cases and controls.
+	
+	Args:
+		caseCounts and controlCounts (list of ints): The lists of the actual counts of qvs.
+		outputName (str): Path to which the graph will be written.
+	"""
+
+	plt.figure(1)
+
+	caseCounter = Counter(caseCounts)
+	controlCounter = Counter(controlCounts)
+
+	totalCases = float(len(caseCounts))
+	totalControls = float(len(controlCounts))
+
+	plt.bar(caseCounter.keys(), np.array(caseCounter.values())/totalCases, facecolor='green', alpha=0.35, label="Cases", ec='white')
+	if len(controlCounter.keys()) > 0: # Sometimes only cases are submitted.
+		plt.bar(controlCounter.keys(), np.array(controlCounter.values())/totalControls, facecolor='blue', alpha=0.35, label="Controls", ec='white')
+
+	plt.title("QVCounts")
+	plt.xlabel('QV Amounts')
+	plt.ylabel('Percentage of [Case/Control] that\nhave this amount of QVs')
+	plt.legend(loc='upper right')
+	plt.grid(True)
+
+	plt.savefig(outputName, bbox_inches='tight')
+	plt.close()
+
+def handler(genotypesFilename, pedFilePath):
+
+	"""
+	Our main function.
 	"""
 	fileName = genotypesFilename.split("/")[-1].replace(".csv", "")
 
@@ -206,55 +319,52 @@ def handler(genotypesFilename):
 	else:
 		folder += "./"
 
-	# Get the number of QVs per sample.
-	# These don't include the zero-counts. (Samples that had no variants.)
+	# If we have the full sample list, we can write out each sample's QV counts.
+	hasPedFile = bool(pedFilePath)
+	if hasPedFile:
+		caseNames, controlNames = getCaseAndControlListsFromPedFile(pedFilePath)
+		totalCases = len(caseNames)
+		totalControls = len(controlNames)
+	# Otherwise, we work from the genotypes file exclusively
+	else:
+		caseNames = []
+		controlNames = []
+		totalCases, totalControls = getTotalCaseAndControlCounts(genotypesFilename)
 
-	# The dominant model returns the actual counts.
-	if "genotypes" in genotypesFilename:
-		counts = getQVcountsForDominantModel(genotypesFilename)
-		qvsPerCase = counts["case"].values()
-		qvsPerControl = counts["ctrl"].values()
-	# The comphet model returns the variantIDs, which we need to count up.
-	if "comphet" in genotypesFilename:
-		qvs = getQVsForComphetModel(genotypesFilename)
-		qvsPerCase = [len(setOfVariants) for setOfVariants in qvs["case"].values()]
-		qvsPerControl = [len(setOfVariants) for setOfVariants in qvs["ctrl"].values()]
+	casesToTheirQVcounts, controlsToTheirQVcounts = getQVcounts(genotypesFilename, caseNames, controlNames)
 
-	totalCases, totalControls = getTotalCaseAndControlCounts(genotypesFilename)
+	# If have ped file, this shouldn't change. If only have genotypes file, now have list of names in file.
+	caseNames = casesToTheirQVcounts.keys()
+	controlNames = controlsToTheirQVcounts.keys()
 
-
-
-	# Add on the zero-counts.
-	numCasesWithoutQV = totalCases - len(qvsPerCase)
-	casesWithoutQV = [0] * numCasesWithoutQV
-	qvsPerCase += casesWithoutQV
-
-	numControlsWithoutQV = totalControls - len(qvsPerControl)
-	controlsWithoutQV = [0] * numControlsWithoutQV
-	qvsPerControl += controlsWithoutQV
+	# Should be 0 if have a ped file.
+	missingCases = totalCases - len(caseNames)
+	missingControls = totalControls - len(controlNames)
 
 	suffix = fileName.split("_")[-1]
-	logName = folder + fileName.replace(suffix, "qv_counts.log")
-	initializeLog(logName, qvsPerCase, qvsPerControl)
+	qvCountsLogName = folder + fileName.replace(suffix, "qv_counts.tsv")
+	writeOutQVcounts(qvCountsLogName, casesToTheirQVcounts, controlsToTheirQVcounts, missingCases, missingControls)
 
-	try:
-		value, pvalue = stats.mannwhitneyu(qvsPerCase, qvsPerControl)
-		writeMannWhitneyResultsToLog(logName, pvalue)
-	except ValueError as e: # If either array is empty.
-		pvalue = None
-		writeToLog(logName, "The test could not be run. (You may have run with no cases, or no controls.)", writeOrAppend = "a")
-	
+	qvsPerCase = casesToTheirQVcounts.values() + [0] * missingCases
+	qvsPerControl = controlsToTheirQVcounts.values() + [0] * missingControls
+
+	mannWhitneyLogName = folder + fileName.replace(suffix, "mann_whitney.log")
+	runMannWhitney(mannWhitneyLogName, qvsPerCase, qvsPerControl)
+
 	qvPlotName = folder + fileName.replace(suffix, "qv_counts.png")
 	graphQVcounts(qvsPerCase, qvsPerControl, qvPlotName)
-	
 
-
+	return
 
 if __name__ == '__main__':
 
-	if len(sys.argv) != 2:
-		raise ValueError("This script only takes in a _genotypes filename as an argument.")
-	else:
-		genotypesFilename = sys.argv[1]
-		handler(genotypesFilename)
+	# if len(sys.argv) != 2:
+	# 	raise ValueError("This script only takes in a _genotypes filename as an argument.")
+	# else:
+	# 	genotypesFilename = sys.argv[1]
+	# 	handler(genotypesFilename)
 
+	arguments = docopt(__doc__)
+	# Can access the values like: arguments["genotypesFilename"]
+	# handler(*arguments.values())
+	handler(arguments["<genotypesFileName>"], arguments["<pedFilePath>"])

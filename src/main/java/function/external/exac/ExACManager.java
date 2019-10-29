@@ -14,7 +14,7 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class ExacManager {
+public class ExACManager {
 
     public static final String[] EXAC_POP = {"global", "afr", "amr", "eas", "sas", "fin", "nfe", "oth"};
 
@@ -47,7 +47,7 @@ public class ExacManager {
     }
 
     public static void init() {
-        if (ExacCommand.isIncludeExacGeneVariantCount) {
+        if (ExACCommand.isIncludeExacGeneVariantCount) {
             initGeneVariantCountMap();
         }
     }

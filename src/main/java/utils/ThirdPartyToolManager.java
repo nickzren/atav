@@ -177,7 +177,8 @@ public class ThirdPartyToolManager {
     public static void runMannWhitneyTest(String genotypesFilePath) {
         String cmd = PYTHON + " "
                 + MANN_WHITNEY_TEST + " "
-                + genotypesFilePath;
+                + genotypesFilePath + " "
+                + SampleManager.getExistingSampleFile();
 
         systemCall(new String[]{cmd});
     }

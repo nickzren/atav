@@ -1,7 +1,5 @@
 package function.external.pext;
 
-import global.Data;
-import java.util.ArrayList;
 import java.util.StringJoiner;
 import utils.FormatManager;
 
@@ -12,13 +10,12 @@ import utils.FormatManager;
 public class PextOutput {
 
     String variantIdStr;
-    ArrayList<Pext> pextList = new ArrayList<>();
+    float ratio;
 
     public static String getTitle() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
-        sj.add("Gene");
         sj.add(PextManager.getTitle());
 
         return sj.toString();
@@ -29,27 +26,20 @@ public class PextOutput {
 
         String[] tmp = id.split("-"); // chr-pos-ref-alt
 
-        if (tmp[2].length() == 1 && tmp[3].length() == 1) { // SNV only
-            pextList = PextManager.getPextList(tmp[0], Integer.parseInt(tmp[1]), tmp[3]);
-        }
+        ratio = PextManager.getRatio(tmp[0], Integer.parseInt(tmp[1]));
     }
 
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        if (pextList.isEmpty()) {
-            sj.add(variantIdStr);
-            sj.add(Data.STRING_NA);
-            sj.add(Data.STRING_NA);
-        } else {
-            for (Pext pext : pextList) {
-                sj.add(variantIdStr);
-                sj.add(pext.getGene());
-                sj.add(FormatManager.getFloat(pext.getScore()));
-            }
-        }
+        sj.add(variantIdStr);
+        sj.add(FormatManager.getFloat(ratio));
 
         return sj;
+    }
+
+    public boolean isValid() {
+        return PextCommand.isPextRatioValid(ratio);
     }
     
     @Override

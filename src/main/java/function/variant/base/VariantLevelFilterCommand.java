@@ -5,8 +5,8 @@ import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
-import function.external.exac.ExacCommand;
-import function.external.exac.ExacManager;
+import function.external.exac.ExACCommand;
+import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesCommand;
@@ -15,6 +15,7 @@ import function.external.gerp.GerpCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
+import function.external.mpc.MPCCommand;
 import function.external.mtr.MTRCommand;
 import function.external.pext.PextCommand;
 import function.external.primateai.PrimateAICommand;
@@ -101,24 +102,24 @@ public class VariantLevelFilterCommand {
                     EvsCommand.isIncludeEvs = true;
                     break;
                 case "--exac-pop":
-                    checkValuesValid(ExacManager.EXAC_POP, option);
-                    ExacCommand.exacPop = option.getValue();
-                    ExacCommand.isIncludeExac = true;
+                    checkValuesValid(ExACManager.EXAC_POP, option);
+                    ExACCommand.exacPop = option.getValue();
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--exac-af":
                     checkValueValid(1, 0, option);
-                    ExacCommand.exacAF = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.exacAF = getValidFloat(option);
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--min-exac-vqslod-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    ExacCommand.exacVqslodSnv = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.exacVqslodSnv = getValidFloat(option);
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--min-exac-vqslod-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    ExacCommand.exacVqslodIndel = getValidFloat(option);
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.exacVqslodIndel = getValidFloat(option);
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--gnomad-exome-pop":
                     checkValuesValid(GnomADManager.GNOMAD_EXOME_POP, option);
@@ -183,11 +184,6 @@ public class VariantLevelFilterCommand {
                     TrapCommand.minTrapScoreNonCoding = getValidFloat(option);
                     TrapCommand.isIncludeTrap = true;
                     break;
-                case "--min-pext-score":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    PextCommand.minPextScore = getValidFloat(option);
-                    PextCommand.isIncludePext = true;
-                    break;    
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
                     KaviarCommand.maxKaviarMaf = getValidFloat(option);
@@ -279,14 +275,24 @@ public class VariantLevelFilterCommand {
                     PrimateAICommand.minPrimateAI = getValidFloat(option);
                     PrimateAICommand.isIncludePrimateAI = true;
                     break;
+                case "--min-mpc":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    MPCCommand.minMPC = getValidFloat(option);
+                    MPCCommand.isIncludeMPC = true;
+                    break;
+                case "--min-pext-ratio":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    PextCommand.minPextRatio = getValidFloat(option);
+                    PextCommand.isIncludePext = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
                 case "--include-exac":
-                    ExacCommand.isIncludeExac = true;
+                    ExACCommand.isIncludeExac = true;
                     break;
                 case "--include-exac-gene-variant-count":
-                    ExacCommand.isIncludeExacGeneVariantCount = true;
+                    ExACCommand.isIncludeExacGeneVariantCount = true;
                     break;
                 case "--include-gnomad-exome":
                     GnomADCommand.isIncludeGnomADExome = true;
@@ -296,16 +302,13 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-gnomad-gene-metrics":
                     GnomADCommand.isIncludeGnomADGeneMetrics = true;
-                    break;    
+                    break;
                 case "--include-gerp":
                     GerpCommand.isIncludeGerp = true;
                     break;
                 case "--include-trap":
                     TrapCommand.isIncludeTrap = true;
                     break;
-                case "--include-pext":
-                    PextCommand.isIncludePext = true;
-                    break;    
 //                case "--include-kaviar":
 //                    KaviarCommand.isIncludeKaviar = true;
 //                    break;
@@ -352,6 +355,12 @@ public class VariantLevelFilterCommand {
                     isExcludeFalseLOFTEE = true;
                     isIncludeLOFTEE = true;
                     break;
+                case "--include-mpc":
+                    MPCCommand.isIncludeMPC = true;
+                    break;
+                case "--include-pext":
+                    PextCommand.isIncludePext = true;
+                    break;
                 default:
                     continue;
             }
@@ -366,8 +375,8 @@ public class VariantLevelFilterCommand {
             return true;
         }
 
-        return value == null ||
-                value == true;
+        return value == null
+                || value == true;
     }
 
     private static Set<String> getSet(CommandOption option) {

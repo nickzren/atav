@@ -14,8 +14,8 @@ import utils.ErrorManager;
  */
 public class TrapManager {
 
-    static final String variantTable = "trap.snv_chr";
-    static final String mnvTable = "trap.mnv";
+    static final String variantTable = "trap_v3.snv_chr";
+    static final String mnvTable = "trap_v3.mnv";
 
     private static String chr = Data.STRING_NA;
     private static int pos = Data.INTEGER_NA;

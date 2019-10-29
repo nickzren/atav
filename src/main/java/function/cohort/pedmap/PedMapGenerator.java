@@ -2,7 +2,6 @@ package function.cohort.pedmap;
 
 import function.cohort.base.AnalysisBase4CalledVar;
 import function.cohort.base.CalledVariant;
-import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.Sample;
 import global.Data;
 import function.cohort.base.SampleManager;
@@ -72,7 +71,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        String sampleFile = CohortLevelFilterCommand.sampleFile;
+        String sampleFile = SampleManager.getExistingSampleFile();
 
         if (PedMapCommand.isKinship) {
             doKinship();
@@ -234,7 +233,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         // Run kinship pruning script
         cmd = ThirdPartyToolManager.PYTHON
                 + " " + KINSHIP_SCRIPT_PATH
-                + " " + CohortLevelFilterCommand.sampleFile
+                + " " + SampleManager.getExistingSampleFile()
                 + " " + CommonCommand.outputPath + "king.kin0"
                 + " " + CommonCommand.outputPath + "king.kin"
                 + " --relatedness_threshold " + PedMapCommand.kinshipRelatednessThreshold

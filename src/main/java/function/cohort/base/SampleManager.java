@@ -478,11 +478,7 @@ public class SampleManager {
             LogManager.writeAndPrint("Generated all existing samples:\n" + existingSampleFile);
 
             ErrorManager.print("Wrong values in sample file.", ErrorManager.INPUT_PARSING);
-        } else {
-            // no need to keep existing samples file since there are no problems
-            File file = new File(existingSampleFile);
-            file.delete();
-        }
+        } 
     }
 
     private static void checkCaseCtrlOptions() {
@@ -835,5 +831,9 @@ public class SampleManager {
 
     public static StringJoiner getCaseIDSJ() {
         return caseIDSJ;
+    }
+    
+    public static String getExistingSampleFile() {
+        return existingSampleFile;
     }
 }

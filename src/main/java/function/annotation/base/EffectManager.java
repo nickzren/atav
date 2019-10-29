@@ -34,6 +34,7 @@ public class EffectManager {
 
     // user input values
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
+    private static HashSet<String> inputEffectSet = new HashSet<>();
 
     private static final String HIGH_IMPACT = "('HIGH')";
     private static final String MODERATE_IMPACT = "('HIGH'),('MODERATE')";
@@ -145,6 +146,7 @@ public class EffectManager {
                     + impactEffect2IdMap.get(impactEffect) + ");");
 
             inputImpactSet.add(Impact.valueOf(impactEffect.split(":")[0]));
+            inputEffectSet.add(impactEffect.split(":")[1]);
         }
 
         stmt.closeOnCompletion();
@@ -209,6 +211,10 @@ public class EffectManager {
 
     public static boolean isLOF(int effectID) {
         return LOF_EFFECT_ID_SET.contains(effectID);
+    }
+    
+    public static boolean isEffectContained(String effect) {
+        return inputEffectSet.isEmpty() || inputEffectSet.contains(effect);
     }
     
     public static boolean isUsed() {
