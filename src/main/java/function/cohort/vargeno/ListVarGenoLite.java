@@ -268,6 +268,10 @@ public class ListVarGenoLite {
                 value = record.get(headerIndex);
             }
 
+            if (value.contains(",")) {
+                value = FormatManager.appendDoubleQuote(value);
+            }
+
             sj.add(value);
         }
 
