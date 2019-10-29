@@ -10,7 +10,10 @@ import function.cohort.base.CohortLevelFilterCommand;
 import function.external.exac.ExAC;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
+import function.variant.base.VariantLevelFilterCommand;
+import function.variant.base.VariantManager;
 import global.Index;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -130,7 +133,17 @@ public class VariantLite {
         }
     }
 
-    public boolean isValid() {
+    public boolean isValid() throws SQLException {
+        if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
+                && VariantManager.isMultiallelicVariant(chr, pos)) {
+            // exclude Multiallelic site > 1 variant
+            return false;
+        } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant2
+                && VariantManager.isMultiallelicVariant2(chr, pos)) {
+            // exclude Multiallelic site > 2 variants
+            return false;
+        }
+        
         return exac.isValid()
                 && gnomADExome.isValid()
                 && gnomADGenome.isValid()

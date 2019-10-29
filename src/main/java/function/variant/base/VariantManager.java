@@ -268,11 +268,11 @@ public class VariantManager {
             // exclude indel
             return false;
         } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
-                && VariantManager.isMultiallelicVariant(var.getChrStr(), var.getStartPosition())) {
+                && isMultiallelicVariant(var.getChrStr(), var.getStartPosition())) {
             // exclude Multiallelic site > 1 variant
             return false;
         } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant2
-                && VariantManager.isMultiallelicVariant2(var.getChrStr(), var.getStartPosition())) {
+                && isMultiallelicVariant2(var.getChrStr(), var.getStartPosition())) {
             // exclude Multiallelic site > 2 variants
             return false;
         }
@@ -305,7 +305,7 @@ public class VariantManager {
         }
     }
 
-    private static boolean isExcluded(String varId) {
+    public static boolean isExcluded(String varId) {
         return excludeVariantSet.contains(varId);
     }
 
