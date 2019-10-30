@@ -26,21 +26,21 @@ public class VCFOutput extends Output {
         sb.append("##FORMAT=<ID=GQ,Number=1,Type=Integer,Description=\"Genotype Quality\">\n");
         sb.append("##FORMAT=<ID=DP,Number=1,Type=Integer,Description=\"Read Depth\">\n");
 
-        StringJoiner headerSJ = new StringJoiner("\t");
+        StringJoiner sj = new StringJoiner("\t");
 
-        headerSJ.add("#CHROM");
-        headerSJ.add("POS");
-        headerSJ.add("ID");
-        headerSJ.add("REF");
-        headerSJ.add("ALT");
-        headerSJ.add("INFO");
-        headerSJ.add("FORMAT");
+        sj.add("#CHROM");
+        sj.add("POS");
+        sj.add("ID");
+        sj.add("REF");
+        sj.add("ALT");
+        sj.add("INFO");
+        sj.add("FORMAT");
 
         for (Sample sample : SampleManager.getList()) {
-            headerSJ.add(sample.getName());
+            sj.add(sample.getName());
         }
 
-        sb.append(headerSJ.toString());
+        sb.append(sj.toString());
 
         return sb.toString();
     }
