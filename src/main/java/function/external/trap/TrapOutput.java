@@ -14,12 +14,12 @@ public class TrapOutput {
     String variantIdStr;
     ArrayList<Trap> trapList = new ArrayList<>();
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
         sj.add("Gene");
-        sj.add(TrapManager.getTitle());
+        sj.add(TrapManager.getHeader());
 
         return sj.toString();
     }

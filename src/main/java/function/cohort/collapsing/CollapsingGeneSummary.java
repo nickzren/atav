@@ -20,7 +20,7 @@ import java.util.StringJoiner;
 public class CollapsingGeneSummary extends CollapsingSummary {
 
     // output columns 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Rank");
@@ -38,11 +38,11 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         sj.add("Fet P");
         sj.add("Linear P");
         sj.add("Logistic P");
-        if (!GeneManager.geneCoverageSummaryTitle.isEmpty()) {
-            sj.add(GeneManager.geneCoverageSummaryTitle);
+        if (!GeneManager.geneCoverageSummaryHeader.isEmpty()) {
+            sj.add(GeneManager.geneCoverageSummaryHeader);
         }
         if (RvisCommand.isIncludeRvis) {
-            sj.add(RvisManager.getTitle());
+            sj.add(RvisManager.getHeader());
         }
 
         return sj.toString();
@@ -79,7 +79,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         if (f.exists()) {
             FileReader fr = new FileReader(f);
             BufferedReader br = new BufferedReader(fr);
-            br.readLine(); // ingore title
+            br.readLine(); // ingore header
 
             String line;
             while ((line = br.readLine()) != null) {

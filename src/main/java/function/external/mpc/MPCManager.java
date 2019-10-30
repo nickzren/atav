@@ -14,7 +14,7 @@ import utils.ErrorManager;
 public class MPCManager {
     static final String table = "mpc.variant";
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "MPC";
     }
     

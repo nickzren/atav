@@ -1,4 +1,4 @@
-package function.cohort.var;
+package function.cohort.vcf;
 
 import function.cohort.base.AnalysisBase4CalledVar;
 import function.cohort.base.CalledVariant;
@@ -11,17 +11,17 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class ListVar extends AnalysisBase4CalledVar {
+public class ListVCF extends AnalysisBase4CalledVar {
 
-    BufferedWriter bwVariants = null;
-    final String variantsFilePath = CommonCommand.outputPath + "variants.csv";
+    BufferedWriter bwVCF = null;
+    final String vcfFilePath = CommonCommand.outputPath + "variants.vcf";
 
     @Override
     public void initOutput() {
         try {
-            bwVariants = new BufferedWriter(new FileWriter(variantsFilePath));
-            bwVariants.write(VarOutput.getHeader());
-            bwVariants.newLine();
+            bwVCF = new BufferedWriter(new FileWriter(vcfFilePath));
+            bwVCF.write(VCFOutput.getHeader());
+            bwVCF.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -30,8 +30,8 @@ public class ListVar extends AnalysisBase4CalledVar {
     @Override
     public void closeOutput() {
         try {
-            bwVariants.flush();
-            bwVariants.close();
+            bwVCF.flush();
+            bwVCF.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -56,10 +56,10 @@ public class ListVar extends AnalysisBase4CalledVar {
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
-            VarOutput output = new VarOutput(calledVar);
+            VCFOutput output = new VCFOutput(calledVar);
 
-            bwVariants.write(output.toString());
-            bwVariants.newLine();
+            bwVCF.write(output.toString());
+            bwVCF.newLine();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -67,6 +67,6 @@ public class ListVar extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "Start running list variant function";
+        return "Start running list vcf function";
     }
 }

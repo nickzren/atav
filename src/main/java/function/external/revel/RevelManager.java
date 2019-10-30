@@ -16,7 +16,7 @@ public class RevelManager {
     static final String variantTable = "revel.variant_060316";
     static final String mnvTable = "revel.mnv_060316";
     
-    public static String getTitle() {
+    public static String getHeader() {
         return "REVEL";
     }
 

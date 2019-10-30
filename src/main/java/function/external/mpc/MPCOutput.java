@@ -10,9 +10,9 @@ public class MPCOutput {
     
     float mpc;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + MPCManager.getTitle();
+                + MPCManager.getHeader();
     }
 
     public MPCOutput(String id) throws Exception {

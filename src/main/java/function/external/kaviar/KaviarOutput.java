@@ -10,9 +10,9 @@ public class KaviarOutput {
 
     Kaviar kaviar;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + KaviarManager.getTitle();
+                + KaviarManager.getHeader();
     }
 
     public KaviarOutput(String id) {

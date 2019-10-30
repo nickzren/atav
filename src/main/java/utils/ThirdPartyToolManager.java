@@ -140,9 +140,9 @@ public class ThirdPartyToolManager {
         systemCall(new String[]{cmd});
     }
 
-    public static void generatePvaluesQQPlot(String title, String pvalueName,
+    public static void generatePvaluesQQPlot(String header, String pvalueName,
             String pvalueFile, String outputPath) {
-        String[] temp = title.split(",");
+        String[] temp = header.split(",");
 
         int col = 0;
 

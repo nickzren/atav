@@ -24,7 +24,7 @@ public class ListGnomADGenome extends AnalysisBase {
     public void initOutput() {
         try {
             bwGnomADGenome = new BufferedWriter(new FileWriter(gnomADGenomeFilePath));
-            bwGnomADGenome.write(GnomADGenomeOutput.getTitle());
+            bwGnomADGenome.write(GnomADGenomeOutput.getHeader());
             bwGnomADGenome.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

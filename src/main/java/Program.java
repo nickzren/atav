@@ -83,6 +83,8 @@ import function.cohort.var.ListVar;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VarGenoCommand;
+import function.cohort.vcf.ListVCF;
+import function.cohort.vcf.VCFCommand;
 import function.external.mpc.ListMPC;
 import function.external.mpc.MPCCommand;
 import function.external.pext.ListPext;
@@ -173,6 +175,8 @@ public class Program {
                 listVarGenoLite.run();
             } else if (VarCommand.isListVar) {
                 runAnalysis(new ListVar());
+            } else if (VCFCommand.isListVCF) {
+                runAnalysis(new ListVCF());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
                 runAnalysis(new CollapsingSingleVariant());
             } else if (CollapsingCommand.isCollapsingCompHet) {

@@ -24,7 +24,7 @@ public class ListDiscovEHR extends AnalysisBase {
     public void initOutput() {
         try {
             bwDisCovEHR = new BufferedWriter(new FileWriter(disCovEHRFilePath));
-            bwDisCovEHR.write(DiscovEHROutput.getTitle());
+            bwDisCovEHR.write(DiscovEHROutput.getHeader());
             bwDisCovEHR.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

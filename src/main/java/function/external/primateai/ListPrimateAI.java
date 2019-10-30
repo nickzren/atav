@@ -23,7 +23,7 @@ public class ListPrimateAI extends AnalysisBase {
     public void initOutput() {
         try {
             bwPrimateAI = new BufferedWriter(new FileWriter(primateAIFilePath));
-            bwPrimateAI.write(PrimateAIOutput.getTitle());
+            bwPrimateAI.write(PrimateAIOutput.getHeader());
             bwPrimateAI.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

@@ -36,7 +36,7 @@ public class ListLIMBR extends AnalysisBase4AnnotatedVar {
     public void initOutput() {
         try {
             bwLIMBR = new BufferedWriter(new FileWriter(limbrFilePath));
-            bwLIMBR.write(LIMBROutput.getTitle());
+            bwLIMBR.write(LIMBROutput.getHeader());
             bwLIMBR.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

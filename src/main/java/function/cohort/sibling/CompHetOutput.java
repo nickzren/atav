@@ -12,7 +12,7 @@ import utils.FormatManager;
  */
 public class CompHetOutput extends Output {
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family ID");
@@ -23,19 +23,19 @@ public class CompHetOutput extends Output {
         sj.add("Child1 Trio Comp Het Flag");
         sj.add("Child2");
         sj.add("Child2 Trio Comp Het Flag");
-        sj.merge(initVarTitleStr("1"));
-        sj.merge(initVarTitleStr("2"));
+        sj.merge(initVarHeaderStr("1"));
+        sj.merge(initVarHeaderStr("2"));
 
         return sj.toString();
     }
 
-    private static StringJoiner initVarTitleStr(String var) {
+    private static StringJoiner initVarHeaderStr(String var) {
         StringJoiner sj = new StringJoiner(",");
         
-        sj.merge(getVariantDataTitle());
-        sj.merge(getAnnotationDataTitle());
-        sj.merge(getExternalDataTitle());
-        sj.merge(getCohortLevelTitle());
+        sj.merge(getVariantDataHeader());
+        sj.merge(getAnnotationDataHeader());
+        sj.merge(getExternalDataHeader());
+        sj.merge(getCohortLevelHeader());
         sj.add("Child1 GT");
         sj.add("Child1 DP Bin");
         sj.add("Child2 GT");

@@ -10,10 +10,10 @@ import utils.FormatManager;
  */
 public class SubRvisOutput {
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
                 + "Gene Name,"
-                + SubRvisManager.getTitle();
+                + SubRvisManager.getHeader();
     }
 
     private String domainName = Data.STRING_NA;

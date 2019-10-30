@@ -10,9 +10,9 @@ public class DenovoDBOutput {
 
     DenovoDB denovoDB;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + DenovoDBManager.getTitle();
+                + DenovoDBManager.getHeader();
     }
 
     public DenovoDBOutput(String id) {

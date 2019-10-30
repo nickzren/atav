@@ -138,15 +138,15 @@ public class ListVarGenoLite {
         };
 
         if (ExACCommand.isIncludeExac) {
-            headers = (String[]) ArrayUtils.addAll(headers, ExACManager.getTitle().split(","));
+            headers = (String[]) ArrayUtils.addAll(headers, ExACManager.getHeader().split(","));
         }
 
         if (GnomADCommand.isIncludeGnomADExome) {
-            headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getExomeTitle().split(","));
+            headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getExomeHeader().split(","));
         }
 
         if (GnomADCommand.isIncludeGnomADGenome) {
-            headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeTitle().split(","));
+            headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeHeader().split(","));
         }
 
         return headers;

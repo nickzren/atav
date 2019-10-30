@@ -20,7 +20,7 @@ public class ListTrap extends AnalysisBase {
     public void initOutput() {
         try {
             bwTrap = new BufferedWriter(new FileWriter(trapFilePath));
-            bwTrap.write(TrapOutput.getTitle());
+            bwTrap.write(TrapOutput.getHeader());
             bwTrap.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

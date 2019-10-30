@@ -12,7 +12,7 @@ public class DenovoDBManager {
 
     static final String table = "knownvar.denovodb_2018_05_07";
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("DenovoDB Phenotype");

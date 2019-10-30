@@ -9,10 +9,10 @@ import utils.FormatManager;
  */
 public class LIMBROutput {
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
                 + "Gene Name,"
-                + LIMBRManager.getTitle();
+                + LIMBRManager.getHeader();
     }
 
     private LIMBRGene geneDomain;

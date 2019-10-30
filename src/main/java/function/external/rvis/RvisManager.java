@@ -17,12 +17,12 @@ public class RvisManager {
 
     private static final String RVIS_PATH = "data/rvis/gene_score_140318.csv";
 
-    private static String title;
+    private static String header;
     private static final HashMap<String, String> rvisMap = new HashMap<>();
     private static StringJoiner NA = new StringJoiner(",");
 
-    public static String getTitle() {
-        return title;
+    public static String getHeader() {
+        return header;
     }
 
     public static String getVersion() {
@@ -49,7 +49,7 @@ public class RvisManager {
                 String values = lineStr.substring(firstCommaIndex + 1);
 
                 if (isFirstLine) {
-                    title = values;
+                    header = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
                         NA.add(Data.STRING_NA);

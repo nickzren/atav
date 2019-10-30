@@ -35,11 +35,11 @@ public class ListTrio extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwDenovo = new BufferedWriter(new FileWriter(denovoFilePath));
-            bwDenovo.write(TrioManager.getTitle4Denovo());
+            bwDenovo.write(TrioManager.getHeader4Denovo());
             bwDenovo.newLine();
 
             bwCompHet = new BufferedWriter(new FileWriter(compHetFilePath));
-            bwCompHet.write(TrioManager.getTitle4CompHet());
+            bwCompHet.write(TrioManager.getHeader4CompHet());
             bwCompHet.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

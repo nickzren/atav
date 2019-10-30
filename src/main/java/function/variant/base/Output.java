@@ -57,7 +57,7 @@ import utils.MathManager;
  */
 public class Output {
 
-    public static StringJoiner getVariantDataTitle() {
+    public static StringJoiner getVariantDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
@@ -69,7 +69,7 @@ public class Output {
         return sj;
     }
 
-    public static StringJoiner getAnnotationDataTitle() {
+    public static StringJoiner getAnnotationDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Transcript Stable Id");
@@ -92,91 +92,91 @@ public class Output {
         return sj;
     }
 
-    public static StringJoiner getExternalDataTitle() {
+    public static StringJoiner getExternalDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         if (EvsCommand.isIncludeEvs) {
-            sj.add(EvsManager.getTitle());
+            sj.add(EvsManager.getHeader());
         }
 
         if (ExACCommand.isIncludeExac) {
-            sj.add(ExACManager.getTitle());
+            sj.add(ExACManager.getHeader());
         }
 
         if (ExACCommand.isIncludeExacGeneVariantCount) {
-            sj.add(ExACManager.getGeneVariantCountTitle());
+            sj.add(ExACManager.getGeneVariantCountHeader());
         }
 
         if (GnomADCommand.isIncludeGnomADExome) {
-            sj.add(GnomADManager.getExomeTitle());
+            sj.add(GnomADManager.getExomeHeader());
         }
 
         if (GnomADCommand.isIncludeGnomADGenome) {
-            sj.add(GnomADManager.getGenomeTitle());
+            sj.add(GnomADManager.getGenomeHeader());
         }
 
         if (GnomADCommand.isIncludeGnomADGeneMetrics) {
-            sj.add(GnomADManager.getGeneMetricsTitle());
+            sj.add(GnomADManager.getGeneMetricsHeader());
         }
 
         if (KnownVarCommand.isIncludeKnownVar) {
-            sj.add(KnownVarManager.getTitle());
+            sj.add(KnownVarManager.getHeader());
         }
 
         if (KaviarCommand.isIncludeKaviar) {
-            sj.add(KaviarManager.getTitle());
+            sj.add(KaviarManager.getHeader());
         }
 
         if (GenomesCommand.isInclude1000Genomes) {
-            sj.add(GenomesManager.getTitle());
+            sj.add(GenomesManager.getHeader());
         }
 
         if (RvisCommand.isIncludeRvis) {
-            sj.add(RvisManager.getTitle());
+            sj.add(RvisManager.getHeader());
         }
 
         if (SubRvisCommand.isIncludeSubRvis) {
-            sj.add(SubRvisManager.getTitle());
+            sj.add(SubRvisManager.getHeader());
         }
 
         if (LIMBRCommand.isIncludeLIMBR) {
-            sj.add(LIMBRManager.getTitle());
+            sj.add(LIMBRManager.getHeader());
         }
 
         if (CCRCommand.isIncludeCCR) {
-            sj.add(CCRManager.getTitle());
+            sj.add(CCRManager.getHeader());
         }
 
         if (GerpCommand.isIncludeGerp) {
-            sj.add(GerpManager.getTitle());
+            sj.add(GerpManager.getHeader());
         }
 
         if (TrapCommand.isIncludeTrap) {
-            sj.add(TrapManager.getTitle());
+            sj.add(TrapManager.getHeader());
         }
 
         if (MgiCommand.isIncludeMgi) {
-            sj.add(MgiManager.getTitle());
+            sj.add(MgiManager.getHeader());
         }
 
         if (DenovoDBCommand.isIncludeDenovoDB) {
-            sj.add(DenovoDBManager.getTitle());
+            sj.add(DenovoDBManager.getHeader());
         }
 
         if (DiscovEHRCommand.isIncludeDiscovEHR) {
-            sj.add(DiscovEHRManager.getTitle());
+            sj.add(DiscovEHRManager.getHeader());
         }
 
         if (MTRCommand.isIncludeMTR) {
-            sj.add(MTRManager.getTitle());
+            sj.add(MTRManager.getHeader());
         }
 
         if (RevelCommand.isIncludeRevel) {
-            sj.add(RevelManager.getTitle());
+            sj.add(RevelManager.getHeader());
         }
 
         if (PrimateAICommand.isIncludePrimateAI) {
-            sj.add(PrimateAIManager.getTitle());
+            sj.add(PrimateAIManager.getHeader());
         }
 
         if (VariantLevelFilterCommand.isIncludeLOFTEE) {
@@ -184,18 +184,18 @@ public class Output {
         }
 
         if (MPCCommand.isIncludeMPC) {
-            sj.add(MPCManager.getTitle());
+            sj.add(MPCManager.getHeader());
         }
 
         if (PextCommand.isIncludePext) {
-            sj.add(PextManager.getTitle());
+            sj.add(PextManager.getHeader());
         }
 
         return sj;
     }
 
     // quick hack here, eventually will get rid of min covered sample binomial p
-    public static StringJoiner getCohortLevelTitle() {
+    public static StringJoiner getCohortLevelHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Hom Case");
@@ -225,7 +225,7 @@ public class Output {
         return sj;
     }
 
-    public static StringJoiner getCarrierDataTitle() {
+    public static StringJoiner getCarrierDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Sample Name");

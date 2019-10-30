@@ -12,7 +12,7 @@ public class EvsManager {
 
     static final String variantTable = "evs.variant_2015_09_16";
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Evs All Maf");

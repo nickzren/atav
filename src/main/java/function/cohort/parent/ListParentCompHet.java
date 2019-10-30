@@ -29,7 +29,7 @@ public class ListParentCompHet extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwCompHet = new BufferedWriter(new FileWriter(compHetFilePath));
-            bwCompHet.write(ParentOutput.getTitle());
+            bwCompHet.write(ParentOutput.getHeader());
             bwCompHet.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

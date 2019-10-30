@@ -23,7 +23,7 @@ public class ListRevel extends AnalysisBase {
     public void initOutput() {
         try {
             bwRevel = new BufferedWriter(new FileWriter(revelFilePath));
-            bwRevel.write(RevelOutput.getTitle());
+            bwRevel.write(RevelOutput.getHeader());
             bwRevel.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

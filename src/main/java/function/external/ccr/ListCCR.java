@@ -36,7 +36,7 @@ public class ListCCR extends AnalysisBase4AnnotatedVar {
     public void initOutput() {
         try {
             bwCCR = new BufferedWriter(new FileWriter(ccrFilePath));
-            bwCCR.write(CCROutput.getTitle());
+            bwCCR.write(CCROutput.getHeader());
             bwCCR.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

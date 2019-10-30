@@ -25,7 +25,7 @@ public class ListMTR extends AnalysisBase {
     public void initOutput() {
         try {
             bwMTR = new BufferedWriter(new FileWriter(disMTRFilePath));
-            bwMTR.write(MTROutput.getTitle());
+            bwMTR.write(MTROutput.getHeader());
             bwMTR.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

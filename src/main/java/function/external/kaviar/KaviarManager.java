@@ -13,7 +13,7 @@ public class KaviarManager {
     static final String snvTable = "kaviar.snv_maf_160113";
     static final String indelTable = "kaviar.indel_maf_160113";
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Kaviar Maf");

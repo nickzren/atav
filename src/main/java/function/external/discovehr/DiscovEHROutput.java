@@ -10,9 +10,9 @@ public class DiscovEHROutput {
 
     DiscovEHR discovEHR;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + DiscovEHRManager.getTitle();
+                + DiscovEHRManager.getHeader();
     }
 
     public DiscovEHROutput(String id) {

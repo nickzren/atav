@@ -20,7 +20,7 @@ public class ListVarAnno extends AnalysisBase4AnnotatedVar {
     public void initOutput() {
         try {
             bwAnnotations = new BufferedWriter(new FileWriter(annotationsFilePath));
-            bwAnnotations.write(VarAnnoOutput.getTitle());
+            bwAnnotations.write(VarAnnoOutput.getHeader());
             bwAnnotations.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

@@ -19,7 +19,7 @@ public class PextManager {
     private static int pos = Data.INTEGER_NA;
     private static float ratio = Data.FLOAT_NA;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "PEXT Ratio";
     }
 

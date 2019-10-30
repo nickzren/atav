@@ -23,7 +23,7 @@ public class ParentalMosaic extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwOutput = new BufferedWriter(new FileWriter(outputFilePath));
-            bwOutput.write(ParentalOutput.getTitle());
+            bwOutput.write(ParentalOutput.getHeader());
             bwOutput.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

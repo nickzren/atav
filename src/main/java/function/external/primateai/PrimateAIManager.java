@@ -15,7 +15,7 @@ public class PrimateAIManager {
     static final String variantTable = "PrimateAI.variant_042319";
     static final String mnvTable = "PrimateAI.mnv_042319";
     
-    public static String getTitle() {
+    public static String getHeader() {
         return "PrimateAI";
     }
 

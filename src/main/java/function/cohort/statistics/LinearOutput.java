@@ -18,13 +18,13 @@ public class LinearOutput extends StatisticOutput {
 
     double beta1 = 0;
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
         
-        sj.merge(getVariantDataTitle());
-        sj.merge(getAnnotationDataTitle());
-        sj.merge(getExternalDataTitle());
-        sj.merge(getCohortLevelTitle());
+        sj.merge(getVariantDataHeader());
+        sj.merge(getAnnotationDataHeader());
+        sj.merge(getExternalDataHeader());
+        sj.merge(getCohortLevelHeader());
         sj.add("P Value");
         sj.add("Beta1");
         

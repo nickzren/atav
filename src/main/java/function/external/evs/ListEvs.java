@@ -24,7 +24,7 @@ public class ListEvs extends AnalysisBase {
     public void initOutput() {
         try {
             bwEvs = new BufferedWriter(new FileWriter(evsFilePath));
-            bwEvs.write(EvsOutput.getTitle());
+            bwEvs.write(EvsOutput.getHeader());
             bwEvs.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

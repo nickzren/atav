@@ -24,7 +24,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
-            bwGenotypes.write(VarGenoOutput.getTitle());
+            bwGenotypes.write(VarGenoOutput.getHeader());
             bwGenotypes.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

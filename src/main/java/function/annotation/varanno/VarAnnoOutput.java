@@ -12,12 +12,12 @@ public class VarAnnoOutput {
 
     AnnotatedVariant annotatedVar;
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.merge(Output.getVariantDataTitle());
-        sj.merge(Output.getAnnotationDataTitle());
-        sj.merge(Output.getExternalDataTitle());
+        sj.merge(Output.getVariantDataHeader());
+        sj.merge(Output.getAnnotationDataHeader());
+        sj.merge(Output.getExternalDataHeader());
 
         return sj.toString();
     }

@@ -24,7 +24,7 @@ public class ListExAC extends AnalysisBase {
     public void initOutput() {
         try {
             bwExac = new BufferedWriter(new FileWriter(exacFilePath));
-            bwExac.write(ExACOutput.getTitle());
+            bwExac.write(ExACOutput.getHeader());
             bwExac.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

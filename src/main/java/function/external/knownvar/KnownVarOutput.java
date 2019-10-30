@@ -20,10 +20,10 @@ public class KnownVarOutput {
     private String acmg;
     private DBDSMOutput dbDSMOutput;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
                 + "Gene Name,"
-                + KnownVarManager.getTitle();
+                + KnownVarManager.getHeader();
     }
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {

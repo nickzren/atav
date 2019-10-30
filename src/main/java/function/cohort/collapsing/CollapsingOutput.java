@@ -14,15 +14,15 @@ import utils.FormatManager;
  */
 public class CollapsingOutput extends Output {
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.merge(getVariantDataTitle());
-        sj.merge(getAnnotationDataTitle());
-        sj.merge(getCarrierDataTitle());
-        sj.merge(getCohortLevelTitle());
+        sj.merge(getVariantDataHeader());
+        sj.merge(getAnnotationDataHeader());
+        sj.merge(getCarrierDataHeader());
+        sj.merge(getCohortLevelHeader());
         sj.add("LOO AF");
-        sj.merge(getExternalDataTitle());
+        sj.merge(getExternalDataHeader());
 
         return sj.toString();
     }

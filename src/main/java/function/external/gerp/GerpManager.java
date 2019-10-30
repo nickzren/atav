@@ -16,7 +16,7 @@ public class GerpManager {
     static final String table = "gerp_2011_12_27.gerp_chr";
     private static Gerp gerp = new Gerp();
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Gerp RS Score";
     }
 

@@ -88,7 +88,7 @@ public class CalledVariant extends AnnotatedVariant {
                 isValid = false;
             }
         }
-        
+
         return isValid;
     }
 
@@ -155,7 +155,7 @@ public class CalledVariant extends AnnotatedVariant {
 
             } else if (noncarrier != null) {
                 isCoveredSampleValid = GenotypeLevelFilterCommand.isMinCoverageValid(noncarrier.getDPBin());
-                
+
                 if (!isCoveredSampleValid) {
                     noncarrier.setGT(Data.BYTE_NA);
                     noncarrier.setDPBin(Data.SHORT_NA);
@@ -306,5 +306,29 @@ public class CalledVariant extends AnnotatedVariant {
 
     public double getCoveredSampleBinomialP() {
         return coveredSampleBinomialP;
+    }
+
+    // NS = Number of Samples With Data
+    public int getNS() {
+        return genoCount[Index.HOM][Index.CASE]
+                + genoCount[Index.HET][Index.CASE]
+                + genoCount[Index.REF][Index.CASE]
+                + genoCount[Index.HOM][Index.CTRL]
+                + genoCount[Index.HET][Index.CTRL]
+                + genoCount[Index.REF][Index.CTRL];
+    }
+
+    // AF = Allele Frequency
+    public float getAF() {
+        int ac = 2 * genoCount[Index.HOM][Index.CASE]
+                + genoCount[Index.HET][Index.CASE]
+                + 2 * genoCount[Index.HOM][Index.CTRL]
+                + genoCount[Index.HET][Index.CTRL];
+        int totalAC = ac + genoCount[Index.HET][Index.CASE]
+                + 2 * genoCount[Index.REF][Index.CASE]
+                + genoCount[Index.HET][Index.CTRL]
+                + 2 * genoCount[Index.REF][Index.CTRL];
+
+        return MathManager.devide(ac, totalAC);
     }
 }
