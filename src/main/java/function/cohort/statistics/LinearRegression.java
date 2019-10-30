@@ -32,14 +32,14 @@ public class LinearRegression extends AnalysisBase4CalledVar {
                 String testModel = StatisticsCommand.linearModels[m];
                 originalPOutputPath[m] = CommonCommand.outputPath + testModel + ".csv";
                 linearBw[m] = new BufferedWriter(new FileWriter(originalPOutputPath[m]));
-                linearBw[m].write(LinearOutput.getTitle());
+                linearBw[m].write(LinearOutput.getHeader());
                 linearBw[m].newLine();
 
                 if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                     sortedPOutputPath[m] = CommonCommand.outputPath + testModel
                             + ".p_" + StatisticsCommand.threshold4Sort + ".sorted" + ".csv";
                     sortedBw[m] = new BufferedWriter(new FileWriter(sortedPOutputPath[m]));
-                    sortedBw[m].write(LinearOutput.getTitle());
+                    sortedBw[m].write(LinearOutput.getHeader());
                     sortedBw[m].newLine();
 
                     unsortedOutputByModelList.add(new ArrayList<>());
@@ -141,13 +141,13 @@ public class LinearRegression extends AnalysisBase4CalledVar {
 
     private void generatePvaluesQQPlot() {
         for (int m = 0; m < StatisticsCommand.linearModels.length; m++) {
-            ThirdPartyToolManager.generatePvaluesQQPlot(LinearOutput.getTitle(),
+            ThirdPartyToolManager.generatePvaluesQQPlot(LinearOutput.getHeader(),
                     "P Value",
                     originalPOutputPath[m],
                     originalPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));
 
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
-                ThirdPartyToolManager.generatePvaluesQQPlot(LinearOutput.getTitle(),
+                ThirdPartyToolManager.generatePvaluesQQPlot(LinearOutput.getHeader(),
                         "P Value",
                         sortedPOutputPath[m],
                         sortedPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));

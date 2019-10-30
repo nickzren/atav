@@ -335,7 +335,7 @@ public class FlashPCAManager {
     }
     
     public static void getevecDatafor1DPlot(String inputFileName, String pdfFileName, 
-            String plotName, String plotTitle, String xName, String yName) {
+            String plotName, String plotHeader, String xName, String yName) {
         Charset charset = Charset.defaultCharset(); 
         XYSeries xyData = new XYSeries(plotName);
         try {
@@ -354,7 +354,7 @@ public class FlashPCAManager {
             XYSeriesCollection dataset = new XYSeriesCollection();
             dataset.addSeries(xyData);
             List<JFreeChart> charts = new ArrayList<>(1);
-            charts.add(ChartFactory.createXYLineChart(plotTitle, xName, yName, (XYDataset) dataset, PlotOrientation.VERTICAL, true, true, false));
+            charts.add(ChartFactory.createXYLineChart(plotHeader, xName, yName, (XYDataset) dataset, PlotOrientation.VERTICAL, true, true, false));
 
             saveChartAsPDF(pdfFileName, charts, 630, 1100);
 

@@ -40,7 +40,7 @@ public class KnownVarManager {
     private static final HashMap<String, String> acmgMap = new HashMap<>();
     private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("HGMDm2site");

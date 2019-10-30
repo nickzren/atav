@@ -12,7 +12,7 @@ public class MTRManager {
 
     static final String table = "mtr.variant_v2";
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("MTR");

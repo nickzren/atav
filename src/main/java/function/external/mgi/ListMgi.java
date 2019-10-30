@@ -32,7 +32,7 @@ public class ListMgi extends AnalysisBase4AnnotatedVar {
     public void initOutput() {
         try {
             bwMgi = new BufferedWriter(new FileWriter(mgiFilePath));
-            bwMgi.write("Variant ID,Gene," + MgiManager.getTitle());
+            bwMgi.write("Variant ID,Gene," + MgiManager.getHeader());
             bwMgi.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

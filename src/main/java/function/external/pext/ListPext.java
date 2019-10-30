@@ -20,7 +20,7 @@ public class ListPext extends AnalysisBase {
     public void initOutput() {
         try {
             bwPext = new BufferedWriter(new FileWriter(pextFilePath));
-            bwPext.write(PextOutput.getTitle());
+            bwPext.write(PextOutput.getHeader());
             bwPext.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

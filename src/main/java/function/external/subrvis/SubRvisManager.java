@@ -23,7 +23,7 @@ public class SubRvisManager {
     private static HashMap<String, ArrayList<SubRvisGene>> geneDomainMap = new HashMap<>();
     private static HashMap<String, ArrayList<SubRvisGene>> geneExonMap = new HashMap<>();
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("subRVIS Domain Name");

@@ -55,7 +55,7 @@ public class SampleManager {
     private static ArrayList<Sample> restrictedSampleList = new ArrayList<>();
 
     private static String tempCovarFile;
-    private static String covariateFileTitle = "";
+    private static String covariateFileHeader = "";
     private static int covariateNum = Data.INTEGER_NA;
 
     // output existing / qualifed samples
@@ -541,8 +541,8 @@ public class SampleManager {
 
                 lineStr = lineStr.replaceAll("( )+", "");
 
-                if (covariateFileTitle.isEmpty()) {
-                    covariateFileTitle = lineStr;
+                if (covariateFileHeader.isEmpty()) {
+                    covariateFileHeader = lineStr;
                     continue;
                 }
 
@@ -657,10 +657,10 @@ public class SampleManager {
                         + "Sample" + "\t"
                         + "Pheno");
 
-                String[] titles = covariateFileTitle.split("\t");
+                String[] columns = covariateFileHeader.split("\t");
 
-                for (int i = 2; i < titles.length; i++) {
-                    bwCov.write("\t" + titles[i]);
+                for (int i = 2; i < columns.length; i++) {
+                    bwCov.write("\t" + columns[i]);
                 }
 
                 bwCov.newLine();

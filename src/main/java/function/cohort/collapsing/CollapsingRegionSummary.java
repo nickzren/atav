@@ -9,7 +9,7 @@ import utils.FormatManager;
  */
 public class CollapsingRegionSummary extends CollapsingSummary {
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Rank");

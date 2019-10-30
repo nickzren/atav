@@ -24,7 +24,7 @@ public class ListDenovoDB extends AnalysisBase {
     public void initOutput() {
         try {
             bwDenovoDB = new BufferedWriter(new FileWriter(denovoDBFilePath));
-            bwDenovoDB.write(DenovoDBOutput.getTitle());
+            bwDenovoDB.write(DenovoDBOutput.getHeader());
             bwDenovoDB.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

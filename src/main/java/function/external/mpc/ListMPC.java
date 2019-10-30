@@ -20,7 +20,7 @@ public class ListMPC extends AnalysisBase {
     public void initOutput() {
         try {
             bwMPC = new BufferedWriter(new FileWriter(gerpFilePath));
-            bwMPC.write(MPCOutput.getTitle());
+            bwMPC.write(MPCOutput.getHeader());
             bwMPC.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

@@ -17,12 +17,12 @@ public class MgiManager {
 
     private static final String MGI_PATH = "data/mgi/mouse_essential_gene_091019.csv";
 
-    public static String title;
+    public static String header;
     private static final HashMap<String, String> mgiMap = new HashMap<>();
     private static StringJoiner NA = new StringJoiner(",");
 
-    public static String getTitle() {
-        return title;
+    public static String getHeader() {
+        return header;
     }
 
     public static String getVersion() {
@@ -47,7 +47,7 @@ public class MgiManager {
                 String values = lineStr.substring(firstCommaIndex + 1);
 
                 if (geneName.equals("Gene")) {
-                    title = values;
+                    header = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
                         NA.add(Data.STRING_NA);

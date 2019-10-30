@@ -10,9 +10,9 @@ public class EvsOutput {
 
     Evs evs;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + EvsManager.getTitle();
+                + EvsManager.getHeader();
     }
 
     public EvsOutput(ResultSet rs) {

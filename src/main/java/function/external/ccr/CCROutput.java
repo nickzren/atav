@@ -10,10 +10,10 @@ import utils.FormatManager;
  */
 public class CCROutput {
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
                 + "Gene Name,"
-                + CCRManager.getTitle();
+                + CCRManager.getHeader();
     }
 
     private CCRGene gene;

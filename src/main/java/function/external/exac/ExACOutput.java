@@ -10,9 +10,9 @@ public class ExACOutput {
 
     ExAC exac;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + ExACManager.getTitle();
+                + ExACManager.getHeader();
     }
 
     public ExACOutput(ResultSet rs) {

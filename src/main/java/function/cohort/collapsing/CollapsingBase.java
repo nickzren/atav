@@ -41,10 +41,10 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
             if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
                 bwSampleMatrix.write("sample/gene" + "\t");
-                bwSummary.write(CollapsingGeneSummary.getTitle());
+                bwSummary.write(CollapsingGeneSummary.getHeader());
             } else {
                 bwSampleMatrix.write("sample/region boundary" + "\t");
-                bwSummary.write(CollapsingRegionSummary.getTitle());
+                bwSummary.write(CollapsingRegionSummary.getHeader());
             }
             bwSummary.newLine();
 
@@ -178,10 +178,10 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     private void generatePvaluesQQPlot() {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
             if (CollapsingCommand.isCollapsingDoLogistic) {
-                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),
+                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getHeader(),
                         "Logistic P", summaryFilePath, geneLogisticPQQPlotPath);
             } else if (CollapsingCommand.isCollapsingDoLinear) {
-                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getTitle(),
+                ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getHeader(),
                         "Linear P", summaryFilePath, geneLinearPQQPlotPath);
                 // linear regression does not have cases and controls, so it skip to run fet p qq-plot script
                 return;

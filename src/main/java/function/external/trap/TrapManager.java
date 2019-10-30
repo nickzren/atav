@@ -23,7 +23,7 @@ public class TrapManager {
     private static String gene = Data.STRING_NA;
     private static float score = Data.FLOAT_NA;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "TraP Score";
     }
 

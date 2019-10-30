@@ -15,7 +15,7 @@ public class GenomesManager {
     static String snvTable = "1000g.snv_20130502";
     static String indelTable = "1000g.indel_20130502";
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         for (String str : GENOMES_POP) {

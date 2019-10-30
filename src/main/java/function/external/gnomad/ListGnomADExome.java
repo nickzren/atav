@@ -24,7 +24,7 @@ public class ListGnomADExome extends AnalysisBase {
     public void initOutput() {
         try {
             bwGnomADExome = new BufferedWriter(new FileWriter(gnomADExomeFilePath));
-            bwGnomADExome.write(GnomADExomeOutput.getTitle());
+            bwGnomADExome.write(GnomADExomeOutput.getHeader());
             bwGnomADExome.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

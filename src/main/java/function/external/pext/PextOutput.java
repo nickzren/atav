@@ -12,11 +12,11 @@ public class PextOutput {
     String variantIdStr;
     float ratio;
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
-        sj.add(PextManager.getTitle());
+        sj.add(PextManager.getHeader());
 
         return sj.toString();
     }

@@ -11,11 +11,11 @@ public class PrimateAIOutput {
     
     PrimateAI primateAI;
     
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
-        sj.add(PrimateAIManager.getTitle());
+        sj.add(PrimateAIManager.getHeader());
 
         return sj.toString();
     }

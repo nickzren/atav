@@ -38,14 +38,14 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
                 String testModel = StatisticsCommand.fisherModels[m];
                 originalPOutputPath[m] = CommonCommand.outputPath + testModel + ".csv";
                 originalBw[m] = new BufferedWriter(new FileWriter(originalPOutputPath[m]));
-                originalBw[m].write(FisherOutput.getTitle());
+                originalBw[m].write(FisherOutput.getHeader());
                 originalBw[m].newLine();
 
                 if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
                     sortedPOutputPath[m] = CommonCommand.outputPath + testModel
                             + ".p_" + StatisticsCommand.threshold4Sort + ".sorted" + ".csv";
                     sortedBw[m] = new BufferedWriter(new FileWriter(sortedPOutputPath[m]));
-                    sortedBw[m].write(FisherOutput.getTitle());
+                    sortedBw[m].write(FisherOutput.getHeader());
                     sortedBw[m].newLine();
 
                     unsortedOutputByModelList.add(new ArrayList<>());
@@ -166,13 +166,13 @@ public class FisherExactTest extends AnalysisBase4CalledVar {
 
     private void generatePvaluesQQPlot() {
         for (int m = 0; m < StatisticsCommand.fisherModels.length; m++) {
-            ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getTitle(),
+            ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getHeader(),
                     "P Value",
                     originalPOutputPath[m],
                     originalPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));
 
             if (StatisticsCommand.threshold4Sort != Data.NO_FILTER) {
-                ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getTitle(),
+                ThirdPartyToolManager.generatePvaluesQQPlot(FisherOutput.getHeader(),
                         "P Value",
                         sortedPOutputPath[m],
                         sortedPOutputPath[m].replace(".csv", ".p.qq.plot.pdf"));

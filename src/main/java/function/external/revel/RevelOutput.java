@@ -11,13 +11,13 @@ public class RevelOutput {
     
     Revel revel;
     
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
         sj.add("Reference Amino Acid");
         sj.add("Alternate Amino Acid");
-        sj.add(RevelManager.getTitle());
+        sj.add(RevelManager.getHeader());
 
         return sj.toString();
     }

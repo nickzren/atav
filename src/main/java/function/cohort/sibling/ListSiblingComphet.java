@@ -40,10 +40,10 @@ public class ListSiblingComphet extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             compHetSharedBw = new BufferedWriter(new FileWriter(comphetSharedFilePath));
-            compHetSharedBw.write(CompHetOutput.getTitle());
+            compHetSharedBw.write(CompHetOutput.getHeader());
             compHetSharedBw.newLine();
             compHetNotSharedBw = new BufferedWriter(new FileWriter(comphetNotSharedFilePath));
-            compHetNotSharedBw.write(CompHetOutput.getTitle());
+            compHetNotSharedBw.write(CompHetOutput.getHeader());
             compHetNotSharedBw.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

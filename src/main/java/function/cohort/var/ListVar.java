@@ -20,7 +20,7 @@ public class ListVar extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwVariants = new BufferedWriter(new FileWriter(variantsFilePath));
-            bwVariants.write(VarOutput.getTitle());
+            bwVariants.write(VarOutput.getHeader());
             bwVariants.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

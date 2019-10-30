@@ -23,7 +23,7 @@ public class LIMBRManager {
     private static HashMap<String, ArrayList<LIMBRGene>> geneDomainMap = new HashMap<>();
     private static HashMap<String, ArrayList<LIMBRGene>> geneExonMap = new HashMap<>();
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("LIMBR Domain Name");

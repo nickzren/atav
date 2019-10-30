@@ -10,9 +10,9 @@ public class GnomADExomeOutput {
 
     GnomADExome gnomADExome;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + GnomADManager.getExomeTitle();
+                + GnomADManager.getExomeHeader();
     }
 
     public GnomADExomeOutput(String id) {

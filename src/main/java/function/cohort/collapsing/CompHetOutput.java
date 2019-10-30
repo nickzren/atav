@@ -12,25 +12,25 @@ import utils.FormatManager;
  */
 public class CompHetOutput extends CollapsingOutput {
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family ID");
-        sj.merge(initVarTitleStr("1"));
-        sj.merge(initVarTitleStr("2"));
+        sj.merge(initVarHeaderStr("1"));
+        sj.merge(initVarHeaderStr("2"));
 
         return sj.toString();
     }
 
-    private static StringJoiner initVarTitleStr(String var) {
+    private static StringJoiner initVarHeaderStr(String var) {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.merge(getVariantDataTitle());
-        sj.merge(getAnnotationDataTitle());
-        sj.merge(getCarrierDataTitle());
-        sj.merge(getCohortLevelTitle());
+        sj.merge(getVariantDataHeader());
+        sj.merge(getAnnotationDataHeader());
+        sj.merge(getCarrierDataHeader());
+        sj.merge(getCohortLevelHeader());
         sj.add("LOO AF");
-        sj.merge(getExternalDataTitle());
+        sj.merge(getExternalDataHeader());
 
         String[] list = sj.toString().split(",");
 

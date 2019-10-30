@@ -42,7 +42,7 @@ public class CollapsingLite extends ListVarGenoLite {
             bwSummary = new BufferedWriter(new FileWriter(summaryFilePath));
 
             bwSampleMatrix.write("sample/gene" + "\t");
-            bwSummary.write(CollapsingGeneSummary.getTitle());
+            bwSummary.write(CollapsingGeneSummary.getHeader());
             bwSummary.newLine();
 
             for (Sample sample : SampleManager.getList()) {

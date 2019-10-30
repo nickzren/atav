@@ -30,7 +30,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             super.initOutput();
 
             bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
-            bwGenotypes.write(CollapsingOutput.getTitle());
+            bwGenotypes.write(CollapsingOutput.getHeader());
             bwGenotypes.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

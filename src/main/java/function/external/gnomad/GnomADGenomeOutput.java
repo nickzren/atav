@@ -10,9 +10,9 @@ public class GnomADGenomeOutput {
 
     GnomADGenome gnomADGenome;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + GnomADManager.getGenomeTitle();
+                + GnomADManager.getGenomeHeader();
     }
 
     public GnomADGenomeOutput(String id) {

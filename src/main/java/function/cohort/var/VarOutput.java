@@ -10,13 +10,13 @@ import java.util.StringJoiner;
  */
 public class VarOutput extends Output {
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.merge(getVariantDataTitle());
-        sj.merge(getAnnotationDataTitle());
-        sj.merge(getExternalDataTitle());
-        sj.merge(getCohortLevelTitle());
+        sj.merge(getVariantDataHeader());
+        sj.merge(getAnnotationDataHeader());
+        sj.merge(getExternalDataHeader());
+        sj.merge(getCohortLevelHeader());
 
         return sj.toString();
     }

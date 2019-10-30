@@ -10,9 +10,9 @@ public class GerpOutput {
 
     float gerpScore;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + GerpManager.getTitle();
+                + GerpManager.getHeader();
     }
 
     public GerpOutput(String id) throws Exception {

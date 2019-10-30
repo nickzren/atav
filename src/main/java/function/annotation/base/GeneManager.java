@@ -33,7 +33,7 @@ public class GeneManager {
     private static int allGeneBoundaryLength;
 
     private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<>();
-    public static String geneCoverageSummaryTitle = "";
+    public static String geneCoverageSummaryHeader = "";
     private static boolean isUsed = false;
 
     private static boolean hasGeneDomainInput = false;
@@ -276,7 +276,7 @@ public class GeneManager {
             return;
         }
 
-        boolean isTitle = true;
+        boolean isHeader = true;
         File f = new File(CollapsingCommand.coverageSummaryFile);
         FileReader fr = new FileReader(f);
         BufferedReader br = new BufferedReader(fr);
@@ -288,10 +288,10 @@ public class GeneManager {
                 String firstRowValue = line.substring(0, firstCommaIndex);
                 String restRowValues = line.substring(firstCommaIndex + 1);
 
-                if (isTitle) {
-                    isTitle = false;
+                if (isHeader) {
+                    isHeader = false;
 
-                    geneCoverageSummaryTitle = restRowValues;
+                    geneCoverageSummaryHeader = restRowValues;
                 }
 
                 if (!geneCoverageSummaryMap.containsKey(firstRowValue)) {

@@ -10,9 +10,9 @@ public class MTROutput {
 
     MTR mtr;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + MTRManager.getTitle();
+                + MTRManager.getHeader();
     }
 
 //    public MTROutput(String id) {

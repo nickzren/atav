@@ -21,7 +21,7 @@ public class CCRManager {
 
     private static HashMap<String, ArrayList<CCRGene>> geneMap = new HashMap<>();
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("CCR Region Name");

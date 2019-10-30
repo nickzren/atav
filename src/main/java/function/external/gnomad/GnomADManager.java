@@ -37,7 +37,7 @@ public class GnomADManager {
 
     // gene metrics
     private static final String GENE_METRICS_PATH = "data/gnomad/gnomad.v2.1.1.lof_metrics.subset.by_gene.csv";
-    private static StringJoiner geneMetricsTitle = new StringJoiner(",");
+    private static StringJoiner geneMetricsHeader = new StringJoiner(",");
     private static final HashMap<String, String> geneMap = new HashMap<>();
     private static StringJoiner NA = new StringJoiner(",");
     
@@ -47,7 +47,7 @@ public class GnomADManager {
         }
     }
 
-    public static String getExomeTitle() {
+    public static String getExomeHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("gnomAD Exome FILTER");
@@ -79,7 +79,7 @@ public class GnomADManager {
         return sj.toString();
     }
 
-    public static String getGenomeTitle() {
+    public static String getGenomeHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("gnomAD Genome FILTER");
@@ -111,8 +111,8 @@ public class GnomADManager {
         return sj.toString();
     }
     
-    public static String getGeneMetricsTitle() {
-        return geneMetricsTitle.toString();
+    public static String getGeneMetricsHeader() {
+        return geneMetricsHeader.toString();
     }
 
     public static String getExomeVersion() {
@@ -190,7 +190,7 @@ public class GnomADManager {
                 
                 if (isFirstLine) {
                     for (String str : values.split(",")) {
-                        geneMetricsTitle.add("gnomAD Gene " + str);
+                        geneMetricsHeader.add("gnomAD Gene " + str);
                         
                         NA.add(Data.STRING_NA);
                     }

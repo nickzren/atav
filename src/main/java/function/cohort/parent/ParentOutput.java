@@ -20,20 +20,20 @@ public class ParentOutput extends Output {
     Carrier mCarrier;
     Carrier fCarrier;
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family ID");
         sj.add("Parent");
         sj.add("Comp Het Flag");
-        sj.merge(initVarTitleStr("1"));
-        sj.merge(initVarTitleStr("2"));
+        sj.merge(initVarHeaderStr("1"));
+        sj.merge(initVarHeaderStr("2"));
 
         return sj.toString();
     }
 
-    private static StringJoiner initVarTitleStr(String var) {
-        String[] columnList = getTitleByVariant().split(",");
+    private static StringJoiner initVarHeaderStr(String var) {
+        String[] columnList = getHeaderByVariant().split(",");
         StringJoiner sj = new StringJoiner(",");
 
         for (String column : columnList) {
@@ -43,24 +43,24 @@ public class ParentOutput extends Output {
         return sj;
     }
 
-    private static String getTitleByVariant() {
+    private static String getHeaderByVariant() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.merge(Output.getVariantDataTitle());
-        sj.merge(Output.getAnnotationDataTitle());
+        sj.merge(Output.getVariantDataHeader());
+        sj.merge(Output.getAnnotationDataHeader());
 
-        sj.merge(initCarrierTitle("child"));
-        sj.merge(initCarrierTitle("mother"));
-        sj.merge(initCarrierTitle("father"));
+        sj.merge(initCarrierHeader("child"));
+        sj.merge(initCarrierHeader("mother"));
+        sj.merge(initCarrierHeader("father"));
 
-        sj.merge(Output.getCohortLevelTitle());
-        sj.merge(Output.getExternalDataTitle());
+        sj.merge(Output.getCohortLevelHeader());
+        sj.merge(Output.getExternalDataHeader());
 
         return sj.toString();
     }
 
-    private static StringJoiner initCarrierTitle(String str) {
-        String[] columnList = Output.getCarrierDataTitle().toString().split(",");
+    private static StringJoiner initCarrierHeader(String str) {
+        String[] columnList = Output.getCarrierDataHeader().toString().split(",");
         StringJoiner sj = new StringJoiner(",");
 
         for (String column : columnList) {

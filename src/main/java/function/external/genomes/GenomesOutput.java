@@ -10,9 +10,9 @@ public class GenomesOutput {
 
     Genomes genomes;
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "Variant ID,"
-                + GenomesManager.getTitle();
+                + GenomesManager.getHeader();
     }
 
     public GenomesOutput(String id) {

@@ -24,18 +24,18 @@ public class ParentalOutput extends Output {
     byte parentGeno;
     double parentBinomial;
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family Id");
         sj.add("Sample Name (parent)");
         sj.add("Genotype (parent)");
         sj.add("Binomial (parent)");
-        sj.merge(getVariantDataTitle());
-        sj.merge(getAnnotationDataTitle());
-        sj.merge(getCarrierDataTitle());
-        sj.merge(getCohortLevelTitle());
-        sj.merge(getExternalDataTitle());
+        sj.merge(getVariantDataHeader());
+        sj.merge(getAnnotationDataHeader());
+        sj.merge(getCarrierDataHeader());
+        sj.merge(getCohortLevelHeader());
+        sj.merge(getExternalDataHeader());
 
         return sj.toString();
     }

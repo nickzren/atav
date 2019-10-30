@@ -11,7 +11,7 @@ public class DiscovEHRManager {
 
     static final String table = "knownvar.discovEHR_2017_07_31";
 
-    public static String getTitle() {
+    public static String getHeader() {
         return "DiscovEHR AF";
     }
 

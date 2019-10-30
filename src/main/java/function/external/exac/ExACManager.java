@@ -24,10 +24,10 @@ public class ExACManager {
 
     private static final String GENE_VARIANT_COUNT_PATH = "data/exac/ExAC.r0.3.damagingCounts.csv";
     private static final HashMap<String, String> geneVariantCountMap = new HashMap<>();
-    private static String geneVariantCountTitle;
+    private static String geneVariantCountHeader;
     private static StringJoiner NA = new StringJoiner(",");
 
-    public static String getTitle() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         for (String str : EXAC_POP) {
@@ -42,8 +42,8 @@ public class ExACManager {
         return sj.toString();
     }
 
-    public static String getGeneVariantCountTitle() {
-        return geneVariantCountTitle;
+    public static String getGeneVariantCountHeader() {
+        return geneVariantCountHeader;
     }
 
     public static void init() {
@@ -119,7 +119,7 @@ public class ExACManager {
                 String values = lineStr.substring(firstCommaIndex + 1);
 
                 if (geneName.equals("Gene")) {
-                    geneVariantCountTitle = values;
+                    geneVariantCountHeader = values;
 
                     for (int i = 0; i < values.split(",").length; i++) {
                         NA.add(Data.STRING_NA);

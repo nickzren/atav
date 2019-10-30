@@ -41,18 +41,18 @@ public class TrioManager {
     private static final byte MEDIUM = 1;
     private static final byte LOW = 0;
 
-    public static String getTitle4Denovo() {
+    public static String getHeader4Denovo() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family ID");
         sj.add("Mother");
         sj.add("Father");
-        sj.merge(getTitleByVariant());
+        sj.merge(getHeaderByVariant());
 
         return sj.toString();
     }
 
-    public static String getTitle4CompHet() {
+    public static String getHeader4CompHet() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family ID");
@@ -61,14 +61,14 @@ public class TrioManager {
         sj.add("Comp Het Flag");
         sj.add("Var Case Freq #1 & #2 (co-occurance)");
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
-        sj.merge(initVarTitleStr("1"));
-        sj.merge(initVarTitleStr("2"));
+        sj.merge(initVarHeaderStr("1"));
+        sj.merge(initVarHeaderStr("2"));
 
         return sj.toString();
     }
 
-    private static StringJoiner initVarTitleStr(String var) {
-        String[] columnList = getTitleByVariant().toString().split(",");
+    private static StringJoiner initVarHeaderStr(String var) {
+        String[] columnList = getHeaderByVariant().toString().split(",");
 
         StringJoiner sj = new StringJoiner(",");
 
@@ -79,19 +79,19 @@ public class TrioManager {
         return sj;
     }
 
-    private static StringJoiner getTitleByVariant() {
+    private static StringJoiner getHeaderByVariant() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.merge(Output.getVariantDataTitle());
-        sj.merge(Output.getAnnotationDataTitle());
-        sj.merge(Output.getCarrierDataTitle());
+        sj.merge(Output.getVariantDataHeader());
+        sj.merge(Output.getAnnotationDataHeader());
+        sj.merge(Output.getCarrierDataHeader());
         sj.add("GT (mother)");
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
         sj.add("Denovo Flag");
-        sj.merge(Output.getCohortLevelTitle());
-        sj.merge(Output.getExternalDataTitle());
+        sj.merge(Output.getCohortLevelHeader());
+        sj.merge(Output.getExternalDataHeader());
 
         return sj;
     }
