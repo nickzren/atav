@@ -20,7 +20,7 @@ public class ListVCF extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwVCF = new BufferedWriter(new FileWriter(vcfFilePath));
-            bwVCF.write(VCFOutput.getTitle());
+            bwVCF.write(VCFOutput.getHeader());
             bwVCF.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);

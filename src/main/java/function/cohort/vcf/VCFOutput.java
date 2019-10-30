@@ -15,22 +15,34 @@ import utils.FormatManager;
  */
 public class VCFOutput extends Output {
 
-    public static String getTitle() {
-        StringJoiner sj = new StringJoiner("\t");
+    public static String getHeader() {
+        StringBuilder sb = new StringBuilder();
 
-        sj.add("#CHROM");
-        sj.add("POS");
-        sj.add("ID");
-        sj.add("REF");
-        sj.add("ALT");
-        sj.add("INFO");
-        sj.add("FORMAT");
+        sb.append("##fileformat=VCFv4.3\n");
+        sb.append("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
+        sb.append("##INFO=<ID=AF,Number=A,Type=Float,Description=\"Allele Frequency\">\n");
+        sb.append("##INFO=<ID=ANN,Number=1,Type=String,Description=\"All Effect Gene Transcript HGVS_c HGVS_p Polyphen_Humdiv Polyphen_Humvar\">\n");
+        sb.append("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
+        sb.append("##FORMAT=<ID=GQ,Number=1,Type=Integer,Description=\"Genotype Quality\">\n");
+        sb.append("##FORMAT=<ID=DP,Number=1,Type=Integer,Description=\"Read Depth\">\n");
+
+        StringJoiner headerSJ = new StringJoiner("\t");
+
+        headerSJ.add("#CHROM");
+        headerSJ.add("POS");
+        headerSJ.add("ID");
+        headerSJ.add("REF");
+        headerSJ.add("ALT");
+        headerSJ.add("INFO");
+        headerSJ.add("FORMAT");
 
         for (Sample sample : SampleManager.getList()) {
-            sj.add(sample.getName());
+            headerSJ.add(sample.getName());
         }
 
-        return sj.toString();
+        sb.append(headerSJ.toString());
+
+        return sb.toString();
     }
 
     public VCFOutput(CalledVariant c) {
