@@ -12,6 +12,7 @@ import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
+import global.Data;
 import global.Index;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -84,7 +85,8 @@ public class VariantLite {
             String[] values = annotation.split("\\|");
             String effect = values[0];
             String geneName = values[1];
-            String stableId = values[2];
+            String stableIdStr = values[2];
+            int stableId = getIntStableId(stableIdStr);
             String HGVS_c = values[3];
             String HGVS_p = values[4];
             float polyphenHumdiv = FormatManager.getFloat(values[5]);
@@ -98,7 +100,7 @@ public class VariantLite {
                     && GeneManager.isValid(geneName, chr, pos)) {
                 if (mostDamagingAnnotation.effect == null) {
                     mostDamagingAnnotation.effect = effect;
-                    mostDamagingAnnotation.stableId = FormatManager.getInteger(stableId);
+                    mostDamagingAnnotation.stableId = stableId;
                     mostDamagingAnnotation.HGVS_c = HGVS_c;
                     mostDamagingAnnotation.HGVS_p = HGVS_p;
                     mostDamagingAnnotation.geneName = geneName;
@@ -107,7 +109,7 @@ public class VariantLite {
                 StringJoiner geneTranscriptSJ = new StringJoiner("|");
                 geneTranscriptSJ.add(effect);
                 geneTranscriptSJ.add(geneName);
-                geneTranscriptSJ.add(stableId);
+                geneTranscriptSJ.add(stableIdStr);
                 geneTranscriptSJ.add(HGVS_c);
                 geneTranscriptSJ.add(HGVS_p);
                 geneTranscriptSJ.add(FormatManager.getFloat(polyphenHumdiv));
@@ -121,7 +123,7 @@ public class VariantLite {
                 mostDamagingAnnotation.polyphenHumdiv = MathManager.max(mostDamagingAnnotation.polyphenHumdiv, polyphenHumdiv);
                 mostDamagingAnnotation.polyphenHumvar = MathManager.max(mostDamagingAnnotation.polyphenHumvar, polyphenHumvar);
 
-                boolean isCCDS = TranscriptManager.isCCDSTranscript(chr, FormatManager.getInteger(stableId));
+                boolean isCCDS = TranscriptManager.isCCDSTranscript(chr, stableId);
 
                 if (isCCDS) {
                     mostDamagingAnnotation.polyphenHumdivCCDS = MathManager.max(mostDamagingAnnotation.polyphenHumdivCCDS, polyphenHumdiv);
@@ -130,6 +132,14 @@ public class VariantLite {
                     mostDamagingAnnotation.hasCCDS = true;
                 }
             }
+        }
+    }
+    
+    private int getIntStableId(String value) {
+        if(value.equals(Data.STRING_NA)) {
+            return Data.INTEGER_NA;
+        }else {
+            return Integer.valueOf(value.substring(4)); // remove ENST
         }
     }
 
