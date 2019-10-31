@@ -20,7 +20,7 @@ public class VCFOutput extends Output {
 
         sb.append("##fileformat=VCFv4.3\n");
         sb.append("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
-        sb.append("##INFO=<ID=AF,Number=A,Type=Float,Description=\"Allele Frequency\">\n");
+        sb.append("##INFO=<ID=AF,Number=1,Type=Float,Description=\"Allele Frequency\">\n");
         sb.append("##INFO=<ID=ANN,Number=1,Type=String,Description=\"All Effect Gene Transcript HGVS_c HGVS_p Polyphen_Humdiv Polyphen_Humvar\">\n");
         sb.append("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
         sb.append("##FORMAT=<ID=GQ,Number=1,Type=Integer,Description=\"Genotype Quality\">\n");
@@ -75,8 +75,8 @@ public class VCFOutput extends Output {
             Carrier carrier = calledVar.getCarrier(sample.getId());
 
             formatSJ = new StringJoiner(":");
-            formatSJ.add(FormatManager.getByte(calledVar.getGT(sample.getIndex())));
-            // return DP carrier, return DP Bin for non-carrier 
+            formatSJ.add(calledVar.getGT4VCF(sample.getIndex()));
+            // return DP for carrier, return DP Bin for non-carrier 
             formatSJ.add(FormatManager.getShort(carrier != null ? carrier.getDP() : calledVar.getDPBin(sample.getIndex())));
             formatSJ.add(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA));
             sj.add(formatSJ.toString());

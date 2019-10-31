@@ -288,6 +288,21 @@ public class CalledVariant extends AnnotatedVariant {
         return gt[index];
     }
 
+    public String getGT4VCF(int index) {
+        byte gt = getGT(index);
+
+        switch (gt) {
+            case Index.HOM:
+                return "1/1";
+            case Index.HET:
+                return "1/0";
+            case Index.REF:
+                return "0/0";
+            default:
+                return "./.";
+        }
+    }
+
     public Carrier getCarrier(int sampleId) {
         return carrierMap.get(sampleId);
     }
