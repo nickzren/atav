@@ -100,7 +100,7 @@ public class CollapsingLite extends ListVarGenoLite {
             closeOutput();
 
             if (CollapsingCommand.isMannWhitneyTest) {
-                ThirdPartyToolManager.runMannWhitneyTest(genotypeFilePath);
+                ThirdPartyToolManager.runMannWhitneyTest(genotypeLiteFilePath);
             }
             generatePvaluesQQPlot();
             gzipFiles();

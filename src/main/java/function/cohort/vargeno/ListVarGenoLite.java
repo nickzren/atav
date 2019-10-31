@@ -30,7 +30,7 @@ public class ListVarGenoLite {
 
     public static BufferedWriter bwGenotypes = null;
 
-    public static final String genotypeFilePath = CommonCommand.outputPath + "genotypes.csv";
+    public static final String genotypeLiteFilePath = CommonCommand.outputPath + "genotypes_lite.csv";
 
     public static final String VARIANT_ID_HEADER = "Variant ID";
     public static final String STABLE_ID_HEADER = "Transcript Stable Id";
@@ -70,7 +70,7 @@ public class ListVarGenoLite {
 
     public void initOutput() {
         try {
-            bwGenotypes = new BufferedWriter(new FileWriter(genotypeFilePath));
+            bwGenotypes = new BufferedWriter(new FileWriter(genotypeLiteFilePath));
         } catch (IOException ex) {
             ErrorManager.send(ex);
         }
