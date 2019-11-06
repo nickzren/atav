@@ -3,8 +3,6 @@ package utils;
 import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Arrays;
 
 /**
@@ -13,19 +11,12 @@ import java.util.Arrays;
  */
 public class FormatManager {
 
-    private static NumberFormat pformat1 = new DecimalFormat("0.####");
-    private static NumberFormat pformat2 = new DecimalFormat("0.###E000");
-
     public static String getDouble(double value) {
         if (value == Data.DOUBLE_NA) {
             return Data.STRING_NA;
         }
 
-        if (value < 0.001 && value > 0) {
-            return pformat2.format(value);
-        } else {
-            return pformat1.format(value);
-        }
+        return String.valueOf(value);
     }
 
     public static String getByte(byte value) {
@@ -51,7 +42,7 @@ public class FormatManager {
 
         return String.valueOf(value);
     }
-    
+
     public static int getInteger(String value) {
         if (value.equals(Data.STRING_NA)) {
             return Data.INTEGER_NA;
@@ -87,11 +78,7 @@ public class FormatManager {
             return "0";
         }
 
-        if (value < 0.001 && value > 0) {
-            return pformat2.format(value);
-        } else {
-            return pformat1.format(value);
-        }
+        return String.valueOf(value);
     }
 
     public static float getFloat(String str) {
@@ -106,12 +93,12 @@ public class FormatManager {
         float nValue = rs.getFloat(strColName);
         return rs.wasNull() ? Data.FLOAT_NA : nValue;
     }
-    
+
     public static String getBoolean(Boolean value) {
-        if(value == null) {
+        if (value == null) {
             return "NA";
         }
-        
+
         return String.valueOf(value);
     }
 
@@ -170,13 +157,13 @@ public class FormatManager {
     public static double[] deepCopyArray(double[] original) {
         return Arrays.copyOf(original, original.length);
     }
-    
+
     public static String appendDoubleQuote(String value) {
         StringBuilder sb = new StringBuilder();
         sb.append("\"");
         sb.append(value);
         sb.append("\"");
-        
+
         return sb.toString();
     }
 }
