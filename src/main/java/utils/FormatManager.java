@@ -159,6 +159,10 @@ public class FormatManager {
     }
 
     public static String appendDoubleQuote(String value) {
+        if(value.startsWith("\"") && value.endsWith("\"")) {
+            return value;
+        }
+        
         StringBuilder sb = new StringBuilder();
         sb.append("\"");
         sb.append(value);

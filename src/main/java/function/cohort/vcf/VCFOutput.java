@@ -21,7 +21,7 @@ public class VCFOutput extends Output {
         sb.append("##fileformat=VCFv4.3\n");
         sb.append("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
         sb.append("##INFO=<ID=AF,Number=1,Type=Float,Description=\"Allele Frequency\">\n");
-        sb.append("##INFO=<ID=ANN,Number=1,Type=String,Description=\"All Effect Gene Transcript HGVS_c HGVS_p Polyphen_Humdiv Polyphen_Humvar\">\n");
+        sb.append("##INFO=<ID=ANN,Number=.,Type=String,Description=\"Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar\">\n");
         sb.append("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n");
         sb.append("##FORMAT=<ID=GQ,Number=1,Type=Integer,Description=\"Genotype Quality\">\n");
         sb.append("##FORMAT=<ID=DP,Number=1,Type=Integer,Description=\"Read Depth\">\n");

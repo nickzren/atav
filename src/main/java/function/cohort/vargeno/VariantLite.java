@@ -37,7 +37,7 @@ public class VariantLite {
     private ExAC exac;
     private GnomADExome gnomADExome;
     private GnomADGenome gnomADGenome;
-    private StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
+    private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
     private Annotation mostDamagingAnnotation = new Annotation();
     private int[] qcFailSample = new int[2];
@@ -64,7 +64,6 @@ public class VariantLite {
                 allAnnotation,
                 chr,
                 pos,
-                allGeneTranscriptSJ,
                 geneList,
                 mostDamagingAnnotation);
         
@@ -78,10 +77,9 @@ public class VariantLite {
             String allAnnotation,
             String chr,
             int pos,
-            StringJoiner allGeneTranscriptSJ,
             List<String> geneList,
             Annotation mostDamagingAnnotation) {
-        for (String annotation : allAnnotation.split(";")) {
+        for (String annotation : allAnnotation.split(",")) {
             String[] values = annotation.split("\\|");
             String effect = values[0];
             String geneName = values[1];
@@ -115,7 +113,7 @@ public class VariantLite {
                 geneTranscriptSJ.add(FormatManager.getFloat(polyphenHumdiv));
                 geneTranscriptSJ.add(FormatManager.getFloat(polyphenHumvar));
 
-                allGeneTranscriptSJ.add(geneTranscriptSJ.toString());
+                allAnnotationSJ.add(geneTranscriptSJ.toString());
                 if (!geneList.contains(geneName)) {
                     geneList.add(geneName);
                 }
@@ -181,7 +179,7 @@ public class VariantLite {
     }
     
     public String getAllAnnotation() {
-        return allGeneTranscriptSJ.toString();
+        return FormatManager.appendDoubleQuote(allAnnotationSJ.toString());
     }
     
     public List<String> getGeneList() {

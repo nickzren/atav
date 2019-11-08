@@ -61,7 +61,7 @@ public class ListVarGenoLite {
     public static int POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER_INDEX;
     public static final String GENE_NAME_HEADER = "Gene Name";
     public static int GENE_NAME_HEADER_INDEX;
-    public static final String ALL_ANNOTATION_HEADER = "All Effect Gene Transcript HGVS_c HGVS_p Polyphen_Humdiv Polyphen_Humvar";
+    public static final String ALL_ANNOTATION_HEADER = "Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar";
     public static int ALL_ANNOTATION_HEADER_INDEX;
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
     public static final String QC_FAIL_CASE_HEADER = "QC Fail Case";

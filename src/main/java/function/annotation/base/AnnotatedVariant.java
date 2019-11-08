@@ -75,7 +75,7 @@ public class AnnotatedVariant extends Variant {
     private String geneName = "";
 
     private List<String> geneList = new ArrayList<>();
-    private StringJoiner allGeneTranscriptSJ = new StringJoiner(";");
+    private StringJoiner allAnnotationSJ = new StringJoiner(",");
 
     // external db annotations
     private ExAC exac;
@@ -192,16 +192,16 @@ public class AnnotatedVariant extends Variant {
                 geneName = annotation.geneName;
             } 
 
-            StringJoiner geneTranscriptSJ = new StringJoiner("|");
-            geneTranscriptSJ.add(annotation.effect);
-            geneTranscriptSJ.add(annotation.geneName);
-            geneTranscriptSJ.add(getStableId(annotation.stableId));
-            geneTranscriptSJ.add(annotation.HGVS_c);
-            geneTranscriptSJ.add(annotation.HGVS_p);
-            geneTranscriptSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
-            geneTranscriptSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
+            StringJoiner annotationSJ = new StringJoiner("|");
+            annotationSJ.add(annotation.effect);
+            annotationSJ.add(annotation.geneName);
+            annotationSJ.add(getStableId(annotation.stableId));
+            annotationSJ.add(annotation.HGVS_c);
+            annotationSJ.add(annotation.HGVS_p);
+            annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
+            annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
             
-            allGeneTranscriptSJ.add(geneTranscriptSJ.toString());
+            allAnnotationSJ.add(annotationSJ.toString());
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
             polyphenHumvar = MathManager.max(polyphenHumvar, annotation.polyphenHumvar);
@@ -220,7 +220,7 @@ public class AnnotatedVariant extends Variant {
     }
     
     public String getAllAnnotation() {
-        return allGeneTranscriptSJ.toString();
+        return FormatManager.appendDoubleQuote(allAnnotationSJ.toString());
     }
 
     public void initExternalData() {
