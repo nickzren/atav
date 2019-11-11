@@ -17,8 +17,8 @@ import utils.FormatManager;
  */
 public class LIMBRManager {
 
-    private static final String DOMAIN_PATH = "data/limbr/DomainLIMBR_05-23-18.txt";
-    private static final String EXON_PATH = "data/limbr/ExonLIMBR_05-23-18.txt";
+    private static final String DOMAIN_PATH = "data/limbr/DomainScoresAndPercentilesPathogenic_8-6-19.txt";
+    private static final String EXON_PATH = "data/limbr/ExonScoresAndPercentilesPathogenic_8-6-19.txt";
 
     private static HashMap<String, ArrayList<LIMBRGene>> geneDomainMap = new HashMap<>();
     private static HashMap<String, ArrayList<LIMBRGene>> geneExonMap = new HashMap<>();
@@ -56,7 +56,7 @@ public class LIMBRManager {
             
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
-                if (lineStr.startsWith("#")) {
+                if (lineStr.startsWith("Gene")) {
                     continue;
                 }
 
