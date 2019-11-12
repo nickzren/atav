@@ -18,7 +18,7 @@ public class VCFOutput extends Output {
     public static String getHeader() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("##fileformat=VCFv4.3\n");
+        sb.append("##fileformat=VCFv4.2\n");
         sb.append("##INFO=<ID=NS,Number=1,Type=Integer,Description=\"Number of Samples With Data\">\n");
         sb.append("##INFO=<ID=AF,Number=1,Type=Float,Description=\"Allele Frequency\">\n");
         sb.append("##INFO=<ID=ANN,Number=.,Type=String,Description=\"Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar\">\n");
@@ -33,6 +33,8 @@ public class VCFOutput extends Output {
         sj.add("ID");
         sj.add("REF");
         sj.add("ALT");
+        sj.add("QUAL");
+        sj.add("FILTER");
         sj.add("INFO");
         sj.add("FORMAT");
 
@@ -58,6 +60,8 @@ public class VCFOutput extends Output {
         sj.add(calledVar.getRsNumberStr());
         sj.add(calledVar.getRefAllele());
         sj.add(calledVar.getAllele());
+        sj.add(Data.STRING_NA);
+        sj.add(Data.STRING_NA);
 
         StringJoiner infoSJ = new StringJoiner(";");
         infoSJ.add("NS=" + FormatManager.getInteger(calledVar.getNS()));
