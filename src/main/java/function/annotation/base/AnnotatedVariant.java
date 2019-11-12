@@ -220,7 +220,7 @@ public class AnnotatedVariant extends Variant {
     }
     
     public String getAllAnnotation() {
-        return FormatManager.appendDoubleQuote(allAnnotationSJ.toString());
+        return allAnnotationSJ.toString();
     }
 
     public void initExternalData() {
@@ -365,7 +365,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(getAllAnnotation());
+        sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
 
     private String getStableId(int stableId) {
