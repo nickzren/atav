@@ -34,6 +34,7 @@ from scipy import stats
 import datetime
 import math
 from docopt import docopt
+import csv
 
 
 def getCaseAndControlListsFromPedFile(pedFilePath):
@@ -77,23 +78,23 @@ def getTotalCaseAndControlCounts(genotypesFilename):
 	# We read through the whole file. Might take a while, but easier than dealing with all edge cases.
 	maxCoveredCasePercentage = 0
 	maxCoveredControlPercentage = 0
-	with open(genotypesFilename, "r") as variants:
-		header = variants.readline().strip().split(",")
+	reader = csv.reader(open(genotypesFilename, "r"))
+	header = next(reader)
 
-		for variant in variants:
-			variant = dict(zip(header, variant.strip().split(",")))
+	for variant in reader:
 
-			casePercentage = float(variant["Covered Case Percentage" + comphetSuffix])/100.0
-			if casePercentage > maxCoveredCasePercentage:
-				maxCoveredCasePercentage = casePercentage
-				coveredCases = int(variant["Covered Case" + comphetSuffix])
-				totalCases = int(round(coveredCases/casePercentage))
+		variant = dict(zip(header, variant))
+		casePercentage = float(variant["Covered Case Percentage" + comphetSuffix])/100.0
+		if casePercentage > maxCoveredCasePercentage:
+			maxCoveredCasePercentage = casePercentage
+			coveredCases = int(variant["Covered Case" + comphetSuffix])
+			totalCases = int(round(coveredCases/casePercentage))
 
-			controlPercentage = float(variant["Covered Ctrl Percentage" + comphetSuffix])/100.0
-			if controlPercentage > maxCoveredControlPercentage:
-				maxCoveredControlPercentage = controlPercentage
-				coveredControls = int(variant["Covered Ctrl" + comphetSuffix])
-				totalControls = int(round(coveredControls/controlPercentage))
+		controlPercentage = float(variant["Covered Ctrl Percentage" + comphetSuffix])/100.0
+		if controlPercentage > maxCoveredControlPercentage:
+			maxCoveredControlPercentage = controlPercentage
+			coveredControls = int(variant["Covered Ctrl" + comphetSuffix])
+			totalControls = int(round(coveredControls/controlPercentage))
 	return totalCases, totalControls
 
 
@@ -139,15 +140,15 @@ def getQVcountsForDominantModel(genotypesFilename, caseNames, controlNames):
 	else:
 		counts = defaultdict(Counter)
 
-	with open(genotypesFilename, "r") as variants:
-		header = variants.readline().strip().split(",")
+	reader = csv.reader(open(genotypesFilename, "r"))
+	header = next(reader)
 
-		for line in variants:
+	for line in reader:
 
-			line = dict(zip(header, line.strip().split(",")))
-			caseOrControl = line["Sample Phenotype"]
-			name = line["Sample Name"]
-			counts[caseOrControl][name] += 1
+		line = dict(zip(header, line))
+		caseOrControl = line["Sample Phenotype"]
+		name = line["Sample Name"]
+		counts[caseOrControl][name] += 1
 
 	return counts["case"], counts["ctrl"]
 
@@ -185,20 +186,21 @@ def getQVsForComphetModel(comphetVariantsFilename, caseNames, controlNames):
 	else:
 		variantIDs = {"case": defaultdict(set), "ctrl": defaultdict(set)}
 
-	with open(comphetVariantsFilename, "r") as variants:
-		header = variants.readline().strip().split(",")
+	reader = csv.reader(open(comphetVariantsFilename, "r"))
+	header = next(reader)
 
-		for line in variants:
+	for line in reader:
 
-			line = dict(zip(header, line.strip().split(",")))
-			caseOrControl = line["Sample Phenotype (#1)"]
-			name = line["Sample Name (#1)"]
-			variantID1 = line["Variant ID (#1)"]
-			variantIDs[caseOrControl][name].add(variantID1)
-			# The comphet file also includes homozygous mutations, in which case there is no Variant #2.
-			if line["Sample Phenotype (#1)"] == "het":
-				variantID2 = line["Variant ID (#2)"]
-				variantIDs[caseOrControl][name].add(variantID2)
+		line = dict(zip(header, line))
+
+		caseOrControl = line["Sample Phenotype (#1)"]
+		name = line["Sample Name (#1)"]
+		variantID1 = line["Variant ID (#1)"]
+		variantIDs[caseOrControl][name].add(variantID1)
+		# The comphet file also includes homozygous mutations, in which case there is no Variant #2.
+		if line["Sample Phenotype (#1)"] == "het":
+			variantID2 = line["Variant ID (#2)"]
+			variantIDs[caseOrControl][name].add(variantID2)
 
 	caseCounts = {name: len(variants) for name, variants in variantIDs["case"].items()}
 	controlCounts = {name: len(variants) for name, variants in variantIDs["ctrl"].items()}
@@ -229,12 +231,12 @@ def writeOutQVcounts(qvCountsLogName, casesToTheirQVcounts, controlsToTheirQVcou
 
 	log = ""
 	if missingCases > 0 or missingControls > 0:
-		log += "A sample file may have not been submitted, and so there are some samples that do not have\n"
-		log += "any QVs, but we don't know their IDs.\n"
+		log += "### A sample file may have not been submitted, and so there are some samples that do not have\n"
+		log += "### any QVs, but we don't know their IDs.\n"
 		if missingCases > 0:
-			log += "There are {} unknown cases with no QVs.\n".format(missingCases)
+			log += "### There are {} unknown cases with no QVs.\n".format(missingCases)
 		if missingControls > 0:
-			log += "There are {} unknown controls with no QVs.\n".format(missingControls)
+			log += "### There are {} unknown controls with no QVs.\n".format(missingControls)
 	log += "Name\tCount\tCase/Control\n"
 	log += "\n".join("{name}\t{count}\tCase".format(name = name, count = count) for name, count in casesToTheirQVcounts.items())
 	log += "\n"
@@ -303,6 +305,37 @@ def graphQVcounts(caseCounts, controlCounts, outputName):
 
 	plt.savefig(outputName, bbox_inches='tight')
 	plt.close()
+
+
+def quickReturnQVamounts(genotypesFilename, pedFilePath):
+
+	# If we have the full sample list, we can write out each sample's QV counts.
+	hasPedFile = bool(pedFilePath)
+	if hasPedFile:
+		caseNames, controlNames = getCaseAndControlListsFromPedFile(pedFilePath)
+		totalCases = len(caseNames)
+		totalControls = len(controlNames)
+	# Otherwise, we work from the genotypes file exclusively
+	else:
+		caseNames = []
+		controlNames = []
+		totalCases, totalControls = getTotalCaseAndControlCounts(genotypesFilename)
+
+	casesToTheirQVcounts, controlsToTheirQVcounts = getQVcounts(genotypesFilename, caseNames, controlNames)
+
+	# If have ped file, this shouldn't change. If only have genotypes file, now have list of names in file.
+	caseNames = casesToTheirQVcounts.keys()
+	controlNames = controlsToTheirQVcounts.keys()
+
+	# Should be 0 if have a ped file.
+	missingCases = totalCases - len(caseNames)
+	missingControls = totalControls - len(controlNames)
+
+	qvsPerCase = casesToTheirQVcounts.values() + [0] * missingCases
+	qvsPerControl = controlsToTheirQVcounts.values() + [0] * missingControls
+
+	return qvsPerCase, qvsPerControl
+
 
 def handler(genotypesFilename, pedFilePath):
 
