@@ -1,6 +1,7 @@
 package function.variant.base;
 
 import function.external.ccr.CCRCommand;
+import function.external.chm.CHMCommand;
 import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
@@ -360,6 +361,12 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-pext":
                     PextCommand.isIncludePext = true;
+                    break;
+                case "--flag-repeat-region":
+                    CHMCommand.isFlagRepeatRegion = true;
+                    break;
+                case "--exclude-repeat-region":
+                    CHMCommand.isExcludeRepeatRegion = true;
                     break;
                 default:
                     continue;

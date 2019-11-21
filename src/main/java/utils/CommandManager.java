@@ -34,6 +34,7 @@ import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
+import function.external.chm.CHMCommand;
 import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
 import function.test.TestCommand;
@@ -399,6 +400,7 @@ public class CommandManager {
                     VariantLevelFilterCommand.isIncludeLOFTEE = true;
                     MPCCommand.isIncludeMPC = true;
                     PextCommand.isIncludePext = true;
+                    CHMCommand.isFlagRepeatRegion = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":

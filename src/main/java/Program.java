@@ -85,6 +85,7 @@ import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
 import function.cohort.vcf.VCFCommand;
+import function.external.chm.CHMManager;
 import function.external.mpc.ListMPC;
 import function.external.mpc.MPCCommand;
 import function.external.pext.ListPext;
@@ -158,6 +159,8 @@ public class Program {
             GnomADManager.init();
             
             CCRManager.init();
+            
+            CHMManager.init();
 
             // output external data version
             LogManager.logExternalDataVersion();

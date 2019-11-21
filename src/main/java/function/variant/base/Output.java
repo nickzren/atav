@@ -41,6 +41,8 @@ import function.cohort.base.Carrier;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
+import function.external.chm.CHMCommand;
+import function.external.chm.CHMManager;
 import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.pext.PextCommand;
@@ -189,6 +191,10 @@ public class Output {
 
         if (PextCommand.isIncludePext) {
             sj.add(PextManager.getHeader());
+        }
+        
+        if (CHMCommand.isFlagRepeatRegion) {
+            sj.add(CHMManager.getHeader());
         }
 
         return sj;

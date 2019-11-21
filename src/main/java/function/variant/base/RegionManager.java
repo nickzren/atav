@@ -214,6 +214,9 @@ public class RegionManager {
         }
     }
 
+    /*
+        return final chr list based on input
+    */
     public static ArrayList<String> getChrList() {
         return chrList;
     }

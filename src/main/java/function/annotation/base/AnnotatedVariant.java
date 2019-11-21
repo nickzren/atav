@@ -2,6 +2,8 @@ package function.annotation.base;
 
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
+import function.external.chm.CHMCommand;
+import function.external.chm.CHMManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBRGene;
 import function.external.limbr.LIMBROutput;
@@ -100,6 +102,7 @@ public class AnnotatedVariant extends Variant {
     private CCROutput ccrOutput;
     private Boolean isLOFTEEHCinCCDS;
     private float mpc;
+    private Boolean isRepeatRegion;
 
     public boolean isValid = true;
 
@@ -112,6 +115,11 @@ public class AnnotatedVariant extends Variant {
     private void checkValid() throws Exception {
         if (isValid) {
             isValid = VariantManager.isValid(this);
+        }
+
+        if (isValid && CHMCommand.isExcludeRepeatRegion) {
+            isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
+            isValid = isRepeatRegion;
         }
 
         if (isValid && GnomADCommand.isIncludeGnomADExome) {
@@ -190,7 +198,7 @@ public class AnnotatedVariant extends Variant {
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
                 geneName = annotation.geneName;
-            } 
+            }
 
             StringJoiner annotationSJ = new StringJoiner("|");
             annotationSJ.add(annotation.effect);
@@ -200,7 +208,7 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(annotation.HGVS_p);
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
-            
+
             allAnnotationSJ.add(annotationSJ.toString());
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
@@ -218,7 +226,7 @@ public class AnnotatedVariant extends Variant {
             }
         }
     }
-    
+
     public String getAllAnnotation() {
         return allAnnotationSJ.toString();
     }
@@ -505,6 +513,14 @@ public class AnnotatedVariant extends Variant {
 
         if (PextCommand.isIncludePext) {
             sj.add(getPextRatio());
+        }
+
+        if (CHMCommand.isFlagRepeatRegion) {
+            if (isRepeatRegion == null) {
+                isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
+            }
+
+            sj.add(FormatManager.getBoolean(isRepeatRegion));
         }
     }
 
