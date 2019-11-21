@@ -7,6 +7,8 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
+import function.external.chm.CHMCommand;
+import function.external.chm.CHMManager;
 import function.external.exac.ExAC;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
@@ -54,7 +56,7 @@ public class VariantLite {
         alt = tmp[3];
 
         isSNV = ref.length() == alt.length();
-        
+
         exac = new ExAC(chr, pos, ref, alt, record);
         gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
         gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
@@ -66,10 +68,10 @@ public class VariantLite {
                 pos,
                 geneList,
                 mostDamagingAnnotation);
-        
+
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
-        
+
         looAF = FormatManager.getFloat(record.get(ListVarGenoLite.LOO_AF_HEADER));
     }
 
@@ -132,11 +134,11 @@ public class VariantLite {
             }
         }
     }
-    
+
     private int getIntStableId(String value) {
-        if(value.equals(Data.STRING_NA)) {
+        if (value.equals(Data.STRING_NA)) {
             return Data.INTEGER_NA;
-        }else {
+        } else {
             return Integer.valueOf(value.substring(4)); // remove ENST
         }
     }
@@ -150,8 +152,11 @@ public class VariantLite {
                 && VariantManager.isMultiallelicVariant2(chr, pos)) {
             // exclude Multiallelic site > 2 variants
             return false;
+        } else if (CHMCommand.isExcludeRepeatRegion
+                && CHMManager.isRepeatRegion(chr, pos)) {
+            return false;
         }
-        
+
         return exac.isValid()
                 && gnomADExome.isValid()
                 && gnomADGenome.isValid()
@@ -159,33 +164,33 @@ public class VariantLite {
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
-    
+
     private boolean isMaxQcFailSampleValid() {
         int totalQCFailSample = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
-        
+
         return CohortLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample);
     }
-    
+
     public String getVariantID() {
         return variantID;
     }
-    
+
     public CSVRecord getRecord() {
         return record;
     }
-    
+
     public Annotation getMostDamagingAnnotation() {
         return mostDamagingAnnotation;
     }
-    
+
     public String getAllAnnotation() {
         return FormatManager.appendDoubleQuote(allAnnotationSJ.toString());
     }
-    
+
     public List<String> getGeneList() {
         return geneList;
     }
-    
+
     public boolean isSNV() {
         return isSNV;
     }
