@@ -4,6 +4,8 @@ import function.annotation.base.GeneManager;
 import function.cohort.statistics.StatisticsCommand;
 import global.Data;
 import java.util.Iterator;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 
@@ -22,6 +24,7 @@ public class CollapsingCommand {
     public static boolean isCollapsingDoLogistic = false;
     public static String regionBoundaryFile = "";
     public static boolean isMannWhitneyTest = false;
+    public static int minCompHetVarDistance = Data.NO_FILTER;
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -88,6 +91,10 @@ public class CollapsingCommand {
                 case "--convert-nan":
                     Data.STRING_NAN = option.getValue();
                     break;
+                case "--min-comp-het-var-distance":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minCompHetVarDistance = getValidInteger(option);
+                    break;    
                 default:
                     continue;
             }
@@ -98,6 +105,14 @@ public class CollapsingCommand {
         if (isCollapsingDoLinear) {
             isCollapsingDoLogistic = false;
         }
+    }
+    
+    public static boolean isMinCompHetVarDistanceValid(int value) {
+        if (minCompHetVarDistance == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minCompHetVarDistance;
     }
 
     public static void initLiteOptions(Iterator<CommandOption> iterator)

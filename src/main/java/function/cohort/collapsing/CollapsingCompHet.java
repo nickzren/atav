@@ -3,6 +3,8 @@ package function.cohort.collapsing;
 import function.cohort.base.CalledVariant;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
+import function.variant.base.Variant;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -123,25 +125,20 @@ public class CollapsingCompHet extends CollapsingBase {
             CompHetOutput output1, output2;
 
             for (Sample sample : SampleManager.getList()) {
-
                 for (int i = 0; i < outputSize; i++) {
-
                     output1 = geneOutputList.get(i);
 
                     byte geno1 = output1.getCalledVariant().getGT(sample.getIndex());
 
                     if (output1.isQualifiedGeno(geno1)) {
-
                         output1.calculateLooAF(sample);
 
                         if (output1.isMaxLooAFValid()) {
-
                             if (isOutputValid(output1, geno1, sample, summary)) {
                                 continue;
                             }
 
                             for (int j = i + 1; j < outputSize; j++) {
-
                                 output2 = geneOutputList.get(j);
 
                                 checkOutputValid(output1, output2, sample, summary);
@@ -157,9 +154,12 @@ public class CollapsingCompHet extends CollapsingBase {
         }
     }
 
+    /*
+        output only if genotype is Hom Var, otherwise continue finding another variant with Het/Hom
+     */
     private boolean isOutputValid(CompHetOutput output1, byte geno,
             Sample sample, CollapsingSummary summary) throws Exception {
-        if (output1.isHomOrRef(geno)) {
+        if (geno == Index.HOM) {
             summary.updateSampleVariantCount4CompHet(sample.getIndex());
 
             updateSummaryVariantCount(output1, summary);
@@ -179,13 +179,14 @@ public class CollapsingCompHet extends CollapsingBase {
 
     private void checkOutputValid(CompHetOutput output1, CompHetOutput output2,
             Sample sample, CollapsingSummary summary) throws Exception {
-        if (output1.getCalledVariant().getVariantId()
-                != output2.getCalledVariant().getVariantId()) {
+        Variant var1 = output1.getCalledVariant();
+        Variant var2 = output2.getCalledVariant();
 
+        if (var1.getVariantId() != var2.getVariantId()
+                && isMinCompHetVarDistanceValid(var1, var2)) {
             byte geno2 = output2.getCalledVariant().getGT(sample.getIndex());
 
             if (output2.isQualifiedGeno(geno2)) {
-
                 output2.calculateLooAF(sample);
 
                 if (output2.isMaxLooAFValid()) {
@@ -204,6 +205,12 @@ public class CollapsingCompHet extends CollapsingBase {
                 }
             }
         }
+    }
+
+    private boolean isMinCompHetVarDistanceValid(Variant var1, Variant var2) {
+        int varDistance = Math.abs(var1.getStartPosition() - var2.getStartPosition());
+
+        return CollapsingCommand.isMinCompHetVarDistanceValid(varDistance);
     }
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {
