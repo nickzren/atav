@@ -50,12 +50,13 @@ public class CHMManager {
         int[][] repeatRegionArray = repeatRegionByChrMap.get(chr);
         int start = 0;
         int last = repeatRegionArray.length - 1;
+        pos -= 1; // variant position is 1-based wherease the repeat region bed file is 0-based
 
         return binarySearch(repeatRegionArray, start, last, pos) != Data.INTEGER_NA;
     }
 
     /*
-        binary search whether a given position fall into a repeated region
+        binary search whether a given position fall into a repeat region
      */
     private static int binarySearch(int arr[][], int first, int last, int pos) {
         if (last >= first) {
