@@ -64,10 +64,10 @@ public class CHMManager {
 
             int start = arr[mid][0];
             int end = arr[mid][1];
-
+            
             if (pos < start) {
                 return binarySearch(arr, first, mid - 1, pos); //search in left subarray  
-            } else if (pos > end) {
+            } else if (pos >= end) {
                 return binarySearch(arr, mid + 1, last, pos); //search in right subarray  
             } else {
                 return mid;
