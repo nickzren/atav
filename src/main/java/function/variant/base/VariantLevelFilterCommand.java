@@ -169,7 +169,7 @@ public class VariantLevelFilterCommand {
                 case "--known-var-pathogenic-only":
                     KnownVarCommand.isKnownVarPathogenicOnly = true;
                     KnownVarCommand.isIncludeKnownVar = true;
-                    break;
+                    break;  
                 case "--min-gerp-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     GerpCommand.minGerpScore = getValidFloat(option);
@@ -316,6 +316,9 @@ public class VariantLevelFilterCommand {
                 case "--include-known-var":
                     KnownVarCommand.isIncludeKnownVar = true;
                     break;
+                case "--include-omim":
+                    KnownVarCommand.isIncludeOMIM = true;
+                    break;    
                 case "--include-rvis":
                     RvisCommand.isIncludeRvis = true;
                     break;

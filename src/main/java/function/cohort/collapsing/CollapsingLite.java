@@ -5,6 +5,8 @@ import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VariantLite;
+import function.external.knownvar.KnownVarCommand;
+import function.external.knownvar.KnownVarManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,6 +34,16 @@ public class CollapsingLite extends ListVarGenoLite {
 
     private static ArrayList<CollapsingSummary> summaryList = new ArrayList<>();
     private static HashMap<String, CollapsingSummary> summaryMap = new HashMap<>();
+
+    private void init() {
+        initOutput();
+
+        initGeneSummaryMap();
+
+        if (KnownVarCommand.isIncludeOMIM) {
+            KnownVarManager.initOMIMMap();
+        }
+    }
 
     @Override
     public void initOutput() {
@@ -71,9 +83,7 @@ public class CollapsingLite extends ListVarGenoLite {
         try {
             LogManager.writeAndPrint("Start running collapsing lite function");
 
-            initOutput();
-
-            initGeneSummaryMap();
+            init();
 
             boolean isHeaderOutput = false;
             String previousVariantID = "";
@@ -88,7 +98,7 @@ public class CollapsingLite extends ListVarGenoLite {
 
                 if (variantLite.isValid()) {
                     updateGeneSummary(variantLite, previousVariantID);
-                    
+
                     // output qualifed record to genotypes file
                     outputGenotype(variantLite);
                 }

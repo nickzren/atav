@@ -262,7 +262,11 @@ public class KnownVarManager {
         }
     }
 
-    private static void initOMIMMap() {
+    public static void initOMIMMap() {
+        if(!omimMap.isEmpty()) {
+            return;
+        }
+        
         try {
             String sql = "SELECT * From " + omimTable;
 
