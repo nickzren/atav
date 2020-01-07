@@ -28,6 +28,8 @@ public class Carrier extends NonCarrier {
     private float readPosRankSum;
     private float mqRankSum;
     private byte filterValue; // PASS(1), LIKELY(2), INTERMEDIATE(3), FAIL(4)
+    private int pidVariantId;
+    private int hpVariantId;
 
     public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");
@@ -46,6 +48,8 @@ public class Carrier extends NonCarrier {
         readPosRankSum = FormatManager.getFloat(rs, "ReadPosRankSum");
         mqRankSum = FormatManager.getFloat(rs, "MQRankSum");
         filterValue = rs.getByte("FILTER+0");
+        pidVariantId = FormatManager.getInt(rs, "PID_variant_id");
+        hpVariantId = FormatManager.getInt(rs, "HP_variant_id");
     }
 
     public short getDP() {
@@ -110,6 +114,14 @@ public class Carrier extends NonCarrier {
         } else {
             return MathManager.getBinomialLessThan(adAlt + adRef, adAlt, 0.5f);
         }
+    }
+    
+    public int getPIDVariantId() {
+        return pidVariantId;
+    }
+    
+    public int getHPVariantId() {
+        return hpVariantId;
     }
 
     public void applyQualityFilter(boolean isSnv) {

@@ -25,6 +25,8 @@ public class CollapsingCommand {
     public static String regionBoundaryFile = "";
     public static boolean isMannWhitneyTest = false;
     public static int minCompHetVarDistance = Data.NO_FILTER;
+    public static boolean isExcludeCompHetPIDVariant = false;
+    public static boolean isExcludeCompHetHPVariant = false;
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -94,7 +96,13 @@ public class CollapsingCommand {
                 case "--min-comp-het-var-distance":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     minCompHetVarDistance = getValidInteger(option);
-                    break;    
+                    break;
+                case "--exclude-comp-het-pid-variant":
+                    isExcludeCompHetPIDVariant = true;
+                    break;
+                case "--exclude-comp-het-hp-variant":
+                    isExcludeCompHetHPVariant = true;
+                    break;
                 default:
                     continue;
             }
@@ -106,13 +114,29 @@ public class CollapsingCommand {
             isCollapsingDoLogistic = false;
         }
     }
-    
+
     public static boolean isMinCompHetVarDistanceValid(int value) {
         if (minCompHetVarDistance == Data.NO_FILTER) {
             return true;
         }
 
         return value >= minCompHetVarDistance;
+    }
+
+    public static boolean isCompHetPIDVariantIdValid(int pidVariantId1, int pidVariantId2) {        
+        if (pidVariantId1 == Data.INTEGER_NA || pidVariantId2 == Data.INTEGER_NA) {
+            return false;
+        }
+
+        return pidVariantId1 == pidVariantId2;
+    }
+
+    public static boolean isCompHetHPVariantIdValid(int hpVariantId1, int hpVariantId2) {        
+        if (hpVariantId1 == Data.INTEGER_NA || hpVariantId2 == Data.INTEGER_NA) {
+            return false;
+        }
+
+        return hpVariantId1 == hpVariantId2;
     }
 
     public static void initLiteOptions(Iterator<CommandOption> iterator)

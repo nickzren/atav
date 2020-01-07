@@ -254,6 +254,8 @@ public class Output {
         sj.add("Read Pos Rank Sum");
         sj.add("MQ Rank Sum");
         sj.add("FILTER");
+        sj.add("PID_variant_id");
+        sj.add("PID_variant_id");
 
         return sj;
     }
@@ -340,6 +342,8 @@ public class Output {
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA));
         sj.add(carrier != null ? carrier.getFILTER() : Data.STRING_NA);
+        sj.add(FormatManager.getInteger(carrier != null ? carrier.getPIDVariantId() : Data.INTEGER_NA));
+        sj.add(FormatManager.getInteger(carrier != null ? carrier.getHPVariantId() : Data.INTEGER_NA));
     }
 
     public void calculateLooAF(Sample sample) {
