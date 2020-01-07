@@ -261,7 +261,7 @@ def runMannWhitney(mannWhitneyLogName, qvsPerCase, qvsPerControl):
 
 	log += "Null hypothesis: the cases' variants and controls' variants follow the same distribution.\n"
 	
-	value, pvalue = stats.mannwhitneyu(qvsPerCase, qvsPerControl, alternative = "two-sided")
+	value, pvalue = stats.mannwhitneyu(qvsPerCase, qvsPerControl)
 	if pvalue == 0.0:
 		log += "The test could not be run. (You may have run with no cases, or no controls.)"
 	elif pvalue < 0.05:
