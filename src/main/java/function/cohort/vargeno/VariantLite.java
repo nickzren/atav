@@ -7,6 +7,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
+import function.external.ccr.CCRCommand;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.exac.ExAC;
@@ -52,6 +53,7 @@ public class VariantLite {
     private float mtrExonPercentile;
     private float limbrDomainPercentile;
     private float limbrExonPercentile;
+    private float ccrPercentile;
     private float revel;
     private float primateAI;
     private int[] qcFailSample = new int[2];
@@ -83,6 +85,7 @@ public class VariantLite {
 
         initSubRVIS(record);
         initLIMBR(record);
+        initCCR(record);
         initREVEL(record);
         initPrimateAI(record);
 
@@ -165,6 +168,12 @@ public class VariantLite {
         if (LIMBRCommand.isIncludeLIMBR) {
             limbrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_DOMAIN_PERCENTILE_HEADER));
             limbrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_EXON_PERCENTILE_HEADER));
+        }
+    }
+    
+    private void initCCR(CSVRecord record) {
+        if (CCRCommand.isIncludeCCR) {
+            ccrPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.CCR_PERCENTILE_HEADER));
         }
     }
 

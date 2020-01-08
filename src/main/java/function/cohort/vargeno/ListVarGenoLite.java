@@ -3,6 +3,7 @@ package function.cohort.vargeno;
 import function.annotation.base.Annotation;
 import function.annotation.base.PolyphenManager;
 import function.cohort.base.GenotypeLevelFilterCommand;
+import function.external.ccr.CCRCommand;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADCommand;
@@ -73,6 +74,7 @@ public class ListVarGenoLite {
     public static final String MTR_EXON_PERCENTILE_HEADER = "MTR Exon Percentile";
     public static final String LIMBR_DOMAIN_PERCENTILE_HEADER = "LIMBR Domain Percentile";
     public static final String LIMBR_EXON_PERCENTILE_HEADER = "LIMBR Exon Percentile";
+    public static final String CCR_PERCENTILE_HEADER = "CCR Percentile";
     public static final String REVEL_HEADER = "REVEL";
     public static final String PRIMATE_AI_HEADER = "PrimateAI";
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
@@ -177,10 +179,14 @@ public class ListVarGenoLite {
                         LIMBR_EXON_PERCENTILE_HEADER});
         }
 
+        if (CCRCommand.isIncludeCCR) {
+            headers = (String[]) ArrayUtils.addAll(headers, new String[]{CCR_PERCENTILE_HEADER});
+        }
+
         if (RevelCommand.isIncludeRevel) {
             headers = (String[]) ArrayUtils.addAll(headers, new String[]{REVEL_HEADER});
         }
-        
+
         if (PrimateAICommand.isIncludePrimateAI) {
             headers = (String[]) ArrayUtils.addAll(headers, new String[]{PRIMATE_AI_HEADER});
         }
