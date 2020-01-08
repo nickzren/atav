@@ -64,7 +64,7 @@ public class ListVarGenoLite {
     public static final String ALL_ANNOTATION_HEADER = "Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar";
     public static int ALL_ANNOTATION_HEADER_INDEX;
     public static final String REVEL_HEADER = "REVEL";
-    public static int REVEL_HEADER_INDEX;
+    public static final String PRIMATE_AI_HEADER = "PrimateAI";
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
     public static final String QC_FAIL_CASE_HEADER = "QC Fail Case";
     public static final String QC_FAIL_CTRL_HEADER = "QC Fail Ctrl";
@@ -134,6 +134,7 @@ public class ListVarGenoLite {
             GENE_NAME_HEADER,
             ALL_ANNOTATION_HEADER,
             REVEL_HEADER,
+            PRIMATE_AI_HEADER,
             SAMPLE_NAME_HEADER,
             QC_FAIL_CASE_HEADER,
             QC_FAIL_CTRL_HEADER,
@@ -216,8 +217,6 @@ public class ListVarGenoLite {
                 case ALL_ANNOTATION_HEADER:
                     ALL_ANNOTATION_HEADER_INDEX = headerIndex;
                     break;
-                case REVEL_HEADER:
-                    REVEL_HEADER_INDEX = headerIndex;
                 default:
                     break;
             }

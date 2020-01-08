@@ -12,6 +12,7 @@ import function.external.chm.CHMManager;
 import function.external.exac.ExAC;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
+import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
@@ -44,6 +45,7 @@ public class VariantLite {
     private List<String> geneList = new ArrayList();
     private Annotation mostDamagingAnnotation = new Annotation();
     private float revel;
+    private float primateAI;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -72,6 +74,7 @@ public class VariantLite {
                 mostDamagingAnnotation);
         
         revel = FormatManager.getFloat(record.get(ListVarGenoLite.REVEL_HEADER));
+        primateAI = FormatManager.getFloat(record.get(ListVarGenoLite.PRIMATE_AI_HEADER));
 
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
@@ -166,6 +169,7 @@ public class VariantLite {
                 && gnomADGenome.isValid()
                 && !geneList.isEmpty()
                 && RevelCommand.isMinRevelValid(revel)
+                && PrimateAICommand.isMinPrimateAIValid(primateAI)
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
