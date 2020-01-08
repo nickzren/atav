@@ -271,9 +271,9 @@ public class AnnotatedVariant extends Variant {
 
             // sub rvis filters will only apply missense variants except gene boundary option at domain level used
             if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
-                return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
+                return SubRvisCommand.isSubRVISDomainScorePercentileValid(subRvisOutput.getDomainScorePercentile())
                         && SubRvisCommand.isMTRDomainPercentileValid(subRvisOutput.getMTRDomainPercentile())
-                        && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
+                        && SubRvisCommand.isSubRVISExonScorePercentileValid(subRvisOutput.getExonScorePercentile())
                         && SubRvisCommand.isMTRExonPercentileValid(subRvisOutput.getMTRExonPercentile());
             } else {
                 return true;

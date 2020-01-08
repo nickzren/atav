@@ -16,7 +16,7 @@ public class SubRvisCommand {
     public static float maxSubRVISExonScorePercentile = Data.NO_FILTER;
     public static float maxMtrExonPercentile = Data.NO_FILTER;
 
-    public static boolean isSubRVISDomainScoreValid(float value) {
+    public static boolean isSubRVISDomainScorePercentileValid(float value) {
         if (maxSubRVISDomainScorePercentile == Data.NO_FILTER) {
             return true;
         }
@@ -34,7 +34,7 @@ public class SubRvisCommand {
                 || value == Data.FLOAT_NA;
     }
 
-    public static boolean isSubRVISExonScoreValid(float value) {
+    public static boolean isSubRVISExonScorePercentileValid(float value) {
         if (maxSubRVISExonScorePercentile == Data.NO_FILTER) {
             return true;
         }

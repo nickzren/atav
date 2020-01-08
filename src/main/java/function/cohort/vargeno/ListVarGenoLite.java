@@ -63,6 +63,8 @@ public class ListVarGenoLite {
     public static int GENE_NAME_HEADER_INDEX;
     public static final String ALL_ANNOTATION_HEADER = "Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar";
     public static int ALL_ANNOTATION_HEADER_INDEX;
+    public static final String SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER = "subRVIS Domain Score Percentile";
+    public static final String SUBRVIS_EXON_SCORE_PERCENTILE_HEADER = "subRVIS Exon Score Percentile";
     public static final String REVEL_HEADER = "REVEL";
     public static final String PRIMATE_AI_HEADER = "PrimateAI";
     public static final String SAMPLE_NAME_HEADER = "Sample Name";

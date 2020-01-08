@@ -38,7 +38,7 @@ public class SubRvisGene {
         return regionList;
     }
 
-    public float getScore() {
+    public float getScorePercentile() {
         return score;
     }
     

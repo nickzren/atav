@@ -14,6 +14,7 @@ import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
 import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
+import function.external.subrvis.SubRvisCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -44,6 +45,8 @@ public class VariantLite {
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
     private Annotation mostDamagingAnnotation = new Annotation();
+    private float subRVISDomainScorePercentile;
+    private float subRVISExonScorePercentile;
     private float revel;
     private float primateAI;
     private int[] qcFailSample = new int[2];
@@ -73,6 +76,8 @@ public class VariantLite {
                 geneList,
                 mostDamagingAnnotation);
         
+        subRVISDomainScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER));
+        subRVISExonScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_EXON_SCORE_PERCENTILE_HEADER));
         revel = FormatManager.getFloat(record.get(ListVarGenoLite.REVEL_HEADER));
         primateAI = FormatManager.getFloat(record.get(ListVarGenoLite.PRIMATE_AI_HEADER));
 
@@ -168,6 +173,8 @@ public class VariantLite {
                 && gnomADExome.isValid()
                 && gnomADGenome.isValid()
                 && !geneList.isEmpty()
+                && SubRvisCommand.isSubRVISDomainScorePercentileValid(subRVISDomainScorePercentile)
+                && SubRvisCommand.isSubRVISExonScorePercentileValid(subRVISExonScorePercentile)
                 && RevelCommand.isMinRevelValid(revel)
                 && PrimateAICommand.isMinPrimateAIValid(primateAI)
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
