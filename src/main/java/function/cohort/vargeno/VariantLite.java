@@ -47,6 +47,8 @@ public class VariantLite {
     private Annotation mostDamagingAnnotation = new Annotation();
     private float subRVISDomainScorePercentile;
     private float subRVISExonScorePercentile;
+    private float mtrDomainPercentile;
+    private float mtrExonPercentile;
     private float revel;
     private float primateAI;
     private int[] qcFailSample = new int[2];
@@ -78,6 +80,8 @@ public class VariantLite {
         
         subRVISDomainScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER));
         subRVISExonScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_EXON_SCORE_PERCENTILE_HEADER));
+        mtrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_DOMAIN_PERCENTILE_HEADER));
+        mtrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_EXON_PERCENTILE_HEADER));
         revel = FormatManager.getFloat(record.get(ListVarGenoLite.REVEL_HEADER));
         primateAI = FormatManager.getFloat(record.get(ListVarGenoLite.PRIMATE_AI_HEADER));
 
@@ -175,6 +179,8 @@ public class VariantLite {
                 && !geneList.isEmpty()
                 && SubRvisCommand.isSubRVISDomainScorePercentileValid(subRVISDomainScorePercentile)
                 && SubRvisCommand.isSubRVISExonScorePercentileValid(subRVISExonScorePercentile)
+                && SubRvisCommand.isMTRDomainPercentileValid(mtrDomainPercentile)
+                && SubRvisCommand.isMTRExonPercentileValid(mtrExonPercentile)
                 && RevelCommand.isMinRevelValid(revel)
                 && PrimateAICommand.isMinPrimateAIValid(primateAI)
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)

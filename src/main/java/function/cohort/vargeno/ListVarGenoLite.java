@@ -65,6 +65,8 @@ public class ListVarGenoLite {
     public static int ALL_ANNOTATION_HEADER_INDEX;
     public static final String SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER = "subRVIS Domain Score Percentile";
     public static final String SUBRVIS_EXON_SCORE_PERCENTILE_HEADER = "subRVIS Exon Score Percentile";
+    public static final String MTR_DOMAIN_PERCENTILE_HEADER = "MTR Domain Percentile";
+    public static final String MTR_EXON_PERCENTILE_HEADER = "MTR Exon Percentile";
     public static final String REVEL_HEADER = "REVEL";
     public static final String PRIMATE_AI_HEADER = "PrimateAI";
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
