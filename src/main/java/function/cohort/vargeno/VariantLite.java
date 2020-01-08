@@ -12,6 +12,7 @@ import function.external.chm.CHMManager;
 import function.external.exac.ExAC;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
+import function.external.limbr.LIMBRCommand;
 import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.subrvis.SubRvisCommand;
@@ -49,6 +50,8 @@ public class VariantLite {
     private float subRVISExonScorePercentile;
     private float mtrDomainPercentile;
     private float mtrExonPercentile;
+    private float limbrDomainPercentile;
+    private float limbrExonPercentile;
     private float revel;
     private float primateAI;
     private int[] qcFailSample = new int[2];
@@ -77,11 +80,12 @@ public class VariantLite {
                 pos,
                 geneList,
                 mostDamagingAnnotation);
-        
+
         subRVISDomainScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER));
         subRVISExonScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_EXON_SCORE_PERCENTILE_HEADER));
         mtrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_DOMAIN_PERCENTILE_HEADER));
         mtrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_EXON_PERCENTILE_HEADER));
+        initLIMBR(record);
         revel = FormatManager.getFloat(record.get(ListVarGenoLite.REVEL_HEADER));
         primateAI = FormatManager.getFloat(record.get(ListVarGenoLite.PRIMATE_AI_HEADER));
 
@@ -151,6 +155,13 @@ public class VariantLite {
         }
     }
 
+    private void initLIMBR(CSVRecord record) {
+        if (LIMBRCommand.isIncludeLIMBR) {
+            limbrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_DOMAIN_PERCENTILE_HEADER));
+            limbrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_EXON_PERCENTILE_HEADER));
+        }
+    }
+
     private int getIntStableId(String value) {
         if (value.equals(Data.STRING_NA)) {
             return Data.INTEGER_NA;
@@ -181,6 +192,8 @@ public class VariantLite {
                 && SubRvisCommand.isSubRVISExonScorePercentileValid(subRVISExonScorePercentile)
                 && SubRvisCommand.isMTRDomainPercentileValid(mtrDomainPercentile)
                 && SubRvisCommand.isMTRExonPercentileValid(mtrExonPercentile)
+                && LIMBRCommand.isLIMBRDomainPercentileValid(limbrDomainPercentile)
+                && LIMBRCommand.isLIMBRExonPercentileValid(limbrExonPercentile)
                 && RevelCommand.isMinRevelValid(revel)
                 && PrimateAICommand.isMinPrimateAIValid(primateAI)
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
