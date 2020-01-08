@@ -8,6 +8,9 @@ import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.limbr.LIMBRCommand;
+import function.external.primateai.PrimateAICommand;
+import function.external.revel.RevelCommand;
+import function.external.subrvis.SubRvisCommand;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -140,8 +143,6 @@ public class ListVarGenoLite {
             POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER,
             GENE_NAME_HEADER,
             ALL_ANNOTATION_HEADER,
-            REVEL_HEADER,
-            PRIMATE_AI_HEADER,
             SAMPLE_NAME_HEADER,
             QC_FAIL_CASE_HEADER,
             QC_FAIL_CTRL_HEADER,
@@ -160,11 +161,28 @@ public class ListVarGenoLite {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeHeader().split(","));
         }
 
+        if (SubRvisCommand.isIncludeSubRvis) {
+            headers = (String[]) ArrayUtils.addAll(headers,
+                    new String[]{
+                        SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER,
+                        SUBRVIS_EXON_SCORE_PERCENTILE_HEADER,
+                        MTR_DOMAIN_PERCENTILE_HEADER,
+                        MTR_EXON_PERCENTILE_HEADER});
+        }
+
         if (LIMBRCommand.isIncludeLIMBR) {
             headers = (String[]) ArrayUtils.addAll(headers,
                     new String[]{
                         LIMBR_DOMAIN_PERCENTILE_HEADER,
                         LIMBR_EXON_PERCENTILE_HEADER});
+        }
+
+        if (RevelCommand.isIncludeRevel) {
+            headers = (String[]) ArrayUtils.addAll(headers, new String[]{REVEL_HEADER});
+        }
+        
+        if (PrimateAICommand.isIncludePrimateAI) {
+            headers = (String[]) ArrayUtils.addAll(headers, new String[]{PRIMATE_AI_HEADER});
         }
 
         return headers;

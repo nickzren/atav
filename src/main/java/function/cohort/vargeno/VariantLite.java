@@ -81,13 +81,10 @@ public class VariantLite {
                 geneList,
                 mostDamagingAnnotation);
 
-        subRVISDomainScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER));
-        subRVISExonScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_EXON_SCORE_PERCENTILE_HEADER));
-        mtrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_DOMAIN_PERCENTILE_HEADER));
-        mtrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_EXON_PERCENTILE_HEADER));
+        initSubRVIS(record);
         initLIMBR(record);
-        revel = FormatManager.getFloat(record.get(ListVarGenoLite.REVEL_HEADER));
-        primateAI = FormatManager.getFloat(record.get(ListVarGenoLite.PRIMATE_AI_HEADER));
+        initREVEL(record);
+        initPrimateAI(record);
 
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
@@ -155,10 +152,31 @@ public class VariantLite {
         }
     }
 
+    private void initSubRVIS(CSVRecord record) {
+        if (SubRvisCommand.isIncludeSubRvis) {
+            subRVISDomainScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER));
+            subRVISExonScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_EXON_SCORE_PERCENTILE_HEADER));
+            mtrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_DOMAIN_PERCENTILE_HEADER));
+            mtrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_EXON_PERCENTILE_HEADER));
+        }
+    }
+
     private void initLIMBR(CSVRecord record) {
         if (LIMBRCommand.isIncludeLIMBR) {
             limbrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_DOMAIN_PERCENTILE_HEADER));
             limbrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_EXON_PERCENTILE_HEADER));
+        }
+    }
+
+    private void initREVEL(CSVRecord record) {
+        if (RevelCommand.isIncludeRevel) {
+            revel = FormatManager.getFloat(record.get(ListVarGenoLite.REVEL_HEADER));
+        }
+    }
+    
+    private void initPrimateAI(CSVRecord record) {
+        if (PrimateAICommand.isIncludePrimateAI) {
+            primateAI = FormatManager.getFloat(record.get(ListVarGenoLite.PRIMATE_AI_HEADER));
         }
     }
 
