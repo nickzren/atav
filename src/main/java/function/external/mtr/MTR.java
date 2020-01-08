@@ -3,6 +3,7 @@ package function.external.mtr;
 import global.Data;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -16,7 +17,7 @@ public class MTR {
     private String chr;
     private int pos;
     private float mtr;
-    private float fdr;
+    private float mtrFDR;
     private float mtrCentile;
 
     public MTR(String chr, int pos) {
@@ -37,6 +38,15 @@ public class MTR {
         }
     }
 
+    public MTR(String chr, int pos, CSVRecord record) {
+        this.chr = chr;
+        this.pos = pos;
+
+        mtr = FormatManager.getFloat(record.get("MTR"));
+        mtrFDR = FormatManager.getFloat(record.get("MTR FDR"));
+        mtrCentile = FormatManager.getFloat(record.get("MTR Centile"));
+    }
+
     private void initMTR() {
         try {
             String sql = MTRManager.getSql4MTR(chr, pos);
@@ -45,11 +55,11 @@ public class MTR {
 
             if (rs.next()) {
                 mtr = getFloat((Float) rs.getObject("MTR"));
-                fdr = getFloat((Float) rs.getObject("FDR"));
+                mtrFDR = getFloat((Float) rs.getObject("FDR"));
                 mtrCentile = getFloat((Float) rs.getObject("MTR_centile"));
             } else {
                 mtr = Data.FLOAT_NA;
-                fdr = Data.FLOAT_NA;
+                mtrFDR = Data.FLOAT_NA;
                 mtrCentile = Data.FLOAT_NA;
             }
         } catch (Exception e) {
@@ -62,9 +72,9 @@ public class MTR {
     }
 
     public boolean isValid() {
-        return MTRCommand.isMTRValid(mtr)
-                && MTRCommand.isFDRValid(fdr)
-                && MTRCommand.isMTRCentileValid(mtrCentile);
+        return MTRCommand.isMaxMTRValid(mtr)
+                && MTRCommand.isMaxMTRFDRValid(mtrFDR)
+                && MTRCommand.isMaxMTRCentileValid(mtrCentile);
     }
 
     private float getFloat(Float f) {
@@ -74,12 +84,12 @@ public class MTR {
 
         return f;
     }
-    
+
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getFloat(mtr));
-        sj.add(FormatManager.getFloat(fdr));
+        sj.add(FormatManager.getFloat(mtrFDR));
         sj.add(FormatManager.getFloat(mtrCentile));
 
         return sj;

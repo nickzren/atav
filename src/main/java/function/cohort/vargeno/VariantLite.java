@@ -11,9 +11,13 @@ import function.external.ccr.CCRCommand;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.exac.ExAC;
+import function.external.exac.ExACCommand;
+import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
 import function.external.limbr.LIMBRCommand;
+import function.external.mtr.MTR;
+import function.external.mtr.MTRCommand;
 import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.subrvis.SubRvisCommand;
@@ -54,6 +58,7 @@ public class VariantLite {
     private float limbrDomainPercentile;
     private float limbrExonPercentile;
     private float ccrPercentile;
+    private MTR mtr;
     private float revel;
     private float primateAI;
     private int[] qcFailSample = new int[2];
@@ -71,10 +76,6 @@ public class VariantLite {
 
         isSNV = ref.length() == alt.length();
 
-        exac = new ExAC(chr, pos, ref, alt, record);
-        gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
-        gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
-
         String allAnnotation = record.get(ListVarGenoLite.ALL_ANNOTATION_HEADER);
         processAnnotation(
                 allAnnotation,
@@ -83,9 +84,13 @@ public class VariantLite {
                 geneList,
                 mostDamagingAnnotation);
 
+        initEXAC(record);
+        initGnomADExome(record);
+        initGnomADGenome(record);
         initSubRVIS(record);
         initLIMBR(record);
         initCCR(record);
+        initMTR(record);
         initREVEL(record);
         initPrimateAI(record);
 
@@ -155,6 +160,24 @@ public class VariantLite {
         }
     }
 
+    private void initEXAC(CSVRecord record) {
+        if (ExACCommand.isIncludeExac) {
+            exac = new ExAC(chr, pos, ref, alt, record);
+        }
+    }
+
+    private void initGnomADExome(CSVRecord record) {
+        if (GnomADCommand.isIncludeGnomADExome) {
+            gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
+        }
+    }
+
+    private void initGnomADGenome(CSVRecord record) {
+        if (GnomADCommand.isIncludeGnomADGenome) {
+            gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
+        }
+    }
+
     private void initSubRVIS(CSVRecord record) {
         if (SubRvisCommand.isIncludeSubRvis) {
             subRVISDomainScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER));
@@ -170,10 +193,16 @@ public class VariantLite {
             limbrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_EXON_PERCENTILE_HEADER));
         }
     }
-    
+
     private void initCCR(CSVRecord record) {
         if (CCRCommand.isIncludeCCR) {
             ccrPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.CCR_PERCENTILE_HEADER));
+        }
+    }
+
+    private void initMTR(CSVRecord record) {
+        if (MTRCommand.isIncludeMTR) {
+            mtr = new MTR(chr, pos, record);
         }
     }
 
@@ -182,7 +211,7 @@ public class VariantLite {
             revel = FormatManager.getFloat(record.get(ListVarGenoLite.REVEL_HEADER));
         }
     }
-    
+
     private void initPrimateAI(CSVRecord record) {
         if (PrimateAICommand.isIncludePrimateAI) {
             primateAI = FormatManager.getFloat(record.get(ListVarGenoLite.PRIMATE_AI_HEADER));
@@ -211,16 +240,18 @@ public class VariantLite {
             return false;
         }
 
-        return exac.isValid()
+        return !geneList.isEmpty()
+                && exac.isValid()
                 && gnomADExome.isValid()
                 && gnomADGenome.isValid()
-                && !geneList.isEmpty()
                 && SubRvisCommand.isSubRVISDomainScorePercentileValid(subRVISDomainScorePercentile)
                 && SubRvisCommand.isSubRVISExonScorePercentileValid(subRVISExonScorePercentile)
                 && SubRvisCommand.isMTRDomainPercentileValid(mtrDomainPercentile)
                 && SubRvisCommand.isMTRExonPercentileValid(mtrExonPercentile)
                 && LIMBRCommand.isLIMBRDomainPercentileValid(limbrDomainPercentile)
                 && LIMBRCommand.isLIMBRExonPercentileValid(limbrExonPercentile)
+                && CCRCommand.isCCRPercentileValid(ccrPercentile)
+                && mtr.isValid()
                 && RevelCommand.isMinRevelValid(revel)
                 && PrimateAICommand.isMinPrimateAIValid(primateAI)
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)

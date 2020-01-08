@@ -9,6 +9,7 @@ import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.limbr.LIMBRCommand;
+import function.external.mtr.MTRCommand;
 import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.subrvis.SubRvisCommand;
@@ -75,6 +76,9 @@ public class ListVarGenoLite {
     public static final String LIMBR_DOMAIN_PERCENTILE_HEADER = "LIMBR Domain Percentile";
     public static final String LIMBR_EXON_PERCENTILE_HEADER = "LIMBR Exon Percentile";
     public static final String CCR_PERCENTILE_HEADER = "CCR Percentile";
+    public static final String MTR_HEADER = "MTR";
+    public static final String MTR_FDR_HEADER = "MTR FDR";
+    public static final String MTR_CENTILE_HEADER = "MTR Centile";
     public static final String REVEL_HEADER = "REVEL";
     public static final String PRIMATE_AI_HEADER = "PrimateAI";
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
@@ -181,6 +185,14 @@ public class ListVarGenoLite {
 
         if (CCRCommand.isIncludeCCR) {
             headers = (String[]) ArrayUtils.addAll(headers, new String[]{CCR_PERCENTILE_HEADER});
+        }
+
+        if (MTRCommand.isIncludeMTR) {
+            headers = (String[]) ArrayUtils.addAll(headers,
+                    new String[]{
+                        MTR_HEADER,
+                        MTR_FDR_HEADER,
+                        MTR_CENTILE_HEADER});
         }
 
         if (RevelCommand.isIncludeRevel) {

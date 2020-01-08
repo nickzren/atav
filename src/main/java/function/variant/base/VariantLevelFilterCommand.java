@@ -169,7 +169,7 @@ public class VariantLevelFilterCommand {
                 case "--known-var-pathogenic-only":
                     KnownVarCommand.isKnownVarPathogenicOnly = true;
                     KnownVarCommand.isIncludeKnownVar = true;
-                    break;  
+                    break;
                 case "--min-gerp-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     GerpCommand.minGerpScore = getValidFloat(option);
@@ -252,18 +252,21 @@ public class VariantLevelFilterCommand {
                     DiscovEHRCommand.isIncludeDiscovEHR = true;
                     break;
                 case "--mtr":
+                case "--max-mtr":
                     checkValueValid(2, 0, option);
-                    MTRCommand.mtr = getValidFloat(option);
+                    MTRCommand.maxMTR = getValidFloat(option);
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--mtr-fdr":
+                case "--max-mtr-fdr":    
                     checkValueValid(1, 0, option);
-                    MTRCommand.fdr = getValidFloat(option);
+                    MTRCommand.maxMTRFDR = getValidFloat(option);
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--mtr-centile":
+                case "--max-mtr-centile":    
                     checkValueValid(100, 0, option);
-                    MTRCommand.mtrCentile = getValidFloat(option);
+                    MTRCommand.maxMTRCentile = getValidFloat(option);
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--min-revel-score":
@@ -318,7 +321,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-omim":
                     KnownVarCommand.isIncludeOMIM = true;
-                    break;    
+                    break;
                 case "--include-rvis":
                     RvisCommand.isIncludeRvis = true;
                     break;

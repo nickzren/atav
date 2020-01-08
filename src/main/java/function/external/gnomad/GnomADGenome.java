@@ -86,7 +86,17 @@ public class GnomADGenome {
 
         isSnv = ref.length() == alt.length();
 
-        initDataFromCSVRecord(record);
+        rf_tp_probability = FormatManager.getFloat(record.get("gnomAD Genome rf_tp_probability"));
+
+        maxAF = Data.FLOAT_NA;
+        af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
+        for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
+            af[i] = FormatManager.getFloat(record.get("gnomAD Genome " + GnomADManager.GNOMAD_GENOME_POP[i] + "_AF"));
+            if (af[i] != Data.FLOAT_NA
+                    && GnomADCommand.gnomADGenomePopSet.contains(GnomADManager.GNOMAD_GENOME_POP[i])) {
+                maxAF = Math.max(maxAF, af[i]);
+            }
+        }
     }
 
     private void initAF() {
@@ -167,22 +177,6 @@ public class GnomADGenome {
 
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
             af[i] = value;
-        }
-    }
-
-    private void initDataFromCSVRecord(CSVRecord record) {
-        if (GnomADCommand.isIncludeGnomADGenome) {
-            rf_tp_probability = FormatManager.getFloat(record.get("gnomAD Genome rf_tp_probability"));
-
-            maxAF = Data.FLOAT_NA;
-            af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
-            for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-                af[i] = FormatManager.getFloat(record.get("gnomAD Genome " + GnomADManager.GNOMAD_GENOME_POP[i] + "_AF"));
-                if (af[i] != Data.FLOAT_NA
-                        && GnomADCommand.gnomADGenomePopSet.contains(GnomADManager.GNOMAD_GENOME_POP[i])) {
-                    maxAF = Math.max(maxAF, af[i]);
-                }
-            }
         }
     }
 
