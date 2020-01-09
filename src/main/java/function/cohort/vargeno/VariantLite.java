@@ -266,7 +266,8 @@ public class VariantLite {
             return false;
         }
 
-        return !geneList.isEmpty()
+        return VariantManager.isVariantIdIncluded(variantID)
+                && !geneList.isEmpty()
                 && exac.isValid()
                 && gnomADExome.isValid()
                 && gnomADGenome.isValid()
