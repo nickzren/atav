@@ -18,6 +18,6 @@ public class CCRCommand {
             return true;
         }
 
-        return value >= minCCRPercentile;
+        return value >= minCCRPercentile || minCCRPercentile == Data.FLOAT_NA;
     }
 }

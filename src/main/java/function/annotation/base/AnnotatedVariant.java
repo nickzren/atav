@@ -271,10 +271,7 @@ public class AnnotatedVariant extends Variant {
 
             // sub rvis filters will only apply missense variants except gene boundary option at domain level used
             if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
-                return SubRvisCommand.isSubRVISDomainScorePercentileValid(subRvisOutput.getDomainScorePercentile())
-                        && SubRvisCommand.isMTRDomainPercentileValid(subRvisOutput.getMTRDomainPercentile())
-                        && SubRvisCommand.isSubRVISExonScorePercentileValid(subRvisOutput.getExonScorePercentile())
-                        && SubRvisCommand.isMTRExonPercentileValid(subRvisOutput.getMTRExonPercentile());
+                return subRvisOutput.isValid();
             } else {
                 return true;
             }
@@ -290,11 +287,7 @@ public class AnnotatedVariant extends Variant {
 
             // LIMBR filters will only apply missense variants except gene boundary option at domain level used
             if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
-                LIMBRGene geneDomain = limbrOutput.getGeneDomain();
-                LIMBRGene geneExon = limbrOutput.getGeneExon();
-
-                return LIMBRCommand.isLIMBRDomainPercentileValid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getPercentiles())
-                        && LIMBRCommand.isLIMBRExonPercentileValid(geneExon == null ? Data.FLOAT_NA : geneExon.getPercentiles());
+                return limbrOutput.isValid();
             } else {
                 return true;
             }
@@ -309,7 +302,7 @@ public class AnnotatedVariant extends Variant {
             ccrOutput = new CCROutput(geneList, getChrStr(), getStartPosition());
 
             if (!EffectManager.isLOF(effectID)) {
-                return CCRCommand.isCCRPercentileValid(ccrOutput.getGene() == null ? Data.FLOAT_NA : ccrOutput.getGene().getPercentiles());
+                return ccrOutput.isValid();
             }
         }
 

@@ -11,18 +11,18 @@ public class SubRvisGene {
     private String id; // domain or exon identifier
     private String chr;
     private ArrayList<Region> regionList;
-    private float score;
+    private float percentile;
     private float mtrPercentile;
 
     public SubRvisGene(String id,
             String chr,
             ArrayList<Region> regionList,
-            float score, 
+            float percentile, 
             float mtrPercentile) {
         this.id = id;
         this.chr = chr;
         this.regionList = regionList;
-        this.score = score;
+        this.percentile = percentile;
         this.mtrPercentile = mtrPercentile;
     }
     
@@ -38,8 +38,8 @@ public class SubRvisGene {
         return regionList;
     }
 
-    public float getScorePercentile() {
-        return score;
+    public float getPercentile() {
+        return percentile;
     }
     
     public float getMTRPercentile() {

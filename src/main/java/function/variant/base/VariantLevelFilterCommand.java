@@ -207,8 +207,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--sub-rvis-domain-score-percentile":
                 case "--max-sub-rvis-domain-score-percentile":
+                case "--max-sub-rvis-domain-percentile":
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.maxSubRVISDomainScorePercentile = getValidFloat(option);
+                    SubRvisCommand.maxSubRVISDomainPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--mtr-domain-percentile":
@@ -219,8 +220,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--sub-rvis-exon-score-percentile":
                 case "--max-sub-rvis-exon-score-percentile":
+                case "--max-sub-rvis-exon-percentile":
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.maxSubRVISExonScorePercentile = getValidFloat(option);
+                    SubRvisCommand.maxSubRVISExonPercentile = getValidFloat(option);
                     SubRvisCommand.isIncludeSubRvis = true;
                     break;
                 case "--mtr-exon-percentile":

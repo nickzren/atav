@@ -8,6 +8,7 @@ import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.external.ccr.CCRCommand;
+import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.exac.ExAC;
@@ -16,11 +17,15 @@ import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
 import function.external.limbr.LIMBRCommand;
+import function.external.limbr.LIMBROutput;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
+import function.external.primateai.PrimateAI;
 import function.external.primateai.PrimateAICommand;
+import function.external.revel.Revel;
 import function.external.revel.RevelCommand;
 import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisOutput;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -51,16 +56,12 @@ public class VariantLite {
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
     private Annotation mostDamagingAnnotation = new Annotation();
-    private float subRVISDomainScorePercentile;
-    private float subRVISExonScorePercentile;
-    private float mtrDomainPercentile;
-    private float mtrExonPercentile;
-    private float limbrDomainPercentile;
-    private float limbrExonPercentile;
-    private float ccrPercentile;
+    private SubRvisOutput subrvis;
+    private LIMBROutput limbr;
+    private CCROutput ccr;
     private MTR mtr;
-    private float revel;
-    private float primateAI;
+    private Revel revel;
+    private PrimateAI primateAI;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -180,23 +181,19 @@ public class VariantLite {
 
     private void initSubRVIS(CSVRecord record) {
         if (SubRvisCommand.isIncludeSubRvis) {
-            subRVISDomainScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER));
-            subRVISExonScorePercentile = FormatManager.getFloat(record.get(ListVarGenoLite.SUBRVIS_EXON_SCORE_PERCENTILE_HEADER));
-            mtrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_DOMAIN_PERCENTILE_HEADER));
-            mtrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.MTR_EXON_PERCENTILE_HEADER));
+            subrvis = new SubRvisOutput(record);
         }
     }
 
     private void initLIMBR(CSVRecord record) {
         if (LIMBRCommand.isIncludeLIMBR) {
-            limbrDomainPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_DOMAIN_PERCENTILE_HEADER));
-            limbrExonPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.LIMBR_EXON_PERCENTILE_HEADER));
+            limbr = new LIMBROutput(record);
         }
     }
 
     private void initCCR(CSVRecord record) {
         if (CCRCommand.isIncludeCCR) {
-            ccrPercentile = FormatManager.getFloat(record.get(ListVarGenoLite.CCR_PERCENTILE_HEADER));
+            ccr = new CCROutput(record);
         }
     }
 
@@ -208,13 +205,13 @@ public class VariantLite {
 
     private void initREVEL(CSVRecord record) {
         if (RevelCommand.isIncludeRevel) {
-            revel = FormatManager.getFloat(record.get(ListVarGenoLite.REVEL_HEADER));
+            revel = new Revel(record);
         }
     }
 
     private void initPrimateAI(CSVRecord record) {
         if (PrimateAICommand.isIncludePrimateAI) {
-            primateAI = FormatManager.getFloat(record.get(ListVarGenoLite.PRIMATE_AI_HEADER));
+            primateAI = new PrimateAI(record);
         }
     }
 
@@ -244,16 +241,12 @@ public class VariantLite {
                 && exac.isValid()
                 && gnomADExome.isValid()
                 && gnomADGenome.isValid()
-                && SubRvisCommand.isSubRVISDomainScorePercentileValid(subRVISDomainScorePercentile)
-                && SubRvisCommand.isSubRVISExonScorePercentileValid(subRVISExonScorePercentile)
-                && SubRvisCommand.isMTRDomainPercentileValid(mtrDomainPercentile)
-                && SubRvisCommand.isMTRExonPercentileValid(mtrExonPercentile)
-                && LIMBRCommand.isLIMBRDomainPercentileValid(limbrDomainPercentile)
-                && LIMBRCommand.isLIMBRExonPercentileValid(limbrExonPercentile)
-                && CCRCommand.isCCRPercentileValid(ccrPercentile)
-                && mtr.isValid()
-                && RevelCommand.isMinRevelValid(revel)
-                && PrimateAICommand.isMinPrimateAIValid(primateAI)
+                && isSubRVISValid()
+                && isLIMBRValid()
+                && isCCRValid()
+                && isMTRValid()
+                && revel.isValid()
+                && primateAI.isValid()
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
@@ -286,5 +279,41 @@ public class VariantLite {
 
     public boolean isSNV() {
         return isSNV;
+    }
+
+    private boolean isSubRVISValid() {
+        // sub rvis filters will only apply missense variants except gene boundary option at domain level used
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
+            return subrvis.isValid();
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isLIMBRValid() {
+        // LIMBR filters will only apply missense variants except gene boundary option at domain level used
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
+            return limbr.isValid();
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isCCRValid() {
+        // applied filter only to non-LOF variants
+        if (!EffectManager.isLOF(mostDamagingAnnotation.effect)) {
+            return ccr.isValid();
+        }
+
+        return true;
+    }
+
+    private boolean isMTRValid() {
+        // MTR filters will only apply missense variants
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
+            return mtr.isValid();
+        }
+
+        return true;
     }
 }

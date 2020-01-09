@@ -2,6 +2,7 @@ package function.external.revel;
 
 import java.sql.ResultSet;
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -30,6 +31,10 @@ public class Revel {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+    
+    public Revel(CSVRecord record) {
+        revel = FormatManager.getFloat(record.get("REVEL"));
     }
     
     public boolean isValid() {

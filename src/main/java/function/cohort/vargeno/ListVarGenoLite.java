@@ -4,15 +4,21 @@ import function.annotation.base.Annotation;
 import function.annotation.base.PolyphenManager;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.external.ccr.CCRCommand;
+import function.external.ccr.CCRManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.limbr.LIMBRCommand;
+import function.external.limbr.LIMBRManager;
 import function.external.mtr.MTRCommand;
+import function.external.mtr.MTRManager;
 import function.external.primateai.PrimateAICommand;
+import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
+import function.external.revel.RevelManager;
 import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisManager;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -69,18 +75,6 @@ public class ListVarGenoLite {
     public static int GENE_NAME_HEADER_INDEX;
     public static final String ALL_ANNOTATION_HEADER = "Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar";
     public static int ALL_ANNOTATION_HEADER_INDEX;
-    public static final String SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER = "subRVIS Domain Score Percentile";
-    public static final String SUBRVIS_EXON_SCORE_PERCENTILE_HEADER = "subRVIS Exon Score Percentile";
-    public static final String MTR_DOMAIN_PERCENTILE_HEADER = "MTR Domain Percentile";
-    public static final String MTR_EXON_PERCENTILE_HEADER = "MTR Exon Percentile";
-    public static final String LIMBR_DOMAIN_PERCENTILE_HEADER = "LIMBR Domain Percentile";
-    public static final String LIMBR_EXON_PERCENTILE_HEADER = "LIMBR Exon Percentile";
-    public static final String CCR_PERCENTILE_HEADER = "CCR Percentile";
-    public static final String MTR_HEADER = "MTR";
-    public static final String MTR_FDR_HEADER = "MTR FDR";
-    public static final String MTR_CENTILE_HEADER = "MTR Centile";
-    public static final String REVEL_HEADER = "REVEL";
-    public static final String PRIMATE_AI_HEADER = "PrimateAI";
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
     public static final String QC_FAIL_CASE_HEADER = "QC Fail Case";
     public static final String QC_FAIL_CTRL_HEADER = "QC Fail Ctrl";
@@ -168,39 +162,27 @@ public class ListVarGenoLite {
         }
 
         if (SubRvisCommand.isIncludeSubRvis) {
-            headers = (String[]) ArrayUtils.addAll(headers,
-                    new String[]{
-                        SUBRVIS_DOMAIN_SCORE_PERCENTILE_HEADER,
-                        SUBRVIS_EXON_SCORE_PERCENTILE_HEADER,
-                        MTR_DOMAIN_PERCENTILE_HEADER,
-                        MTR_EXON_PERCENTILE_HEADER});
+            headers = (String[]) ArrayUtils.addAll(headers, SubRvisManager.getHeader().split(","));
         }
 
         if (LIMBRCommand.isIncludeLIMBR) {
-            headers = (String[]) ArrayUtils.addAll(headers,
-                    new String[]{
-                        LIMBR_DOMAIN_PERCENTILE_HEADER,
-                        LIMBR_EXON_PERCENTILE_HEADER});
+            headers = (String[]) ArrayUtils.addAll(headers, LIMBRManager.getHeader().split(","));
         }
 
         if (CCRCommand.isIncludeCCR) {
-            headers = (String[]) ArrayUtils.addAll(headers, new String[]{CCR_PERCENTILE_HEADER});
+            headers = (String[]) ArrayUtils.addAll(headers, CCRManager.getHeader().split(","));
         }
 
         if (MTRCommand.isIncludeMTR) {
-            headers = (String[]) ArrayUtils.addAll(headers,
-                    new String[]{
-                        MTR_HEADER,
-                        MTR_FDR_HEADER,
-                        MTR_CENTILE_HEADER});
+            headers = (String[]) ArrayUtils.addAll(headers, MTRManager.getHeader().split(","));
         }
 
         if (RevelCommand.isIncludeRevel) {
-            headers = (String[]) ArrayUtils.addAll(headers, new String[]{REVEL_HEADER});
+            headers = (String[]) ArrayUtils.addAll(headers, RevelManager.getHeader().split(","));
         }
 
         if (PrimateAICommand.isIncludePrimateAI) {
-            headers = (String[]) ArrayUtils.addAll(headers, new String[]{PRIMATE_AI_HEADER});
+            headers = (String[]) ArrayUtils.addAll(headers, PrimateAIManager.getHeader().split(","));
         }
 
         return headers;
