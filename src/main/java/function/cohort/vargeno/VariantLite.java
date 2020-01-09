@@ -11,6 +11,8 @@ import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.discovehr.DiscovEHR;
+import function.external.discovehr.DiscovEHRCommand;
 import function.external.exac.ExAC;
 import function.external.exac.ExACCommand;
 import function.external.gnomad.GnomADCommand;
@@ -63,6 +65,7 @@ public class VariantLite {
     private SubRvisOutput subrvis;
     private LIMBROutput limbr;
     private CCROutput ccr;
+    private DiscovEHR discovEHR;
     private MTR mtr;
     private Revel revel;
     private PrimateAI primateAI;
@@ -97,6 +100,7 @@ public class VariantLite {
         initSubRVIS(record);
         initLIMBR(record);
         initCCR(record);
+        initDiscovEHR(record);
         initMTR(record);
         initREVEL(record);
         initPrimateAI(record);
@@ -203,6 +207,12 @@ public class VariantLite {
             ccr = new CCROutput(record);
         }
     }
+    
+    private void initDiscovEHR(CSVRecord record) {
+        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+            discovEHR = new DiscovEHR(record);
+        }
+    }
 
     private void initMTR(CSVRecord record) {
         if (MTRCommand.isIncludeMTR) {
@@ -263,6 +273,7 @@ public class VariantLite {
                 && isSubRVISValid()
                 && isLIMBRValid()
                 && isCCRValid()
+                && discovEHR.isValid()
                 && isMTRValid()
                 && revel.isValid()
                 && primateAI.isValid()

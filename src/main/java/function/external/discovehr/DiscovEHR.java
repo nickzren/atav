@@ -2,6 +2,7 @@ package function.external.discovehr;
 
 import global.Data;
 import java.sql.ResultSet;
+import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -40,6 +41,10 @@ public class DiscovEHR {
         }
     }
 
+    public DiscovEHR(CSVRecord record) {
+        af = FormatManager.getFloat(record.get("DiscovEHR AF"));
+    }
+    
     private void initAF() {
         try {
             String sql = DiscovEHRManager.getSql4AF(chr, pos, ref, alt);

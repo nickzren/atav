@@ -5,6 +5,8 @@ import function.annotation.base.PolyphenManager;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCRManager;
+import function.external.discovehr.DiscovEHRCommand;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADCommand;
@@ -175,6 +177,10 @@ public class ListVarGenoLite {
 
         if (CCRCommand.isIncludeCCR) {
             headers = (String[]) ArrayUtils.addAll(headers, CCRManager.getHeader().split(","));
+        }
+        
+        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+            headers = (String[]) ArrayUtils.addAll(headers, DiscovEHRManager.getHeader().split(","));
         }
 
         if (MTRCommand.isIncludeMTR) {
