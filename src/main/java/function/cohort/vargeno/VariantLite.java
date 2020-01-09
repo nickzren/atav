@@ -18,6 +18,8 @@ import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCOutput;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
 import function.external.primateai.PrimateAI;
@@ -62,6 +64,7 @@ public class VariantLite {
     private MTR mtr;
     private Revel revel;
     private PrimateAI primateAI;
+    private MPCOutput mpc;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -94,6 +97,7 @@ public class VariantLite {
         initMTR(record);
         initREVEL(record);
         initPrimateAI(record);
+        initMPC(record);
 
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
@@ -215,6 +219,12 @@ public class VariantLite {
         }
     }
 
+    private void initMPC(CSVRecord record) {
+        if (MPCCommand.isIncludeMPC) {
+            mpc = new MPCOutput(record);
+        }
+    }
+
     private int getIntStableId(String value) {
         if (value.equals(Data.STRING_NA)) {
             return Data.INTEGER_NA;
@@ -247,6 +257,7 @@ public class VariantLite {
                 && isMTRValid()
                 && revel.isValid()
                 && primateAI.isValid()
+                && isMPCValid()
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
@@ -315,5 +326,14 @@ public class VariantLite {
         }
 
         return true;
+    }
+
+    private boolean isMPCValid() {
+        // MPC filters will only apply missense variants
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
+            return mpc.isValid();
+        } else {
+            return true;
+        }
     }
 }

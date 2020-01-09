@@ -11,6 +11,8 @@ import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBRManager;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCManager;
 import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
 import function.external.primateai.PrimateAICommand;
@@ -183,6 +185,10 @@ public class ListVarGenoLite {
 
         if (PrimateAICommand.isIncludePrimateAI) {
             headers = (String[]) ArrayUtils.addAll(headers, PrimateAIManager.getHeader().split(","));
+        }
+        
+        if(MPCCommand.isIncludeMPC) {
+            headers = (String[]) ArrayUtils.addAll(headers, MPCManager.getHeader().split(","));
         }
 
         return headers;
