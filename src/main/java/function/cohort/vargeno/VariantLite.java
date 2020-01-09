@@ -22,6 +22,8 @@ import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCOutput;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
+import function.external.pext.PextCommand;
+import function.external.pext.PextOutput;
 import function.external.primateai.PrimateAI;
 import function.external.primateai.PrimateAICommand;
 import function.external.revel.Revel;
@@ -65,6 +67,7 @@ public class VariantLite {
     private Revel revel;
     private PrimateAI primateAI;
     private MPCOutput mpc;
+    private PextOutput pext;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -98,7 +101,7 @@ public class VariantLite {
         initREVEL(record);
         initPrimateAI(record);
         initMPC(record);
-
+        initPEXT(record);
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
 
@@ -224,6 +227,12 @@ public class VariantLite {
             mpc = new MPCOutput(record);
         }
     }
+    
+    private void initPEXT(CSVRecord record) {
+        if (PextCommand.isIncludePext) {
+            pext = new PextOutput(record);
+        }
+    }
 
     private int getIntStableId(String value) {
         if (value.equals(Data.STRING_NA)) {
@@ -258,6 +267,7 @@ public class VariantLite {
                 && revel.isValid()
                 && primateAI.isValid()
                 && isMPCValid()
+                && pext.isValid()
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
