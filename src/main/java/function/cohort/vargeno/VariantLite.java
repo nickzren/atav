@@ -207,7 +207,7 @@ public class VariantLite {
             ccr = new CCROutput(record);
         }
     }
-    
+
     private void initDiscovEHR(CSVRecord record) {
         if (DiscovEHRCommand.isIncludeDiscovEHR) {
             discovEHR = new DiscovEHR(record);
@@ -237,7 +237,7 @@ public class VariantLite {
             mpc = new MPCOutput(record);
         }
     }
-    
+
     private void initPEXT(CSVRecord record) {
         if (PextCommand.isIncludePext) {
             pext = new PextOutput(record);
@@ -268,18 +268,18 @@ public class VariantLite {
 
         return VariantManager.isVariantIdIncluded(variantID)
                 && !geneList.isEmpty()
-                && exac.isValid()
-                && gnomADExome.isValid()
-                && gnomADGenome.isValid()
+                && isExacValid()
+                && isGnomADExomeValid()
+                && isGnomADGenomeValid()
                 && isSubRVISValid()
                 && isLIMBRValid()
                 && isCCRValid()
-                && discovEHR.isValid()
+                && isDiscovEHRValid()
                 && isMTRValid()
-                && revel.isValid()
-                && primateAI.isValid()
+                && isRevelValid()
+                && isPrimateAIValid()
                 && isMPCValid()
-                && pext.isValid()
+                && isPextValid()
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
@@ -314,7 +314,35 @@ public class VariantLite {
         return isSNV;
     }
 
+    private boolean isExacValid() {
+        if (exac == null) {
+            return true;
+        }
+
+        return exac.isValid();
+    }
+
+    private boolean isGnomADExomeValid() {
+        if (gnomADExome == null) {
+            return true;
+        }
+
+        return gnomADExome.isValid();
+    }
+
+    private boolean isGnomADGenomeValid() {
+        if (gnomADGenome == null) {
+            return true;
+        }
+
+        return gnomADGenome.isValid();
+    }
+
     private boolean isSubRVISValid() {
+        if (subrvis == null) {
+            return true;
+        }
+
         // sub rvis filters will only apply missense variants except gene boundary option at domain level used
         if (mostDamagingAnnotation.effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
             return subrvis.isValid();
@@ -324,6 +352,10 @@ public class VariantLite {
     }
 
     private boolean isLIMBRValid() {
+        if (limbr == null) {
+            return true;
+        }
+
         // LIMBR filters will only apply missense variants except gene boundary option at domain level used
         if (mostDamagingAnnotation.effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
             return limbr.isValid();
@@ -333,6 +365,10 @@ public class VariantLite {
     }
 
     private boolean isCCRValid() {
+        if (ccr == null) {
+            return true;
+        }
+
         // applied filter only to non-LOF variants
         if (!EffectManager.isLOF(mostDamagingAnnotation.effect)) {
             return ccr.isValid();
@@ -340,8 +376,20 @@ public class VariantLite {
 
         return true;
     }
+    
+    private boolean isDiscovEHRValid() {
+        if (discovEHR == null) {
+            return true;
+        }
+
+        return discovEHR.isValid();
+    }
 
     private boolean isMTRValid() {
+        if (mtr == null) {
+            return true;
+        }
+
         // MTR filters will only apply missense variants
         if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
             return mtr.isValid();
@@ -349,13 +397,41 @@ public class VariantLite {
 
         return true;
     }
+    
+    private boolean isRevelValid() {
+        if (revel == null) {
+            return true;
+        }
+
+        return revel.isValid();
+    }
+    
+    private boolean isPrimateAIValid() {
+        if (primateAI == null) {
+            return true;
+        }
+
+        return primateAI.isValid();
+    }
 
     private boolean isMPCValid() {
+        if (mpc == null) {
+            return true;
+        }
+
         // MPC filters will only apply missense variants
         if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
             return mpc.isValid();
         } else {
             return true;
         }
+    }
+    
+    private boolean isPextValid() {
+        if (pext == null) {
+            return true;
+        }
+
+        return pext.isValid();
     }
 }
