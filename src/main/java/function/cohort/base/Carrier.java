@@ -48,8 +48,18 @@ public class Carrier extends NonCarrier {
         readPosRankSum = FormatManager.getFloat(rs, "ReadPosRankSum");
         mqRankSum = FormatManager.getFloat(rs, "MQRankSum");
         filterValue = rs.getByte("FILTER+0");
-        pidVariantId = FormatManager.getInt(rs, "PID_variant_id");
-        hpVariantId = FormatManager.getInt(rs, "HP_variant_id");
+        // PGT = 1 indicate variant is in phase
+        if (rs.getByte("PGT") == 1) {
+            pidVariantId = FormatManager.getInt(rs, "PID_variant_id");
+        } else {
+            pidVariantId = Data.INTEGER_NA;
+        }
+        // HP_GT = 1 indicate variant is in phase
+        if (rs.getByte("HP_GT") == 1) {
+            hpVariantId = FormatManager.getInt(rs, "HP_variant_id");
+        } else {
+            hpVariantId = Data.INTEGER_NA;
+        }
     }
 
     public short getDP() {
@@ -115,11 +125,11 @@ public class Carrier extends NonCarrier {
             return MathManager.getBinomialLessThan(adAlt + adRef, adAlt, 0.5f);
         }
     }
-    
+
     public int getPIDVariantId() {
         return pidVariantId;
     }
-    
+
     public int getHPVariantId() {
         return hpVariantId;
     }
