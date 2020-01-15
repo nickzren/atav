@@ -41,9 +41,20 @@ public class SubRvisOutput {
     }
 
     public SubRvisOutput(CSVRecord record) {
-        domainPercentile = FormatManager.getFloat(record.get("subRVIS Domain Percentile"));
+        String column = "subRVIS Domain Percentile";
+        if (!record.isMapped(column)) {
+            column = "subRVIS Domain Score Percentile";
+        }
+        domainPercentile = FormatManager.getFloat(record.get(column));
+
         mtrDomainPercentile = FormatManager.getFloat(record.get("MTR Domain Percentile"));
-        exonPercentile = FormatManager.getFloat(record.get("subRVIS Exon Percentile"));
+
+        column = "subRVIS Exon Percentile";
+        if (!record.isMapped(column)) {
+            column = "subRVIS Exon Score Percentile";
+        }
+        exonPercentile = FormatManager.getFloat(record.get(column));
+
         mtrExonPercentile = FormatManager.getFloat(record.get("MTR Exon Percentile"));
     }
 
