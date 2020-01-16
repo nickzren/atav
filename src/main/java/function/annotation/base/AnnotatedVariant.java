@@ -5,7 +5,6 @@ import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.limbr.LIMBRCommand;
-import function.external.limbr.LIMBRGene;
 import function.external.limbr.LIMBROutput;
 import function.external.denovo.DenovoDB;
 import function.external.denovo.DenovoDBCommand;
@@ -170,18 +169,6 @@ public class AnnotatedVariant extends Variant {
             isValid = discovEHR.isValid();
         }
 
-        if (isValid && RevelCommand.isIncludeRevel) {
-            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
-
-            isValid = RevelCommand.isMinRevelValid(revel);
-        }
-
-        if (isValid && PrimateAICommand.isIncludePrimateAI) {
-            primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
-
-            isValid = PrimateAICommand.isMinPrimateAIValid(primateAI);
-        }
-
         if (isValid && VariantLevelFilterCommand.isIncludeLOFTEE) {
             isLOFTEEHCinCCDS = VariantManager.getLOFTEEHCinCCDS(chrStr, startPosition, refAllele, allele);
 
@@ -261,6 +248,8 @@ public class AnnotatedVariant extends Variant {
                 && isCCRValid()
                 && isMTRValid()
                 && isPextValid()
+                && isRevelValid()
+                && isPrimateAIValid()
                 && isMPCValid();
     }
 
@@ -329,6 +318,38 @@ public class AnnotatedVariant extends Variant {
             pextRatio = PextManager.getRatio(chrStr, getStartPosition());
 
             return PextCommand.isPextRatioValid(pextRatio);
+        }
+
+        return true;
+    }
+
+    // init REVEL score base on most damaging gene and applied filter
+    private boolean isRevelValid() {
+        if (RevelCommand.isIncludeRevel) {
+            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
+
+            // REVEL filters will only apply missense variants
+            if (effect.startsWith("missense_variant")) {
+                return RevelCommand.isMinRevelValid(revel);
+            } else {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    // init PrimateAI score base on most damaging gene and applied filter
+    private boolean isPrimateAIValid() {
+        if (PrimateAICommand.isIncludePrimateAI) {
+            primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
+
+            // PrimateAI filters will only apply missense variants
+            if (effect.startsWith("missense_variant")) {
+                return PrimateAICommand.isMinPrimateAIValid(primateAI);
+            } else {
+                return true;
+            }
         }
 
         return true;

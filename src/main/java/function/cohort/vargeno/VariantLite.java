@@ -376,7 +376,7 @@ public class VariantLite {
 
         return true;
     }
-    
+
     private boolean isDiscovEHRValid() {
         if (discovEHR == null) {
             return true;
@@ -390,28 +390,38 @@ public class VariantLite {
             return true;
         }
 
-        // MTR filters will only apply missense variants
+        // MTR filter will only apply missense variants
         if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
             return mtr.isValid();
         }
 
         return true;
     }
-    
+
     private boolean isRevelValid() {
         if (revel == null) {
             return true;
         }
 
-        return revel.isValid();
+        // Revel filter will only apply missense variants
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
+            return revel.isValid();
+        }
+
+        return true;
     }
-    
+
     private boolean isPrimateAIValid() {
         if (primateAI == null) {
             return true;
         }
 
-        return primateAI.isValid();
+        // PrimateAI filter will only apply missense variants
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
+            return primateAI.isValid();
+        }
+
+        return true;
     }
 
     private boolean isMPCValid() {
@@ -419,14 +429,14 @@ public class VariantLite {
             return true;
         }
 
-        // MPC filters will only apply missense variants
+        // MPC filter will only apply missense variants
         if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
             return mpc.isValid();
         } else {
             return true;
         }
     }
-    
+
     private boolean isPextValid() {
         if (pext == null) {
             return true;
