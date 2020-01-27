@@ -228,10 +228,8 @@ public class CollapsingCompHet extends CollapsingBase {
             return false;
         }
 
-        int pidVariantID1 = carrier1.getPIDVariantId();
-        int pidVariantID2 = carrier2.getPIDVariantId();
-
-        return CollapsingCommand.isCompHetPIDVariantIdValid(pidVariantID1, pidVariantID2);
+        return CollapsingCommand.isCompHetPIDVariantIdValid(var1.getVariantId(), carrier2.getPIDVariantId()) ||
+                CollapsingCommand.isCompHetPIDVariantIdValid(var2.getVariantId(), carrier1.getPIDVariantId());
     }
 
     private boolean isCompHetHPVariantIdValid(CalledVariant var1, CalledVariant var2, Sample sample) {
@@ -245,11 +243,9 @@ public class CollapsingCompHet extends CollapsingBase {
         if (carrier1 == null || carrier2 == null) {
             return false;
         }
-
-        int hpVariantID1 = carrier1.getHPVariantId();
-        int hpVariantID2 = carrier2.getHPVariantId();
-
-        return CollapsingCommand.isCompHetHPVariantIdValid(hpVariantID1, hpVariantID2);
+        
+        return CollapsingCommand.isCompHetHPVariantIdValid(var1.getVariantId(), carrier2.getHPVariantId()) ||
+                CollapsingCommand.isCompHetHPVariantIdValid(var2.getVariantId(), carrier1.getHPVariantId());
     }
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {
