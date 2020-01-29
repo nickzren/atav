@@ -60,6 +60,10 @@ public class Sample {
         return type;
     }
     
+    public void setType(String value) {
+        type = value;
+    }
+    
     public String getPhenotype() {
         if (pheno == 0) {
             return "ctrl";
@@ -70,6 +74,10 @@ public class Sample {
 
     public String getCaptureKit() {
         return captureKit;
+    }
+    
+    public void setCaptureKit(String value) {
+        captureKit = value;
     }
 
     public String getFamilyId() {

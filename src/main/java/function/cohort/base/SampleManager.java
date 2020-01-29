@@ -214,7 +214,7 @@ public class SampleManager {
 
     private static void initExcludeIGMGnomADSample() {
         if (CohortLevelFilterCommand.isExcludeIGMGnomadSample) {
-            try (BufferedReader br = Files.newBufferedReader(Paths.get(IGM_GNOMAD_SAMPLE_PATH))) {
+            try ( BufferedReader br = Files.newBufferedReader(Paths.get(IGM_GNOMAD_SAMPLE_PATH))) {
                 excludeIGMGnomadSampleSet = br.lines().collect(Collectors.toSet());
             } catch (IOException e) {
                 ErrorManager.print("Error: parsing IGM GnomAD Sample file", ErrorManager.INPUT_PARSING);
@@ -433,7 +433,7 @@ public class SampleManager {
                     + "WHERE sample_name = '" + sample.getName() + "' "
                     + "AND sample_type = '" + sample.getType() + "' "
                     + "AND capture_kit = '" + sample.getCaptureKit() + "' "
-                    + "AND sample_failure = 1 ";
+                    + "AND sample_failure > 0 ";
 
             ResultSet rs = DBManager.executeQuery(sqlCode);
             if (rs.next()) {
@@ -441,11 +441,13 @@ public class SampleManager {
             } else {
                 sqlCode = "SELECT * FROM sample "
                         + "WHERE sample_name = '" + sample.getName() + "' "
-                        + "AND sample_finished = 1";
+                        + "AND sample_finished = 1 AND sample_failure = 0";
 
                 rs = DBManager.executeQuery(sqlCode);
 
-                if (rs.next()) {
+                if (rs.next()) {                    
+                    sample.setType(rs.getString("sample_type"));
+                    sample.setCaptureKit(rs.getString("capture_kit"));
                     diffTypeSampleList.add(sample);
                 } else {
                     notExistSampleList.add(sample);
@@ -478,7 +480,7 @@ public class SampleManager {
             LogManager.writeAndPrint("Generated all existing samples:\n" + existingSampleFile);
 
             ErrorManager.print("Wrong values in sample file.", ErrorManager.INPUT_PARSING);
-        } 
+        }
     }
 
     private static void checkCaseCtrlOptions() {
@@ -510,9 +512,14 @@ public class SampleManager {
 
             for (Sample sample : sampleList) {
                 LogManager.writeAndPrintNoNewLine(
-                        sample.getName()
-                        + "\t" + sample.getType()
-                        + "\t" + sample.getCaptureKit());
+                        sample.getFamilyId() + "\t"
+                        + sample.getName() + "\t"
+                        + sample.getPaternalId() + "\t"
+                        + sample.getMaternalId() + "\t"
+                        + sample.getSex() + "\t"
+                        + (sample.getPheno() + 1) + "\t"
+                        + sample.getType() + "\t"
+                        + sample.getCaptureKit());
             }
 
             LogManager.writeAndPrintNoNewLine(""); // hack to add new line
@@ -832,7 +839,7 @@ public class SampleManager {
     public static StringJoiner getCaseIDSJ() {
         return caseIDSJ;
     }
-    
+
     public static String getExistingSampleFile() {
         return existingSampleFile;
     }
