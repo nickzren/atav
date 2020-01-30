@@ -123,20 +123,26 @@ public class CollapsingCommand {
         return value >= minCompHetVarDistance;
     }
 
-    public static boolean isCompHetPIDVariantIdValid(int variantId, int pidVariantId) {        
-        if (pidVariantId == Data.INTEGER_NA) {
+    public static boolean isCompHetPIDVariantIdValid(int variantId1, int variantId2,
+            int pidVariantId1, int pidVariantId2) {
+        if (pidVariantId1 == Data.INTEGER_NA && pidVariantId2 == Data.INTEGER_NA) {
             return false;
         }
 
-        return variantId == pidVariantId;
+        return variantId1 == pidVariantId2
+                || variantId2 == pidVariantId1
+                || pidVariantId1 == pidVariantId2;
     }
 
-    public static boolean isCompHetHPVariantIdValid(int variantId, int hpVariantId) {        
-        if (hpVariantId == Data.INTEGER_NA) {
+    public static boolean isCompHetHPVariantIdValid(int variantId1, int variantId2,
+            int hpVariantId1, int hpVariantId2) {
+        if (hpVariantId1 == Data.INTEGER_NA && hpVariantId2 == Data.INTEGER_NA) {
             return false;
         }
 
-        return variantId == hpVariantId;
+        return variantId1 == hpVariantId2
+                || variantId2 == hpVariantId1
+                || hpVariantId1 == hpVariantId2;
     }
 
     public static void initLiteOptions(Iterator<CommandOption> iterator)

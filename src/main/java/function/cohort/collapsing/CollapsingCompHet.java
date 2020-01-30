@@ -4,7 +4,7 @@ import function.cohort.base.CalledVariant;
 import function.cohort.base.Carrier;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
-import static function.cohort.collapsing.CollapsingCommand.isExcludeCompHetPIDVariant;
+import global.Data;
 import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -224,12 +224,12 @@ public class CollapsingCompHet extends CollapsingBase {
         Carrier carrier1 = var1.getCarrier(sample.getId());
         Carrier carrier2 = var2.getCarrier(sample.getId());
 
-        if (carrier1 == null || carrier2 == null) {
-            return false;
-        }
+        int pidVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getPIDVariantId();
+        int pidVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getPIDVariantId();
 
-        return CollapsingCommand.isCompHetPIDVariantIdValid(var1.getVariantId(), carrier2.getPIDVariantId()) ||
-                CollapsingCommand.isCompHetPIDVariantIdValid(var2.getVariantId(), carrier1.getPIDVariantId());
+        return CollapsingCommand.isCompHetPIDVariantIdValid(
+                var1.getVariantId(), var2.getVariantId(),
+                pidVariantId1, pidVariantId2);
     }
 
     private boolean isCompHetHPVariantIdValid(CalledVariant var1, CalledVariant var2, Sample sample) {
@@ -240,12 +240,12 @@ public class CollapsingCompHet extends CollapsingBase {
         Carrier carrier1 = var1.getCarrier(sample.getId());
         Carrier carrier2 = var2.getCarrier(sample.getId());
 
-        if (carrier1 == null || carrier2 == null) {
-            return false;
-        }
-        
-        return CollapsingCommand.isCompHetHPVariantIdValid(var1.getVariantId(), carrier2.getHPVariantId()) ||
-                CollapsingCommand.isCompHetHPVariantIdValid(var2.getVariantId(), carrier1.getHPVariantId());
+        int hpVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getHPVariantId();
+        int hpVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getHPVariantId();
+
+        return CollapsingCommand.isCompHetHPVariantIdValid(
+                var1.getVariantId(), var2.getVariantId(),
+                hpVariantId1, hpVariantId2);
     }
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {
