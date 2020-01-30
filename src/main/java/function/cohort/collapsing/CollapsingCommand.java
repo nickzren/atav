@@ -123,7 +123,7 @@ public class CollapsingCommand {
         return value >= minCompHetVarDistance;
     }
 
-    public static boolean isCompHetPIDVariantIdValid(int variantId1, int variantId2,
+    public static boolean isCompHetPIDVariantIdInvalid(int variantId1, int variantId2,
             int pidVariantId1, int pidVariantId2) {
         if (pidVariantId1 == Data.INTEGER_NA && pidVariantId2 == Data.INTEGER_NA) {
             return false;
@@ -134,7 +134,7 @@ public class CollapsingCommand {
                 || pidVariantId1 == pidVariantId2;
     }
 
-    public static boolean isCompHetHPVariantIdValid(int variantId1, int variantId2,
+    public static boolean isCompHetHPVariantIdInvalid(int variantId1, int variantId2,
             int hpVariantId1, int hpVariantId2) {
         if (hpVariantId1 == Data.INTEGER_NA && hpVariantId2 == Data.INTEGER_NA) {
             return false;

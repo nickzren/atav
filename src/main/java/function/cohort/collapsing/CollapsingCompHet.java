@@ -185,8 +185,8 @@ public class CollapsingCompHet extends CollapsingBase {
 
         if (var1.getVariantId() != var2.getVariantId()
                 && isMinCompHetVarDistanceValid(var1, var2)
-                && !isCompHetPIDVariantIdValid(var1, var2, sample)
-                && !isCompHetHPVariantIdValid(var1, var2, sample)) {
+                && !isCompHetPIDVariantIdInvalid(var1, var2, sample)
+                && !isCompHetHPVariantIdInvalid(var1, var2, sample)) {
             byte geno2 = output2.getCalledVariant().getGT(sample.getIndex());
 
             if (output2.isQualifiedGeno(geno2)) {
@@ -216,7 +216,7 @@ public class CollapsingCompHet extends CollapsingBase {
         return CollapsingCommand.isMinCompHetVarDistanceValid(varDistance);
     }
 
-    private boolean isCompHetPIDVariantIdValid(CalledVariant var1, CalledVariant var2, Sample sample) {
+    private boolean isCompHetPIDVariantIdInvalid(CalledVariant var1, CalledVariant var2, Sample sample) {
         if (!CollapsingCommand.isExcludeCompHetPIDVariant) {
             return false;
         }
@@ -227,12 +227,12 @@ public class CollapsingCompHet extends CollapsingBase {
         int pidVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getPIDVariantId();
         int pidVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getPIDVariantId();
 
-        return CollapsingCommand.isCompHetPIDVariantIdValid(
+        return CollapsingCommand.isCompHetPIDVariantIdInvalid(
                 var1.getVariantId(), var2.getVariantId(),
                 pidVariantId1, pidVariantId2);
     }
 
-    private boolean isCompHetHPVariantIdValid(CalledVariant var1, CalledVariant var2, Sample sample) {
+    private boolean isCompHetHPVariantIdInvalid(CalledVariant var1, CalledVariant var2, Sample sample) {
         if (!CollapsingCommand.isExcludeCompHetHPVariant) {
             return false;
         }
@@ -243,7 +243,7 @@ public class CollapsingCompHet extends CollapsingBase {
         int hpVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getHPVariantId();
         int hpVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getHPVariantId();
 
-        return CollapsingCommand.isCompHetHPVariantIdValid(
+        return CollapsingCommand.isCompHetHPVariantIdInvalid(
                 var1.getVariantId(), var2.getVariantId(),
                 hpVariantId1, hpVariantId2);
     }
