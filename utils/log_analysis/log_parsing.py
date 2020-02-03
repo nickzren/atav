@@ -181,6 +181,7 @@ def extractFunction(x):
     for word in words:
       if word in functionType:
         return word
+    print(x)
     return "notfound"
   except:
     return "invalid"
@@ -213,7 +214,7 @@ def get_time(timestr):
 from pyspark.sql.types import IntegerType
 sqlContext.registerFunction("get_time",get_time,IntegerType())
 
-timeframes = ["[0,10min[","[10min,1h[","[1h,6h[","[6h,12h[","[12h,1d[","[1d,2d[","[2d+"]
+timeframes = ["[0,10min]","[10min,1h]","[1h,6h]","[6h,12h]","[12h,1d]","[1d,2d]","[2d+"]
 
 def get_timeframe(time):
   if time < 10*60:
