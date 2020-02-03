@@ -116,7 +116,9 @@ logSchema = StructType([ \
   StructField("server", StringType(), False), \
   StructField("command", StringType(), False), \
   StructField("time", StringType(), False), \
-  StructField("size", StringType(), False) ])
+  StructField("size", StringType(), False), \
+  StructField("jobid", StringType(), False), \
+  StructField("exit", StringType(), False) ])
 
 functionsSchema = StructType([ \
   StructField("function", StringType(), False), \
@@ -127,7 +129,7 @@ functionsSchema = StructType([ \
 awsLogFilepath = os.path.join(inputDir,'users.command.log')
 df = sqlContext.read \
     .format('csv') \
-    .options(header='false',delimiter='\t',mode='DROPMALFORMED') \
+    .options(header='false',delimiter='\t') \
     .load(awsLogFilepath, schema = logSchema).cache()
 df.registerTempTable('aws_command_log')
 
@@ -251,7 +253,6 @@ for inx,interval in enum(intervals):
   df = sqlContext.sql("SELECT user, extract_function(command) fun, get_time(time) time FROM aws_command_log") \
     .where("date_in_interval(datetime,'"+interval[0]+"','"+interval[1]+"')") \
     .drop("datetime")
-  
   # Workaround for Spark 2.0 preview
   # Switch back to udf ASAP
   # df = sqlContext.sql("SELECT * FROM aws_command_log")
