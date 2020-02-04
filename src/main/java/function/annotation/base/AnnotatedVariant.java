@@ -62,7 +62,7 @@ import utils.MathManager;
  */
 public class AnnotatedVariant extends Variant {
 
-    // AnnoDB annotations / most damaging effect annotations
+    // annotations / most damaging effect annotations
     private int stableId;
     private String effect = "";
     private int effectID;

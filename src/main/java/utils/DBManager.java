@@ -12,14 +12,14 @@ import java.util.Properties;
  */
 public class DBManager {
 
-    private static int maxATAVJobNum; // using this to control max connections to AnnoDB server
+    private static int maxATAVJobNum; // using this to control max connections to db server
     private static String priorityUsers;
 
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_PORT = "3306";
 
     // init from config
-    private static String annodbName;
+    private static String dbName;
     private static String dbUser;
     private static String dbPassword;
     private static HashMap<String, String> dbHostMap = new HashMap<String, String>();
@@ -73,7 +73,7 @@ public class DBManager {
 
             initServers(prop.getProperty("servers"));
 
-            annodbName = prop.getProperty("annodb");
+            dbName = prop.getProperty("annodb");
             dbUser = prop.getProperty("dbuser");
             dbPassword = prop.getProperty("dbpassword");
             maxATAVJobNum = Integer.parseInt(prop.getProperty("max-atav-job"));
@@ -94,7 +94,7 @@ public class DBManager {
 
     private static Connection getConnection() {
         try {
-            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + annodbName + "?useSSL=false&autoReconnect=true";
+            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + dbName + "?useSSL=false&autoReconnect=true";
             
             if (CommonCommand.isDebug) {
                 System.out.println(url);
@@ -161,7 +161,7 @@ public class DBManager {
             minNum = getMinNumFromServers();
 
             if (minNum > maxATAVJobNum && !priorityUsers.contains(Data.userName)) {
-                ErrorManager.print("All AnnoDB servers "
+                ErrorManager.print("All database servers "
                         + "reached to max concurrent jobs, please submit your ATAV job later.", ErrorManager.MAX_CONNECTION);
             }
         }

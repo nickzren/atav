@@ -71,7 +71,7 @@ public class SampleManager {
     // igm gnomad sample
     private static final String IGM_GNOMAD_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/igm_gnomad_sample.txt";
     private static Set<String> excludeIGMGnomadSampleSet = new HashSet<>();
-
+  
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
@@ -90,7 +90,7 @@ public class SampleManager {
         } else if (CohortLevelFilterCommand.isAllSample
                 || CohortLevelFilterCommand.isAllExome) {
             initAllSampleFile();
-            initAllSampleFromAnnoDB();
+            initAllSampleFromDB();
             closeAllSampleFile();
             CohortLevelFilterCommand.sampleFile = allSampleFile;
         }
@@ -232,7 +232,7 @@ public class SampleManager {
         totalSampleNum = sampleList.size();
     }
 
-    private static void initAllSampleFromAnnoDB() {
+    private static void initAllSampleFromDB() {
         String sqlCode = "SELECT * FROM sample "
                 + "WHERE sample_type != 'custom_capture' "
                 + "and sample_finished = 1 "
@@ -242,7 +242,7 @@ public class SampleManager {
             sqlCode += " and sample_type = 'Exome' and sample_name not like 'SRR%'";
         }
 
-        initSampleFromAnnoDB(sqlCode);
+        initSampleFromDB(sqlCode);
     }
 
     private static void initFromSampleFile() {
@@ -351,7 +351,7 @@ public class SampleManager {
         }
     }
 
-    private static void initSampleFromAnnoDB(String sqlCode) {
+    private static void initSampleFromDB(String sqlCode) {
         try {
             ResultSet rs = DBManager.executeQuery(sqlCode);
 
