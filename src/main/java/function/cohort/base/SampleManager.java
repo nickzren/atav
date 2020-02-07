@@ -239,8 +239,10 @@ public class SampleManager {
                 + "and sample_failure = 0 ";
 
         if (CohortLevelFilterCommand.isAllExome) {
-            sqlCode += " and sample_type = 'Exome' and sample_name not like 'SRR%'";
+            sqlCode += " and sample_type = 'Exome'";
         }
+        
+        sqlCode += " and sample_name not like 'SRR%'";
 
         initSampleFromDB(sqlCode);
     }
