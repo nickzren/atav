@@ -3,6 +3,7 @@ package function.cohort.vargeno;
 import function.annotation.base.Annotation;
 import function.annotation.base.AnnotationLevelFilterCommand;
 import function.annotation.base.EffectManager;
+import function.annotation.base.Gene;
 import function.annotation.base.GeneManager;
 import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
@@ -38,6 +39,7 @@ import global.Data;
 import global.Index;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
@@ -135,6 +137,10 @@ public class VariantLite {
             if (EffectManager.isEffectContained(effect)
                     && PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
                     && GeneManager.isValid(geneName, chr, pos)) {
+                // reset gene name to gene domain name so the downstream procedure could match correctly
+                // only for gene boundary input
+                geneName = GeneManager.getGeneDomainName(geneName, chr, pos);
+
                 if (mostDamagingAnnotation.effect == null) {
                     mostDamagingAnnotation.effect = effect;
                     mostDamagingAnnotation.stableId = stableId;
