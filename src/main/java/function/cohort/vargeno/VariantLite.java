@@ -8,6 +8,7 @@ import function.annotation.base.GeneManager;
 import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
+import function.cohort.collapsing.CollapsingCommand;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
@@ -94,7 +95,8 @@ public class VariantLite {
                 chr,
                 pos,
                 geneList,
-                mostDamagingAnnotation);
+                mostDamagingAnnotation,
+                record);
 
         initEXAC(record);
         initGnomADExome(record);
@@ -119,11 +121,18 @@ public class VariantLite {
             String chr,
             int pos,
             List<String> geneList,
-            Annotation mostDamagingAnnotation) {
+            Annotation mostDamagingAnnotation,
+            CSVRecord record) {
         for (String annotation : allAnnotation.split(",")) {
             String[] values = annotation.split("\\|");
             String effect = values[0];
             String geneName = values[1];
+            
+            // if --gene-column used, ATAV will perform collapsing by input gene column values
+            if(!CollapsingCommand.geneColumn.isEmpty()) {
+                geneName = record.get(CollapsingCommand.geneColumn);
+            }
+            
             String stableIdStr = values[2];
             int stableId = getIntStableId(stableIdStr);
             String HGVS_c = values[3];
@@ -159,7 +168,7 @@ public class VariantLite {
                 geneTranscriptSJ.add(FormatManager.getFloat(polyphenHumvar));
 
                 allAnnotationSJ.add(geneTranscriptSJ.toString());
-                if (!geneList.contains(geneName)) {
+                if (!geneList.contains(geneName) && !geneName.equals(Data.STRING_NA)) {
                     geneList.add(geneName);
                 }
 

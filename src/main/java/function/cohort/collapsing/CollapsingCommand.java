@@ -27,6 +27,7 @@ public class CollapsingCommand {
     public static int minCompHetVarDistance = Data.NO_FILTER;
     public static boolean isExcludeCompHetPIDVariant = false;
     public static boolean isExcludeCompHetHPVariant = false;
+    public static String geneColumn = "";
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -115,6 +116,31 @@ public class CollapsingCommand {
         }
     }
 
+    public static void initLiteOptions(Iterator<CommandOption> iterator)
+            throws Exception { // collapsing lite
+        CommandOption option;
+
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            switch (option.getName()) {
+                case "--mann-whitney-test":
+                    isMannWhitneyTest = true;
+                    break;
+                case "--read-coverage-summary":
+                    coverageSummaryFile = getValidPath(option);
+                    GeneManager.initCoverageSummary();
+                    break;
+                case "--gene-column":
+                    geneColumn = option.getValue().replaceAll("_", " ");
+                    break;
+                default:
+                    continue;
+            }
+
+            iterator.remove();
+        }
+    }
+
     public static boolean isMinCompHetVarDistanceValid(int value) {
         if (minCompHetVarDistance == Data.NO_FILTER) {
             return true;
@@ -143,27 +169,5 @@ public class CollapsingCommand {
         return variantId1 == hpVariantId2
                 || variantId2 == hpVariantId1
                 || hpVariantId1 == hpVariantId2;
-    }
-
-    public static void initLiteOptions(Iterator<CommandOption> iterator)
-            throws Exception { // collapsing lite
-        CommandOption option;
-
-        while (iterator.hasNext()) {
-            option = (CommandOption) iterator.next();
-            switch (option.getName()) {
-                case "--mann-whitney-test":
-                    isMannWhitneyTest = true;
-                    break;
-                case "--read-coverage-summary":
-                    coverageSummaryFile = getValidPath(option);
-                    GeneManager.initCoverageSummary();
-                    break;
-                default:
-                    continue;
-            }
-
-            iterator.remove();
-        }
     }
 }
