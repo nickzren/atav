@@ -35,6 +35,7 @@ import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMCommand;
+import function.external.gme.GMECommand;
 import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
 import function.test.TestCommand;
@@ -401,6 +402,7 @@ public class CommandManager {
                     MPCCommand.isIncludeMPC = true;
                     PextCommand.isIncludePext = true;
                     CHMCommand.isFlagRepeatRegion = true;
+                    GMECommand.isIncludeGME = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -517,6 +519,11 @@ public class CommandManager {
                     PextCommand.isListPext = true;
                     PextCommand.isIncludePext = true;
                     break;
+                case "--list-gme":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    GMECommand.isListGME = true;
+                    GMECommand.isIncludeGME = true;
+                    break;    
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;

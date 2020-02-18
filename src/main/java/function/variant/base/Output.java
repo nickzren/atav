@@ -43,6 +43,8 @@ import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.gme.GMECommand;
+import function.external.gme.GMEManager;
 import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.pext.PextCommand;
@@ -195,6 +197,10 @@ public class Output {
         
         if (CHMCommand.isFlagRepeatRegion) {
             sj.add(CHMManager.getHeader());
+        }
+        
+        if (GMECommand.isIncludeGME) {
+            sj.add(GMEManager.getHeader());
         }
 
         return sj;

@@ -21,6 +21,8 @@ import function.external.genomes.Genomes;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gme.GMECommand;
+import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADManager;
 import function.variant.base.Variant;
@@ -102,6 +104,7 @@ public class AnnotatedVariant extends Variant {
     private Boolean isLOFTEEHCinCCDS;
     private float mpc;
     private Boolean isRepeatRegion;
+    private float gmeAF;
 
     public boolean isValid = true;
 
@@ -119,6 +122,12 @@ public class AnnotatedVariant extends Variant {
         if (isValid && CHMCommand.isExcludeRepeatRegion) {
             isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
             isValid = isRepeatRegion;
+        }
+        
+        if (isValid && GMECommand.isIncludeGME) {
+            gmeAF = GMEManager.getAF(variantIdStr);
+
+            isValid = GMECommand.isMaxGMEAFValid(gmeAF);
         }
 
         if (isValid && GnomADCommand.isIncludeGnomADExome) {
@@ -536,6 +545,10 @@ public class AnnotatedVariant extends Variant {
 
             sj.add(FormatManager.getBoolean(isRepeatRegion));
         }
+        
+        if (GMECommand.isIncludeGME) {
+            sj.add(getGME());
+        }
     }
 
     public StringJoiner getEvsStringJoiner() {
@@ -624,5 +637,9 @@ public class AnnotatedVariant extends Variant {
 
     public String getMPC() {
         return FormatManager.getFloat(mpc);
+    }
+    
+    public String getGME() {
+        return FormatManager.getFloat(gmeAF);
     }
 }

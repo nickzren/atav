@@ -13,6 +13,7 @@ import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesCommand;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
+import function.external.gme.GMECommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
@@ -260,13 +261,13 @@ public class VariantLevelFilterCommand {
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--mtr-fdr":
-                case "--max-mtr-fdr":    
+                case "--max-mtr-fdr":
                     checkValueValid(1, 0, option);
                     MTRCommand.maxMTRFDR = getValidFloat(option);
                     MTRCommand.isIncludeMTR = true;
                     break;
                 case "--mtr-centile":
-                case "--max-mtr-centile":    
+                case "--max-mtr-centile":
                     checkValueValid(100, 0, option);
                     MTRCommand.maxMTRCentile = getValidFloat(option);
                     MTRCommand.isIncludeMTR = true;
@@ -290,6 +291,11 @@ public class VariantLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     PextCommand.minPextRatio = getValidFloat(option);
                     PextCommand.isIncludePext = true;
+                    break;
+                case "--max-gme-af":
+                    checkValueValid(1, 0, option);
+                    GMECommand.maxGmeAF = getValidFloat(option);
+                    GMECommand.isIncludeGME = true;
                     break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
@@ -375,6 +381,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--exclude-repeat-region":
                     CHMCommand.isExcludeRepeatRegion = true;
+                    break;
+                case "--include-gme":
+                    GMECommand.isIncludeGME = true;
                     break;
                 default:
                     continue;

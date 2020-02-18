@@ -17,6 +17,8 @@ import function.external.discovehr.DiscovEHR;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.exac.ExAC;
 import function.external.exac.ExACCommand;
+import function.external.gme.GMECommand;
+import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
@@ -74,6 +76,7 @@ public class VariantLite {
     private PrimateAI primateAI;
     private MPCOutput mpc;
     private PextOutput pext;
+    private float gmeAF;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -110,6 +113,7 @@ public class VariantLite {
         initPrimateAI(record);
         initMPC(record);
         initPEXT(record);
+        initGME(record);
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
 
@@ -258,6 +262,12 @@ public class VariantLite {
             pext = new PextOutput(record);
         }
     }
+    
+    private void initGME(CSVRecord record) {
+        if (GMECommand.isIncludeGME) {
+            gmeAF = GMEManager.getAF(record);
+        }
+    }
 
     private int getIntStableId(String value) {
         if (value.equals(Data.STRING_NA)) {
@@ -295,6 +305,7 @@ public class VariantLite {
                 && isPrimateAIValid()
                 && isMPCValid()
                 && isPextValid()
+                && isGMEAFValid()
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
@@ -458,5 +469,9 @@ public class VariantLite {
         }
 
         return pext.isValid();
+    }
+    
+    private boolean isGMEAFValid() {
+        return GMECommand.isMaxGMEAFValid(gmeAF);
     }
 }

@@ -86,6 +86,9 @@ import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMManager;
+import function.external.gme.GMECommand;
+import function.external.gme.GMEManager;
+import function.external.gme.ListGME;
 import function.external.mpc.ListMPC;
 import function.external.mpc.MPCCommand;
 import function.external.pext.ListPext;
@@ -123,13 +126,13 @@ public class Program {
     private static void init(String[] options) {
         try {
             EmailManager.init();
-            
+
             CommandManager.initOptions(options);
-            
+
             DBManager.init();
 
             ThirdPartyToolManager.init();
-            
+
             EffectManager.init();
 
             SampleManager.init();
@@ -143,7 +146,7 @@ public class Program {
             VariantManager.init();
 
             DPBinBlockManager.init();
-            
+
             ExACManager.init();
 
             KnownVarManager.init();
@@ -157,10 +160,12 @@ public class Program {
             MgiManager.init();
 
             GnomADManager.init();
-            
+
             CCRManager.init();
-            
+
             CHMManager.init();
+
+            GMEManager.init();
 
             // output external data version
             LogManager.logExternalDataVersion();
@@ -251,8 +256,9 @@ public class Program {
                 runAnalysis(new ListPext());
             } else if (MPCCommand.isListMPC) {
                 runAnalysis(new ListMPC());
-            } 
-            else if (TestCommand.isTest) { // Test Functions
+            } else if (GMECommand.isListGME) {
+                runAnalysis(new ListGME());
+            } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }
         } catch (Exception e) {

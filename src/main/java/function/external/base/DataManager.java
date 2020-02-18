@@ -16,6 +16,8 @@ import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gme.GMECommand;
+import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.kaviar.KaviarManager;
@@ -140,6 +142,10 @@ public class DataManager {
 
         if (PextCommand.isIncludePext) {
             sb.append(PextManager.getVersion());
+        }
+        
+        if (GMECommand.isIncludeGME) {
+            sb.append(GMEManager.getVersion());
         }
 
         return sb.toString();
