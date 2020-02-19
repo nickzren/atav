@@ -16,9 +16,10 @@ import utils.CommonCommand;
  */
 public class SplitFileByChr {
 
+    private static final String input = "data/CHM-eval/um75-hs37d5.bed";
     private static HashMap<String, BufferedWriter> bwMap = new HashMap();
 
-    public static void run(String input) throws Exception {
+    public static void run() throws Exception {
         File file = new File(input);
         String fileName = file.getName();
 
