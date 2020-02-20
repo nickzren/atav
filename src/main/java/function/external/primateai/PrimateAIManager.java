@@ -41,6 +41,8 @@ public class PrimateAIManager {
             if (rs.next()) {
                 return rs.getFloat("score");
             }
+            
+            rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);
         }

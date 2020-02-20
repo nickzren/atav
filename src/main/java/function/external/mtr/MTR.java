@@ -62,6 +62,8 @@ public class MTR {
                 mtrFDR = Data.FLOAT_NA;
                 mtrCentile = Data.FLOAT_NA;
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

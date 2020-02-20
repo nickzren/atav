@@ -100,6 +100,8 @@ public class ExAC {
                 meanCoverage = Data.FLOAT_NA;
                 sampleCovered10x = Data.INTEGER_NA;
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -121,6 +123,8 @@ public class ExAC {
             } else {
                 resetAF(Data.FLOAT_NA);
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

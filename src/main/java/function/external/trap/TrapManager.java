@@ -61,6 +61,8 @@ public class TrapManager {
             } else {
                 score = Data.FLOAT_NA;
             }
+            
+            rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);
         }
@@ -85,6 +87,8 @@ public class TrapManager {
 
                 list.add(new Trap(gene, score));
             }
+            
+            rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);
         }

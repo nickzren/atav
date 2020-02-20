@@ -30,6 +30,8 @@ public class CountVariant {
             if (rset.next()) {
                 calledVarCount += rset.getLong("count");
             }
+            
+            rset.close();
         }
 
         LogManager.writeAndPrint("total unique variant: " + uniqueVarCount);

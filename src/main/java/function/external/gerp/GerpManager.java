@@ -48,6 +48,8 @@ public class GerpManager {
                     score = rs.getFloat("gerp_rs");
 
                 }
+                
+                rs.close();
 
                 gerp.setValues(chr, pos, score);
             } catch (SQLException ex) {

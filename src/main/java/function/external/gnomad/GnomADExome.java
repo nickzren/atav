@@ -113,6 +113,8 @@ public class GnomADExome {
             } else {
                 resetAF(Data.FLOAT_NA);
             }
+            
+            rs.close();
         } catch (SQLException e) {
             ErrorManager.send(e);
         }

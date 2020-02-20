@@ -112,6 +112,8 @@ public class GnomADGenome {
             } else {
                 resetAF(Data.FLOAT_NA);
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

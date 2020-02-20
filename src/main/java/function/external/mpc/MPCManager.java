@@ -46,6 +46,8 @@ public class MPCManager {
                 mpc = rs.getFloat("MPC");
 
             }
+            
+            rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);
         }

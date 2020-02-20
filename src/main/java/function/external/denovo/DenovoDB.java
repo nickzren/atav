@@ -39,6 +39,8 @@ public class DenovoDB {
                 phenotyp = Data.STRING_NA;
                 pubmedID = Data.STRING_NA;
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

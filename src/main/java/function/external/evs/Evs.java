@@ -60,6 +60,8 @@ public class Evs {
                 allGenotypeCount = Data.STRING_NA;
                 filterStatus = Data.STRING_NA;
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

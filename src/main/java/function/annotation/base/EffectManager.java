@@ -90,6 +90,8 @@ public class EffectManager {
                     MISSENSE_VARIANT_ID = id;
                 }
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

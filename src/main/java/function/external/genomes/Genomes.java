@@ -69,6 +69,8 @@ public class Genomes {
                     af[i] = Data.FLOAT_NA;
                 }
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

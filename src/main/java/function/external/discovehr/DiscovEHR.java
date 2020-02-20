@@ -56,6 +56,8 @@ public class DiscovEHR {
             } else {
                 af = Data.FLOAT_NA;
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

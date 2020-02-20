@@ -41,6 +41,8 @@ public class RevelManager {
             if (rs.next()) {
                 return rs.getFloat("revel");
             }
+            
+            rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);
         }

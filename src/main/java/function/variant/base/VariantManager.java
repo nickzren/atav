@@ -229,8 +229,11 @@ public class VariantManager {
         if (rset.next()) {
             String chr = rset.getString("chrom");
             int pos = rset.getInt("POS");
+            rset.close();
             return chr + "-" + pos;
         }
+        
+        rset.close();
 
         return "";
     }
@@ -388,6 +391,7 @@ public class VariantManager {
                 value = null;
             }
         }
+        rset.close();
 
         return value;
     }
