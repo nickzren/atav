@@ -38,6 +38,7 @@ import function.external.chm.CHMCommand;
 import function.external.gme.GMECommand;
 import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
+import function.external.topmed.TopMedCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
@@ -403,6 +404,7 @@ public class CommandManager {
                     PextCommand.isIncludePext = true;
                     CHMCommand.isFlagRepeatRegion = true;
                     GMECommand.isIncludeGME = true;
+                    TopMedCommand.isIncludeTopMed = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -523,7 +525,12 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     GMECommand.isListGME = true;
                     GMECommand.isIncludeGME = true;
-                    break;    
+                    break;
+                case "--list-top-med":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    TopMedCommand.isListTopMed = true;
+                    TopMedCommand.isIncludeTopMed = true;
+                    break; 
                 case "--test":
                     // Test Functions
                     CommonCommand.isNonDBAnalysis = true;

@@ -49,6 +49,8 @@ import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
+import function.external.topmed.TopMedCommand;
+import function.external.topmed.TopMedManager;
 import global.Data;
 import global.Index;
 import java.util.StringJoiner;
@@ -201,6 +203,10 @@ public class Output {
         
         if (GMECommand.isIncludeGME) {
             sj.add(GMEManager.getHeader());
+        }
+        
+        if (TopMedCommand.isIncludeTopMed) {
+            sj.add(TopMedManager.getHeader());
         }
 
         return sj;

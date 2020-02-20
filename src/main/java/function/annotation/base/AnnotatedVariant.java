@@ -47,6 +47,8 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
+import function.external.topmed.TopMedCommand;
+import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
 import function.variant.base.VariantLevelFilterCommand;
@@ -105,6 +107,7 @@ public class AnnotatedVariant extends Variant {
     private float mpc;
     private Boolean isRepeatRegion;
     private float gmeAF;
+    private float topmedAF;
 
     public boolean isValid = true;
 
@@ -123,11 +126,17 @@ public class AnnotatedVariant extends Variant {
             isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
             isValid = isRepeatRegion;
         }
-        
+
         if (isValid && GMECommand.isIncludeGME) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
             isValid = GMECommand.isMaxGMEAFValid(gmeAF);
+        }
+
+        if (isValid && TopMedCommand.isIncludeTopMed) {
+            topmedAF = TopMedManager.getAF(variantIdStr);
+
+            isValid = TopMedCommand.isMaxAFValid(topmedAF);
         }
 
         if (isValid && GnomADCommand.isIncludeGnomADExome) {
@@ -545,9 +554,13 @@ public class AnnotatedVariant extends Variant {
 
             sj.add(FormatManager.getBoolean(isRepeatRegion));
         }
-        
+
         if (GMECommand.isIncludeGME) {
             sj.add(getGME());
+        }
+        
+        if (TopMedCommand.isIncludeTopMed) {
+            sj.add(getTopMed());
         }
     }
 
@@ -638,8 +651,12 @@ public class AnnotatedVariant extends Variant {
     public String getMPC() {
         return FormatManager.getFloat(mpc);
     }
-    
+
     public String getGME() {
         return FormatManager.getFloat(gmeAF);
+    }
+    
+    public String getTopMed() {
+        return FormatManager.getFloat(topmedAF);
     }
 }

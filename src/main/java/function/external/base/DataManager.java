@@ -40,6 +40,8 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
+import function.external.topmed.TopMedCommand;
+import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
 import global.Data;
@@ -146,6 +148,10 @@ public class DataManager {
         
         if (GMECommand.isIncludeGME) {
             sb.append(GMEManager.getVersion());
+        }
+        
+        if (TopMedCommand.isIncludeTopMed) {
+            sb.append(TopMedManager.getVersion());
         }
 
         return sb.toString();

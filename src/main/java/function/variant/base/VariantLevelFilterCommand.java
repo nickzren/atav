@@ -24,6 +24,7 @@ import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
+import function.external.topmed.TopMedCommand;
 import function.external.trap.TrapCommand;
 import global.Data;
 import java.util.Arrays;
@@ -297,6 +298,11 @@ public class VariantLevelFilterCommand {
                     GMECommand.maxGmeAF = getValidFloat(option);
                     GMECommand.isIncludeGME = true;
                     break;
+                case "--max-top-med-af":
+                    checkValueValid(1, 0, option);
+                    TopMedCommand.maxAF = getValidFloat(option);
+                    TopMedCommand.isIncludeTopMed = true;
+                    break;    
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
@@ -385,6 +391,9 @@ public class VariantLevelFilterCommand {
                 case "--include-gme":
                     GMECommand.isIncludeGME = true;
                     break;
+                case "--include-top-med":
+                    TopMedCommand.isIncludeTopMed = true;
+                    break;    
                 default:
                     continue;
             }

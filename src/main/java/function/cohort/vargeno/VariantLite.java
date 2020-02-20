@@ -36,6 +36,8 @@ import function.external.revel.Revel;
 import function.external.revel.RevelCommand;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
+import function.external.topmed.TopMedCommand;
+import function.external.topmed.TopMedManager;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -77,6 +79,7 @@ public class VariantLite {
     private MPCOutput mpc;
     private PextOutput pext;
     private float gmeAF;
+    private float topmedAF;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -114,6 +117,7 @@ public class VariantLite {
         initMPC(record);
         initPEXT(record);
         initGME(record);
+        initTopMed(record);
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
 
@@ -131,12 +135,12 @@ public class VariantLite {
             String[] values = annotation.split("\\|");
             String effect = values[0];
             String geneName = values[1];
-            
+
             // if --gene-column used, ATAV will perform collapsing by input gene column values
-            if(!CollapsingCommand.geneColumn.isEmpty()) {
+            if (!CollapsingCommand.geneColumn.isEmpty()) {
                 geneName = record.get(CollapsingCommand.geneColumn);
             }
-            
+
             String stableIdStr = values[2];
             int stableId = getIntStableId(stableIdStr);
             String HGVS_c = values[3];
@@ -262,10 +266,16 @@ public class VariantLite {
             pext = new PextOutput(record);
         }
     }
-    
+
     private void initGME(CSVRecord record) {
         if (GMECommand.isIncludeGME) {
             gmeAF = GMEManager.getAF(record);
+        }
+    }
+
+    private void initTopMed(CSVRecord record) {
+        if (TopMedCommand.isIncludeTopMed) {
+            topmedAF = TopMedManager.getAF(record);
         }
     }
 
@@ -470,7 +480,7 @@ public class VariantLite {
 
         return pext.isValid();
     }
-    
+
     private boolean isGMEAFValid() {
         return GMECommand.isMaxGMEAFValid(gmeAF);
     }
