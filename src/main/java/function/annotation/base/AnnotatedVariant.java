@@ -15,6 +15,8 @@ import function.external.evs.EvsCommand;
 import function.external.exac.ExAC;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
+import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADCommand;
 import function.external.genomes.Genomes;
@@ -108,6 +110,7 @@ public class AnnotatedVariant extends Variant {
     private Boolean isRepeatRegion;
     private float gmeAF;
     private float topmedAF;
+    private float genomeasiaAF;
 
     public boolean isValid = true;
 
@@ -137,6 +140,12 @@ public class AnnotatedVariant extends Variant {
             topmedAF = TopMedManager.getAF(variantIdStr);
 
             isValid = TopMedCommand.isMaxAFValid(topmedAF);
+        }
+        
+        if (isValid && GenomeAsiaCommand.isInclude) {
+            genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
+
+            isValid = GenomeAsiaCommand.isMaxAFValid(genomeasiaAF);
         }
 
         if (isValid && GnomADCommand.isIncludeGnomADExome) {
@@ -562,6 +571,10 @@ public class AnnotatedVariant extends Variant {
         if (TopMedCommand.isIncludeTopMed) {
             sj.add(getTopMed());
         }
+        
+        if (GenomeAsiaCommand.isInclude) {
+            sj.add(getGenomeAsia());
+        }
     }
 
     public StringJoiner getEvsStringJoiner() {
@@ -658,5 +671,9 @@ public class AnnotatedVariant extends Variant {
     
     public String getTopMed() {
         return FormatManager.getFloat(topmedAF);
+    }
+    
+    public String getGenomeAsia() {
+        return FormatManager.getFloat(genomeasiaAF);
     }
 }

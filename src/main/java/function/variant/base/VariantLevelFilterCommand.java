@@ -8,6 +8,7 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
+import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesCommand;
@@ -302,7 +303,12 @@ public class VariantLevelFilterCommand {
                     checkValueValid(1, 0, option);
                     TopMedCommand.maxAF = getValidFloat(option);
                     TopMedCommand.isIncludeTopMed = true;
-                    break;    
+                    break;
+                case "--max-genome-asia-af":
+                    checkValueValid(1, 0, option);
+                    GenomeAsiaCommand.maxAF = getValidFloat(option);
+                    GenomeAsiaCommand.isInclude = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isIncludeEvs = true;
                     break;
@@ -393,7 +399,10 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-top-med":
                     TopMedCommand.isIncludeTopMed = true;
-                    break;    
+                    break;
+                case "--include-genome-asia":
+                    GenomeAsiaCommand.isInclude = true;
+                    break; 
                 default:
                     continue;
             }

@@ -86,6 +86,8 @@ import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMManager;
+import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.genomeasia.ListGenomeAsia;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
@@ -93,6 +95,8 @@ import function.external.mpc.ListMPC;
 import function.external.mpc.MPCCommand;
 import function.external.pext.ListPext;
 import function.external.pext.PextCommand;
+import function.external.topmed.ListTopMed;
+import function.external.topmed.TopMedCommand;
 import function.test.Test;
 import function.test.TestCommand;
 import utils.EmailManager;
@@ -258,6 +262,10 @@ public class Program {
                 runAnalysis(new ListMPC());
             } else if (GMECommand.isListGME) {
                 runAnalysis(new ListGME());
+            } else if (TopMedCommand.isListTopMed) {
+                runAnalysis(new ListTopMed());
+            } else if (GenomeAsiaCommand.isList) {
+                runAnalysis(new ListGenomeAsia());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }

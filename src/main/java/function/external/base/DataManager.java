@@ -11,6 +11,8 @@ import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
+import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.genomeasia.GenomeAsiaManager;
 import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
@@ -152,6 +154,10 @@ public class DataManager {
         
         if (TopMedCommand.isIncludeTopMed) {
             sb.append(TopMedManager.getVersion());
+        }
+        
+        if (GenomeAsiaCommand.isInclude) {
+            sb.append(GenomeAsiaManager.getVersion());
         }
 
         return sb.toString();

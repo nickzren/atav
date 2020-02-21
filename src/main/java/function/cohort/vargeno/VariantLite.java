@@ -17,6 +17,8 @@ import function.external.discovehr.DiscovEHR;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.exac.ExAC;
 import function.external.exac.ExACCommand;
+import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
@@ -80,6 +82,7 @@ public class VariantLite {
     private PextOutput pext;
     private float gmeAF;
     private float topmedAF;
+    private float genomeasiaAF;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -118,6 +121,7 @@ public class VariantLite {
         initPEXT(record);
         initGME(record);
         initTopMed(record);
+        initGenomeAsia(record);
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
 
@@ -278,6 +282,12 @@ public class VariantLite {
             topmedAF = TopMedManager.getAF(record);
         }
     }
+    
+    private void initGenomeAsia(CSVRecord record) {
+        if (GenomeAsiaCommand.isInclude) {
+            genomeasiaAF = GenomeAsiaManager.getAF(record);
+        }
+    }
 
     private int getIntStableId(String value) {
         if (value.equals(Data.STRING_NA)) {
@@ -316,6 +326,8 @@ public class VariantLite {
                 && isMPCValid()
                 && isPextValid()
                 && isGMEAFValid()
+                && isTopMedAFValid()
+                && isGenomeAsiaAFValid()
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
@@ -483,5 +495,13 @@ public class VariantLite {
 
     private boolean isGMEAFValid() {
         return GMECommand.isMaxGMEAFValid(gmeAF);
+    }
+    
+    private boolean isTopMedAFValid() {
+        return TopMedCommand.isMaxAFValid(topmedAF);
+    }
+    
+    private boolean isGenomeAsiaAFValid() {
+        return GenomeAsiaCommand.isMaxAFValid(genomeasiaAF);
     }
 }

@@ -35,6 +35,7 @@ import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMCommand;
+import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gme.GMECommand;
 import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
@@ -405,6 +406,7 @@ public class CommandManager {
                     CHMCommand.isFlagRepeatRegion = true;
                     GMECommand.isIncludeGME = true;
                     TopMedCommand.isIncludeTopMed = true;
+                    GenomeAsiaCommand.isInclude = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -530,7 +532,12 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     TopMedCommand.isListTopMed = true;
                     TopMedCommand.isIncludeTopMed = true;
-                    break; 
+                    break;
+                case "--list-genome-asia":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    GenomeAsiaCommand.isList = true;
+                    GenomeAsiaCommand.isInclude = true;
+                    break;
                 case "--test":
                     // Test Functions
                     CommonCommand.isNonDBAnalysis = true;
