@@ -200,85 +200,85 @@ public class VariantLite {
     }
 
     private void initEXAC(CSVRecord record) {
-        if (ExACCommand.isIncludeExac) {
+        if (ExACCommand.isInclude) {
             exac = new ExAC(chr, pos, ref, alt, record);
         }
     }
 
     private void initGnomADExome(CSVRecord record) {
-        if (GnomADCommand.isIncludeGnomADExome) {
+        if (GnomADCommand.isIncludeExome) {
             gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
         }
     }
 
     private void initGnomADGenome(CSVRecord record) {
-        if (GnomADCommand.isIncludeGnomADGenome) {
+        if (GnomADCommand.isIncludeGenome) {
             gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
         }
     }
 
     private void initSubRVIS(CSVRecord record) {
-        if (SubRvisCommand.isIncludeSubRvis) {
+        if (SubRvisCommand.isInclude) {
             subrvis = new SubRvisOutput(record);
         }
     }
 
     private void initLIMBR(CSVRecord record) {
-        if (LIMBRCommand.isIncludeLIMBR) {
+        if (LIMBRCommand.isInclude) {
             limbr = new LIMBROutput(record);
         }
     }
 
     private void initCCR(CSVRecord record) {
-        if (CCRCommand.isIncludeCCR) {
+        if (CCRCommand.isInclude) {
             ccr = new CCROutput(record);
         }
     }
 
     private void initDiscovEHR(CSVRecord record) {
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+        if (DiscovEHRCommand.isInclude) {
             discovEHR = new DiscovEHR(record);
         }
     }
 
     private void initMTR(CSVRecord record) {
-        if (MTRCommand.isIncludeMTR) {
+        if (MTRCommand.isInclude) {
             mtr = new MTR(chr, pos, record);
         }
     }
 
     private void initREVEL(CSVRecord record) {
-        if (RevelCommand.isIncludeRevel) {
+        if (RevelCommand.isInclude) {
             revel = new Revel(record);
         }
     }
 
     private void initPrimateAI(CSVRecord record) {
-        if (PrimateAICommand.isIncludePrimateAI) {
+        if (PrimateAICommand.isInclude) {
             primateAI = new PrimateAI(record);
         }
     }
 
     private void initMPC(CSVRecord record) {
-        if (MPCCommand.isIncludeMPC) {
+        if (MPCCommand.isInclude) {
             mpc = new MPCOutput(record);
         }
     }
 
     private void initPEXT(CSVRecord record) {
-        if (PextCommand.isIncludePext) {
+        if (PextCommand.isInclude) {
             pext = new PextOutput(record);
         }
     }
 
     private void initGME(CSVRecord record) {
-        if (GMECommand.isIncludeGME) {
+        if (GMECommand.isInclude) {
             gmeAF = GMEManager.getAF(record);
         }
     }
 
     private void initTopMed(CSVRecord record) {
-        if (TopMedCommand.isIncludeTopMed) {
+        if (TopMedCommand.isInclude) {
             topmedAF = TopMedManager.getAF(record);
         }
     }
@@ -306,7 +306,7 @@ public class VariantLite {
                 && VariantManager.isMultiallelicVariant2(chr, pos)) {
             // exclude Multiallelic site > 2 variants
             return false;
-        } else if (CHMCommand.isExcludeRepeatRegion
+        } else if (CHMCommand.isExclude
                 && CHMManager.isRepeatRegion(chr, pos)) {
             return false;
         }

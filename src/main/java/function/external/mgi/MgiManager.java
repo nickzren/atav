@@ -30,7 +30,7 @@ public class MgiManager {
     }
 
     public static void init() {
-        if (MgiCommand.isIncludeMgi) {
+        if (MgiCommand.isInclude) {
             initMgiMap();
         }
     }

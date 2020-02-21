@@ -39,8 +39,8 @@ public class VariantManager {
     private static int maxIncludeNum = 200000;
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
-        if (TrioCommand.isListTrio
-                || ParentCommand.isListParentCompHet
+        if (TrioCommand.isList
+                || ParentCommand.isList
                 || CollapsingCommand.isCollapsingCompHet) {
             // disable process region as variant by varaint way
             maxIncludeNum = 0;

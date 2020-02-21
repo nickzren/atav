@@ -6,5 +6,5 @@ package function.cohort.var;
  */
 public class VarCommand {
 
-    public static boolean isListVar = false;
+    public static boolean isList = false;
 }

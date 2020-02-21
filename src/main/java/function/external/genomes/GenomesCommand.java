@@ -7,8 +7,8 @@ import global.Data;
  * @author nick
  */
 public class GenomesCommand {
-    public static boolean isList1000Genomes = false;
-    public static boolean isInclude1000Genomes = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
     
     public static String genomesPop = "global";
     public static float maxGenomesAF = Data.NO_FILTER;

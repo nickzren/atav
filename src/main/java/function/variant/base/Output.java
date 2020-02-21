@@ -103,87 +103,87 @@ public class Output {
     public static StringJoiner getExternalDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        if (EvsCommand.isIncludeEvs) {
+        if (EvsCommand.isInclude) {
             sj.add(EvsManager.getHeader());
         }
 
-        if (ExACCommand.isIncludeExac) {
+        if (ExACCommand.isInclude) {
             sj.add(ExACManager.getHeader());
         }
 
-        if (ExACCommand.isIncludeExacGeneVariantCount) {
+        if (ExACCommand.isIncludeCount) {
             sj.add(ExACManager.getGeneVariantCountHeader());
         }
 
-        if (GnomADCommand.isIncludeGnomADExome) {
+        if (GnomADCommand.isIncludeExome) {
             sj.add(GnomADManager.getExomeHeader());
         }
 
-        if (GnomADCommand.isIncludeGnomADGenome) {
+        if (GnomADCommand.isIncludeGenome) {
             sj.add(GnomADManager.getGenomeHeader());
         }
 
-        if (GnomADCommand.isIncludeGnomADGeneMetrics) {
+        if (GnomADCommand.isIncludeGeneMetrics) {
             sj.add(GnomADManager.getGeneMetricsHeader());
         }
 
-        if (KnownVarCommand.isIncludeKnownVar) {
+        if (KnownVarCommand.isInclude) {
             sj.add(KnownVarManager.getHeader());
         }
 
-        if (KaviarCommand.isIncludeKaviar) {
+        if (KaviarCommand.isInclude) {
             sj.add(KaviarManager.getHeader());
         }
 
-        if (GenomesCommand.isInclude1000Genomes) {
+        if (GenomesCommand.isInclude) {
             sj.add(GenomesManager.getHeader());
         }
 
-        if (RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isInclude) {
             sj.add(RvisManager.getHeader());
         }
 
-        if (SubRvisCommand.isIncludeSubRvis) {
+        if (SubRvisCommand.isInclude) {
             sj.add(SubRvisManager.getHeader());
         }
 
-        if (LIMBRCommand.isIncludeLIMBR) {
+        if (LIMBRCommand.isInclude) {
             sj.add(LIMBRManager.getHeader());
         }
 
-        if (CCRCommand.isIncludeCCR) {
+        if (CCRCommand.isInclude) {
             sj.add(CCRManager.getHeader());
         }
 
-        if (GerpCommand.isIncludeGerp) {
+        if (GerpCommand.isInclude) {
             sj.add(GerpManager.getHeader());
         }
 
-        if (TrapCommand.isIncludeTrap) {
+        if (TrapCommand.isInclude) {
             sj.add(TrapManager.getHeader());
         }
 
-        if (MgiCommand.isIncludeMgi) {
+        if (MgiCommand.isInclude) {
             sj.add(MgiManager.getHeader());
         }
 
-        if (DenovoDBCommand.isIncludeDenovoDB) {
+        if (DenovoDBCommand.isInclude) {
             sj.add(DenovoDBManager.getHeader());
         }
 
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+        if (DiscovEHRCommand.isInclude) {
             sj.add(DiscovEHRManager.getHeader());
         }
 
-        if (MTRCommand.isIncludeMTR) {
+        if (MTRCommand.isInclude) {
             sj.add(MTRManager.getHeader());
         }
 
-        if (RevelCommand.isIncludeRevel) {
+        if (RevelCommand.isInclude) {
             sj.add(RevelManager.getHeader());
         }
 
-        if (PrimateAICommand.isIncludePrimateAI) {
+        if (PrimateAICommand.isInclude) {
             sj.add(PrimateAIManager.getHeader());
         }
 
@@ -191,23 +191,23 @@ public class Output {
             sj.add("LOFTEE-HC in CCDS");
         }
 
-        if (MPCCommand.isIncludeMPC) {
+        if (MPCCommand.isInclude) {
             sj.add(MPCManager.getHeader());
         }
 
-        if (PextCommand.isIncludePext) {
+        if (PextCommand.isInclude) {
             sj.add(PextManager.getHeader());
         }
         
-        if (CHMCommand.isFlagRepeatRegion) {
+        if (CHMCommand.isFlag) {
             sj.add(CHMManager.getHeader());
         }
         
-        if (GMECommand.isIncludeGME) {
+        if (GMECommand.isInclude) {
             sj.add(GMEManager.getHeader());
         }
         
-        if (TopMedCommand.isIncludeTopMed) {
+        if (TopMedCommand.isInclude) {
             sj.add(TopMedManager.getHeader());
         }
         

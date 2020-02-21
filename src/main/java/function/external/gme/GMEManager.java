@@ -33,7 +33,7 @@ public class GMEManager {
     }
 
     public static void init() {
-        if (GMECommand.isIncludeGME) {
+        if (GMECommand.isInclude) {
             initGmeMap();
         }
     }

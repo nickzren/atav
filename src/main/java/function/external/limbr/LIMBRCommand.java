@@ -8,8 +8,8 @@ import global.Data;
  */
 public class LIMBRCommand {
 
-    public static boolean isListLIMBR = false;
-    public static boolean isIncludeLIMBR = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     public static float maxLimbrDomainPercentile = Data.NO_FILTER;
     public static float maxLimbrExonPercentile = Data.NO_FILTER;

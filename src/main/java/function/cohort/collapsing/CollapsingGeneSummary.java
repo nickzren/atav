@@ -43,7 +43,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         if (!GeneManager.geneCoverageSummaryHeader.isEmpty()) {
             sj.add(GeneManager.geneCoverageSummaryHeader);
         }
-        if (RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isInclude) {
             sj.add(RvisManager.getHeader());
         }
         if (KnownVarCommand.isIncludeOMIM) {
@@ -153,7 +153,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         sj.add(FormatManager.getDouble(linearP));
         sj.add(getLogisticP());
         GeneManager.addCoverageSummary(name, sj);
-        if (RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isInclude) {
             sj.add(getRvis());
         }
         if (KnownVarCommand.isIncludeOMIM) {

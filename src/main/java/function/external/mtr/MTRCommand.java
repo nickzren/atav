@@ -8,8 +8,8 @@ import global.Data;
  */
 public class MTRCommand {
 
-    public static boolean isListMTR = false;
-    public static boolean isIncludeMTR = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
     public static float maxMTR = Data.NO_FILTER;
     public static float maxMTRFDR = Data.NO_FILTER;
     public static float maxMTRCentile = Data.NO_FILTER;

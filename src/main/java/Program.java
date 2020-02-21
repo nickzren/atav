@@ -180,14 +180,14 @@ public class Program {
 
     private static void startAnalysis() {
         try {
-            if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
+            if (VarGenoCommand.isList) { // Genotype Analysis Functions
                 runAnalysis(new ListVarGeno());
-            } else if (VarGenoCommand.isListVarGenoLite) {
+            } else if (VarGenoCommand.isListLite) {
                 ListVarGenoLite listVarGenoLite = new ListVarGenoLite();
                 listVarGenoLite.run();
-            } else if (VarCommand.isListVar) {
+            } else if (VarCommand.isList) {
                 runAnalysis(new ListVar());
-            } else if (VCFCommand.isListVCF) {
+            } else if (VCFCommand.isList) {
                 runAnalysis(new ListVCF());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
                 runAnalysis(new CollapsingSingleVariant());
@@ -202,15 +202,15 @@ public class Program {
                 runAnalysis(new LinearRegression());
             } else if (SiblingCommand.isSiblingCompHet) {
                 runAnalysis(new ListSiblingComphet());
-            } else if (TrioCommand.isListTrio) {
+            } else if (TrioCommand.isList) {
                 runAnalysis(new ListTrio());
-            } else if (ParentCommand.isListParentCompHet) {
+            } else if (ParentCommand.isList) {
                 runAnalysis(new ListParentCompHet());
             } else if (ParentalCommand.isParentalMosaic) {
                 runAnalysis(new ParentalMosaic());
             } else if (PedMapCommand.isPedMap) {
                 runAnalysis(new PedMapGenerator());
-            } else if (VarAnnoCommand.isListVarAnno) { // Variant Annotation Functions
+            } else if (VarAnnoCommand.isList) { // Variant Annotation Functions
                 runAnalysis(new ListVarAnno());
             } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
                 runAnalysis(new CoverageSummary());
@@ -220,49 +220,49 @@ public class Program {
                 runAnalysis(new CoverageComparison());
             } else if (CoverageCommand.isSiteCoverageComparison) {
                 runAnalysis(new SiteCoverageComparison());
-            } else if (EvsCommand.isListEvs) { // External Datasets Functions
+            } else if (EvsCommand.isList) { // External Datasets Functions
                 runAnalysis(new ListEvs());
-            } else if (ExACCommand.isListExac) {
+            } else if (ExACCommand.isList) {
                 runAnalysis(new ListExAC());
-            } else if (GnomADCommand.isListGnomADExome) {
+            } else if (GnomADCommand.isListExome) {
                 runAnalysis(new ListGnomADExome());
-            } else if (GnomADCommand.isListGnomADGenome) {
+            } else if (GnomADCommand.isListGenome) {
                 runAnalysis(new ListGnomADGenome());
-            } else if (KnownVarCommand.isListKnownVar) {
+            } else if (KnownVarCommand.isList) {
                 runAnalysis(new ListKnownVar());
-            } else if (KaviarCommand.isListKaviar) {
+            } else if (KaviarCommand.isList) {
                 runAnalysis(new ListKaviar());
-            } else if (GerpCommand.isListGerp) {
+            } else if (GerpCommand.isList) {
                 runAnalysis(new ListGerp());
-            } else if (TrapCommand.isListTrap) {
+            } else if (TrapCommand.isList) {
                 runAnalysis(new ListTrap());
-            } else if (SubRvisCommand.isListSubRvis) {
+            } else if (SubRvisCommand.isList) {
                 runAnalysis(new ListSubRvis());
-            } else if (LIMBRCommand.isListLIMBR) {
+            } else if (LIMBRCommand.isList) {
                 runAnalysis(new ListLIMBR());
-            } else if (RvisCommand.isListRvis) {
+            } else if (RvisCommand.isList) {
                 runAnalysis(new ListRvis());
-            } else if (GenomesCommand.isList1000Genomes) {
+            } else if (GenomesCommand.isList) {
                 runAnalysis(new List1000Genomes());
-            } else if (MgiCommand.isListMgi) {
+            } else if (MgiCommand.isList) {
                 runAnalysis(new ListMgi());
-            } else if (DenovoDBCommand.isListDenovoDB) {
+            } else if (DenovoDBCommand.isList) {
                 runAnalysis(new ListDenovoDB());
-            } else if (DiscovEHRCommand.isListDiscovEHR) {
+            } else if (DiscovEHRCommand.isList) {
                 runAnalysis(new ListDiscovEHR());
-            } else if (RevelCommand.isListRevel) {
+            } else if (RevelCommand.isList) {
                 runAnalysis(new ListRevel());
-            } else if (PrimateAICommand.isListPrimateAI) {
+            } else if (PrimateAICommand.isList) {
                 runAnalysis(new ListPrimateAI());
-            } else if (CCRCommand.isListCCR) {
+            } else if (CCRCommand.isList) {
                 runAnalysis(new ListCCR());
-            } else if (PextCommand.isListPext) {
+            } else if (PextCommand.isList) {
                 runAnalysis(new ListPext());
-            } else if (MPCCommand.isListMPC) {
+            } else if (MPCCommand.isList) {
                 runAnalysis(new ListMPC());
-            } else if (GMECommand.isListGME) {
+            } else if (GMECommand.isList) {
                 runAnalysis(new ListGME());
-            } else if (TopMedCommand.isListTopMed) {
+            } else if (TopMedCommand.isList) {
                 runAnalysis(new ListTopMed());
             } else if (GenomeAsiaCommand.isList) {
                 runAnalysis(new ListGenomeAsia());

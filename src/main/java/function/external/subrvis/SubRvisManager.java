@@ -41,7 +41,7 @@ public class SubRvisManager {
     }
 
     public static void init() {
-        if (SubRvisCommand.isIncludeSubRvis) {
+        if (SubRvisCommand.isInclude) {
             initGeneMap(geneDomainMap, Data.ATAV_HOME + SUBRVIS_DOMAIN_PATH);
 
             initGeneMap(geneExonMap, Data.ATAV_HOME + SUBRVIS_EXON_PATH);

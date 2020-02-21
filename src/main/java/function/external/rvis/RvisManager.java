@@ -30,7 +30,7 @@ public class RvisManager {
     }
 
     public static void init() {
-        if (RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isInclude) {
             initRvisMap();
         }
     }

@@ -11,11 +11,11 @@ import java.util.Set;
  */
 public class GnomADCommand {
 
-    public static boolean isListGnomADExome = false;
-    public static boolean isListGnomADGenome = false;
-    public static boolean isIncludeGnomADExome = false;
-    public static boolean isIncludeGnomADGenome = false;
-    public static boolean isIncludeGnomADGeneMetrics = false;
+    public static boolean isListExome = false;
+    public static boolean isListGenome = false;
+    public static boolean isIncludeExome = false;
+    public static boolean isIncludeGenome = false;
+    public static boolean isIncludeGeneMetrics = false;
 
     public static Set<String> gnomADExomePopSet = new HashSet<String>(Arrays.asList("global"));
     public static Set<String> gnomADGenomePopSet = new HashSet<String>(Arrays.asList("global"));

@@ -8,8 +8,8 @@ import global.Data;
  */
 public class SubRvisCommand {
 
-    public static boolean isListSubRvis = false;
-    public static boolean isIncludeSubRvis = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     public static float maxSubRVISDomainPercentile = Data.NO_FILTER;
     public static float maxMtrDomainPercentile = Data.NO_FILTER;

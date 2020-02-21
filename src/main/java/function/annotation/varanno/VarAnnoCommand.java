@@ -6,6 +6,6 @@ package function.annotation.varanno;
  */
 public class VarAnnoCommand {
 
-    public static boolean isListVarAnno = false;
+    public static boolean isList = false;
     
 }

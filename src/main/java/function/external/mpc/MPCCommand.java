@@ -7,8 +7,8 @@ import global.Data;
  * @author nick
  */
 public class MPCCommand {
-    public static boolean isListMPC = false;
-    public static boolean isIncludeMPC = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     public static float minMPC = Data.NO_FILTER;
 

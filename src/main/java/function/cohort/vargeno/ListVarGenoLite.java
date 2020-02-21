@@ -155,51 +155,51 @@ public class ListVarGenoLite {
             LOO_AF_HEADER
         };
 
-        if (ExACCommand.isIncludeExac) {
+        if (ExACCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, ExACManager.getHeader().split(","));
         }
 
-        if (GnomADCommand.isIncludeGnomADExome) {
+        if (GnomADCommand.isIncludeExome) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getExomeHeader().split(","));
         }
 
-        if (GnomADCommand.isIncludeGnomADGenome) {
+        if (GnomADCommand.isIncludeGenome) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeHeader().split(","));
         }
 
-        if (SubRvisCommand.isIncludeSubRvis) {
+        if (SubRvisCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, SubRvisManager.getHeader().split(","));
         }
 
-        if (LIMBRCommand.isIncludeLIMBR) {
+        if (LIMBRCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, LIMBRManager.getHeader().split(","));
         }
 
-        if (CCRCommand.isIncludeCCR) {
+        if (CCRCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, CCRManager.getHeader().split(","));
         }
         
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+        if (DiscovEHRCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, DiscovEHRManager.getHeader().split(","));
         }
 
-        if (MTRCommand.isIncludeMTR) {
+        if (MTRCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, MTRManager.getHeader().split(","));
         }
 
-        if (RevelCommand.isIncludeRevel) {
+        if (RevelCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, RevelManager.getHeader().split(","));
         }
 
-        if (PrimateAICommand.isIncludePrimateAI) {
+        if (PrimateAICommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, PrimateAIManager.getHeader().split(","));
         }
 
-        if (MPCCommand.isIncludeMPC) {
+        if (MPCCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, MPCManager.getHeader().split(","));
         }
 
-        if (PextCommand.isIncludePext) {
+        if (PextCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, PextManager.getHeader().split(","));
         }
 

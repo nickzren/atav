@@ -193,7 +193,7 @@ public class Carrier extends NonCarrier {
      */
     protected void checkValidOnXY(Region r) {
         if (gt != Data.BYTE_NA
-                && !TrioCommand.isListTrio
+                && !TrioCommand.isList
                 && !VariantLevelFilterCommand.disableCheckOnSexChr) {
             boolean isValid = true;
 

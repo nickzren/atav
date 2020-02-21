@@ -35,7 +35,7 @@ public class CCRManager {
     }
 
     public static void init() {
-        if (CCRCommand.isIncludeCCR) {
+        if (CCRCommand.isInclude) {
             initGeneMap(geneMap, Data.ATAV_HOME + PATH);
         }
     }

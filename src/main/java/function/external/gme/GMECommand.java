@@ -7,8 +7,8 @@ import global.Data;
  * @author nick
  */
 public class GMECommand {
-    public static boolean isListGME = false;
-    public static boolean isIncludeGME = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
     public static float maxGmeAF = Data.NO_FILTER;
     
     public static boolean isMaxGMEAFValid(float value) {

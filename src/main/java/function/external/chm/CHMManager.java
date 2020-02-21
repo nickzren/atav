@@ -23,7 +23,7 @@ public class CHMManager {
     }
 
     public static void init() throws Exception {
-        if (CHMCommand.isFlagRepeatRegion || CHMCommand.isExcludeRepeatRegion) {
+        if (CHMCommand.isFlag || CHMCommand.isExclude) {
             for (String chr : RegionManager.getChrList()) {
                 Path path = Paths.get(repeatRegionBedFilePath.replace("CHR", chr));
                 int count = (int) Files.lines(path).count();

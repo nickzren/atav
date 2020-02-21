@@ -8,8 +8,8 @@ import global.Data;
  */
 public class TrapCommand {
 
-    public static boolean isListTrap = false;
-    public static boolean isIncludeTrap = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     public static float minTrapScore = Data.NO_FILTER;
     public static float minTrapScoreNonCoding = Data.NO_FILTER;

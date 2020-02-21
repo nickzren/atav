@@ -98,7 +98,7 @@ public class KnownVarManager {
     }
 
     public static void init() throws SQLException {
-        if (KnownVarCommand.isIncludeKnownVar) {
+        if (KnownVarCommand.isInclude) {
             initHGMDMap();
 
             initClinVarMap();

@@ -327,17 +327,17 @@ public class CommandManager {
             switch (option.getName()) {
                 // Genotype Analysis Functions
                 case "--list-var-geno":
-                    VarGenoCommand.isListVarGeno = true;
+                    VarGenoCommand.isList = true;
                     break;
                 case "--list-var-geno-lite":
-                    VarGenoCommand.isListVarGenoLite = true;
+                    VarGenoCommand.isListLite = true;
                     break;
                 case "--list-var":
-                    VarCommand.isListVar = true;
+                    VarCommand.isList = true;
                     break;
                 case "--list-vcf":
                     Data.STRING_NA = ".";
-                    VCFCommand.isListVCF = true;
+                    VCFCommand.isList = true;
                     break;
                 case "--collapsing-dom":
                     CollapsingCommand.isCollapsingSingleVariant = true;
@@ -362,11 +362,11 @@ public class CommandManager {
                     SiblingCommand.isSiblingCompHet = true;
                     break;
                 case "--list-trio":
-                    TrioCommand.isListTrio = true;
+                    TrioCommand.isList = true;
                     CohortLevelFilterCommand.isCaseOnly = true;
                     break;
                 case "--list-parent-comp-het":
-                    ParentCommand.isListParentCompHet = true;
+                    ParentCommand.isList = true;
                     break;
                 case "--list-parental-mosaic":
                     ParentalCommand.isParentalMosaic = true;
@@ -379,33 +379,33 @@ public class CommandManager {
                 // Variant Annotation Functions
                 case "--list-var-anno":
                     CommonCommand.isNonSampleAnalysis = true;
-                    VarAnnoCommand.isListVarAnno = true;
-                    EvsCommand.isIncludeEvs = true;
-                    ExACCommand.isIncludeExac = true;
-                    GnomADCommand.isIncludeGnomADExome = true;
-                    GnomADCommand.isIncludeGnomADGenome = true;
-                    GnomADCommand.isIncludeGnomADGeneMetrics = true;
-                    GerpCommand.isIncludeGerp = true;
-                    TrapCommand.isIncludeTrap = true;
+                    VarAnnoCommand.isList = true;
+                    EvsCommand.isInclude = true;
+                    ExACCommand.isInclude = true;
+                    GnomADCommand.isIncludeExome = true;
+                    GnomADCommand.isIncludeGenome = true;
+                    GnomADCommand.isIncludeGeneMetrics = true;
+                    GerpCommand.isInclude = true;
+                    TrapCommand.isInclude = true;
 //                    KaviarCommand.isIncludeKaviar = true;
-                    KnownVarCommand.isIncludeKnownVar = true;
-                    RvisCommand.isIncludeRvis = true;
-                    SubRvisCommand.isIncludeSubRvis = true;
-                    LIMBRCommand.isIncludeLIMBR = true;
-                    CCRCommand.isIncludeCCR = true;
+                    KnownVarCommand.isInclude = true;
+                    RvisCommand.isInclude = true;
+                    SubRvisCommand.isInclude = true;
+                    LIMBRCommand.isInclude = true;
+                    CCRCommand.isInclude = true;
 //                    GenomesCommand.isInclude1000Genomes = true;
-                    MgiCommand.isIncludeMgi = true;
-                    DenovoDBCommand.isIncludeDenovoDB = true;
-                    DiscovEHRCommand.isIncludeDiscovEHR = true;
-                    MTRCommand.isIncludeMTR = true;
-                    RevelCommand.isIncludeRevel = true;
-                    PrimateAICommand.isIncludePrimateAI = true;
+                    MgiCommand.isInclude = true;
+                    DenovoDBCommand.isInclude = true;
+                    DiscovEHRCommand.isInclude = true;
+                    MTRCommand.isInclude = true;
+                    RevelCommand.isInclude = true;
+                    PrimateAICommand.isInclude = true;
                     VariantLevelFilterCommand.isIncludeLOFTEE = true;
-                    MPCCommand.isIncludeMPC = true;
-                    PextCommand.isIncludePext = true;
-                    CHMCommand.isFlagRepeatRegion = true;
-                    GMECommand.isIncludeGME = true;
-                    TopMedCommand.isIncludeTopMed = true;
+                    MPCCommand.isInclude = true;
+                    PextCommand.isInclude = true;
+                    CHMCommand.isFlag = true;
+                    GMECommand.isInclude = true;
+                    TopMedCommand.isInclude = true;
                     GenomeAsiaCommand.isInclude = true;
                     break;
                 // Coverage Analysis Functions    
@@ -425,113 +425,113 @@ public class CommandManager {
                 // External Datasets Functions    
                 case "--list-evs":
                     CommonCommand.isNonSampleAnalysis = true;
-                    EvsCommand.isListEvs = true;
-                    EvsCommand.isIncludeEvs = true;
+                    EvsCommand.isList = true;
+                    EvsCommand.isInclude = true;
                     break;
                 case "--list-exac":
                     CommonCommand.isNonSampleAnalysis = true;
-                    ExACCommand.isListExac = true;
-                    ExACCommand.isIncludeExac = true;
+                    ExACCommand.isList = true;
+                    ExACCommand.isInclude = true;
                     break;
                 case "--list-gnomad-exome":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GnomADCommand.isListGnomADExome = true;
-                    GnomADCommand.isIncludeGnomADExome = true;
+                    GnomADCommand.isListExome = true;
+                    GnomADCommand.isIncludeExome = true;
                     break;
                 case "--list-gnomad-genome":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GnomADCommand.isListGnomADGenome = true;
-                    GnomADCommand.isIncludeGnomADGenome = true;
+                    GnomADCommand.isListGenome = true;
+                    GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--list-known-var":
                     CommonCommand.isNonSampleAnalysis = true;
-                    KnownVarCommand.isListKnownVar = true;
-                    KnownVarCommand.isIncludeKnownVar = true;
+                    KnownVarCommand.isList = true;
+                    KnownVarCommand.isInclude = true;
                     break;
                 case "--list-kaviar":
                     CommonCommand.isNonSampleAnalysis = true;
-                    KaviarCommand.isListKaviar = true;
-                    KaviarCommand.isIncludeKaviar = true;
+                    KaviarCommand.isList = true;
+                    KaviarCommand.isInclude = true;
                     break;
                 case "--list-gerp":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GerpCommand.isListGerp = true;
-                    GerpCommand.isIncludeGerp = true;
+                    GerpCommand.isList = true;
+                    GerpCommand.isInclude = true;
                     break;
                 case "--list-trap":
                     CommonCommand.isNonSampleAnalysis = true;
-                    TrapCommand.isListTrap = true;
-                    TrapCommand.isIncludeTrap = true;
+                    TrapCommand.isList = true;
+                    TrapCommand.isInclude = true;
                     break;
                 case "--list-sub-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
-                    SubRvisCommand.isListSubRvis = true;
-                    SubRvisCommand.isIncludeSubRvis = true;
+                    SubRvisCommand.isList = true;
+                    SubRvisCommand.isInclude = true;
                     break;
                 case "--list-limbr":
                     CommonCommand.isNonSampleAnalysis = true;
-                    LIMBRCommand.isListLIMBR = true;
-                    LIMBRCommand.isIncludeLIMBR = true;
+                    LIMBRCommand.isList = true;
+                    LIMBRCommand.isInclude = true;
                     break;
                 case "--list-ccr":
                     CommonCommand.isNonSampleAnalysis = true;
-                    CCRCommand.isListCCR = true;
-                    CCRCommand.isIncludeCCR = true;
+                    CCRCommand.isList = true;
+                    CCRCommand.isInclude = true;
                     break;
                 case "--list-rvis":
                     CommonCommand.isNonSampleAnalysis = true;
-                    RvisCommand.isListRvis = true;
-                    RvisCommand.isIncludeRvis = true;
+                    RvisCommand.isList = true;
+                    RvisCommand.isInclude = true;
                     break;
                 case "--list-1000-genomes":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GenomesCommand.isList1000Genomes = true;
-                    GenomesCommand.isInclude1000Genomes = true;
+                    GenomesCommand.isList = true;
+                    GenomesCommand.isInclude = true;
                     break;
                 case "--list-mgi":
                     CommonCommand.isNonSampleAnalysis = true;
-                    MgiCommand.isListMgi = true;
-                    MgiCommand.isIncludeMgi = true;
+                    MgiCommand.isList = true;
+                    MgiCommand.isInclude = true;
                     break;
                 case "--list-denovo-db":
                     CommonCommand.isNonSampleAnalysis = true;
-                    DenovoDBCommand.isListDenovoDB = true;
-                    DenovoDBCommand.isIncludeDenovoDB = true;
+                    DenovoDBCommand.isList = true;
+                    DenovoDBCommand.isInclude = true;
                     break;
                 case "--list-discovehr":
                     CommonCommand.isNonSampleAnalysis = true;
-                    DiscovEHRCommand.isListDiscovEHR = true;
-                    DiscovEHRCommand.isIncludeDiscovEHR = true;
+                    DiscovEHRCommand.isList = true;
+                    DiscovEHRCommand.isInclude = true;
                     break;
                 case "--list-revel":
                     CommonCommand.isNonSampleAnalysis = true;
-                    RevelCommand.isListRevel = true;
-                    RevelCommand.isIncludeRevel = true;
+                    RevelCommand.isList = true;
+                    RevelCommand.isInclude = true;
                     break;
                 case "--list-primate-ai":
                     CommonCommand.isNonSampleAnalysis = true;
-                    PrimateAICommand.isListPrimateAI = true;
-                    PrimateAICommand.isIncludePrimateAI = true;
+                    PrimateAICommand.isList = true;
+                    PrimateAICommand.isInclude = true;
                     break;
                 case "--list-mpc":
                     CommonCommand.isNonSampleAnalysis = true;
-                    MPCCommand.isListMPC = true;
-                    MPCCommand.isIncludeMPC = true;
+                    MPCCommand.isList = true;
+                    MPCCommand.isInclude = true;
                     break;
                 case "--list-pext":
                     CommonCommand.isNonSampleAnalysis = true;
-                    PextCommand.isListPext = true;
-                    PextCommand.isIncludePext = true;
+                    PextCommand.isList = true;
+                    PextCommand.isInclude = true;
                     break;
                 case "--list-gme":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GMECommand.isListGME = true;
-                    GMECommand.isIncludeGME = true;
+                    GMECommand.isList = true;
+                    GMECommand.isInclude = true;
                     break;
                 case "--list-top-med":
                     CommonCommand.isNonSampleAnalysis = true;
-                    TopMedCommand.isListTopMed = true;
-                    TopMedCommand.isIncludeTopMed = true;
+                    TopMedCommand.isList = true;
+                    TopMedCommand.isInclude = true;
                     break;
                 case "--list-genome-asia":
                     CommonCommand.isNonSampleAnalysis = true;
@@ -560,13 +560,13 @@ public class CommandManager {
     }
 
     private static void initSubOptions() throws Exception {
-        if (VarGenoCommand.isListVarGeno) { // Genotype Analysis Functions
+        if (VarGenoCommand.isList) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
-        } else if (VarGenoCommand.isListVarGenoLite) { // Genotype Analysis Functions
+        } else if (VarGenoCommand.isListLite) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
-        } else if (VarCommand.isListVar) {
+        } else if (VarCommand.isList) {
 
-        } else if (VCFCommand.isListVCF) {
+        } else if (VCFCommand.isList) {
 
         } else if (CollapsingCommand.isCollapsingSingleVariant) {
             CollapsingCommand.initSingleVarOptions(optionList.iterator());
@@ -580,13 +580,13 @@ public class CommandManager {
             StatisticsCommand.initLinearOptions(optionList.iterator());
         } else if (SiblingCommand.isSiblingCompHet) {
 
-        } else if (TrioCommand.isListTrio) {
+        } else if (TrioCommand.isList) {
             TrioCommand.initOptions(optionList.iterator());
         } else if (ParentalCommand.isParentalMosaic) {
             ParentalCommand.initOptions(optionList.iterator());
         } else if (PedMapCommand.isPedMap) {
             PedMapCommand.initOptions(optionList.iterator());
-        } else if (VarAnnoCommand.isListVarAnno) { // Variant Annotation Functions
+        } else if (VarAnnoCommand.isList) { // Variant Annotation Functions
 
         } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
             CoverageCommand.initCoverageSummary(optionList.iterator());
@@ -596,11 +596,11 @@ public class CommandManager {
             CoverageCommand.initCoverageComparison(optionList.iterator());
         } else if (CoverageCommand.isSiteCoverageComparison) {
             CoverageCommand.initCoverageComparisonSite(optionList.iterator());
-        } else if (EvsCommand.isListEvs) { // External Datasets Functions
+        } else if (EvsCommand.isList) { // External Datasets Functions
 
-        } else if (GnomADCommand.isListGnomADExome) {
+        } else if (GnomADCommand.isListExome) {
 
-        } else if (KnownVarCommand.isListKnownVar) {
+        } else if (KnownVarCommand.isList) {
 
         } else if (TestCommand.isTest) { // Test Functions
             TestCommand.initOptions(optionList.iterator());

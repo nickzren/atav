@@ -9,8 +9,8 @@ import global.Data;
 public class EvsCommand {
 
     // list evs
-    public static boolean isListEvs = false;
-    public static boolean isIncludeEvs = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     // filter option
     public static String evsPop = "all";
