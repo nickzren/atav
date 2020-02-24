@@ -27,6 +27,8 @@ import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADManager;
+import function.external.iranome.IranomeCommand;
+import function.external.iranome.IranomeManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import function.external.kaviar.Kaviar;
@@ -111,6 +113,7 @@ public class AnnotatedVariant extends Variant {
     private float gmeAF;
     private float topmedAF;
     private float genomeasiaAF;
+    private float iranomeAF;
 
     public boolean isValid = true;
 
@@ -134,6 +137,12 @@ public class AnnotatedVariant extends Variant {
             gmeAF = GMEManager.getAF(variantIdStr);
 
             isValid = GMECommand.isMaxGMEAFValid(gmeAF);
+        }
+        
+        if (isValid && IranomeCommand.isInclude) {
+            iranomeAF = IranomeManager.getAF(variantIdStr);
+
+            isValid = IranomeCommand.isMaxAFValid(iranomeAF);
         }
 
         if (isValid && TopMedCommand.isInclude) {
@@ -575,6 +584,10 @@ public class AnnotatedVariant extends Variant {
         if (GenomeAsiaCommand.isInclude) {
             sj.add(getGenomeAsia());
         }
+        
+        if (IranomeCommand.isInclude) {
+            sj.add(getIranome());
+        }
     }
 
     public StringJoiner getEvsStringJoiner() {
@@ -675,5 +688,9 @@ public class AnnotatedVariant extends Variant {
     
     public String getGenomeAsia() {
         return FormatManager.getFloat(genomeasiaAF);
+    }
+    
+    public String getIranome() {
+        return FormatManager.getFloat(iranomeAF);
     }
 }

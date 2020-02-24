@@ -91,6 +91,9 @@ import function.external.genomeasia.ListGenomeAsia;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
+import function.external.iranome.IranomeCommand;
+import function.external.iranome.IranomeManager;
+import function.external.iranome.ListIranome;
 import function.external.mpc.ListMPC;
 import function.external.mpc.MPCCommand;
 import function.external.pext.ListPext;
@@ -170,6 +173,8 @@ public class Program {
             CHMManager.init();
 
             GMEManager.init();
+            
+            IranomeManager.init();
 
             // output external data version
             LogManager.logExternalDataVersion();
@@ -266,6 +271,8 @@ public class Program {
                 runAnalysis(new ListTopMed());
             } else if (GenomeAsiaCommand.isList) {
                 runAnalysis(new ListGenomeAsia());
+            } else if (IranomeCommand.isList) {
+                runAnalysis(new ListIranome());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
             }

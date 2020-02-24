@@ -15,6 +15,7 @@ import function.external.genomes.GenomesCommand;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.gme.GMECommand;
+import function.external.iranome.IranomeCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
@@ -309,6 +310,11 @@ public class VariantLevelFilterCommand {
                     GenomeAsiaCommand.maxAF = getValidFloat(option);
                     GenomeAsiaCommand.isInclude = true;
                     break;
+                case "--max-iranome-af":
+                    checkValueValid(1, 0, option);
+                    IranomeCommand.maxAF = getValidFloat(option);
+                    IranomeCommand.isInclude = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isInclude = true;
                     break;
@@ -403,6 +409,9 @@ public class VariantLevelFilterCommand {
                 case "--include-genome-asia":
                     GenomeAsiaCommand.isInclude = true;
                     break; 
+                case "--include-iranome":
+                    IranomeCommand.isInclude = true;
+                    break;
                 default:
                     continue;
             }

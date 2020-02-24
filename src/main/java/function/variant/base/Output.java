@@ -47,6 +47,8 @@ import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
+import function.external.iranome.IranomeCommand;
+import function.external.iranome.IranomeManager;
 import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.pext.PextCommand;
@@ -213,6 +215,10 @@ public class Output {
         
         if (GenomeAsiaCommand.isInclude) {
             sj.add(GenomeAsiaManager.getHeader());
+        }
+        
+        if (IranomeCommand.isInclude) {
+            sj.add(IranomeManager.getHeader());
         }
 
         return sj;

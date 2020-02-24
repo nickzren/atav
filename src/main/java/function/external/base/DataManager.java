@@ -21,6 +21,8 @@ import function.external.gerp.GerpManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
+import function.external.iranome.IranomeCommand;
+import function.external.iranome.IranomeManager;
 import function.external.kaviar.KaviarCommand;
 import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarCommand;
@@ -158,6 +160,10 @@ public class DataManager {
         
         if (GenomeAsiaCommand.isInclude) {
             sb.append(GenomeAsiaManager.getVersion());
+        }
+        
+        if (IranomeCommand.isInclude) {
+            sb.append(IranomeManager.getVersion());
         }
 
         return sb.toString();

@@ -24,6 +24,8 @@ import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
+import function.external.iranome.IranomeCommand;
+import function.external.iranome.IranomeManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.mpc.MPCCommand;
@@ -83,6 +85,7 @@ public class VariantLite {
     private float gmeAF;
     private float topmedAF;
     private float genomeasiaAF;
+    private float iranomeAF;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -122,6 +125,7 @@ public class VariantLite {
         initGME(record);
         initTopMed(record);
         initGenomeAsia(record);
+        initIranome(record);
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
 
@@ -288,6 +292,12 @@ public class VariantLite {
             genomeasiaAF = GenomeAsiaManager.getAF(record);
         }
     }
+    
+    private void initIranome(CSVRecord record) {
+        if (IranomeCommand.isInclude) {
+            iranomeAF = IranomeManager.getAF(record);
+        }
+    }
 
     private int getIntStableId(String value) {
         if (value.equals(Data.STRING_NA)) {
@@ -328,6 +338,7 @@ public class VariantLite {
                 && isGMEAFValid()
                 && isTopMedAFValid()
                 && isGenomeAsiaAFValid()
+                && isIranomeAFValid()
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
@@ -503,5 +514,9 @@ public class VariantLite {
     
     private boolean isGenomeAsiaAFValid() {
         return GenomeAsiaCommand.isMaxAFValid(genomeasiaAF);
+    }
+    
+    private boolean isIranomeAFValid() {
+        return IranomeCommand.isMaxAFValid(iranomeAF);
     }
 }
