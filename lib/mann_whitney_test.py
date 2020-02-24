@@ -110,8 +110,10 @@ def getQVcounts(genotypesFilename, caseNames, controlNames):
 
 	if "genotypes" in genotypesFilename:
 		caseCounts, controlCounts = getQVcountsForDominantModel(genotypesFilename, caseNames, controlNames)
-	if "comphet" in genotypesFilename:
+	elif "comphet" in genotypesFilename:
 		caseCounts, controlCounts = getQVsForComphetModel(genotypesFilename, caseNames, controlNames)
+	else:
+		raise NameError("Unclear whether variants file is dominant or comphet.\nRename with 'genotypes' or 'comphet'.")
 		
 	return caseCounts, controlCounts
 
@@ -255,22 +257,30 @@ def runMannWhitney(mannWhitneyLogName, qvsPerCase, qvsPerControl):
 	"""
 
 	log = ""
-	log += "Checking amounts of called variant for cases vs. controls. Date: {}.\n".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+	log += "Checking amounts of found variants for cases vs. controls. Date: {}.\n".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 	log += "Cases (n = {}): Median: {}; mean: {}.\n".format(len(qvsPerCase), np.median(qvsPerCase), np.mean(qvsPerCase))
 	log += "Controls (n = {}): Median: {}; mean: {}.\n".format(len(qvsPerControl), np.median(qvsPerControl), np.mean(qvsPerControl))
 
 	log += "Null hypothesis: the cases' variants and controls' variants follow the same distribution.\n"
 	
-	value, pvalue = stats.mannwhitneyu(qvsPerCase, qvsPerControl, alternative = "two-sided")
-	if pvalue == 0.0:
-		log += "The test could not be run. (You may have run with no cases, or no controls.)"
-	elif pvalue < 0.05:
-		log += "The p-value ({0:.3}) is less than 0.05. We reject the null, meaning there's a significant difference\n".format(pvalue)
-		log += "between the number of variants that the cases have than do the controls."
-	else:
-		log += "The p-value ({0:.3}) is greater than 0.05. We do not reject the null, meaning that there's no significant\n".format(pvalue)
-		log += "difference between the number of variants that the cases have than do the controls."
-	writeToLog(mannWhitneyLogName, log, writeOrAppend = "w")
+	try:
+		value, pvalue = stats.mannwhitneyu(qvsPerCase, qvsPerControl, alternative = "two-sided")
+		if pvalue == 0.0:
+			log += "The test could not be run. (You may have run with no cases, or no controls.)"
+		elif pvalue < 0.05:
+			log += "The p-value ({0:.3}) is less than 0.05. We reject the null, meaning there's a significant difference\n".format(pvalue)
+			log += "between the number of variants that the cases have than do the controls."
+		else:
+			log += "The p-value ({0:.3}) is greater than 0.05. We do not reject the null, meaning that there's no significant\n".format(pvalue)
+			log += "difference between the number of variants that the cases have than do the controls."
+		writeToLog(mannWhitneyLogName, log, writeOrAppend = "w")
+	
+	# This happens when all the values are the same. Most likely when no case and no controls
+	# have a variant.
+	except ValueError as e:
+		log += "All samples have the same number of variants ({}),".format(qvsPerCase[0])
+		log += " and the Mann-Whitney test could not be run."
+		writeToLog(mannWhitneyLogName, log, writeOrAppend = "w")
 
 	return
 
@@ -391,13 +401,13 @@ def handler(genotypesFilename, pedFilePath):
 
 if __name__ == '__main__':
 
-	# if len(sys.argv) != 2:
-	# 	raise ValueError("This script only takes in a _genotypes filename as an argument.")
+	### If your environment doesn't have docopt:
+	# if len(sys.argv) != 3:
+	# 	raise ValueError("This script only takes in the paths to a _genotypes file and a ped file as an argument.")
 	# else:
 	# 	genotypesFilename = sys.argv[1]
-	# 	handler(genotypesFilename)
+	# 	pedFilePath = sys.argv[2]
+	# 	handler(genotypesFilename, pedFilePath)
 
 	arguments = docopt(__doc__)
-	# Can access the values like: arguments["genotypesFilename"]
-	# handler(*arguments.values())
 	handler(arguments["<genotypesFileName>"], arguments["<pedFilePath>"])
