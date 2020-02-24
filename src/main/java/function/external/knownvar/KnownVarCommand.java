@@ -6,8 +6,9 @@ package function.external.knownvar;
  */
 public class KnownVarCommand {
 
-    public static boolean isListKnownVar = false;
+    public static boolean isList = false;
     public static boolean isKnownVarOnly = false;
     public static boolean isKnownVarPathogenicOnly = false;
-    public static boolean isIncludeKnownVar = false;
+    public static boolean isInclude = false;
+    public static boolean isIncludeOMIM = false;
 }

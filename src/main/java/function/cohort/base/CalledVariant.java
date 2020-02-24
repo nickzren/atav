@@ -196,7 +196,7 @@ public class CalledVariant extends AnnotatedVariant {
 
     public void addSampleGeno(byte geno, Sample sample) {
         if (geno != Data.BYTE_NA) {
-            if (TrioCommand.isListTrio && TrioManager.isParent(sample.getId())) {
+            if (TrioCommand.isList && TrioManager.isParent(sample.getId())) {
                 // exclude parent controls
                 return;
             }

@@ -8,8 +8,8 @@ import global.Data;
  */
 public class PrimateAICommand {
     
-    public static boolean isListPrimateAI = false;
-    public static boolean isIncludePrimateAI = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     // filter option
     public static float minPrimateAI = Data.NO_FILTER;

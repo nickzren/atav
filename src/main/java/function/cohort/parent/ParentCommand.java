@@ -6,5 +6,5 @@ package function.cohort.parent;
  */
 public class ParentCommand {
 
-    public static boolean isListParentCompHet = false;
+    public static boolean isList = false;
 }

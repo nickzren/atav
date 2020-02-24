@@ -41,7 +41,7 @@ public class LIMBRManager {
     }
 
     public static void init() {
-        if (LIMBRCommand.isIncludeLIMBR) {
+        if (LIMBRCommand.isInclude) {
             initGeneMap(geneDomainMap, Data.ATAV_HOME + DOMAIN_PATH);
 
             initGeneMap(geneExonMap, Data.ATAV_HOME + EXON_PATH);

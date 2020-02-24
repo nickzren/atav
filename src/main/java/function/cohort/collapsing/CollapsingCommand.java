@@ -4,6 +4,8 @@ import function.annotation.base.GeneManager;
 import function.cohort.statistics.StatisticsCommand;
 import global.Data;
 import java.util.Iterator;
+import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 
@@ -22,6 +24,10 @@ public class CollapsingCommand {
     public static boolean isCollapsingDoLogistic = false;
     public static String regionBoundaryFile = "";
     public static boolean isMannWhitneyTest = false;
+    public static int minCompHetVarDistance = Data.NO_FILTER;
+    public static boolean isExcludeCompHetPIDVariant = false;
+    public static boolean isExcludeCompHetHPVariant = false;
+    public static String geneColumn = "";
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -88,6 +94,16 @@ public class CollapsingCommand {
                 case "--convert-nan":
                     Data.STRING_NAN = option.getValue();
                     break;
+                case "--min-comp-het-var-distance":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minCompHetVarDistance = getValidInteger(option);
+                    break;
+                case "--exclude-comp-het-pid-variant":
+                    isExcludeCompHetPIDVariant = true;
+                    break;
+                case "--exclude-comp-het-hp-variant":
+                    isExcludeCompHetHPVariant = true;
+                    break;
                 default:
                     continue;
             }
@@ -114,11 +130,44 @@ public class CollapsingCommand {
                     coverageSummaryFile = getValidPath(option);
                     GeneManager.initCoverageSummary();
                     break;
+                case "--gene-column":
+                    geneColumn = option.getValue().replaceAll("_", " ");
+                    break;
                 default:
                     continue;
             }
 
             iterator.remove();
         }
+    }
+
+    public static boolean isMinCompHetVarDistanceValid(int value) {
+        if (minCompHetVarDistance == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minCompHetVarDistance;
+    }
+
+    public static boolean isCompHetPIDVariantIdInvalid(int variantId1, int variantId2,
+            int pidVariantId1, int pidVariantId2) {
+        if (pidVariantId1 == Data.INTEGER_NA && pidVariantId2 == Data.INTEGER_NA) {
+            return false;
+        }
+
+        return variantId1 == pidVariantId2
+                || variantId2 == pidVariantId1
+                || pidVariantId1 == pidVariantId2;
+    }
+
+    public static boolean isCompHetHPVariantIdInvalid(int variantId1, int variantId2,
+            int hpVariantId1, int hpVariantId2) {
+        if (hpVariantId1 == Data.INTEGER_NA && hpVariantId2 == Data.INTEGER_NA) {
+            return false;
+        }
+
+        return variantId1 == hpVariantId2
+                || variantId2 == hpVariantId1
+                || hpVariantId1 == hpVariantId2;
     }
 }

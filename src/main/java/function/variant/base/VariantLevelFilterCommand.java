@@ -1,17 +1,20 @@
 package function.variant.base;
 
 import function.external.ccr.CCRCommand;
+import function.external.chm.CHMCommand;
 import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
+import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesCommand;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
+import function.external.gme.GMECommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
@@ -22,6 +25,7 @@ import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
+import function.external.topmed.TopMedCommand;
 import function.external.trap.TrapCommand;
 import global.Data;
 import java.util.Arrays;
@@ -95,258 +99,281 @@ public class VariantLevelFilterCommand {
                 case "--evs-maf":
                     checkValueValid(0.5, 0, option);
                     EvsCommand.evsMaf = getValidDouble(option);
-                    EvsCommand.isIncludeEvs = true;
+                    EvsCommand.isInclude = true;
                     break;
                 case "--exclude-evs-qc-failed":
                     EvsCommand.isExcludeEvsQcFailed = true;
-                    EvsCommand.isIncludeEvs = true;
+                    EvsCommand.isInclude = true;
                     break;
                 case "--exac-pop":
                     checkValuesValid(ExACManager.EXAC_POP, option);
                     ExACCommand.exacPop = option.getValue();
-                    ExACCommand.isIncludeExac = true;
+                    ExACCommand.isInclude = true;
                     break;
                 case "--exac-af":
                     checkValueValid(1, 0, option);
                     ExACCommand.exacAF = getValidFloat(option);
-                    ExACCommand.isIncludeExac = true;
+                    ExACCommand.isInclude = true;
                     break;
                 case "--min-exac-vqslod-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     ExACCommand.exacVqslodSnv = getValidFloat(option);
-                    ExACCommand.isIncludeExac = true;
+                    ExACCommand.isInclude = true;
                     break;
                 case "--min-exac-vqslod-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     ExACCommand.exacVqslodIndel = getValidFloat(option);
-                    ExACCommand.isIncludeExac = true;
+                    ExACCommand.isInclude = true;
                     break;
                 case "--gnomad-exome-pop":
                     checkValuesValid(GnomADManager.GNOMAD_EXOME_POP, option);
                     GnomADCommand.gnomADExomePopSet = getSet(option);
-                    GnomADCommand.isIncludeGnomADExome = true;
+                    GnomADCommand.isIncludeExome = true;
                     break;
                 case "--gnomad-genome-pop":
                     checkValuesValid(GnomADManager.GNOMAD_GENOME_POP, option);
                     GnomADCommand.gnomADGenomePopSet = getSet(option);
-                    GnomADCommand.isIncludeGnomADGenome = true;
+                    GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--gnomad-exome-af":
                     checkValueValid(1, 0, option);
                     GnomADCommand.gnomADExomeAF = getValidFloat(option);
-                    GnomADCommand.isIncludeGnomADExome = true;
+                    GnomADCommand.isIncludeExome = true;
                     break;
                 case "--gnomad-genome-af":
                     checkValueValid(1, 0, option);
                     GnomADCommand.gnomADGenomeAF = getValidFloat(option);
-                    GnomADCommand.isIncludeGnomADGenome = true;
+                    GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--gnomad-exome-rf-tp-probability-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     GnomADCommand.gnomADExomeRfTpProbabilitySnv = getValidFloat(option);
-                    GnomADCommand.isIncludeGnomADExome = true;
+                    GnomADCommand.isIncludeExome = true;
                     break;
                 case "--gnomad-exome-rf-tp-probability-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     GnomADCommand.gnomADExomeRfTpProbabilityIndel = getValidFloat(option);
-                    GnomADCommand.isIncludeGnomADExome = true;
+                    GnomADCommand.isIncludeExome = true;
                     break;
                 case "--gnomad-genome-rf-tp-probability-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     GnomADCommand.gnomADGenomeRfTpProbabilitySnv = getValidFloat(option);
-                    GnomADCommand.isIncludeGnomADGenome = true;
+                    GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--gnomad-genome-rf-tp-probability-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     GnomADCommand.gnomADGenomeRfTpProbabilityIndel = getValidFloat(option);
-                    GnomADCommand.isIncludeGnomADGenome = true;
+                    GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--known-var-only":
                     KnownVarCommand.isKnownVarOnly = true;
-                    KnownVarCommand.isIncludeKnownVar = true;
+                    KnownVarCommand.isInclude = true;
                     break;
                 case "--known-var-pathogenic-only":
                     KnownVarCommand.isKnownVarPathogenicOnly = true;
-                    KnownVarCommand.isIncludeKnownVar = true;
+                    KnownVarCommand.isInclude = true;
                     break;
                 case "--min-gerp-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     GerpCommand.minGerpScore = getValidFloat(option);
-                    GerpCommand.isIncludeGerp = true;
+                    GerpCommand.isInclude = true;
                     break;
                 case "--min-trap-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     TrapCommand.minTrapScore = getValidFloat(option);
-                    TrapCommand.isIncludeTrap = true;
+                    TrapCommand.isInclude = true;
                     break;
                 case "--min-trap-score-non-coding":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     TrapCommand.minTrapScoreNonCoding = getValidFloat(option);
-                    TrapCommand.isIncludeTrap = true;
+                    TrapCommand.isInclude = true;
                     break;
                 case "--max-kaviar-maf":
                     checkValueValid(1, 0, option);
                     KaviarCommand.maxKaviarMaf = getValidFloat(option);
-                    KaviarCommand.isIncludeKaviar = true;
+                    KaviarCommand.isInclude = true;
                     break;
                 case "--max-kaviar-allele-count":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
-                    KaviarCommand.isIncludeKaviar = true;
+                    KaviarCommand.isInclude = true;
                     break;
                 case "--1000-genomes-pop":
                     checkValuesValid(GenomesManager.GENOMES_POP, option);
                     GenomesCommand.genomesPop = option.getValue();
-                    GenomesCommand.isInclude1000Genomes = true;
+                    GenomesCommand.isInclude = true;
                     break;
                 case "--max-1000-genomes-af":
                     checkValueValid(1, 0, option);
                     GenomesCommand.maxGenomesAF = getValidFloat(option);
-                    GenomesCommand.isInclude1000Genomes = true;
+                    GenomesCommand.isInclude = true;
                     break;
                 case "--sub-rvis-domain-score-percentile":
                 case "--max-sub-rvis-domain-score-percentile":
+                case "--max-sub-rvis-domain-percentile":
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.maxSubRVISDomainScorePercentile = getValidFloat(option);
-                    SubRvisCommand.isIncludeSubRvis = true;
+                    SubRvisCommand.maxSubRVISDomainPercentile = getValidFloat(option);
+                    SubRvisCommand.isInclude = true;
                     break;
                 case "--mtr-domain-percentile":
                 case "--max-mtr-domain-percentile":
                     checkValueValid(100, 0, option);
                     SubRvisCommand.maxMtrDomainPercentile = getValidFloat(option);
-                    SubRvisCommand.isIncludeSubRvis = true;
+                    SubRvisCommand.isInclude = true;
                     break;
                 case "--sub-rvis-exon-score-percentile":
                 case "--max-sub-rvis-exon-score-percentile":
+                case "--max-sub-rvis-exon-percentile":
                     checkValueValid(100, 0, option);
-                    SubRvisCommand.maxSubRVISExonScorePercentile = getValidFloat(option);
-                    SubRvisCommand.isIncludeSubRvis = true;
+                    SubRvisCommand.maxSubRVISExonPercentile = getValidFloat(option);
+                    SubRvisCommand.isInclude = true;
                     break;
                 case "--mtr-exon-percentile":
                 case "--max-mtr-exon-percentile":
                     checkValueValid(100, 0, option);
                     SubRvisCommand.maxMtrExonPercentile = getValidFloat(option);
-                    SubRvisCommand.isIncludeSubRvis = true;
+                    SubRvisCommand.isInclude = true;
                     break;
                 case "--limbr-domain-percentile":
                 case "--max-limbr-domain-percentile":
                     checkValueValid(100, 0, option);
                     LIMBRCommand.maxLimbrDomainPercentile = getValidFloat(option);
-                    LIMBRCommand.isIncludeLIMBR = true;
+                    LIMBRCommand.isInclude = true;
                     break;
                 case "--limbr-exon-percentile":
                 case "--max-limbr-exon-percentile":
                     checkValueValid(100, 0, option);
                     LIMBRCommand.maxLimbrExonPercentile = getValidFloat(option);
-                    LIMBRCommand.isIncludeLIMBR = true;
+                    LIMBRCommand.isInclude = true;
                     break;
                 case "--min-ccr-percentile":
                     checkValueValid(100, 0, option);
                     CCRCommand.minCCRPercentile = getValidFloat(option);
-                    CCRCommand.isIncludeCCR = true;
+                    CCRCommand.isInclude = true;
                     break;
                 case "--discovehr-af":
                     checkValueValid(1, 0, option);
                     DiscovEHRCommand.discovEHRAF = getValidFloat(option);
-                    DiscovEHRCommand.isIncludeDiscovEHR = true;
+                    DiscovEHRCommand.isInclude = true;
                     break;
                 case "--mtr":
+                case "--max-mtr":
                     checkValueValid(2, 0, option);
-                    MTRCommand.mtr = getValidFloat(option);
-                    MTRCommand.isIncludeMTR = true;
+                    MTRCommand.maxMTR = getValidFloat(option);
+                    MTRCommand.isInclude = true;
                     break;
                 case "--mtr-fdr":
+                case "--max-mtr-fdr":
                     checkValueValid(1, 0, option);
-                    MTRCommand.fdr = getValidFloat(option);
-                    MTRCommand.isIncludeMTR = true;
+                    MTRCommand.maxMTRFDR = getValidFloat(option);
+                    MTRCommand.isInclude = true;
                     break;
                 case "--mtr-centile":
+                case "--max-mtr-centile":
                     checkValueValid(100, 0, option);
-                    MTRCommand.mtrCentile = getValidFloat(option);
-                    MTRCommand.isIncludeMTR = true;
+                    MTRCommand.maxMTRCentile = getValidFloat(option);
+                    MTRCommand.isInclude = true;
                     break;
                 case "--min-revel-score":
                     checkValueValid(1, 0, option);
                     RevelCommand.minRevel = getValidFloat(option);
-                    RevelCommand.isIncludeRevel = true;
+                    RevelCommand.isInclude = true;
                     break;
                 case "--min-primate-ai":
                     checkValueValid(1, 0, option);
                     PrimateAICommand.minPrimateAI = getValidFloat(option);
-                    PrimateAICommand.isIncludePrimateAI = true;
+                    PrimateAICommand.isInclude = true;
                     break;
                 case "--min-mpc":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     MPCCommand.minMPC = getValidFloat(option);
-                    MPCCommand.isIncludeMPC = true;
+                    MPCCommand.isInclude = true;
                     break;
                 case "--min-pext-ratio":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     PextCommand.minPextRatio = getValidFloat(option);
-                    PextCommand.isIncludePext = true;
+                    PextCommand.isInclude = true;
+                    break;
+                case "--max-gme-af":
+                    checkValueValid(1, 0, option);
+                    GMECommand.maxGmeAF = getValidFloat(option);
+                    GMECommand.isInclude = true;
+                    break;
+                case "--max-top-med-af":
+                    checkValueValid(1, 0, option);
+                    TopMedCommand.maxAF = getValidFloat(option);
+                    TopMedCommand.isInclude = true;
+                    break;
+                case "--max-genome-asia-af":
+                    checkValueValid(1, 0, option);
+                    GenomeAsiaCommand.maxAF = getValidFloat(option);
+                    GenomeAsiaCommand.isInclude = true;
                     break;
                 case "--include-evs":
-                    EvsCommand.isIncludeEvs = true;
+                    EvsCommand.isInclude = true;
                     break;
                 case "--include-exac":
-                    ExACCommand.isIncludeExac = true;
+                    ExACCommand.isInclude = true;
                     break;
                 case "--include-exac-gene-variant-count":
-                    ExACCommand.isIncludeExacGeneVariantCount = true;
+                    ExACCommand.isIncludeCount = true;
                     break;
                 case "--include-gnomad-exome":
-                    GnomADCommand.isIncludeGnomADExome = true;
+                    GnomADCommand.isIncludeExome = true;
                     break;
                 case "--include-gnomad-genome":
-                    GnomADCommand.isIncludeGnomADGenome = true;
+                    GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--include-gnomad-gene-metrics":
-                    GnomADCommand.isIncludeGnomADGeneMetrics = true;
+                    GnomADCommand.isIncludeGeneMetrics = true;
                     break;
                 case "--include-gerp":
-                    GerpCommand.isIncludeGerp = true;
+                    GerpCommand.isInclude = true;
                     break;
                 case "--include-trap":
-                    TrapCommand.isIncludeTrap = true;
+                    TrapCommand.isInclude = true;
                     break;
 //                case "--include-kaviar":
 //                    KaviarCommand.isIncludeKaviar = true;
 //                    break;
                 case "--include-known-var":
-                    KnownVarCommand.isIncludeKnownVar = true;
+                    KnownVarCommand.isInclude = true;
+                    break;
+                case "--include-omim":
+                    KnownVarCommand.isIncludeOMIM = true;
                     break;
                 case "--include-rvis":
-                    RvisCommand.isIncludeRvis = true;
+                    RvisCommand.isInclude = true;
                     break;
                 case "--include-sub-rvis":
-                    SubRvisCommand.isIncludeSubRvis = true;
+                    SubRvisCommand.isInclude = true;
                     break;
                 case "--include-limbr":
-                    LIMBRCommand.isIncludeLIMBR = true;
+                    LIMBRCommand.isInclude = true;
                     break;
                 case "--include-ccr":
-                    CCRCommand.isIncludeCCR = true;
+                    CCRCommand.isInclude = true;
                     break;
 //                case "--include-1000-genomes":
 //                    GenomesCommand.isInclude1000Genomes = true;
 //                    break;
                 case "--include-mgi":
-                    MgiCommand.isIncludeMgi = true;
+                    MgiCommand.isInclude = true;
                     break;
                 case "--include-denovo-db":
-                    DenovoDBCommand.isIncludeDenovoDB = true;
+                    DenovoDBCommand.isInclude = true;
                     break;
                 case "--include-discovehr":
-                    DiscovEHRCommand.isIncludeDiscovEHR = true;
+                    DiscovEHRCommand.isInclude = true;
                     break;
                 case "--include-mtr":
-                    MTRCommand.isIncludeMTR = true;
+                    MTRCommand.isInclude = true;
                     break;
                 case "--include-revel":
-                    RevelCommand.isIncludeRevel = true;
+                    RevelCommand.isInclude = true;
                     break;
                 case "--include-primate-ai":
-                    PrimateAICommand.isIncludePrimateAI = true;
+                    PrimateAICommand.isInclude = true;
                     break;
                 case "--include-loftee":
                     isIncludeLOFTEE = true;
@@ -356,11 +383,26 @@ public class VariantLevelFilterCommand {
                     isIncludeLOFTEE = true;
                     break;
                 case "--include-mpc":
-                    MPCCommand.isIncludeMPC = true;
+                    MPCCommand.isInclude = true;
                     break;
                 case "--include-pext":
-                    PextCommand.isIncludePext = true;
+                    PextCommand.isInclude = true;
                     break;
+                case "--flag-repeat-region":
+                    CHMCommand.isFlag = true;
+                    break;
+                case "--exclude-repeat-region":
+                    CHMCommand.isExclude = true;
+                    break;
+                case "--include-gme":
+                    GMECommand.isInclude = true;
+                    break;
+                case "--include-top-med":
+                    TopMedCommand.isInclude = true;
+                    break;
+                case "--include-genome-asia":
+                    GenomeAsiaCommand.isInclude = true;
+                    break; 
                 default:
                     continue;
             }

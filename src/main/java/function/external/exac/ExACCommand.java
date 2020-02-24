@@ -8,10 +8,10 @@ import global.Data;
  */
 public class ExACCommand {
 
-    public static boolean isListExac = false;
-    public static boolean isIncludeExac = false;
-    public static boolean isIncludeExacGeneVariantCount = false;
-    public static boolean isListExacCount = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
+    public static boolean isListCount = false;
+    public static boolean isIncludeCount = false;
 
     public static String exacPop = "global";
     public static float exacAF = Data.NO_FILTER;

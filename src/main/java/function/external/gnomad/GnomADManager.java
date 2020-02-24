@@ -42,7 +42,7 @@ public class GnomADManager {
     private static StringJoiner NA = new StringJoiner(",");
     
     public static void init() {
-        if(GnomADCommand.isIncludeGnomADGeneMetrics) {
+        if(GnomADCommand.isIncludeGeneMetrics) {
             initGeneMap();
         }
     }

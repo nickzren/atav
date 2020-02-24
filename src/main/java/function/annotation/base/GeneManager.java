@@ -377,6 +377,23 @@ public class GeneManager {
         return hasGeneDomainInput;
     }
 
+    public static String getGeneDomainName(String geneName, String chr, int pos) {
+        if (hasGeneDomainInput) {
+            HashSet<Gene> set = GeneManager.getMap().get(geneName);
+
+            if (set != null) {
+                for (Gene gene : set) {
+                    if (gene.contains(chr, pos)) {
+                        return gene.getName();
+                    }
+                }
+            } 
+        }
+        
+        return geneName;
+    }
+    
+
     public static String getUpToDateGene(String dragendbGene) {
         String upToDateGene = hgncGeneMap.get(dragendbGene);
         return upToDateGene == null ? dragendbGene : upToDateGene;

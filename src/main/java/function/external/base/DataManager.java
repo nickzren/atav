@@ -11,11 +11,15 @@ import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
+import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.genomeasia.GenomeAsiaManager;
 import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gme.GMECommand;
+import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.kaviar.KaviarCommand;
 import function.external.kaviar.KaviarManager;
@@ -38,6 +42,8 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
+import function.external.topmed.TopMedCommand;
+import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
 import global.Data;
@@ -54,92 +60,104 @@ public class DataManager {
     public static String getVersion() {
         StringBuilder sb = new StringBuilder();
 
-        if (EvsCommand.isIncludeEvs) {
+        if (EvsCommand.isInclude) {
             sb.append(EvsManager.getVersion());
         }
 
-        if (ExACCommand.isIncludeExac) {
+        if (ExACCommand.isInclude) {
             sb.append(ExACManager.getVersion());
         }
 
-        if (GnomADCommand.isIncludeGnomADExome) {
+        if (GnomADCommand.isIncludeExome) {
             sb.append(GnomADManager.getExomeVersion());
         }
 
-        if (GnomADCommand.isIncludeGnomADGenome) {
+        if (GnomADCommand.isIncludeGenome) {
             sb.append(GnomADManager.getGenomeVersion());
         }
 
-        if (GnomADCommand.isIncludeGnomADGeneMetrics) {
+        if (GnomADCommand.isIncludeGeneMetrics) {
             sb.append(GnomADManager.getGeneMetricsVersion());
         }
 
-        if (KnownVarCommand.isIncludeKnownVar) {
+        if (KnownVarCommand.isInclude) {
             sb.append(KnownVarManager.getVersion());
         }
 
-        if (KaviarCommand.isIncludeKaviar) {
+        if (KaviarCommand.isInclude) {
             sb.append(KaviarManager.getVersion());
         }
 
-        if (GenomesCommand.isInclude1000Genomes) {
+        if (GenomesCommand.isInclude) {
             sb.append(GenomesManager.getVersion());
         }
 
-        if (RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isInclude) {
             sb.append(RvisManager.getVersion());
         }
 
-        if (SubRvisCommand.isIncludeSubRvis) {
+        if (SubRvisCommand.isInclude) {
             sb.append(SubRvisManager.getVersion());
         }
 
-        if (LIMBRCommand.isIncludeLIMBR) {
+        if (LIMBRCommand.isInclude) {
             sb.append(LIMBRManager.getVersion());
         }
 
-        if (CCRCommand.isIncludeCCR) {
+        if (CCRCommand.isInclude) {
             sb.append(CCRManager.getVersion());
         }
 
-        if (GerpCommand.isIncludeGerp) {
+        if (GerpCommand.isInclude) {
             sb.append(GerpManager.getVersion());
         }
 
-        if (TrapCommand.isIncludeTrap) {
+        if (TrapCommand.isInclude) {
             sb.append(TrapManager.getVersion());
         }
 
-        if (MgiCommand.isIncludeMgi) {
+        if (MgiCommand.isInclude) {
             sb.append(MgiManager.getVersion());
         }
 
-        if (DenovoDBCommand.isIncludeDenovoDB) {
+        if (DenovoDBCommand.isInclude) {
             sb.append(DenovoDBManager.getVersion());
         }
 
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+        if (DiscovEHRCommand.isInclude) {
             sb.append(DiscovEHRManager.getVersion());
         }
 
-        if (MTRCommand.isIncludeMTR) {
+        if (MTRCommand.isInclude) {
             sb.append(MTRManager.getVersion());
         }
 
-        if (RevelCommand.isIncludeRevel) {
+        if (RevelCommand.isInclude) {
             sb.append(RevelManager.getVersion());
         }
 
-        if (PrimateAICommand.isIncludePrimateAI) {
+        if (PrimateAICommand.isInclude) {
             sb.append(PrimateAIManager.getVersion());
         }
 
-        if (MPCCommand.isIncludeMPC) {
+        if (MPCCommand.isInclude) {
             sb.append(MPCManager.getVersion());
         }
 
-        if (PextCommand.isIncludePext) {
+        if (PextCommand.isInclude) {
             sb.append(PextManager.getVersion());
+        }
+        
+        if (GMECommand.isInclude) {
+            sb.append(GMEManager.getVersion());
+        }
+        
+        if (TopMedCommand.isInclude) {
+            sb.append(TopMedManager.getVersion());
+        }
+        
+        if (GenomeAsiaCommand.isInclude) {
+            sb.append(GenomeAsiaManager.getVersion());
         }
 
         return sb.toString();

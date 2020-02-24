@@ -28,6 +28,8 @@ public class Carrier extends NonCarrier {
     private float readPosRankSum;
     private float mqRankSum;
     private byte filterValue; // PASS(1), LIKELY(2), INTERMEDIATE(3), FAIL(4)
+    private int pidVariantId;
+    private int hpVariantId;
 
     public Carrier(ResultSet rs) throws Exception {
         sampleId = rs.getInt("sample_id");
@@ -46,6 +48,18 @@ public class Carrier extends NonCarrier {
         readPosRankSum = FormatManager.getFloat(rs, "ReadPosRankSum");
         mqRankSum = FormatManager.getFloat(rs, "MQRankSum");
         filterValue = rs.getByte("FILTER+0");
+        // PGT = 1 indicate variant is in phase
+        if (rs.getByte("PGT") == 1) {
+            pidVariantId = FormatManager.getInt(rs, "PID_variant_id");
+        } else {
+            pidVariantId = Data.INTEGER_NA;
+        }
+        // HP_GT = 1 indicate variant is in phase
+        if (rs.getByte("HP_GT") == 1) {
+            hpVariantId = FormatManager.getInt(rs, "HP_variant_id");
+        } else {
+            hpVariantId = Data.INTEGER_NA;
+        }
     }
 
     public short getDP() {
@@ -112,6 +126,14 @@ public class Carrier extends NonCarrier {
         }
     }
 
+    public int getPIDVariantId() {
+        return pidVariantId;
+    }
+
+    public int getHPVariantId() {
+        return hpVariantId;
+    }
+
     public void applyQualityFilter(boolean isSnv) {
         if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
@@ -171,7 +193,7 @@ public class Carrier extends NonCarrier {
      */
     protected void checkValidOnXY(Region r) {
         if (gt != Data.BYTE_NA
-                && !TrioCommand.isListTrio
+                && !TrioCommand.isList
                 && !VariantLevelFilterCommand.disableCheckOnSexChr) {
             boolean isValid = true;
 

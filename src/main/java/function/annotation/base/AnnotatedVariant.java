@@ -2,8 +2,9 @@ package function.annotation.base;
 
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
+import function.external.chm.CHMCommand;
+import function.external.chm.CHMManager;
 import function.external.limbr.LIMBRCommand;
-import function.external.limbr.LIMBRGene;
 import function.external.limbr.LIMBROutput;
 import function.external.denovo.DenovoDB;
 import function.external.denovo.DenovoDBCommand;
@@ -14,12 +15,16 @@ import function.external.evs.EvsCommand;
 import function.external.exac.ExAC;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
+import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADCommand;
 import function.external.genomes.Genomes;
 import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gme.GMECommand;
+import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADManager;
 import function.variant.base.Variant;
@@ -44,6 +49,8 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
+import function.external.topmed.TopMedCommand;
+import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
 import function.variant.base.VariantLevelFilterCommand;
@@ -61,7 +68,7 @@ import utils.MathManager;
  */
 public class AnnotatedVariant extends Variant {
 
-    // AnnoDB annotations / most damaging effect annotations
+    // annotations / most damaging effect annotations
     private int stableId;
     private String effect = "";
     private int effectID;
@@ -100,6 +107,10 @@ public class AnnotatedVariant extends Variant {
     private CCROutput ccrOutput;
     private Boolean isLOFTEEHCinCCDS;
     private float mpc;
+    private Boolean isRepeatRegion;
+    private float gmeAF;
+    private float topmedAF;
+    private float genomeasiaAF;
 
     public boolean isValid = true;
 
@@ -114,64 +125,75 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
-        if (isValid && GnomADCommand.isIncludeGnomADExome) {
+        if (isValid && CHMCommand.isExclude) {
+            isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
+            isValid = isRepeatRegion;
+        }
+
+        if (isValid && GMECommand.isInclude) {
+            gmeAF = GMEManager.getAF(variantIdStr);
+
+            isValid = GMECommand.isMaxGMEAFValid(gmeAF);
+        }
+
+        if (isValid && TopMedCommand.isInclude) {
+            topmedAF = TopMedManager.getAF(variantIdStr);
+
+            isValid = TopMedCommand.isMaxAFValid(topmedAF);
+        }
+        
+        if (isValid && GenomeAsiaCommand.isInclude) {
+            genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
+
+            isValid = GenomeAsiaCommand.isMaxAFValid(genomeasiaAF);
+        }
+
+        if (isValid && GnomADCommand.isIncludeExome) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADExome.isValid();
         }
 
-        if (isValid && GnomADCommand.isIncludeGnomADGenome) {
+        if (isValid && GnomADCommand.isIncludeGenome) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADGenome.isValid();
         }
 
-        if (isValid && ExACCommand.isIncludeExac) {
+        if (isValid && ExACCommand.isInclude) {
             exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
         }
 
-        if (isValid && EvsCommand.isIncludeEvs) {
+        if (isValid && EvsCommand.isInclude) {
             evs = new Evs(chrStr, startPosition, refAllele, allele);
 
             isValid = evs.isValid();
         }
 
-        if (isValid && GerpCommand.isIncludeGerp) {
+        if (isValid && GerpCommand.isInclude) {
             gerpScore = GerpManager.getScore(chrStr, startPosition, refAllele, allele);
 
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
-        if (isValid && KaviarCommand.isIncludeKaviar) {
+        if (isValid && KaviarCommand.isInclude) {
             kaviar = new Kaviar(chrStr, startPosition, refAllele, allele);
 
             isValid = kaviar.isValid();
         }
 
-        if (isValid && GenomesCommand.isInclude1000Genomes) {
+        if (isValid && GenomesCommand.isInclude) {
             genomes = new Genomes(chrStr, startPosition, refAllele, allele);
 
             isValid = genomes.isValid();
         }
 
-        if (isValid && DiscovEHRCommand.isIncludeDiscovEHR) {
+        if (isValid && DiscovEHRCommand.isInclude) {
             discovEHR = new DiscovEHR(chrStr, startPosition, refAllele, allele);
 
             isValid = discovEHR.isValid();
-        }
-
-        if (isValid && RevelCommand.isIncludeRevel) {
-            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
-
-            isValid = RevelCommand.isMinRevelValid(revel);
-        }
-
-        if (isValid && PrimateAICommand.isIncludePrimateAI) {
-            primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
-
-            isValid = PrimateAICommand.isMinPrimateAIValid(primateAI);
         }
 
         if (isValid && VariantLevelFilterCommand.isIncludeLOFTEE) {
@@ -190,7 +212,7 @@ public class AnnotatedVariant extends Variant {
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
                 geneName = annotation.geneName;
-            } 
+            }
 
             StringJoiner annotationSJ = new StringJoiner("|");
             annotationSJ.add(annotation.effect);
@@ -200,7 +222,7 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(annotation.HGVS_p);
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
-            
+
             allAnnotationSJ.add(annotationSJ.toString());
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
@@ -218,29 +240,29 @@ public class AnnotatedVariant extends Variant {
             }
         }
     }
-    
+
     public String getAllAnnotation() {
         return allAnnotationSJ.toString();
     }
 
     public void initExternalData() {
-        if (KnownVarCommand.isIncludeKnownVar) {
+        if (KnownVarCommand.isInclude) {
             knownVarOutput = new KnownVarOutput(this);
         }
 
-        if (MgiCommand.isIncludeMgi) {
+        if (MgiCommand.isInclude) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
 
-        if (DenovoDBCommand.isIncludeDenovoDB) {
+        if (DenovoDBCommand.isInclude) {
             denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
         }
 
-        if (ExACCommand.isIncludeExacGeneVariantCount) {
+        if (ExACCommand.isIncludeCount) {
             exacGeneVariantCountStr = ExACManager.getLine(getGeneName());
         }
 
-        if (TrapCommand.isIncludeTrap) {
+        if (TrapCommand.isInclude) {
             trapScore = isIndel() ? Data.FLOAT_NA
                     : TrapManager.getScore(chrStr, getStartPosition(), allele, isMNV(), geneName);
         }
@@ -253,20 +275,19 @@ public class AnnotatedVariant extends Variant {
                 && isCCRValid()
                 && isMTRValid()
                 && isPextValid()
+                && isRevelValid()
+                && isPrimateAIValid()
                 && isMPCValid();
     }
 
     // init sub rvis score base on most damaging gene and applied filter
     private boolean isSubRVISValid() {
-        if (SubRvisCommand.isIncludeSubRvis) {
+        if (SubRvisCommand.isInclude) {
             subRvisOutput = new SubRvisOutput(getGeneName(), getChrStr(), getStartPosition());
 
             // sub rvis filters will only apply missense variants except gene boundary option at domain level used
             if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
-                return SubRvisCommand.isSubRVISDomainScoreValid(subRvisOutput.getDomainScore())
-                        && SubRvisCommand.isMTRDomainPercentileValid(subRvisOutput.getMTRDomainPercentile())
-                        && SubRvisCommand.isSubRVISExonScoreValid(subRvisOutput.getExonScore())
-                        && SubRvisCommand.isMTRExonPercentileValid(subRvisOutput.getMTRExonPercentile());
+                return subRvisOutput.isValid();
             } else {
                 return true;
             }
@@ -277,16 +298,12 @@ public class AnnotatedVariant extends Variant {
 
     // init LIMBR score base on most damaging gene and applied filter
     private boolean isLIMBRValid() {
-        if (LIMBRCommand.isIncludeLIMBR) {
+        if (LIMBRCommand.isInclude) {
             limbrOutput = new LIMBROutput(getGeneName(), getChrStr(), getStartPosition());
 
             // LIMBR filters will only apply missense variants except gene boundary option at domain level used
             if (effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
-                LIMBRGene geneDomain = limbrOutput.getGeneDomain();
-                LIMBRGene geneExon = limbrOutput.getGeneExon();
-
-                return LIMBRCommand.isLIMBRDomainPercentileValid(geneDomain == null ? Data.FLOAT_NA : geneDomain.getPercentiles())
-                        && LIMBRCommand.isLIMBRExonPercentileValid(geneExon == null ? Data.FLOAT_NA : geneExon.getPercentiles());
+                return limbrOutput.isValid();
             } else {
                 return true;
             }
@@ -297,11 +314,11 @@ public class AnnotatedVariant extends Variant {
 
     // init CCR score and applied filter only to non-LOF variants
     private boolean isCCRValid() {
-        if (CCRCommand.isIncludeCCR) {
+        if (CCRCommand.isInclude) {
             ccrOutput = new CCROutput(geneList, getChrStr(), getStartPosition());
 
             if (!EffectManager.isLOF(effectID)) {
-                return CCRCommand.isCCRPercentileValid(ccrOutput.getGene() == null ? Data.FLOAT_NA : ccrOutput.getGene().getPercentiles());
+                return ccrOutput.isValid();
             }
         }
 
@@ -310,7 +327,7 @@ public class AnnotatedVariant extends Variant {
 
     // init MTR score based on most damaging transcript and applied filter
     private boolean isMTRValid() {
-        if (MTRCommand.isIncludeMTR) {
+        if (MTRCommand.isInclude) {
             // MTR filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
                 mtr = new MTR(chrStr, startPosition);
@@ -324,7 +341,7 @@ public class AnnotatedVariant extends Variant {
 
     // init PEXT score and applied filter 
     private boolean isPextValid() {
-        if (PextCommand.isIncludePext) {
+        if (PextCommand.isInclude) {
             pextRatio = PextManager.getRatio(chrStr, getStartPosition());
 
             return PextCommand.isPextRatioValid(pextRatio);
@@ -333,9 +350,41 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
+    // init REVEL score base on most damaging gene and applied filter
+    private boolean isRevelValid() {
+        if (RevelCommand.isInclude) {
+            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
+
+            // REVEL filters will only apply missense variants
+            if (effect.startsWith("missense_variant")) {
+                return RevelCommand.isMinRevelValid(revel);
+            } else {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    // init PrimateAI score base on most damaging gene and applied filter
+    private boolean isPrimateAIValid() {
+        if (PrimateAICommand.isInclude) {
+            primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
+
+            // PrimateAI filters will only apply missense variants
+            if (effect.startsWith("missense_variant")) {
+                return PrimateAICommand.isMinPrimateAIValid(primateAI);
+            } else {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
     // init MPC score base on most damaging gene and applied filter
     private boolean isMPCValid() {
-        if (MPCCommand.isIncludeMPC) {
+        if (MPCCommand.isInclude) {
             mpc = MPCManager.getScore(chrStr, getStartPosition(), refAllele, allele);
 
             // MPC filters will only apply missense variants
@@ -411,87 +460,87 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getExternalData(StringJoiner sj) {
-        if (EvsCommand.isIncludeEvs) {
+        if (EvsCommand.isInclude) {
             sj.merge(getEvsStringJoiner());
         }
 
-        if (ExACCommand.isIncludeExac) {
+        if (ExACCommand.isInclude) {
             sj.merge(getExacStringJoiner());
         }
 
-        if (ExACCommand.isIncludeExacGeneVariantCount) {
+        if (ExACCommand.isIncludeCount) {
             sj.add(getExacGeneVariantCount());
         }
 
-        if (GnomADCommand.isIncludeGnomADExome) {
+        if (GnomADCommand.isIncludeExome) {
             sj.merge(getGnomADExomeStringJoiner());
         }
 
-        if (GnomADCommand.isIncludeGnomADGenome) {
+        if (GnomADCommand.isIncludeGenome) {
             sj.merge(getGnomADGenomeStringJoiner());
         }
 
-        if (GnomADCommand.isIncludeGnomADGeneMetrics) {
+        if (GnomADCommand.isIncludeGeneMetrics) {
             sj.add(getGnomADGeneMetrics());
         }
 
-        if (KnownVarCommand.isIncludeKnownVar) {
+        if (KnownVarCommand.isInclude) {
             sj.merge(getKnownVarStringJoiner());
         }
 
-        if (KaviarCommand.isIncludeKaviar) {
+        if (KaviarCommand.isInclude) {
             sj.merge(getKaviarStringJoiner());
         }
 
-        if (GenomesCommand.isInclude1000Genomes) {
+        if (GenomesCommand.isInclude) {
             sj.merge(get1000GenomesStringJoiner());
         }
 
-        if (RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isInclude) {
             sj.add(getRvis());
         }
 
-        if (SubRvisCommand.isIncludeSubRvis) {
+        if (SubRvisCommand.isInclude) {
             sj.merge(getSubRvisStringJoiner());
         }
 
-        if (LIMBRCommand.isIncludeLIMBR) {
+        if (LIMBRCommand.isInclude) {
             sj.merge(getLIMBRStringJoiner());
         }
 
-        if (CCRCommand.isIncludeCCR) {
+        if (CCRCommand.isInclude) {
             sj.merge(getCCRStringJoiner());
         }
 
-        if (GerpCommand.isIncludeGerp) {
+        if (GerpCommand.isInclude) {
             sj.add(getGerpScore());
         }
 
-        if (TrapCommand.isIncludeTrap) {
+        if (TrapCommand.isInclude) {
             sj.add(getTrapScore());
         }
 
-        if (MgiCommand.isIncludeMgi) {
+        if (MgiCommand.isInclude) {
             sj.add(getMgi());
         }
 
-        if (DenovoDBCommand.isIncludeDenovoDB) {
+        if (DenovoDBCommand.isInclude) {
             sj.merge(getDenovoDBStringJoiner());
         }
 
-        if (DiscovEHRCommand.isIncludeDiscovEHR) {
+        if (DiscovEHRCommand.isInclude) {
             sj.add(getDiscovEHR());
         }
 
-        if (MTRCommand.isIncludeMTR) {
+        if (MTRCommand.isInclude) {
             sj.add(getMTR());
         }
 
-        if (RevelCommand.isIncludeRevel) {
+        if (RevelCommand.isInclude) {
             sj.add(FormatManager.getFloat(revel));
         }
 
-        if (PrimateAICommand.isIncludePrimateAI) {
+        if (PrimateAICommand.isInclude) {
             sj.add(FormatManager.getFloat(primateAI));
         }
 
@@ -499,12 +548,32 @@ public class AnnotatedVariant extends Variant {
             sj.add(FormatManager.getBoolean(isLOFTEEHCinCCDS));
         }
 
-        if (MPCCommand.isIncludeMPC) {
+        if (MPCCommand.isInclude) {
             sj.add(getMPC());
         }
 
-        if (PextCommand.isIncludePext) {
+        if (PextCommand.isInclude) {
             sj.add(getPextRatio());
+        }
+
+        if (CHMCommand.isFlag) {
+            if (isRepeatRegion == null) {
+                isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
+            }
+
+            sj.add(FormatManager.getBoolean(isRepeatRegion));
+        }
+
+        if (GMECommand.isInclude) {
+            sj.add(getGME());
+        }
+        
+        if (TopMedCommand.isInclude) {
+            sj.add(getTopMed());
+        }
+        
+        if (GenomeAsiaCommand.isInclude) {
+            sj.add(getGenomeAsia());
         }
     }
 
@@ -594,5 +663,17 @@ public class AnnotatedVariant extends Variant {
 
     public String getMPC() {
         return FormatManager.getFloat(mpc);
+    }
+
+    public String getGME() {
+        return FormatManager.getFloat(gmeAF);
+    }
+    
+    public String getTopMed() {
+        return FormatManager.getFloat(topmedAF);
+    }
+    
+    public String getGenomeAsia() {
+        return FormatManager.getFloat(genomeasiaAF);
     }
 }

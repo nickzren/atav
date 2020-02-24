@@ -9,7 +9,7 @@ import utils.CommandOption;
  */
 public class TrioCommand {
 
-    public static boolean isListTrio = false;
+    public static boolean isList = false;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
        

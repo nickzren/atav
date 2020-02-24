@@ -8,8 +8,8 @@ import global.Data;
  */
 public class DiscovEHRCommand {
 
-    public static boolean isListDiscovEHR = false;
-    public static boolean isIncludeDiscovEHR = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
     public static float discovEHRAF = Data.NO_FILTER;
 
     public static boolean isDiscovEHRAFValid(float value) {

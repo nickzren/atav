@@ -1,6 +1,8 @@
 package function.cohort.collapsing;
 
 import function.annotation.base.GeneManager;
+import function.external.knownvar.KnownVarCommand;
+import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import global.Data;
@@ -41,8 +43,11 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         if (!GeneManager.geneCoverageSummaryHeader.isEmpty()) {
             sj.add(GeneManager.geneCoverageSummaryHeader);
         }
-        if (RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isInclude) {
             sj.add(RvisManager.getHeader());
+        }
+        if (KnownVarCommand.isIncludeOMIM) {
+            sj.add("OMIM Disease");
         }
 
         return sj.toString();
@@ -111,6 +116,16 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         return RvisManager.getLine(geneName);
     }
     
+    public String getOMIM() {
+        String geneName = name;
+
+        if (name.contains("_")) { // if using gene domain
+            geneName = name.substring(0, name.indexOf("_"));
+        }
+
+        return KnownVarManager.getOMIM(geneName);
+    }
+    
     private String getLogisticP() {
         if(logisticP == 0) {
             return Data.STRING_NAN;
@@ -138,8 +153,11 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         sj.add(FormatManager.getDouble(linearP));
         sj.add(getLogisticP());
         GeneManager.addCoverageSummary(name, sj);
-        if (RvisCommand.isIncludeRvis) {
+        if (RvisCommand.isInclude) {
             sj.add(getRvis());
+        }
+        if (KnownVarCommand.isIncludeOMIM) {
+            sj.add(getOMIM());
         }
 
         return sj.toString();

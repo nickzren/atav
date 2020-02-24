@@ -3,10 +3,28 @@ package function.cohort.vargeno;
 import function.annotation.base.Annotation;
 import function.annotation.base.PolyphenManager;
 import function.cohort.base.GenotypeLevelFilterCommand;
+import function.external.ccr.CCRCommand;
+import function.external.ccr.CCRManager;
+import function.external.discovehr.DiscovEHRCommand;
+import function.external.discovehr.DiscovEHRManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
+import function.external.limbr.LIMBRCommand;
+import function.external.limbr.LIMBRManager;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCManager;
+import function.external.mtr.MTRCommand;
+import function.external.mtr.MTRManager;
+import function.external.pext.PextCommand;
+import function.external.pext.PextManager;
+import function.external.primateai.PrimateAICommand;
+import function.external.primateai.PrimateAIManager;
+import function.external.revel.RevelCommand;
+import function.external.revel.RevelManager;
+import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisManager;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -137,16 +155,52 @@ public class ListVarGenoLite {
             LOO_AF_HEADER
         };
 
-        if (ExACCommand.isIncludeExac) {
+        if (ExACCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, ExACManager.getHeader().split(","));
         }
 
-        if (GnomADCommand.isIncludeGnomADExome) {
+        if (GnomADCommand.isIncludeExome) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getExomeHeader().split(","));
         }
 
-        if (GnomADCommand.isIncludeGnomADGenome) {
+        if (GnomADCommand.isIncludeGenome) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeHeader().split(","));
+        }
+
+        if (SubRvisCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, SubRvisManager.getHeader().split(","));
+        }
+
+        if (LIMBRCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, LIMBRManager.getHeader().split(","));
+        }
+
+        if (CCRCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, CCRManager.getHeader().split(","));
+        }
+        
+        if (DiscovEHRCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, DiscovEHRManager.getHeader().split(","));
+        }
+
+        if (MTRCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, MTRManager.getHeader().split(","));
+        }
+
+        if (RevelCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, RevelManager.getHeader().split(","));
+        }
+
+        if (PrimateAICommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, PrimateAIManager.getHeader().split(","));
+        }
+
+        if (MPCCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, MPCManager.getHeader().split(","));
+        }
+
+        if (PextCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, PextManager.getHeader().split(","));
         }
 
         return headers;

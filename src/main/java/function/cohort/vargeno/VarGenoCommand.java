@@ -9,8 +9,8 @@ import utils.CommandOption;
  */
 public class VarGenoCommand {
 
-    public static boolean isListVarGeno = false;
-    public static boolean isListVarGenoLite = false;
+    public static boolean isList = false;
+    public static boolean isListLite = false;
     public static boolean isMannWhitneyTest = false;
 
     public static void initOptions(Iterator<CommandOption> iterator) {

@@ -8,8 +8,8 @@ import global.Data;
  */
 public class RevelCommand {
 
-    public static boolean isListRevel = false;
-    public static boolean isIncludeRevel = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     // filter option
     public static float minRevel = Data.NO_FILTER;

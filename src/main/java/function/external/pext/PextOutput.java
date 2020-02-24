@@ -1,6 +1,7 @@
 package function.external.pext;
 
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.FormatManager;
 
 /**
@@ -27,6 +28,10 @@ public class PextOutput {
         String[] tmp = id.split("-"); // chr-pos-ref-alt
 
         ratio = PextManager.getRatio(tmp[0], Integer.parseInt(tmp[1]));
+    }
+    
+    public PextOutput(CSVRecord record) {
+        ratio = FormatManager.getFloat(record.get("PEXT Ratio"));
     }
 
     public StringJoiner getStringJoiner() {

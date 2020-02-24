@@ -48,6 +48,8 @@ public class PextManager {
             } else {
                 ratio = Data.FLOAT_NA;
             }
+            
+            rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);
         }

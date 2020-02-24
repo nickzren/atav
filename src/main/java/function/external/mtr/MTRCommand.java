@@ -8,36 +8,36 @@ import global.Data;
  */
 public class MTRCommand {
 
-    public static boolean isListMTR = false;
-    public static boolean isIncludeMTR = false;
-    public static float mtr = Data.NO_FILTER;
-    public static float fdr = Data.NO_FILTER;
-    public static float mtrCentile = Data.NO_FILTER;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
+    public static float maxMTR = Data.NO_FILTER;
+    public static float maxMTRFDR = Data.NO_FILTER;
+    public static float maxMTRCentile = Data.NO_FILTER;
 
-    public static boolean isMTRValid(float value) {
-        if (mtr == Data.NO_FILTER) {
+    public static boolean isMaxMTRValid(float value) {
+        if (maxMTR == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= mtr
+        return value <= maxMTR
                 || value == Data.FLOAT_NA;
     }
 
-    public static boolean isFDRValid(float value) {
-        if (fdr == Data.NO_FILTER) {
+    public static boolean isMaxMTRFDRValid(float value) {
+        if (maxMTRFDR == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= fdr
+        return value <= maxMTRFDR
                 || value == Data.FLOAT_NA;
     }
 
-    public static boolean isMTRCentileValid(float value) {
-        if (mtrCentile == Data.NO_FILTER) {
+    public static boolean isMaxMTRCentileValid(float value) {
+        if (maxMTRCentile == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= mtrCentile
+        return value <= maxMTRCentile
                 || value == Data.FLOAT_NA;
     }
 }

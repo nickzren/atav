@@ -8,8 +8,8 @@ import global.Data;
  */
 public class CCRCommand {
 
-    public static boolean isListCCR = false;
-    public static boolean isIncludeCCR = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     public static float minCCRPercentile = Data.NO_FILTER;
     
@@ -18,6 +18,6 @@ public class CCRCommand {
             return true;
         }
 
-        return value >= minCCRPercentile;
+        return value >= minCCRPercentile || minCCRPercentile == Data.FLOAT_NA;
     }
 }

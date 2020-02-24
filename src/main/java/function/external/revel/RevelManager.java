@@ -6,6 +6,7 @@ import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import utils.DBManager;
+import utils.ErrorManager;
 
 /**
  *
@@ -15,7 +16,7 @@ public class RevelManager {
 
     static final String variantTable = "revel.variant_060316";
     static final String mnvTable = "revel.mnv_060316";
-    
+
     public static String getHeader() {
         return "REVEL";
     }
@@ -31,13 +32,19 @@ public class RevelManager {
                 + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
     }
 
-    public static float getRevel(String chr, int pos, String ref, String alt, boolean isMNV) throws SQLException {
+    public static float getRevel(String chr, int pos, String ref, String alt, boolean isMNV) {
         String sql = getSqlByVariant(chr, pos, ref, alt, isMNV);
 
-        ResultSet rs = DBManager.executeQuery(sql);
+        try {
+            ResultSet rs = DBManager.executeQuery(sql);
 
-        if (rs.next()) {
-            return rs.getFloat("revel");
+            if (rs.next()) {
+                return rs.getFloat("revel");
+            }
+            
+            rs.close();
+        } catch (SQLException ex) {
+            ErrorManager.send(ex);
         }
 
         return Data.FLOAT_NA;
@@ -46,10 +53,10 @@ public class RevelManager {
     public static String getSqlByVariant(String chr,
             int pos, String ref, String alt, boolean isMNV) {
         String table = variantTable;
-        if(isMNV) {
+        if (isMNV) {
             table = mnvTable;
         }
-        
+
         return "SELECT MAX(REVEL) as revel "
                 + "FROM " + table + " "
                 + "WHERE chr = '" + chr + "' "

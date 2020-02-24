@@ -27,10 +27,10 @@ public class SubRvisManager {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("subRVIS Domain Name");
-        sj.add("subRVIS Domain Score Percentile");
+        sj.add("subRVIS Domain Percentile");
         sj.add("MTR Domain Percentile");
         sj.add("subRVIS Exon Name");
-        sj.add("subRVIS Exon Score Percentile");
+        sj.add("subRVIS Exon Percentile");
         sj.add("MTR Exon Percentile");
 
         return sj.toString();
@@ -41,7 +41,7 @@ public class SubRvisManager {
     }
 
     public static void init() {
-        if (SubRvisCommand.isIncludeSubRvis) {
+        if (SubRvisCommand.isInclude) {
             initGeneMap(geneDomainMap, Data.ATAV_HOME + SUBRVIS_DOMAIN_PATH);
 
             initGeneMap(geneExonMap, Data.ATAV_HOME + SUBRVIS_EXON_PATH);
@@ -67,10 +67,10 @@ public class SubRvisManager {
                 String[] regionStr = tmp[2].split(":");
                 String chr = regionStr[0];
                 ArrayList<Region> regionList = getRegionList(regionStr[1]);
-                float score = FormatManager.getFloat(tmp[3]);
+                float percentile = FormatManager.getFloat(tmp[3]);
                 float mtrPercentile = FormatManager.getFloat(tmp[4]);
 
-                SubRvisGene subRvisGene = new SubRvisGene(id, chr, regionList, score, mtrPercentile);
+                SubRvisGene subRvisGene = new SubRvisGene(id, chr, regionList, percentile, mtrPercentile);
 
                 if (geneMap.containsKey(geneName)) {
                     geneMap.get(geneName).add(subRvisGene);

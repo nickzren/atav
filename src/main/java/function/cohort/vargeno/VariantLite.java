@@ -3,19 +3,50 @@ package function.cohort.vargeno;
 import function.annotation.base.Annotation;
 import function.annotation.base.AnnotationLevelFilterCommand;
 import function.annotation.base.EffectManager;
+import function.annotation.base.Gene;
 import function.annotation.base.GeneManager;
 import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
+import function.cohort.collapsing.CollapsingCommand;
+import function.external.ccr.CCRCommand;
+import function.external.ccr.CCROutput;
+import function.external.chm.CHMCommand;
+import function.external.chm.CHMManager;
+import function.external.discovehr.DiscovEHR;
+import function.external.discovehr.DiscovEHRCommand;
 import function.external.exac.ExAC;
+import function.external.exac.ExACCommand;
+import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.genomeasia.GenomeAsiaManager;
+import function.external.gme.GMECommand;
+import function.external.gme.GMEManager;
+import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
+import function.external.limbr.LIMBRCommand;
+import function.external.limbr.LIMBROutput;
+import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCOutput;
+import function.external.mtr.MTR;
+import function.external.mtr.MTRCommand;
+import function.external.pext.PextCommand;
+import function.external.pext.PextOutput;
+import function.external.primateai.PrimateAI;
+import function.external.primateai.PrimateAICommand;
+import function.external.revel.Revel;
+import function.external.revel.RevelCommand;
+import function.external.subrvis.SubRvisCommand;
+import function.external.subrvis.SubRvisOutput;
+import function.external.topmed.TopMedCommand;
+import function.external.topmed.TopMedManager;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
@@ -40,6 +71,18 @@ public class VariantLite {
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
     private Annotation mostDamagingAnnotation = new Annotation();
+    private SubRvisOutput subrvis;
+    private LIMBROutput limbr;
+    private CCROutput ccr;
+    private DiscovEHR discovEHR;
+    private MTR mtr;
+    private Revel revel;
+    private PrimateAI primateAI;
+    private MPCOutput mpc;
+    private PextOutput pext;
+    private float gmeAF;
+    private float topmedAF;
+    private float genomeasiaAF;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -54,10 +97,6 @@ public class VariantLite {
         alt = tmp[3];
 
         isSNV = ref.length() == alt.length();
-        
-        exac = new ExAC(chr, pos, ref, alt, record);
-        gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
-        gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
 
         String allAnnotation = record.get(ListVarGenoLite.ALL_ANNOTATION_HEADER);
         processAnnotation(
@@ -65,11 +104,27 @@ public class VariantLite {
                 chr,
                 pos,
                 geneList,
-                mostDamagingAnnotation);
-        
+                mostDamagingAnnotation,
+                record);
+
+        initEXAC(record);
+        initGnomADExome(record);
+        initGnomADGenome(record);
+        initSubRVIS(record);
+        initLIMBR(record);
+        initCCR(record);
+        initDiscovEHR(record);
+        initMTR(record);
+        initREVEL(record);
+        initPrimateAI(record);
+        initMPC(record);
+        initPEXT(record);
+        initGME(record);
+        initTopMed(record);
+        initGenomeAsia(record);
         qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
         qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
-        
+
         looAF = FormatManager.getFloat(record.get(ListVarGenoLite.LOO_AF_HEADER));
     }
 
@@ -78,11 +133,18 @@ public class VariantLite {
             String chr,
             int pos,
             List<String> geneList,
-            Annotation mostDamagingAnnotation) {
+            Annotation mostDamagingAnnotation,
+            CSVRecord record) {
         for (String annotation : allAnnotation.split(",")) {
             String[] values = annotation.split("\\|");
             String effect = values[0];
             String geneName = values[1];
+
+            // if --gene-column used, ATAV will perform collapsing by input gene column values
+            if (!CollapsingCommand.geneColumn.isEmpty()) {
+                geneName = record.get(CollapsingCommand.geneColumn);
+            }
+
             String stableIdStr = values[2];
             int stableId = getIntStableId(stableIdStr);
             String HGVS_c = values[3];
@@ -96,6 +158,10 @@ public class VariantLite {
             if (EffectManager.isEffectContained(effect)
                     && PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
                     && GeneManager.isValid(geneName, chr, pos)) {
+                // reset gene name to gene domain name so the downstream procedure could match correctly
+                // only for gene boundary input
+                geneName = GeneManager.getGeneDomainName(geneName, chr, pos);
+
                 if (mostDamagingAnnotation.effect == null) {
                     mostDamagingAnnotation.effect = effect;
                     mostDamagingAnnotation.stableId = stableId;
@@ -114,7 +180,7 @@ public class VariantLite {
                 geneTranscriptSJ.add(FormatManager.getFloat(polyphenHumvar));
 
                 allAnnotationSJ.add(geneTranscriptSJ.toString());
-                if (!geneList.contains(geneName)) {
+                if (!geneList.contains(geneName) && !geneName.equals(Data.STRING_NA)) {
                     geneList.add(geneName);
                 }
 
@@ -132,11 +198,101 @@ public class VariantLite {
             }
         }
     }
+
+    private void initEXAC(CSVRecord record) {
+        if (ExACCommand.isInclude) {
+            exac = new ExAC(chr, pos, ref, alt, record);
+        }
+    }
+
+    private void initGnomADExome(CSVRecord record) {
+        if (GnomADCommand.isIncludeExome) {
+            gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
+        }
+    }
+
+    private void initGnomADGenome(CSVRecord record) {
+        if (GnomADCommand.isIncludeGenome) {
+            gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
+        }
+    }
+
+    private void initSubRVIS(CSVRecord record) {
+        if (SubRvisCommand.isInclude) {
+            subrvis = new SubRvisOutput(record);
+        }
+    }
+
+    private void initLIMBR(CSVRecord record) {
+        if (LIMBRCommand.isInclude) {
+            limbr = new LIMBROutput(record);
+        }
+    }
+
+    private void initCCR(CSVRecord record) {
+        if (CCRCommand.isInclude) {
+            ccr = new CCROutput(record);
+        }
+    }
+
+    private void initDiscovEHR(CSVRecord record) {
+        if (DiscovEHRCommand.isInclude) {
+            discovEHR = new DiscovEHR(record);
+        }
+    }
+
+    private void initMTR(CSVRecord record) {
+        if (MTRCommand.isInclude) {
+            mtr = new MTR(chr, pos, record);
+        }
+    }
+
+    private void initREVEL(CSVRecord record) {
+        if (RevelCommand.isInclude) {
+            revel = new Revel(record);
+        }
+    }
+
+    private void initPrimateAI(CSVRecord record) {
+        if (PrimateAICommand.isInclude) {
+            primateAI = new PrimateAI(record);
+        }
+    }
+
+    private void initMPC(CSVRecord record) {
+        if (MPCCommand.isInclude) {
+            mpc = new MPCOutput(record);
+        }
+    }
+
+    private void initPEXT(CSVRecord record) {
+        if (PextCommand.isInclude) {
+            pext = new PextOutput(record);
+        }
+    }
+
+    private void initGME(CSVRecord record) {
+        if (GMECommand.isInclude) {
+            gmeAF = GMEManager.getAF(record);
+        }
+    }
+
+    private void initTopMed(CSVRecord record) {
+        if (TopMedCommand.isInclude) {
+            topmedAF = TopMedManager.getAF(record);
+        }
+    }
     
+    private void initGenomeAsia(CSVRecord record) {
+        if (GenomeAsiaCommand.isInclude) {
+            genomeasiaAF = GenomeAsiaManager.getAF(record);
+        }
+    }
+
     private int getIntStableId(String value) {
-        if(value.equals(Data.STRING_NA)) {
+        if (value.equals(Data.STRING_NA)) {
             return Data.INTEGER_NA;
-        }else {
+        } else {
             return Integer.valueOf(value.substring(4)); // remove ENST
         }
     }
@@ -150,43 +306,202 @@ public class VariantLite {
                 && VariantManager.isMultiallelicVariant2(chr, pos)) {
             // exclude Multiallelic site > 2 variants
             return false;
+        } else if (CHMCommand.isExclude
+                && CHMManager.isRepeatRegion(chr, pos)) {
+            return false;
         }
-        
-        return exac.isValid()
-                && gnomADExome.isValid()
-                && gnomADGenome.isValid()
+
+        return VariantManager.isVariantIdIncluded(variantID)
                 && !geneList.isEmpty()
+                && isExacValid()
+                && isGnomADExomeValid()
+                && isGnomADGenomeValid()
+                && isSubRVISValid()
+                && isLIMBRValid()
+                && isCCRValid()
+                && isDiscovEHRValid()
+                && isMTRValid()
+                && isRevelValid()
+                && isPrimateAIValid()
+                && isMPCValid()
+                && isPextValid()
+                && isGMEAFValid()
+                && isTopMedAFValid()
+                && isGenomeAsiaAFValid()
                 && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
-    
+
     private boolean isMaxQcFailSampleValid() {
         int totalQCFailSample = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
-        
+
         return CohortLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample);
     }
-    
+
     public String getVariantID() {
         return variantID;
     }
-    
+
     public CSVRecord getRecord() {
         return record;
     }
-    
+
     public Annotation getMostDamagingAnnotation() {
         return mostDamagingAnnotation;
     }
-    
+
     public String getAllAnnotation() {
         return FormatManager.appendDoubleQuote(allAnnotationSJ.toString());
     }
-    
+
     public List<String> getGeneList() {
         return geneList;
     }
-    
+
     public boolean isSNV() {
         return isSNV;
+    }
+
+    private boolean isExacValid() {
+        if (exac == null) {
+            return true;
+        }
+
+        return exac.isValid();
+    }
+
+    private boolean isGnomADExomeValid() {
+        if (gnomADExome == null) {
+            return true;
+        }
+
+        return gnomADExome.isValid();
+    }
+
+    private boolean isGnomADGenomeValid() {
+        if (gnomADGenome == null) {
+            return true;
+        }
+
+        return gnomADGenome.isValid();
+    }
+
+    private boolean isSubRVISValid() {
+        if (subrvis == null) {
+            return true;
+        }
+
+        // sub rvis filters will only apply missense variants except gene boundary option at domain level used
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
+            return subrvis.isValid();
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isLIMBRValid() {
+        if (limbr == null) {
+            return true;
+        }
+
+        // LIMBR filters will only apply missense variants except gene boundary option at domain level used
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
+            return limbr.isValid();
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isCCRValid() {
+        if (ccr == null) {
+            return true;
+        }
+
+        // applied filter only to non-LOF variants
+        if (!EffectManager.isLOF(mostDamagingAnnotation.effect)) {
+            return ccr.isValid();
+        }
+
+        return true;
+    }
+
+    private boolean isDiscovEHRValid() {
+        if (discovEHR == null) {
+            return true;
+        }
+
+        return discovEHR.isValid();
+    }
+
+    private boolean isMTRValid() {
+        if (mtr == null) {
+            return true;
+        }
+
+        // MTR filter will only apply missense variants
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
+            return mtr.isValid();
+        }
+
+        return true;
+    }
+
+    private boolean isRevelValid() {
+        if (revel == null) {
+            return true;
+        }
+
+        // Revel filter will only apply missense variants
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
+            return revel.isValid();
+        }
+
+        return true;
+    }
+
+    private boolean isPrimateAIValid() {
+        if (primateAI == null) {
+            return true;
+        }
+
+        // PrimateAI filter will only apply missense variants
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
+            return primateAI.isValid();
+        }
+
+        return true;
+    }
+
+    private boolean isMPCValid() {
+        if (mpc == null) {
+            return true;
+        }
+
+        // MPC filter will only apply missense variants
+        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
+            return mpc.isValid();
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isPextValid() {
+        if (pext == null) {
+            return true;
+        }
+
+        return pext.isValid();
+    }
+
+    private boolean isGMEAFValid() {
+        return GMECommand.isMaxGMEAFValid(gmeAF);
+    }
+    
+    private boolean isTopMedAFValid() {
+        return TopMedCommand.isMaxAFValid(topmedAF);
+    }
+    
+    private boolean isGenomeAsiaAFValid() {
+        return GenomeAsiaCommand.isMaxAFValid(genomeasiaAF);
     }
 }

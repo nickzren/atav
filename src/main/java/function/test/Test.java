@@ -1,6 +1,7 @@
 package function.test;
 
 import function.AnalysisBase;
+import global.Data;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +35,8 @@ public class Test extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-//            TraPGeneMapping.run();  
+//            String input = Data.ATAV_HOME + "data/CHM-eval/um75-hs37d5.bed";
+//            SplitFileByChr.run(input);
         } catch (Exception ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }

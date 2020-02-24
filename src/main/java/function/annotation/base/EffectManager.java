@@ -43,6 +43,7 @@ public class EffectManager {
 
     public static int MISSENSE_VARIANT_ID;
     public static HashSet<Integer> LOF_EFFECT_ID_SET = new HashSet<>();
+    public static HashSet<String> LOF_EFFECT_SET = new HashSet<>();
     
     private static boolean isUsed = false;
 
@@ -89,6 +90,8 @@ public class EffectManager {
                     MISSENSE_VARIANT_ID = id;
                 }
             }
+            
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -99,6 +102,7 @@ public class EffectManager {
         
         for (String impactEffect : lofEffect.split(",")) {
             LOF_EFFECT_ID_SET.add(impactEffect2IdMap.get(impactEffect));
+            LOF_EFFECT_SET.add(impactEffect.split(":")[1]);
         }
     }
 
@@ -211,6 +215,10 @@ public class EffectManager {
 
     public static boolean isLOF(int effectID) {
         return LOF_EFFECT_ID_SET.contains(effectID);
+    }
+    
+    public static boolean isLOF(String effect) {
+        return LOF_EFFECT_SET.contains(effect);
     }
     
     public static boolean isEffectContained(String effect) {

@@ -1,5 +1,6 @@
 package function.external.mpc;
 
+import org.apache.commons.csv.CSVRecord;
 import utils.FormatManager;
 
 /**
@@ -18,6 +19,10 @@ public class MPCOutput {
     public MPCOutput(String id) throws Exception {
         String[] tmp = id.split("-"); // chr-pos-ref-alt
         mpc = MPCManager.getScore(tmp[0], Integer.parseInt(tmp[1]), tmp[2], tmp[3]);
+    }
+    
+    public MPCOutput(CSVRecord record) {
+        mpc = FormatManager.getFloat(record.get("MPC"));
     }
     
     public boolean isValid() {

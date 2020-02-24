@@ -5,6 +5,8 @@ import function.cohort.base.Sample;
 import function.cohort.base.AnalysisBase4CalledVar;
 import function.annotation.base.GeneManager;
 import function.cohort.base.SampleManager;
+import function.external.knownvar.KnownVarCommand;
+import function.external.knownvar.KnownVarManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -85,6 +87,10 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
         initSummaryMap();
 
         SampleManager.generateCovariateFile();
+
+        if (KnownVarCommand.isIncludeOMIM) {
+            KnownVarManager.initOMIMMap();
+        }
     }
 
     @Override
@@ -185,8 +191,8 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
                         "Linear P", summaryFilePath, geneLinearPQQPlotPath);
                 // linear regression does not have cases and controls, so it skip to run fet p qq-plot script
                 return;
-            } 
-            
+            }
+
             ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
         }
     }

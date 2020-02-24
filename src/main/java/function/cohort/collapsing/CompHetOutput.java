@@ -59,8 +59,4 @@ public class CompHetOutput extends CollapsingOutput {
 
         return sj;
     }
-
-    public boolean isHomOrRef(byte geno) {
-        return geno == Index.HOM || geno == Index.REF;
-    }
 }

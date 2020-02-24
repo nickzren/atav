@@ -8,8 +8,8 @@ import global.Data;
  */
 public class PextCommand {
 
-    public static boolean isListPext = false;
-    public static boolean isIncludePext = false;
+    public static boolean isList = false;
+    public static boolean isInclude = false;
 
     public static float minPextRatio = Data.NO_FILTER;
 

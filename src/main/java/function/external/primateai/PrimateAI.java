@@ -3,6 +3,7 @@ package function.external.primateai;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -27,6 +28,10 @@ public class PrimateAI {
         } catch (SQLException e) {
             ErrorManager.send(e);
         }
+    }
+    
+    public PrimateAI(CSVRecord record) {
+        score = FormatManager.getFloat(record.get("PrimateAI"));
     }
     
     public boolean isValid() {

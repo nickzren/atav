@@ -47,7 +47,7 @@ public class ExACManager {
     }
 
     public static void init() {
-        if (ExACCommand.isIncludeExacGeneVariantCount) {
+        if (ExACCommand.isIncludeCount) {
             initGeneVariantCountMap();
         }
     }

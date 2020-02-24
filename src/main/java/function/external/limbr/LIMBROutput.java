@@ -1,6 +1,8 @@
 package function.external.limbr;
 
+import global.Data;
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.FormatManager;
 
 /**
@@ -15,44 +17,52 @@ public class LIMBROutput {
                 + LIMBRManager.getHeader();
     }
 
-    private LIMBRGene geneDomain;
-    private LIMBRGene geneExon;
+    private String domainName = Data.STRING_NA;
+    private float domainScore = Data.FLOAT_NA;
+    private float domainPercentile = Data.FLOAT_NA;
+    private String exonName = Data.STRING_NA;
+    private float exonScore = Data.FLOAT_NA;
+    private float exonPercentile = Data.FLOAT_NA;
 
     public LIMBROutput(String geneName, String chr, int pos) {
-        geneDomain = LIMBRManager.getGeneDomain(geneName, chr, pos);
-        geneExon = LIMBRManager.getExonDomain(geneName, chr, pos);
+        LIMBRGene geneDomain = LIMBRManager.getGeneDomain(geneName, chr, pos);
+        if (geneDomain != null) {
+            domainName = geneDomain.getId();
+            domainScore = geneDomain.getScore();
+            domainPercentile = geneDomain.getPercentiles();
+        }
+
+        LIMBRGene geneExon = LIMBRManager.getExonDomain(geneName, chr, pos);
+        if (geneExon != null) {
+            exonName = geneExon.getId();
+            exonScore = geneExon.getScore();
+            exonPercentile = geneExon.getPercentiles();
+        }
     }
 
-    public LIMBRGene getGeneDomain() {
-        return geneDomain;
+    public LIMBROutput(CSVRecord record) {
+        domainPercentile = FormatManager.getFloat(record.get("LIMBR Domain Percentile"));
+        exonPercentile = FormatManager.getFloat(record.get("LIMBR Exon Percentile"));
     }
 
-    public LIMBRGene getGeneExon() {
-        return geneExon;
-    }
-    
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        if (geneDomain != null) {
-            sj.add(geneDomain.getId());
-            sj.add(FormatManager.getFloat(geneDomain.getScore()));
-            sj.add(FormatManager.getFloat(geneDomain.getPercentiles()));
-        } else {
-            sj.add("NA,NA,NA");
-        }
-
-        if (geneExon != null) {
-            sj.add(geneExon.getId());
-            sj.add(FormatManager.getFloat(geneExon.getScore()));
-            sj.add(FormatManager.getFloat(geneExon.getPercentiles()));
-        } else {
-            sj.add("NA,NA,NA");
-        }
+        sj.add(domainName);
+        sj.add(FormatManager.getFloat(domainScore));
+        sj.add(FormatManager.getFloat(domainPercentile));
+        sj.add(exonName);
+        sj.add(FormatManager.getFloat(exonScore));
+        sj.add(FormatManager.getFloat(exonPercentile));
 
         return sj;
     }
-    
+
+    public boolean isValid() {
+        return LIMBRCommand.isLIMBRDomainPercentileValid(domainPercentile)
+                && LIMBRCommand.isLIMBRExonPercentileValid(exonPercentile);
+    }
+
     @Override
     public String toString() {
         return getStringJoiner().toString();

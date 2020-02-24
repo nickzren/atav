@@ -2,6 +2,7 @@ package function.external.subrvis;
 
 import global.Data;
 import java.util.StringJoiner;
+import org.apache.commons.csv.CSVRecord;
 import utils.FormatManager;
 
 /**
@@ -17,38 +18,56 @@ public class SubRvisOutput {
     }
 
     private String domainName = Data.STRING_NA;
-    private float domainScore = Data.FLOAT_NA;
+    private float domainPercentile = Data.FLOAT_NA;
     private float mtrDomainPercentile = Data.FLOAT_NA;
     private String exonName = Data.STRING_NA;
-    private float exonScore = Data.FLOAT_NA;
+    private float exonPercentile = Data.FLOAT_NA;
     private float mtrExonPercentile = Data.FLOAT_NA;
 
     public SubRvisOutput(String geneName, String chr, int pos) {
         SubRvisGene geneDomain = SubRvisManager.getGeneDomain(geneName, chr, pos);
         if (geneDomain != null) {
             domainName = geneDomain.getId();
-            domainScore = geneDomain.getScore();
+            domainPercentile = geneDomain.getPercentile();
             mtrDomainPercentile = geneDomain.getMTRPercentile();
         }
 
         SubRvisGene geneExon = SubRvisManager.getExonDomain(geneName, chr, pos);
         if (geneExon != null) {
             exonName = geneExon.getId();
-            exonScore = geneExon.getScore();
+            exonPercentile = geneExon.getPercentile();
             mtrExonPercentile = geneExon.getMTRPercentile();
         }
     }
 
-    public float getDomainScore() {
-        return domainScore;
+    public SubRvisOutput(CSVRecord record) {
+        String column = "subRVIS Domain Percentile";
+        if (!record.isMapped(column)) {
+            column = "subRVIS Domain Score Percentile";
+        }
+        domainPercentile = FormatManager.getFloat(record.get(column));
+
+        mtrDomainPercentile = FormatManager.getFloat(record.get("MTR Domain Percentile"));
+
+        column = "subRVIS Exon Percentile";
+        if (!record.isMapped(column)) {
+            column = "subRVIS Exon Score Percentile";
+        }
+        exonPercentile = FormatManager.getFloat(record.get(column));
+
+        mtrExonPercentile = FormatManager.getFloat(record.get("MTR Exon Percentile"));
+    }
+
+    public float getDomainPercentile() {
+        return domainPercentile;
     }
 
     public float getMTRDomainPercentile() {
         return mtrDomainPercentile;
     }
 
-    public float getExonScore() {
-        return exonScore;
+    public float getExonPercentile() {
+        return exonPercentile;
     }
 
     public float getMTRExonPercentile() {
@@ -59,15 +78,22 @@ public class SubRvisOutput {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(domainName);
-        sj.add(FormatManager.getFloat(domainScore));
+        sj.add(FormatManager.getFloat(domainPercentile));
         sj.add(FormatManager.getFloat(mtrDomainPercentile));
         sj.add(exonName);
-        sj.add(FormatManager.getFloat(exonScore));
+        sj.add(FormatManager.getFloat(exonPercentile));
         sj.add(FormatManager.getFloat(mtrExonPercentile));
 
         return sj;
     }
-    
+
+    public boolean isValid() {
+        return SubRvisCommand.isSubRVISDomainPercentileValid(domainPercentile)
+                && SubRvisCommand.isSubRVISExonPercentileValid(exonPercentile)
+                && SubRvisCommand.isMTRDomainPercentileValid(mtrDomainPercentile)
+                && SubRvisCommand.isMTRExonPercentileValid(mtrExonPercentile);
+    }
+
     @Override
     public String toString() {
         return getStringJoiner().toString();
