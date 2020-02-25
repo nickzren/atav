@@ -125,25 +125,23 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
     private void outputSampleGeneSummary(Gene gene) {
         try {
             for (Sample sample : SampleManager.getList()) {
-                StringJoiner sj = new StringJoiner(",");
-                sj.add(sample.getName());
-                sj.add(gene.getName());
-                sj.add(gene.getChr());
-                sj.add(FormatManager.getInteger(gene.getLength()));
-                sj.add(FormatManager.getInteger(geneSampleCoverage[gene.getIndex()][sample.getIndex()]));
-
                 double ratio = MathManager.devide(geneSampleCoverage[gene.getIndex()][sample.getIndex()], gene.getLength());
-                sj.add(FormatManager.getDouble(ratio));
-
                 int pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
-                sj.add(FormatManager.getInteger(pass));
-
-                if (CoverageCommand.isIncludeCoverageDetail) {
-                    writeToFile(sj.toString(), bwCoverageDetail);
-                }
-
                 // count region per sample
                 sampleCoverageCount[sample.getIndex()] += pass;
+
+                if (CoverageCommand.isIncludeCoverageDetail) {
+                    StringJoiner sj = new StringJoiner(",");
+                    sj.add(sample.getName());
+                    sj.add(gene.getName());
+                    sj.add(gene.getChr());
+                    sj.add(FormatManager.getInteger(gene.getLength()));
+                    sj.add(FormatManager.getInteger(geneSampleCoverage[gene.getIndex()][sample.getIndex()]));
+                    sj.add(FormatManager.getDouble(ratio));
+                    sj.add(FormatManager.getInteger(pass));
+
+                    writeToFile(sj.toString(), bwCoverageDetail);
+                }
             }
         } catch (Exception e) {
             ErrorManager.send(e);

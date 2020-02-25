@@ -16,7 +16,7 @@ public class CoverageCommand {
 
     // coverage base 
     public static boolean isIncludeCoverageDetail = false;
-    
+
     // coverage summary
     public static boolean isCoverageSummary = false;
     public static boolean isSiteCoverageSummary = false;
@@ -30,6 +30,9 @@ public class CoverageCommand {
     public static boolean isSiteCoverageComparison = false;
     public static boolean isRelativeDifference = false;
     public static boolean isLinear = false;
+    
+    // site coverage comparison
+    public static boolean isIncludeSiteSummary = false;
 
     public static void initCoverageComparison(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -49,8 +52,8 @@ public class CoverageCommand {
                     isRelativeDifference = true;
                     break;
                 case "--include-coverage-detail":
-                    isIncludeCoverageDetail = true;;
-                    break;    
+                    isIncludeCoverageDetail = true;
+                    break;
                 default:
                     continue;
             }
@@ -95,13 +98,16 @@ public class CoverageCommand {
                 case "--include-coverage-detail":
                     isIncludeCoverageDetail = true;
                     break;
+                case "--include-site-summary":
+                    isIncludeSiteSummary = true;
+                    break;
                 default:
                     continue;
             }
             iterator.remove();
         }
     }
-    
+
     public static void initSiteCoverageSummary(Iterator<CommandOption> iterator) {
         CommandOption option;
 
