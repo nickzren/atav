@@ -25,9 +25,9 @@ import utils.ThirdPartyToolManager;
 public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     BufferedWriter bwSampleSummary = null;
-    BufferedWriter bwCoverageDetails = null;
+    BufferedWriter bwCoverageDetail = null;
     final String sampleSummaryFilePath = CommonCommand.outputPath + "sample.summary.csv";
-    final String coverageDetailsFilePath = CommonCommand.outputPath + "coverage.details.csv";
+    final String coverageDetailFilePath = CommonCommand.outputPath + "coverage.detail.csv";
 
     public int[] sampleCoverageCount = new int[SampleManager.getTotalSampleNum()];
     public int[][] geneSampleCoverage = new int[GeneManager.getGeneBoundaryList().size()][SampleManager.getTotalSampleNum()];
@@ -40,10 +40,11 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                     + "Total_Regions,Total_Covered_Regions,%Regions_Covered");
             bwSampleSummary.newLine();
 
-            bwCoverageDetails = new BufferedWriter(new FileWriter(coverageDetailsFilePath));
-            bwCoverageDetails.write("Sample,Gene,Chr,Length,Covered_Base,%Bases_Covered,Coverage_Status");
-            bwCoverageDetails.newLine();
-
+            if (CoverageCommand.isIncludeCoverageDetail) {
+                bwCoverageDetail = new BufferedWriter(new FileWriter(coverageDetailFilePath));
+                bwCoverageDetail.write("Sample,Gene,Chr,Length,Covered_Base,%Bases_Covered,Coverage_Status");
+                bwCoverageDetail.newLine();
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -54,8 +55,11 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
         try {
             bwSampleSummary.flush();
             bwSampleSummary.close();
-            bwCoverageDetails.flush();
-            bwCoverageDetails.close();
+
+            if (CoverageCommand.isIncludeCoverageDetail) {
+                bwCoverageDetail.flush();
+                bwCoverageDetail.close();
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -63,7 +67,6 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     @Override
     public void doAfterCloseOutput() {
-        ThirdPartyToolManager.gzipFile(coverageDetailsFilePath);
     }
 
     @Override
@@ -135,7 +138,9 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
                 int pass = ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0;
                 sj.add(FormatManager.getInteger(pass));
 
-                writeToFile(sj.toString(), bwCoverageDetails);
+                if (CoverageCommand.isIncludeCoverageDetail) {
+                    writeToFile(sj.toString(), bwCoverageDetail);
+                }
 
                 // count region per sample
                 sampleCoverageCount[sample.getIndex()] += pass;

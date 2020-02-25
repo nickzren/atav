@@ -21,17 +21,17 @@ import utils.MathManager;
  */
 public class CoverageSummary extends CoverageAnalysisBase {
 
-    public BufferedWriter bwCoverageDetailsByExon = null;
-    public final String coverageDetailsByExonFilePath = CommonCommand.outputPath + "coverage.details.by.exon.csv";
+    public BufferedWriter bwCoverageDetailByExon = null;
+    public final String coverageDetailByExonFilePath = CommonCommand.outputPath + "coverage.detail.by.exon.csv";
 
     @Override
     public void initOutput() {
         try {
             super.initOutput();
 
-            bwCoverageDetailsByExon = new BufferedWriter(new FileWriter(coverageDetailsByExonFilePath));
-            bwCoverageDetailsByExon.write("Sample,Gene,ExonID,Chr,Start_Position,Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
-            bwCoverageDetailsByExon.newLine();
+            bwCoverageDetailByExon = new BufferedWriter(new FileWriter(coverageDetailByExonFilePath));
+            bwCoverageDetailByExon.write("Sample,Gene,ExonID,Chr,Start_Position,Stop_Position,Length,Covered_Base,%Bases_Covered,Coverage_Status");
+            bwCoverageDetailByExon.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -42,8 +42,8 @@ public class CoverageSummary extends CoverageAnalysisBase {
         try {
             super.closeOutput();
 
-            bwCoverageDetailsByExon.flush();
-            bwCoverageDetailsByExon.close();
+            bwCoverageDetailByExon.flush();
+            bwCoverageDetailByExon.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -51,10 +51,10 @@ public class CoverageSummary extends CoverageAnalysisBase {
 
     @Override
     public void processExon(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon) {
-        outputCoverageDetailsByExon(sampleCoveredLengthMap, gene, exon);
+        outputCoverageDetailByExon(sampleCoveredLengthMap, gene, exon);
     }
 
-    private void outputCoverageDetailsByExon(HashMap<Integer, Integer> sampleCoveredLengthMap,
+    private void outputCoverageDetailByExon(HashMap<Integer, Integer> sampleCoveredLengthMap,
             Gene gene, Exon exon) {
         try {
             for (Sample sample : SampleManager.getList()) {
@@ -77,7 +77,7 @@ public class CoverageSummary extends CoverageAnalysisBase {
                 sj.add(FormatManager.getDouble(ratio));
                 sj.add(FormatManager.getInteger(ratio >= CoverageCommand.minPercentRegionCovered ? 1 : 0));
 
-                writeToFile(sj.toString(), bwCoverageDetailsByExon);
+                writeToFile(sj.toString(), bwCoverageDetailByExon);
             }
         } catch (Exception e) {
             ErrorManager.send(e);

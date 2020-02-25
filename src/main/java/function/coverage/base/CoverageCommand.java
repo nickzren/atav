@@ -14,6 +14,9 @@ import utils.CommandOption;
  */
 public class CoverageCommand {
 
+    // coverage base 
+    public static boolean isIncludeCoverageDetail = false;
+    
     // coverage summary
     public static boolean isCoverageSummary = false;
     public static boolean isSiteCoverageSummary = false;
@@ -45,6 +48,9 @@ public class CoverageCommand {
                 case "--relative-difference":
                     isRelativeDifference = true;
                     break;
+                case "--include-coverage-detail":
+                    isIncludeCoverageDetail = true;;
+                    break;    
                 default:
                     continue;
             }
@@ -57,16 +63,21 @@ public class CoverageCommand {
 
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
-            if (option.getName().equals("--percent-region-covered")) {
-                minPercentRegionCovered = getValidFloat(option);
-            } else {
-                continue;
+            switch (option.getName()) {
+                case "--percent-region-covered":
+                    minPercentRegionCovered = getValidFloat(option);
+                    break;
+                case "--include-coverage-detail":
+                    isIncludeCoverageDetail = true;
+                    break;
+                default:
+                    continue;
             }
             iterator.remove();
         }
     }
 
-    public static void initCoverageComparisonSite(Iterator<CommandOption> iterator) {
+    public static void initSiteCoverageComparison(Iterator<CommandOption> iterator) {
         CommandOption option;
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
@@ -80,6 +91,25 @@ public class CoverageCommand {
                     break;
                 case "--relative-difference":
                     isRelativeDifference = true;
+                    break;
+                case "--include-coverage-detail":
+                    isIncludeCoverageDetail = true;
+                    break;
+                default:
+                    continue;
+            }
+            iterator.remove();
+        }
+    }
+    
+    public static void initSiteCoverageSummary(Iterator<CommandOption> iterator) {
+        CommandOption option;
+
+        while (iterator.hasNext()) {
+            option = (CommandOption) iterator.next();
+            switch (option.getName()) {
+                case "--include-coverage-detail":
+                    isIncludeCoverageDetail = true;
                     break;
                 default:
                     continue;
