@@ -1,5 +1,8 @@
 package function.variant.base;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
+import function.annotation.base.EffectManager;
+import function.annotation.base.PolyphenManager;
 import function.external.knownvar.ClinVar;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
@@ -8,6 +11,8 @@ import function.cohort.base.SampleManager;
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.parent.ParentCommand;
 import function.cohort.trio.TrioCommand;
+import function.external.trap.TrapCommand;
+import function.external.trap.TrapManager;
 import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;

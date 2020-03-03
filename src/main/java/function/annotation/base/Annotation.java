@@ -2,6 +2,7 @@ package function.annotation.base;
 
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
+import function.variant.base.VariantManager;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
@@ -16,7 +17,8 @@ public class Annotation {
 
     private String chr;
     private int pos;
-    private String allele;
+    private String ref;
+    private String alt;
     public String effect;
     public int effectID;
     public String geneName;
@@ -33,7 +35,8 @@ public class Annotation {
     public void init(ResultSet rset, String chr) throws SQLException {
         this.chr = chr;
         pos = rset.getInt("POS");
-        allele = rset.getString("ALT");
+        ref = rset.getString("REF");
+        alt = rset.getString("ALT");
         stableId = rset.getInt("transcript_stable_id");
 
         if (stableId < 0) {
@@ -56,43 +59,45 @@ public class Annotation {
     }
 
     public boolean isValid() {
-        if (GeneManager.isValid(this, chr, pos)
-                && TranscriptManager.isValid(chr, stableId)) {
-            boolean isPolyphenValid = PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
-                    && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar);
+        return GeneManager.isValid(this, chr, pos)
+                && TranscriptManager.isValid(chr, stableId)
+                && isPolyphenAndTrapValid(chr, pos, ref, alt,
+                        polyphenHumdiv, polyphenHumvar, effect, effectID, geneName);
+    }
 
-            boolean isValid = isPolyphenValid;
+    public static boolean isPolyphenAndTrapValid(String chr, int pos, String ref, String alt,
+            float polyphenHumdiv, float polyphenHumvar, String effect, int effectID, String geneName) {
+        boolean isPolyphenValid = PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
+                && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar);
+        boolean isValid = isPolyphenValid;
 
-            float trapScore = Data.FLOAT_NA;
-            if (TrapCommand.minTrapScore != Data.NO_FILTER
-                    || TrapCommand.minTrapScoreNonCoding != Data.NO_FILTER) {
-
-                trapScore = TrapManager.getScore(chr, pos, allele, false, geneName);
-            }
-
-            // trap filter apply to missense variants when it failed to pass polyphen filter but exclude NA TraP
-            // trap filter apply to missense variants when polyphen filter not applied
-            // trap filter apply to annotation that effect less damaging than missense_variant and not 5_prime_UTR_premature_start_codon_gain_variant
-            if (effect.startsWith("missense_variant")) {
-                // when polyphen filter failed, to save variant needs to make sure trap filter used
-                if (!isPolyphenValid && TrapCommand.minTrapScore != Data.NO_FILTER) {
-                    isValid = trapScore == Data.FLOAT_NA ? false : TrapCommand.isTrapScoreValid(trapScore);
-                } else if (AnnotationLevelFilterCommand.polyphenHumdiv.equals(Data.NO_FILTER_STR)
-                        && AnnotationLevelFilterCommand.polyphenHumvar.equals(Data.NO_FILTER_STR)) {
-                    isValid = TrapCommand.isTrapScoreValid(trapScore);
-                }
-            } else if (effectID > EffectManager.MISSENSE_VARIANT_ID
-                    && !effect.equals("5_prime_UTR_premature_start_codon_gain_variant")) {
-                isValid = TrapCommand.isTrapScoreValid(trapScore)
-                        && TrapCommand.isTrapScoreNonCodingValid(trapScore);
-            }
-
-            return isValid;
+        float trapScore = Data.FLOAT_NA;
+        if (TrapCommand.minTrapScore != Data.NO_FILTER
+                || TrapCommand.minTrapScoreNonCoding != Data.NO_FILTER) {
+            boolean isMNV = ref.length() > 1 && alt.length() > 1 && alt.length() == ref.length();
+            trapScore = TrapManager.getScore(chr, pos, alt, isMNV, geneName);
         }
 
-        return false;
+        // trap filter apply to missense variants when it failed to pass polyphen filter but exclude NA TraP
+        // trap filter apply to missense variants when polyphen filter not applied
+        // trap filter apply to annotation that effect less damaging than missense_variant and not 5_prime_UTR_premature_start_codon_gain_variant
+        if (effect.startsWith("missense_variant")) {
+            // when polyphen filter failed, to save variant needs to make sure trap filter used
+            if (!isPolyphenValid && TrapCommand.minTrapScore != Data.NO_FILTER) {
+                isValid = trapScore == Data.FLOAT_NA ? false : TrapCommand.isTrapScoreValid(trapScore);
+            } else if (AnnotationLevelFilterCommand.polyphenHumdiv.equals(Data.NO_FILTER_STR)
+                    && AnnotationLevelFilterCommand.polyphenHumvar.equals(Data.NO_FILTER_STR)) {
+                isValid = TrapCommand.isTrapScoreValid(trapScore);
+            }
+        } else if (effectID > EffectManager.MISSENSE_VARIANT_ID
+                && !effect.equals("5_prime_UTR_premature_start_codon_gain_variant")) {
+            isValid = TrapCommand.isTrapScoreValid(trapScore)
+                    && TrapCommand.isTrapScoreNonCodingValid(trapScore);
+        }
+
+        return isValid;
     }
-    
+
     public String getStableId() {
         if (stableId == Data.INTEGER_NA) {
             return Data.STRING_NA;

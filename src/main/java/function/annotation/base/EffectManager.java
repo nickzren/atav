@@ -31,7 +31,9 @@ public class EffectManager {
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
     private static HashMap<String, Integer> impactEffect2IdMap = new HashMap<>();
-
+    // potential problem here for the same effect name 
+    private static HashMap<String, Integer> effect2IdMap = new HashMap<>();
+    
     // user input values
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
     private static HashSet<String> inputEffectSet = new HashSet<>();
@@ -85,6 +87,7 @@ public class EffectManager {
 
                 id2EffectMap.put(id, effect);
                 impactEffect2IdMap.put(impactEffect, id);
+                effect2IdMap.put(effect, id);
 
                 if (effect.equals("missense_variant")) {
                     MISSENSE_VARIANT_ID = id;
@@ -213,6 +216,10 @@ public class EffectManager {
         return id2EffectMap.get(id);
     }
 
+    public static int getIdByEffect(String effect) {
+        return effect2IdMap.get(effect);
+    }
+    
     public static boolean isLOF(int effectID) {
         return LOF_EFFECT_ID_SET.contains(effectID);
     }

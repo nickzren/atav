@@ -25,6 +25,8 @@ import function.external.revel.RevelCommand;
 import function.external.revel.RevelManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
+import function.external.trap.TrapCommand;
+import function.external.trap.TrapManager;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -85,7 +87,9 @@ public class ListVarGenoLite {
     public static final String QC_FAIL_CASE_HEADER = "QC Fail Case";
     public static final String QC_FAIL_CTRL_HEADER = "QC Fail Ctrl";
     public static final String LOO_AF_HEADER = "LOO AF";
-
+    public static final String TRAP_HEADER = "TraP Score";
+    public static int TRAP_HEADER_INDEX;
+    
     public void initOutput() {
         try {
             bwGenotypes = new BufferedWriter(new FileWriter(genotypeLiteFilePath));
@@ -179,6 +183,10 @@ public class ListVarGenoLite {
             headers = (String[]) ArrayUtils.addAll(headers, CCRManager.getHeader().split(","));
         }
         
+        if (TrapCommand.isInclude) {
+            headers = (String[]) ArrayUtils.addAll(headers, TRAP_HEADER.split(","));
+        }
+        
         if (DiscovEHRCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, DiscovEHRManager.getHeader().split(","));
         }
@@ -267,6 +275,9 @@ public class ListVarGenoLite {
                 case ALL_ANNOTATION_HEADER:
                     ALL_ANNOTATION_HEADER_INDEX = headerIndex;
                     break;
+                case TRAP_HEADER:
+                    TRAP_HEADER_INDEX = headerIndex;
+                    break;
                 default:
                     break;
             }
@@ -318,6 +329,8 @@ public class ListVarGenoLite {
                 value = "'" + mostDamagingAnnotation.geneName + "'";
             } else if (headerIndex == ALL_ANNOTATION_HEADER_INDEX) {
                 value = allAnnotation;
+            } else if (headerIndex == TRAP_HEADER_INDEX) {
+                value = FormatManager.getFloat(variantLite.getTrapScore());
             } else {
                 value = record.get(headerIndex);
             }

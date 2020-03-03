@@ -5,8 +5,10 @@ import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 import utils.ErrorManager;
+import utils.FormatManager;
 
 /**
  *
@@ -68,6 +70,10 @@ public class TrapManager {
         }
 
         return score;
+    }
+    
+    public static float getScore(CSVRecord record) {
+        return FormatManager.getFloat(record.get(getHeader()));
     }
 
     public static ArrayList<Trap> getTrapList(String chr, int pos, String alt) {

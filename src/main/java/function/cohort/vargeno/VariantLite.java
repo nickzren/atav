@@ -1,10 +1,8 @@
 package function.cohort.vargeno;
 
 import function.annotation.base.Annotation;
-import function.annotation.base.AnnotationLevelFilterCommand;
 import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
-import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.collapsing.CollapsingCommand;
@@ -41,6 +39,8 @@ import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
+import function.external.trap.TrapCommand;
+import function.external.trap.TrapManager;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -65,15 +65,16 @@ public class VariantLite {
     private String ref;
     private String alt;
     private boolean isSNV;
-    private ExAC exac;
-    private GnomADExome gnomADExome;
-    private GnomADGenome gnomADGenome;
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
     private Annotation mostDamagingAnnotation = new Annotation();
+    private ExAC exac;
+    private GnomADExome gnomADExome;
+    private GnomADGenome gnomADGenome;
     private SubRvisOutput subrvis;
     private LIMBROutput limbr;
     private CCROutput ccr;
+    private float trapScore;
     private DiscovEHR discovEHR;
     private Boolean isLOFTEEHCinCCDS;
     private MTR mtr;
@@ -103,8 +104,6 @@ public class VariantLite {
         String allAnnotation = record.get(ListVarGenoLite.ALL_ANNOTATION_HEADER);
         processAnnotation(
                 allAnnotation,
-                chr,
-                pos,
                 geneList,
                 mostDamagingAnnotation,
                 record);
@@ -115,6 +114,7 @@ public class VariantLite {
         initSubRVIS(record);
         initLIMBR(record);
         initCCR(record);
+        initTrap(record);
         initDiscovEHR(record);
         initLOFTEE(record);
         initMTR(record);
@@ -134,14 +134,13 @@ public class VariantLite {
 
     private void processAnnotation(
             String allAnnotation,
-            String chr,
-            int pos,
             List<String> geneList,
             Annotation mostDamagingAnnotation,
             CSVRecord record) {
         for (String annotation : allAnnotation.split(",")) {
             String[] values = annotation.split("\\|");
             String effect = values[0];
+            int effectID = EffectManager.getIdByEffect(effect);
             String geneName = values[1];
 
             // if --gene-column used, ATAV will perform collapsing by input gene column values
@@ -157,11 +156,13 @@ public class VariantLite {
             float polyphenHumvar = FormatManager.getFloat(values[6]);
 
             // --effect filter applied
-            // --polyphen-humdiv filter applied
             // --gene or --gene-boundary filter applied
+            // --polyphen-humdiv filter applied
+            // --min-trap-score and --min-trap-score-non-coding applied
             if (EffectManager.isEffectContained(effect)
-                    && PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
-                    && GeneManager.isValid(geneName, chr, pos)) {
+                    && GeneManager.isValid(geneName, chr, pos)
+                    && Annotation.isPolyphenAndTrapValid(chr, pos, ref, alt,
+                            polyphenHumdiv, polyphenHumvar, effect, effectID, geneName)) {
                 // reset gene name to gene domain name so the downstream procedure could match correctly
                 // only for gene boundary input
                 geneName = GeneManager.getGeneDomainName(geneName, chr, pos);
@@ -239,12 +240,24 @@ public class VariantLite {
         }
     }
 
+    private void initTrap(CSVRecord record) {
+        if (TrapCommand.isInclude) {
+            if (TrapCommand.minTrapScore != Data.NO_FILTER
+                    || TrapCommand.minTrapScoreNonCoding != Data.NO_FILTER) {
+                boolean isMNV = ref.length() > 1 && alt.length() > 1 && alt.length() == ref.length();
+                trapScore = TrapManager.getScore(chr, pos, alt, isMNV, mostDamagingAnnotation.geneName);
+            } else {
+                trapScore = TrapManager.getScore(record);
+            }
+        }
+    }
+
     private void initDiscovEHR(CSVRecord record) {
         if (DiscovEHRCommand.isInclude) {
             discovEHR = new DiscovEHR(record);
         }
     }
-    
+
     private void initLOFTEE(CSVRecord record) {
         if (VariantLevelFilterCommand.isIncludeLOFTEE) {
             isLOFTEEHCinCCDS = VariantManager.getLOFTEEHCinCCDS(record);
@@ -292,13 +305,13 @@ public class VariantLite {
             topmedAF = TopMedManager.getAF(record);
         }
     }
-    
+
     private void initGenomeAsia(CSVRecord record) {
         if (GenomeAsiaCommand.isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(record);
         }
     }
-    
+
     private void initIranome(CSVRecord record) {
         if (IranomeCommand.isInclude) {
             iranomeAF = IranomeManager.getAF(record);
@@ -450,7 +463,7 @@ public class VariantLite {
 
         return discovEHR.isValid();
     }
-    
+
     private boolean isLOFTEEValid() {
         return VariantLevelFilterCommand.isLOFTEEValid(isLOFTEEHCinCCDS);
     }
@@ -518,16 +531,20 @@ public class VariantLite {
     private boolean isGMEAFValid() {
         return GMECommand.isMaxGMEAFValid(gmeAF);
     }
-    
+
     private boolean isTopMedAFValid() {
         return TopMedCommand.isMaxAFValid(topmedAF);
     }
-    
+
     private boolean isGenomeAsiaAFValid() {
         return GenomeAsiaCommand.isMaxAFValid(genomeasiaAF);
     }
-    
+
     private boolean isIranomeAFValid() {
         return IranomeCommand.isMaxAFValid(iranomeAF);
+    }
+
+    public float getTrapScore() {
+        return trapScore;
     }
 }
