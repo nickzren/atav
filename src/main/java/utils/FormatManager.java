@@ -96,10 +96,18 @@ public class FormatManager {
 
     public static String getBoolean(Boolean value) {
         if (value == null) {
-            return "NA";
+            return Data.STRING_NA;
         }
 
         return String.valueOf(value);
+    }
+
+    public static Boolean getBoolean(String value) {
+        if (value.equals(Data.STRING_NA)) {
+            return null;
+        }
+
+        return Boolean.valueOf(value);
     }
 
     public static String getFunction(String str) {
@@ -159,10 +167,10 @@ public class FormatManager {
     }
 
     public static String appendDoubleQuote(String value) {
-        if(value.startsWith("\"") && value.endsWith("\"")) {
+        if (value.startsWith("\"") && value.endsWith("\"")) {
             return value;
         }
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append("\"");
         sb.append(value);

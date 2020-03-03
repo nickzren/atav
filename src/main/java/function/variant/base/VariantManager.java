@@ -17,7 +17,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
+import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
+import utils.FormatManager;
 
 /**
  *
@@ -186,7 +188,7 @@ public class VariantManager {
         if (str.startsWith("chr")) {
             str = str.substring(3, str.length());
         }
-        
+
         String[] values = str.split("-");
         String chr = values[0];
         String pos = values[1];
@@ -232,7 +234,7 @@ public class VariantManager {
             rset.close();
             return chr + "-" + pos;
         }
-        
+
         rset.close();
 
         return "";
@@ -341,7 +343,7 @@ public class VariantManager {
             }
         }
     }
-    
+
     public static void dropCaseVariantTable(String chr) {
         if (CohortLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
             try {
@@ -394,6 +396,11 @@ public class VariantManager {
         rset.close();
 
         return value;
+    }
+
+    // get LOFTEE HC in CCDS
+    public static Boolean getLOFTEEHCinCCDS(CSVRecord record) {
+        return FormatManager.getBoolean(record.get("LOFTEE-HC in CCDS"));
     }
 
     public static boolean isUsed() {

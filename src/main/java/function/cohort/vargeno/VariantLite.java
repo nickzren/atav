@@ -3,7 +3,6 @@ package function.cohort.vargeno;
 import function.annotation.base.Annotation;
 import function.annotation.base.AnnotationLevelFilterCommand;
 import function.annotation.base.EffectManager;
-import function.annotation.base.Gene;
 import function.annotation.base.GeneManager;
 import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
@@ -48,7 +47,6 @@ import global.Data;
 import global.Index;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
@@ -77,6 +75,7 @@ public class VariantLite {
     private LIMBROutput limbr;
     private CCROutput ccr;
     private DiscovEHR discovEHR;
+    private Boolean isLOFTEEHCinCCDS;
     private MTR mtr;
     private Revel revel;
     private PrimateAI primateAI;
@@ -117,6 +116,7 @@ public class VariantLite {
         initLIMBR(record);
         initCCR(record);
         initDiscovEHR(record);
+        initLOFTEE(record);
         initMTR(record);
         initREVEL(record);
         initPrimateAI(record);
@@ -244,6 +244,12 @@ public class VariantLite {
             discovEHR = new DiscovEHR(record);
         }
     }
+    
+    private void initLOFTEE(CSVRecord record) {
+        if (VariantLevelFilterCommand.isIncludeLOFTEE) {
+            isLOFTEEHCinCCDS = VariantManager.getLOFTEEHCinCCDS(record);
+        }
+    }
 
     private void initMTR(CSVRecord record) {
         if (MTRCommand.isInclude) {
@@ -330,6 +336,7 @@ public class VariantLite {
                 && isLIMBRValid()
                 && isCCRValid()
                 && isDiscovEHRValid()
+                && isLOFTEEValid()
                 && isMTRValid()
                 && isRevelValid()
                 && isPrimateAIValid()
@@ -442,6 +449,10 @@ public class VariantLite {
         }
 
         return discovEHR.isValid();
+    }
+    
+    private boolean isLOFTEEValid() {
+        return VariantLevelFilterCommand.isLOFTEEValid(isLOFTEEHCinCCDS);
     }
 
     private boolean isMTRValid() {
