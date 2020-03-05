@@ -104,39 +104,40 @@ public class VariantLite {
         String allAnnotation = record.get(ListVarGenoLite.ALL_ANNOTATION_HEADER);
         processAnnotation(
                 allAnnotation,
-                geneList,
-                mostDamagingAnnotation,
                 record);
 
-        initEXAC(record);
-        initGnomADExome(record);
-        initGnomADGenome(record);
-        initSubRVIS(record);
-        initLIMBR(record);
-        initCCR(record);
-        initTrap(record);
-        initDiscovEHR(record);
-        initLOFTEE(record);
-        initMTR(record);
-        initREVEL(record);
-        initPrimateAI(record);
-        initMPC(record);
-        initPEXT(record);
-        initGME(record);
-        initTopMed(record);
-        initGenomeAsia(record);
-        initIranome(record);
-        qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
-        qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
+        if (mostDamagingAnnotation.isValid()) {
+            initEXAC(record);
+            initGnomADExome(record);
+            initGnomADGenome(record);
+            initSubRVIS(record);
+            initLIMBR(record);
+            initCCR(record);
+            initTrap(record);
+            initDiscovEHR(record);
+            initLOFTEE(record);
+            initMTR(record);
+            initREVEL(record);
+            initPrimateAI(record);
+            initMPC(record);
+            initPEXT(record);
+            initGME(record);
+            initTopMed(record);
+            initGenomeAsia(record);
+            initIranome(record);
+            qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
+            qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
 
-        looAF = FormatManager.getFloat(record.get(ListVarGenoLite.LOO_AF_HEADER));
+            looAF = FormatManager.getFloat(record.get(ListVarGenoLite.LOO_AF_HEADER));
+        }
     }
 
     private void processAnnotation(
             String allAnnotation,
-            List<String> geneList,
-            Annotation mostDamagingAnnotation,
             CSVRecord record) {
+        // isValid to false means no annotations passed the filters
+        mostDamagingAnnotation.setValid(false);
+
         for (String annotation : allAnnotation.split(",")) {
             String[] values = annotation.split("\\|");
             String effect = values[0];
@@ -163,6 +164,10 @@ public class VariantLite {
                     && GeneManager.isValid(geneName, chr, pos)
                     && Annotation.isPolyphenAndTrapValid(chr, pos, ref, alt,
                             polyphenHumdiv, polyphenHumvar, effect, effectID, geneName)) {
+                if (!mostDamagingAnnotation.isValid()) {
+                    mostDamagingAnnotation.setValid(true);
+                }
+
                 // reset gene name to gene domain name so the downstream procedure could match correctly
                 // only for gene boundary input
                 geneName = GeneManager.getGeneDomainName(geneName, chr, pos);
@@ -340,7 +345,8 @@ public class VariantLite {
             return false;
         }
 
-        return VariantManager.isVariantIdIncluded(variantID)
+        return mostDamagingAnnotation.isValid()
+                && VariantManager.isVariantIdIncluded(variantID)
                 && !geneList.isEmpty()
                 && isExacValid()
                 && isGnomADExomeValid()

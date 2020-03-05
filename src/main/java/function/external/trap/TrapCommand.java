@@ -14,6 +14,7 @@ public class TrapCommand {
     public static float minTrapScore = Data.NO_FILTER;
     public static float minTrapScoreNonCoding = Data.NO_FILTER;
 
+    // exclude variant with NA score by default
     public static boolean isTrapScoreValid(float value) {
         if (minTrapScore == Data.NO_FILTER) {
             return true;

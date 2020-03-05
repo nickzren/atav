@@ -31,6 +31,7 @@ public class Annotation {
     public float polyphenHumvarCCDS = Data.FLOAT_NA;
     public boolean isCCDS;
     public boolean hasCCDS;
+    private boolean isValid;
 
     public void init(ResultSet rset, String chr) throws SQLException {
         this.chr = chr;
@@ -56,13 +57,23 @@ public class Annotation {
 
         polyphenHumdivCCDS = isCCDS ? polyphenHumdiv : Data.FLOAT_NA;
         polyphenHumvarCCDS = isCCDS ? polyphenHumvar : Data.FLOAT_NA;
+        
+        checkValid();
     }
-
-    public boolean isValid() {
-        return GeneManager.isValid(this, chr, pos)
+    
+    private void checkValid() {
+        isValid = GeneManager.isValid(this, chr, pos)
                 && TranscriptManager.isValid(chr, stableId)
                 && isPolyphenAndTrapValid(chr, pos, ref, alt,
                         polyphenHumdiv, polyphenHumvar, effect, effectID, geneName);
+    }
+
+    public void setValid(boolean value) {
+        isValid = value;
+    }
+    
+    public boolean isValid() {
+        return isValid;
     }
 
     public static boolean isPolyphenAndTrapValid(String chr, int pos, String ref, String alt,
