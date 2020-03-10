@@ -20,10 +20,10 @@ public class PedMapCommand {
     public static int kinshipSeed = 42;
     public static float kinshipRelatednessThreshold = 0.0884f;
     //for flashpca, plink outlier removal
-    public static boolean isFlashPCAKeepOutliers = false;
     public static int flashPCANumEvec = 10;
     public static int flashPCANumNeighbor = 5;//nearest neighbor for outlier detection
     public static float flashPCAzThresh = -3f;//Z value per nearest neghbor
+    public static boolean flashPCAPlinkPruning = false;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -40,14 +40,14 @@ public class PedMapCommand {
                 case "--flashpca":
                     isFlashPCA = true;
                     break;
-                case "--flashpca-include-outlier":
-                    isFlashPCAKeepOutliers = true;
-                    break;
                 case "--flashpca-num-eigvec":
                     flashPCANumEvec = getValidInteger(option);
                     break;
                 case "--flashpca-num-nearest-neighbor":
                     flashPCANumNeighbor = getValidInteger(option);
+                    break;
+                case "--flashpca-plink-pruning":
+                    flashPCAPlinkPruning = true;
                     break;
                 case "--flashpca-z-score-thresh":
                     flashPCAzThresh = getValidFloat(option);

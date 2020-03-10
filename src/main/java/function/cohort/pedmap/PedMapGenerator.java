@@ -279,10 +279,10 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         sampleMap4FlashPCA.entrySet().removeIf(entry -> (entry.getValue().getToFilter()));
 
         FlashPCAManager.plot2DData(sampleMap4FlashPCA, nDim, false, CommonCommand.outputPath + "plot_eigenvectors_flashpca.pdf");
-
-        LogManager.writeAndPrint("Finding outliers using plink ibs clustering");
-
-        if (!PedMapCommand.isFlashPCAKeepOutliers) {
+        
+        if (PedMapCommand.flashPCAPlinkPruning) {
+            LogManager.writeAndPrint("Finding outliers using plink ibs clustering");
+            
             FlashPCAManager.findOutliers();
 
             //read each line of outlier nearest file and filter based on Z-score
