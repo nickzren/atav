@@ -15,13 +15,14 @@ public class DBManager {
     private static int maxATAVJobNum; // using this to control max connections to db server
     private static String priorityUsers;
 
-    private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_PORT = "3306";
 
     // init from config
     private static String dbName;
     private static String dbUser;
     private static String dbPassword;
+    private static String dbConfigProperties = "?serverTimezone=UTC&autoReconnect=true";
     private static HashMap<String, String> dbHostMap = new HashMap<String, String>();
 
     // init from user command
@@ -32,7 +33,7 @@ public class DBManager {
     private static Statement stmt;
     // this is just for collecting annotation data
     private static Connection concurReadOnlyConn;
-    private static Statement concurReadOnlyStmt; 
+    private static Statement concurReadOnlyStmt;
 
     public static void init() {
         try {
@@ -94,7 +95,7 @@ public class DBManager {
 
     private static Connection getConnection() {
         try {
-            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + dbName + "?useSSL=false&autoReconnect=true";
+            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + dbName + dbConfigProperties;
             
             if (CommonCommand.isDebug) {
                 System.out.println(url);
@@ -193,7 +194,7 @@ public class DBManager {
                 + "information_schema.processlist where USER='atav'";
 
         try {
-            String url = "jdbc:mysql://" + hostIp + ":" + DB_PORT + "?useSSL=false";
+            String url = "jdbc:mysql://" + hostIp + ":" + DB_PORT + dbConfigProperties;
 
             Connection conn = DriverManager.getConnection(url,
                     dbUser,
