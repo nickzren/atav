@@ -8,7 +8,7 @@ public class Data {
 
     // software info
     public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String VERSION = "7.1.3";
+    public static String VERSION = "pgl.7.1.3";
     public static String userName = System.getProperty("user.name");
 
     // atav home path
@@ -16,8 +16,8 @@ public class Data {
 //    public static final String ATAV_HOME = ""; // local testing
 
     // system config file path
-    public static final String SYSTEM_CONFIG = Data.ATAV_HOME +  "config/atav.dragen.system.config.properties";
-    public static final String SYSTEM_CONFIG_FOR_DEBUG = Data.ATAV_HOME +  "config/atav.dragen.debug.system.config.properties";
+    public static final String SYSTEM_CONFIG = Data.ATAV_HOME +  "config/atav.pgl.system.config.properties";
+    public static final String SYSTEM_CONFIG_FOR_DEBUG = Data.ATAV_HOME +  "config/atav.pgl.debug.system.config.properties";
 
     // system default values
     public static final int NO_FILTER = Integer.MAX_VALUE;
