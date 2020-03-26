@@ -94,6 +94,11 @@ public class FormatManager {
         return rs.wasNull() ? Data.FLOAT_NA : nValue;
     }
 
+    public static short getShort(ResultSet rs, String strColName) throws SQLException {
+        short nValue = rs.getShort(strColName);
+        return rs.wasNull() ? Data.SHORT_NA : nValue;
+    }
+    
     public static String getBoolean(Boolean value) {
         if (value == null) {
             return Data.STRING_NA;

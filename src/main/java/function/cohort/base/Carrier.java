@@ -18,11 +18,11 @@ public class Carrier extends NonCarrier {
     private short dp;
     private short adRef;
     private short adAlt;
-    private byte gq;
+    private short gq;
     private float vqslod;
     private float sor;
     private float fs;
-    private byte mq;
+    private short mq;
     private byte qd;
     private int qual;
     private float readPosRankSum;
@@ -38,11 +38,11 @@ public class Carrier extends NonCarrier {
         dpBin = Data.SHORT_NA;
         adRef = rs.getShort("AD_REF");
         adAlt = rs.getShort("AD_ALT");
-        gq = FormatManager.getByte(rs, "GQ");
+        gq = FormatManager.getShort(rs, "GQ");
         vqslod = FormatManager.getFloat(rs, "VQSLOD");
         sor = FormatManager.getFloat(rs, "SOR");
         fs = FormatManager.getFloat(rs, "FS");
-        mq = FormatManager.getByte(rs, "MQ");
+        mq = FormatManager.getShort(rs, "MQ");
         qd = FormatManager.getByte(rs, "QD");
         qual = FormatManager.getInt(rs, "QUAL");
         readPosRankSum = FormatManager.getFloat(rs, "ReadPosRankSum");
@@ -74,7 +74,7 @@ public class Carrier extends NonCarrier {
         return adAlt;
     }
 
-    public byte getGQ() {
+    public short getGQ() {
         return gq;
     }
 
@@ -90,7 +90,7 @@ public class Carrier extends NonCarrier {
         return fs;
     }
 
-    public byte getMQ() {
+    public short getMQ() {
         return mq;
     }
 

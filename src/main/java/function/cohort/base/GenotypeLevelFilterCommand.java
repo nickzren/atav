@@ -232,12 +232,12 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isMinGqValid(byte value) {
+    public static boolean isMinGqValid(short value) {
         if (minGQ == Data.NO_FILTER) {
             return true;
         }
 
-        if (value == Data.BYTE_NA) {
+        if (value == Data.SHORT_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }
@@ -296,12 +296,12 @@ public class GenotypeLevelFilterCommand {
         return false;
     }
 
-    public static boolean isMinMqValid(byte value) {
+    public static boolean isMinMqValid(short value) {
         if (minMQ == Data.NO_FILTER) {
             return true;
         }
 
-        if (value == Data.BYTE_NA) {
+        if (value == Data.SHORT_NA) {
             if (isQcMissingIncluded) {
                 return true;
             }

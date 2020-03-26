@@ -82,7 +82,7 @@ public class VCFOutput extends Output {
             formatSJ.add(calledVar.getGT4VCF(sample.getIndex()));
             // return DP for carrier, return DP Bin for non-carrier 
             formatSJ.add(FormatManager.getShort(carrier != null ? carrier.getDP() : calledVar.getDPBin(sample.getIndex())));
-            formatSJ.add(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA));
+            formatSJ.add(FormatManager.getShort(carrier != null ? carrier.getGQ() : Data.SHORT_NA));
             sj.add(formatSJ.toString());
         }
 

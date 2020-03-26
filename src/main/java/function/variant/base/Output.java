@@ -354,11 +354,11 @@ public class Output {
         sj.add(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA));
         sj.add(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA);
         sj.add(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA);
-        sj.add(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getGQ() : Data.SHORT_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getVQSLOD() : Data.FLOAT_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getSOR() : Data.FLOAT_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA));
-        sj.add(FormatManager.getByte(carrier != null ? carrier.getMQ() : Data.BYTE_NA));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getMQ() : Data.SHORT_NA));
         sj.add(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA));
         sj.add(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA));
