@@ -71,8 +71,8 @@ public abstract class CoverageAnalysisBase extends AnalysisBase {
 
     @Override
     public void beforeProcessDatabaseData() {
-        if (GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
-            ErrorManager.print("--min-coverage option has to be used in this function.", ErrorManager.COMMAND_PARSING);
+        if (GenotypeLevelFilterCommand.minDpBin == Data.NO_FILTER) {
+            ErrorManager.print("--min-dp-bin option has to be used in this function.", ErrorManager.COMMAND_PARSING);
         }
     }
 

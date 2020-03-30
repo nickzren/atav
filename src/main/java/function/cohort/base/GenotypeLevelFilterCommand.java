@@ -18,7 +18,7 @@ import static utils.CommandManager.getValidPath;
  */
 public class GenotypeLevelFilterCommand {
 
-    public static int minCoverage = Data.NO_FILTER;
+    public static int minDpBin = Data.NO_FILTER;
     public static boolean isIncludeHomRef = false;
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
@@ -52,8 +52,9 @@ public class GenotypeLevelFilterCommand {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--min-coverage":
+                case "--min-dp-bin":
                     checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
-                    minCoverage = getValidInteger(option);
+                    minDpBin = getValidInteger(option);
                     break;
                 case "--include-hom-ref":
                     isIncludeHomRef = true;
@@ -171,7 +172,7 @@ public class GenotypeLevelFilterCommand {
         // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
         if (minQual >= 30
                 && minMQ >= 40
-                && minCoverage >= 3
+                && minDpBin >= 3
                 && filter != null) {
 
             int qualifiedFilterCount = 0;
@@ -194,12 +195,12 @@ public class GenotypeLevelFilterCommand {
         return isHighQualityCallVariantOnly;
     }
 
-    public static boolean isMinCoverageValid(short value) {
-        if (minCoverage == Data.NO_FILTER) {
+    public static boolean isMinDpBinValid(short value) {
+        if (minDpBin == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= minCoverage;
+        return value >= minDpBin;
     }
 
     public static boolean isFilterValid(byte value) {

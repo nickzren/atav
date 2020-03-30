@@ -142,7 +142,7 @@ public class CoverageManager {
 
                 short dpBin = DPBinBlockManager.getCoverageByBin(c);
 
-                if (dpBin >= GenotypeLevelFilterCommand.minCoverage) {
+                if (dpBin >= GenotypeLevelFilterCommand.minDpBin) {
                     list.add(new CoverageInterval(
                             blockId, 
                             DPBinBlockManager.getCoverageByBinIndex(dpBin),

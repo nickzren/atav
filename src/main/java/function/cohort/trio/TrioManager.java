@@ -170,13 +170,13 @@ public class TrioManager {
     }
 
     public static String getStatus(int chr, boolean isMale, byte oGeno,
-            short oCov, byte mGeno, short mCov, byte dGeno, short dCov) {
-        String key = getKey(chr, isMale, oGeno, oCov, mGeno, mCov, dGeno, dCov);
+            short oDpBin, byte mGeno, short mDpBin, byte dGeno, short dDpBin) {
+        String key = getKey(chr, isMale, oGeno, oDpBin, mGeno, mDpBin, dGeno, dDpBin);
         return denovoRules.containsKey(key) ? denovoRules.get(key) : Data.STRING_NA;
     }
 
     private static String getKey(int chr, boolean isMale, byte oGeno,
-            short oCov, byte mGeno, short mCov, byte dGeno, short dCov) {
+            short oDpBin, byte mGeno, short mDpBin, byte dGeno, short dDpBin) {
         StringBuilder sKey = new StringBuilder();
         if (chr < 23) {
             sKey.append('A');
@@ -196,13 +196,13 @@ public class TrioManager {
             sKey.append('F');
         }
 
-        getKeyPartGenotypeAndCoverage(sKey, oGeno, oCov);
-        getKeyPartGenotypeAndCoverage(sKey, mGeno, mCov);
-        getKeyPartGenotypeAndCoverage(sKey, dGeno, dCov);
+        getKeyPartGenotypeAndCoverage(sKey, oGeno, oDpBin);
+        getKeyPartGenotypeAndCoverage(sKey, mGeno, mDpBin);
+        getKeyPartGenotypeAndCoverage(sKey, dGeno, dDpBin);
         return sKey.toString();
     }
 
-    private static void getKeyPartGenotypeAndCoverage(StringBuilder sKey, byte geno, short cov) {
+    private static void getKeyPartGenotypeAndCoverage(StringBuilder sKey, byte geno, short dpBin) {
         switch (geno) {
             case Index.REF: //HOM REF
                 sKey.append('0');
@@ -220,8 +220,8 @@ public class TrioManager {
 
         if (geno == Data.BYTE_NA) { //missing
             sKey.append('0');
-        } else if (cov >= GenotypeLevelFilterCommand.minCoverage
-                || GenotypeLevelFilterCommand.minCoverage == Data.NO_FILTER) {
+        } else if (dpBin >= GenotypeLevelFilterCommand.minDpBin
+                || GenotypeLevelFilterCommand.minDpBin == Data.NO_FILTER) {
             sKey.append('1');
         } else {
             sKey.append('2');
