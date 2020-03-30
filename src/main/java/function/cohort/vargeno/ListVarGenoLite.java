@@ -26,7 +26,6 @@ import function.external.revel.RevelManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapCommand;
-import function.external.trap.TrapManager;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

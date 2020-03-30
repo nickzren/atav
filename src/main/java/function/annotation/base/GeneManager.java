@@ -192,6 +192,10 @@ public class GeneManager {
 
         br.close();
         fr.close();
+
+        if (geneBoundaryList.isEmpty()) {
+            ErrorManager.print("--gene-boundary input does not have any valid data.", ErrorManager.INPUT_PARSING);
+        }
     }
 
     private static void initGeneMap() {
@@ -302,6 +306,10 @@ public class GeneManager {
 
         br.close();
         fr.close();
+
+        if (geneCoverageSummaryMap.isEmpty()) {
+            LogManager.writeAndPrint("--read-coverage-summary input does not have any valid data.");
+        }
     }
 
     public static void addCoverageSummary(String geneName, StringJoiner sj) {
@@ -387,12 +395,11 @@ public class GeneManager {
                         return gene.getName();
                     }
                 }
-            } 
+            }
         }
-        
+
         return geneName;
     }
-    
 
     public static String getUpToDateGene(String dragendbGene) {
         String upToDateGene = hgncGeneMap.get(dragendbGene);
