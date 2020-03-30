@@ -19,6 +19,7 @@ import static utils.CommandManager.getValidPath;
 public class GenotypeLevelFilterCommand {
 
     public static int minDpBin = Data.NO_FILTER;
+    public static int minDp = Data.NO_FILTER;
     public static boolean isIncludeHomRef = false;
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
@@ -56,6 +57,10 @@ public class GenotypeLevelFilterCommand {
                     checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
                     minDpBin = getValidInteger(option);
                     break;
+                case "--min-dp":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minDp = getValidInteger(option);
+                    break;    
                 case "--include-hom-ref":
                     isIncludeHomRef = true;
                     break;
@@ -172,7 +177,7 @@ public class GenotypeLevelFilterCommand {
         // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
         if (minQual >= 30
                 && minMQ >= 40
-                && minDpBin >= 3
+                && (minDpBin >= 3 || minDp >= 3)
                 && filter != null) {
 
             int qualifiedFilterCount = 0;
@@ -201,6 +206,22 @@ public class GenotypeLevelFilterCommand {
         }
 
         return value >= minDpBin;
+    }
+    
+    public static boolean isMinDpValid(short value) {
+        if (minDp == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.SHORT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= minDp) {
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean isFilterValid(byte value) {
