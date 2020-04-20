@@ -61,7 +61,7 @@ public class NonCarrier {
     }
 
     public void applyCoverageFilter() {
-        if (!GenotypeLevelFilterCommand.isMinCoverageValid(dpBin)) {
+        if (!GenotypeLevelFilterCommand.isMinDpBinValid(dpBin)) {
             gt = Data.BYTE_NA;
         }
     }

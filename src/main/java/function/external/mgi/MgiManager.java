@@ -4,9 +4,12 @@ import function.external.base.DataManager;
 import global.Data;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.StringJoiner;
+import java.util.zip.GZIPInputStream;
 import utils.ErrorManager;
 
 /**
@@ -15,7 +18,7 @@ import utils.ErrorManager;
  */
 public class MgiManager {
 
-    private static final String MGI_PATH = "data/mgi/mouse_essential_gene_091019.csv";
+    private static final String MGI_PATH = "data/mgi/mouse_essential_gene_041020.csv.gz";
 
     public static String header;
     private static final HashMap<String, String> mgiMap = new HashMap<>();
@@ -38,8 +41,10 @@ public class MgiManager {
     private static void initMgiMap() {
         try {
             File f = new File(Data.ATAV_HOME + MGI_PATH);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
                 int firstCommaIndex = lineStr.indexOf(",");
@@ -58,7 +63,8 @@ public class MgiManager {
             }
 
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

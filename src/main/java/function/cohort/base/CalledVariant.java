@@ -137,7 +137,7 @@ public class CalledVariant extends AnnotatedVariant {
             boolean isCoveredSampleValid;
 
             if (carrier != null) {
-                isCoveredSampleValid = GenotypeLevelFilterCommand.isMinCoverageValid(carrier.getDPBin());
+                isCoveredSampleValid = GenotypeLevelFilterCommand.isMinDpBinValid(carrier.getDPBin());
 
                 if (!isCoveredSampleValid) {
                     carrier.setGT(Data.BYTE_NA);
@@ -154,7 +154,7 @@ public class CalledVariant extends AnnotatedVariant {
                 }
 
             } else if (noncarrier != null) {
-                isCoveredSampleValid = GenotypeLevelFilterCommand.isMinCoverageValid(noncarrier.getDPBin());
+                isCoveredSampleValid = GenotypeLevelFilterCommand.isMinDpBinValid(noncarrier.getDPBin());
 
                 if (!isCoveredSampleValid) {
                     noncarrier.setGT(Data.BYTE_NA);

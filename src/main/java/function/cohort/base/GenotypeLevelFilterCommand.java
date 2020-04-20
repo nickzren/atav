@@ -18,7 +18,8 @@ import static utils.CommandManager.getValidPath;
  */
 public class GenotypeLevelFilterCommand {
 
-    public static int minCoverage = Data.NO_FILTER;
+    public static int minDpBin = Data.NO_FILTER;
+    public static int minDp = Data.NO_FILTER;
     public static boolean isIncludeHomRef = false;
     public static int[] filter; // null - no filer 
     public static double[] hetPercentAltRead = null; // {min, max}
@@ -40,10 +41,6 @@ public class GenotypeLevelFilterCommand {
     public static boolean isQcMissingIncluded = false;
     public static String genotypeFile = "";
 
-    // below variables all true will trigger ATAV only retrive high quality variants
-    // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
-    private static boolean isHighQualityCallVariantOnly = false;
-
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
         CommandOption option;
@@ -52,9 +49,14 @@ public class GenotypeLevelFilterCommand {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--min-coverage":
+                case "--min-dp-bin":
                     checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
-                    minCoverage = getValidInteger(option);
+                    minDpBin = getValidInteger(option);
                     break;
+                case "--min-dp":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minDp = getValidInteger(option);
+                    break;    
                 case "--include-hom-ref":
                     isIncludeHomRef = true;
                     break;
@@ -163,43 +165,30 @@ public class GenotypeLevelFilterCommand {
 
             iterator.remove();
         }
-
-        initIsHighQualityVariantOnly();
     }
 
-    private static void initIsHighQualityVariantOnly() {
-        // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
-        if (minQual >= 30
-                && minMQ >= 40
-                && minCoverage >= 3
-                && filter != null) {
-
-            int qualifiedFilterCount = 0;
-
-            for (int filterIndex : filter) {
-                if (filterIndex == Enum.FILTER.PASS.getValue()
-                        || filterIndex == Enum.FILTER.LIKELY.getValue()
-                        || filterIndex == Enum.FILTER.INTERMEDIATE.getValue()) {
-                    qualifiedFilterCount++;
-                }
-            }
-
-            if (qualifiedFilterCount == 3) {
-                isHighQualityCallVariantOnly = true;
-            }
-        }
-    }
-
-    public static boolean isHighQualityCallVariantOnly() {
-        return isHighQualityCallVariantOnly;
-    }
-
-    public static boolean isMinCoverageValid(short value) {
-        if (minCoverage == Data.NO_FILTER) {
+    public static boolean isMinDpBinValid(short value) {
+        if (minDpBin == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= minCoverage;
+        return value >= minDpBin;
+    }
+    
+    public static boolean isMinDpValid(short value) {
+        if (minDp == Data.NO_FILTER) {
+            return true;
+        }
+
+        if (value == Data.SHORT_NA) {
+            if (isQcMissingIncluded) {
+                return true;
+            }
+        } else if (value >= minDp) {
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean isFilterValid(byte value) {

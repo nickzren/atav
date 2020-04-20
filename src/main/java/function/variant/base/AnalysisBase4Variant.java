@@ -72,11 +72,6 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
             sql = addFilter2SQL(sql, " gene = input_gene ");
         }
 
-        // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
-        if (GenotypeLevelFilterCommand.isHighQualityCallVariantOnly()) {
-            sql = addFilter2SQL(sql, " has_high_quality_call = 1 ");
-        }
-
         sql += "ORDER BY POS,variant_id,effect_id,transcript_stable_id;";
         
         return DBManager.executeConcurReadOnlyQuery(sql);

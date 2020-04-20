@@ -26,14 +26,18 @@ import function.external.revel.RevelManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
 import function.external.trap.TrapCommand;
-import function.external.trap.TrapManager;
+import global.Data;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.StringJoiner;
+import java.util.zip.GZIPInputStream;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang.ArrayUtils;
@@ -54,42 +58,42 @@ public class ListVarGenoLite {
 
     public static final String VARIANT_ID_HEADER = "Variant ID";
     public static final String STABLE_ID_HEADER = "Transcript Stable Id";
-    public static int STABLE_ID_HEADER_INDEX;
+    public static int STABLE_ID_HEADER_INDEX = Data.INTEGER_NA;
     public static final String EFFECT_HEADER = "Effect";
-    public static int EFFECT_HEADER_INDEX;
+    public static int EFFECT_HEADER_INDEX = Data.INTEGER_NA;
     public static final String HAS_CCDS_HEADER = "Has CCDS Transcript";
-    public static int HAS_CCDS_HEADER_INDEX;
+    public static int HAS_CCDS_HEADER_INDEX = Data.INTEGER_NA;
     public static final String HGVS_c_HEADER = "HGVS_c";
-    public static int HGVS_c_HEADER_INDEX;
+    public static int HGVS_c_HEADER_INDEX = Data.INTEGER_NA;
     public static final String HGVS_p_HEADER = "HGVS_p";
-    public static int HGVS_p_HEADER_INDEX;
+    public static int HGVS_p_HEADER_INDEX = Data.INTEGER_NA;
     public static final String POLYPHEN_HUMDIV_SCORE_HEADER = "Polyphen Humdiv Score";
-    public static int POLYPHEN_HUMDIV_SCORE_HEADER_INDEX;
+    public static int POLYPHEN_HUMDIV_SCORE_HEADER_INDEX = Data.INTEGER_NA;
     public static final String POLYPHEN_HUMDIV_PREDICTION_HEADER = "Polyphen Humdiv Prediction";
-    public static int POLYPHEN_HUMDIV_PREDICTION_HEADER_INDEX;
+    public static int POLYPHEN_HUMDIV_PREDICTION_HEADER_INDEX = Data.INTEGER_NA;
     public static final String POLYPHEN_HUMDIV_SCORE_CCDS_HEADER = "Polyphen Humdiv Score (CCDS)";
-    public static int POLYPHEN_HUMDIV_SCORE_CCDS_HEADER_INDEX;
+    public static int POLYPHEN_HUMDIV_SCORE_CCDS_HEADER_INDEX = Data.INTEGER_NA;
     public static final String POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER = "Polyphen Humdiv Prediction (CCDS)";
-    public static int POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER_INDEX;
+    public static int POLYPHEN_HUMDIV_PREDICTION_CCDS_HEADER_INDEX = Data.INTEGER_NA;
     public static final String POLYPHEN_HUMVAR_SCORE_HEADER = "Polyphen Humvar Score";
-    public static int POLYPHEN_HUMVAR_SCORE_HEADER_INDEX;
+    public static int POLYPHEN_HUMVAR_SCORE_HEADER_INDEX = Data.INTEGER_NA;
     public static final String POLYPHEN_HUMVAR_PREDICTION_HEADER = "Polyphen Humvar Prediction";
-    public static int POLYPHEN_HUMVAR_PREDICTION_HEADER_INDEX;
+    public static int POLYPHEN_HUMVAR_PREDICTION_HEADER_INDEX = Data.INTEGER_NA;
     public static final String POLYPHEN_HUMVAR_SCORE_CCDS_HEADER = "Polyphen Humvar Score (CCDS)";
-    public static int POLYPHEN_HUMVAR_SCORE_CCDS_HEADER_INDEX;
+    public static int POLYPHEN_HUMVAR_SCORE_CCDS_HEADER_INDEX = Data.INTEGER_NA;
     public static final String POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER = "Polyphen Humvar Prediction (CCDS)";
-    public static int POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER_INDEX;
+    public static int POLYPHEN_HUMVAR_PREDICTION_CCDS_HEADER_INDEX = Data.INTEGER_NA;
     public static final String GENE_NAME_HEADER = "Gene Name";
-    public static int GENE_NAME_HEADER_INDEX;
+    public static int GENE_NAME_HEADER_INDEX = Data.INTEGER_NA;
     public static final String ALL_ANNOTATION_HEADER = "Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar";
-    public static int ALL_ANNOTATION_HEADER_INDEX;
+    public static int ALL_ANNOTATION_HEADER_INDEX = Data.INTEGER_NA;
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
     public static final String QC_FAIL_CASE_HEADER = "QC Fail Case";
     public static final String QC_FAIL_CTRL_HEADER = "QC Fail Ctrl";
     public static final String LOO_AF_HEADER = "LOO AF";
     public static final String TRAP_HEADER = "TraP Score";
-    public static int TRAP_HEADER_INDEX;
-    
+    public static int TRAP_HEADER_INDEX = Data.INTEGER_NA;
+
     public void initOutput() {
         try {
             bwGenotypes = new BufferedWriter(new FileWriter(genotypeLiteFilePath));
@@ -182,11 +186,11 @@ public class ListVarGenoLite {
         if (CCRCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, CCRManager.getHeader().split(","));
         }
-        
+
         if (TrapCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, TRAP_HEADER.split(","));
         }
-        
+
         if (DiscovEHRCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, DiscovEHRManager.getHeader().split(","));
         }
@@ -214,12 +218,23 @@ public class ListVarGenoLite {
         return headers;
     }
 
-    public Iterable<CSVRecord> getRecords() throws FileNotFoundException, IOException {
-        Reader in = new FileReader(GenotypeLevelFilterCommand.genotypeFile);
+    public Iterable<CSVRecord> getRecords() throws FileNotFoundException, IOException {        
+        String filename = GenotypeLevelFilterCommand.genotypeFile;
+        
+        Reader decoder;
+
+        if (filename.endsWith(".gz")) {
+            InputStream fileStream = new FileInputStream(filename);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            decoder = new InputStreamReader(gzipStream);
+        } else {
+            decoder = new FileReader(GenotypeLevelFilterCommand.genotypeFile);
+        }
+        
         Iterable<CSVRecord> records = CSVFormat.DEFAULT
                 .withHeader(getHeaders())
                 .withFirstRecordAsHeader()
-                .parse(in);
+                .parse(decoder);
 
         return records;
     }
@@ -295,8 +310,8 @@ public class ListVarGenoLite {
         String allAnnotation = variantLite.getAllAnnotation();
 
         StringJoiner sj = new StringJoiner(",");
-
-        for (int headerIndex = 0; headerIndex < record.size(); headerIndex++) {
+        
+        for (int headerIndex = 0; headerIndex < record.size(); headerIndex++) {            
             String value = "";
 
             if (headerIndex == STABLE_ID_HEADER_INDEX) {
@@ -338,7 +353,7 @@ public class ListVarGenoLite {
             if (value.contains(",")) {
                 value = FormatManager.appendDoubleQuote(value);
             }
-
+            
             sj.add(value);
         }
 

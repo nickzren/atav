@@ -53,7 +53,7 @@ public class EmailManager {
      * @param body
      */
     private static void sendEmail(String subject, String body, String to) {
-        if(CommonCommand.isDebug) {
+        if(CommonCommand.isDebug || CommonCommand.disableEmail) {
             // no email sending if it is in debug mode
             return;
         }

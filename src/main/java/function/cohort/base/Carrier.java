@@ -145,7 +145,8 @@ public class Carrier extends NonCarrier {
                     || !GenotypeLevelFilterCommand.isMinQdValid(qd)
                     || !GenotypeLevelFilterCommand.isMinQualValid(qual)
                     || !GenotypeLevelFilterCommand.isMinRprsValid(readPosRankSum)
-                    || !GenotypeLevelFilterCommand.isMinMqrsValid(mqRankSum)) {
+                    || !GenotypeLevelFilterCommand.isMinMqrsValid(mqRankSum)
+                    || !GenotypeLevelFilterCommand.isMinDpValid(dp)) {
                 gt = Data.BYTE_NA;
             }
         }
