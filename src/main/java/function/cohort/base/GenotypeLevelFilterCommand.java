@@ -41,10 +41,6 @@ public class GenotypeLevelFilterCommand {
     public static boolean isQcMissingIncluded = false;
     public static String genotypeFile = "";
 
-    // below variables all true will trigger ATAV only retrive high quality variants
-    // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP
-    private static boolean isHighQualityCallVariantOnly = false;
-
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
         CommandOption option;
@@ -169,35 +165,6 @@ public class GenotypeLevelFilterCommand {
 
             iterator.remove();
         }
-
-        initIsHighQualityVariantOnly();
-    }
-
-    private static void initIsHighQualityVariantOnly() {
-        // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP
-        if (minQual >= 30
-                && minMQ >= 40
-                && (minDpBin >= 3 || minDp >= 3)
-                && filter != null) {
-
-            int qualifiedFilterCount = 0;
-
-            for (int filterIndex : filter) {
-                if (filterIndex == Enum.FILTER.PASS.getValue()
-                        || filterIndex == Enum.FILTER.LIKELY.getValue()
-                        || filterIndex == Enum.FILTER.INTERMEDIATE.getValue()) {
-                    qualifiedFilterCount++;
-                }
-            }
-
-            if (qualifiedFilterCount == 3) {
-                isHighQualityCallVariantOnly = true;
-            }
-        }
-    }
-
-    public static boolean isHighQualityCallVariantOnly() {
-        return isHighQualityCallVariantOnly;
     }
 
     public static boolean isMinDpBinValid(short value) {
