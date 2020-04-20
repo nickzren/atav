@@ -14,27 +14,27 @@ public class OutputSubsetSample {
 
     // minor config tweak for this task
     // CommonCommand.isNonSampleAnalysis = true;
-    public static final String OUTPUT_PATH = "/nfs/seqscratch_ssd/zr2180/waldb/";
+    public static final String OUTPUT_PATH = "/nfs/informatics/data/tmp/waldb/";
 
     public static void run() throws SQLException {
         String sql = "CREATE TEMPORARY TABLE IF NOT EXISTS exome_sample_id AS "
                 + "(SELECT sample_id FROM sample where sample_type = 'exome' "
                 + "and sample_name not like '%SRR%' "
                 + "and sample_finished = 1 "
-                + "and sample_failure = 0 limit 10000)";
+                + "and sample_failure = 0 limit 100)";
         updateSQL(sql);
 
         sql = "SELECT sample_id,sample_id,sample_type,capture_kit,prep_id,NULL,0,1,0 FROM sample where sample_type = 'exome' "
                 + "and sample_name not like '%SRR%' "
                 + "and sample_finished = 1 "
-                + "and sample_failure = 0 limit 10000 "
-                + "into outfile '" + OUTPUT_PATH + "db_load_10k_exome_sample.txt';";
+                + "and sample_failure = 0 limit 100 "
+                + "into outfile '" + OUTPUT_PATH + "db_load_100_exome_sample.txt';";
         executeSQL(sql);
         sql = "SELECT sample_id,sample_id,0,0,1,1,sample_type,capture_kit FROM sample where sample_type = 'exome' "
                 + "and sample_name not like '%SRR%' "
                 + "and sample_finished = 1 "
-                + "and sample_failure = 0 limit 10000 "
-                + "into outfile '" + OUTPUT_PATH + "10k_exome_atav_sample.txt';";
+                + "and sample_failure = 0 limit 100 "
+                + "into outfile '" + OUTPUT_PATH + "100_exome_atav_sample.txt';";
         executeSQL(sql);
 
         sql = "SELECT * FROM hgnc "
@@ -44,6 +44,7 @@ public class OutputSubsetSample {
         sql = "SELECT * FROM effect_ranking "
                 + "into outfile '" + OUTPUT_PATH + "effect_ranking.txt';";
         executeSQL(sql);
+        
         outputCarrierData();
         outputNonCarrierData();
     }
@@ -69,8 +70,8 @@ public class OutputSubsetSample {
             sql = "load data infile '" + OUTPUT_PATH + "variant_id_chr" + chr + ".txt' "
                     + "ignore into table WalDB.variant_id_chr" + chr;
             executeSQL(sql);
-            String[] cmd = {"rm " + OUTPUT_PATH + "variant_id_chr" + chr + ".txt "};
-            ThirdPartyToolManager.systemCall(cmd);
+//            String[] cmd = {"rm " + OUTPUT_PATH + "variant_id_chr" + chr + ".txt "};
+//            ThirdPartyToolManager.systemCall(cmd);
 
             // get variant id , pos, ref, alt data
             sql = "select distinct v.variant_id,v.POS,v.REF,v.ALT from WalDB.variant_chr" + chr
@@ -85,8 +86,8 @@ public class OutputSubsetSample {
                     + " where v.variant_id = i.variant_id"
                     + " into outfile '" + OUTPUT_PATH + "db_load_variant_chr" + chr + ".txt';";
             executeSQL(sql);
-            cmd[0] = "gzip -9 " + OUTPUT_PATH + "db_load_variant_chr" + chr + ".txt ";
-            ThirdPartyToolManager.systemCall(cmd);
+//            cmd[0] = "gzip -9 " + OUTPUT_PATH + "db_load_variant_chr" + chr + ".txt ";
+//            ThirdPartyToolManager.systemCall(cmd);
             
             // create variant pos table            
             sql = "CREATE temporary TABLE WalDB.variant_pos_chr" + chr + " ("
@@ -102,8 +103,8 @@ public class OutputSubsetSample {
             sql = "load data infile '" + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt' "
                     + "ignore into table WalDB.variant_pos_chr" + chr;
             executeSQL(sql);
-            cmd[0] = "rm " + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt ";
-            ThirdPartyToolManager.systemCall(cmd);
+//            cmd[0] = "rm " + OUTPUT_PATH + "variant_pos_chr" + chr + ".txt ";
+//            ThirdPartyToolManager.systemCall(cmd);
 
 //            // get carrier data
             sql = "select c.* "
@@ -113,8 +114,8 @@ public class OutputSubsetSample {
                     + "where v.variant_id = c.variant_id and c.sample_id = s.sample_id "
                     + "into outfile '" + OUTPUT_PATH + "db_load_called_variant_chr" + chr + ".txt';";
             executeSQL(sql);
-            cmd[0] = "gzip -9 " + OUTPUT_PATH + "db_load_called_variant_chr" + chr + ".txt ";
-            ThirdPartyToolManager.systemCall(cmd);
+//            cmd[0] = "gzip -9 " + OUTPUT_PATH + "db_load_called_variant_chr" + chr + ".txt ";
+//            ThirdPartyToolManager.systemCall(cmd);
 
             sql = "drop table WalDB.variant_pos_chr" + chr;
             updateSQL(sql);
@@ -127,8 +128,8 @@ public class OutputSubsetSample {
                     + "where d.sample_id = s.sample_id "
                     + "into outfile '" + OUTPUT_PATH + "db_load_DP_bins_chr" + chr + ".txt';";
             executeSQL(sql);
-            String[] cmd = {"gzip -9 " + OUTPUT_PATH + "db_load_DP_bins_chr" + chr + ".txt "};
-            ThirdPartyToolManager.systemCall(cmd);
+//            String[] cmd = {"gzip -9 " + OUTPUT_PATH + "db_load_DP_bins_chr" + chr + ".txt "};
+//            ThirdPartyToolManager.systemCall(cmd);
         }
     }
 
