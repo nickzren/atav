@@ -1,8 +1,11 @@
 package function.annotation.base;
 
+import function.external.primateai.PrimateAICommand;
+import function.external.primateai.PrimateAIManager;
+import function.external.revel.RevelCommand;
+import function.external.revel.RevelManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
-import function.variant.base.VariantManager;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
@@ -15,10 +18,12 @@ import utils.MathManager;
  */
 public class Annotation {
 
+    private static int currentVariantID = Data.INTEGER_NA;
     private String chr;
     private int pos;
     private String ref;
     private String alt;
+    private boolean isMNV;
     public String effect;
     public int effectID;
     public String geneName;
@@ -31,6 +36,12 @@ public class Annotation {
     public float polyphenHumvarCCDS = Data.FLOAT_NA;
     public boolean isCCDS;
     public boolean hasCCDS;
+
+    public float revel;
+    public float primateAI;
+    private int ensembleMissenseValidCount;
+    private int ensembleMissenseNACount;
+
     private boolean isValid;
 
     public void init(ResultSet rset, String chr) throws SQLException {
@@ -38,6 +49,18 @@ public class Annotation {
         pos = rset.getInt("POS");
         ref = rset.getString("REF");
         alt = rset.getString("ALT");
+
+        isMNV = ref.length() > 1 && alt.length() > 1
+                && alt.length() == ref.length();
+
+        int variantID = rset.getInt("variant_id");
+        // only need to init once per variant
+        if (currentVariantID != variantID) {
+            currentVariantID = variantID;
+            initRevel();
+            initPrimateAI();
+        }
+
         stableId = rset.getInt("transcript_stable_id");
 
         if (stableId < 0) {
@@ -57,21 +80,22 @@ public class Annotation {
 
         polyphenHumdivCCDS = isCCDS ? polyphenHumdiv : Data.FLOAT_NA;
         polyphenHumvarCCDS = isCCDS ? polyphenHumvar : Data.FLOAT_NA;
-        
+
         checkValid();
     }
-    
+
     private void checkValid() {
         isValid = GeneManager.isValid(this, chr, pos)
                 && TranscriptManager.isValid(chr, stableId)
                 && isPolyphenAndTrapValid(chr, pos, ref, alt,
-                        polyphenHumdiv, polyphenHumvar, effect, effectID, geneName);
+                        polyphenHumdiv, polyphenHumvar, effect, effectID, geneName)
+                && isEnsembleMissenseValid();
     }
 
     public void setValid(boolean value) {
         isValid = value;
     }
-    
+
     public boolean isValid() {
         return isValid;
     }
@@ -125,5 +149,59 @@ public class Annotation {
         idSB.insert(0, "ENST");
 
         return idSB.toString();
+    }
+
+    private void initRevel() {
+        if (RevelCommand.isInclude) {
+            revel = RevelManager.getRevel(chr, pos, ref, alt, isMNV);
+        }
+    }
+
+    private void initPrimateAI() {
+        if (PrimateAICommand.isInclude) {
+            primateAI = PrimateAIManager.getPrimateAI(chr, pos, ref, alt, isMNV);
+        }
+    }
+
+    /*
+        1. only applied when --ensemble-missense applied
+        2. all three filters required to applied 
+     */
+    private boolean isEnsembleMissenseValid() {
+        if (AnnotationLevelFilterCommand.ensembleMissense) {
+            ensembleMissenseValidCount = 0;
+            ensembleMissenseNACount = 0;
+
+            if (effect.startsWith("missense_variant")) {
+                doEnsembleMissenseFilterCount(
+                        PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv),
+                        polyphenHumdiv == Data.FLOAT_NA);
+
+                doEnsembleMissenseFilterCount(
+                        RevelCommand.isMinRevelValid(revel),
+                        revel == Data.FLOAT_NA);
+
+                doEnsembleMissenseFilterCount(
+                        PrimateAICommand.isMinPrimateAIValid(primateAI),
+                        primateAI == Data.FLOAT_NA);
+
+                return ensembleMissenseValidCount >= 2
+                        || (ensembleMissenseValidCount >= 1 && ensembleMissenseNACount >= 2)
+                        || ensembleMissenseNACount >= 3;
+            }
+        }
+
+        return true;
+    }
+
+    // valid for all ATAV filters means the value is either pass cutoff or NA
+    private void doEnsembleMissenseFilterCount(boolean isValid, boolean isNA) {
+        if (isValid) {
+            if (isNA) {
+                ensembleMissenseNACount++;
+            } else {
+                ensembleMissenseValidCount++;
+            }
+        }
     }
 }

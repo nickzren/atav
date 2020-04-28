@@ -221,6 +221,10 @@ public class AnnotatedVariant extends Variant {
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
                 geneName = annotation.geneName;
+                
+                // only need to init once per variant
+                revel = annotation.revel;
+                primateAI = annotation.primateAI;
             }
 
             StringJoiner annotationSJ = new StringJoiner("|");
@@ -358,12 +362,10 @@ public class AnnotatedVariant extends Variant {
 
         return true;
     }
-
-    // init REVEL score base on most damaging gene and applied filter
+ 
+   // applied at variant level when --ensemble-missense not applied
     private boolean isRevelValid() {
-        if (RevelCommand.isInclude) {
-            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
-
+        if (RevelCommand.isInclude && !AnnotationLevelFilterCommand.ensembleMissense) {
             // REVEL filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
                 return RevelCommand.isMinRevelValid(revel);
@@ -375,11 +377,9 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
-    // init PrimateAI score base on most damaging gene and applied filter
+    // applied at variant level when --ensemble-missense not applied
     private boolean isPrimateAIValid() {
-        if (PrimateAICommand.isInclude) {
-            primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
-
+        if (PrimateAICommand.isInclude && !AnnotationLevelFilterCommand.ensembleMissense) {
             // PrimateAI filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
                 return PrimateAICommand.isMinPrimateAIValid(primateAI);
