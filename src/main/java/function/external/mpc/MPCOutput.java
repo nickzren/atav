@@ -22,7 +22,7 @@ public class MPCOutput {
     }
     
     public MPCOutput(CSVRecord record) {
-        mpc = FormatManager.getFloat(record.get("MPC"));
+        mpc = FormatManager.getFloat(record, "MPC");
     }
     
     public boolean isValid() {

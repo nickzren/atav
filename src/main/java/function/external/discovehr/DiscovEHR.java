@@ -41,8 +41,8 @@ public class DiscovEHR {
         }
     }
 
-    public DiscovEHR(CSVRecord record) {
-        af = FormatManager.getFloat(record.get("DiscovEHR AF"));
+    public DiscovEHR(CSVRecord record) {                
+        af = FormatManager.getFloat(record, "DiscovEHR AF");
     }
     
     private void initAF() {

@@ -1,5 +1,6 @@
 package function.external.primateai;
 
+import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
@@ -30,8 +31,8 @@ public class PrimateAI {
         }
     }
     
-    public PrimateAI(CSVRecord record) {
-        score = FormatManager.getFloat(record.get("PrimateAI"));
+    public PrimateAI(CSVRecord record) {        
+        score = FormatManager.getFloat(record, "PrimateAI");
     }
     
     public boolean isValid() {

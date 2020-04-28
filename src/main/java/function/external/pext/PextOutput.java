@@ -31,7 +31,7 @@ public class PextOutput {
     }
     
     public PextOutput(CSVRecord record) {
-        ratio = FormatManager.getFloat(record.get("PEXT Ratio"));
+        ratio = FormatManager.getFloat(record, "PEXT Ratio");
     }
 
     public StringJoiner getStringJoiner() {

@@ -42,9 +42,9 @@ public class MTR {
         this.chr = chr;
         this.pos = pos;
 
-        mtr = FormatManager.getFloat(record.get("MTR"));
-        mtrFDR = FormatManager.getFloat(record.get("MTR FDR"));
-        mtrCentile = FormatManager.getFloat(record.get("MTR Centile"));
+        mtr = FormatManager.getFloat(record, "MTR");
+        mtrFDR = FormatManager.getFloat(record, "MTR FDR");
+        mtrCentile = FormatManager.getFloat(record, "MTR Centile");
     }
 
     private void initMTR() {
@@ -62,7 +62,7 @@ public class MTR {
                 mtrFDR = Data.FLOAT_NA;
                 mtrCentile = Data.FLOAT_NA;
             }
-            
+
             rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);

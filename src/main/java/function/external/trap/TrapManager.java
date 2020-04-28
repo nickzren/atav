@@ -73,7 +73,7 @@ public class TrapManager {
     }
     
     public static float getScore(CSVRecord record) {
-        return FormatManager.getFloat(record.get(getHeader()));
+        return FormatManager.getFloat(record, getHeader());
     }
 
     public static ArrayList<Trap> getTrapList(String chr, int pos, String alt) {

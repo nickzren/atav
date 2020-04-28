@@ -4,6 +4,7 @@ import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  *
@@ -81,6 +82,14 @@ public class FormatManager {
         return String.valueOf(value);
     }
 
+    public static float getFloat(CSVRecord record, String column) {
+        if (record.isMapped(column)) {
+            return getFloat(record.get(column));
+        } else {
+            return Data.FLOAT_NA;
+        }
+    }
+
     public static float getFloat(String str) {
         if (str == null || str.equals(Data.STRING_NA)) {
             return Data.FLOAT_NA;
@@ -92,6 +101,14 @@ public class FormatManager {
     public static float getFloat(ResultSet rs, String strColName) throws SQLException {
         float nValue = rs.getFloat(strColName);
         return rs.wasNull() ? Data.FLOAT_NA : nValue;
+    }
+
+    public static Boolean getBoolean(CSVRecord record, String column) {
+        if (record.isMapped(column)) {
+            return getBoolean(record.get(column));
+        } else {
+            return null;
+        }
     }
 
     public static String getBoolean(Boolean value) {

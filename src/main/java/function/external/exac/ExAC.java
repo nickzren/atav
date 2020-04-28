@@ -76,15 +76,16 @@ public class ExAC {
         maxAF = Data.FLOAT_NA;
         this.af = new float[ExACManager.EXAC_POP.length];
         for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
-            af[i] = FormatManager.getFloat(record.get("ExAC " + ExACManager.EXAC_POP[i] + " af"));
+            af[i] = FormatManager.getFloat(record, "ExAC " + ExACManager.EXAC_POP[i] + " af");
+
             if (af[i] != Data.FLOAT_NA
                     && ExACCommand.exacPop.contains(ExACManager.EXAC_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
             }
         }
 
-        vqslod = FormatManager.getFloat(record.get("ExAC vqslod"));
-        meanCoverage = FormatManager.getFloat(record.get("ExAC Mean Coverage"));
+        vqslod = FormatManager.getFloat(record, "ExAC vqslod");
+        meanCoverage = FormatManager.getFloat(record, "ExAC Mean Coverage");
     }
 
     private void initCoverage() {
@@ -100,7 +101,7 @@ public class ExAC {
                 meanCoverage = Data.FLOAT_NA;
                 sampleCovered10x = Data.INTEGER_NA;
             }
-            
+
             rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -123,7 +124,7 @@ public class ExAC {
             } else {
                 resetAF(Data.FLOAT_NA);
             }
-            
+
             rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);

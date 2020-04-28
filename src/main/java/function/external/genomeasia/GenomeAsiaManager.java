@@ -55,7 +55,7 @@ public class GenomeAsiaManager {
         return af;
     }
 
-    public static float getAF(CSVRecord record) {
-        return FormatManager.getFloat(record.get(getHeader()));
+    public static float getAF(CSVRecord record) {        
+        return FormatManager.getFloat(record, getHeader());
     }
 }

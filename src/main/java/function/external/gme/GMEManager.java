@@ -86,6 +86,6 @@ public class GMEManager {
     }
     
     public static float getAF(CSVRecord record) {
-        return FormatManager.getFloat(record.get(getHeader()));
+        return FormatManager.getFloat(record, getHeader());
     }
 }
