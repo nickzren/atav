@@ -15,12 +15,8 @@ public class TrapCommand {
 
     public static boolean isValid(float value, String effect) {
         if (value == Data.FLOAT_NA
-                || minTrapScore == Data.NO_FILTER) {
-            return true;
-        }
-        
-        // only apply to missense variant
-        if (!effect.startsWith("missense_variant")) {
+                || minTrapScore == Data.NO_FILTER
+                || !effect.startsWith("missense_variant")) {
             return true;
         }
 

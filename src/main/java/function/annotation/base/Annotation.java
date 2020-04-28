@@ -4,8 +4,6 @@ import function.external.primateai.PrimateAICommand;
 import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
 import function.external.revel.RevelManager;
-import function.external.trap.TrapCommand;
-import function.external.trap.TrapManager;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
@@ -23,7 +21,6 @@ public class Annotation {
     private int pos;
     private String ref;
     private String alt;
-    private boolean isIndel;
     private boolean isMNV;
     public String effect;
     public int effectID;
@@ -40,7 +37,6 @@ public class Annotation {
 
     public float revel;
     public float primateAI;
-    public float trapScore;
     private int ensembleMissenseValidCount;
     private int ensembleMissenseNACount;
 
@@ -51,7 +47,6 @@ public class Annotation {
         pos = rset.getInt("POS");
         ref = rset.getString("REF");
         alt = rset.getString("ALT");
-        isIndel = ref.length() != alt.length();
         isMNV = ref.length() > 1 && alt.length() > 1
                 && alt.length() == ref.length();
 
@@ -61,7 +56,6 @@ public class Annotation {
             currentVariantID = variantID;
             initRevel();
             initPrimateAI();
-            initTraP();
         }
 
         stableId = rset.getInt("transcript_stable_id");
@@ -91,7 +85,6 @@ public class Annotation {
         isValid = GeneManager.isValid(this, chr, pos)
                 && TranscriptManager.isValid(chr, stableId)
                 && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
-                && TrapCommand.isValid(trapScore, effect)
                 && isEnsembleMissenseValid();
     }
 
@@ -133,17 +126,11 @@ public class Annotation {
         }
     }
 
-    private void initTraP() {
-        if (TrapCommand.isInclude) {
-            trapScore = isIndel ? Data.FLOAT_NA : TrapManager.getScore(chr, pos, alt, isMNV, geneName);
-        }
-    }
-
     /*
         1. only applied when --ensemble-missense applied
         2. it required to use --polyphen-humdiv, --min-revel-score and --min-primate-ai
      */
-    private boolean isEnsembleMissenseValid() {
+    public boolean isEnsembleMissenseValid() {
         if (AnnotationLevelFilterCommand.ensembleMissense) {
             ensembleMissenseValidCount = 0;
             ensembleMissenseNACount = 0;

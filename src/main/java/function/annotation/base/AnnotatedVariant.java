@@ -52,6 +52,7 @@ import function.external.subrvis.SubRvisOutput;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
+import function.external.trap.TrapManager;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -135,7 +136,7 @@ public class AnnotatedVariant extends Variant {
 
             isValid = GMECommand.isMaxGMEAFValid(gmeAF);
         }
-        
+
         if (isValid && IranomeCommand.isInclude) {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
@@ -147,7 +148,7 @@ public class AnnotatedVariant extends Variant {
 
             isValid = TopMedCommand.isMaxAFValid(topmedAF);
         }
-        
+
         if (isValid && GenomeAsiaCommand.isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
@@ -196,6 +197,12 @@ public class AnnotatedVariant extends Variant {
             isValid = genomes.isValid();
         }
 
+        if (isValid && TrapCommand.isInclude) {
+            trapScore = isIndel() ? Data.FLOAT_NA : TrapManager.getScore(chrStr, startPosition, allele, isMNV(), geneName);
+
+            isValid = TrapCommand.isValid(trapScore, effect);
+        }
+
         if (isValid && DiscovEHRCommand.isInclude) {
             discovEHR = new DiscovEHR(chrStr, startPosition, refAllele, allele);
 
@@ -218,11 +225,10 @@ public class AnnotatedVariant extends Variant {
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
                 geneName = annotation.geneName;
-                
+
                 // only need to init once per variant
                 revel = annotation.revel;
                 primateAI = annotation.primateAI;
-                trapScore = annotation.trapScore;
             }
 
             StringJoiner annotationSJ = new StringJoiner("|");
@@ -281,8 +287,8 @@ public class AnnotatedVariant extends Variant {
                 && isCCRValid()
                 && isMTRValid()
                 && isPextValid()
-                && isRevelValid()
-                && isPrimateAIValid()
+                && RevelCommand.isValid(revel, effect)
+                && PrimateAICommand.isValid(primateAI, effect)
                 && isMPCValid();
     }
 
@@ -351,34 +357,6 @@ public class AnnotatedVariant extends Variant {
             pextRatio = PextManager.getRatio(chrStr, getStartPosition());
 
             return PextCommand.isPextRatioValid(pextRatio);
-        }
-
-        return true;
-    }
- 
-   // applied at variant level when --ensemble-missense not applied
-    private boolean isRevelValid() {
-        if (RevelCommand.isInclude && !AnnotationLevelFilterCommand.ensembleMissense) {
-            // REVEL filters will only apply missense variants
-            if (effect.startsWith("missense_variant")) {
-                return RevelCommand.isMinRevelValid(revel);
-            } else {
-                return true;
-            }
-        }
-
-        return true;
-    }
-
-    // applied at variant level when --ensemble-missense not applied
-    private boolean isPrimateAIValid() {
-        if (PrimateAICommand.isInclude && !AnnotationLevelFilterCommand.ensembleMissense) {
-            // PrimateAI filters will only apply missense variants
-            if (effect.startsWith("missense_variant")) {
-                return PrimateAICommand.isMinPrimateAIValid(primateAI);
-            } else {
-                return true;
-            }
         }
 
         return true;
@@ -569,15 +547,15 @@ public class AnnotatedVariant extends Variant {
         if (GMECommand.isInclude) {
             sj.add(getGME());
         }
-        
+
         if (TopMedCommand.isInclude) {
             sj.add(getTopMed());
         }
-        
+
         if (GenomeAsiaCommand.isInclude) {
             sj.add(getGenomeAsia());
         }
-        
+
         if (IranomeCommand.isInclude) {
             sj.add(getIranome());
         }
@@ -674,15 +652,15 @@ public class AnnotatedVariant extends Variant {
     public String getGME() {
         return FormatManager.getFloat(gmeAF);
     }
-    
+
     public String getTopMed() {
         return FormatManager.getFloat(topmedAF);
     }
-    
+
     public String getGenomeAsia() {
         return FormatManager.getFloat(genomeasiaAF);
     }
-    
+
     public String getIranome() {
         return FormatManager.getFloat(iranomeAF);
     }
