@@ -30,9 +30,7 @@ public class PrimateAICommand {
             // PrimateAI filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
                 return isMinPrimateAIValid(primateAI);
-            } else {
-                return true;
-            }
+            } 
         }
         
         return true;

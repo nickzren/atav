@@ -30,9 +30,7 @@ public class RevelCommand {
             // REVEL filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
                 return isMinRevelValid(revel);
-            } else {
-                return true;
-            }
+            } 
         }
 
         return true;
