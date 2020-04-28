@@ -29,7 +29,7 @@ public class PolyphenManager {
         return "probably";
     }
 
-    public static boolean isValid(float score, String effect, String inputPrediction) {
+    private static boolean isValid(float score, String effect, String inputPrediction) {
         if(inputPrediction.equals(Data.NO_FILTER_STR)) {
             return true;
         }
@@ -42,5 +42,14 @@ public class PolyphenManager {
         } else {
             return true;
         }
+    }
+    
+    public static boolean isValid(float polyphenHumdiv, float polyphenHumvar, String effect) {
+        if(AnnotationLevelFilterCommand.ensembleMissense) {
+            return true;
+        }
+        
+        return isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
+                && isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar);
     }
 }

@@ -23,6 +23,7 @@ public class Annotation {
     private int pos;
     private String ref;
     private String alt;
+    private boolean isIndel;
     private boolean isMNV;
     public String effect;
     public int effectID;
@@ -39,6 +40,7 @@ public class Annotation {
 
     public float revel;
     public float primateAI;
+    public float trapScore;
     private int ensembleMissenseValidCount;
     private int ensembleMissenseNACount;
 
@@ -49,7 +51,7 @@ public class Annotation {
         pos = rset.getInt("POS");
         ref = rset.getString("REF");
         alt = rset.getString("ALT");
-
+        isIndel = ref.length() != alt.length();
         isMNV = ref.length() > 1 && alt.length() > 1
                 && alt.length() == ref.length();
 
@@ -59,6 +61,7 @@ public class Annotation {
             currentVariantID = variantID;
             initRevel();
             initPrimateAI();
+            initTraP();
         }
 
         stableId = rset.getInt("transcript_stable_id");
@@ -87,8 +90,8 @@ public class Annotation {
     private void checkValid() {
         isValid = GeneManager.isValid(this, chr, pos)
                 && TranscriptManager.isValid(chr, stableId)
-                && isPolyphenAndTrapValid(chr, pos, ref, alt,
-                        polyphenHumdiv, polyphenHumvar, effect, effectID, geneName)
+                && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
+                && TrapCommand.isValid(trapScore, effect)
                 && isEnsembleMissenseValid();
     }
 
@@ -97,39 +100,6 @@ public class Annotation {
     }
 
     public boolean isValid() {
-        return isValid;
-    }
-
-    public static boolean isPolyphenAndTrapValid(String chr, int pos, String ref, String alt,
-            float polyphenHumdiv, float polyphenHumvar, String effect, int effectID, String geneName) {
-        boolean isPolyphenValid = PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
-                && PolyphenManager.isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar);
-        boolean isValid = isPolyphenValid;
-
-        float trapScore = Data.FLOAT_NA;
-        if (TrapCommand.minTrapScore != Data.NO_FILTER
-                || TrapCommand.minTrapScoreNonCoding != Data.NO_FILTER) {
-            boolean isMNV = ref.length() > 1 && alt.length() > 1 && alt.length() == ref.length();
-            trapScore = TrapManager.getScore(chr, pos, alt, isMNV, geneName);
-        }
-
-        // trap filter apply to missense variants when it failed to pass polyphen filter but exclude NA TraP
-        // trap filter apply to missense variants when polyphen filter not applied
-        // trap filter apply to annotation that effect less damaging than missense_variant and not 5_prime_UTR_premature_start_codon_gain_variant
-        if (effect.startsWith("missense_variant")) {
-            // when polyphen filter failed, to save variant needs to make sure trap filter used
-            if (!isPolyphenValid && TrapCommand.minTrapScore != Data.NO_FILTER) {
-                isValid = trapScore == Data.FLOAT_NA ? false : TrapCommand.isTrapScoreValid(trapScore);
-            } else if (AnnotationLevelFilterCommand.polyphenHumdiv.equals(Data.NO_FILTER_STR)
-                    && AnnotationLevelFilterCommand.polyphenHumvar.equals(Data.NO_FILTER_STR)) {
-                isValid = TrapCommand.isTrapScoreValid(trapScore);
-            }
-        } else if (effectID > EffectManager.MISSENSE_VARIANT_ID
-                && !effect.equals("5_prime_UTR_premature_start_codon_gain_variant")) {
-            isValid = TrapCommand.isTrapScoreValid(trapScore)
-                    && TrapCommand.isTrapScoreNonCodingValid(trapScore);
-        }
-
         return isValid;
     }
 
@@ -163,9 +133,15 @@ public class Annotation {
         }
     }
 
+    private void initTraP() {
+        if (TrapCommand.isInclude) {
+            trapScore = isIndel ? Data.FLOAT_NA : TrapManager.getScore(chr, pos, alt, isMNV, geneName);
+        }
+    }
+
     /*
         1. only applied when --ensemble-missense applied
-        2. all three filters required to applied 
+        2. it required to use --polyphen-humdiv, --min-revel-score and --min-primate-ai
      */
     private boolean isEnsembleMissenseValid() {
         if (AnnotationLevelFilterCommand.ensembleMissense) {
@@ -174,7 +150,7 @@ public class Annotation {
 
             if (effect.startsWith("missense_variant")) {
                 doEnsembleMissenseFilterCount(
-                        PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv),
+                        PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect),
                         polyphenHumdiv == Data.FLOAT_NA);
 
                 doEnsembleMissenseFilterCount(

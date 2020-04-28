@@ -12,23 +12,18 @@ public class TrapCommand {
     public static boolean isInclude = false;
 
     public static float minTrapScore = Data.NO_FILTER;
-    public static float minTrapScoreNonCoding = Data.NO_FILTER;
 
-    public static boolean isTrapScoreValid(float value) {
+    public static boolean isValid(float value, String effect) {
         if (value == Data.FLOAT_NA
                 || minTrapScore == Data.NO_FILTER) {
             return true;
         }
-
-        return value >= minTrapScore;
-    }
-    
-    public static boolean isTrapScoreNonCodingValid(float value) {
-        if (value == Data.FLOAT_NA
-                || minTrapScoreNonCoding == Data.NO_FILTER) {
+        
+        // only apply to missense variant
+        if (!effect.startsWith("missense_variant")) {
             return true;
         }
 
-        return value >= minTrapScoreNonCoding;
+        return value >= minTrapScore;
     }
 }

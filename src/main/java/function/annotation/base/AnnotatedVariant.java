@@ -44,9 +44,7 @@ import function.external.mtr.MTRCommand;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
 import function.external.primateai.PrimateAICommand;
-import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
-import function.external.revel.RevelManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
@@ -54,7 +52,6 @@ import function.external.subrvis.SubRvisOutput;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
-import function.external.trap.TrapManager;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -225,6 +222,7 @@ public class AnnotatedVariant extends Variant {
                 // only need to init once per variant
                 revel = annotation.revel;
                 primateAI = annotation.primateAI;
+                trapScore = annotation.trapScore;
             }
 
             StringJoiner annotationSJ = new StringJoiner("|");
@@ -273,11 +271,6 @@ public class AnnotatedVariant extends Variant {
 
         if (ExACCommand.isIncludeCount) {
             exacGeneVariantCountStr = ExACManager.getLine(getGeneName());
-        }
-
-        if (TrapCommand.isInclude) {
-            trapScore = isIndel() ? Data.FLOAT_NA
-                    : TrapManager.getScore(chrStr, getStartPosition(), allele, isMNV(), geneName);
         }
     }
 

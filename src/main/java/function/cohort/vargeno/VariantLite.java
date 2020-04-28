@@ -3,6 +3,7 @@ package function.cohort.vargeno;
 import function.annotation.base.Annotation;
 import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
+import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.collapsing.CollapsingCommand;
@@ -162,8 +163,8 @@ public class VariantLite {
             // --min-trap-score and --min-trap-score-non-coding applied
             if (EffectManager.isEffectContained(effect)
                     && GeneManager.isValid(geneName, chr, pos)
-                    && Annotation.isPolyphenAndTrapValid(chr, pos, ref, alt,
-                            polyphenHumdiv, polyphenHumvar, effect, effectID, geneName)) {
+                    && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
+                    && TrapCommand.isValid(trapScore, effect)) {
                 if (!mostDamagingAnnotation.isValid()) {
                     mostDamagingAnnotation.setValid(true);
                 }
@@ -247,8 +248,7 @@ public class VariantLite {
 
     private void initTrap(CSVRecord record) {
         if (TrapCommand.isInclude) {
-            if (TrapCommand.minTrapScore != Data.NO_FILTER
-                    || TrapCommand.minTrapScoreNonCoding != Data.NO_FILTER) {
+            if (TrapCommand.minTrapScore != Data.NO_FILTER) {
                 boolean isMNV = ref.length() > 1 && alt.length() > 1 && alt.length() == ref.length();
                 trapScore = TrapManager.getScore(chr, pos, alt, isMNV, mostDamagingAnnotation.geneName);
             } else {
