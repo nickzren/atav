@@ -29,7 +29,7 @@ public class PolyphenManager {
         return "probably";
     }
 
-    private static boolean isValid(float score, String effect, String inputPrediction) {
+    public static boolean isValid(float score, String effect, String inputPrediction) {
         if(inputPrediction.equals(Data.NO_FILTER_STR)) {
             return true;
         }
@@ -44,6 +44,7 @@ public class PolyphenManager {
         }
     }
     
+    // when --ensemble-missense used, always return true here
     public static boolean isValid(float polyphenHumdiv, float polyphenHumvar, String effect) {
         if(AnnotationLevelFilterCommand.ensembleMissense) {
             return true;

@@ -150,7 +150,7 @@ public class Annotation {
 
             if (effect.startsWith("missense_variant")) {
                 doEnsembleMissenseFilterCount(
-                        PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect),
+                        PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv),
                         polyphenHumdiv == Data.FLOAT_NA);
 
                 doEnsembleMissenseFilterCount(
