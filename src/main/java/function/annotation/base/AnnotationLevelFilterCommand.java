@@ -24,8 +24,6 @@ public class AnnotationLevelFilterCommand {
     public static String polyphenHumvar = Data.NO_FILTER_STR;
     public static boolean ensembleMissense = false;
 
-    public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
-
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
         CommandOption option;
@@ -51,11 +49,11 @@ public class AnnotationLevelFilterCommand {
                     break;
                 case "--polyphen":
                 case "--polyphen-humdiv":
-                    checkValuesValid(POLYPHEN_CAT, option);
+                    checkValuesValid(PolyphenManager.POLYPHEN_CAT, option);
                     polyphenHumdiv = option.getValue();
                     break;
                 case "--polyphen-humvar":
-                    checkValuesValid(POLYPHEN_CAT, option);
+                    checkValuesValid(PolyphenManager.POLYPHEN_CAT, option);
                     polyphenHumvar = option.getValue();
                     break;
                 case "--ensemble-missense":

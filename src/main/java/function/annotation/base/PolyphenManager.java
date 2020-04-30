@@ -8,34 +8,36 @@ import global.Data;
  */
 public class PolyphenManager {
 
-    public static String getPrediction(float score, String effect) {        
+    public static final String[] POLYPHEN_CAT = {"probably", "possibly", "unknown", "benign"};
+
+    public static String getPrediction(float score, String effect) {
         if (score == Data.FLOAT_NA) {
             if (effect.startsWith("missense_variant")
                     || effect.equals("splice_region_variant")) {
-                return "unknown";
+                return POLYPHEN_CAT[2];
             } else {
                 return Data.STRING_NA;
             }
         }
 
-        if (score < 0.4335) { //based on Liz's comment
-            return "benign";
+        if (score < 0.4335) {
+            return POLYPHEN_CAT[3];
         }
 
-        if (score < 0.9035) { //based on Liz's comment
-            return "possibly";
+        if (score < 0.9035) {
+            return POLYPHEN_CAT[1];
         }
 
-        return "probably";
+        return POLYPHEN_CAT[0];
     }
 
     public static boolean isValid(float score, String effect, String inputPrediction) {
-        if(inputPrediction.equals(Data.NO_FILTER_STR)) {
+        if (inputPrediction.equals(Data.NO_FILTER_STR)) {
             return true;
         }
-        
+
         String prediction = getPrediction(score, effect);
-        
+
         if (effect.startsWith("missense_variant")
                 || effect.equals("splice_region_variant")) {
             return inputPrediction.contains(prediction);
@@ -43,13 +45,13 @@ public class PolyphenManager {
             return true;
         }
     }
-    
+
     // when --ensemble-missense used, always return true here
     public static boolean isValid(float polyphenHumdiv, float polyphenHumvar, String effect) {
-        if(AnnotationLevelFilterCommand.ensembleMissense) {
+        if (AnnotationLevelFilterCommand.ensembleMissense) {
             return true;
         }
-        
+
         return isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
                 && isValid(polyphenHumvar, effect, AnnotationLevelFilterCommand.polyphenHumvar);
     }

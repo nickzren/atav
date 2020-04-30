@@ -136,8 +136,10 @@ public class Annotation {
             ensembleMissenseNACount = 0;
 
             if (effect.startsWith("missense_variant")) {
+                // count polyphen unknown as NA no mater valid or not
                 doEnsembleMissenseFilterCount(
-                        PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv),
+                        PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv) 
+                                || polyphenHumdiv == Data.FLOAT_NA,
                         polyphenHumdiv == Data.FLOAT_NA);
 
                 doEnsembleMissenseFilterCount(
