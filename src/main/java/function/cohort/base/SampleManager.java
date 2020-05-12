@@ -233,7 +233,9 @@ public class SampleManager {
     }
 
     private static void initAllSampleFromDB() {
-        String sqlCode = "SELECT * FROM sample WHERE sample_finished = 1 and sample_failure = 0 ";
+        String sqlCode = "SELECT * FROM sample "
+                + "WHERE sample_finished = 1 and sample_failure = 0 "
+                + "and sample_type != 'custom_capture'";
 
         if (CohortLevelFilterCommand.isAllExome) {
             sqlCode += " and sample_type = 'Exome'";

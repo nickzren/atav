@@ -2,6 +2,7 @@ package function.cohort.base;
 
 import global.Data;
 import java.util.Iterator;
+import java.util.Stack;
 import static utils.CommandManager.checkRangeValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidInteger;
@@ -41,6 +42,10 @@ public class GenotypeLevelFilterCommand {
     public static boolean isQcMissingIncluded = false;
     public static String genotypeFile = "";
 
+    // below variables all true will trigger ATAV only retrive high quality variants
+    // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP or DP Bin
+    private static boolean isHighQualityCallVariantOnly = false;
+
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
         CommandOption option;
@@ -56,7 +61,7 @@ public class GenotypeLevelFilterCommand {
                 case "--min-dp":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     minDp = getValidInteger(option);
-                    break;    
+                    break;
                 case "--include-hom-ref":
                     isIncludeHomRef = true;
                     break;
@@ -158,13 +163,45 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--genotype":
                     genotypeFile = getValidPath(option);
-                    break;    
+                    break;
                 default:
                     continue;
             }
 
             iterator.remove();
         }
+
+        initIsHighQualityVariantOnly();
+    }
+
+    private static void initIsHighQualityVariantOnly() {
+        // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP or DP Bin
+        if (minQual != Data.NO_FILTER
+                && minMQ != Data.NO_FILTER
+                && (minDpBin != Data.NO_FILTER || minDp != Data.NO_FILTER)
+                && filter != null) {
+            if (minQual >= 30
+                    && minMQ >= 40
+                    && (minDpBin >= 3
+                    || minDp >= 3)) {
+                Stack<Integer> stack = new Stack<>();
+                stack.add(Enum.FILTER.PASS.getValue());
+                stack.add(Enum.FILTER.LIKELY.getValue());
+                stack.add(Enum.FILTER.INTERMEDIATE.getValue());
+
+                for (int filterIndex : filter) {
+                    stack.removeElement(filterIndex);
+                }
+
+                if (stack.empty()) {
+                    isHighQualityCallVariantOnly = true;
+                }
+            }
+        }
+    }
+
+    public static boolean isHighQualityCallVariantOnly() {
+        return isHighQualityCallVariantOnly;
     }
 
     public static boolean isMinDpBinValid(short value) {
@@ -174,7 +211,7 @@ public class GenotypeLevelFilterCommand {
 
         return value >= minDpBin;
     }
-    
+
     public static boolean isMinDpValid(short value) {
         if (minDp == Data.NO_FILTER) {
             return true;
