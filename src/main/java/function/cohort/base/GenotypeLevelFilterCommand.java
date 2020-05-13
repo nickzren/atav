@@ -188,14 +188,16 @@ public class GenotypeLevelFilterCommand {
                 stack.add(Enum.FILTER.PASS.getValue());
                 stack.add(Enum.FILTER.LIKELY.getValue());
                 stack.add(Enum.FILTER.INTERMEDIATE.getValue());
+                stack.add(Enum.FILTER.FAIL.getValue());
 
                 for (int filterIndex : filter) {
                     stack.removeElement(filterIndex);
                 }
 
-                if (stack.empty()) {
+                if (stack.size() == 1 
+                        && stack.contains(Enum.FILTER.FAIL.getValue())) {
                     isHighQualityCallVariantOnly = true;
-                }
+                } 
             }
         }
     }
