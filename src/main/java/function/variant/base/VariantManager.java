@@ -405,7 +405,7 @@ public class VariantManager {
 
     // get LOFTEE HC in CCDS
     public static Boolean getLOFTEEHCinCCDS(CSVRecord record) {
-        return FormatManager.getBoolean(record.get("LOFTEE-HC in CCDS"));
+        return FormatManager.getBoolean(record, "LOFTEE-HC in CCDS");
     }
 
     public static boolean isUsed() {

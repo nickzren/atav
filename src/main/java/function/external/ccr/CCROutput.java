@@ -34,8 +34,8 @@ public class CCROutput {
         }
     }
     
-    public CCROutput(CSVRecord record) {
-        percentile = FormatManager.getFloat(record.get("CCR Percentile"));
+    public CCROutput(CSVRecord record) {        
+        percentile = FormatManager.getFloat(record, "CCR Percentile");
     }
 
     public StringJoiner getStringJoiner() {

@@ -44,9 +44,7 @@ import function.external.mtr.MTRCommand;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
 import function.external.primateai.PrimateAICommand;
-import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
-import function.external.revel.RevelManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
@@ -138,7 +136,7 @@ public class AnnotatedVariant extends Variant {
 
             isValid = GMECommand.isMaxGMEAFValid(gmeAF);
         }
-        
+
         if (isValid && IranomeCommand.isInclude) {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
@@ -150,7 +148,7 @@ public class AnnotatedVariant extends Variant {
 
             isValid = TopMedCommand.isMaxAFValid(topmedAF);
         }
-        
+
         if (isValid && GenomeAsiaCommand.isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
@@ -199,6 +197,12 @@ public class AnnotatedVariant extends Variant {
             isValid = genomes.isValid();
         }
 
+        if (isValid && TrapCommand.isInclude) {
+            trapScore = isIndel() ? Data.FLOAT_NA : TrapManager.getScore(chrStr, startPosition, allele, isMNV(), geneName);
+
+            isValid = TrapCommand.isValid(trapScore, effect);
+        }
+
         if (isValid && DiscovEHRCommand.isInclude) {
             discovEHR = new DiscovEHR(chrStr, startPosition, refAllele, allele);
 
@@ -221,6 +225,10 @@ public class AnnotatedVariant extends Variant {
                 HGVS_c = annotation.HGVS_c;
                 HGVS_p = annotation.HGVS_p;
                 geneName = annotation.geneName;
+
+                // only need to init once per variant
+                revel = annotation.revel;
+                primateAI = annotation.primateAI;
             }
 
             StringJoiner annotationSJ = new StringJoiner("|");
@@ -270,11 +278,6 @@ public class AnnotatedVariant extends Variant {
         if (ExACCommand.isIncludeCount) {
             exacGeneVariantCountStr = ExACManager.getLine(getGeneName());
         }
-
-        if (TrapCommand.isInclude) {
-            trapScore = isIndel() ? Data.FLOAT_NA
-                    : TrapManager.getScore(chrStr, getStartPosition(), allele, isMNV(), geneName);
-        }
     }
 
     public boolean isValid() {
@@ -284,8 +287,8 @@ public class AnnotatedVariant extends Variant {
                 && isCCRValid()
                 && isMTRValid()
                 && isPextValid()
-                && isRevelValid()
-                && isPrimateAIValid()
+                && RevelCommand.isValid(revel, effect)
+                && PrimateAICommand.isValid(primateAI, effect)
                 && isMPCValid();
     }
 
@@ -359,38 +362,6 @@ public class AnnotatedVariant extends Variant {
         return true;
     }
 
-    // init REVEL score base on most damaging gene and applied filter
-    private boolean isRevelValid() {
-        if (RevelCommand.isInclude) {
-            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
-
-            // REVEL filters will only apply missense variants
-            if (effect.startsWith("missense_variant")) {
-                return RevelCommand.isMinRevelValid(revel);
-            } else {
-                return true;
-            }
-        }
-
-        return true;
-    }
-
-    // init PrimateAI score base on most damaging gene and applied filter
-    private boolean isPrimateAIValid() {
-        if (PrimateAICommand.isInclude) {
-            primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
-
-            // PrimateAI filters will only apply missense variants
-            if (effect.startsWith("missense_variant")) {
-                return PrimateAICommand.isMinPrimateAIValid(primateAI);
-            } else {
-                return true;
-            }
-        }
-
-        return true;
-    }
-
     // init MPC score base on most damaging gene and applied filter
     private boolean isMPCValid() {
         if (MPCCommand.isInclude) {
@@ -423,6 +394,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
+        sj.add(GeneManager.getAllGeneSymbol(geneList));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
 
@@ -576,15 +548,15 @@ public class AnnotatedVariant extends Variant {
         if (GMECommand.isInclude) {
             sj.add(getGME());
         }
-        
+
         if (TopMedCommand.isInclude) {
             sj.add(getTopMed());
         }
-        
+
         if (GenomeAsiaCommand.isInclude) {
             sj.add(getGenomeAsia());
         }
-        
+
         if (IranomeCommand.isInclude) {
             sj.add(getIranome());
         }
@@ -681,15 +653,15 @@ public class AnnotatedVariant extends Variant {
     public String getGME() {
         return FormatManager.getFloat(gmeAF);
     }
-    
+
     public String getTopMed() {
         return FormatManager.getFloat(topmedAF);
     }
-    
+
     public String getGenomeAsia() {
         return FormatManager.getFloat(genomeasiaAF);
     }
-    
+
     public String getIranome() {
         return FormatManager.getFloat(iranomeAF);
     }

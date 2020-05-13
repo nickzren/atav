@@ -1,5 +1,6 @@
 package function.external.revel;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
 
 /**
@@ -15,11 +16,23 @@ public class RevelCommand {
     public static float minRevel = Data.NO_FILTER;
 
     public static boolean isMinRevelValid(float value) {
-        if (minRevel == Data.NO_FILTER) {
+        if (value == Data.FLOAT_NA
+                || minRevel == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= minRevel
-                || value == Data.FLOAT_NA;
+        return value >= minRevel;
+    }
+    
+    // applied at variant level when --ensemble-missense not applied
+    public static boolean isValid(float revel, String effect) {
+        if (isInclude && !AnnotationLevelFilterCommand.ensembleMissense) {
+            // REVEL filters will only apply missense variants
+            if (effect.startsWith("missense_variant")) {
+                return isMinRevelValid(revel);
+            } 
+        }
+
+        return true;
     }
 }

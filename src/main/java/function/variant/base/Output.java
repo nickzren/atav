@@ -97,6 +97,7 @@ public class Output {
         sj.add("Polyphen Humvar Prediction (CCDS)");
         sj.add("Gene Name");
         sj.add("UpToDate Gene Name");
+        sj.add("All Gene Symbols");
         sj.add("Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar");
 
         return sj;

@@ -234,9 +234,8 @@ public class SampleManager {
 
     private static void initAllSampleFromDB() {
         String sqlCode = "SELECT * FROM sample "
-                + "WHERE sample_type != 'custom_capture' "
-                + "and sample_finished = 1 "
-                + "and sample_failure = 0 ";
+                + "WHERE sample_finished = 1 and sample_failure = 0 "
+                + "and sample_type != 'custom_capture'";
 
         if (CohortLevelFilterCommand.isAllExome) {
             sqlCode += " and sample_type = 'Exome'";
@@ -367,13 +366,13 @@ public class SampleManager {
                     LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
                     continue;
                 }
-
-                if (!sampleNameSet.contains(individualId)) {
-                    sampleNameSet.add(individualId);
-                } else {
-                    // do not allow duplicate samples
-                    continue;
-                }
+                
+//                if (!sampleNameSet.contains(individualId)) {
+//                    sampleNameSet.add(individualId);
+//                } else {
+//                    // do not allow duplicate samples
+//                    continue;
+//                }
 
                 String paternalId = "0";
                 String maternalId = "0";

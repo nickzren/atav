@@ -45,17 +45,17 @@ public class SubRvisOutput {
         if (!record.isMapped(column)) {
             column = "subRVIS Domain Score Percentile";
         }
-        domainPercentile = FormatManager.getFloat(record.get(column));
-
-        mtrDomainPercentile = FormatManager.getFloat(record.get("MTR Domain Percentile"));
+        domainPercentile = FormatManager.getFloat(record, column);
+        
+        mtrDomainPercentile = FormatManager.getFloat(record, "MTR Domain Percentile");
 
         column = "subRVIS Exon Percentile";
         if (!record.isMapped(column)) {
             column = "subRVIS Exon Score Percentile";
         }
-        exonPercentile = FormatManager.getFloat(record.get(column));
+        exonPercentile = FormatManager.getFloat(record, column);
 
-        mtrExonPercentile = FormatManager.getFloat(record.get("MTR Exon Percentile"));
+        mtrExonPercentile = FormatManager.getFloat(record, "MTR Exon Percentile");
     }
 
     public float getDomainPercentile() {

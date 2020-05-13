@@ -41,8 +41,8 @@ public class LIMBROutput {
     }
 
     public LIMBROutput(CSVRecord record) {
-        domainPercentile = FormatManager.getFloat(record.get("LIMBR Domain Percentile"));
-        exonPercentile = FormatManager.getFloat(record.get("LIMBR Exon Percentile"));
+        domainPercentile = FormatManager.getFloat(record, "LIMBR Domain Percentile");
+        exonPercentile = FormatManager.getFloat(record, "LIMBR Exon Percentile");
     }
 
     public StringJoiner getStringJoiner() {

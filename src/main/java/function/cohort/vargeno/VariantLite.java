@@ -3,6 +3,7 @@ package function.cohort.vargeno;
 import function.annotation.base.Annotation;
 import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
+import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.collapsing.CollapsingCommand;
@@ -101,6 +102,10 @@ public class VariantLite {
 
         isSNV = ref.length() == alt.length();
 
+        // init to apply per annotation
+        initREVEL(record);
+        initPrimateAI(record);
+
         String allAnnotation = record.get(ListVarGenoLite.ALL_ANNOTATION_HEADER);
         processAnnotation(
                 allAnnotation,
@@ -117,14 +122,13 @@ public class VariantLite {
             initDiscovEHR(record);
             initLOFTEE(record);
             initMTR(record);
-            initREVEL(record);
-            initPrimateAI(record);
             initMPC(record);
             initPEXT(record);
             initGME(record);
             initTopMed(record);
             initGenomeAsia(record);
             initIranome(record);
+            
             qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
             qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
 
@@ -138,10 +142,9 @@ public class VariantLite {
         // isValid to false means no annotations passed the filters
         mostDamagingAnnotation.setValid(false);
 
-        for (String annotation : allAnnotation.split(",")) {
-            String[] values = annotation.split("\\|");
+        for (String annotationStr : allAnnotation.split(",")) {
+            String[] values = annotationStr.split("\\|");
             String effect = values[0];
-            int effectID = EffectManager.getIdByEffect(effect);
             String geneName = values[1];
 
             // if --gene-column used, ATAV will perform collapsing by input gene column values
@@ -156,14 +159,21 @@ public class VariantLite {
             float polyphenHumdiv = FormatManager.getFloat(values[5]);
             float polyphenHumvar = FormatManager.getFloat(values[6]);
 
+            // init annotation in order to apply --ensemble-missense filter
+            Annotation annotation = new Annotation();
+            annotation.effect = effect;
+            annotation.polyphenHumdiv = polyphenHumdiv;
+            annotation.revel = revel.getRevel();
+            annotation.primateAI = primateAI.getPrimateDLScore();
+
             // --effect filter applied
             // --gene or --gene-boundary filter applied
             // --polyphen-humdiv filter applied
-            // --min-trap-score and --min-trap-score-non-coding applied
+            // --ensemble-missens applied
             if (EffectManager.isEffectContained(effect)
                     && GeneManager.isValid(geneName, chr, pos)
-                    && Annotation.isPolyphenAndTrapValid(chr, pos, ref, alt,
-                            polyphenHumdiv, polyphenHumvar, effect, effectID, geneName)) {
+                    && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
+                    && annotation.isEnsembleMissenseValid()) {
                 if (!mostDamagingAnnotation.isValid()) {
                     mostDamagingAnnotation.setValid(true);
                 }
@@ -246,9 +256,10 @@ public class VariantLite {
     }
 
     private void initTrap(CSVRecord record) {
+        trapScore = Data.FLOAT_NA;
+        
         if (TrapCommand.isInclude) {
-            if (TrapCommand.minTrapScore != Data.NO_FILTER
-                    || TrapCommand.minTrapScoreNonCoding != Data.NO_FILTER) {
+            if (TrapCommand.minTrapScore != Data.NO_FILTER) {
                 boolean isMNV = ref.length() > 1 && alt.length() > 1 && alt.length() == ref.length();
                 trapScore = TrapManager.getScore(chr, pos, alt, isMNV, mostDamagingAnnotation.geneName);
             } else {
@@ -359,6 +370,7 @@ public class VariantLite {
                 && isMTRValid()
                 && isRevelValid()
                 && isPrimateAIValid()
+                && TrapCommand.isValid(trapScore, mostDamagingAnnotation.effect)
                 && isMPCValid()
                 && isPextValid()
                 && isGMEAFValid()
@@ -492,12 +504,7 @@ public class VariantLite {
             return true;
         }
 
-        // Revel filter will only apply missense variants
-        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
-            return revel.isValid();
-        }
-
-        return true;
+        return RevelCommand.isValid(revel.getRevel(), mostDamagingAnnotation.effect);
     }
 
     private boolean isPrimateAIValid() {
@@ -505,12 +512,7 @@ public class VariantLite {
             return true;
         }
 
-        // PrimateAI filter will only apply missense variants
-        if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
-            return primateAI.isValid();
-        }
-
-        return true;
+        return PrimateAICommand.isValid(primateAI.getPrimateDLScore(), mostDamagingAnnotation.effect);
     }
 
     private boolean isMPCValid() {

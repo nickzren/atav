@@ -1,5 +1,6 @@
 package function.external.revel;
 
+import global.Data;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
@@ -11,6 +12,7 @@ import utils.FormatManager;
  * @author nick
  */
 public class Revel {
+
     private String chr;
     private int pos;
     private String ref;
@@ -18,7 +20,7 @@ public class Revel {
     private String aaref;
     private String aaalt;
     private float revel;
-    
+
     public Revel(ResultSet rs) {
         try {
             chr = rs.getString("chr");
@@ -32,11 +34,11 @@ public class Revel {
             ErrorManager.send(e);
         }
     }
-    
+
     public Revel(CSVRecord record) {
-        revel = FormatManager.getFloat(record.get("REVEL"));
+        revel = FormatManager.getFloat(record, "REVEL");
     }
-    
+
     public boolean isValid() {
         return RevelCommand.isMinRevelValid(revel);
     }
@@ -44,11 +46,15 @@ public class Revel {
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
-    
-    public String getRevel() {
+
+    public float getRevel() {
+        return revel;
+    }
+
+    public String getRevelStr() {
         return FormatManager.getFloat(revel);
     }
-    
+
     @Override
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
@@ -56,7 +62,7 @@ public class Revel {
         sj.add(getVariantId());
         sj.add(aaref);
         sj.add(aaalt);
-        sj.add(getRevel());
+        sj.add(getRevelStr());
 
         return sj.toString();
     }
