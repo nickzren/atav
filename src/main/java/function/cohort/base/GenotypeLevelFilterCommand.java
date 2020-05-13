@@ -43,7 +43,7 @@ public class GenotypeLevelFilterCommand {
     public static String genotypeFile = "";
 
     // below variables all true will trigger ATAV only retrive high quality variants
-    // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP or DP Bin
+    // FILTER = PASS
     private static boolean isHighQualityCallVariantOnly = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
@@ -175,29 +175,19 @@ public class GenotypeLevelFilterCommand {
     }
 
     private static void initIsHighQualityVariantOnly() {
-        // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP or DP Bin
-        if (minQual != Data.NO_FILTER
-                && minMQ != Data.NO_FILTER
-                && (minDpBin != Data.NO_FILTER || minDp != Data.NO_FILTER)
-                && filter != null) {
-            if (minQual >= 30
-                    && minMQ >= 40
-                    && (minDpBin >= 3
-                    || minDp >= 3)) {
-                Stack<Integer> stack = new Stack<>();
-                stack.add(Enum.FILTER.PASS.getValue());
-                stack.add(Enum.FILTER.LIKELY.getValue());
-                stack.add(Enum.FILTER.INTERMEDIATE.getValue());
-                stack.add(Enum.FILTER.FAIL.getValue());
+        // FILTER = PASS
+        if (filter != null) {
+            Stack<Integer> stack = new Stack<>();
+            stack.add(Enum.FILTER.PASS.getValue());
+            stack.add(Enum.FILTER.FAIL.getValue());
 
-                for (int filterIndex : filter) {
-                    stack.removeElement(filterIndex);
-                }
+            for (int filterIndex : filter) {
+                stack.removeElement(filterIndex);
+            }
 
-                if (stack.size() == 1 
-                        && stack.contains(Enum.FILTER.FAIL.getValue())) {
-                    isHighQualityCallVariantOnly = true;
-                } 
+            if (stack.size() == 1
+                    && stack.contains(Enum.FILTER.FAIL.getValue())) {
+                isHighQualityCallVariantOnly = true;
             }
         }
     }
