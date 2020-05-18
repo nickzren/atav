@@ -240,8 +240,6 @@ public class SampleManager {
         if (CohortLevelFilterCommand.isAllExome) {
             sqlCode += " and sample_type = 'Exome'";
         }
-        
-        sqlCode += " and sample_name not like 'SRR%'";
 
         initSampleFromDB(sqlCode);
     }
