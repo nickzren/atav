@@ -7,6 +7,7 @@ import global.Data;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -219,5 +220,14 @@ public class RegionManager {
     */
     public static ArrayList<String> getChrList() {
         return chrList;
+    }
+    
+    public static boolean isRegionInputValid(String value) {
+        if (Pattern.matches("^[chrxymtCHRXYMT0-9\\:\\-\\,]+$", value)) {
+            return true;
+        } else {
+            File file = new File(value);
+            return file.exists();
+        }
     }
 }

@@ -40,6 +40,7 @@ import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.outputInvalidOptionValue;
 
 /**
  *
@@ -68,10 +69,18 @@ public class VariantLevelFilterCommand {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--region":
-                    CommonCommand.regionInput = option.getValue();
+                    if (RegionManager.isRegionInputValid(option.getValue())) {
+                        CommonCommand.regionInput = option.getValue();
+                    } else {
+                        outputInvalidOptionValue(option);
+                    }
                     break;
                 case "--variant":
-                    includeVariantId = option.getValue();
+                    if (VariantManager.isVariantIdInputValid(option.getValue())) {
+                        includeVariantId = option.getValue();
+                    } else {
+                        outputInvalidOptionValue(option);
+                    }
                     break;
                 case "--rs-number":
                     includeRsNumber = option.getValue();
@@ -403,7 +412,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-genome-asia":
                     GenomeAsiaCommand.isInclude = true;
-                    break; 
+                    break;
                 case "--include-iranome":
                     IranomeCommand.isInclude = true;
                     break;

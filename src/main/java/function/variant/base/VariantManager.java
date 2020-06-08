@@ -1,8 +1,5 @@
 package function.variant.base;
 
-import function.annotation.base.AnnotationLevelFilterCommand;
-import function.annotation.base.EffectManager;
-import function.annotation.base.PolyphenManager;
 import function.external.knownvar.ClinVar;
 import function.external.knownvar.HGMD;
 import function.external.knownvar.KnownVarManager;
@@ -11,17 +8,17 @@ import function.cohort.base.SampleManager;
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.parent.ParentCommand;
 import function.cohort.trio.TrioCommand;
-import function.external.trap.TrapCommand;
-import function.external.trap.TrapManager;
 import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
+import java.nio.file.Files;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.regex.Pattern;
 import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 import utils.FormatManager;
@@ -410,5 +407,18 @@ public class VariantManager {
 
     public static boolean isUsed() {
         return isUsed;
+    }
+    
+    public static boolean isVariantIdInputValid(String value) {
+        if (Pattern.matches("^[atcgATCG0-9-,]+$", value)) {
+            return true;
+        } else {
+            File file = new File(value);
+            return file.exists();
+        }
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(isVariantIdInputValid("1-1231507-G-A,1-7827441-T-A"));
     }
 }
