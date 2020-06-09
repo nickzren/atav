@@ -1,13 +1,15 @@
 package function.external.gnomad;
 
 import function.external.base.DataManager;
-import function.variant.base.Region;
+import function.variant.base.RegionManager;
 import global.Data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.StringJoiner;
+import utils.DBManager;
 import utils.ErrorManager;
 
 /**
@@ -40,10 +42,42 @@ public class GnomADManager {
     private static StringJoiner geneMetricsHeader = new StringJoiner(",");
     private static final HashMap<String, String> geneMap = new HashMap<>();
     private static StringJoiner NA = new StringJoiner(",");
-    
+
+    private static PreparedStatement preparedStatement4VariantExome;
+    private static PreparedStatement preparedStatement4MNVExome;
+    private static PreparedStatement preparedStatement4RegionExome;
+    private static final HashMap<String, PreparedStatement> preparedStatement4VariantGenomeMap = new HashMap<>();
+    private static PreparedStatement preparedStatement4MNVGenome;
+    private static final HashMap<String, PreparedStatement> preparedStatement4RegionGenomeMap = new HashMap<>();
+
     public static void init() {
-        if(GnomADCommand.isIncludeGeneMetrics) {
+        if (GnomADCommand.isIncludeGeneMetrics) {
             initGeneMap();
+        }
+
+        initPreparedStatement();
+    }
+
+    public static void initPreparedStatement() {
+        if (GnomADCommand.isIncludeExome) {
+            String sql = "SELECT * FROM " + exomeVariantTable + " WHERE chr =? AND pos =? AND ref =? AND alt =?";
+            preparedStatement4VariantExome = DBManager.initPreparedStatement(sql);
+            sql = "SELECT * FROM " + exomeMNVTable + " WHERE chr =? AND pos =? AND ref =? AND alt =?";
+            preparedStatement4MNVExome = DBManager.initPreparedStatement(sql);
+            sql = "SELECT * FROM " + exomeVariantTable + " WHERE chr=? AND pos BETWEEN ? AND ?";
+            preparedStatement4RegionExome = DBManager.initPreparedStatement(sql);
+        }
+
+        if (GnomADCommand.isIncludeGenome) {
+            String sql = "SELECT * FROM " + genomeMNVTable + " WHERE chr=? AND pos=? AND ref=? AND alt=?";
+            preparedStatement4MNVGenome = DBManager.initPreparedStatement(sql);
+            for (String chr : RegionManager.ALL_CHR) {
+                sql = "SELECT * FROM " + genomeVariantTable + chr + " WHERE chr=? AND pos=? AND ref=? AND alt=?";
+                preparedStatement4VariantGenomeMap.put(chr, DBManager.initPreparedStatement(sql));
+
+                sql = "SELECT * FROM " + genomeVariantTable + chr + " WHERE chr=? AND pos BETWEEN ? AND ?";
+                preparedStatement4RegionGenomeMap.put(chr, DBManager.initPreparedStatement(sql));
+            }
         }
     }
 
@@ -61,7 +95,7 @@ public class GnomADManager {
         for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
             String pop = GnomADManager.GNOMAD_EXOME_POP[i];
             sj.add("gnomAD Exome " + pop + "_AF");
-            
+
             switch (i) {
                 case 0: // global
                 case 1: // controls
@@ -93,7 +127,7 @@ public class GnomADManager {
         for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
             String pop = GnomADManager.GNOMAD_GENOME_POP[i];
             sj.add("gnomAD Genome " + pop + "_AF");
-            
+
             switch (i) {
                 case 0: // global
                 case 1: // controls
@@ -110,7 +144,7 @@ public class GnomADManager {
 
         return sj.toString();
     }
-    
+
     public static String getGeneMetricsHeader() {
         return geneMetricsHeader.toString();
     }
@@ -122,95 +156,63 @@ public class GnomADManager {
     public static String getGenomeVersion() {
         return "gnomAD Genome: " + DataManager.getVersion(genomeVariantTable) + "\n";
     }
-    
+
     public static String getGeneMetricsVersion() {
         return "gnomAD Gene Metrics: " + DataManager.getVersion(GENE_METRICS_PATH) + "\n";
     }
 
-    public static String getSql4ExomeVariant(Region region) {
-        String sql = "SELECT * FROM " + exomeVariantTable + " "
-                + "WHERE chr = '" + region.getChrStr() + "' "
-                + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
-
-        return sql;
-    }
-
-    public static String getSql4GenomeVariant(Region region) {
-        String sql = "SELECT * FROM " + genomeVariantTable + region.getChrStr() + " "
-                + "WHERE chr = '" + region.getChrStr() + "' "
-                + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
-
-        return sql;
-    }
-
-    public static String getSql4ExomeVariant(String chr,
-            int pos, String ref, String alt, boolean isMNV) {
-        String table = exomeVariantTable;
-        if (isMNV) {
-            table = exomeMNVTable;
-        }
-
-        String sql = "SELECT * FROM " + table + " "
-                + "WHERE chr = '" + chr + "' "
-                + "AND pos = " + pos + " "
-                + "AND ref = '" + ref + "' "
-                + "AND alt = '" + alt + "'";
-
-        return sql;
-    }
-
-    public static String getSql4GenomeVariant(String chr,
-            int pos, String ref, String alt, boolean isMNV) {
-        String table = genomeVariantTable + chr;
-        if (isMNV) {
-            table = genomeMNVTable;
-        }
-
-        String sql = "SELECT * FROM " + table + " "
-                + "WHERE chr = '" + chr + "' "
-                + "AND pos = " + pos + " "
-                + "AND ref = '" + ref + "' "
-                + "AND alt = '" + alt + "'";
-
-        return sql;
-    }
-    
     private static void initGeneMap() {
         try {
             File f = new File(Data.ATAV_HOME + GENE_METRICS_PATH);
             FileReader fr = new FileReader(f);
             BufferedReader br = new BufferedReader(fr);
-            
+
             String lineStr = "";
             boolean isFirstLine = true;
             while ((lineStr = br.readLine()) != null) {
                 int firstCommaIndex = lineStr.indexOf(",");
                 String geneName = lineStr.substring(0, firstCommaIndex);
                 String values = lineStr.substring(firstCommaIndex + 1);
-                
+
                 if (isFirstLine) {
                     for (String str : values.split(",")) {
                         geneMetricsHeader.add("gnomAD Gene " + str);
-                        
+
                         NA.add(Data.STRING_NA);
                     }
-                    
+
                     isFirstLine = false;
                 } else {
                     geneMap.put(geneName, values);
                 }
             }
-            
+
             br.close();
             fr.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-    
+
     public static String getGeneMetricsLine(String geneName) {
         String line = geneMap.get(geneName);
 
         return line == null ? NA.toString() : line;
+    }
+
+    public static PreparedStatement getPreparedStatement4VariantExome(boolean isMNV) {
+        return isMNV ? preparedStatement4MNVExome : preparedStatement4VariantExome;
+    }
+
+    public static PreparedStatement getPreparedStatement4RegionExome() {
+        return preparedStatement4RegionExome;
+    }
+
+    public static PreparedStatement getPreparedStatement4VariantGenome(String chr, boolean isMNV) {
+        return isMNV ? preparedStatement4MNVGenome : preparedStatement4VariantGenomeMap.get(chr);
+    }
+
+    public static PreparedStatement getPreparedStatement4RegionGenome(String chr) {
+        return preparedStatement4RegionGenomeMap.get(chr);
     }
 }

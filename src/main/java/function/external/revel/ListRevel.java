@@ -6,9 +6,9 @@ import function.variant.base.RegionManager;
 import function.variant.base.VariantManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import utils.CommonCommand;
-import utils.DBManager;
 import utils.ErrorManager;
 
 /**
@@ -16,9 +16,10 @@ import utils.ErrorManager;
  * @author nick
  */
 public class ListRevel extends AnalysisBase {
+
     BufferedWriter bwRevel = null;
     final String revelFilePath = CommonCommand.outputPath + "revel.csv";
-    
+
     @Override
     public void initOutput() {
         try {
@@ -39,7 +40,7 @@ public class ListRevel extends AnalysisBase {
             ErrorManager.send(ex);
         }
     }
-    
+
     @Override
     public void doAfterCloseOutput() {
     }
@@ -51,19 +52,18 @@ public class ListRevel extends AnalysisBase {
     @Override
     public void afterProcessDatabaseData() {
     }
-    
+
     @Override
     public void processDatabaseData() throws Exception {
         for (int r = 0; r < RegionManager.getRegionSize(); r++) {
-
             Region region = RegionManager.getRegion(r);
-
-            String sqlCode = RevelManager.getSqlByRegion(region);
-
-            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
-
-            while (rset.next()) {
-                RevelOutput output = new RevelOutput(rset);
+            PreparedStatement preparedStatemen = RevelManager.getPreparedStatement4Region();
+            preparedStatemen.setString(1, region.getChrStr());
+            preparedStatemen.setInt(2, region.getStartPosition());
+            preparedStatemen.setInt(3, region.getEndPosition());
+            ResultSet rs = preparedStatemen.executeQuery();
+            while (rs.next()) {
+                RevelOutput output = new RevelOutput(rs);
 
                 if (VariantManager.isVariantIdIncluded(output.revel.getVariantId())
                         && output.isValid()) {
@@ -72,7 +72,7 @@ public class ListRevel extends AnalysisBase {
                 }
             }
 
-            rset.close();
+            rs.close();
         }
     }
 

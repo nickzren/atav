@@ -1,6 +1,7 @@
 package function.external.mtr;
 
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
@@ -49,10 +50,10 @@ public class MTR {
 
     private void initMTR() {
         try {
-            String sql = MTRManager.getSql4MTR(chr, pos);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = MTRManager.getPreparedStatement4Site();
+            preparedStatement.setString(1, chr);
+            preparedStatement.setInt(2, pos);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 mtr = getFloat((Float) rs.getObject("MTR"));
                 mtrFDR = getFloat((Float) rs.getObject("FDR"));

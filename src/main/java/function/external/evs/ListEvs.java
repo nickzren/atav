@@ -8,8 +8,8 @@ import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import utils.DBManager;
 
 /**
  *
@@ -56,15 +56,14 @@ public class ListEvs extends AnalysisBase {
     @Override
     public void processDatabaseData() throws Exception {
         for (int r = 0; r < RegionManager.getRegionSize(); r++) {
-
             Region region = RegionManager.getRegion(r);
-
-            String sqlCode = EvsManager.getSqlByRegion(region);
-
-            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
-
-            while (rset.next()) {
-                EvsOutput output = new EvsOutput(rset);
+            PreparedStatement preparedStatement = EvsManager.getPreparedStatement4Region();
+            preparedStatement.setString(1, region.getChrStr());
+            preparedStatement.setInt(2, region.getStartPosition());
+            preparedStatement.setInt(3, region.getEndPosition());
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                EvsOutput output = new EvsOutput(rs);
 
                 if (VariantManager.isVariantIdIncluded(output.evs.getVariantId())
                         && output.isValid()) {
@@ -74,7 +73,7 @@ public class ListEvs extends AnalysisBase {
                 }
             }
 
-            rset.close();
+            rs.close();
         }
     }
 

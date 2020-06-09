@@ -1,10 +1,13 @@
 package function.external.trap;
 
 import function.external.base.DataManager;
+import function.variant.base.RegionManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -25,6 +28,25 @@ public class TrapManager {
     private static String gene = Data.STRING_NA;
     private static float score = Data.FLOAT_NA;
 
+    private static final HashMap<String, PreparedStatement> preparedStatement4VariantGeneMap = new HashMap<>();
+    private static PreparedStatement preparedStatement4MNVGene;
+    private static final HashMap<String, PreparedStatement> preparedStatement4VariantMap = new HashMap<>();
+
+    public static void init() {
+        if (TrapCommand.isInclude) {
+            String sql = "SELECT score FROM " + mnvTable + " WHERE pos=? AND alt=? AND hgnc_gene=?";
+            preparedStatement4MNVGene = DBManager.initPreparedStatement(sql);
+
+            for (String chr : RegionManager.ALL_CHR) {
+                sql = "SELECT score FROM " + variantTable + chr + " WHERE pos=? AND alt=? AND hgnc_gene=?";
+                preparedStatement4VariantGeneMap.put(chr, DBManager.initPreparedStatement(sql));
+                
+                sql = "SELECT hgnc_gene,score FROM " + variantTable + chr + " WHERE pos=? AND alt=?";
+                preparedStatement4VariantMap.put(chr, DBManager.initPreparedStatement(sql));
+            }
+        }
+    }
+
     public static String getHeader() {
         return "TraP Score";
     }
@@ -33,7 +55,7 @@ public class TrapManager {
         return "TraP: " + DataManager.getVersion(variantTable) + "\n";
     }
 
-    public static float getScore(String _chr, int _pos, String _alt, 
+    public static float getScore(String _chr, int _pos, String _alt,
             boolean isMNV, String _gene) {
         if (chr.equals(_chr) && pos == _pos && alt.equals(_alt) && gene.equals(_gene)) {
             return score;
@@ -44,26 +66,19 @@ public class TrapManager {
             gene = _gene;
         }
 
-        String table = variantTable + chr;
-        if(isMNV) {
-            table = mnvTable;
-        }
-        
         try {
-            String sql = "SELECT score "
-                    + "FROM " + table + " "
-                    + "WHERE pos = " + pos + " "
-                    + "AND alt ='" + alt + "' "
-                    + "AND hgnc_gene = '" + gene + "'";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = isMNV 
+                    ? preparedStatement4MNVGene : preparedStatement4VariantGeneMap.get(chr);
+            preparedStatement.setInt(1, pos);
+            preparedStatement.setString(2, alt);
+            preparedStatement.setString(3, gene);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 score = rs.getFloat("score");
             } else {
                 score = Data.FLOAT_NA;
             }
-            
+
             rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);
@@ -71,7 +86,7 @@ public class TrapManager {
 
         return score;
     }
-    
+
     public static float getScore(CSVRecord record) {
         return FormatManager.getFloat(record, getHeader());
     }
@@ -80,20 +95,17 @@ public class TrapManager {
         ArrayList<Trap> list = new ArrayList<>();
 
         try {
-            String sql = "SELECT hgnc_gene,score "
-                    + "FROM " + variantTable + chr + " "
-                    + "WHERE pos = " + pos + " "
-                    + "AND alt ='" + alt + "'";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = preparedStatement4VariantMap.get(chr);
+            preparedStatement.setInt(1, pos);
+            preparedStatement.setString(2, alt);
+            ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 String gene = rs.getString("hgnc_gene");
                 float score = rs.getFloat("score");
 
                 list.add(new Trap(gene, score));
             }
-            
+
             rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);

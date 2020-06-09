@@ -12,7 +12,6 @@ import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
-import java.nio.file.Files;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -416,9 +415,5 @@ public class VariantManager {
             File file = new File(value);
             return file.exists();
         }
-    }
-    
-    public static void main(String[] args) {
-        System.out.println(isVariantIdInputValid("1-1231507-G-A,1-7827441-T-A"));
     }
 }

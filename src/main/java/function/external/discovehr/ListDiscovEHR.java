@@ -8,8 +8,8 @@ import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import utils.DBManager;
 
 /**
  *
@@ -56,15 +56,14 @@ public class ListDiscovEHR extends AnalysisBase {
     @Override
     public void processDatabaseData() throws Exception {
         for (int r = 0; r < RegionManager.getRegionSize(); r++) {
-
-            Region region = RegionManager.getRegion(r);
-            
-            String sqlCode = DiscovEHRManager.getSql4AF(region);
-
-            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
-
-            while (rset.next()) {
-                DiscovEHROutput output = new DiscovEHROutput(rset);
+            Region region = RegionManager.getRegion(r); 
+            PreparedStatement preparedStatement = DiscovEHRManager.getPreparedStatement4Region();
+            preparedStatement.setString(1, region.getChrStr());
+            preparedStatement.setInt(2, region.getStartPosition());
+            preparedStatement.setInt(3, region.getEndPosition());
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                DiscovEHROutput output = new DiscovEHROutput(rs);
 
                 if (VariantManager.isVariantIdIncluded(output.discovEHR.getVariantId())) {
                     bwDisCovEHR.write(output.discovEHR.getVariantId() + ",");
@@ -73,7 +72,7 @@ public class ListDiscovEHR extends AnalysisBase {
                 }
             }
 
-            rset.close();
+            rs.close();
         }
     }
 

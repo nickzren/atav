@@ -5,6 +5,8 @@ import java.io.*;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -116,6 +118,16 @@ public class DBManager {
             ErrorManager.send(e);
         }
 
+        return null;
+    }
+    
+    public static PreparedStatement initPreparedStatement(String sql) {
+        try {
+            return conn.prepareStatement(sql);
+        } catch (SQLException ex) {
+            ErrorManager.send(ex);
+        }
+        
         return null;
     }
 

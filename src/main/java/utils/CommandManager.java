@@ -11,9 +11,7 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExACCommand;
 import function.external.gnomad.GnomADCommand;
-import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
-import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mtr.MTRCommand;
@@ -453,11 +451,6 @@ public class CommandManager {
                     KnownVarCommand.isList = true;
                     KnownVarCommand.isInclude = true;
                     break;
-                case "--list-kaviar":
-                    CommonCommand.isNonSampleAnalysis = true;
-                    KaviarCommand.isList = true;
-                    KaviarCommand.isInclude = true;
-                    break;
                 case "--list-gerp":
                     CommonCommand.isNonSampleAnalysis = true;
                     GerpCommand.isList = true;
@@ -487,11 +480,6 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     RvisCommand.isList = true;
                     RvisCommand.isInclude = true;
-                    break;
-                case "--list-1000-genomes":
-                    CommonCommand.isNonSampleAnalysis = true;
-                    GenomesCommand.isList = true;
-                    GenomesCommand.isInclude = true;
                     break;
                 case "--list-mgi":
                     CommonCommand.isNonSampleAnalysis = true;

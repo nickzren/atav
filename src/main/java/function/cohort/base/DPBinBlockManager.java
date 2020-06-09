@@ -1,8 +1,10 @@
 package function.cohort.base;
 
+import function.variant.base.RegionManager;
 import function.variant.base.Variant;
 import global.Data;
 import global.Index;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +24,8 @@ public class DPBinBlockManager {
     private static HashMap<Character, Short> dpBin = new HashMap<>();
     private static HashMap<Short, Byte> dpBinIndex = new HashMap<>();
 
+    private static final HashMap<String, PreparedStatement> preparedStatement4BlockMap = new HashMap<>();
+    
     public static void init() {
         dpBin.put('b', Data.SHORT_NA);
         dpBin.put('c', (short) 10);
@@ -36,6 +40,13 @@ public class DPBinBlockManager {
         dpBinIndex.put((short) 30, Index.DP_BIN_30);
         dpBinIndex.put((short) 50, Index.DP_BIN_50);
         dpBinIndex.put((short) 200, Index.DP_BIN_200);
+        
+        for (String chr : RegionManager.ALL_CHR) {
+            String sql = "SELECT sample_id, DP_string FROM DP_bins_chr" + chr + "," + SampleManager.TMP_SAMPLE_ID_TABLE
+                    + " WHERE block_id=? AND sample_id = input_sample_id";
+
+            preparedStatement4BlockMap.put(chr, DBManager.initPreparedStatement(sql));
+        }
     }
 
     public static void add(SampleDPBin sampleDPBin) {
@@ -88,11 +99,10 @@ public class DPBinBlockManager {
             Variant var,
             int posIndex,
             int blockId) {
-        try {
-            String sql = "SELECT sample_id, DP_string FROM DP_bins_chr" + var.getChrStr() + "," + SampleManager.TMP_SAMPLE_ID_TABLE
-                    + " WHERE block_id = " + blockId + " AND sample_id = input_sample_id";
-
-            ResultSet rs = DBManager.executeQuery(sql);
+        try {           
+            PreparedStatement preparedStatement = preparedStatement4BlockMap.get(var.getChrStr());
+            preparedStatement.setInt(1, blockId);
+            ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 NonCarrier noncarrier = new NonCarrier(rs.getInt("sample_id"), rs.getString("DP_string"), posIndex);
 

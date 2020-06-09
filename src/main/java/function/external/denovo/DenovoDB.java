@@ -1,9 +1,9 @@
 package function.external.denovo;
 
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
-import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -28,10 +28,12 @@ public class DenovoDB {
         this.alt = alt;
 
         try {
-            String sql = DenovoDBManager.getSql(chr, pos, ref, alt);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = DenovoDBManager.getPreparedStatement4Variant();
+            preparedStatement.setString(1, chr);
+            preparedStatement.setInt(2, pos);
+            preparedStatement.setString(3, ref);
+            preparedStatement.setString(4, alt);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 phenotyp = rs.getString("Phenotype");
                 pubmedID = rs.getString("PubmedID");

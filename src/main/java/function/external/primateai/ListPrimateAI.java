@@ -6,9 +6,9 @@ import function.variant.base.RegionManager;
 import function.variant.base.VariantManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import utils.CommonCommand;
-import utils.DBManager;
 import utils.ErrorManager;
 
 /**
@@ -55,15 +55,14 @@ public class ListPrimateAI extends AnalysisBase {
     @Override
     public void processDatabaseData() throws Exception {
         for (int r = 0; r < RegionManager.getRegionSize(); r++) {
-
             Region region = RegionManager.getRegion(r);
-
-            String sqlCode = PrimateAIManager.getSqlByRegion(region);
-
-            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
-
-            while (rset.next()) {
-                PrimateAIOutput output = new PrimateAIOutput(rset);
+            PreparedStatement preparedStatemen = PrimateAIManager.getPreparedStatement4Region();
+            preparedStatemen.setString(1, region.getChrStr());
+            preparedStatemen.setInt(2, region.getStartPosition());
+            preparedStatemen.setInt(3, region.getEndPosition());
+            ResultSet rs = preparedStatemen.executeQuery();
+            while (rs.next()) {
+                PrimateAIOutput output = new PrimateAIOutput(rs);
 
                 if (VariantManager.isVariantIdIncluded(output.primateAI.getVariantId())
                         && output.isValid()) {
@@ -72,7 +71,7 @@ public class ListPrimateAI extends AnalysisBase {
                 }
             }
 
-            rset.close();
+            rs.close();
         }
     }
 

@@ -19,8 +19,6 @@ import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADCommand;
-import function.external.genomes.Genomes;
-import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.external.gme.GMECommand;
@@ -31,8 +29,6 @@ import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
-import function.external.kaviar.Kaviar;
-import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarOutput;
 import function.external.mgi.MgiCommand;
@@ -89,7 +85,6 @@ public class AnnotatedVariant extends Variant {
     private String exacGeneVariantCountStr;
     private GnomADExome gnomADExome;
     private GnomADGenome gnomADGenome;
-    private Kaviar kaviar;
     private Evs evs;
     private float gerpScore;
     private float trapScore;
@@ -97,7 +92,6 @@ public class AnnotatedVariant extends Variant {
     private KnownVarOutput knownVarOutput;
     private SubRvisOutput subRvisOutput;
     private LIMBROutput limbrOutput;
-    private Genomes genomes;
     private String mgiStr;
     private DenovoDB denovoDB;
     private DiscovEHR discovEHR;
@@ -183,18 +177,6 @@ public class AnnotatedVariant extends Variant {
             gerpScore = GerpManager.getScore(chrStr, startPosition, refAllele, allele);
 
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
-        }
-
-        if (isValid && KaviarCommand.isInclude) {
-            kaviar = new Kaviar(chrStr, startPosition, refAllele, allele);
-
-            isValid = kaviar.isValid();
-        }
-
-        if (isValid && GenomesCommand.isInclude) {
-            genomes = new Genomes(chrStr, startPosition, refAllele, allele);
-
-            isValid = genomes.isValid();
         }
 
         if (isValid && TrapCommand.isInclude) {
@@ -469,14 +451,6 @@ public class AnnotatedVariant extends Variant {
             sj.merge(getKnownVarStringJoiner());
         }
 
-        if (KaviarCommand.isInclude) {
-            sj.merge(getKaviarStringJoiner());
-        }
-
-        if (GenomesCommand.isInclude) {
-            sj.merge(get1000GenomesStringJoiner());
-        }
-
         if (RvisCommand.isInclude) {
             sj.add(getRvis());
         }
@@ -588,14 +562,6 @@ public class AnnotatedVariant extends Variant {
 
     public StringJoiner getKnownVarStringJoiner() {
         return knownVarOutput.getStringJoiner();
-    }
-
-    public StringJoiner getKaviarStringJoiner() {
-        return kaviar.getStringJoiner();
-    }
-
-    public StringJoiner get1000GenomesStringJoiner() {
-        return genomes.getStringJoiner();
     }
 
     public String getRvis() {

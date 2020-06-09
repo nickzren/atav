@@ -13,9 +13,7 @@ import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
-import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
-import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.external.gme.GMECommand;
@@ -23,8 +21,6 @@ import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
-import function.external.kaviar.KaviarCommand;
-import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.limbr.LIMBRCommand;
@@ -49,6 +45,7 @@ import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -84,14 +81,6 @@ public class DataManager {
 
         if (KnownVarCommand.isInclude) {
             sb.append(KnownVarManager.getVersion());
-        }
-
-        if (KaviarCommand.isInclude) {
-            sb.append(KaviarManager.getVersion());
-        }
-
-        if (GenomesCommand.isInclude) {
-            sb.append(GenomesManager.getVersion());
         }
 
         if (RvisCommand.isInclude) {
@@ -171,18 +160,18 @@ public class DataManager {
 
     public static String getVersion(String table) {
         try {
-            String sql = "SELECT version_number "
-                    + "From external_table_meta "
-                    + "Where data_source ='" + table + "'";
+            String sql = "SELECT version_number From external_table_meta Where data_source=?";
 
-            ResultSet rs = DBManager.executeQuery(sql);
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setString(1, table);
+            ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
                 return rs.getString("version_number");
-
             }
 
             rs.close();
+            preparedStatement.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

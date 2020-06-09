@@ -7,6 +7,7 @@ import utils.LogManager;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -76,9 +77,8 @@ public class EffectManager {
     private static void initDefaultEffectSet() {
         try {
             String sql = "SELECT * FROM effect_ranking";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String effect = rs.getString("effect");
@@ -95,6 +95,7 @@ public class EffectManager {
             }
             
             rs.close();
+            preparedStatement.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

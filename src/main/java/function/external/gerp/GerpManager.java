@@ -1,9 +1,12 @@
 package function.external.gerp;
 
 import function.external.base.DataManager;
+import function.variant.base.RegionManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import utils.DBManager;
 import utils.ErrorManager;
 
@@ -15,6 +18,17 @@ public class GerpManager {
 
     static final String table = "gerp_2011_12_27.gerp_chr";
     private static Gerp gerp = new Gerp();
+
+    private static final HashMap<String, PreparedStatement> preparedStatement4SiteMap = new HashMap<>();
+
+    public static void init() {
+        if (GerpCommand.isInclude) {
+            for (String chr : RegionManager.ALL_CHR) {
+                String sql = "SELECT gerp_rs FROM " + table + chr + " WHERE pos=?";
+                preparedStatement4SiteMap.put(chr, DBManager.initPreparedStatement(sql));
+            }
+        }
+    }
 
     public static String getHeader() {
         return "Gerp RS Score";
@@ -36,21 +50,11 @@ public class GerpManager {
 
         if (!gerp.isSameSite(chr, pos)) {
             try {
-                String sql = "SELECT gerp_rs "
-                        + "FROM " + table + chr + " "
-                        + "WHERE pos = " + pos;
-
-                ResultSet rs = DBManager.executeQuery(sql);
-
-                float score = Data.FLOAT_NA;
-
-                if (rs.next()) {
-                    score = rs.getFloat("gerp_rs");
-
-                }
-                
+                PreparedStatement preparedStatement = preparedStatement4SiteMap.get(chr);
+                preparedStatement.setInt(1, pos);
+                ResultSet rs = preparedStatement.executeQuery();
+                float score = rs.next() ? rs.getFloat("gerp_rs") : Data.FLOAT_NA;
                 rs.close();
-
                 gerp.setValues(chr, pos, score);
             } catch (SQLException ex) {
                 ErrorManager.send(ex);

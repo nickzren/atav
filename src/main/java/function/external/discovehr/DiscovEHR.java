@@ -1,9 +1,9 @@
 package function.external.discovehr;
 
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import org.apache.commons.csv.CSVRecord;
-import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -47,10 +47,12 @@ public class DiscovEHR {
     
     private void initAF() {
         try {
-            String sql = DiscovEHRManager.getSql4AF(chr, pos, ref, alt);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = DiscovEHRManager.getPreparedStatement4Variant();
+            preparedStatement.setString(1, chr);
+            preparedStatement.setInt(2, pos);
+            preparedStatement.setString(3, ref);
+            preparedStatement.setString(4, alt);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 af = rs.getFloat("af");
             } else {

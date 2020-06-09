@@ -11,14 +11,10 @@ import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
-import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
-import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.external.gnomad.GnomADCommand;
-import function.external.kaviar.KaviarCommand;
-import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.limbr.LIMBRCommand;
@@ -132,14 +128,6 @@ public class Output {
 
         if (KnownVarCommand.isInclude) {
             sj.add(KnownVarManager.getHeader());
-        }
-
-        if (KaviarCommand.isInclude) {
-            sj.add(KaviarManager.getHeader());
-        }
-
-        if (GenomesCommand.isInclude) {
-            sj.add(GenomesManager.getHeader());
         }
 
         if (RvisCommand.isInclude) {

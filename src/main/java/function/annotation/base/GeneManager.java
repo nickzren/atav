@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.StringJoiner;
@@ -41,8 +42,12 @@ public class GeneManager {
     private static boolean isUsed = false;
 
     private static boolean hasGeneDomainInput = false;
+    
+    private static PreparedStatement preparedStatement4GeneChrom;
 
     public static void init() throws Exception {
+        initPreparedStatement4GeneChrom();
+        
         initHgncGeneMap();
         
         initAllGeneSymbolMap();
@@ -58,6 +63,15 @@ public class GeneManager {
         initTempTable();
     }
 
+    private static void initPreparedStatement4GeneChrom() {
+        String sql = "SELECT chrom FROM hgnc WHERE gene=?";
+        preparedStatement4GeneChrom = DBManager.initPreparedStatement(sql);
+    }
+    
+    public static PreparedStatement getPreparedStatement4GeneChrom() {
+        return preparedStatement4GeneChrom;
+    }
+    
     private static void initHgncGeneMap() {
         try {
             File file = new File(Data.ATAV_HOME + HGNC_GENE_MAP_PATH);

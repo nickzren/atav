@@ -1,7 +1,9 @@
 package function.external.discovehr;
 
 import function.external.base.DataManager;
-import function.variant.base.Region;
+import function.external.denovo.DenovoDBCommand;
+import java.sql.PreparedStatement;
+import utils.DBManager;
 
 /**
  *
@@ -10,6 +12,19 @@ import function.variant.base.Region;
 public class DiscovEHRManager {
 
     static final String table = "knownvar.discovEHR_2017_07_31";
+    
+    private static PreparedStatement preparedStatement4Variant;
+    private static PreparedStatement preparedStatement4Region;
+
+    public static void init() {
+        if (DenovoDBCommand.isInclude) {
+            String sql = "SELECT af FROM " + table + " WHERE chr=? AND pos=? AND ref_allele=? AND alt_allele=?";
+            preparedStatement4Variant = DBManager.initPreparedStatement(sql);
+
+            sql = "SELECT * FROM " + table + " WHERE chr=? AND pos BETWEEN ? AND ?";
+            preparedStatement4Region = DBManager.initPreparedStatement(sql);
+        }
+    }
 
     public static String getHeader() {
         return "DiscovEHR AF";
@@ -18,21 +33,12 @@ public class DiscovEHRManager {
     public static String getVersion() {
         return "DiscovEHR: " + DataManager.getVersion(table) + "\n";
     }
-
-    public static String getSql4AF(Region region) {
-        return "SELECT * "
-                + "FROM " + DiscovEHRManager.table + " "
-                + "WHERE chr = '" + region.getChrStr() + "' "
-                + "AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
+    
+    public static PreparedStatement getPreparedStatement4Variant() {
+        return preparedStatement4Variant;
     }
 
-    public static String getSql4AF(String chr,
-            int pos, String ref, String alt) {
-        return "SELECT af "
-                + "FROM " + DiscovEHRManager.table + " "
-                + "WHERE chr = '" + chr + "' "
-                + "AND pos = " + pos + " "
-                + "AND ref_allele = '" + ref + "' "
-                + "AND alt_allele = '" + alt + "'";
+    public static PreparedStatement getPreparedStatement4Region() {
+        return preparedStatement4Region;
     }
 }

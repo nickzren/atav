@@ -11,12 +11,9 @@ import function.external.exac.ExACManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
-import function.external.genomes.GenomesCommand;
-import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.gme.GMECommand;
 import function.external.iranome.IranomeCommand;
-import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mpc.MPCCommand;
@@ -192,26 +189,6 @@ public class VariantLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     TrapCommand.minTrapScore = getValidFloat(option);
                     TrapCommand.isInclude = true;
-                    break;
-                case "--max-kaviar-maf":
-                    checkValueValid(1, 0, option);
-                    KaviarCommand.maxKaviarMaf = getValidFloat(option);
-                    KaviarCommand.isInclude = true;
-                    break;
-                case "--max-kaviar-allele-count":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
-                    KaviarCommand.isInclude = true;
-                    break;
-                case "--1000-genomes-pop":
-                    checkValuesValid(GenomesManager.GENOMES_POP, option);
-                    GenomesCommand.genomesPop = option.getValue();
-                    GenomesCommand.isInclude = true;
-                    break;
-                case "--max-1000-genomes-af":
-                    checkValueValid(1, 0, option);
-                    GenomesCommand.maxGenomesAF = getValidFloat(option);
-                    GenomesCommand.isInclude = true;
                     break;
                 case "--sub-rvis-domain-score-percentile":
                 case "--max-sub-rvis-domain-score-percentile":
