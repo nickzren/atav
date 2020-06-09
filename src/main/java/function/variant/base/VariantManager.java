@@ -12,6 +12,7 @@ import global.Data;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,6 +42,11 @@ public class VariantManager {
 
     private static int maxIncludeNum = 200000;
 
+    private static PreparedStatement preparedStatement4RS;
+    private static PreparedStatement preparedStatement4MultiallelicVariant;
+    private static PreparedStatement preparedStatement4MultiallelicVariant2;
+    private static PreparedStatement preparedStatement4LOFTEEHCinCCDS;
+
     public static void init() throws FileNotFoundException, Exception, SQLException {
         if (TrioCommand.isList
                 || ParentCommand.isList
@@ -48,6 +54,8 @@ public class VariantManager {
             // disable process region as variant by varaint way
             maxIncludeNum = 0;
         }
+
+        initPreparedStatement();
 
         initByVariantId(VariantLevelFilterCommand.includeVariantId, includeVariantSet, true);
 
@@ -64,6 +72,27 @@ public class VariantManager {
             isUsed = true;
 
             resetRegionList();
+        }
+    }
+
+    private static void initPreparedStatement() {
+        if (!VariantLevelFilterCommand.includeRsNumber.isEmpty()) {
+            String sql = "select chrom, POS from rs_number where rs_number=?";
+            preparedStatement4RS = DBManager.initPreparedStatement(sql);
+        }
+
+        if (VariantLevelFilterCommand.isExcludeMultiallelicVariant) {
+            String sql = "select pos from multiallelic_variant_site where chr=? and pos=?";
+            preparedStatement4MultiallelicVariant = DBManager.initPreparedStatement(sql);
+        }
+
+        if (VariantLevelFilterCommand.isExcludeMultiallelicVariant2) {
+            String sql = "select pos from multiallelic_variant_site_2 where chr=? and pos=?";
+            preparedStatement4MultiallelicVariant2 = DBManager.initPreparedStatement(sql);
+        }
+        if (VariantLevelFilterCommand.isIncludeLOFTEE) {
+            String sql = "select is_hc_in_ccds from loftee where chr=? and pos=? and ref=? and alt=?";
+            preparedStatement4LOFTEEHCinCCDS = DBManager.initPreparedStatement(sql);
         }
     }
 
@@ -224,10 +253,8 @@ public class VariantManager {
     }
 
     private static String getVariantPositionByRS(int rs) throws SQLException {
-        String sql = "select chrom, POS from rs_number "
-                + "where rs_number = " + rs;
-
-        ResultSet rset = DBManager.executeQuery(sql);
+        preparedStatement4RS.setInt(1, rs);
+        ResultSet rset = preparedStatement4RS.executeQuery();
 
         if (rset.next()) {
             String chr = rset.getString("chrom");
@@ -362,39 +389,38 @@ public class VariantManager {
 
     // exclude Multiallelic site > 1 variant
     public static boolean isMultiallelicVariant(String chr, int pos) throws SQLException {
-        String sql = "select pos from multiallelic_variant_site "
-                + "where chr = '" + chr + "' and pos =" + pos + " limit 1";
+        preparedStatement4MultiallelicVariant.setString(1, chr);
+        preparedStatement4MultiallelicVariant.setInt(2, pos);
+        ResultSet rs = preparedStatement4MultiallelicVariant.executeQuery();
 
-        ResultSet rset = DBManager.executeQuery(sql);
-
-        return rset.next();
+        return rs.next();
     }
 
     // exclude Multiallelic site > 2 variants
     public static boolean isMultiallelicVariant2(String chr, int pos) throws SQLException {
-        String sql = "select pos from multiallelic_variant_site_2 "
-                + "where chr = '" + chr + "' and pos =" + pos + " limit 1";
+        preparedStatement4MultiallelicVariant2.setString(1, chr);
+        preparedStatement4MultiallelicVariant2.setInt(2, pos);
+        ResultSet rs = preparedStatement4MultiallelicVariant2.executeQuery();
 
-        ResultSet rset = DBManager.executeQuery(sql);
-
-        return rset.next();
+        return rs.next();
     }
 
     // get LOFTEE HC in CCDS
     public static Boolean getLOFTEEHCinCCDS(String chr, int pos, String ref, String alt) throws SQLException {
-        String sql = "select is_hc_in_ccds from loftee "
-                + "where chr = '" + chr + "' and pos =" + pos + " and ref='" + ref + "' and alt='" + alt + "'";
-
-        ResultSet rset = DBManager.executeQuery(sql);
+        preparedStatement4LOFTEEHCinCCDS.setString(1, chr);
+        preparedStatement4LOFTEEHCinCCDS.setInt(2, pos);
+        preparedStatement4LOFTEEHCinCCDS.setString(3, ref);
+        preparedStatement4LOFTEEHCinCCDS.setString(4, alt);
+        ResultSet rs = preparedStatement4LOFTEEHCinCCDS.executeQuery();
 
         Boolean value = null;
-        if (rset.next()) {
-            value = rset.getBoolean("is_hc_in_ccds");
-            if (rset.wasNull()) {
+        if (rs.next()) {
+            value = rs.getBoolean("is_hc_in_ccds");
+            if (rs.wasNull()) {
                 value = null;
             }
         }
-        rset.close();
+        rs.close();
 
         return value;
     }
@@ -407,7 +433,7 @@ public class VariantManager {
     public static boolean isUsed() {
         return isUsed;
     }
-    
+
     public static boolean isVariantIdInputValid(String value) {
         if (Pattern.matches("^[atcgATCG0-9-,]+$", value)) {
             return true;

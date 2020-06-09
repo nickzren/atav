@@ -33,7 +33,6 @@ import java.util.Set;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidFloat;
-import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;

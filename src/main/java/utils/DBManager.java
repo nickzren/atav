@@ -5,8 +5,6 @@ import java.io.*;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
