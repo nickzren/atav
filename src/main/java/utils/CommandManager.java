@@ -246,8 +246,8 @@ public class CommandManager {
                 case "--disable-timestamp-from-out-path":
                     isTimestampEnabled = false;
                     break;
-                case "--disable-email":
-                    CommonCommand.disableEmail = true;
+                case "--email":
+                    CommonCommand.email = true;
                     break;
                 default:
                     continue;
