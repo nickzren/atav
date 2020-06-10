@@ -90,6 +90,7 @@ import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.genomeasia.ListGenomeAsia;
 import function.external.gerp.GerpManager;
+import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
@@ -174,6 +175,8 @@ public class Program {
             RvisManager.init();
 
             SubRvisManager.init();
+            
+            GeVIRManager.init();
 
             LIMBRManager.init();
 

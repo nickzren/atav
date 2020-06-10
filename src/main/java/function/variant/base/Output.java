@@ -41,6 +41,8 @@ import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
+import function.external.gevir.GeVIRCommand;
+import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.iranome.IranomeCommand;
@@ -136,6 +138,10 @@ public class Output {
 
         if (SubRvisCommand.isInclude) {
             sj.add(SubRvisManager.getHeader());
+        }
+        
+        if (GeVIRCommand.isInclude) {
+            sj.add(GeVIRManager.getHeader());
         }
 
         if (LIMBRCommand.isInclude) {

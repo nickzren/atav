@@ -21,6 +21,8 @@ import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADCommand;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gevir.GeVIRCommand;
+import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADGenome;
@@ -458,6 +460,10 @@ public class AnnotatedVariant extends Variant {
         if (SubRvisCommand.isInclude) {
             sj.merge(getSubRvisStringJoiner());
         }
+        
+        if (GeVIRCommand.isInclude) {
+            sj.add(getGeVIR());
+        }
 
         if (LIMBRCommand.isInclude) {
             sj.merge(getLIMBRStringJoiner());
@@ -570,6 +576,10 @@ public class AnnotatedVariant extends Variant {
 
     public StringJoiner getSubRvisStringJoiner() {
         return subRvisOutput.getStringJoiner();
+    }
+    
+    public String getGeVIR() {
+        return GeVIRManager.getLine(getGeneName());
     }
 
     public StringJoiner getLIMBRStringJoiner() {

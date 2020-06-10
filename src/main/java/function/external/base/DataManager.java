@@ -16,6 +16,8 @@ import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gnomad.GnomADManager;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gevir.GeVIRCommand;
+import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
@@ -89,6 +91,10 @@ public class DataManager {
 
         if (SubRvisCommand.isInclude) {
             sb.append(SubRvisManager.getVersion());
+        }
+        
+        if (GeVIRCommand.isInclude) {
+            sb.append(GeVIRManager.getVersion());
         }
 
         if (LIMBRCommand.isInclude) {

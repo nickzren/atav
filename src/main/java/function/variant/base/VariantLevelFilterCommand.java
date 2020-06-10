@@ -12,6 +12,7 @@ import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.gerp.GerpCommand;
+import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
 import function.external.iranome.IranomeCommand;
 import function.external.knownvar.KnownVarCommand;
@@ -319,9 +320,6 @@ public class VariantLevelFilterCommand {
                 case "--include-trap":
                     TrapCommand.isInclude = true;
                     break;
-//                case "--include-kaviar":
-//                    KaviarCommand.isIncludeKaviar = true;
-//                    break;
                 case "--include-known-var":
                     KnownVarCommand.isInclude = true;
                     break;
@@ -334,15 +332,15 @@ public class VariantLevelFilterCommand {
                 case "--include-sub-rvis":
                     SubRvisCommand.isInclude = true;
                     break;
+                case "--include-gevir":
+                    GeVIRCommand.isInclude = true;
+                    break;
                 case "--include-limbr":
                     LIMBRCommand.isInclude = true;
                     break;
                 case "--include-ccr":
                     CCRCommand.isInclude = true;
                     break;
-//                case "--include-1000-genomes":
-//                    GenomesCommand.isInclude1000Genomes = true;
-//                    break;
                 case "--include-mgi":
                     MgiCommand.isInclude = true;
                     break;
