@@ -128,7 +128,7 @@ public class VariantLite {
             initTopMed(record);
             initGenomeAsia(record);
             initIranome(record);
-            
+
             qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
             qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
 
@@ -163,8 +163,8 @@ public class VariantLite {
             Annotation annotation = new Annotation();
             annotation.effect = effect;
             annotation.polyphenHumdiv = polyphenHumdiv;
-            annotation.revel = revel.getRevel();
-            annotation.primateAI = primateAI.getPrimateDLScore();
+            annotation.revel = revel == null ? Data.FLOAT_NA : revel.getRevel();
+            annotation.primateAI = primateAI == null ? Data.FLOAT_NA : primateAI.getPrimateDLScore();
 
             // --effect filter applied
             // --gene or --gene-boundary filter applied
@@ -257,7 +257,7 @@ public class VariantLite {
 
     private void initTrap(CSVRecord record) {
         trapScore = Data.FLOAT_NA;
-        
+
         if (TrapCommand.isInclude) {
             if (TrapCommand.minTrapScore != Data.NO_FILTER) {
                 boolean isMNV = ref.length() > 1 && alt.length() > 1 && alt.length() == ref.length();
