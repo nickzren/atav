@@ -1,12 +1,11 @@
 # ATAV
 
-ATAV (Analysis Tool for Annotated Variants) is a command line tool that is designed to detect complex disease-associated rare genetic variants by performing association analysis on annotated variants derived from whole-genome or whole-exome sequencing data which are all stored in our centralized database.
-
-The database stored variants, variant calls, coverage depths, and sample meta data for high-throughput sequencing samples. The database is implemented as a Percona MySQL fully normalized schema. The system consists of a master server and a set of slave servers. The primarily ingest method for incrementally adding samples to the system is via the data pipeline which annotates a single-sample VCF file, parses the VCF while inserting novel variants into the variant library on the master server, and loading all parsed data files into master database, it will then replicate to slave databases.
-
-The slave servers host single-sample and cohort-level analysis queries, primarily as implemented in the ATAV.
+ATAV command line tool supports tests for diagnostic analyses such as identifying putative de novo and inherited genotypes of interest in trios, and a framework for performing region-based rare-variant collapsing analyses that identify genes or other genomic units that carry an excess of qualifying variants among cases in comparison to the background variation observed in internal controls of convenience in ATAV database.
 
 Any questions, please contact Nick Ren (z.ren@columbia.edu)
 
 For more details, please visit:
 http://redmine.igm.cumc.columbia.edu/projects/atav/wiki
+
+If you use ATAV for publication, please cite:
+Zhong Ren, Gundula Povysil, David B. Goldstein. (2020) ATAV - a comprehensive platform for population-scale genomic analyses. bioRxiv DOI: 10.1101/2020.06.08.136507
