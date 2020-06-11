@@ -4,8 +4,8 @@ ATAV command line tool supports tests for diagnostic analyses such as identifyin
 
 Any questions, please contact Nick Ren (z.ren@columbia.edu)
 
-For more details, please visit:
+For more details, please visit:<br/>
 http://redmine.igm.cumc.columbia.edu/projects/atav/wiki
 
-If you use ATAV for publication, please cite:
+If you use ATAV for publication, please cite:<br/>
 Zhong Ren, Gundula Povysil, David B. Goldstein. (2020) ATAV - a comprehensive platform for population-scale genomic analyses. bioRxiv DOI: 10.1101/2020.06.08.136507
