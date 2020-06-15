@@ -1,7 +1,6 @@
 package function.external.discovehr;
 
 import function.external.base.DataManager;
-import function.external.denovo.DenovoDBCommand;
 import java.sql.PreparedStatement;
 import utils.DBManager;
 
@@ -17,7 +16,7 @@ public class DiscovEHRManager {
     private static PreparedStatement preparedStatement4Region;
 
     public static void init() {
-        if (DenovoDBCommand.isInclude) {
+        if (DiscovEHRCommand.isInclude) {
             String sql = "SELECT af FROM " + table + " WHERE chr=? AND pos=? AND ref_allele=? AND alt_allele=?";
             preparedStatement4Variant = DBManager.initPreparedStatement(sql);
 
