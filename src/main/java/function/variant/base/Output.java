@@ -51,6 +51,8 @@ import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
+import function.external.synrvis.SynRvisCommand;
+import function.external.synrvis.SynRvisManager;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import global.Data;
@@ -142,6 +144,10 @@ public class Output {
         
         if (GeVIRCommand.isInclude) {
             sj.add(GeVIRManager.getHeader());
+        }
+        
+        if (SynRvisCommand.isInclude) {
+            sj.add(SynRvisManager.getHeader());
         }
 
         if (LIMBRCommand.isInclude) {

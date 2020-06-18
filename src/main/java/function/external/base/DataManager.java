@@ -42,6 +42,8 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
+import function.external.synrvis.SynRvisCommand;
+import function.external.synrvis.SynRvisManager;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
@@ -95,6 +97,10 @@ public class DataManager {
         
         if (GeVIRCommand.isInclude) {
             sb.append(GeVIRManager.getVersion());
+        }
+        
+        if (SynRvisCommand.isInclude) {
+            sb.append(SynRvisManager.getVersion());
         }
 
         if (LIMBRCommand.isInclude) {

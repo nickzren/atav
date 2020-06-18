@@ -106,6 +106,7 @@ import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
 import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelManager;
+import function.external.synrvis.SynRvisManager;
 import function.external.topmed.ListTopMed;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
@@ -177,6 +178,8 @@ public class Program {
             SubRvisManager.init();
             
             GeVIRManager.init();
+            
+            SynRvisManager.init();
 
             LIMBRManager.init();
 

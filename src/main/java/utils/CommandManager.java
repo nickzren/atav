@@ -39,6 +39,7 @@ import function.external.gme.GMECommand;
 import function.external.iranome.IranomeCommand;
 import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
+import function.external.synrvis.SynRvisCommand;
 import function.external.topmed.TopMedCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
@@ -394,6 +395,7 @@ public class CommandManager {
                     RvisCommand.isInclude = true;
                     SubRvisCommand.isInclude = true;
                     GeVIRCommand.isInclude = true;
+                    SynRvisCommand.isInclude = true;
                     LIMBRCommand.isInclude = true;
                     CCRCommand.isInclude = true;
                     MgiCommand.isInclude = true;

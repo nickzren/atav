@@ -24,6 +24,7 @@ import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
+import function.external.synrvis.SynRvisCommand;
 import function.external.topmed.TopMedCommand;
 import function.external.trap.TrapCommand;
 import global.Data;
@@ -334,6 +335,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-gevir":
                     GeVIRCommand.isInclude = true;
+                    break;
+                case "--include-syn-rvis":
+                    SynRvisCommand.isInclude = true;
                     break;
                 case "--include-limbr":
                     LIMBRCommand.isInclude = true;

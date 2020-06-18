@@ -47,6 +47,8 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisOutput;
+import function.external.synrvis.SynRvisCommand;
+import function.external.synrvis.SynRvisManager;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
@@ -465,6 +467,10 @@ public class AnnotatedVariant extends Variant {
             sj.add(getGeVIR());
         }
 
+        if (SynRvisCommand.isInclude) {
+            sj.add(getSynRvis());
+        }
+        
         if (LIMBRCommand.isInclude) {
             sj.merge(getLIMBRStringJoiner());
         }
@@ -582,6 +588,10 @@ public class AnnotatedVariant extends Variant {
         return GeVIRManager.getLine(getGeneName());
     }
 
+    public String getSynRvis() {
+        return SynRvisManager.getLine(getGeneName());
+    }
+    
     public StringJoiner getLIMBRStringJoiner() {
         return limbrOutput.getStringJoiner();
     }
