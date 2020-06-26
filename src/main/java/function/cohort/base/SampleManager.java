@@ -70,7 +70,7 @@ public class SampleManager {
     private static StringJoiner caseIDSJ = new StringJoiner(",");
 
     // igm gnomad sample
-    private static final String IGM_GNOMAD_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/igm_gnomad_sample.txt";
+    private static final String IGM_GNOMAD_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/igm_gnomad_sample_062620.txt";
     private static Set<String> excludeIGMGnomadSampleSet = new HashSet<>();
 
     public static void init() {
