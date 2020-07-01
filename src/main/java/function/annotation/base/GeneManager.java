@@ -42,14 +42,14 @@ public class GeneManager {
     private static boolean isUsed = false;
 
     private static boolean hasGeneDomainInput = false;
-    
+
     private static PreparedStatement preparedStatement4GeneChrom;
 
     public static void init() throws Exception {
         initPreparedStatement4GeneChrom();
-        
+
         initHgncGeneMap();
-        
+
         initAllGeneSymbolMap();
 
         initGeneName();
@@ -67,11 +67,11 @@ public class GeneManager {
         String sql = "SELECT chrom FROM hgnc WHERE gene=?";
         preparedStatement4GeneChrom = DBManager.initPreparedStatement(sql);
     }
-    
+
     public static PreparedStatement getPreparedStatement4GeneChrom() {
         return preparedStatement4GeneChrom;
     }
-    
+
     private static void initHgncGeneMap() {
         try {
             File file = new File(Data.ATAV_HOME + HGNC_GENE_MAP_PATH);
@@ -91,7 +91,7 @@ public class GeneManager {
             ErrorManager.send(ex);
         }
     }
-    
+
     private static void initAllGeneSymbolMap() {
         try {
             File f = new File(Data.ATAV_HOME + ALL_GENE_SYMBOL_MAP_PATH);
@@ -449,21 +449,17 @@ public class GeneManager {
         String upToDateGene = hgncGeneMap.get(dragendbGene);
         return upToDateGene == null ? dragendbGene : upToDateGene;
     }
-    
+
     public static String getAllGeneSymbol(List<String> geneList) {
-        if(geneList.isEmpty()) {
+        if (geneList.isEmpty()) {
             return Data.STRING_NA;
         }
-        
+
         StringJoiner sj = new StringJoiner(";");
-        
-        for(String gene : geneList) {
+
+        for (String gene : geneList) {
             String allGeneSymbol = allGeneSymbolMap.get(gene);
-            if(allGeneSymbol == null) {
-                continue;
-            }
-            
-            sj.add(allGeneSymbol);
+            sj.add(allGeneSymbol == null ? gene : allGeneSymbol);
         }
 
         return sj.toString();
