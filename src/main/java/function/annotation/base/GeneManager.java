@@ -23,7 +23,7 @@ import utils.DBManager;
 public class GeneManager {
 
     public static final String TMP_GENE_TABLE = "tmp_gene_chr"; // need to append chr in real time
-    public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_121118.tsv";
+    public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_040320.tsv.gz";
     public static final String ALL_GENE_SYMBOL_MAP_PATH = "data/gene/hgnc_complete_set_to_GRCh37.87_040320.tsv.gz";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
@@ -74,10 +74,12 @@ public class GeneManager {
 
     private static void initHgncGeneMap() {
         try {
-            File file = new File(Data.ATAV_HOME + HGNC_GENE_MAP_PATH);
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            String line;
+            File f = new File(Data.ATAV_HOME + HGNC_GENE_MAP_PATH);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
+            String line = "";
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#")) {
                     String[] tmp = line.split("\t");
@@ -86,7 +88,8 @@ public class GeneManager {
                 }
             }
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (IOException ex) {
             ErrorManager.send(ex);
         }
