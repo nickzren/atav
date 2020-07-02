@@ -63,12 +63,40 @@ public class DataManager {
     public static String getVersion() {
         StringBuilder sb = new StringBuilder();
 
+        if (CCRCommand.isInclude) {
+            sb.append(CCRManager.getVersion());
+        }
+
         if (EvsCommand.isInclude) {
             sb.append(EvsManager.getVersion());
         }
 
         if (ExACCommand.isInclude) {
             sb.append(ExACManager.getVersion());
+        }
+
+        if (DenovoDBCommand.isInclude) {
+            sb.append(DenovoDBManager.getVersion());
+        }
+
+        if (DiscovEHRCommand.isInclude) {
+            sb.append(DiscovEHRManager.getVersion());
+        }
+
+        if (GenomeAsiaCommand.isInclude) {
+            sb.append(GenomeAsiaManager.getVersion());
+        }
+
+        if (GerpCommand.isInclude) {
+            sb.append(GerpManager.getVersion());
+        }
+
+        if (GeVIRCommand.isInclude) {
+            sb.append(GeVIRManager.getVersion());
+        }
+
+        if (GMECommand.isInclude) {
+            sb.append(GMEManager.getVersion());
         }
 
         if (GnomADCommand.isIncludeExome) {
@@ -83,8 +111,40 @@ public class DataManager {
             sb.append(GnomADManager.getGeneMetricsVersion());
         }
 
+        if (IranomeCommand.isInclude) {
+            sb.append(IranomeManager.getVersion());
+        }
+
         if (KnownVarCommand.isInclude) {
             sb.append(KnownVarManager.getVersion());
+        }
+
+        if (LIMBRCommand.isInclude) {
+            sb.append(LIMBRManager.getVersion());
+        }
+
+        if (MgiCommand.isInclude) {
+            sb.append(MgiManager.getVersion());
+        }
+
+        if (MPCCommand.isInclude) {
+            sb.append(MPCManager.getVersion());
+        }
+
+        if (MTRCommand.isInclude) {
+            sb.append(MTRManager.getVersion());
+        }
+
+        if (PextCommand.isInclude) {
+            sb.append(PextManager.getVersion());
+        }
+
+        if (PrimateAICommand.isInclude) {
+            sb.append(PrimateAIManager.getVersion());
+        }
+
+        if (RevelCommand.isInclude) {
+            sb.append(RevelManager.getVersion());
         }
 
         if (RvisCommand.isInclude) {
@@ -94,77 +154,17 @@ public class DataManager {
         if (SubRvisCommand.isInclude) {
             sb.append(SubRvisManager.getVersion());
         }
-        
-        if (GeVIRCommand.isInclude) {
-            sb.append(GeVIRManager.getVersion());
-        }
-        
+
         if (SynRvisCommand.isInclude) {
             sb.append(SynRvisManager.getVersion());
         }
 
-        if (LIMBRCommand.isInclude) {
-            sb.append(LIMBRManager.getVersion());
-        }
-
-        if (CCRCommand.isInclude) {
-            sb.append(CCRManager.getVersion());
-        }
-
-        if (GerpCommand.isInclude) {
-            sb.append(GerpManager.getVersion());
+        if (TopMedCommand.isInclude) {
+            sb.append(TopMedManager.getVersion());
         }
 
         if (TrapCommand.isInclude) {
             sb.append(TrapManager.getVersion());
-        }
-
-        if (MgiCommand.isInclude) {
-            sb.append(MgiManager.getVersion());
-        }
-
-        if (DenovoDBCommand.isInclude) {
-            sb.append(DenovoDBManager.getVersion());
-        }
-
-        if (DiscovEHRCommand.isInclude) {
-            sb.append(DiscovEHRManager.getVersion());
-        }
-
-        if (MTRCommand.isInclude) {
-            sb.append(MTRManager.getVersion());
-        }
-
-        if (RevelCommand.isInclude) {
-            sb.append(RevelManager.getVersion());
-        }
-
-        if (PrimateAICommand.isInclude) {
-            sb.append(PrimateAIManager.getVersion());
-        }
-
-        if (MPCCommand.isInclude) {
-            sb.append(MPCManager.getVersion());
-        }
-
-        if (PextCommand.isInclude) {
-            sb.append(PextManager.getVersion());
-        }
-        
-        if (GMECommand.isInclude) {
-            sb.append(GMEManager.getVersion());
-        }
-        
-        if (TopMedCommand.isInclude) {
-            sb.append(TopMedManager.getVersion());
-        }
-        
-        if (GenomeAsiaCommand.isInclude) {
-            sb.append(GenomeAsiaManager.getVersion());
-        }
-        
-        if (IranomeCommand.isInclude) {
-            sb.append(IranomeManager.getVersion());
         }
 
         return sb.toString();
