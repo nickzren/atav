@@ -1,6 +1,7 @@
 package function.external.gnomad;
 
 import global.Data;
+import java.sql.PreparedStatement;
 import utils.ErrorManager;
 import utils.FormatManager;
 import java.sql.ResultSet;
@@ -104,10 +105,12 @@ public class GnomADExome {
         af = new float[GnomADManager.GNOMAD_EXOME_POP.length];
 
         try {
-            String sql = GnomADManager.getSql4ExomeVariant(chr, pos, ref, alt, isMNV);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = GnomADManager.getPreparedStatement4VariantExome(isMNV);
+            preparedStatement.setString(1, chr);
+            preparedStatement.setInt(2, pos);
+            preparedStatement.setString(3, ref);
+            preparedStatement.setString(4, alt);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 setAF(rs);
             } else {

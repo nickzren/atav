@@ -23,6 +23,7 @@ import function.cohort.statistics.LinearRegression;
 import function.cohort.trio.ListTrio;
 import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
+import function.cohort.base.CarrierBlockManager;
 import function.coverage.base.CoverageCommand;
 import function.coverage.comparison.SiteCoverageComparison;
 import function.external.ccr.CCRCommand;
@@ -44,13 +45,9 @@ import function.external.exac.ListExAC;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.gnomad.ListGnomADExome;
-import function.external.genomes.GenomesCommand;
-import function.external.genomes.List1000Genomes;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.ListGerp;
 import function.external.gnomad.ListGnomADGenome;
-import function.external.kaviar.KaviarCommand;
-import function.external.kaviar.ListKaviar;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.knownvar.ListKnownVar;
@@ -86,8 +83,14 @@ import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMManager;
+import function.external.denovo.DenovoDBManager;
+import function.external.discovehr.DiscovEHRManager;
+import function.external.evs.EvsManager;
 import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.genomeasia.GenomeAsiaManager;
 import function.external.genomeasia.ListGenomeAsia;
+import function.external.gerp.GerpManager;
+import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
@@ -96,10 +99,18 @@ import function.external.iranome.IranomeManager;
 import function.external.iranome.ListIranome;
 import function.external.mpc.ListMPC;
 import function.external.mpc.MPCCommand;
+import function.external.mpc.MPCManager;
+import function.external.mtr.MTRManager;
 import function.external.pext.ListPext;
 import function.external.pext.PextCommand;
+import function.external.pext.PextManager;
+import function.external.primateai.PrimateAIManager;
+import function.external.revel.RevelManager;
+import function.external.synrvis.SynRvisManager;
 import function.external.topmed.ListTopMed;
 import function.external.topmed.TopMedCommand;
+import function.external.topmed.TopMedManager;
+import function.external.trap.TrapManager;
 import function.test.Test;
 import function.test.TestCommand;
 import utils.EmailManager;
@@ -137,7 +148,7 @@ public class Program {
             CommandManager.initOptions(options);
 
             DBManager.init();
-
+            
             ThirdPartyToolManager.init();
 
             EffectManager.init();
@@ -151,9 +162,13 @@ public class Program {
             TranscriptManager.init();
 
             VariantManager.init();
-
+            
+            CarrierBlockManager.init();
+            
             DPBinBlockManager.init();
 
+            EvsManager.init();
+            
             ExACManager.init();
 
             KnownVarManager.init();
@@ -161,18 +176,44 @@ public class Program {
             RvisManager.init();
 
             SubRvisManager.init();
+            
+            GeVIRManager.init();
+            
+            SynRvisManager.init();
 
             LIMBRManager.init();
 
             MgiManager.init();
+            
+            DenovoDBManager.init();
 
+            DiscovEHRManager.init();
+
+            MTRManager.init();
+            
+            RevelManager.init();
+            
+            PrimateAIManager.init();
+            
             GnomADManager.init();
 
             CCRManager.init();
+            
+            GerpManager.init();
+            
+            TrapManager.init();
 
+            MPCManager.init();
+            
+            PextManager.init();
+            
             CHMManager.init();
 
             GMEManager.init();
+            
+            TopMedManager.init();
+            
+            GenomeAsiaManager.init();
             
             IranomeManager.init();
 
@@ -235,8 +276,6 @@ public class Program {
                 runAnalysis(new ListGnomADGenome());
             } else if (KnownVarCommand.isList) {
                 runAnalysis(new ListKnownVar());
-            } else if (KaviarCommand.isList) {
-                runAnalysis(new ListKaviar());
             } else if (GerpCommand.isList) {
                 runAnalysis(new ListGerp());
             } else if (TrapCommand.isList) {
@@ -247,8 +286,6 @@ public class Program {
                 runAnalysis(new ListLIMBR());
             } else if (RvisCommand.isList) {
                 runAnalysis(new ListRvis());
-            } else if (GenomesCommand.isList) {
-                runAnalysis(new List1000Genomes());
             } else if (MgiCommand.isList) {
                 runAnalysis(new ListMgi());
             } else if (DenovoDBCommand.isList) {

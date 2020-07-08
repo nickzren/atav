@@ -11,12 +11,10 @@ import function.external.exac.ExACManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
-import function.external.genomes.GenomesCommand;
-import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
+import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
 import function.external.iranome.IranomeCommand;
-import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mpc.MPCCommand;
@@ -26,6 +24,7 @@ import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
 import function.external.rvis.RvisCommand;
 import function.external.subrvis.SubRvisCommand;
+import function.external.synrvis.SynRvisCommand;
 import function.external.topmed.TopMedCommand;
 import function.external.trap.TrapCommand;
 import global.Data;
@@ -36,10 +35,10 @@ import java.util.Set;
 import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidFloat;
-import static utils.CommandManager.getValidInteger;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.outputInvalidOptionValue;
 
 /**
  *
@@ -68,10 +67,18 @@ public class VariantLevelFilterCommand {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--region":
-                    CommonCommand.regionInput = option.getValue();
+                    if (RegionManager.isRegionInputValid(option.getValue())) {
+                        CommonCommand.regionInput = option.getValue();
+                    } else {
+                        outputInvalidOptionValue(option);
+                    }
                     break;
                 case "--variant":
-                    includeVariantId = option.getValue();
+                    if (VariantManager.isVariantIdInputValid(option.getValue())) {
+                        includeVariantId = option.getValue();
+                    } else {
+                        outputInvalidOptionValue(option);
+                    }
                     break;
                 case "--rs-number":
                     includeRsNumber = option.getValue();
@@ -183,26 +190,6 @@ public class VariantLevelFilterCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     TrapCommand.minTrapScore = getValidFloat(option);
                     TrapCommand.isInclude = true;
-                    break;
-                case "--max-kaviar-maf":
-                    checkValueValid(1, 0, option);
-                    KaviarCommand.maxKaviarMaf = getValidFloat(option);
-                    KaviarCommand.isInclude = true;
-                    break;
-                case "--max-kaviar-allele-count":
-                    checkValueValid(Data.NO_FILTER, 0, option);
-                    KaviarCommand.maxKaviarAlleleCount = getValidInteger(option);
-                    KaviarCommand.isInclude = true;
-                    break;
-                case "--1000-genomes-pop":
-                    checkValuesValid(GenomesManager.GENOMES_POP, option);
-                    GenomesCommand.genomesPop = option.getValue();
-                    GenomesCommand.isInclude = true;
-                    break;
-                case "--max-1000-genomes-af":
-                    checkValueValid(1, 0, option);
-                    GenomesCommand.maxGenomesAF = getValidFloat(option);
-                    GenomesCommand.isInclude = true;
                     break;
                 case "--sub-rvis-domain-score-percentile":
                 case "--max-sub-rvis-domain-score-percentile":
@@ -334,9 +321,6 @@ public class VariantLevelFilterCommand {
                 case "--include-trap":
                     TrapCommand.isInclude = true;
                     break;
-//                case "--include-kaviar":
-//                    KaviarCommand.isIncludeKaviar = true;
-//                    break;
                 case "--include-known-var":
                     KnownVarCommand.isInclude = true;
                     break;
@@ -349,15 +333,18 @@ public class VariantLevelFilterCommand {
                 case "--include-sub-rvis":
                     SubRvisCommand.isInclude = true;
                     break;
+                case "--include-gevir":
+                    GeVIRCommand.isInclude = true;
+                    break;
+                case "--include-syn-rvis":
+                    SynRvisCommand.isInclude = true;
+                    break;
                 case "--include-limbr":
                     LIMBRCommand.isInclude = true;
                     break;
                 case "--include-ccr":
                     CCRCommand.isInclude = true;
                     break;
-//                case "--include-1000-genomes":
-//                    GenomesCommand.isInclude1000Genomes = true;
-//                    break;
                 case "--include-mgi":
                     MgiCommand.isInclude = true;
                     break;
@@ -403,7 +390,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-genome-asia":
                     GenomeAsiaCommand.isInclude = true;
-                    break; 
+                    break;
                 case "--include-iranome":
                     IranomeCommand.isInclude = true;
                     break;

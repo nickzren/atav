@@ -141,6 +141,8 @@ public class LogManager {
         String str = "Completed";
         if (exit != ErrorManager.SUCCESS) {
             str = "Failed";
+            // hack to force send email when job failed to complete.
+            CommonCommand.email = true;
         }
 
         // email user job complete

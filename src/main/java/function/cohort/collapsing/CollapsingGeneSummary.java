@@ -1,10 +1,14 @@
 package function.cohort.collapsing;
 
 import function.annotation.base.GeneManager;
+import function.external.gevir.GeVIRCommand;
+import function.external.gevir.GeVIRManager;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
+import function.external.synrvis.SynRvisCommand;
+import function.external.synrvis.SynRvisManager;
 import global.Data;
 import utils.CommonCommand;
 import utils.FormatManager;
@@ -45,6 +49,12 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         }
         if (RvisCommand.isInclude) {
             sj.add(RvisManager.getHeader());
+        }
+        if (GeVIRCommand.isInclude) {
+            sj.add(GeVIRManager.getHeader());
+        }
+        if (SynRvisCommand.isInclude) {
+            sj.add(SynRvisManager.getHeader());
         }
         if (KnownVarCommand.isIncludeOMIM) {
             sj.add("OMIM Disease");
@@ -107,13 +117,21 @@ public class CollapsingGeneSummary extends CollapsingSummary {
     }
 
     public String getRvis() {
-        String geneName = name;
-
-        if (name.contains("_")) { // if using gene domain
-            geneName = name.substring(0, name.indexOf("_"));
-        }
+       String geneName = name.contains("_") ? name.substring(0, name.indexOf("_")) : name;
 
         return RvisManager.getLine(geneName);
+    }
+    
+    public String getGeVIR() {
+        String geneName = name.contains("_") ? name.substring(0, name.indexOf("_")) : name;
+
+        return GeVIRManager.getLine(geneName);
+    }
+    
+    public String getSynRvis() {
+        String geneName = name.contains("_") ? name.substring(0, name.indexOf("_")) : name;
+
+        return SynRvisManager.getLine(geneName);
     }
     
     public String getOMIM() {
@@ -155,6 +173,12 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         GeneManager.addCoverageSummary(name, sj);
         if (RvisCommand.isInclude) {
             sj.add(getRvis());
+        }
+        if (GeVIRCommand.isInclude) {
+            sj.add(getGeVIR());
+        }
+        if (SynRvisCommand.isInclude) {
+            sj.add(getSynRvis());
         }
         if (KnownVarCommand.isIncludeOMIM) {
             sj.add(getOMIM());

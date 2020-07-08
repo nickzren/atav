@@ -1,9 +1,9 @@
 package function.external.evs;
 
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
-import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -48,10 +48,12 @@ public class Evs {
 
     private void initAF() {
         try {
-            String sql = EvsManager.getSqlByVariant(chr, pos, ref, alt);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = EvsManager.getPreparedStatement4Variant();
+            preparedStatement.setString(1, chr);
+            preparedStatement.setInt(2, pos);
+            preparedStatement.setString(3, ref);
+            preparedStatement.setString(4, alt);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 allMaf = rs.getFloat("all_maf");
                 allGenotypeCount = rs.getString("all_genotype_count");

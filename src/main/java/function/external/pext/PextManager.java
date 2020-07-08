@@ -2,6 +2,7 @@ package function.external.pext;
 
 import function.external.base.DataManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import utils.DBManager;
@@ -19,6 +20,15 @@ public class PextManager {
     private static int pos = Data.INTEGER_NA;
     private static float ratio = Data.FLOAT_NA;
 
+    private static PreparedStatement preparedStatement4Site;
+
+    public static void init() {
+        if (PextCommand.isInclude) {
+            String sql = "SELECT ratio FROM " + table + " WHERE chr=? AND pos=?";
+            preparedStatement4Site = DBManager.initPreparedStatement(sql);
+        }
+    }
+
     public static String getHeader() {
         return "PEXT Ratio";
     }
@@ -34,21 +44,17 @@ public class PextManager {
             chr = _chr;
             pos = _pos;
         }
-        
+
         try {
-            String sql = "SELECT ratio "
-                    + "FROM " + table + " "
-                    + "WHERE chr = '" + chr + "' "
-                    + "AND pos = " + pos;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            preparedStatement4Site.setString(1, chr);
+            preparedStatement4Site.setInt(2, pos);
+            ResultSet rs = preparedStatement4Site.executeQuery();
             if (rs.next()) {
                 ratio = rs.getFloat("ratio");
             } else {
                 ratio = Data.FLOAT_NA;
             }
-            
+
             rs.close();
         } catch (SQLException ex) {
             ErrorManager.send(ex);

@@ -2,6 +2,7 @@ package function.external.mpc;
 
 import function.external.base.DataManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import utils.DBManager;
@@ -14,6 +15,15 @@ import utils.ErrorManager;
 public class MPCManager {
     static final String table = "mpc.variant";
 
+    private static PreparedStatement preparedStatement4Variant;
+    
+    public static void init() {
+        if(MPCCommand.isInclude) {
+            String sql = "SELECT MPC FROM " + table + " WHERE chr=? AND pos=? AND alt=?";
+            preparedStatement4Variant = DBManager.initPreparedStatement(sql);
+        }
+    }
+    
     public static String getHeader() {
         return "MPC";
     }
@@ -35,13 +45,10 @@ public class MPCManager {
         float mpc = Data.FLOAT_NA;
         
         try {
-            String sql = "SELECT MPC FROM " + table + " "
-                + "WHERE chr = '" + chr + "' "
-                + "AND pos = " + pos + " "
-                + "AND alt = '" + alt + "'";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-            
+            preparedStatement4Variant.setString(1, chr);
+            preparedStatement4Variant.setInt(2, pos);
+            preparedStatement4Variant.setString(3, alt);
+            ResultSet rs = preparedStatement4Variant.executeQuery();
             if (rs.next()) {
                 mpc = rs.getFloat("MPC");
 

@@ -1,5 +1,6 @@
 package function.annotation.base;
 
+import java.sql.PreparedStatement;
 import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
@@ -18,7 +19,7 @@ public class Gene {
     private boolean isValid = true;
 
     private int index; // index for line in gene boundary file
-
+    
     public Gene(String name) {
         this.name = name.trim();
 
@@ -31,17 +32,16 @@ public class Gene {
 
     private void initChr() {
         try {
-            String sql = "SELECT chrom FROM hgnc WHERE gene = '" + name + "'";
-
-            ResultSet rset = DBManager.executeQuery(sql);
-
-            if (rset.next()) {
-                chr = rset.getString("chrom");
+            PreparedStatement preparedStatement = GeneManager.getPreparedStatement4GeneChrom();
+            preparedStatement.setString(1, name);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                chr = rs.getString("chrom");
             } else {
                 isValid = false;
             }
 
-            rset.close();
+            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

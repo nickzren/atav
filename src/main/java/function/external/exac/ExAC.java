@@ -1,13 +1,13 @@
 package function.external.exac;
 
 import global.Data;
+import java.sql.PreparedStatement;
 import utils.ErrorManager;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
-import utils.DBManager;
 
 /**
  *
@@ -90,10 +90,10 @@ public class ExAC {
 
     private void initCoverage() {
         try {
-            String sql = ExACManager.getSql4Cvg(chr, pos);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = ExACManager.getPreparedStatement4Coverage();
+            preparedStatement.setString(1, chr);
+            preparedStatement.setInt(2, pos);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 meanCoverage = rs.getFloat("mean_cvg");
                 sampleCovered10x = rs.getInt("covered_10x");
@@ -113,10 +113,12 @@ public class ExAC {
         gts = new String[ExACManager.EXAC_POP.length];
 
         try {
-            String sql = ExACManager.getSqlByVariant(chr, pos, ref, alt, isMNV);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = ExACManager.getPreparedStatement4Variant(isMNV);
+            preparedStatement.setString(1, chr);
+            preparedStatement.setInt(2, pos);
+            preparedStatement.setString(3, ref);
+            preparedStatement.setString(4, alt);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 setAF(rs);
             } else if (meanCoverage > 0) {

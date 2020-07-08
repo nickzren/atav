@@ -13,18 +13,16 @@ import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
-import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
-import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
+import function.external.gevir.GeVIRCommand;
+import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
-import function.external.kaviar.KaviarCommand;
-import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.limbr.LIMBRCommand;
@@ -44,11 +42,14 @@ import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.subrvis.SubRvisCommand;
 import function.external.subrvis.SubRvisManager;
+import function.external.synrvis.SynRvisCommand;
+import function.external.synrvis.SynRvisManager;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -62,12 +63,40 @@ public class DataManager {
     public static String getVersion() {
         StringBuilder sb = new StringBuilder();
 
+        if (CCRCommand.isInclude) {
+            sb.append(CCRManager.getVersion());
+        }
+
         if (EvsCommand.isInclude) {
             sb.append(EvsManager.getVersion());
         }
 
         if (ExACCommand.isInclude) {
             sb.append(ExACManager.getVersion());
+        }
+
+        if (DenovoDBCommand.isInclude) {
+            sb.append(DenovoDBManager.getVersion());
+        }
+
+        if (DiscovEHRCommand.isInclude) {
+            sb.append(DiscovEHRManager.getVersion());
+        }
+
+        if (GenomeAsiaCommand.isInclude) {
+            sb.append(GenomeAsiaManager.getVersion());
+        }
+
+        if (GerpCommand.isInclude) {
+            sb.append(GerpManager.getVersion());
+        }
+
+        if (GeVIRCommand.isInclude) {
+            sb.append(GeVIRManager.getVersion());
+        }
+
+        if (GMECommand.isInclude) {
+            sb.append(GMEManager.getVersion());
         }
 
         if (GnomADCommand.isIncludeExome) {
@@ -82,16 +111,40 @@ public class DataManager {
             sb.append(GnomADManager.getGeneMetricsVersion());
         }
 
+        if (IranomeCommand.isInclude) {
+            sb.append(IranomeManager.getVersion());
+        }
+
         if (KnownVarCommand.isInclude) {
             sb.append(KnownVarManager.getVersion());
         }
 
-        if (KaviarCommand.isInclude) {
-            sb.append(KaviarManager.getVersion());
+        if (LIMBRCommand.isInclude) {
+            sb.append(LIMBRManager.getVersion());
         }
 
-        if (GenomesCommand.isInclude) {
-            sb.append(GenomesManager.getVersion());
+        if (MgiCommand.isInclude) {
+            sb.append(MgiManager.getVersion());
+        }
+
+        if (MPCCommand.isInclude) {
+            sb.append(MPCManager.getVersion());
+        }
+
+        if (MTRCommand.isInclude) {
+            sb.append(MTRManager.getVersion());
+        }
+
+        if (PextCommand.isInclude) {
+            sb.append(PextManager.getVersion());
+        }
+
+        if (PrimateAICommand.isInclude) {
+            sb.append(PrimateAIManager.getVersion());
+        }
+
+        if (RevelCommand.isInclude) {
+            sb.append(RevelManager.getVersion());
         }
 
         if (RvisCommand.isInclude) {
@@ -102,68 +155,16 @@ public class DataManager {
             sb.append(SubRvisManager.getVersion());
         }
 
-        if (LIMBRCommand.isInclude) {
-            sb.append(LIMBRManager.getVersion());
+        if (SynRvisCommand.isInclude) {
+            sb.append(SynRvisManager.getVersion());
         }
 
-        if (CCRCommand.isInclude) {
-            sb.append(CCRManager.getVersion());
-        }
-
-        if (GerpCommand.isInclude) {
-            sb.append(GerpManager.getVersion());
+        if (TopMedCommand.isInclude) {
+            sb.append(TopMedManager.getVersion());
         }
 
         if (TrapCommand.isInclude) {
             sb.append(TrapManager.getVersion());
-        }
-
-        if (MgiCommand.isInclude) {
-            sb.append(MgiManager.getVersion());
-        }
-
-        if (DenovoDBCommand.isInclude) {
-            sb.append(DenovoDBManager.getVersion());
-        }
-
-        if (DiscovEHRCommand.isInclude) {
-            sb.append(DiscovEHRManager.getVersion());
-        }
-
-        if (MTRCommand.isInclude) {
-            sb.append(MTRManager.getVersion());
-        }
-
-        if (RevelCommand.isInclude) {
-            sb.append(RevelManager.getVersion());
-        }
-
-        if (PrimateAICommand.isInclude) {
-            sb.append(PrimateAIManager.getVersion());
-        }
-
-        if (MPCCommand.isInclude) {
-            sb.append(MPCManager.getVersion());
-        }
-
-        if (PextCommand.isInclude) {
-            sb.append(PextManager.getVersion());
-        }
-        
-        if (GMECommand.isInclude) {
-            sb.append(GMEManager.getVersion());
-        }
-        
-        if (TopMedCommand.isInclude) {
-            sb.append(TopMedManager.getVersion());
-        }
-        
-        if (GenomeAsiaCommand.isInclude) {
-            sb.append(GenomeAsiaManager.getVersion());
-        }
-        
-        if (IranomeCommand.isInclude) {
-            sb.append(IranomeManager.getVersion());
         }
 
         return sb.toString();
@@ -171,18 +172,18 @@ public class DataManager {
 
     public static String getVersion(String table) {
         try {
-            String sql = "SELECT version_number "
-                    + "From external_table_meta "
-                    + "Where data_source ='" + table + "'";
+            String sql = "SELECT version_number From external_table_meta Where data_source=?";
 
-            ResultSet rs = DBManager.executeQuery(sql);
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setString(1, table);
+            ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
                 return rs.getString("version_number");
-
             }
 
             rs.close();
+            preparedStatement.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

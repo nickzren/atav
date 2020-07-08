@@ -11,6 +11,7 @@ import utils.LogManager;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -69,9 +70,9 @@ public class SampleManager {
     private static StringJoiner caseIDSJ = new StringJoiner(",");
 
     // igm gnomad sample
-    private static final String IGM_GNOMAD_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/igm_gnomad_sample.txt";
+    private static final String IGM_GNOMAD_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/igm_gnomad_sample_062620.txt";
     private static Set<String> excludeIGMGnomadSampleSet = new HashSet<>();
-  
+
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
@@ -240,8 +241,6 @@ public class SampleManager {
         if (CohortLevelFilterCommand.isAllExome) {
             sqlCode += " and sample_type = 'Exome'";
         }
-        
-        sqlCode += " and sample_name not like 'SRR%'";
 
         initSampleFromDB(sqlCode);
     }
@@ -354,7 +353,8 @@ public class SampleManager {
 
     private static void initSampleFromDB(String sqlCode) {
         try {
-            ResultSet rs = DBManager.executeQuery(sqlCode);
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sqlCode);
+            ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
                 int sampleId = rs.getInt("sample_id");
@@ -366,14 +366,13 @@ public class SampleManager {
                     LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
                     continue;
                 }
-                
+
 //                if (!sampleNameSet.contains(individualId)) {
 //                    sampleNameSet.add(individualId);
 //                } else {
 //                    // do not allow duplicate samples
 //                    continue;
 //                }
-
                 String paternalId = "0";
                 String maternalId = "0";
                 byte sex = 1; // male
@@ -430,23 +429,24 @@ public class SampleManager {
 
     private static void checkSampleList(Sample sample) {
         try {
-            String sqlCode = "SELECT * FROM sample "
-                    + "WHERE sample_name = '" + sample.getName() + "' "
-                    + "AND sample_type = '" + sample.getType() + "' "
-                    + "AND capture_kit = '" + sample.getCaptureKit() + "' "
-                    + "AND sample_failure > 0 ";
+            String sql = "SELECT * FROM sample "
+                    + "WHERE sample_name=? AND sample_type=? AND capture_kit=? AND sample_failure > 0 ";
 
-            ResultSet rs = DBManager.executeQuery(sqlCode);
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setString(1, sample.getName());
+            preparedStatement.setString(2, sample.getType());
+            preparedStatement.setString(3, sample.getCaptureKit());
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 failedSampleList.add(sample);
             } else {
-                sqlCode = "SELECT * FROM sample "
-                        + "WHERE sample_name = '" + sample.getName() + "' "
-                        + "AND sample_finished = 1 AND sample_failure = 0";
+                sql = "SELECT * FROM sample "
+                        + "WHERE sample_name=? AND sample_finished = 1 AND sample_failure = 0";
 
-                rs = DBManager.executeQuery(sqlCode);
-
-                if (rs.next()) {                    
+                preparedStatement = DBManager.initPreparedStatement(sql);
+                preparedStatement.setString(1, sample.getName());
+                rs = preparedStatement.executeQuery();
+                if (rs.next()) {
                     sample.setType(rs.getString("sample_type"));
                     sample.setCaptureKit(rs.getString("capture_kit"));
                     diffTypeSampleList.add(sample);
@@ -456,6 +456,7 @@ public class SampleManager {
             }
 
             rs.close();
+            preparedStatement.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -775,20 +776,22 @@ public class SampleManager {
             String captureKit) throws Exception {
         int sampleId = Data.INTEGER_NA;
 
-        try {
-            String sqlCode = "SELECT sample_id FROM sample "
-                    + "WHERE sample_name = '" + sampleName + "' "
-                    + "AND sample_type = '" + sampleType + "' "
-                    + "AND capture_kit = '" + captureKit + "' "
-                    + "AND sample_finished = 1 "
-                    + "AND sample_failure = 0";
+        try {           
+            String sql = "SELECT sample_id FROM sample "
+                    + "WHERE sample_name=? AND sample_type=? AND capture_kit=? "
+                    + "AND sample_finished = 1 AND sample_failure = 0";
 
-            ResultSet rs = DBManager.executeQuery(sqlCode);
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setString(1, sampleName);
+            preparedStatement.setString(2, sampleType);
+            preparedStatement.setString(3, captureKit);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 sampleId = rs.getInt("sample_id");
             }
 
             rs.close();
+            preparedStatement.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

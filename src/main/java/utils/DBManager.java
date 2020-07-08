@@ -118,6 +118,16 @@ public class DBManager {
 
         return null;
     }
+    
+    public static PreparedStatement initPreparedStatement(String sql) {
+        try {
+            return conn.prepareStatement(sql);
+        } catch (SQLException ex) {
+            ErrorManager.send(ex);
+        }
+        
+        return null;
+    }
 
     public static Statement createStatementByConcurReadOnlyConn() {
         try {

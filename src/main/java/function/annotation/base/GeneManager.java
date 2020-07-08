@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.StringJoiner;
@@ -22,7 +23,7 @@ import utils.DBManager;
 public class GeneManager {
 
     public static final String TMP_GENE_TABLE = "tmp_gene_chr"; // need to append chr in real time
-    public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_121118.tsv";
+    public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_040320.tsv.gz";
     public static final String ALL_GENE_SYMBOL_MAP_PATH = "data/gene/hgnc_complete_set_to_GRCh37.87_040320.tsv.gz";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
@@ -42,9 +43,13 @@ public class GeneManager {
 
     private static boolean hasGeneDomainInput = false;
 
+    private static PreparedStatement preparedStatement4GeneChrom;
+
     public static void init() throws Exception {
+        initPreparedStatement4GeneChrom();
+
         initHgncGeneMap();
-        
+
         initAllGeneSymbolMap();
 
         initGeneName();
@@ -58,12 +63,23 @@ public class GeneManager {
         initTempTable();
     }
 
+    private static void initPreparedStatement4GeneChrom() {
+        String sql = "SELECT chrom FROM hgnc WHERE gene=?";
+        preparedStatement4GeneChrom = DBManager.initPreparedStatement(sql);
+    }
+
+    public static PreparedStatement getPreparedStatement4GeneChrom() {
+        return preparedStatement4GeneChrom;
+    }
+
     private static void initHgncGeneMap() {
         try {
-            File file = new File(Data.ATAV_HOME + HGNC_GENE_MAP_PATH);
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            String line;
+            File f = new File(Data.ATAV_HOME + HGNC_GENE_MAP_PATH);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
+            String line = "";
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#")) {
                     String[] tmp = line.split("\t");
@@ -72,12 +88,13 @@ public class GeneManager {
                 }
             }
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (IOException ex) {
             ErrorManager.send(ex);
         }
     }
-    
+
     private static void initAllGeneSymbolMap() {
         try {
             File f = new File(Data.ATAV_HOME + ALL_GENE_SYMBOL_MAP_PATH);
@@ -435,21 +452,17 @@ public class GeneManager {
         String upToDateGene = hgncGeneMap.get(dragendbGene);
         return upToDateGene == null ? dragendbGene : upToDateGene;
     }
-    
+
     public static String getAllGeneSymbol(List<String> geneList) {
-        if(geneList.isEmpty()) {
+        if (geneList.isEmpty()) {
             return Data.STRING_NA;
         }
-        
+
         StringJoiner sj = new StringJoiner(";");
-        
-        for(String gene : geneList) {
+
+        for (String gene : geneList) {
             String allGeneSymbol = allGeneSymbolMap.get(gene);
-            if(allGeneSymbol == null) {
-                continue;
-            }
-            
-            sj.add(allGeneSymbol);
+            sj.add(allGeneSymbol == null ? gene : allGeneSymbol);
         }
 
         return sj.toString();

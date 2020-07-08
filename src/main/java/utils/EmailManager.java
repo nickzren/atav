@@ -53,35 +53,33 @@ public class EmailManager {
      * @param body
      */
     private static void sendEmail(String subject, String body, String to) {
-        if(CommonCommand.isDebug || CommonCommand.disableEmail) {
-            // no email sending if it is in debug mode
-            return;
-        }
-        
         try {
-            Properties props = System.getProperties();
-            props.put("mail.smtp.host", MAIL_SERVER);
-            Session session = Session.getInstance(props, null);
+            // only send email to user when --email used
+            if (CommonCommand.email) {
+                Properties props = System.getProperties();
+                props.put("mail.smtp.host", MAIL_SERVER);
+                Session session = Session.getInstance(props, null);
 
-            MimeMessage msg = new MimeMessage(session);
-            //set message headers
-            msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
-            msg.addHeader("format", "flowed");
-            msg.addHeader("Content-Transfer-Encoding", "8bit");
+                MimeMessage msg = new MimeMessage(session);
+                //set message headers
+                msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
+                msg.addHeader("format", "flowed");
+                msg.addHeader("Content-Transfer-Encoding", "8bit");
 
-            msg.setFrom(new InternetAddress(EMAIL_FROM, "IGM BIOINFO"));
+                msg.setFrom(new InternetAddress(EMAIL_FROM, "IGM BIOINFO"));
 
-            msg.setReplyTo(InternetAddress.parse(EMAIL_FROM, false));
+                msg.setReplyTo(InternetAddress.parse(EMAIL_FROM, false));
 
-            msg.setSubject(subject, "UTF-8");
+                msg.setSubject(subject, "UTF-8");
 
-            msg.setText(body, "UTF-8");
+                msg.setText(body, "UTF-8");
 
-            msg.setSentDate(new Date());
+                msg.setSentDate(new Date());
 
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+                msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
 
-            Transport.send(msg);
+                Transport.send(msg);
+            }
         } catch (UnsupportedEncodingException | MessagingException e) {
         }
     }

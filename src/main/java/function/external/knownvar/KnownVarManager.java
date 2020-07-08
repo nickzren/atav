@@ -6,6 +6,7 @@ import function.external.base.DataManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import global.Data;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -39,6 +40,34 @@ public class KnownVarManager {
     private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
     private static final HashMap<String, String> acmgMap = new HashMap<>();
     private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
+
+    private static PreparedStatement preparedStatement4HGMDSite;
+    private static PreparedStatement preparedStatement4HGMDIndelFlankingCount;
+    private static PreparedStatement preparedStatement4ClinVarPathogenicIndelFlankingCount;
+    private static PreparedStatement preparedStatement4ClinVarAllIndelFlankingCount;
+
+    private static void initPreparedStatement() {
+        String sql = "SELECT ref,alt,DiseaseName,variantClass,pmid From " + hgmdTable + " WHERE chr=? AND pos=?";
+        preparedStatement4HGMDSite = DBManager.initPreparedStatement(sql);
+
+        sql = "SELECT count(*) as count From " + hgmdTable
+                + " WHERE chr=? AND pos BETWEEN ? AND ? AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
+        preparedStatement4HGMDIndelFlankingCount = DBManager.initPreparedStatement(sql);
+
+        sql = "SELECT count(*) as count "
+                + "From " + clinVarTable + " "
+                + "WHERE chr=? "
+                + "AND pos BETWEEN ? AND ? "
+                + "AND ClinSig like '%pathogenic%' "
+                + "AND ClinSig not like '%conflicting%' "
+                + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
+        preparedStatement4ClinVarPathogenicIndelFlankingCount = DBManager.initPreparedStatement(sql);
+
+        sql = "SELECT count(*) as count From " + clinVarTable + " "
+                + "WHERE chr=? AND pos BETWEEN ? AND ? AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
+        preparedStatement4ClinVarAllIndelFlankingCount = DBManager.initPreparedStatement(sql);
+
+    }
 
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
@@ -99,6 +128,8 @@ public class KnownVarManager {
 
     public static void init() throws SQLException {
         if (KnownVarCommand.isInclude) {
+            initPreparedStatement();
+
             initHGMDMap();
 
             initClinVarMap();
@@ -263,10 +294,10 @@ public class KnownVarManager {
     }
 
     public static void initOMIMMap() {
-        if(!omimMap.isEmpty()) {
+        if (!omimMap.isEmpty()) {
             return;
         }
-        
+
         try {
             String sql = "SELECT * From " + omimTable;
 
@@ -362,15 +393,10 @@ public class KnownVarManager {
     public static int getHGMDIndelFlankingCount(Variant var) {
         try {
             int width = 9;
-
-            String sql = "SELECT count(*) as count "
-                    + "From " + hgmdTable + " "
-                    + "WHERE chr='" + var.getChrStr() + "' "
-                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
-                    + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            preparedStatement4HGMDIndelFlankingCount.setString(1, var.getChrStr());
+            preparedStatement4HGMDIndelFlankingCount.setInt(2, var.getStartPosition() - width);
+            preparedStatement4HGMDIndelFlankingCount.setInt(3, var.getStartPosition() + width);
+            ResultSet rs = preparedStatement4HGMDIndelFlankingCount.executeQuery();
             if (rs.next()) {
                 return rs.getInt("count");
             }
@@ -386,16 +412,11 @@ public class KnownVarManager {
     public static String getHGMDBySite(Variant var, int distance) {
         try {
             if (var.isSnv()) { // only query for SNVs
-                String sql = "SELECT ref,alt,DiseaseName,variantClass,pmid "
-                        + "From " + hgmdTable + " "
-                        + "WHERE chr='" + var.getChrStr() + "' "
-                        + "AND pos = " + (var.getStartPosition() + distance);
-
-                ResultSet rs = DBManager.executeQuery(sql);
-
                 StringBuilder sb = new StringBuilder();
                 int count = 0;
-
+                preparedStatement4HGMDSite.setString(1, var.getChrStr());
+                preparedStatement4HGMDSite.setInt(2, var.getStartPosition() + distance);
+                ResultSet rs = preparedStatement4HGMDSite.executeQuery();
                 while (rs.next()) {
                     if (rs.getString("ref").length() > 1
                             || rs.getString("alt").length() > 1) { // skip indels
@@ -441,17 +462,10 @@ public class KnownVarManager {
     public static int getClinVarPathogenicIndelFlankingCount(Variant var) {
         try {
             int width = 9;
-
-            String sql = "SELECT count(*) as count "
-                    + "From " + clinVarTable + " "
-                    + "WHERE chr='" + var.getChrStr() + "' "
-                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
-                    + "AND ClinSig like '%pathogenic%' "
-                    + "AND ClinSig not like '%conflicting%' "
-                    + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            preparedStatement4ClinVarPathogenicIndelFlankingCount.setString(1, var.getChrStr());
+            preparedStatement4ClinVarPathogenicIndelFlankingCount.setInt(2, var.getStartPosition() - width);
+            preparedStatement4ClinVarPathogenicIndelFlankingCount.setInt(3, var.getStartPosition() + width);
+            ResultSet rs = preparedStatement4ClinVarPathogenicIndelFlankingCount.executeQuery();
             if (rs.next()) {
                 return rs.getInt("count");
             }
@@ -466,16 +480,11 @@ public class KnownVarManager {
 
     public static int getClinVarAllIndelFlankingCount(Variant var) {
         try {
-            int width = 9;
-
-            String sql = "SELECT count(*) as count "
-                    + "From " + clinVarTable + " "
-                    + "WHERE chr='" + var.getChrStr() + "' "
-                    + "AND pos BETWEEN " + (var.getStartPosition() - width) + " AND " + (var.getStartPosition() + width) + " "
-                    + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            int width = 9;       
+            preparedStatement4ClinVarAllIndelFlankingCount.setString(1, var.getChrStr());
+            preparedStatement4ClinVarAllIndelFlankingCount.setInt(2, var.getStartPosition() - width);
+            preparedStatement4ClinVarAllIndelFlankingCount.setInt(3, var.getStartPosition() + width);
+            ResultSet rs = preparedStatement4ClinVarAllIndelFlankingCount.executeQuery();
             if (rs.next()) {
                 return rs.getInt("count");
             }

@@ -11,14 +11,10 @@ import function.external.evs.EvsCommand;
 import function.external.evs.EvsManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
-import function.external.genomes.GenomesCommand;
 import function.external.gnomad.GnomADManager;
-import function.external.genomes.GenomesManager;
 import function.external.gerp.GerpCommand;
 import function.external.gerp.GerpManager;
 import function.external.gnomad.GnomADCommand;
-import function.external.kaviar.KaviarCommand;
-import function.external.kaviar.KaviarManager;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
 import function.external.limbr.LIMBRCommand;
@@ -45,6 +41,8 @@ import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
+import function.external.gevir.GeVIRCommand;
+import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.iranome.IranomeCommand;
@@ -53,6 +51,8 @@ import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
+import function.external.synrvis.SynRvisCommand;
+import function.external.synrvis.SynRvisManager;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import global.Data;
@@ -134,20 +134,20 @@ public class Output {
             sj.add(KnownVarManager.getHeader());
         }
 
-        if (KaviarCommand.isInclude) {
-            sj.add(KaviarManager.getHeader());
-        }
-
-        if (GenomesCommand.isInclude) {
-            sj.add(GenomesManager.getHeader());
-        }
-
         if (RvisCommand.isInclude) {
             sj.add(RvisManager.getHeader());
         }
 
         if (SubRvisCommand.isInclude) {
             sj.add(SubRvisManager.getHeader());
+        }
+        
+        if (GeVIRCommand.isInclude) {
+            sj.add(GeVIRManager.getHeader());
+        }
+        
+        if (SynRvisCommand.isInclude) {
+            sj.add(SynRvisManager.getHeader());
         }
 
         if (LIMBRCommand.isInclude) {

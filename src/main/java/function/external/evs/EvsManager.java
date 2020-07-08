@@ -2,7 +2,9 @@ package function.external.evs;
 
 import function.external.base.DataManager;
 import function.variant.base.Region;
+import java.sql.PreparedStatement;
 import java.util.StringJoiner;
+import utils.DBManager;
 
 /**
  *
@@ -10,8 +12,24 @@ import java.util.StringJoiner;
  */
 public class EvsManager {
 
-    static final String variantTable = "evs.variant_2015_09_16";
+    static final String table = "evs.variant_2015_09_16";
 
+    private static PreparedStatement preparedStatement4Variant;
+    private static PreparedStatement preparedStatement4Region;
+    
+    public static void init() {
+        if (EvsCommand.isInclude) {
+            String sql = "SELECT all_maf,all_genotype_count,FilterStatus FROM " 
+                    + table + " WHERE chr=? AND position=? AND ref_allele=? AND alt_allele=?";
+            preparedStatement4Variant = DBManager.initPreparedStatement(sql);
+
+            sql = "SELECT chr,position,ref_allele,alt_allele,"
+                + "all_maf,all_genotype_count,FilterStatus FROM " 
+                    + table + " WHERE chr=? AND position BETWEEN ? AND ?";
+            preparedStatement4Region = DBManager.initPreparedStatement(sql);
+        }
+    }
+    
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
@@ -23,24 +41,14 @@ public class EvsManager {
     }
 
     public static String getVersion() {
-        return "EVS: " + DataManager.getVersion(variantTable) + "\n";
+        return "EVS: " + DataManager.getVersion(table) + "\n";
+    }
+    
+    public static PreparedStatement getPreparedStatement4Variant() {
+        return preparedStatement4Variant;
     }
 
-    public static String getSqlByRegion(Region region) {
-        return "SELECT chr,position,ref_allele,alt_allele,"
-                + "all_maf,all_genotype_count,FilterStatus "
-                + "FROM " + variantTable + " "
-                + "WHERE chr = '" + region.getChrStr() + "' "
-                + "AND position BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
-    }
-
-    public static String getSqlByVariant(String chr,
-            int pos, String ref, String alt) {
-        return "SELECT all_maf,all_genotype_count,FilterStatus "
-                + "FROM " + variantTable + " "
-                + "WHERE chr = '" + chr + "' "
-                + "AND position = " + pos + " "
-                + "AND ref_allele = '" + ref + "' "
-                + "AND alt_allele = '" + alt + "'";
+    public static PreparedStatement getPreparedStatement4Region() {
+        return preparedStatement4Region;
     }
 }

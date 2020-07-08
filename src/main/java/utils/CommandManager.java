@@ -11,9 +11,7 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExACCommand;
 import function.external.gnomad.GnomADCommand;
-import function.external.genomes.GenomesCommand;
 import function.external.gerp.GerpCommand;
-import function.external.kaviar.KaviarCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mtr.MTRCommand;
@@ -36,10 +34,12 @@ import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMCommand;
 import function.external.genomeasia.GenomeAsiaCommand;
+import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
 import function.external.iranome.IranomeCommand;
 import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
+import function.external.synrvis.SynRvisCommand;
 import function.external.topmed.TopMedCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
@@ -247,8 +247,8 @@ public class CommandManager {
                 case "--disable-timestamp-from-out-path":
                     isTimestampEnabled = false;
                     break;
-                case "--disable-email":
-                    CommonCommand.disableEmail = true;
+                case "--email":
+                    CommonCommand.email = true;
                     break;
                 default:
                     continue;
@@ -391,13 +391,13 @@ public class CommandManager {
                     GnomADCommand.isIncludeGeneMetrics = true;
                     GerpCommand.isInclude = true;
                     TrapCommand.isInclude = true;
-//                    KaviarCommand.isIncludeKaviar = true;
                     KnownVarCommand.isInclude = true;
                     RvisCommand.isInclude = true;
                     SubRvisCommand.isInclude = true;
+                    GeVIRCommand.isInclude = true;
+                    SynRvisCommand.isInclude = true;
                     LIMBRCommand.isInclude = true;
                     CCRCommand.isInclude = true;
-//                    GenomesCommand.isInclude1000Genomes = true;
                     MgiCommand.isInclude = true;
                     DenovoDBCommand.isInclude = true;
                     DiscovEHRCommand.isInclude = true;
@@ -453,11 +453,6 @@ public class CommandManager {
                     KnownVarCommand.isList = true;
                     KnownVarCommand.isInclude = true;
                     break;
-                case "--list-kaviar":
-                    CommonCommand.isNonSampleAnalysis = true;
-                    KaviarCommand.isList = true;
-                    KaviarCommand.isInclude = true;
-                    break;
                 case "--list-gerp":
                     CommonCommand.isNonSampleAnalysis = true;
                     GerpCommand.isList = true;
@@ -487,11 +482,6 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     RvisCommand.isList = true;
                     RvisCommand.isInclude = true;
-                    break;
-                case "--list-1000-genomes":
-                    CommonCommand.isNonSampleAnalysis = true;
-                    GenomesCommand.isList = true;
-                    GenomesCommand.isInclude = true;
                     break;
                 case "--list-mgi":
                     CommonCommand.isNonSampleAnalysis = true;

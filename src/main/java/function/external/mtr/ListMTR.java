@@ -1,16 +1,10 @@
 package function.external.mtr;
 
-import function.external.discovehr.*;
 import function.AnalysisBase;
-import function.variant.base.Region;
-import function.variant.base.RegionManager;
-import function.variant.base.VariantManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.sql.ResultSet;
-import utils.DBManager;
 
 /**
  *

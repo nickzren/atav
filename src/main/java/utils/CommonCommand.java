@@ -10,7 +10,7 @@ public class CommonCommand {
     public static boolean isDebug = false;
 //    public static boolean isDebug = true;
     
-    public static boolean disableEmail = false;
+    public static boolean email = false;
 
     public static boolean isNonDBAnalysis = false;
     public static boolean isNonSampleAnalysis = false;

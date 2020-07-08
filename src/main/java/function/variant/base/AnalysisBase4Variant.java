@@ -27,6 +27,10 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
                 + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene "
                 + "FROM variant_chr" + region.getChrStr() + " ";
 
+        if (GeneManager.isUsed()) {
+            sql += "FORCE INDEX (gene_idx)";
+        }
+        
         // case only filter - add tmp table
         if (CohortLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
             sql += ", tmp_case_variant_id_chr" + region.getChrStr() + " ";

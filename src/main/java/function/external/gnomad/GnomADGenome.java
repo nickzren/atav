@@ -1,13 +1,13 @@
 package function.external.gnomad;
 
 import global.Data;
+import java.sql.PreparedStatement;
 import utils.ErrorManager;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
-import utils.DBManager;
 
 /**
  *
@@ -103,10 +103,12 @@ public class GnomADGenome {
         af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
 
         try {
-            String sql = GnomADManager.getSql4GenomeVariant(chr, pos, ref, alt, isMNV);
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
+            PreparedStatement preparedStatement = GnomADManager.getPreparedStatement4VariantGenome(chr, isMNV);
+            preparedStatement.setString(1, chr);
+            preparedStatement.setInt(2, pos);
+            preparedStatement.setString(3, ref);
+            preparedStatement.setString(4, alt);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 setAF(rs);
             } else {

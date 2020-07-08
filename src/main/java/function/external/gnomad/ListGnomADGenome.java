@@ -8,6 +8,7 @@ import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import utils.DBManager;
 
@@ -56,15 +57,14 @@ public class ListGnomADGenome extends AnalysisBase {
     @Override
     public void processDatabaseData() throws Exception {
         for (int r = 0; r < RegionManager.getRegionSize(); r++) {
-
             Region region = RegionManager.getRegion(r);
-
-            String sqlCode = GnomADManager.getSql4GenomeVariant(region);
-
-            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sqlCode);
-
-            while (rset.next()) {
-                GnomADGenomeOutput output = new GnomADGenomeOutput(rset);
+            PreparedStatement preparedStatement = GnomADManager.getPreparedStatement4RegionGenome(region.getChrStr());
+            preparedStatement.setString(1, region.getChrStr());
+            preparedStatement.setInt(2, region.getStartPosition());
+            preparedStatement.setInt(3, region.getEndPosition());
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                GnomADGenomeOutput output = new GnomADGenomeOutput(rs);
 
                 if (VariantManager.isVariantIdIncluded(output.gnomADGenome.getVariantId())
                         && output.isValid()) {
@@ -74,7 +74,7 @@ public class ListGnomADGenome extends AnalysisBase {
                 }
             }
 
-            rset.close();
+            rs.close();
         }
     }
 

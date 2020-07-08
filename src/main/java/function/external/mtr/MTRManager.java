@@ -1,8 +1,9 @@
 package function.external.mtr;
 
 import function.external.base.DataManager;
-import function.variant.base.Region;
+import java.sql.PreparedStatement;
 import java.util.StringJoiner;
+import utils.DBManager;
 
 /**
  *
@@ -11,6 +12,19 @@ import java.util.StringJoiner;
 public class MTRManager {
 
     static final String table = "mtr.variant_v2";
+
+    private static PreparedStatement preparedStatement4Site;
+    private static PreparedStatement preparedStatement4Region;
+
+    public static void init() {
+        if (MTRCommand.isInclude) {
+            String sql = "SELECT MTR,FDR,MTR_centile FROM " + MTRManager.table + " WHERE chr=? AND pos=?";
+            preparedStatement4Site = DBManager.initPreparedStatement(sql);
+
+            sql = "SELECT * FROM " + MTRManager.table + " WHERE chr=? AND pos BETWEEN ? AND ?";
+            preparedStatement4Region = DBManager.initPreparedStatement(sql);
+        }
+    }
 
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
@@ -25,16 +39,12 @@ public class MTRManager {
     public static String getVersion() {
         return "MTR: " + DataManager.getVersion(table) + "\n";
     }
-
-    public static String getSql4MTR(Region region) {
-        return "SELECT * "
-                + "FROM " + MTRManager.table + " "
-                + "WHERE chr = '" + region.getChrStr() + "' AND pos BETWEEN " + region.getStartPosition() + " AND " + region.getEndPosition();
+    
+    public static PreparedStatement getPreparedStatement4Site() {
+        return preparedStatement4Site;
     }
-
-    public static String getSql4MTR(String chr, int pos) {
-        return "SELECT MTR,FDR,MTR_centile "
-                + "FROM " + MTRManager.table + " "
-                + "WHERE chr = '" + chr + "' AND pos = " + pos;
+    
+    public static PreparedStatement getPreparedStatement4Region() {
+        return preparedStatement4Region;
     }
 }
