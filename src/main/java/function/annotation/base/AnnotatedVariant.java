@@ -183,12 +183,6 @@ public class AnnotatedVariant extends Variant {
             isValid = GerpCommand.isGerpScoreValid(gerpScore);
         }
 
-        if (isValid && TrapCommand.isInclude) {
-            trapScore = isIndel() ? Data.FLOAT_NA : TrapManager.getScore(chrStr, startPosition, allele, isMNV(), geneName);
-
-            isValid = TrapCommand.isValid(trapScore, effect);
-        }
-
         if (isValid && DiscovEHRCommand.isInclude) {
             discovEHR = new DiscovEHR(chrStr, startPosition, refAllele, allele);
 
@@ -270,6 +264,7 @@ public class AnnotatedVariant extends Variant {
         return isValid
                 && isSubRVISValid()
                 && isLIMBRValid()
+                && isTrapValid()
                 && isCCRValid()
                 && isMTRValid()
                 && isPextValid()
@@ -332,6 +327,17 @@ public class AnnotatedVariant extends Variant {
 
                 return mtr.isValid();
             }
+        }
+
+        return true;
+    }
+
+    // init Trap score and applied filter 
+    private boolean isTrapValid() {
+        if (TrapCommand.isInclude) {
+            trapScore = isIndel() ? Data.FLOAT_NA : TrapManager.getScore(chrStr, startPosition, allele, isMNV(), geneName);
+
+            return TrapCommand.isValid(trapScore, effect);
         }
 
         return true;
@@ -462,7 +468,7 @@ public class AnnotatedVariant extends Variant {
         if (SubRvisCommand.isInclude) {
             sj.merge(getSubRvisStringJoiner());
         }
-        
+
         if (GeVIRCommand.isInclude) {
             sj.add(getGeVIR());
         }
@@ -470,7 +476,7 @@ public class AnnotatedVariant extends Variant {
         if (SynRvisCommand.isInclude) {
             sj.add(getSynRvis());
         }
-        
+
         if (LIMBRCommand.isInclude) {
             sj.merge(getLIMBRStringJoiner());
         }
@@ -583,7 +589,7 @@ public class AnnotatedVariant extends Variant {
     public StringJoiner getSubRvisStringJoiner() {
         return subRvisOutput.getStringJoiner();
     }
-    
+
     public String getGeVIR() {
         return GeVIRManager.getLine(getGeneName());
     }
@@ -591,7 +597,7 @@ public class AnnotatedVariant extends Variant {
     public String getSynRvis() {
         return SynRvisManager.getLine(getGeneName());
     }
-    
+
     public StringJoiner getLIMBRStringJoiner() {
         return limbrOutput.getStringJoiner();
     }
