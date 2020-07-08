@@ -34,13 +34,13 @@ public class TrapManager {
 
     public static void init() {
         if (TrapCommand.isInclude) {
-            String sql = "SELECT score FROM " + mnvTable + " WHERE pos=? AND alt=? AND hgnc_gene=?";
+            String sql = "SELECT score FROM " + mnvTable + " WHERE chr=? AND pos=? AND alt=? AND hgnc_gene=?";
             preparedStatement4MNVGene = DBManager.initPreparedStatement(sql);
 
             for (String chr : RegionManager.ALL_CHR) {
                 sql = "SELECT score FROM " + variantTable + chr + " WHERE pos=? AND alt=? AND hgnc_gene=?";
                 preparedStatement4VariantGeneMap.put(chr, DBManager.initPreparedStatement(sql));
-                
+
                 sql = "SELECT hgnc_gene,score FROM " + variantTable + chr + " WHERE pos=? AND alt=?";
                 preparedStatement4VariantMap.put(chr, DBManager.initPreparedStatement(sql));
             }
@@ -67,11 +67,20 @@ public class TrapManager {
         }
 
         try {
-            PreparedStatement preparedStatement = isMNV 
-                    ? preparedStatement4MNVGene : preparedStatement4VariantGeneMap.get(chr);
-            preparedStatement.setInt(1, pos);
-            preparedStatement.setString(2, alt);
-            preparedStatement.setString(3, gene);
+            PreparedStatement preparedStatement;
+            if (isMNV) {
+                preparedStatement = preparedStatement4MNVGene;
+                preparedStatement.setString(1, chr);
+                preparedStatement.setInt(2, pos);
+                preparedStatement.setString(3, alt);
+                preparedStatement.setString(4, gene);
+            } else {
+                preparedStatement = preparedStatement4VariantGeneMap.get(chr);
+                preparedStatement.setInt(1, pos);
+                preparedStatement.setString(2, alt);
+                preparedStatement.setString(3, gene);
+            }
+
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 score = rs.getFloat("score");
