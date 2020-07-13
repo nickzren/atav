@@ -435,7 +435,7 @@ public class VariantManager {
     }
 
     public static boolean isVariantIdInputValid(String value) {
-        if (Pattern.matches("^[atcgATCG0-9-,]+$", value)) {
+        if (Pattern.matches("^[atcgxymtATCGXYMT0-9-,]+$", value)) {
             return true;
         } else {
             File file = new File(value);
