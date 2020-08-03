@@ -21,6 +21,7 @@ import utils.MathManager;
 public class SiteClean {
 
     int totalCleanedBases = 0;
+    int zeroCoverageBases = 0;
     double caseCoverage = 0;
     double ctrlCoverage = 0;
     ArrayList<SortedSite> siteList = new ArrayList<>();
@@ -90,8 +91,11 @@ public class SiteClean {
         double cutoff = getCutoff();
 
         for (SortedSite sortedSite : siteList) {
-            if (sortedSite.getCutoff() < cutoff
-                    && sortedSite.getCaseAvg() + sortedSite.getCtrlAvg() > 0) {
+            if (sortedSite.getCutoff() < cutoff) {
+                if (sortedSite.getCaseAvg() + sortedSite.getCtrlAvg() == 0) {
+                    zeroCoverageBases++;
+                }
+
                 totalCleanedBases++;
                 ctrlCoverage += sortedSite.getCtrlAvg();
                 caseCoverage += sortedSite.getCaseAvg();
@@ -224,8 +228,12 @@ public class SiteClean {
     public void outputLog() {
         LogManager.writeAndPrint("The total number of bases before pruning is "
                 + FormatManager.getDouble((double) GeneManager.getAllGeneBoundaryLength() / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The total number of bases after zero coverage pruning is "
+                + FormatManager.getDouble((double) (GeneManager.getAllGeneBoundaryLength() - zeroCoverageBases) / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases after pruning is "
                 + FormatManager.getDouble((double) totalCleanedBases / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The % of bases with zero coverage is "
+                + FormatManager.getDouble((double) zeroCoverageBases / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
         LogManager.writeAndPrint("The % of bases pruned is "
                 + FormatManager.getDouble(100.0 - (double) totalCleanedBases / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
 

@@ -87,6 +87,10 @@ public class MathManager {
         float max = MathManager.max(a, b);
         float min = MathManager.min(a, b);
 
+        if (max == Data.FLOAT_NA || min == Data.FLOAT_NA) {
+            return Data.FLOAT_NA;
+        }
+
         return devide(max - min, min);
     }
 
