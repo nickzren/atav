@@ -15,6 +15,7 @@ public class ListVCF extends AnalysisBase4CalledVar {
 
     BufferedWriter bwVCF = null;
     final String vcfFilePath = CommonCommand.outputPath + "variants.vcf";
+    final String vcfBGZFilePath = vcfFilePath + ".gz";
 
     @Override
     public void initOutput() {
@@ -43,6 +44,9 @@ public class ListVCF extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
+        VCFManager.bgzipVCF(vcfFilePath);
+        
+        VCFManager.tabixVCF(vcfBGZFilePath);
     }
 
     @Override
