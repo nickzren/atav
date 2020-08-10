@@ -92,22 +92,22 @@ public class SiteClean {
 
         for (SortedSite sortedSite : siteList) {
             if (sortedSite.getCutoff() < cutoff) {
-                if (sortedSite.getCaseAvg() + sortedSite.getCtrlAvg() == 0) {
+                if (sortedSite.getCaseAvg() + sortedSite.getCtrlAvg() > 0) {
+                    totalCleanedBases++;
+                    ctrlCoverage += sortedSite.getCtrlAvg();
+                    caseCoverage += sortedSite.getCaseAvg();
+
+                    HashMap<Integer, SortedSite> map = cleanedSiteMap.get(sortedSite.getChr());
+
+                    if (map == null) {
+                        map = new HashMap<>();
+                        cleanedSiteMap.put(sortedSite.getChr(), map);
+                    }
+
+                    map.put(sortedSite.getPos(), sortedSite);
+                } else {
                     zeroCoverageBases++;
                 }
-
-                totalCleanedBases++;
-                ctrlCoverage += sortedSite.getCtrlAvg();
-                caseCoverage += sortedSite.getCaseAvg();
-
-                HashMap<Integer, SortedSite> map = cleanedSiteMap.get(sortedSite.getChr());
-
-                if (map == null) {
-                    map = new HashMap<>();
-                    cleanedSiteMap.put(sortedSite.getChr(), map);
-                }
-
-                map.put(sortedSite.getPos(), sortedSite);
             }
         }
 
