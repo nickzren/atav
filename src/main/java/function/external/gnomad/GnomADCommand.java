@@ -19,28 +19,28 @@ public class GnomADCommand {
 
     public static Set<String> gnomADExomePopSet = new HashSet<String>(Arrays.asList("global"));
     public static Set<String> gnomADGenomePopSet = new HashSet<String>(Arrays.asList("global"));
-    public static float gnomADExomeAF = Data.NO_FILTER;
-    public static float gnomADGenomeAF = Data.NO_FILTER;
+    public static float maxGnomADExomeAF = Data.NO_FILTER;
+    public static float maxGnomADGenomeAF = Data.NO_FILTER;
     public static float gnomADExomeRfTpProbabilitySnv = Data.NO_FILTER;
     public static float gnomADExomeRfTpProbabilityIndel = Data.NO_FILTER;
     public static float gnomADGenomeRfTpProbabilitySnv = Data.NO_FILTER;
     public static float gnomADGenomeRfTpProbabilityIndel = Data.NO_FILTER;
 
     public static boolean isGnomADExomeAFValid(float value) {
-        if (gnomADExomeAF == Data.NO_FILTER) {
+        if (maxGnomADExomeAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= gnomADExomeAF
+        return value <= maxGnomADExomeAF
                 || value == Data.FLOAT_NA;
     }
 
     public static boolean isGnomADGenomeAFValid(float value) {
-        if (gnomADGenomeAF == Data.NO_FILTER) {
+        if (maxGnomADGenomeAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= gnomADGenomeAF
+        return value <= maxGnomADGenomeAF
                 || value == Data.FLOAT_NA;
     }
 

@@ -119,8 +119,9 @@ public class VariantLevelFilterCommand {
                     ExACCommand.isInclude = true;
                     break;
                 case "--exac-af":
+                case "--max-exac-af":
                     checkValueValid(1, 0, option);
-                    ExACCommand.exacAF = getValidFloat(option);
+                    ExACCommand.maxExacAF = getValidFloat(option);
                     ExACCommand.isInclude = true;
                     break;
                 case "--min-exac-vqslod-snv":
@@ -144,13 +145,15 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--gnomad-exome-af":
+                case "--max-gnomad-exome-af":
                     checkValueValid(1, 0, option);
-                    GnomADCommand.gnomADExomeAF = getValidFloat(option);
+                    GnomADCommand.maxGnomADExomeAF = getValidFloat(option);
                     GnomADCommand.isIncludeExome = true;
                     break;
                 case "--gnomad-genome-af":
+                case "--max-gnomad-genome-af":
                     checkValueValid(1, 0, option);
-                    GnomADCommand.gnomADGenomeAF = getValidFloat(option);
+                    GnomADCommand.maxGnomADGenomeAF = getValidFloat(option);
                     GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--gnomad-exome-rf-tp-probability-snv":

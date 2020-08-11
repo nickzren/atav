@@ -14,17 +14,17 @@ public class ExACCommand {
     public static boolean isIncludeCount = false;
 
     public static String exacPop = "global";
-    public static float exacAF = Data.NO_FILTER;
+    public static float maxExacAF = Data.NO_FILTER;
     public static float exacVqslodSnv = Data.NO_FILTER;
     public static float exacVqslodIndel = Data.NO_FILTER;
     public static float exacMeanCoverage = Data.NO_FILTER;
 
     public static boolean isExacAFValid(float value) {
-        if (exacAF == Data.NO_FILTER) {
+        if (maxExacAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= exacAF
+        return value <= maxExacAF
                 || value == Data.FLOAT_NA;
     }
 
