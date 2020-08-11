@@ -56,7 +56,7 @@ public class ListGME extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
                 float af = GMEManager.getAF(variantId);
 
-                if (GMECommand.isMaxGMEAFValid(af)) {
+                if (GMECommand.isAFValid(af)) {
                     bwGME.write(variantId + ",");
                     bwGME.write(FormatManager.getFloat(af));
                     bwGME.newLine();

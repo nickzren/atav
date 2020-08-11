@@ -285,7 +285,7 @@ public class Output {
 
     protected CalledVariant calledVar;
     // The value will be dynamically updated per sample
-    private double looAF = 0;
+    private float looAF = 0;
 
     public Output(CalledVariant c) {
         calledVar = c;
@@ -393,7 +393,7 @@ public class Output {
     }
 
     public boolean isMaxLooAFValid() {
-        return CohortLevelFilterCommand.isMaxLooAFValid(looAF);
+        return CohortLevelFilterCommand.isLooAFValid(looAF);
     }
 
     public double getLooAf() {
