@@ -14,7 +14,7 @@ public class CollapsingSummary implements Comparable {
 
     String name; // gene name or region name
 
-    int[] variantNumBySample = new int[SampleManager.getTotalSampleNum()];
+    byte[] hasQualifiedVariantBySample = new byte[SampleManager.getTotalSampleNum()];
 
     int totalVariant = 0;
     int totalSnv = 0;
@@ -47,13 +47,9 @@ public class CollapsingSummary implements Comparable {
         linearP = value;
     }
 
-    public void updateSampleVariantCount4SingleVar(int index) {
-        variantNumBySample[index] = variantNumBySample[index] + 1;
-    }
-
-    public void updateSampleVariantCount4CompHet(int index) {
-        if (variantNumBySample[index] == 0) {
-            variantNumBySample[index] = variantNumBySample[index] + 1;
+    public void countQualifiedVariantBySample(int index) {
+        if (hasQualifiedVariantBySample[index] == 0) {
+            hasQualifiedVariantBySample[index] = 1;
         }
     }
 
@@ -70,11 +66,11 @@ public class CollapsingSummary implements Comparable {
     public void countSample() {
         for (Sample sample : SampleManager.getList()) {
             if (sample.isCase()) {
-                if (variantNumBySample[sample.getIndex()] > 0) {
+                if (hasQualifiedVariantBySample[sample.getIndex()] > 0) {
                     qualifiedCase++;
                 }
             } else {
-                if (variantNumBySample[sample.getIndex()] > 0) {
+                if (hasQualifiedVariantBySample[sample.getIndex()] > 0) {
                     qualifiedCtrl++;
                 }
             }
@@ -82,7 +78,7 @@ public class CollapsingSummary implements Comparable {
 
         unqualifiedCase = totalCase - qualifiedCase;
         unqualifiedCtrl = totalCtrl - qualifiedCtrl;
-        
+
         qualifiedCaseFreq = MathManager.devide(qualifiedCase, totalCase);
         qualifiedCtrlFreq = MathManager.devide(qualifiedCtrl, totalCtrl);
 

@@ -2,7 +2,6 @@ package function.cohort.collapsing;
 
 import function.cohort.base.CalledVariant;
 import function.cohort.base.Sample;
-import global.Index;
 import java.util.StringJoiner;
 import utils.FormatManager;
 

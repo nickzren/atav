@@ -139,7 +139,7 @@ public class CollapsingLite extends ListVarGenoLite {
             }
 
             CollapsingSummary summary = summaryMap.get(geneName);
-            summary.updateSampleVariantCount4SingleVar(sample.getIndex());
+            summary.countQualifiedVariantBySample(sample.getIndex());
 
             // only count variant once per gene
             if (!previousVariantID.equals(variantLite.getVariantID())) {
@@ -174,7 +174,7 @@ public class CollapsingLite extends ListVarGenoLite {
             bwSampleMatrix.write(summary.name + "\t");
 
             for (Sample sample : SampleManager.getList()) {
-                bwSampleMatrix.write(summary.variantNumBySample[sample.getIndex()] + "\t");
+                bwSampleMatrix.write(summary.hasQualifiedVariantBySample[sample.getIndex()] + "\t");
             }
 
             bwSampleMatrix.newLine();
