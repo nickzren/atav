@@ -230,7 +230,7 @@ public class SiteClean {
         LogManager.writeAndPrint("The total number of bases before pruning is "
                 + FormatManager.getDouble((double) GeneManager.getAllGeneBoundaryLength() / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases with zero individuals passing min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
-                + FormatManager.getDouble((double) (GeneManager.getAllGeneBoundaryLength() - zeroIndividualPassMinCovSiteCount) / 1000000.0) + " MB");
+                + FormatManager.getDouble((double) zeroIndividualPassMinCovSiteCount / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases after pruning is "
                 + FormatManager.getDouble((double) totalCleanedBases / 1000000.0) + " MB");
         LogManager.writeAndPrint("The % of bases with zero individuals passing min-coverage min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
