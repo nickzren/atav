@@ -123,6 +123,10 @@ public class GeneManager {
         if (AnnotationLevelFilterCommand.geneInput.isEmpty()) {
             return;
         }
+        
+        if (!AnnotationLevelFilterCommand.geneBoundaryFile.isEmpty()) {
+            ErrorManager.print("--gene-boundary and --gene cannot be used at the same time.", ErrorManager.INPUT_PARSING);
+        }
 
         isUsed = true;
 
@@ -255,20 +259,6 @@ public class GeneManager {
                 geneMap.putAll(geneMapByBoundaries);
             } else if (geneMapByBoundaries.isEmpty()) {
                 geneMap.putAll(geneMapByName);
-            } else {
-                HashSet<String> nameSet = new HashSet<>();
-
-                nameSet.addAll(geneMapByName.keySet());
-                nameSet.addAll(geneMapByBoundaries.keySet());
-
-                for (String geneName : nameSet) {
-                    if (geneMapByName.containsKey(geneName)
-                            && geneMapByBoundaries.containsKey(geneName)) {
-                        HashSet<Gene> set = geneMapByBoundaries.get(geneName);
-
-                        geneMap.put(geneName, set);
-                    }
-                }
             }
         }
     }
