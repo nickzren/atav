@@ -1,5 +1,7 @@
 package function.coverage.comparison;
 
+import global.Data;
+
 /**
  *
  * @author quanli, nick
@@ -25,19 +27,19 @@ public class SortedExon implements Comparable {
     }
 
     public float getCaseAvg() {
-        return caseAvg;
+        return caseAvg == Data.FLOAT_NA ? 0 : caseAvg;
     }
 
     public float getCtrlAvg() {
-        return ctrlAvg;
+        return ctrlAvg == Data.FLOAT_NA ? 0 : ctrlAvg;
     }
 
     public float getCovDiff() {
-        return covDiff;
+        return covDiff == Data.FLOAT_NA ? 0 : covDiff;
     }
 
-    public double getCutoff() {
-        return covDiff;
+    public double getCutoff(){
+        return covDiff == Data.FLOAT_NA ? 0 : covDiff;
     }
 
     public int getLength() {

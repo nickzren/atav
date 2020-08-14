@@ -161,7 +161,7 @@ public class CollapsingCompHet extends CollapsingBase {
     private boolean isOutputValid(CompHetOutput output1, byte geno,
             Sample sample, CollapsingSummary summary) throws Exception {
         if (geno == Index.HOM) {
-            summary.updateSampleVariantCount4CompHet(sample.getIndex());
+            summary.countQualifiedVariantBySample(sample.getIndex());
 
             updateSummaryVariantCount(output1, summary);
 
@@ -193,7 +193,7 @@ public class CollapsingCompHet extends CollapsingBase {
                 output2.calculateLooAF(sample);
 
                 if (output2.isMaxLooAFValid()) {
-                    summary.updateSampleVariantCount4CompHet(sample.getIndex());
+                    summary.countQualifiedVariantBySample(sample.getIndex());
 
                     updateSummaryVariantCount(output1, summary);
                     updateSummaryVariantCount(output2, summary);

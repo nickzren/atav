@@ -18,12 +18,16 @@ import static utils.LogManager.writeAndPrint;
  */
 public class ThirdPartyToolManager {
 
-    public static String PYTHON;
-    public static String PERL;
-    public static String PLINK;
-    public static String KING;
+    public static String BGZIP;
     public static String FLASHPCA;
-    private static String RSCRIPT;
+    public static String KING;
+    public static String PLINK;
+    public static String TABIX;
+
+    public static String PERL;
+    public static String PYTHON;
+    public static String RSCRIPT;
+
     private static final String COLLAPSED_REGRESSION_R = Data.ATAV_HOME + "lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = Data.ATAV_HOME + "lib/pvals_qqplot.R";
     private static final String PERM_QQPLOT_FOR_COLLAPSING = Data.ATAV_HOME + "lib/generate_qq.py";
@@ -45,11 +49,14 @@ public class ThirdPartyToolManager {
             Properties prop = new Properties();
             prop.load(input);
 
-            PYTHON = prop.getProperty("python");
-            PERL = prop.getProperty("perl");
-            PLINK = prop.getProperty("plink");
-            KING = prop.getProperty("king");
+            BGZIP = prop.getProperty("bgzip");
             FLASHPCA = prop.getProperty("flashpca");
+            KING = prop.getProperty("king");
+            PLINK = prop.getProperty("plink");
+            TABIX = prop.getProperty("tabix");
+
+            PERL = prop.getProperty("perl");
+            PYTHON = prop.getProperty("python");
             RSCRIPT = prop.getProperty("rscript");
         } catch (IOException e) {
             ErrorManager.send(e);
@@ -82,7 +89,7 @@ public class ThirdPartyToolManager {
             while ((line = stdInput.readLine()) != null) {
                 cmdReadLine.append(line).append("\n");
             }
-            
+
             while ((line = stdError.readLine()) != null) {
                 cmdReadLine.append(line).append("\n");
             }
@@ -94,7 +101,7 @@ public class ThirdPartyToolManager {
 
         stopwatch.stop();
         String runTime = getTotalRunTime(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-      
+
         if (exitValue != 0) {
             writeAndPrint("System call failed: " + runTime);
             ErrorManager.print(cmdReadLine.toString(), ErrorManager.UNEXPECTED_FAIL);

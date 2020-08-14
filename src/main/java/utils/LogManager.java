@@ -1,6 +1,7 @@
 package utils;
 
 import com.github.lalyos.jfiglet.FigletFont;
+import function.cohort.collapsing.CollapsingCommand;
 import function.external.base.DataManager;
 import global.Data;
 import java.io.*;
@@ -200,6 +201,11 @@ public class LogManager {
     }
 
     public static void logExternalDataVersion() {
+        // collapsing lite is based on user input data
+        if(CollapsingCommand.isCollapsingLite) {
+            return;
+        }
+        
         String externalDataVersion = DataManager.getVersion();
 
         if (!externalDataVersion.isEmpty()) {

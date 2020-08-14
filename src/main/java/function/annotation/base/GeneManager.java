@@ -58,7 +58,7 @@ public class GeneManager {
 
         initGeneMap();
 
-        resetRegionList();
+        initAllGeneMapAndResetRegionList();
 
         initTempTable();
     }
@@ -139,7 +139,9 @@ public class GeneManager {
                     HashSet<Gene> set = new HashSet<>();
                     set.add(gene);
                     geneMapByName.put(geneName, set);
-                } else {
+                }
+
+                if (!gene.isExist()) {
                     LogManager.writeAndPrint("Invalid gene: " + gene.getName());
                 }
             }
@@ -167,7 +169,9 @@ public class GeneManager {
                     HashSet<Gene> set = new HashSet<>();
                     set.add(gene);
                     geneMapByName.put(lineStr, set);
-                } else {
+                }
+
+                if (!gene.isExist()) {
                     LogManager.writeAndPrint("Invalid gene: " + gene.getName());
                 }
             }
@@ -217,21 +221,21 @@ public class GeneManager {
                     if (geneId.contains("_")) { // if using gene domain
                         hasGeneDomainInput = true;
 
-                        String geneName = geneId.substring(0, geneId.indexOf("_"));
+                        geneId = geneId.substring(0, geneId.indexOf("_"));
+                    }
 
-                        if (!geneMapByBoundaries.containsKey(geneName)) {
-                            geneMapByBoundaries.put(geneName, set);
-                        } else {
-                            geneMapByBoundaries.get(geneName).add(gene);
-                        }
-                    } else {
+                    if (!geneMapByBoundaries.containsKey(geneId)) {
                         geneMapByBoundaries.put(geneId, set);
+                    } else {
+                        geneMapByBoundaries.get(geneId).add(gene);
                     }
 
                     gene.setIndex(geneIndex++);
                     geneBoundaryList.add(gene);
                     allGeneBoundaryLength += gene.getLength();
-                } else {
+                }
+
+                if (!gene.isExist()) {
                     LogManager.writeAndPrint("Invalid gene: " + gene.getName());
                 }
             }
@@ -269,7 +273,7 @@ public class GeneManager {
         }
     }
 
-    private static void resetRegionList() throws Exception {
+    private static void initAllGeneMapAndResetRegionList() throws Exception {
         if (isUsed) {
             ArrayList<String> chrList = new ArrayList<>();
 
@@ -278,21 +282,20 @@ public class GeneManager {
             }
 
             geneMap.entrySet().stream().forEach((entry) -> {
-                Gene gene = entry.getValue().iterator().next();
-                if (!gene.getChr().isEmpty()) {
-                    if (!chrList.contains(gene.getChr())) {
-                        chrList.add(gene.getChr());
-                    }
+                for (Gene gene : entry.getValue()) {
+                    if (!gene.getChr().isEmpty()) {
+                        if (!chrList.contains(gene.getChr())) {
+                            chrList.add(gene.getChr());
+                        }
 
-                    chrAllGeneMap.get(gene.getChr()).add("('" + entry.getKey() + "')");
+                        chrAllGeneMap.get(gene.getChr()).add("('" + entry.getKey() + "')");
+                    }
                 }
             });
 
-            if (!RegionManager.isUsed()) {
-                RegionManager.clear();
-                RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
-                RegionManager.sortRegionList();
-            }
+            RegionManager.clear();
+            RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
+            RegionManager.sortRegionList();
         }
     }
 

@@ -56,8 +56,8 @@ public class ExAC {
 
             initCoverage();
 
-            af = new float[ExACManager.EXAC_POP.length];
-            gts = new String[ExACManager.EXAC_POP.length];
+            af = new float[ExACManager.POP.length];
+            gts = new String[ExACManager.POP.length];
 
             setAF(rs);
         } catch (Exception e) {
@@ -74,12 +74,12 @@ public class ExAC {
         isSnv = ref.length() == alt.length();
 
         maxAF = Data.FLOAT_NA;
-        this.af = new float[ExACManager.EXAC_POP.length];
-        for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
-            af[i] = FormatManager.getFloat(record, "ExAC " + ExACManager.EXAC_POP[i] + " af");
+        this.af = new float[ExACManager.POP.length];
+        for (int i = 0; i < ExACManager.POP.length; i++) {
+            af[i] = FormatManager.getFloat(record, "ExAC " + ExACManager.POP[i] + " af");
 
             if (af[i] != Data.FLOAT_NA
-                    && ExACCommand.exacPop.contains(ExACManager.EXAC_POP[i])) {
+                    && ExACCommand.pop.contains(ExACManager.POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
             }
         }
@@ -109,8 +109,8 @@ public class ExAC {
     }
 
     private void initAF() {
-        af = new float[ExACManager.EXAC_POP.length];
-        gts = new String[ExACManager.EXAC_POP.length];
+        af = new float[ExACManager.POP.length];
+        gts = new String[ExACManager.POP.length];
 
         try {
             PreparedStatement preparedStatement = ExACManager.getPreparedStatement4Variant(isMNV);
@@ -135,20 +135,20 @@ public class ExAC {
 
     private void setAF(ResultSet rs) throws SQLException {
         maxAF = Data.FLOAT_NA;
-        for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
-            af[i] = rs.getFloat(ExACManager.EXAC_POP[i] + "_af");
+        for (int i = 0; i < ExACManager.POP.length; i++) {
+            af[i] = rs.getFloat(ExACManager.POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
-                    && ExACCommand.exacPop.contains(ExACManager.EXAC_POP[i])) {
+                    && ExACCommand.pop.contains(ExACManager.POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
             }
-            gts[i] = rs.getString(ExACManager.EXAC_POP[i] + "_gts");
+            gts[i] = rs.getString(ExACManager.POP[i] + "_gts");
         }
 
         vqslod = rs.getFloat("vqslod");
     }
 
     private void resetAF(float value) {
-        for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
+        for (int i = 0; i < ExACManager.POP.length; i++) {
             af[i] = value;
             gts[i] = Data.STRING_NA;
         }
@@ -157,9 +157,9 @@ public class ExAC {
     }
 
     public boolean isValid() {
-        return ExACCommand.isExacAFValid(maxAF)
-                && ExACCommand.isExacVqslodValid(vqslod, isSnv)
-                && ExACCommand.isExacMeanCoverageValid(meanCoverage);
+        return ExACCommand.isAFValid(maxAF)
+                && ExACCommand.isVqslodValid(vqslod, isSnv)
+                && ExACCommand.isMeanCoverageValid(meanCoverage);
     }
 
     public String getVariantId() {
@@ -169,7 +169,7 @@ public class ExAC {
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        for (int i = 0; i < ExACManager.EXAC_POP.length; i++) {
+        for (int i = 0; i < ExACManager.POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));
 
             if (gts[i].equals(Data.STRING_NA)) {

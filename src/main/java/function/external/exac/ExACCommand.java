@@ -13,52 +13,67 @@ public class ExACCommand {
     public static boolean isListCount = false;
     public static boolean isIncludeCount = false;
 
-    public static String exacPop = "global";
-    public static float exacAF = Data.NO_FILTER;
-    public static float exacVqslodSnv = Data.NO_FILTER;
-    public static float exacVqslodIndel = Data.NO_FILTER;
-    public static float exacMeanCoverage = Data.NO_FILTER;
+    public static String pop = "global";
+    public static float maxAF = Data.NO_FILTER;
+    public static float maf = Data.NO_FILTER;
+    public static float vqslodSnv = Data.NO_FILTER;
+    public static float vqslodIndel = Data.NO_FILTER;
+    public static float meanCoverage = Data.NO_FILTER;
+    
+    public static boolean isAFValid(float value) {
+        return isMaxAFValid(value) && isMAFValid(value);
+    }
 
-    public static boolean isExacAFValid(float value) {
-        if (exacAF == Data.NO_FILTER) {
+    private static boolean isMaxAFValid(float value) {
+        if (maxAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= exacAF
+        return value <= maxAF
+                || value == Data.FLOAT_NA;
+    }
+    
+    private static boolean isMAFValid(float value) {
+        if (maf == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maf
+                || value >= (1 - maf)
                 || value == Data.FLOAT_NA;
     }
 
-    public static boolean isExacVqslodValid(float value, boolean isSnv) {
+    public static boolean isVqslodValid(float value, boolean isSnv) {
         if (isSnv) {
-            return isExacVqslodSnvValid(value);
+            return isVqslodSnvValid(value);
         } else {
-            return isExacVqslodIndelValid(value);
+            return isVqslodIndelValid(value);
         }
     }
 
-    private static boolean isExacVqslodSnvValid(float value) {
-        if (exacVqslodSnv == Data.NO_FILTER) {
+    private static boolean isVqslodSnvValid(float value) {
+        if (vqslodSnv == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= exacVqslodSnv
+        return value >= vqslodSnv
                 || value == Data.FLOAT_NA;
     }
 
-    private static boolean isExacVqslodIndelValid(float value) {
-        if (exacVqslodIndel == Data.NO_FILTER) {
+    private static boolean isVqslodIndelValid(float value) {
+        if (vqslodIndel == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= exacVqslodIndel
+        return value >= vqslodIndel
                 || value == Data.FLOAT_NA;
     }
 
-    public static boolean isExacMeanCoverageValid(float value) {
-        if (exacMeanCoverage == Data.NO_FILTER) {
+    public static boolean isMeanCoverageValid(float value) {
+        if (meanCoverage == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= exacMeanCoverage;
+        return value >= meanCoverage;
     }
 }

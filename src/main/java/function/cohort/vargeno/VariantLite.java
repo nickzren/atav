@@ -377,7 +377,7 @@ public class VariantLite {
                 && isTopMedAFValid()
                 && isGenomeAsiaAFValid()
                 && isIranomeAFValid()
-                && CohortLevelFilterCommand.isMaxLooAFValid(looAF)
+                && CohortLevelFilterCommand.isLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
 
@@ -537,19 +537,19 @@ public class VariantLite {
     }
 
     private boolean isGMEAFValid() {
-        return GMECommand.isMaxGMEAFValid(gmeAF);
+        return GMECommand.isAFValid(gmeAF);
     }
 
     private boolean isTopMedAFValid() {
-        return TopMedCommand.isMaxAFValid(topmedAF);
+        return TopMedCommand.isAFValid(topmedAF);
     }
 
     private boolean isGenomeAsiaAFValid() {
-        return GenomeAsiaCommand.isMaxAFValid(genomeasiaAF);
+        return GenomeAsiaCommand.isAFValid(genomeasiaAF);
     }
 
     private boolean isIranomeAFValid() {
-        return IranomeCommand.isMaxAFValid(iranomeAF);
+        return IranomeCommand.isAFValid(iranomeAF);
     }
 
     public float getTrapScore() {

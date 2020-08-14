@@ -1,7 +1,7 @@
 package function.annotation.base;
 
+import function.variant.base.RegionManager;
 import java.sql.PreparedStatement;
-import utils.DBManager;
 import utils.ErrorManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ public class Gene {
     private ArrayList<Exon> exonList = new ArrayList<>();
 
     private boolean isValid = true;
+    private boolean isExist = true;
 
     private int index; // index for line in gene boundary file
     
@@ -27,6 +28,11 @@ public class Gene {
             initExonList(this.name);
         } else { // input gene
             initChr();
+        }
+
+        if (isValid && RegionManager.isUsed()) {
+            // invalid only when region filter is used and gene's chr not in --region
+            isValid = RegionManager.getChrList().contains(chr);
         }
     }
 
@@ -39,6 +45,7 @@ public class Gene {
                 chr = rs.getString("chrom");
             } else {
                 isValid = false;
+                isExist = false;
             }
 
             rs.close();
@@ -98,6 +105,10 @@ public class Gene {
 
     public boolean isValid() {
         return isValid;
+    }
+    
+    public boolean isExist() {
+        return isExist;
     }
 
     @Override

@@ -18,14 +18,14 @@ import utils.ErrorManager;
  */
 public class GnomADManager {
 
-    public static final String[] GNOMAD_EXOME_POP = {
+    public static final String[] EXOME_POP = {
         "global", "controls", "non_neuro",
         "afr", "amr", "asj", "eas", "sas", "fin", "nfe", "nfemax", "easmax",
         "controls_afr", "controls_amr", "controls_asj", "controls_eas", "controls_sas", "controls_fin", "controls_nfe", "controls_nfemax", "controls_easmax",
         "non_neuro_afr", "non_neuro_amr", "non_neuro_asj", "non_neuro_eas", "non_neuro_sas", "non_neuro_fin", "non_neuro_nfe", "non_neuro_nfemax", "non_neuro_easmax"
     };
 
-    public static final String[] GNOMAD_GENOME_POP = {
+    public static final String[] GENOME_POP = {
         "global", "controls", "non_neuro",
         "afr", "amr", "asj", "eas", "fin", "nfe", "nfemax", "easmax",
         "controls_afr", "controls_amr", "controls_asj", "controls_eas", "controls_fin", "controls_nfe", "controls_nfemax", "controls_easmax",
@@ -92,8 +92,8 @@ public class GnomADManager {
         sj.add("gnomAD Exome qd");
         sj.add("gnomAD Exome pab_max");
 
-        for (int i = 0; i < GnomADManager.GNOMAD_EXOME_POP.length; i++) {
-            String pop = GnomADManager.GNOMAD_EXOME_POP[i];
+        for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
+            String pop = GnomADManager.EXOME_POP[i];
             sj.add("gnomAD Exome " + pop + "_AF");
 
             switch (i) {
@@ -124,8 +124,8 @@ public class GnomADManager {
         sj.add("gnomAD Genome qd");
         sj.add("gnomAD Genome pab_max");
 
-        for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-            String pop = GnomADManager.GNOMAD_GENOME_POP[i];
+        for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
+            String pop = GnomADManager.GENOME_POP[i];
             sj.add("gnomAD Genome " + pop + "_AF");
 
             switch (i) {

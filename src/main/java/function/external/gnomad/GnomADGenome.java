@@ -68,7 +68,7 @@ public class GnomADGenome {
             pos = rs.getInt("pos");
             ref = rs.getString("ref");
             alt = rs.getString("alt");
-            af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
+            af = new float[GnomADManager.GENOME_POP.length];
 
             isSnv = ref.length() == alt.length();
 
@@ -89,18 +89,18 @@ public class GnomADGenome {
         rf_tp_probability = FormatManager.getFloat(record, "gnomAD Genome rf_tp_probability");
 
         maxAF = Data.FLOAT_NA;
-        af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
-        for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-            af[i] = FormatManager.getFloat(record, "gnomAD Genome " + GnomADManager.GNOMAD_GENOME_POP[i] + "_AF");
+        af = new float[GnomADManager.GENOME_POP.length];
+        for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
+            af[i] = FormatManager.getFloat(record, "gnomAD Genome " + GnomADManager.GENOME_POP[i] + "_AF");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.gnomADGenomePopSet.contains(GnomADManager.GNOMAD_GENOME_POP[i])) {
+                    && GnomADCommand.genomePopSet.contains(GnomADManager.GENOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
             }
         }
     }
 
     private void initAF() {
-        af = new float[GnomADManager.GNOMAD_GENOME_POP.length];
+        af = new float[GnomADManager.GENOME_POP.length];
 
         try {
             PreparedStatement preparedStatement = GnomADManager.getPreparedStatement4VariantGenome(chr, isMNV);
@@ -146,10 +146,10 @@ public class GnomADGenome {
         non_neuro_nhemi = FormatManager.getInt(rs, "non_neuro_nhemi");
 
         maxAF = Data.FLOAT_NA;
-        for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
-            af[i] = FormatManager.getFloat(rs, GnomADManager.GNOMAD_GENOME_POP[i] + "_af");
+        for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
+            af[i] = FormatManager.getFloat(rs, GnomADManager.GENOME_POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.gnomADGenomePopSet.contains(GnomADManager.GNOMAD_GENOME_POP[i])) {
+                    && GnomADCommand.genomePopSet.contains(GnomADManager.GENOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
             }
         }
@@ -179,14 +179,14 @@ public class GnomADGenome {
         non_neuro_nhomalt = Data.INTEGER_NA;
         non_neuro_nhemi = Data.INTEGER_NA;
 
-        for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
+        for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = value;
         }
     }
 
     public boolean isValid() {
-        return GnomADCommand.isGnomADGenomeAFValid(maxAF)
-                && GnomADCommand.isGnomADGenomeRfTpProbabilityValid(rf_tp_probability, isSnv);
+        return GnomADCommand.isGenomeAFValid(maxAF)
+                && GnomADCommand.isGenomeRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 
     public String getVariantId() {
@@ -204,7 +204,7 @@ public class GnomADGenome {
         sj.add(FormatManager.getFloat(qd));
         sj.add(FormatManager.getFloat(pab_max));
 
-        for (int i = 0; i < GnomADManager.GNOMAD_GENOME_POP.length; i++) {
+        for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));
 
             switch (i) {

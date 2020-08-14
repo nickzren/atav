@@ -116,9 +116,8 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     private boolean checkAlleleFreqValid() {
-        isValid = CohortLevelFilterCommand.isMaxCtrlAFValid(af[Index.CTRL])
-                && CohortLevelFilterCommand.isMinCtrlAFValid(af[Index.CTRL])
-                && CohortLevelFilterCommand.isMaxCaseAFValid(af[Index.CASE]);
+        isValid = CohortLevelFilterCommand.isCtrlAFValid(af[Index.CTRL])
+                && CohortLevelFilterCommand.isCaseAFValid(af[Index.CASE]);
 
         return isValid;
     }

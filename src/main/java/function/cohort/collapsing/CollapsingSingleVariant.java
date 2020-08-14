@@ -113,7 +113,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
                     hasQualifiedVariant = true;
 
                     for (CollapsingSummary summary : summaryList) {
-                        summary.updateSampleVariantCount4SingleVar(sample.getIndex());
+                        summary.countQualifiedVariantBySample(sample.getIndex());
                     }
 
                     outputQualifiedVariant(output, sample);

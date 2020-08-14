@@ -17,7 +17,7 @@ import utils.ErrorManager;
  */
 public class ExACManager {
 
-    public static final String[] EXAC_POP = {"global", "afr", "amr", "eas", "sas", "fin", "nfe", "oth"};
+    public static final String[] POP = {"global", "afr", "amr", "eas", "sas", "fin", "nfe", "oth"};
 
     private static final String coverageTable = "exac.coverage_03";
     private static String variantTable = "exac.variant_r03_2015_09_16";
@@ -36,7 +36,7 @@ public class ExACManager {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        for (String str : EXAC_POP) {
+        for (String str : POP) {
             sj.add("ExAC " + str + " af");
             sj.add("ExAC " + str + " gts");
         }
@@ -82,7 +82,7 @@ public class ExACManager {
     public static String getSql4Region() {
         String select = "chr,pos,ref_allele,alt_allele,";
 
-        for (String str : EXAC_POP) {
+        for (String str : POP) {
             select += str + "_af,"
                     + str + "_gts,";
         }
@@ -98,7 +98,7 @@ public class ExACManager {
     private static String getSql4Variant(boolean isMNV) {
         String select = "";
 
-        for (String str : EXAC_POP) {
+        for (String str : POP) {
             select += str + "_af,"
                     + str + "_gts,";
         }

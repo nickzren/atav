@@ -3,6 +3,7 @@ package function.coverage.comparison;
 import function.annotation.base.Exon;
 import function.annotation.base.Gene;
 import function.annotation.base.GeneManager;
+import function.cohort.base.GenotypeLevelFilterCommand;
 import function.coverage.base.CoverageCommand;
 import function.cohort.base.SampleManager;
 import global.Data;
@@ -21,6 +22,7 @@ import utils.MathManager;
 public class SiteClean {
 
     int totalCleanedBases = 0;
+    int zeroIndividualPassMinCovSiteCount = 0;
     double caseCoverage = 0;
     double ctrlCoverage = 0;
     ArrayList<SortedSite> siteList = new ArrayList<>();
@@ -90,20 +92,23 @@ public class SiteClean {
         double cutoff = getCutoff();
 
         for (SortedSite sortedSite : siteList) {
-            if (sortedSite.getCutoff() < cutoff
-                    && sortedSite.getCaseAvg() + sortedSite.getCtrlAvg() > 0) {
-                totalCleanedBases++;
-                ctrlCoverage += sortedSite.getCtrlAvg();
-                caseCoverage += sortedSite.getCaseAvg();
+            if (sortedSite.getCutoff() < cutoff) {
+                if (sortedSite.getCaseAvg() + sortedSite.getCtrlAvg() > 0) {
+                    totalCleanedBases++;
+                    ctrlCoverage += sortedSite.getCtrlAvg();
+                    caseCoverage += sortedSite.getCaseAvg();
 
-                HashMap<Integer, SortedSite> map = cleanedSiteMap.get(sortedSite.getChr());
+                    HashMap<Integer, SortedSite> map = cleanedSiteMap.get(sortedSite.getChr());
 
-                if (map == null) {
-                    map = new HashMap<>();
-                    cleanedSiteMap.put(sortedSite.getChr(), map);
+                    if (map == null) {
+                        map = new HashMap<>();
+                        cleanedSiteMap.put(sortedSite.getChr(), map);
+                    }
+
+                    map.put(sortedSite.getPos(), sortedSite);
+                } else {
+                    zeroIndividualPassMinCovSiteCount++;
                 }
-
-                map.put(sortedSite.getPos(), sortedSite);
             }
         }
 
@@ -224,8 +229,12 @@ public class SiteClean {
     public void outputLog() {
         LogManager.writeAndPrint("The total number of bases before pruning is "
                 + FormatManager.getDouble((double) GeneManager.getAllGeneBoundaryLength() / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The total number of bases with zero individuals passing min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
+                + FormatManager.getDouble((double) zeroIndividualPassMinCovSiteCount / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases after pruning is "
                 + FormatManager.getDouble((double) totalCleanedBases / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The % of bases with zero individuals passing min-coverage min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
+                + FormatManager.getDouble((double) zeroIndividualPassMinCovSiteCount / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
         LogManager.writeAndPrint("The % of bases pruned is "
                 + FormatManager.getDouble(100.0 - (double) totalCleanedBases / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
 

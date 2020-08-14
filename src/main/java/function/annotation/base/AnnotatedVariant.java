@@ -132,25 +132,25 @@ public class AnnotatedVariant extends Variant {
         if (isValid && GMECommand.isInclude) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
-            isValid = GMECommand.isMaxGMEAFValid(gmeAF);
+            isValid = GMECommand.isAFValid(gmeAF);
         }
 
         if (isValid && IranomeCommand.isInclude) {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
-            isValid = IranomeCommand.isMaxAFValid(iranomeAF);
+            isValid = IranomeCommand.isAFValid(iranomeAF);
         }
 
         if (isValid && TopMedCommand.isInclude) {
             topmedAF = TopMedManager.getAF(variantIdStr);
 
-            isValid = TopMedCommand.isMaxAFValid(topmedAF);
+            isValid = TopMedCommand.isAFValid(topmedAF);
         }
 
         if (isValid && GenomeAsiaCommand.isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
-            isValid = GenomeAsiaCommand.isMaxAFValid(genomeasiaAF);
+            isValid = GenomeAsiaCommand.isAFValid(genomeasiaAF);
         }
 
         if (isValid && GnomADCommand.isIncludeExome) {
