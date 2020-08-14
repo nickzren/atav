@@ -20,31 +20,44 @@ public abstract class AnalysisBase4AnnotatedVar extends AnalysisBase4Variant {
             annotatedVar = null;
 
             region = RegionManager.getRegion(r);
+            
+            // when --gene or --gene-boundary used 
+            if (GeneManager.isUsed()) {
+                while (!GeneManager.isEmpty(region.getChrStr())) {
+                    GeneManager.resetTempTable(region.getChrStr());
 
-            rset = getAnnotationList(region);
-
-            while (rset.next()) {
-                annotation.init(rset, region.getChrStr());
-
-                if (annotation.isValid()) {
-
-                    nextVariantId = rset.getInt("variant_id");
-
-                    if (annotatedVar == null
-                            || nextVariantId != annotatedVar.getVariantId()) {
-                        processVariant();
-
-                        annotatedVar = new AnnotatedVariant(region.getChrStr(), nextVariantId, rset);
-                    } // end of new one
-
-                    annotatedVar.update(annotation);
+                    iterateVariantAnnotation();
                 }
+            } else {
+                iterateVariantAnnotation();
             }
-
-            processVariant(); // only for the last qualified variant
-
-            rset.close();
         }
+    }
+
+    private void iterateVariantAnnotation() throws Exception {
+        rset = getAnnotationList(region);
+
+        while (rset.next()) {
+            annotation.init(rset, region.getChrStr());
+
+            if (annotation.isValid()) {
+
+                nextVariantId = rset.getInt("variant_id");
+
+                if (annotatedVar == null
+                        || nextVariantId != annotatedVar.getVariantId()) {
+                    processVariant();
+
+                    annotatedVar = new AnnotatedVariant(region.getChrStr(), nextVariantId, rset);
+                } // end of new one
+
+                annotatedVar.update(annotation);
+            }
+        }
+
+        processVariant(); // only for the last qualified variant
+
+        rset.close();
     }
 
     private void processVariant() {

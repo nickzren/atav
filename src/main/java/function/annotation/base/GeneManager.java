@@ -10,8 +10,11 @@ import java.util.HashSet;
 import function.variant.base.RegionManager;
 import global.Data;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
 import utils.DBManager;
@@ -27,21 +30,22 @@ public class GeneManager {
     public static final String ALL_GENE_SYMBOL_MAP_PATH = "data/gene/hgnc_complete_set_to_GRCh37.87_040320.tsv.gz";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
-    private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
+    private static HashMap<String, Queue<String>> allGeneNameByChrMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
     private static final HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<>();
+    private static ArrayList<Gene> geneBoundaryList = new ArrayList<>();
+    private static int allGeneBoundaryLength;
     // key: existing dragendb gene name, value: up to date gene name
     private static HashMap<String, String> hgncGeneMap = new HashMap<>();
     private static HashMap<String, String> allGeneSymbolMap = new HashMap<>();
 
-    private static ArrayList<Gene> geneBoundaryList = new ArrayList<>();
-    private static int allGeneBoundaryLength;
-
     private static HashMap<String, String> geneCoverageSummaryMap = new HashMap<>();
     public static String geneCoverageSummaryHeader = "";
-    private static boolean isUsed = false;
 
+    private static boolean isUsed = false;
     private static boolean hasGeneDomainInput = false;
+
+    private static final int BATCH = 500;
 
     private static PreparedStatement preparedStatement4GeneChrom;
 
@@ -60,7 +64,7 @@ public class GeneManager {
 
         initAllGeneMapAndResetRegionList();
 
-        initTempTable();
+        createTempTable();
     }
 
     private static void initPreparedStatement4GeneChrom() {
@@ -123,7 +127,7 @@ public class GeneManager {
         if (AnnotationLevelFilterCommand.geneInput.isEmpty()) {
             return;
         }
-        
+
         if (!AnnotationLevelFilterCommand.geneBoundaryFile.isEmpty()) {
             ErrorManager.print("--gene-boundary and --gene cannot be used at the same time.", ErrorManager.INPUT_PARSING);
         }
@@ -260,6 +264,9 @@ public class GeneManager {
             } else if (geneMapByBoundaries.isEmpty()) {
                 geneMap.putAll(geneMapByName);
             }
+
+            geneMapByName.clear();
+            geneMapByBoundaries.clear();
         }
     }
 
@@ -268,17 +275,20 @@ public class GeneManager {
             ArrayList<String> chrList = new ArrayList<>();
 
             for (String chr : RegionManager.ALL_CHR) {
-                chrAllGeneMap.put(chr, new StringJoiner(","));
+                allGeneNameByChrMap.put(chr, new LinkedList());
             }
 
             geneMap.entrySet().stream().forEach((entry) -> {
+                String geneName = Data.STRING_NA;
                 for (Gene gene : entry.getValue()) {
-                    if (!gene.getChr().isEmpty()) {
+                    if (!geneName.equals(gene.getName())) {
+                        geneName = gene.getName();
+
                         if (!chrList.contains(gene.getChr())) {
                             chrList.add(gene.getChr());
                         }
 
-                        chrAllGeneMap.get(gene.getChr()).add("('" + entry.getKey() + "')");
+                        allGeneNameByChrMap.get(gene.getChr()).add(geneName);
                     }
                 }
             });
@@ -289,9 +299,13 @@ public class GeneManager {
         }
     }
 
-    private static void initTempTable() {
+    public static boolean isEmpty(String chr) {
+        return allGeneNameByChrMap.get(chr).isEmpty();
+    }
+
+    private static void createTempTable() {
         try {
-            for (String chr : chrAllGeneMap.keySet()) {
+            for (String chr : allGeneNameByChrMap.keySet()) {
                 Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
 
                 // create table
@@ -299,19 +313,30 @@ public class GeneManager {
                         "CREATE TEMPORARY TABLE " + TMP_GENE_TABLE + chr + "("
                         + "input_gene varchar(128) NOT NULL, "
                         + "PRIMARY KEY (input_gene)) ENGINE=MEMORY;");
-
-                if (chrAllGeneMap.get(chr).length() > 0) {
-                    // insert values
-                    stmt.executeUpdate("INSERT IGNORE INTO " + TMP_GENE_TABLE + chr
-                            + " values " + chrAllGeneMap.get(chr).toString());
-
-                    stmt.closeOnCompletion();
-                }
             }
-
-            chrAllGeneMap.clear(); // free memmory
         } catch (Exception e) {
             ErrorManager.send(e);
+        }
+    }
+
+    public static void resetTempTable(String chr) throws SQLException {
+        Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
+        Queue<String> queue = allGeneNameByChrMap.get(chr);
+        if (!queue.isEmpty()) {
+            StringJoiner sj = new StringJoiner(",");
+
+            int count = 0;
+            while (!queue.isEmpty() && count++ < BATCH) {
+                sj.add("('" + queue.remove() + "')");
+            }
+
+            // truncate table 
+            stmt.executeUpdate("TRUNCATE " + TMP_GENE_TABLE + chr);
+
+            // insert values
+            stmt.executeUpdate("INSERT INTO " + TMP_GENE_TABLE + chr + " values " + sj.toString());
+
+            stmt.closeOnCompletion();
         }
     }
 
