@@ -10,7 +10,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import utils.DBManager;
 
 /**
  *

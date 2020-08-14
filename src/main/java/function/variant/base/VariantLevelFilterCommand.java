@@ -302,7 +302,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--gme-maf":
                     checkValueValid(1, 0, option);
-                    GMECommand.gmeMAF = getValidFloat(option);
+                    GMECommand.maf = getValidFloat(option);
                     GMECommand.isInclude = true;
                     break;    
                 case "--max-top-med-af":
