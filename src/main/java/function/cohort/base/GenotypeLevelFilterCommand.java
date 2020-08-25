@@ -41,6 +41,8 @@ public class GenotypeLevelFilterCommand {
     public static final String[] FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
     public static boolean isQcMissingIncluded = false;
     public static String genotypeFile = "";
+    public static boolean isHomOnly = false;
+    public static boolean isHetOnly = false;
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // FILTER = PASS
@@ -164,6 +166,12 @@ public class GenotypeLevelFilterCommand {
                 case "--genotype":
                     genotypeFile = getValidPath(option);
                     break;
+                case "--hom-only":
+                    isHomOnly = true;
+                    break;
+                case "--het-only":
+                    isHetOnly = true;
+                    break;
                 default:
                     continue;
             }
@@ -173,7 +181,7 @@ public class GenotypeLevelFilterCommand {
 
         initIsHighQualityVariantOnly();
     }
-
+    
     private static void initIsHighQualityVariantOnly() {
         // FILTER = PASS
         if (filter != null) {

@@ -141,11 +141,11 @@ public class Output {
         if (SubRvisCommand.isInclude) {
             sj.add(SubRvisManager.getHeader());
         }
-        
+
         if (GeVIRCommand.isInclude) {
             sj.add(GeVIRManager.getHeader());
         }
-        
+
         if (SynRvisCommand.isInclude) {
             sj.add(SynRvisManager.getHeader());
         }
@@ -201,23 +201,23 @@ public class Output {
         if (PextCommand.isInclude) {
             sj.add(PextManager.getHeader());
         }
-        
+
         if (CHMCommand.isFlag) {
             sj.add(CHMManager.getHeader());
         }
-        
+
         if (GMECommand.isInclude) {
             sj.add(GMEManager.getHeader());
         }
-        
+
         if (TopMedCommand.isInclude) {
             sj.add(TopMedManager.getHeader());
         }
-        
+
         if (GenomeAsiaCommand.isInclude) {
             sj.add(GenomeAsiaManager.getHeader());
         }
-        
+
         if (IranomeCommand.isInclude) {
             sj.add(IranomeManager.getHeader());
         }
@@ -311,10 +311,22 @@ public class Output {
     }
 
     public boolean isQualifiedGeno(byte geno) {
+        // --hom-only
+        if (GenotypeLevelFilterCommand.isHomOnly) {
+            return geno == Index.HOM;
+        }
+
+        // --het-only
+        if (GenotypeLevelFilterCommand.isHetOnly) {
+            return geno == Index.HET;
+        }
+
+        // --include-hom-ref
         if (GenotypeLevelFilterCommand.isIncludeHomRef && geno == Index.REF) {
             return true;
         }
 
+        // default: hom alt or het is valid 
         return geno == Index.HOM || geno == Index.HET;
     }
 
