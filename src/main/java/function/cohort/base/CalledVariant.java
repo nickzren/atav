@@ -26,7 +26,7 @@ public class CalledVariant extends AnnotatedVariant {
     public int[][] genoCount = new int[5][2];
     public float[] homFreq = new float[2];
     public float[] hetFreq = new float[2];
-    public float[] af = new float[2];
+    public float[] af = new float[3];
     public double[] hweP = new double[2];
     private int[] coveredSample = new int[2];
     private double coveredSampleBinomialP;
@@ -49,6 +49,8 @@ public class CalledVariant extends AnnotatedVariant {
                 calculateAlleleFreq();
 
                 if (checkAlleleFreqValid()) {
+                    switchGT();
+
                     initDPBinCoveredSampleBinomialP();
 
                     initCoveredSamplePercentage();
@@ -215,29 +217,48 @@ public class CalledVariant extends AnnotatedVariant {
         dpBin[s] = bin;
     }
 
-    public void calculate() {
-        calculateAlleleFreq();
+    // --ctrl-maf or --loo-maf will tigger to swich GT when AF > 0.5
+    private void switchGT() {
+        if ((CohortLevelFilterCommand.ctrlMAF != Data.NO_FILTER && af[Index.CTRL] > 0.5)
+                || (CohortLevelFilterCommand.looMAF != Data.NO_FILTER && af[Index.ALL] > 0.5)) {
+            // switch per sample GT
+            for (int s = 0; s < SampleManager.getList().size(); s++) {
+                if (gt[s] == Index.REF) {
+                    gt[s] = Index.HOM;
+                } else if (gt[s] == Index.HOM) {
+                    gt[s] = Index.REF;
+                }
+            }
 
-        calculateGenotypeFreq();
+            // switch sample GT count
+            int homCtrl = genoCount[Index.HOM][Index.CTRL];
+            genoCount[Index.HOM][Index.CTRL] = genoCount[Index.REF][Index.CTRL];
+            genoCount[Index.REF][Index.CTRL] = homCtrl;
 
-        calculateHweP();
+            int homCase = genoCount[Index.HOM][Index.CASE];
+            genoCount[Index.HOM][Index.CASE] = genoCount[Index.REF][Index.CASE];
+            genoCount[Index.REF][Index.CASE] = homCase;
+        }
     }
 
+    // af = (2*hom + het) / (2*hom + 2*het + 2*ref)
     private void calculateAlleleFreq() {
+        // case af
         int caseAC = 2 * genoCount[Index.HOM][Index.CASE]
                 + genoCount[Index.HET][Index.CASE];
         int caseTotalAC = caseAC + genoCount[Index.HET][Index.CASE]
                 + 2 * genoCount[Index.REF][Index.CASE];
-
-        // (2*hom + maleHom + het) / (2*hom + maleHom + 2*het + 2*ref + maleRef)
         af[Index.CASE] = MathManager.devide(caseAC, caseTotalAC);
 
+        // ctrl af
         int ctrlAC = 2 * genoCount[Index.HOM][Index.CTRL]
                 + genoCount[Index.HET][Index.CTRL];
         int ctrlTotalAC = ctrlAC + genoCount[Index.HET][Index.CTRL]
                 + 2 * genoCount[Index.REF][Index.CTRL];
-
         af[Index.CTRL] = MathManager.devide(ctrlAC, ctrlTotalAC);
+        
+        // all af
+        af[Index.ALL] = MathManager.devide(ctrlAC + caseAC, ctrlTotalAC + caseTotalAC);
     }
 
     private void calculateGenotypeFreq() {

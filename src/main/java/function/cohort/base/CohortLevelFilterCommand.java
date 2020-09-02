@@ -10,6 +10,7 @@ import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
+import utils.ErrorManager;
 
 /**
  *
@@ -122,6 +123,10 @@ public class CohortLevelFilterCommand {
             }
 
             iterator.remove();
+        }
+
+        if (ctrlMAF != Data.NO_FILTER && looMAF != Data.NO_FILTER) {
+            ErrorManager.print("--ctrl-maf and --loo-maf cannot be used at once.", ErrorManager.COMMAND_PARSING);
         }
     }
 
@@ -239,7 +244,7 @@ public class CohortLevelFilterCommand {
     public static boolean isLooAFValid(float value) {
         return isMaxLooAFValid(value) && isLooMAFValid(value);
     }
-    
+
     private static boolean isMaxLooAFValid(float value) {
         if (maxLooAF == Data.NO_FILTER) {
             return true;
