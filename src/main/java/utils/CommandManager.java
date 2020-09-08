@@ -3,6 +3,7 @@ package utils;
 import function.annotation.base.AnnotationLevelFilterCommand;
 import global.Data;
 import function.annotation.varanno.VarAnnoCommand;
+import function.cohort.af.AFCommand;
 import function.coverage.base.CoverageCommand;
 import function.external.ccr.CCRCommand;
 import function.external.limbr.LIMBRCommand;
@@ -342,6 +343,9 @@ public class CommandManager {
                 case "--list-vcf":
                     Data.STRING_NA = ".";
                     VCFCommand.isList = true;
+                    break;
+                case "--list-af":
+                    AFCommand.isList = true;
                     break;
                 case "--collapsing-dom":
                     CollapsingCommand.isCollapsingSingleVariant = true;

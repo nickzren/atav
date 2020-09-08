@@ -23,6 +23,8 @@ import function.cohort.statistics.LinearRegression;
 import function.cohort.trio.ListTrio;
 import function.annotation.varanno.ListVarAnno;
 import function.annotation.varanno.VarAnnoCommand;
+import function.cohort.af.AFCommand;
+import function.cohort.af.ListAF;
 import function.cohort.base.CarrierBlockManager;
 import function.coverage.base.CoverageCommand;
 import function.coverage.comparison.SiteCoverageComparison;
@@ -235,6 +237,8 @@ public class Program {
                 runAnalysis(new ListVar());
             } else if (VCFCommand.isList) {
                 runAnalysis(new ListVCF());
+            } else if (AFCommand.isList) {
+                runAnalysis(new ListAF());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
                 runAnalysis(new CollapsingSingleVariant());
             } else if (CollapsingCommand.isCollapsingCompHet) {

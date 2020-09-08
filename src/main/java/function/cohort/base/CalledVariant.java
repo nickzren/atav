@@ -258,7 +258,7 @@ public class CalledVariant extends AnnotatedVariant {
         int ctrlTotalAC = ctrlAC + genoCount[Index.HET][Index.CTRL]
                 + 2 * genoCount[Index.REF][Index.CTRL];
         af[Index.CTRL] = MathManager.devide(ctrlAC, ctrlTotalAC);
-        
+
         // all af
         af[Index.ALL] = MathManager.devide(ctrlAC + caseAC, ctrlTotalAC + caseTotalAC);
     }
@@ -353,6 +353,27 @@ public class CalledVariant extends AnnotatedVariant {
                 + genoCount[Index.HOM][Index.CTRL]
                 + genoCount[Index.HET][Index.CTRL]
                 + genoCount[Index.REF][Index.CTRL];
+    }
+
+    public int getAC() {
+        return 2 * genoCount[Index.HOM][Index.CASE]
+                + genoCount[Index.HET][Index.CASE]
+                + 2 * genoCount[Index.HOM][Index.CTRL]
+                + genoCount[Index.HET][Index.CTRL];
+    }
+
+    public int getAN() {
+        return getAC()
+                + 2 * genoCount[Index.REF][Index.CASE]
+                + genoCount[Index.HET][Index.CASE]
+                + 2 * genoCount[Index.REF][Index.CTRL]
+                + genoCount[Index.HET][Index.CTRL];
+    }
+
+    // NHOM = Number of homozygotes
+    public int getNHOM() {
+        return genoCount[Index.HOM][Index.CTRL]
+                + genoCount[Index.HOM][Index.CASE];
     }
 
     // AF = Allele Frequency
