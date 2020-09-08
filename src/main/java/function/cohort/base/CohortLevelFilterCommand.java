@@ -124,7 +124,7 @@ public class CohortLevelFilterCommand {
             iterator.remove();
         }
     }
-
+    
     public static boolean isCtrlAFValid(float value) {
         return isMinCtrlAFValid(value)
                 && isMaxCtrlAFValid(value)
@@ -239,7 +239,7 @@ public class CohortLevelFilterCommand {
     public static boolean isLooAFValid(float value) {
         return isMaxLooAFValid(value) && isLooMAFValid(value);
     }
-    
+
     private static boolean isMaxLooAFValid(float value) {
         if (maxLooAF == Data.NO_FILTER) {
             return true;
