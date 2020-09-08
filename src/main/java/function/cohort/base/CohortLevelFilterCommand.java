@@ -10,7 +10,6 @@ import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
-import utils.ErrorManager;
 
 /**
  *
@@ -23,8 +22,6 @@ public class CohortLevelFilterCommand {
     public static boolean isAllSample = false;
     public static boolean isAllExome = false;
     public static boolean isExcludeIGMGnomadSample = false;
-    public static float maxAF = Data.NO_FILTER;
-    public static float maf = Data.NO_FILTER;
     public static float maxCtrlAF = Data.NO_FILTER;
     public static float maxCaseAF = Data.NO_FILTER;
     public static float minCtrlAF = Data.NO_FILTER;
@@ -61,14 +58,6 @@ public class CohortLevelFilterCommand {
                     break;
                 case "--disable-check-duplicate-sample":
                     isDisableCheckDuplicateSample = true;
-                    break;
-                case "--max-af":
-                    checkValueValid(1, 0, option);
-                    maxAF = getValidFloat(option);
-                    break;
-                case "--maf":
-                    checkValueValid(1, 0, option);
-                    maf = getValidFloat(option);
                     break;
                 case "--ctrl-af":
                 case "--max-ctrl-af":
@@ -136,11 +125,6 @@ public class CohortLevelFilterCommand {
         }
     }
     
-    public static boolean isAFValid(float value) {
-        return isMaxAFValid(value)
-                & isMAFValid(value);
-    }
-
     public static boolean isCtrlAFValid(float value) {
         return isMinCtrlAFValid(value)
                 && isMaxCtrlAFValid(value)
@@ -155,22 +139,6 @@ public class CohortLevelFilterCommand {
         return value >= minCtrlAF;
     }
 
-    private static boolean isMaxAFValid(float value) {
-        if (maxAF == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value <= maxAF;
-    }
-    
-    private static boolean isMAFValid(float value) {
-        if (maf == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value <= maf || value >= (1 - maf);
-    }
-    
     private static boolean isMaxCtrlAFValid(float value) {
         if (maxCtrlAF == Data.NO_FILTER) {
             return true;
