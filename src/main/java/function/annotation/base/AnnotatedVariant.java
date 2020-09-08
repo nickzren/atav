@@ -126,7 +126,7 @@ public class AnnotatedVariant extends Variant {
 
         if (isValid && CHMCommand.isExclude) {
             isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
-            isValid = isRepeatRegion;
+            isValid = !isRepeatRegion; // invalid when variant's repeat region is true
         }
 
         if (isValid && GMECommand.isInclude) {
