@@ -242,6 +242,10 @@ public class SampleManager {
             sqlCode += " and sample_type = 'Exome'";
         }
 
+        if (CohortLevelFilterCommand.isAvailableControlUseOnly) {
+            sqlCode += " and available_control_use = 1";
+        }
+        
         initSampleFromDB(sqlCode);
     }
 

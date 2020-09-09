@@ -21,6 +21,7 @@ public class CohortLevelFilterCommand {
     public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
     public static boolean isAllExome = false;
+    public static boolean isAvailableControlUseOnly = false;
     public static boolean isExcludeIGMGnomadSample = false;
     public static float maxCtrlAF = Data.NO_FILTER;
     public static float maxCaseAF = Data.NO_FILTER;
@@ -52,6 +53,9 @@ public class CohortLevelFilterCommand {
                     break;
                 case "--all-exome":
                     isAllExome = true;
+                    break;
+                case "--available-control-use-only":
+                    isAvailableControlUseOnly = true;
                     break;
                 case "--exclude-igm-gnomad-sample":
                     isExcludeIGMGnomadSample = true;
