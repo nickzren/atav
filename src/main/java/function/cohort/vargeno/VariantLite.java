@@ -22,6 +22,8 @@ import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADGenome;
+import function.external.igmaf.IGMAFCommand;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.external.limbr.LIMBRCommand;
@@ -87,6 +89,7 @@ public class VariantLite {
     private float topmedAF;
     private float genomeasiaAF;
     private float iranomeAF;
+    private float igmAF;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -128,6 +131,7 @@ public class VariantLite {
             initTopMed(record);
             initGenomeAsia(record);
             initIranome(record);
+            initIGMAF(record);
 
             qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
             qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
@@ -333,6 +337,12 @@ public class VariantLite {
             iranomeAF = IranomeManager.getAF(record);
         }
     }
+    
+    private void initIGMAF(CSVRecord record) {
+        if (IGMAFCommand.isInclude) {
+            igmAF = IGMAFManager.getAF(record);
+        }
+    }
 
     private int getIntStableId(String value) {
         if (value.equals(Data.STRING_NA)) {
@@ -377,6 +387,7 @@ public class VariantLite {
                 && isTopMedAFValid()
                 && isGenomeAsiaAFValid()
                 && isIranomeAFValid()
+                && isIGMAFValid()
                 && CohortLevelFilterCommand.isLooAFValid(looAF)
                 && isMaxQcFailSampleValid();
     }
@@ -552,6 +563,10 @@ public class VariantLite {
         return IranomeCommand.isAFValid(iranomeAF);
     }
 
+    private boolean isIGMAFValid() {
+        return IGMAFCommand.isAFValid(igmAF);
+    }
+    
     public float getTrapScore() {
         return trapScore;
     }

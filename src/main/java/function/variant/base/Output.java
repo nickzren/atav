@@ -45,6 +45,8 @@ import function.external.gevir.GeVIRCommand;
 import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
+import function.external.igmaf.IGMAFCommand;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.external.mpc.MPCCommand;
@@ -220,6 +222,10 @@ public class Output {
 
         if (IranomeCommand.isInclude) {
             sj.add(IranomeManager.getHeader());
+        }
+        
+        if (IGMAFCommand.isInclude) {
+            sj.add(IGMAFManager.getHeader());
         }
 
         return sj;

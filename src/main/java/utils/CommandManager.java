@@ -37,6 +37,7 @@ import function.external.chm.CHMCommand;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
+import function.external.igmaf.IGMAFCommand;
 import function.external.iranome.IranomeCommand;
 import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
@@ -416,6 +417,7 @@ public class CommandManager {
                     TopMedCommand.isInclude = true;
                     GenomeAsiaCommand.isInclude = true;
                     IranomeCommand.isInclude = true;
+                    IGMAFCommand.isInclude = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":

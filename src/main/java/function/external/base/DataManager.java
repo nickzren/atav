@@ -21,6 +21,8 @@ import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
+import function.external.igmaf.IGMAFCommand;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.external.knownvar.KnownVarCommand;
@@ -111,6 +113,10 @@ public class DataManager {
             sb.append(GnomADManager.getGeneMetricsVersion());
         }
 
+        if (IGMAFCommand.isInclude) {
+            sb.append(IGMAFManager.getVersion());
+        }
+        
         if (IranomeCommand.isInclude) {
             sb.append(IranomeManager.getVersion());
         }

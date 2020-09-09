@@ -96,6 +96,7 @@ import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.external.iranome.ListIranome;
@@ -218,6 +219,8 @@ public class Program {
             GenomeAsiaManager.init();
             
             IranomeManager.init();
+            
+            IGMAFManager.init();
 
             // output external data version
             LogManager.logExternalDataVersion();

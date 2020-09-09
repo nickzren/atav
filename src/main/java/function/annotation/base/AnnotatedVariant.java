@@ -27,6 +27,8 @@ import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADManager;
+import function.external.igmaf.IGMAFCommand;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.variant.base.Variant;
@@ -110,6 +112,7 @@ public class AnnotatedVariant extends Variant {
     private float topmedAF;
     private float genomeasiaAF;
     private float iranomeAF;
+    private float igmAF;
 
     public boolean isValid = true;
 
@@ -129,6 +132,12 @@ public class AnnotatedVariant extends Variant {
             isValid = !isRepeatRegion; // invalid when variant's repeat region is true
         }
 
+        if (isValid && IGMAFCommand.isInclude) {
+            igmAF = IGMAFManager.getAF(chrStr, variantId);
+
+            isValid = IGMAFCommand.isAFValid(igmAF);
+        }
+        
         if (isValid && GMECommand.isInclude) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
@@ -552,6 +561,10 @@ public class AnnotatedVariant extends Variant {
         if (IranomeCommand.isInclude) {
             sj.add(getIranome());
         }
+        
+        if (IGMAFCommand.isInclude) {
+            sj.add(getIGMAF());
+        }
     }
 
     public StringJoiner getEvsStringJoiner() {
@@ -656,5 +669,9 @@ public class AnnotatedVariant extends Variant {
 
     public String getIranome() {
         return FormatManager.getFloat(iranomeAF);
+    }
+    
+    public String getIGMAF() {
+        return FormatManager.getFloat(igmAF);
     }
 }

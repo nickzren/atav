@@ -14,6 +14,7 @@ import function.external.gnomad.GnomADManager;
 import function.external.gerp.GerpCommand;
 import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
+import function.external.igmaf.IGMAFCommand;
 import function.external.iranome.IranomeCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
@@ -335,6 +336,16 @@ public class VariantLevelFilterCommand {
                     IranomeCommand.maf = getValidFloat(option);
                     IranomeCommand.isInclude = true;
                     break;
+                case "--max-igm-af":
+                    checkValueValid(1, 0, option);
+                    IGMAFCommand.maxAF = getValidFloat(option);
+                    IGMAFCommand.isInclude = true;
+                    break;
+                case "--igm-maf":
+                    checkValueValid(0.5, 0, option);
+                    IGMAFCommand.maf = getValidFloat(option);
+                    IGMAFCommand.isInclude = true;
+                    break;   
                 case "--include-evs":
                     EvsCommand.isInclude = true;
                     break;
@@ -432,6 +443,9 @@ public class VariantLevelFilterCommand {
                 case "--include-iranome":
                     IranomeCommand.isInclude = true;
                     break;
+                case "--include-igm-af":
+                    IGMAFCommand.isInclude = true;
+                    break;    
                 default:
                     continue;
             }
