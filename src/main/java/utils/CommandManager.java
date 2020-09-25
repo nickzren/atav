@@ -592,6 +592,8 @@ public class CommandManager {
             ParentalCommand.initOptions(optionList.iterator());
         } else if (PedMapCommand.isPedMap) {
             PedMapCommand.initOptions(optionList.iterator());
+        } else if (VCFCommand.isList) {
+            VCFCommand.initOptions(optionList.iterator());
         } else if (VarAnnoCommand.isList) { // Variant Annotation Functions
 
         } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions

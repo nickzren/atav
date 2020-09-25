@@ -76,6 +76,12 @@ public class VCFOutput extends Output {
         sj.add(formatSJ.toString());
 
         for (Sample sample : SampleManager.getList()) {
+            // --output-case-only
+            if (VCFCommand.isOutputCaseOnly
+                    && !sample.isCase()) {
+                continue;
+            }
+
             Carrier carrier = calledVar.getCarrier(sample.getId());
 
             formatSJ = new StringJoiner(":");
