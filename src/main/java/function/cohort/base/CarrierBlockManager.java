@@ -64,7 +64,7 @@ public class CarrierBlockManager {
     private static void initBlockCarrierMap(Variant var) {
         try {
             HashMap<Integer, Integer> validVariantCarrierCount = new HashMap<>();
-
+            
             PreparedStatement preparedStatement = preparedStatement4BlockMap.get(var.getChrStr());
             preparedStatement.setInt(1, currentBlockId);
             ResultSet rs = preparedStatement.executeQuery();
@@ -78,20 +78,23 @@ public class CarrierBlockManager {
                 if (varCarrierMap == null) {
                     varCarrierMap = new HashMap<>();
                     blockCarrierMap.put(variantId, varCarrierMap);
-
-                    validVariantCarrierCount.put(variantId, 0);
                 }
+
+                carrier.checkValidOnXY(var);
+
+                carrier.applyQualityFilter(var.isSnv());
 
                 if (carrier.isValid()) {
                     validVariantCarrierCount.computeIfPresent(variantId, (k, v) -> v + 1);
                 }
-
+                
+                // add carrier in order to distinguish non-carrier
                 varCarrierMap.put(carrier.getSampleId(), carrier);
             }
 
             rs.close();
-
-            // removed no qualified carriers variant
+            
+            // remove variant if no qualified carriers
             for (Entry<Integer, Integer> entry : validVariantCarrierCount.entrySet()) {
                 if (entry.getValue() == 0) {
                     blockCarrierMap.remove(entry.getKey());
