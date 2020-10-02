@@ -2,6 +2,7 @@ package function.cohort.vcf;
 
 import function.cohort.base.CalledVariant;
 import function.cohort.base.Carrier;
+import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.variant.base.Output;
@@ -39,6 +40,11 @@ public class VCFOutput extends Output {
         sj.add("FORMAT");
 
         for (Sample sample : SampleManager.getList()) {
+            if (CohortLevelFilterCommand.isCaseOnly
+                    && !sample.isCase()) {
+                continue;
+            }
+            
             sj.add(sample.getName());
         }
 
@@ -76,8 +82,8 @@ public class VCFOutput extends Output {
         sj.add(formatSJ.toString());
 
         for (Sample sample : SampleManager.getList()) {
-            // --output-case-only
-            if (VCFCommand.isOutputCaseOnly
+            // output case samples only
+            if (CohortLevelFilterCommand.isCaseOnly
                     && !sample.isCase()) {
                 continue;
             }
