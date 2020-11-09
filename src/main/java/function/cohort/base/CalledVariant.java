@@ -26,6 +26,7 @@ public class CalledVariant extends AnnotatedVariant {
     public int[][] genoCount = new int[5][2];
     public float[] homFreq = new float[2];
     public float[] hetFreq = new float[2];
+    public int ac;
     public float[] af = new float[3];
     public double[] hweP = new double[2];
     private int[] coveredSample = new int[2];
@@ -99,7 +100,8 @@ public class CalledVariant extends AnnotatedVariant {
 
         isValid = CohortLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample)
                 && CohortLevelFilterCommand.isMinCaseCarrierValid(getCaseCarrier())
-                && CohortLevelFilterCommand.isMinVarPresentValid(carrierMap.size());
+                && CohortLevelFilterCommand.isMinVarPresentValid(carrierMap.size())
+                && CohortLevelFilterCommand.isACValid(ac);
 
         return isValid;
     }
@@ -260,7 +262,8 @@ public class CalledVariant extends AnnotatedVariant {
         af[Index.CTRL] = MathManager.devide(ctrlAC, ctrlTotalAC);
 
         // all af
-        af[Index.ALL] = MathManager.devide(ctrlAC + caseAC, ctrlTotalAC + caseTotalAC);
+        ac = ctrlAC + caseAC;
+        af[Index.ALL] = MathManager.devide(ac, ctrlTotalAC + caseTotalAC);
     }
 
     private void calculateGenotypeFreq() {
@@ -356,10 +359,7 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     public int getAC() {
-        return 2 * genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HET][Index.CASE]
-                + 2 * genoCount[Index.HOM][Index.CTRL]
-                + genoCount[Index.HET][Index.CTRL];
+        return ac;
     }
 
     public int getAN() {

@@ -10,7 +10,6 @@ import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
-import utils.ErrorManager;
 
 /**
  *
@@ -25,6 +24,7 @@ public class CohortLevelFilterCommand {
     public static boolean isAvailableControlUseOnly = false;
     public static boolean isExcludeIGMGnomadSample = false;
     public static float maxAF = Data.NO_FILTER;
+    public static float minAF = Data.NO_FILTER;
     public static float maf = Data.NO_FILTER;
     public static float maxCtrlAF = Data.NO_FILTER;
     public static float maxCaseAF = Data.NO_FILTER;
@@ -32,6 +32,8 @@ public class CohortLevelFilterCommand {
     public static float ctrlMAF = Data.NO_FILTER;
     public static float caseMAF = Data.NO_FILTER;
     public static int minVarPresent = 1; // special case
+    public static int maxAC = Data.NO_FILTER;
+    public static int minAC = Data.NO_FILTER;
     public static int minCaseCarrier = Data.NO_FILTER;
     public static int maxQcFailSample = Data.NO_FILTER;
     public static double minCoveredSampleBinomialP = Data.NO_FILTER;
@@ -70,8 +72,12 @@ public class CohortLevelFilterCommand {
                     checkValueValid(1, 0, option);
                     maxAF = getValidFloat(option);
                     break;
-                case "--maf":
+                case "--min-af":
                     checkValueValid(1, 0, option);
+                    minAF = getValidFloat(option);
+                    break;
+                case "--maf":
+                    checkValueValid(0.5, 0, option);
                     maf = getValidFloat(option);
                     break;
                 case "--ctrl-af":
@@ -93,7 +99,7 @@ public class CohortLevelFilterCommand {
                     maxCaseAF = getValidFloat(option);
                     break;
                 case "--case-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     caseMAF = getValidFloat(option);
                     break;
                 case "--loo-af":
@@ -102,8 +108,16 @@ public class CohortLevelFilterCommand {
                     maxLooAF = getValidFloat(option);
                     break;
                 case "--loo-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     looMAF = getValidFloat(option);
+                    break;
+                case "--max-ac":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    maxAC = getValidInteger(option);
+                    break;
+                case "--min-ac":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minAC = getValidInteger(option);
                     break;
                 case "--min-variant-present":
                     checkValueValid(Data.NO_FILTER, 0, option);
@@ -139,10 +153,11 @@ public class CohortLevelFilterCommand {
             iterator.remove();
         }
     }
-    
+
     public static boolean isAFValid(float value) {
         return isMaxAFValid(value)
-                & isMAFValid(value);
+                && isMinAFValid(value)
+                && isMAFValid(value);
     }
 
     public static boolean isCtrlAFValid(float value) {
@@ -166,7 +181,15 @@ public class CohortLevelFilterCommand {
 
         return value <= maxAF;
     }
-    
+
+    private static boolean isMinAFValid(float value) {
+        if (minAF == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minAF;
+    }
+
     private static boolean isMAFValid(float value) {
         if (maf == Data.NO_FILTER) {
             return true;
@@ -174,7 +197,7 @@ public class CohortLevelFilterCommand {
 
         return value <= maf || value >= (1 - maf);
     }
-    
+
     private static boolean isMaxCtrlAFValid(float value) {
         if (maxCtrlAF == Data.NO_FILTER) {
             return true;
@@ -217,6 +240,27 @@ public class CohortLevelFilterCommand {
         }
 
         return value >= minVarPresent;
+    }
+
+    public static boolean isACValid(int value) {
+        return isMaxACValid(value)
+                && isMinACValid(value);
+    }
+
+    private static boolean isMaxACValid(int value) {
+        if (maxAC == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxAC;
+    }
+
+    private static boolean isMinACValid(int value) {
+        if (minAC == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value >= minAC;
     }
 
     public static boolean isMinCaseCarrierValid(int value) {

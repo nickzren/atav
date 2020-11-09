@@ -126,7 +126,7 @@ public class VariantLevelFilterCommand {
                     ExACCommand.isInclude = true;
                     break;
                 case "--exac-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     ExACCommand.maf = getValidFloat(option);
                     ExACCommand.isInclude = true;
                     break;    
@@ -157,7 +157,7 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.isIncludeExome = true;
                     break;
                 case "--gnomad-exome-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     GnomADCommand.exomeMAF = getValidFloat(option);
                     GnomADCommand.isIncludeExome = true;
                     break;    
@@ -168,7 +168,7 @@ public class VariantLevelFilterCommand {
                     GnomADCommand.isIncludeGenome = true;
                     break;
                 case "--gnomad-genome-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     GnomADCommand.genomeMAF = getValidFloat(option);
                     GnomADCommand.isIncludeGenome = true;
                     break;      
@@ -302,7 +302,7 @@ public class VariantLevelFilterCommand {
                     GMECommand.isInclude = true;
                     break;
                 case "--gme-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     GMECommand.maf = getValidFloat(option);
                     GMECommand.isInclude = true;
                     break;    
@@ -312,7 +312,7 @@ public class VariantLevelFilterCommand {
                     TopMedCommand.isInclude = true;
                     break;
                 case "--top-med-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     TopMedCommand.maf = getValidFloat(option);
                     TopMedCommand.isInclude = true;
                     break;    
@@ -322,7 +322,7 @@ public class VariantLevelFilterCommand {
                     GenomeAsiaCommand.isInclude = true;
                     break;
                 case "--genome-asia-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     GenomeAsiaCommand.maf = getValidFloat(option);
                     GenomeAsiaCommand.isInclude = true;
                     break;
@@ -332,7 +332,7 @@ public class VariantLevelFilterCommand {
                     IranomeCommand.isInclude = true;
                     break;
                 case "--iranome-maf":
-                    checkValueValid(1, 0, option);
+                    checkValueValid(0.5, 0, option);
                     IranomeCommand.maf = getValidFloat(option);
                     IranomeCommand.isInclude = true;
                     break;

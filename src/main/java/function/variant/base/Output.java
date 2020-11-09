@@ -256,6 +256,7 @@ public class Output {
         }
         sj.add("Case AF");
         sj.add("Ctrl AF");
+        sj.add("AC");
         sj.add("AF");
         sj.add("Case HWE_P");
         sj.add("Ctrl HWE_P");
@@ -359,6 +360,7 @@ public class Output {
         }
         sj.add(FormatManager.getFloat(calledVar.af[Index.CASE]));
         sj.add(FormatManager.getFloat(calledVar.af[Index.CTRL]));
+        sj.add(FormatManager.getFloat(calledVar.ac));
         sj.add(FormatManager.getFloat(calledVar.af[Index.ALL]));
         sj.add(FormatManager.getDouble(calledVar.hweP[Index.CASE]));
         sj.add(FormatManager.getDouble(calledVar.hweP[Index.CTRL]));
