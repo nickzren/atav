@@ -220,11 +220,11 @@ public class CalledVariant extends AnnotatedVariant {
         dpBin[s] = bin;
     }
 
-    // --ctrl-maf or --loo-maf or --maf will tigger to swich GT when its AF > 0.5
+    // --max-ctrl-maf or --max-loo-maf or --max-maf will tigger to swich GT when its AF > 0.5
     private void switchGT() {
         if ((CohortLevelFilterCommand.ctrlMAF != Data.NO_FILTER && af[Index.CTRL] > 0.5)
                 || (CohortLevelFilterCommand.looMAF != Data.NO_FILTER && af[Index.ALL] > 0.5)
-                || (CohortLevelFilterCommand.maf != Data.NO_FILTER && af[Index.ALL] > 0.5)) {
+                || (CohortLevelFilterCommand.maxMAF != Data.NO_FILTER && af[Index.ALL] > 0.5)) {
             // switch per sample GT
             for (int s = 0; s < SampleManager.getList().size(); s++) {
                 if (gt[s] == Index.REF) {

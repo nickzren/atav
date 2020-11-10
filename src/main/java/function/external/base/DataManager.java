@@ -21,6 +21,8 @@ import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
@@ -101,11 +103,11 @@ public class DataManager {
             sb.append(GMEManager.getVersion());
         }
 
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.isInclude) {
             sb.append(GnomADManager.getExomeVersion());
         }
 
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.isInclude) {
             sb.append(GnomADManager.getGenomeVersion());
         }
 

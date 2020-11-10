@@ -26,6 +26,7 @@ public class ExAC {
     private int sampleCovered10x;
     private float[] af;
     private float maxAF;
+    private float minAF;
     private String[] gts;
     private float vqslod;
 
@@ -73,7 +74,8 @@ public class ExAC {
 
         isSnv = ref.length() == alt.length();
 
-        maxAF = Data.FLOAT_NA;
+        maxAF = Float.MIN_VALUE;
+        minAF = Float.MAX_VALUE;
         this.af = new float[ExACManager.POP.length];
         for (int i = 0; i < ExACManager.POP.length; i++) {
             af[i] = FormatManager.getFloat(record, "ExAC " + ExACManager.POP[i] + " af");
@@ -81,6 +83,7 @@ public class ExAC {
             if (af[i] != Data.FLOAT_NA
                     && ExACCommand.pop.contains(ExACManager.POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
+                minAF = Math.min(minAF, af[i]);
             }
         }
 
@@ -134,12 +137,14 @@ public class ExAC {
     }
 
     private void setAF(ResultSet rs) throws SQLException {
-        maxAF = Data.FLOAT_NA;
+        maxAF = Float.MIN_VALUE;
+        minAF = Float.MAX_VALUE;
         for (int i = 0; i < ExACManager.POP.length; i++) {
             af[i] = rs.getFloat(ExACManager.POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
                     && ExACCommand.pop.contains(ExACManager.POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
+                minAF = Math.min(minAF, af[i]);
             }
             gts[i] = rs.getString(ExACManager.POP[i] + "_gts");
         }
@@ -157,7 +162,7 @@ public class ExAC {
     }
 
     public boolean isValid() {
-        return ExACCommand.isAFValid(maxAF)
+        return ExACCommand.isAFValid(maxAF, minAF)
                 && ExACCommand.isVqslodValid(vqslod, isSnv)
                 && ExACCommand.isMeanCoverageValid(meanCoverage);
     }

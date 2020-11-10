@@ -19,9 +19,10 @@ import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
-import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADExome;
+import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenome;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
@@ -230,13 +231,13 @@ public class VariantLite {
     }
 
     private void initGnomADExome(CSVRecord record) {
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.isInclude) {
             gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
         }
     }
 
     private void initGnomADGenome(CSVRecord record) {
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.isInclude) {
             gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
         }
     }

@@ -9,7 +9,8 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
-import function.external.gnomad.GnomADCommand;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBRManager;
@@ -167,11 +168,11 @@ public class ListVarGenoLite {
             headers = (String[]) ArrayUtils.addAll(headers, ExACManager.getHeader().split(","));
         }
 
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getExomeHeader().split(","));
         }
 
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeHeader().split(","));
         }
 

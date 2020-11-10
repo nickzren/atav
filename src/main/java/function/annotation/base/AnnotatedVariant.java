@@ -25,7 +25,9 @@ import function.external.gevir.GeVIRCommand;
 import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
+import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenome;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
@@ -162,13 +164,13 @@ public class AnnotatedVariant extends Variant {
             isValid = GenomeAsiaCommand.isAFValid(genomeasiaAF);
         }
 
-        if (isValid && GnomADCommand.isIncludeExome) {
+        if (isValid && GnomADExomeCommand.isInclude) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADExome.isValid();
         }
 
-        if (isValid && GnomADCommand.isIncludeGenome) {
+        if (isValid && GnomADGenomeCommand.isInclude) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADGenome.isValid();
@@ -454,11 +456,11 @@ public class AnnotatedVariant extends Variant {
             sj.add(getExacGeneVariantCount());
         }
 
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.isInclude) {
             sj.merge(getGnomADExomeStringJoiner());
         }
 
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.isInclude) {
             sj.merge(getGnomADGenomeStringJoiner());
         }
 

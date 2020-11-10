@@ -37,6 +37,8 @@ import function.external.chm.CHMCommand;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.igmaf.IGMAFCommand;
 import function.external.iranome.IranomeCommand;
 import function.external.mpc.MPCCommand;
@@ -391,8 +393,8 @@ public class CommandManager {
                     VarAnnoCommand.isList = true;
                     EvsCommand.isInclude = true;
                     ExACCommand.isInclude = true;
-                    GnomADCommand.isIncludeExome = true;
-                    GnomADCommand.isIncludeGenome = true;
+                    GnomADExomeCommand.isInclude = true;
+                    GnomADGenomeCommand.isInclude = true;
                     GnomADCommand.isIncludeGeneMetrics = true;
                     GerpCommand.isInclude = true;
                     TrapCommand.isInclude = true;
@@ -446,13 +448,13 @@ public class CommandManager {
                     break;
                 case "--list-gnomad-exome":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GnomADCommand.isListExome = true;
-                    GnomADCommand.isIncludeExome = true;
+                    GnomADExomeCommand.isList = true;
+                    GnomADExomeCommand.isInclude = true;
                     break;
                 case "--list-gnomad-genome":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GnomADCommand.isListGenome = true;
-                    GnomADCommand.isIncludeGenome = true;
+                    GnomADGenomeCommand.isList = true;
+                    GnomADGenomeCommand.isInclude = true;
                     break;
                 case "--list-known-var":
                     CommonCommand.isNonSampleAnalysis = true;
@@ -604,7 +606,7 @@ public class CommandManager {
             CoverageCommand.initSiteCoverageComparison(optionList.iterator());
         } else if (EvsCommand.isList) { // External Datasets Functions
 
-        } else if (GnomADCommand.isListExome) {
+        } else if (GnomADExomeCommand.isList) {
 
         } else if (KnownVarCommand.isList) {
 

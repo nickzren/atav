@@ -44,7 +44,6 @@ import function.external.evs.ListEvs;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
 import function.external.exac.ListExAC;
-import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.gnomad.ListGnomADExome;
 import function.external.gerp.GerpCommand;
@@ -96,6 +95,8 @@ import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
@@ -277,9 +278,9 @@ public class Program {
                 runAnalysis(new ListEvs());
             } else if (ExACCommand.isList) {
                 runAnalysis(new ListExAC());
-            } else if (GnomADCommand.isListExome) {
+            } else if (GnomADExomeCommand.isList) {
                 runAnalysis(new ListGnomADExome());
-            } else if (GnomADCommand.isListGenome) {
+            } else if (GnomADGenomeCommand.isList) {
                 runAnalysis(new ListGnomADGenome());
             } else if (KnownVarCommand.isList) {
                 runAnalysis(new ListKnownVar());

@@ -45,6 +45,8 @@ import function.external.gevir.GeVIRCommand;
 import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
@@ -120,11 +122,11 @@ public class Output {
             sj.add(ExACManager.getGeneVariantCountHeader());
         }
 
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.isInclude) {
             sj.add(GnomADManager.getExomeHeader());
         }
 
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.isInclude) {
             sj.add(GnomADManager.getGenomeHeader());
         }
 
