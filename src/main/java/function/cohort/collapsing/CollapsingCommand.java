@@ -28,6 +28,7 @@ public class CollapsingCommand {
     public static boolean isExcludeCompHetPIDVariant = false;
     public static boolean isExcludeCompHetHPVariant = false;
     public static String geneColumn = "";
+    public static boolean isCollapsingMatrixHetHom = false;
 
     public static void initSingleVarOptions(Iterator<CommandOption> iterator)
             throws Exception { // collapsing dom or rec
@@ -56,6 +57,9 @@ public class CollapsingCommand {
                     break;
                 case "--convert-nan":
                     Data.STRING_NAN = option.getValue();
+                    break;
+                case "--collapsing-matrix-het-hom":
+                    isCollapsingMatrixHetHom = true;
                     break;
                 default:
                     continue;
@@ -132,6 +136,9 @@ public class CollapsingCommand {
                     break;
                 case "--gene-column":
                     geneColumn = option.getValue().replaceAll("_", " ");
+                    break;
+                case "--collapsing-matrix-het-hom":
+                    isCollapsingMatrixHetHom = true;
                     break;
                 default:
                     continue;

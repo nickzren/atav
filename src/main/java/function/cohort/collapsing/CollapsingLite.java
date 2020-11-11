@@ -7,6 +7,8 @@ import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VariantLite;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
+import global.Data;
+import global.Index;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -134,17 +136,33 @@ public class CollapsingLite extends ListVarGenoLite {
             String sampleName = variantLite.getRecord().get(SAMPLE_NAME_HEADER);
             Sample sample = SampleManager.getSampleByName(sampleName);
 
+            String gtStr = variantLite.getRecord().get(GT_HEADER);
+            byte geno = getGeno(gtStr);
+
             if (!summaryMap.containsKey(geneName)) {
                 summaryMap.put(geneName, new CollapsingGeneSummary(geneName));
             }
 
             CollapsingSummary summary = summaryMap.get(geneName);
-            summary.countQualifiedVariantBySample(sample.getIndex());
+            summary.countQualifiedVariantBySample(geno, sample.getIndex());
 
             // only count variant once per gene
             if (!previousVariantID.equals(variantLite.getVariantID())) {
                 summary.updateVariantCount(variantLite.isSNV());
             }
+        }
+    }
+
+    private byte getGeno(String geno) {
+        switch (geno) {
+            case "hom":
+                return Index.HOM;
+            case "het":
+                return Index.HET;
+            case "hom ref":
+                return Index.REF;
+            default:
+                return Data.BYTE_NA;
         }
     }
 
