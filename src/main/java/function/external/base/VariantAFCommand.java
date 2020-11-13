@@ -45,8 +45,7 @@ public class VariantAFCommand {
             return true;
         }
 
-        return value > minAF
-                || value == Data.FLOAT_NA;
+        return value > minAF;
     }
 
     private static boolean isMaxMAFValid(float value) {
@@ -64,9 +63,8 @@ public class VariantAFCommand {
             return true;
         }
 
-        return (value > minMAF
-                && value < (1 - minMAF))
-                || value == Data.FLOAT_NA;
+        return value > minMAF
+                && value < (1 - minMAF);
     }
 
     private static boolean isMaxMAFValid(float max, float min) {
@@ -86,9 +84,7 @@ public class VariantAFCommand {
         }
 
         // maxAF > cutoff and minAF < 1- cutoff
-        return (max > minMAF
-                && min < (1 - minMAF))
-                || max == Data.FLOAT_NA
-                || min == Data.FLOAT_NA;
+        return max > minMAF
+                && min < (1 - minMAF);
     }
 }
