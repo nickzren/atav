@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 
@@ -27,6 +28,10 @@ public class CarrierBlockManager {
     private static final HashMap<String, PreparedStatement> preparedStatement4VariantMap = new HashMap<>();
 
     public static void init() {
+        if (CommonCommand.isNonDBAnalysis) {
+            return;
+        }
+        
         for (String chr : RegionManager.ALL_CHR) {
             String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,VQSLOD,SOR,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0,PGT,PID_variant_id,HP_GT,HP_variant_id "
                     + "FROM called_variant_chr" + chr + "," + EffectManager.TMP_IMPACT_TABLE + ","

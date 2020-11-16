@@ -14,6 +14,8 @@ public class TestCommand {
     public static boolean isTest = false;
     public static int sampleID = Data.INTEGER_NA;
     public static String dpBinFilePath = Data.STRING_NA;
+    public static String testInput = Data.STRING_NA;
+    public static String testOutput = Data.STRING_NA;
     
      public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -26,6 +28,12 @@ public class TestCommand {
                     break;
                 case "--sample-id":
                     sampleID = getValidInteger(option);
+                    break;
+                case "--test-input":
+                    testInput = option.getValue();
+                    break;
+                case "--test-output":
+                    testOutput = option.getValue();
                     break;
                 default:
                     continue;

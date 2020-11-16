@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 
@@ -27,6 +28,10 @@ public class DPBinBlockManager {
     private static final HashMap<String, PreparedStatement> preparedStatement4BlockMap = new HashMap<>();
     
     public static void init() {
+        if (CommonCommand.isNonDBAnalysis) {
+            return;
+        }
+        
         dpBin.put('b', Data.SHORT_NA);
         dpBin.put('c', (short) 10);
         dpBin.put('d', (short) 20);

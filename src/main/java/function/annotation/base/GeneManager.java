@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
+import utils.CommonCommand;
 import utils.DBManager;
 
 /**
@@ -46,6 +47,10 @@ public class GeneManager {
     private static PreparedStatement preparedStatement4GeneChrom;
 
     public static void init() throws Exception {
+        if (CommonCommand.isNonDBAnalysis) {
+            return;
+        }
+        
         initPreparedStatement4GeneChrom();
 
         initHgncGeneMap();

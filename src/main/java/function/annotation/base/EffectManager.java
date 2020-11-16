@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import utils.CommandManager;
+import utils.CommonCommand;
 import utils.DBManager;
 
 /**
@@ -51,6 +52,10 @@ public class EffectManager {
     private static boolean isUsed = false;
 
     public static void init() throws SQLException {
+        if (CommonCommand.isNonDBAnalysis) {
+            return;
+        }
+        
         initDefaultEffectSet();
         
         initLOFEffectIDSet();
