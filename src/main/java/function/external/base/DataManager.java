@@ -75,7 +75,7 @@ public class DataManager {
             sb.append(EvsManager.getVersion());
         }
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             sb.append(ExACManager.getVersion());
         }
 
@@ -87,7 +87,7 @@ public class DataManager {
             sb.append(DiscovEHRManager.getVersion());
         }
 
-        if (GenomeAsiaCommand.isInclude) {
+        if (GenomeAsiaCommand.getInstance().isInclude) {
             sb.append(GenomeAsiaManager.getVersion());
         }
 
@@ -99,15 +99,15 @@ public class DataManager {
             sb.append(GeVIRManager.getVersion());
         }
 
-        if (GMECommand.isInclude) {
+        if (GMECommand.getInstance().isInclude) {
             sb.append(GMEManager.getVersion());
         }
 
-        if (GnomADExomeCommand.isInclude) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             sb.append(GnomADManager.getExomeVersion());
         }
 
-        if (GnomADGenomeCommand.isInclude) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             sb.append(GnomADManager.getGenomeVersion());
         }
 
@@ -115,11 +115,11 @@ public class DataManager {
             sb.append(GnomADManager.getGeneMetricsVersion());
         }
 
-        if (IGMAFCommand.isInclude) {
+        if (IGMAFCommand.getInstance().isInclude) {
             sb.append(IGMAFManager.getVersion());
         }
         
-        if (IranomeCommand.isInclude) {
+        if (IranomeCommand.getInstance().isInclude) {
             sb.append(IranomeManager.getVersion());
         }
 
@@ -167,7 +167,7 @@ public class DataManager {
             sb.append(SynRvisManager.getVersion());
         }
 
-        if (TopMedCommand.isInclude) {
+        if (TopMedCommand.getInstance().isInclude) {
             sb.append(TopMedManager.getVersion());
         }
 

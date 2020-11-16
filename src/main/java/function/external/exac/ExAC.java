@@ -162,7 +162,7 @@ public class ExAC {
     }
 
     public boolean isValid() {
-        return ExACCommand.isAFValid(maxAF, minAF)
+        return ExACCommand.getInstance().isAFValid(maxAF, minAF)
                 && ExACCommand.isVqslodValid(vqslod, isSnv)
                 && ExACCommand.isMeanCoverageValid(meanCoverage);
     }

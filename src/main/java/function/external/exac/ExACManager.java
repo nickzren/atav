@@ -57,7 +57,7 @@ public class ExACManager {
             initGeneVariantCountMap();
         }
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             initPreparedStatement();
         }
     }

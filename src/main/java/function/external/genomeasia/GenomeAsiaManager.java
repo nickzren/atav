@@ -23,7 +23,7 @@ public class GenomeAsiaManager {
     private static final HashMap<String, PreparedStatement> preparedStatement4VariantMap = new HashMap<>();
 
     public static void init() {
-        if (GenomeAsiaCommand.isInclude) {
+        if (GenomeAsiaCommand.getInstance().isInclude) {
             for (String chr : RegionManager.ALL_CHR) {
                 String sql = "SELECT af FROM " + table + chr + " WHERE pos=? AND ref=? AND alt=?";
                 preparedStatement4VariantMap.put(chr, DBManager.initPreparedStatement(sql));

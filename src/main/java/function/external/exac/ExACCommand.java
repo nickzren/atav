@@ -17,6 +17,16 @@ public class ExACCommand extends VariantAFCommand {
     public static float vqslodIndel = Data.NO_FILTER;
     public static float meanCoverage = Data.NO_FILTER;
 
+    private static ExACCommand single_instance = null;
+
+    public static ExACCommand getInstance() {
+        if (single_instance == null) {
+            single_instance = new ExACCommand();
+        }
+
+        return single_instance;
+    }
+    
     public static boolean isVqslodValid(float value, boolean isSnv) {
         if (isSnv) {
             return isVqslodSnvValid(value);

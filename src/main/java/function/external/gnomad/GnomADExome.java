@@ -192,7 +192,7 @@ public class GnomADExome {
     }
 
     public boolean isValid() {
-        return GnomADExomeCommand.isAFValid(maxAF, minAF)
+        return GnomADExomeCommand.getInstance().isAFValid(maxAF, minAF)
                 && GnomADExomeCommand.isRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 

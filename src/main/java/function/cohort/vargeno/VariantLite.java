@@ -225,19 +225,19 @@ public class VariantLite {
     }
 
     private void initEXAC(CSVRecord record) {
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             exac = new ExAC(chr, pos, ref, alt, record);
         }
     }
 
     private void initGnomADExome(CSVRecord record) {
-        if (GnomADExomeCommand.isInclude) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
         }
     }
 
     private void initGnomADGenome(CSVRecord record) {
-        if (GnomADGenomeCommand.isInclude) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
         }
     }
@@ -316,31 +316,31 @@ public class VariantLite {
     }
 
     private void initGME(CSVRecord record) {
-        if (GMECommand.isInclude) {
+        if (GMECommand.getInstance().isInclude) {
             gmeAF = GMEManager.getAF(record);
         }
     }
 
     private void initTopMed(CSVRecord record) {
-        if (TopMedCommand.isInclude) {
+        if (TopMedCommand.getInstance().isInclude) {
             topmedAF = TopMedManager.getAF(record);
         }
     }
 
     private void initGenomeAsia(CSVRecord record) {
-        if (GenomeAsiaCommand.isInclude) {
+        if (GenomeAsiaCommand.getInstance().isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(record);
         }
     }
 
     private void initIranome(CSVRecord record) {
-        if (IranomeCommand.isInclude) {
+        if (IranomeCommand.getInstance().isInclude) {
             iranomeAF = IranomeManager.getAF(record);
         }
     }
     
     private void initIGMAF(CSVRecord record) {
-        if (IGMAFCommand.isInclude) {
+        if (IGMAFCommand.getInstance().isInclude) {
             igmAF = IGMAFManager.getAF(record);
         }
     }
@@ -549,23 +549,23 @@ public class VariantLite {
     }
 
     private boolean isGMEAFValid() {
-        return GMECommand.isAFValid(gmeAF);
+        return GMECommand.getInstance().isAFValid(gmeAF);
     }
 
     private boolean isTopMedAFValid() {
-        return TopMedCommand.isAFValid(topmedAF);
+        return TopMedCommand.getInstance().isAFValid(topmedAF);
     }
 
     private boolean isGenomeAsiaAFValid() {
-        return GenomeAsiaCommand.isAFValid(genomeasiaAF);
+        return GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
     }
 
     private boolean isIranomeAFValid() {
-        return IranomeCommand.isAFValid(iranomeAF);
+        return IranomeCommand.getInstance().isAFValid(iranomeAF);
     }
 
     private boolean isIGMAFValid() {
-        return IGMAFCommand.isAFValid(igmAF);
+        return IGMAFCommand.getInstance().isAFValid(igmAF);
     }
     
     public float getTrapScore() {

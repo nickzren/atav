@@ -190,7 +190,7 @@ public class GnomADGenome {
     }
 
     public boolean isValid() {
-        return GnomADGenomeCommand.isAFValid(maxAF, minAF)
+        return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF)
                 && GnomADGenomeCommand.isRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 

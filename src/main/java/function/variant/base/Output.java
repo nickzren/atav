@@ -114,7 +114,7 @@ public class Output {
             sj.add(EvsManager.getHeader());
         }
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             sj.add(ExACManager.getHeader());
         }
 
@@ -122,11 +122,11 @@ public class Output {
             sj.add(ExACManager.getGeneVariantCountHeader());
         }
 
-        if (GnomADExomeCommand.isInclude) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             sj.add(GnomADManager.getExomeHeader());
         }
 
-        if (GnomADGenomeCommand.isInclude) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             sj.add(GnomADManager.getGenomeHeader());
         }
 
@@ -210,23 +210,23 @@ public class Output {
             sj.add(CHMManager.getHeader());
         }
 
-        if (GMECommand.isInclude) {
+        if (GMECommand.getInstance().isInclude) {
             sj.add(GMEManager.getHeader());
         }
 
-        if (TopMedCommand.isInclude) {
+        if (TopMedCommand.getInstance().isInclude) {
             sj.add(TopMedManager.getHeader());
         }
 
-        if (GenomeAsiaCommand.isInclude) {
+        if (GenomeAsiaCommand.getInstance().isInclude) {
             sj.add(GenomeAsiaManager.getHeader());
         }
 
-        if (IranomeCommand.isInclude) {
+        if (IranomeCommand.getInstance().isInclude) {
             sj.add(IranomeManager.getHeader());
         }
         
-        if (IGMAFCommand.isInclude) {
+        if (IGMAFCommand.getInstance().isInclude) {
             sj.add(IGMAFManager.getHeader());
         }
 

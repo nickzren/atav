@@ -134,49 +134,49 @@ public class AnnotatedVariant extends Variant {
             isValid = !isRepeatRegion; // invalid when variant's repeat region is true
         }
 
-        if (isValid && IGMAFCommand.isInclude) {
+        if (isValid && IGMAFCommand.getInstance().isInclude) {
             igmAF = IGMAFManager.getAF(chrStr, variantId);
 
-            isValid = IGMAFCommand.isAFValid(igmAF);
+            isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
         }
         
-        if (isValid && GMECommand.isInclude) {
+        if (isValid && GMECommand.getInstance().isInclude) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
-            isValid = GMECommand.isAFValid(gmeAF);
+            isValid = GMECommand.getInstance().isAFValid(gmeAF);
         }
 
-        if (isValid && IranomeCommand.isInclude) {
+        if (isValid && IranomeCommand.getInstance().isInclude) {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
-            isValid = IranomeCommand.isAFValid(iranomeAF);
+            isValid = IranomeCommand.getInstance().isAFValid(iranomeAF);
         }
 
-        if (isValid && TopMedCommand.isInclude) {
+        if (isValid && TopMedCommand.getInstance().isInclude) {
             topmedAF = TopMedManager.getAF(variantIdStr);
 
-            isValid = TopMedCommand.isAFValid(topmedAF);
+            isValid = TopMedCommand.getInstance().isAFValid(topmedAF);
         }
 
-        if (isValid && GenomeAsiaCommand.isInclude) {
+        if (isValid && GenomeAsiaCommand.getInstance().isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
-            isValid = GenomeAsiaCommand.isAFValid(genomeasiaAF);
+            isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
         }
 
-        if (isValid && GnomADExomeCommand.isInclude) {
+        if (isValid && GnomADExomeCommand.getInstance().isInclude) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADExome.isValid();
         }
 
-        if (isValid && GnomADGenomeCommand.isInclude) {
+        if (isValid && GnomADGenomeCommand.getInstance().isInclude) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADGenome.isValid();
         }
 
-        if (isValid && ExACCommand.isInclude) {
+        if (isValid && ExACCommand.getInstance().isInclude) {
             exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
@@ -448,7 +448,7 @@ public class AnnotatedVariant extends Variant {
             sj.merge(getEvsStringJoiner());
         }
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             sj.merge(getExacStringJoiner());
         }
 
@@ -456,11 +456,11 @@ public class AnnotatedVariant extends Variant {
             sj.add(getExacGeneVariantCount());
         }
 
-        if (GnomADExomeCommand.isInclude) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             sj.merge(getGnomADExomeStringJoiner());
         }
 
-        if (GnomADGenomeCommand.isInclude) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             sj.merge(getGnomADGenomeStringJoiner());
         }
 
@@ -548,23 +548,23 @@ public class AnnotatedVariant extends Variant {
             sj.add(FormatManager.getBoolean(isRepeatRegion));
         }
 
-        if (GMECommand.isInclude) {
+        if (GMECommand.getInstance().isInclude) {
             sj.add(getGME());
         }
 
-        if (TopMedCommand.isInclude) {
+        if (TopMedCommand.getInstance().isInclude) {
             sj.add(getTopMed());
         }
 
-        if (GenomeAsiaCommand.isInclude) {
+        if (GenomeAsiaCommand.getInstance().isInclude) {
             sj.add(getGenomeAsia());
         }
 
-        if (IranomeCommand.isInclude) {
+        if (IranomeCommand.getInstance().isInclude) {
             sj.add(getIranome());
         }
         
-        if (IGMAFCommand.isInclude) {
+        if (IGMAFCommand.getInstance().isInclude) {
             sj.add(getIGMAF());
         }
     }

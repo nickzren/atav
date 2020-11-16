@@ -8,14 +8,14 @@ import global.Data;
  */
 public class VariantAFCommand {
 
-    public static boolean isList = false;
-    public static boolean isInclude = false;
-    public static float maxAF = Data.NO_FILTER;
-    public static float minAF = Data.NO_FILTER;
-    public static float maxMAF = Data.NO_FILTER;
-    public static float minMAF = Data.NO_FILTER;
+    public boolean isList = false;
+    public boolean isInclude = false;
+    public float maxAF = Data.NO_FILTER;
+    public float minAF = Data.NO_FILTER;
+    public float maxMAF = Data.NO_FILTER;
+    public float minMAF = Data.NO_FILTER;
 
-    public static boolean isAFValid(float value) {
+    public boolean isAFValid(float value) {
         return isMaxAFValid(value)
                 && isMinAFValid(value)
                 && isMaxMAFValid(value)
@@ -23,15 +23,15 @@ public class VariantAFCommand {
 
     }
 
-    public static boolean isAFValid(float max, float min) {
+    public boolean isAFValid(float max, float min) {
         return isMaxAFValid(max)
-                && isMinAFValid(min)
-                && VariantAFCommand.isMaxMAFValid(max, min)
+                && isMinAFValid(max)
+                && isMaxMAFValid(max, min)
                 && isMinMAFValid(max, min);
 
     }
 
-    private static boolean isMaxAFValid(float value) {
+    private boolean isMaxAFValid(float value) {
         if (maxAF == Data.NO_FILTER) {
             return true;
         }
@@ -40,7 +40,7 @@ public class VariantAFCommand {
                 || value == Data.FLOAT_NA;
     }
 
-    private static boolean isMinAFValid(float value) {
+    private boolean isMinAFValid(float value) {
         if (minAF == Data.NO_FILTER) {
             return true;
         }
@@ -48,7 +48,7 @@ public class VariantAFCommand {
         return value > minAF;
     }
 
-    private static boolean isMaxMAFValid(float value) {
+    private boolean isMaxMAFValid(float value) {
         if (maxMAF == Data.NO_FILTER) {
             return true;
         }
@@ -58,7 +58,7 @@ public class VariantAFCommand {
                 || value == Data.FLOAT_NA;
     }
 
-    private static boolean isMinMAFValid(float value) {
+    private boolean isMinMAFValid(float value) {
         if (minMAF == Data.NO_FILTER) {
             return true;
         }
@@ -67,7 +67,7 @@ public class VariantAFCommand {
                 && value < (1 - minMAF);
     }
 
-    private static boolean isMaxMAFValid(float max, float min) {
+    private boolean isMaxMAFValid(float max, float min) {
         if (maxMAF == Data.NO_FILTER) {
             return true;
         }
@@ -78,7 +78,7 @@ public class VariantAFCommand {
                 || min == Data.FLOAT_NA;
     }
 
-    private static boolean isMinMAFValid(float max, float min) {
+    private boolean isMinMAFValid(float max, float min) {
         if (minMAF == Data.NO_FILTER) {
             return true;
         }

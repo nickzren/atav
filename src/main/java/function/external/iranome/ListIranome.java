@@ -56,7 +56,7 @@ public class ListIranome extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
                 float af = IranomeManager.getAF(variantId);
 
-                if (IranomeCommand.isAFValid(af)) {
+                if (IranomeCommand.getInstance().isAFValid(af)) {
                     bwIranome.write(variantId + ",");
                     bwIranome.write(FormatManager.getFloat(af));
                     bwIranome.newLine();

@@ -97,6 +97,7 @@ import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
 import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenomeCommand;
+import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
@@ -127,7 +128,7 @@ import utils.ThirdPartyToolManager;
  */
 public class Program {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {       
         try {
             RunTimeManager.start();
 
@@ -276,11 +277,11 @@ public class Program {
                 runAnalysis(new SiteCoverageComparison());
             } else if (EvsCommand.isList) { // External Datasets Functions
                 runAnalysis(new ListEvs());
-            } else if (ExACCommand.isList) {
+            } else if (ExACCommand.getInstance().isList) {
                 runAnalysis(new ListExAC());
-            } else if (GnomADExomeCommand.isList) {
+            } else if (GnomADExomeCommand.getInstance().isList) {
                 runAnalysis(new ListGnomADExome());
-            } else if (GnomADGenomeCommand.isList) {
+            } else if (GnomADGenomeCommand.getInstance().isList) {
                 runAnalysis(new ListGnomADGenome());
             } else if (KnownVarCommand.isList) {
                 runAnalysis(new ListKnownVar());
@@ -310,13 +311,13 @@ public class Program {
                 runAnalysis(new ListPext());
             } else if (MPCCommand.isList) {
                 runAnalysis(new ListMPC());
-            } else if (GMECommand.isList) {
+            } else if (GMECommand.getInstance().isList) {
                 runAnalysis(new ListGME());
-            } else if (TopMedCommand.isList) {
+            } else if (TopMedCommand.getInstance().isList) {
                 runAnalysis(new ListTopMed());
-            } else if (GenomeAsiaCommand.isList) {
+            } else if (GenomeAsiaCommand.getInstance().isList) {
                 runAnalysis(new ListGenomeAsia());
-            } else if (IranomeCommand.isList) {
+            } else if (IranomeCommand.getInstance().isList) {
                 runAnalysis(new ListIranome());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());

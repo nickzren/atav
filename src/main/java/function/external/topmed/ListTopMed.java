@@ -56,7 +56,7 @@ public class ListTopMed extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
                 float af = TopMedManager.getAF(variantId);
 
-                if (TopMedCommand.isAFValid(af)) {
+                if (TopMedCommand.getInstance().isAFValid(af)) {
                     bwTopMed.write(variantId + ",");
                     bwTopMed.write(FormatManager.getFloat(af));
                     bwTopMed.newLine();

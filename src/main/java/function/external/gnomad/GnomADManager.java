@@ -59,7 +59,7 @@ public class GnomADManager {
     }
 
     public static void initPreparedStatement() {
-        if (GnomADExomeCommand.isInclude) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             String sql = "SELECT * FROM " + exomeVariantTable + " WHERE chr =? AND pos =? AND ref =? AND alt =?";
             preparedStatement4VariantExome = DBManager.initPreparedStatement(sql);
             sql = "SELECT * FROM " + exomeMNVTable + " WHERE chr =? AND pos =? AND ref =? AND alt =?";
@@ -68,7 +68,7 @@ public class GnomADManager {
             preparedStatement4RegionExome = DBManager.initPreparedStatement(sql);
         }
 
-        if (GnomADGenomeCommand.isInclude) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             String sql = "SELECT * FROM " + genomeMNVTable + " WHERE chr=? AND pos=? AND ref=? AND alt=?";
             preparedStatement4MNVGenome = DBManager.initPreparedStatement(sql);
             for (String chr : RegionManager.ALL_CHR) {

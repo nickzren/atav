@@ -165,15 +165,15 @@ public class ListVarGenoLite {
             LOO_AF_HEADER
         };
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, ExACManager.getHeader().split(","));
         }
 
-        if (GnomADExomeCommand.isInclude) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getExomeHeader().split(","));
         }
 
-        if (GnomADGenomeCommand.isInclude) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeHeader().split(","));
         }
 

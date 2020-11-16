@@ -20,7 +20,7 @@ public class IGMAFManager {
     private static PreparedStatement preparedStatement;
 
     public static void init() {
-        if (IGMAFCommand.isInclude) {
+        if (IGMAFCommand.getInstance().isInclude) {
             String sql = "SELECT af FROM " + table + " WHERE chr=? AND variant_id=?";
             preparedStatement = DBManager.initPreparedStatement(sql);
         }
