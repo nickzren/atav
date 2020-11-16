@@ -274,7 +274,7 @@ public class CohortLevelFilterCommand {
             return true;
         }
 
-        return value >= minAC;
+        return value > minAC;
     }
 
     public static boolean isMinCaseCarrierValid(int value) {

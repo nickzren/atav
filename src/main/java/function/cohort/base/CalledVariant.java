@@ -46,22 +46,21 @@ public class CalledVariant extends AnnotatedVariant {
 
             initGenoCovArray();
 
-            if (checkGenoCountValid()) {
-                calculateAlleleFreq();
+            calculateAlleleFreq();
 
-                if (checkAlleleFreqValid()) {
-                    switchGT();
+            if (checkGenoCountValid()
+                    && checkAlleleFreqValid()) {
+                switchGT();
 
-                    initDPBinCoveredSampleBinomialP();
+                initDPBinCoveredSampleBinomialP();
 
-                    initCoveredSamplePercentage();
+                initCoveredSamplePercentage();
 
-                    if (checkCoveredSampleBinomialP()
-                            && checkCoveredSamplePercentage()) {
-                        calculateGenotypeFreq();
+                if (checkCoveredSampleBinomialP()
+                        && checkCoveredSamplePercentage()) {
+                    calculateGenotypeFreq();
 
-                        calculateHweP();
-                    }
+                    calculateHweP();
                 }
             }
         }
