@@ -2,6 +2,7 @@ package function.variant.base;
 
 import function.external.ccr.CCRCommand;
 import function.external.chm.CHMCommand;
+import function.external.dbnsfp.DBNSFPCommand;
 import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
@@ -535,6 +536,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-igm-af":
                     IGMAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--include-dbnsfp":
+                    DBNSFPCommand.isInclude = true;
                     break;
                 default:
                     continue;

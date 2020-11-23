@@ -11,6 +11,9 @@ import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.dbnsfp.DBNSFP;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.dbnsfp.DBNSFPManager;
 import function.external.discovehr.DiscovEHR;
 import function.external.discovehr.DiscovEHRCommand;
 import function.external.exac.ExAC;
@@ -91,6 +94,7 @@ public class VariantLite {
     private float genomeasiaAF;
     private float iranomeAF;
     private float igmAF;
+    private DBNSFP dbNSFP;
     private int[] qcFailSample = new int[2];
     private float looAF;
     private CSVRecord record;
@@ -109,6 +113,7 @@ public class VariantLite {
         // init to apply per annotation
         initREVEL(record);
         initPrimateAI(record);
+        initDBNSFP(record);
 
         String allAnnotation = record.get(ListVarGenoLite.ALL_ANNOTATION_HEADER);
         processAnnotation(
@@ -338,10 +343,16 @@ public class VariantLite {
             iranomeAF = IranomeManager.getAF(record);
         }
     }
-    
+
     private void initIGMAF(CSVRecord record) {
         if (IGMAFCommand.getInstance().isInclude) {
             igmAF = IGMAFManager.getAF(record);
+        }
+    }
+
+    private void initDBNSFP(CSVRecord record) {
+        if (DBNSFPCommand.isInclude) {
+            dbNSFP = new DBNSFP(record);
         }
     }
 
@@ -567,7 +578,7 @@ public class VariantLite {
     private boolean isIGMAFValid() {
         return IGMAFCommand.getInstance().isAFValid(igmAF);
     }
-    
+
     public float getTrapScore() {
         return trapScore;
     }

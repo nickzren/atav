@@ -69,6 +69,14 @@ public class FormatManager {
 
         return str;
     }
+    
+    public static String getString(CSVRecord record, String column) {
+        if (record.isMapped(column)) {
+            return getString(record.get(column));
+        } else {
+            return Data.STRING_NA;
+        }
+    }
 
     public static String getFloat(float value) {
         if (value == Data.FLOAT_NA) {

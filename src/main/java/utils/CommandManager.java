@@ -34,6 +34,7 @@ import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMCommand;
+import function.external.dbnsfp.DBNSFPCommand;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
@@ -420,6 +421,7 @@ public class CommandManager {
                     GenomeAsiaCommand.getInstance().isInclude = true;
                     IranomeCommand.getInstance().isInclude = true;
                     IGMAFCommand.getInstance().isInclude = true;
+                    DBNSFPCommand.isInclude = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":

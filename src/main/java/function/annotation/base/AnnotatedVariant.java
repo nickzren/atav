@@ -4,6 +4,9 @@ import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.dbnsfp.DBNSFP;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.dbnsfp.DBNSFPManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.denovo.DenovoDB;
@@ -62,6 +65,7 @@ import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringJoiner;
 import utils.MathManager;
@@ -87,6 +91,7 @@ public class AnnotatedVariant extends Variant {
 
     private List<String> geneList = new ArrayList<>();
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
+    private HashSet<Integer> allTranscriptSet = new HashSet<>();
 
     // external db annotations
     private ExAC exac;
@@ -115,6 +120,7 @@ public class AnnotatedVariant extends Variant {
     private float genomeasiaAF;
     private float iranomeAF;
     private float igmAF;
+    private DBNSFP dbNSFP;
 
     public boolean isValid = true;
 
@@ -232,6 +238,7 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
 
             allAnnotationSJ.add(annotationSJ.toString());
+            allTranscriptSet.add(annotation.stableId);
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
             polyphenHumvar = MathManager.max(polyphenHumvar, annotation.polyphenHumvar);
@@ -268,6 +275,10 @@ public class AnnotatedVariant extends Variant {
 
         if (ExACCommand.isIncludeCount) {
             exacGeneVariantCountStr = ExACManager.getLine(getGeneName());
+        }
+        
+        if(DBNSFPCommand.isInclude) {
+            dbNSFP = DBNSFPManager.getDBNSFP(chrStr, startPosition, allele, isSnv(), allTranscriptSet);
         }
     }
 
@@ -566,6 +577,10 @@ public class AnnotatedVariant extends Variant {
         
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(getIGMAF());
+        }
+        
+        if (DBNSFPCommand.isInclude) {
+            sj.add(dbNSFP.toString());
         }
     }
 

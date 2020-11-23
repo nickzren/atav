@@ -39,6 +39,8 @@ import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.dbnsfp.DBNSFPManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gevir.GeVIRCommand;
@@ -225,9 +227,13 @@ public class Output {
         if (IranomeCommand.getInstance().isInclude) {
             sj.add(IranomeManager.getHeader());
         }
-        
+
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(IGMAFManager.getHeader());
+        }
+
+        if (DBNSFPCommand.isInclude) {
+            sj.add(DBNSFPManager.getHeader());
         }
 
         return sj;

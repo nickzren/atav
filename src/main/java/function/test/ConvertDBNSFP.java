@@ -4,6 +4,7 @@ import function.variant.base.RegionManager;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,10 +55,6 @@ public class ConvertDBNSFP {
             ArrayList<CSVRecord> list = new ArrayList<>();
 
             for (CSVRecord record : records) {
-                if (record.get("Ensembl_transcriptid").equals("Ensembl_transcriptid")) {
-                    continue;
-                }
-
                 String pos = getSQNull(record.get("hg19_pos(1-based)"));
                 String alt = getSQNull(record.get("alt"));
                 String id = pos + alt;
@@ -91,13 +88,13 @@ public class ConvertDBNSFP {
         nullCount = 0;
 
         StringJoiner lineSJ = new StringJoiner("\t");
-        String pos = getSQNull(list.get(0).get("alt"));
+        String pos = getSQNull(list.get(0).get("hg19_pos(1-based)"));
         if (pos.equals(SQ_NULL)) {
             return;
         }
         lineSJ.add(pos);
 
-        String alt = getSQNull(list.get(0).get("hg19_pos(1-based)"));
+        String alt = getSQNull(list.get(0).get("alt"));
         if (alt.equals(SQ_NULL)) {
             return;
         }
@@ -127,22 +124,19 @@ public class ConvertDBNSFP {
         lineSJ.add(getSQNull(siftPredSJ.toString()));
         lineSJ.add(getSQNull(polyphenHDIVSJ.toString()));
         lineSJ.add(getSQNull(polyphenHVARSJ.toString()));
-        lineSJ.add(getSQNull(lrtPredSJ.toString()));
+
+        String lrtPred = getSQNull(lrtPredSJ.toString());
+        int lrtPredNum = lrtPred.split(";").length;
+        if (transcriptNum != lrtPredNum && !lrtPred.equals(SQ_NULL)) {
+            lrtPred = getMostDamagingValue(lrtPred);
+        }
+        lineSJ.add(lrtPred);
 
         String mutationTasterPred = getSQNull(mutationTasterPredSJ.toString());
         int mutationTasterPredNum = mutationTasterPred.split(";").length;
-        mutationTasterPred = getSQNull(mutationTasterPred);
-
         if (transcriptNum != mutationTasterPredNum && !mutationTasterPred.equals(SQ_NULL)) {
-            // pick the most damaging one
-            int min = Integer.MAX_VALUE;
-            for (String s : mutationTasterPred.split(";")) {
-                min = Math.min(min, s.charAt(0));
-            }
-
-            mutationTasterPred = Character.toString((char) min);
+            mutationTasterPred = getMostDamagingValue(mutationTasterPred);
         }
-
         lineSJ.add(mutationTasterPred);
 
         if (nullCount == MAX_NULL_COUNT) {
@@ -151,6 +145,20 @@ public class ConvertDBNSFP {
 
         bw.write(lineSJ.toString());
         bw.newLine();
+    }
+
+    private static String getMostDamagingValue(String value) {
+        // pick the most damaging one: A to Z only
+        int min = Integer.MAX_VALUE;
+        for (String s : value.split(";")) {
+            if (s.equals(".")) {
+                continue;
+            }
+
+            min = Math.min(min, s.charAt(0));
+        }
+
+        return getSQNull(Character.toString((char) min));
     }
 
     private static String removeFrontZero(String transcript) {
@@ -177,8 +185,14 @@ public class ConvertDBNSFP {
 
     public static Iterable<CSVRecord> getRecords(String filename) throws FileNotFoundException, IOException {
         Reader decoder;
-        InputStream fileStream = new FileInputStream(filename);
-        decoder = new InputStreamReader(fileStream);
+        
+        if (filename.endsWith(".gz")) {
+            InputStream fileStream = new FileInputStream(filename);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            decoder = new InputStreamReader(gzipStream);
+        } else {
+            decoder = new FileReader(filename);
+        }
 
         Iterable<CSVRecord> records = CSVFormat.TDF
                 .withHeader(headers)

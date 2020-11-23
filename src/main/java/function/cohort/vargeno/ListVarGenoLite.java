@@ -230,7 +230,7 @@ public class ListVarGenoLite {
             InputStream gzipStream = new GZIPInputStream(fileStream);
             decoder = new InputStreamReader(gzipStream);
         } else {
-            decoder = new FileReader(GenotypeLevelFilterCommand.genotypeFile);
+            decoder = new FileReader(filename);
         }
         
         Iterable<CSVRecord> records = CSVFormat.DEFAULT

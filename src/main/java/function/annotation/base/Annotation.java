@@ -1,5 +1,8 @@
 package function.annotation.base;
 
+import function.external.dbnsfp.DBNSFP;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.dbnsfp.DBNSFPManager;
 import function.external.primateai.PrimateAICommand;
 import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
@@ -138,8 +141,8 @@ public class Annotation {
             if (effect.startsWith("missense_variant")) {
                 // count polyphen unknown as NA no mater valid or not
                 doEnsembleMissenseFilterCount(
-                        PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv) 
-                                || polyphenHumdiv == Data.FLOAT_NA,
+                        PolyphenManager.isValid(polyphenHumdiv, effect, AnnotationLevelFilterCommand.polyphenHumdiv)
+                        || polyphenHumdiv == Data.FLOAT_NA,
                         polyphenHumdiv == Data.FLOAT_NA);
 
                 doEnsembleMissenseFilterCount(
