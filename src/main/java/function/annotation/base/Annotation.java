@@ -1,8 +1,5 @@
 package function.annotation.base;
 
-import function.external.dbnsfp.DBNSFP;
-import function.external.dbnsfp.DBNSFPCommand;
-import function.external.dbnsfp.DBNSFPManager;
 import function.external.primateai.PrimateAICommand;
 import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;

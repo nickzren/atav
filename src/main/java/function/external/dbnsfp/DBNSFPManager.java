@@ -148,6 +148,6 @@ public class DBNSFPManager {
     }
 
     private static String getNonEmptyString(String value) {
-        return value.isEmpty() ? Data.STRING_NA : value;
+        return value.isEmpty() ? Data.STRING_NA : value.replaceAll("\\.", Data.STRING_NA);
     }
 }
