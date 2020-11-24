@@ -492,7 +492,7 @@ public class SampleManager {
     private static void checkCaseCtrlOptions() {
         if (caseNum == 0) {
             if (CohortLevelFilterCommand.maxCaseAF != Data.NO_FILTER
-                    || CohortLevelFilterCommand.caseMAF != Data.NO_FILTER
+                    || CohortLevelFilterCommand.maxCaseMAF != Data.NO_FILTER
                     || CohortLevelFilterCommand.minCaseCarrier != Data.NO_FILTER
                     || CohortLevelFilterCommand.minCoveredSamplePercentage[Index.CASE] != Data.NO_FILTER
                     || CohortLevelFilterCommand.isCaseOnly == true) {
@@ -501,7 +501,7 @@ public class SampleManager {
             }
         } else if (ctrlNum == 0) {
             if (CohortLevelFilterCommand.maxCtrlAF != Data.NO_FILTER
-                    || CohortLevelFilterCommand.ctrlMAF != Data.NO_FILTER
+                    || CohortLevelFilterCommand.maxCtrlMAF != Data.NO_FILTER
                     || CohortLevelFilterCommand.minCoveredSamplePercentage[Index.CTRL] != Data.NO_FILTER) {
                 ErrorManager.print("You used control filters but your sample file has no controls.",
                         ErrorManager.INPUT_PARSING);
