@@ -11,13 +11,12 @@ public class Data {
     public static String VERSION = "trunk";
     public static String userName = System.getProperty("user.name");
 
-    // atav home path
-    public static final String ATAV_HOME = "/nfs/goldstein/software/atav_home/"; // location of compiled Jar file
-//    public static final String ATAV_HOME = ""; // local testing
+    // atav home path (location of executable jar file, config dir, data dir, lib dir etc.)
+    public static String ATAV_HOME = System.getenv().getOrDefault("ATAV_HOME", "");
 
     // system config file path
-    public static final String SYSTEM_CONFIG = Data.ATAV_HOME +  "config/atav.dragen.system.config.properties";
-    public static final String SYSTEM_CONFIG_FOR_DEBUG = Data.ATAV_HOME +  "config/atav.dragen.debug.system.config.properties";
+    public static final String SYSTEM_CONFIG = Data.ATAV_HOME + "config/atav.dragen.system.config.properties";
+    public static final String SYSTEM_CONFIG_FOR_DEBUG = Data.ATAV_HOME + "config/atav.dragen.debug.system.config.properties";
 
     // system default values
     public static final int NO_FILTER = Integer.MAX_VALUE;
