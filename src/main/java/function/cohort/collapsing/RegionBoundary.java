@@ -13,11 +13,17 @@ public class RegionBoundary {
     private List<Region> regionList = new ArrayList<Region>();
 
     public RegionBoundary(String regionBoundaryStr) {
+        // gene/domain boundary format: name chr (start..end,start..end,start..end) length
+        // region boundary format: name chr:start-end,chr:start-end,chr:start-end
         String[] tmp = regionBoundaryStr.split("\\s+");
 
         name = tmp[0];
-        
-        initRegionList(tmp[1]);
+
+        if (regionBoundaryStr.contains("(")) { // input gene/domain boundary format
+            initRegionList(tmp[1], tmp[2]);
+        } else {
+            initRegionList(tmp[1]);
+        }
     }
 
     public String getName() {
@@ -26,6 +32,14 @@ public class RegionBoundary {
 
     public List<Region> getList() {
         return regionList;
+    }
+
+    private void initRegionList(String chr, String boundaryStr) {
+        boundaryStr = boundaryStr.replace("(", "").replace(")", "");
+
+        for (String intervalStr : boundaryStr.split(",")) {
+            regionList.add(new Region(chr, intervalStr));
+        }
     }
 
     private void initRegionList(String boundaryStr) {
@@ -49,6 +63,14 @@ public class RegionBoundary {
         String chr;
         public int start;
         public int end;
+
+        public Region(String chr, String intervalStr) { // chr, start..end
+            this.chr = chr;
+
+            String[] tmp = intervalStr.split("\\W");
+            start = Integer.valueOf(tmp[0]);
+            end = Integer.valueOf(tmp[2]);
+        }
 
         public Region(String regionStr) { // chr:start-end
             String[] tmp = regionStr.split(":|-");
