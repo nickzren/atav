@@ -550,7 +550,7 @@ public class CommandManager {
                     break;    
                 case "--test":
                     // Test Functions
-                    CommonCommand.isNonDBAnalysis = true;
+//                    CommonCommand.isNonDBAnalysis = true;
                     CommonCommand.isNonSampleAnalysis = true;
                     TestCommand.isTest = true;
                     break;

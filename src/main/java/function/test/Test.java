@@ -35,7 +35,7 @@ public class Test extends AnalysisBase {
     @Override
     public void processDatabaseData() {
         try {
-//            ConvertDBNSFP.run();
+//            OutputSubsetSample.run();
         } catch (Exception ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }
