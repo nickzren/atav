@@ -4,9 +4,13 @@ import function.external.base.DataManager;
 import global.Data;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.StringJoiner;
+import java.util.zip.GZIPInputStream;
 import utils.ErrorManager;
 
 /**
@@ -15,7 +19,7 @@ import utils.ErrorManager;
  */
 public class RvisManager {
 
-    private static final String RVIS_PATH = "data/rvis/gene_score_140318.csv";
+    private static final String RVIS_PATH = "data/rvis/gene_score_140318.csv.gz";
 
     private static String header;
     private static final HashMap<String, String> rvisMap = new HashMap<>();
@@ -38,8 +42,9 @@ public class RvisManager {
     private static void initRvisMap() {
         try {
             File f = new File(Data.ATAV_HOME + RVIS_PATH);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
             
             String lineStr = "";
             boolean isFirstLine = true;
@@ -62,7 +67,8 @@ public class RvisManager {
             }
             
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
