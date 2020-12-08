@@ -16,9 +16,9 @@ public class DBManager {
     private static String priorityUsers;
 
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_PORT = "3306";
 
     // init from config
+    private static String dbPort;
     private static String dbName;
     private static String dbUser;
     private static String dbPassword;
@@ -74,6 +74,7 @@ public class DBManager {
 
             initServers(prop.getProperty("servers"));
 
+            dbPort = prop.getProperty("dbport", "3306");
             dbName = prop.getProperty("annodb");
             dbUser = prop.getProperty("dbuser");
             dbPassword = prop.getProperty("dbpassword");
@@ -95,8 +96,8 @@ public class DBManager {
 
     private static Connection getConnection() {
         try {
-            String url = "jdbc:mysql://" + dbHostIp + ":" + DB_PORT + "/" + dbName + dbConfigProperties;
-            
+            String url = "jdbc:mysql://" + dbHostIp + ":" + dbPort + "/" + dbName + dbConfigProperties;
+
             if (CommonCommand.isDebug) {
                 System.out.println(url);
             }
@@ -118,14 +119,14 @@ public class DBManager {
 
         return null;
     }
-    
+
     public static PreparedStatement initPreparedStatement(String sql) {
         try {
             return conn.prepareStatement(sql);
         } catch (SQLException ex) {
             ErrorManager.send(ex);
         }
-        
+
         return null;
     }
 
@@ -204,7 +205,7 @@ public class DBManager {
                 + "information_schema.processlist where USER='atav'";
 
         try {
-            String url = "jdbc:mysql://" + hostIp + ":" + DB_PORT + dbConfigProperties;
+            String url = "jdbc:mysql://" + hostIp + ":" + dbPort + dbConfigProperties;
 
             Connection conn = DriverManager.getConnection(url,
                     dbUser,
