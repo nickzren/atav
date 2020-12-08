@@ -5,10 +5,14 @@ import function.variant.base.RegionManager;
 import global.Data;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.StringJoiner;
+import java.util.zip.GZIPInputStream;
 import utils.DBManager;
 import utils.ErrorManager;
 
@@ -38,7 +42,7 @@ public class GnomADManager {
     private static final String genomeMNVTable = "gnomad_2_1.genome_mnv";
 
     // gene metrics
-    private static final String GENE_METRICS_PATH = "data/gnomad/gnomad.v2.1.1.lof_metrics.subset.by_gene.csv";
+    private static final String GENE_METRICS_PATH = "data/gnomad/gnomad.v2.1.1.lof_metrics.subset.by_gene.csv.gz";
     private static StringJoiner geneMetricsHeader = new StringJoiner(",");
     private static final HashMap<String, String> geneMap = new HashMap<>();
     private static StringJoiner NA = new StringJoiner(",");
@@ -160,12 +164,13 @@ public class GnomADManager {
     public static String getGeneMetricsVersion() {
         return "gnomAD Gene Metrics: " + DataManager.getVersion(GENE_METRICS_PATH) + "\n";
     }
-
+    
     private static void initGeneMap() {
         try {
             File f = new File(Data.ATAV_HOME + GENE_METRICS_PATH);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
 
             String lineStr = "";
             boolean isFirstLine = true;
@@ -188,7 +193,8 @@ public class GnomADManager {
             }
 
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
