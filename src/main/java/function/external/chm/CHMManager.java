@@ -3,11 +3,16 @@ package function.external.chm;
 import function.variant.base.RegionManager;
 import global.Data;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
 
 /**
  *
@@ -15,7 +20,7 @@ import java.util.HashMap;
  */
 public class CHMManager {
 
-    private static String repeatRegionBedFilePath = Data.ATAV_HOME + "data/CHM-eval/CHR_um75-hs37d5.bed";
+    private static String repeatRegionBedFilePath = Data.ATAV_HOME + "data/CHM-eval/CHR_um75-hs37d5.bed.gz";
     private static HashMap<String, int[][]> repeatRegionByChrMap = new HashMap<>();
 
     public static String getHeader() {
@@ -26,13 +31,17 @@ public class CHMManager {
         if (CHMCommand.isFlag || CHMCommand.isExclude) {
             for (String chr : RegionManager.getChrList()) {
                 Path path = Paths.get(repeatRegionBedFilePath.replace("CHR", chr));
-                int count = (int) Files.lines(path).count();
 
+                int count = getGzipFileRowCount(path.toFile());
                 repeatRegionByChrMap.put(chr, new int[count][2]);
 
-                BufferedReader br = new BufferedReader(new FileReader(path.toFile()));
+                GZIPInputStream in = new GZIPInputStream(new FileInputStream(path.toFile()));
+                Reader decoder = new InputStreamReader(in);
+                BufferedReader br = new BufferedReader(decoder);
+
                 String lineStr = "";
                 int index = 0;
+                br = new BufferedReader(decoder);
                 while ((lineStr = br.readLine()) != null) {
                     String[] tmp = lineStr.split("\t");
 
@@ -42,8 +51,26 @@ public class CHMManager {
                     repeatRegionByChrMap.get(chr)[index][0] = start;
                     repeatRegionByChrMap.get(chr)[index++][1] = end;
                 }
+
+                br.close();
+                decoder.close();
+                in.close();
             }
         }
+    }
+
+    private static int getGzipFileRowCount(File file) throws FileNotFoundException, IOException {
+        GZIPInputStream in = new GZIPInputStream(new FileInputStream(file));
+        Reader decoder = new InputStreamReader(in);
+        BufferedReader br = new BufferedReader(decoder);
+
+        int count = (int) br.lines().count();
+
+        br.close();
+        decoder.close();
+        in.close();
+
+        return count;
     }
 
     public static boolean isRepeatRegion(String chr, int pos) {
@@ -64,7 +91,7 @@ public class CHMManager {
 
             int start = arr[mid][0];
             int end = arr[mid][1];
-            
+
             if (pos < start) {
                 return binarySearch(arr, first, mid - 1, pos); //search in left subarray  
             } else if (pos >= end) {
