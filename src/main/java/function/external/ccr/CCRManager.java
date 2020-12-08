@@ -4,10 +4,13 @@ import function.external.base.DataManager;
 import global.Data;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringJoiner;
+import java.util.zip.GZIPInputStream;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -17,7 +20,7 @@ import utils.FormatManager;
  */
 public class CCRManager {
 
-    private static final String PATH = "data/ccr/2019-4-23_ccrScores.txt";
+    private static final String PATH = "data/ccr/2019-4-23_ccrScores.txt.gz";
 
     private static HashMap<String, ArrayList<CCRGene>> geneMap = new HashMap<>();
 
@@ -44,8 +47,9 @@ public class CCRManager {
          String lineStr = "";
         try {
             File f = new File(filePath);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
             
            
             while ((lineStr = br.readLine()) != null) {
@@ -74,7 +78,8 @@ public class CCRManager {
             }
 
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (Exception e) {
             System.out.println(lineStr);
             ErrorManager.send(e);
