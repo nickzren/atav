@@ -7,6 +7,7 @@ import function.annotation.base.GeneManager;
 import function.cohort.base.SampleManager;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
+import function.variant.base.RegionManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -16,6 +17,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -120,9 +122,14 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     private void initRegionSummaryMap() {
-        RegionBoundaryManager.getList().stream().forEach((regionBoundary) -> {
-            updateRegionSummaryMap(regionBoundary.getName());
-        });
+        for (String chr : RegionManager.ALL_CHR) {
+            List<RegionBoundary> list = RegionBoundaryManager.getList(chr);
+            if (list != null) {
+                list.stream().forEach((regionBoundary) -> {
+                    updateRegionSummaryMap(regionBoundary.getName());
+                });
+            }
+        }
     }
 
     public void updateGeneSummaryMap(String geneName) {

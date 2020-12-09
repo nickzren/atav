@@ -222,6 +222,10 @@ public class RegionManager {
         return chrList;
     }
     
+    public static boolean isChrContained(String chr) {
+        return chrList.contains(chr);
+    }
+    
     public static boolean isRegionInputValid(String value) {
         if (Pattern.matches("^[chrxymtCHRXYMT0-9\\:\\-\\,]+$", value)) {
             return true;

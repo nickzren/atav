@@ -92,7 +92,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             // region summary
             output.initRegionBoundaryNameSet();
 
-            for (String regionName : output.regionBoundaryNameSet) {
+            for (String regionName : output.regionBoundaryNameList) {
                 updateRegionSummaryMap(regionName);
                 summaryList.add(summaryMap.get(regionName));
             }
