@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 import utils.FormatManager;
@@ -29,7 +30,7 @@ import utils.FormatManager;
  */
 public class VariantManager {
 
-    private static final String ARTIFACTS_Variant_PATH = Data.ATAV_HOME + "data/artifacts_variant.txt";
+    private static final String ARTIFACTS_Variant_PATH = Data.ATAV_HOME + "data/artifacts_variant.txt.gz";
     public static final String[] VARIANT_TYPE = {"snv", "indel"};
 
     private static HashSet<String> includeVariantSet = new HashSet<>();
@@ -140,8 +141,9 @@ public class VariantManager {
         int lineNum = 0;
 
         try {
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -154,7 +156,8 @@ public class VariantManager {
             }
 
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in variant file: " + lineStr);

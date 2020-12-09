@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.zip.GZIPInputStream;
 import utils.ErrorManager;
 
 /**
@@ -14,8 +15,8 @@ import utils.ErrorManager;
  */
 public class TranscriptManager {
 
-    private static final String CCDS_TRANSCRIPT_PATH = "data/transcript/ccds_transcripts_ens87.txt";
-    private static final String CANONICAL_TRANSCRIPT_PATH = "data/transcript/canonical_transcripts_ens87.txt";
+    private static final String CCDS_TRANSCRIPT_PATH = "data/transcript/ccds_transcripts_ens87.txt.gz";
+    private static final String CANONICAL_TRANSCRIPT_PATH = "data/transcript/canonical_transcripts_ens87.txt.gz";
 
     private static HashMap<String, HashSet<Integer>> transcriptMap = new HashMap<>();
     private static HashMap<String, HashSet<Integer>> ccdsTranscriptMap = new HashMap<>();
@@ -48,9 +49,10 @@ public class TranscriptManager {
         }
 
         try {
-            File file = new File(path);
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
+            File f = new File(path);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.replaceAll("( )+", "");
@@ -69,7 +71,8 @@ public class TranscriptManager {
                 }
             }
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }

@@ -4,10 +4,14 @@ import function.external.base.DataManager;
 import global.Data;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.StringJoiner;
+import java.util.zip.GZIPInputStream;
 import utils.DBManager;
 import utils.ErrorManager;
 
@@ -114,8 +118,9 @@ public class ExACManager {
     private static void initGeneVariantCountMap() {
         try {
             File f = new File(Data.ATAV_HOME + GENE_VARIANT_COUNT_PATH);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
                 int firstCommaIndex = lineStr.indexOf(",");
@@ -133,7 +138,8 @@ public class ExACManager {
                 }
             }
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
