@@ -82,7 +82,7 @@ public class RegionBoundary {
             return false;
         }
 
-        for (int i = 0; i < intervalAarry[0].length; i++) {
+        for (int i = 0; i < intervalAarry.length; i++) {
             if (pos >= intervalAarry[i][0]
                     && pos <= intervalAarry[i][1]) {
                 return true;
