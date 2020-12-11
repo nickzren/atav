@@ -280,26 +280,17 @@ public class GeneManager {
 
     private static void initAllGeneMapAndResetRegionList() throws Exception {
         if (isUsed) {
-            ArrayList<String> chrList = new ArrayList<>();
-
-            for (String chr : RegionManager.ALL_CHR) {
-                chrAllGeneMap.put(chr, new StringJoiner(","));
-            }
-
             geneMap.entrySet().stream().forEach((entry) -> {
                 for (Gene gene : entry.getValue()) {
                     if (!gene.getChr().isEmpty()) {
-                        if (!chrList.contains(gene.getChr())) {
-                            chrList.add(gene.getChr());
-                        }
-
+                        chrAllGeneMap.putIfAbsent(gene.getChr(), new StringJoiner(","));
                         chrAllGeneMap.get(gene.getChr()).add("('" + entry.getKey() + "')");
                     }
                 }
             });
 
             RegionManager.clear();
-            RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
+            RegionManager.initChrRegionList(chrAllGeneMap.keySet().toArray(new String[chrAllGeneMap.keySet().size()]));
             RegionManager.sortRegionList();
         }
     }
@@ -313,7 +304,7 @@ public class GeneManager {
                 stmt.executeUpdate(
                         "CREATE TEMPORARY TABLE " + TMP_GENE_TABLE + chr + "("
                         + "input_gene varchar(128) NOT NULL, "
-                        + "PRIMARY KEY (input_gene)) ENGINE=MEMORY;");
+                        + "PRIMARY KEY (input_gene)) ENGINE=TokuDB;");
 
                 if (chrAllGeneMap.get(chr).length() > 0) {
                     // insert values

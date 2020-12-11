@@ -83,7 +83,7 @@ public class Annotation {
 
     private void checkValid() {
         isValid = GeneManager.isValid(this, chr, pos)
-                && TranscriptManager.isValid(chr, stableId)
+                && TranscriptManager.isTranscriptBoundaryValid(stableId, pos)
                 && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
                 && isEnsembleMissenseValid();
     }

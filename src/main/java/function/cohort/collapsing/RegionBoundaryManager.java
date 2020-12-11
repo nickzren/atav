@@ -33,22 +33,16 @@ public class RegionBoundaryManager {
             while ((lineStr = br.readLine()) != null) {
                 if (!lineStr.isEmpty()) {
                     RegionBoundary regionBoundary = new RegionBoundary(lineStr);
-                    
+
                     // if used --region
-                    if(!RegionManager.isChrContained(regionBoundary.getChr())) {
+                    if (!RegionManager.isChrContained(regionBoundary.getChr())) {
                         continue;
                     }
+                    
+                    regionBoundaryMap.putIfAbsent(regionBoundary.getChr(), new ArrayList<>());
+                    regionBoundaryMap.get(regionBoundary.getChr()).add(regionBoundary);
 
-                    List<RegionBoundary> regionBoundaryList = regionBoundaryMap.get(regionBoundary.getChr());
-
-                    if (regionBoundaryList == null) {
-                        regionBoundaryList = new ArrayList<>();
-                        regionBoundaryMap.put(regionBoundary.getChr(), regionBoundaryList);
-                    }
-
-                    regionBoundaryList.add(regionBoundary);
-
-                    for(int i = 0; i < regionBoundary.getIntevalArray().length; i++) {
+                    for (int i = 0; i < regionBoundary.getIntevalArray().length; i++) {
                         regionList.add(regionBoundary.getRegionStrByIndex(i));
                     }
                 }

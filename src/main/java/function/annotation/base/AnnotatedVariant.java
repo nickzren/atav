@@ -90,8 +90,8 @@ public class AnnotatedVariant extends Variant {
     private String geneName = "";
 
     private List<String> geneList = new ArrayList<>();
+    private HashSet<Integer> transcriptSet = new HashSet<>();
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
-    private HashSet<Integer> allTranscriptSet = new HashSet<>();
 
     // external db annotations
     private ExAC exac;
@@ -145,7 +145,7 @@ public class AnnotatedVariant extends Variant {
 
             isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
         }
-        
+
         if (isValid && GMECommand.getInstance().isInclude) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
@@ -237,8 +237,8 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
 
+            transcriptSet.add(annotation.stableId);
             allAnnotationSJ.add(annotationSJ.toString());
-            allTranscriptSet.add(annotation.stableId);
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
             polyphenHumvar = MathManager.max(polyphenHumvar, annotation.polyphenHumvar);
@@ -276,9 +276,9 @@ public class AnnotatedVariant extends Variant {
         if (ExACCommand.isIncludeCount) {
             exacGeneVariantCountStr = ExACManager.getLine(getGeneName());
         }
-        
-        if(DBNSFPCommand.isInclude) {
-            dbNSFP = DBNSFPManager.getDBNSFP(chrStr, startPosition, allele, isSnv(), allTranscriptSet);
+
+        if (DBNSFPCommand.isInclude) {
+            dbNSFP = DBNSFPManager.getDBNSFP(chrStr, startPosition, allele, isSnv(), transcriptSet);
         }
     }
 
@@ -454,6 +454,10 @@ public class AnnotatedVariant extends Variant {
         return geneList;
     }
 
+    public HashSet<Integer> getTranscriptSet() {
+        return transcriptSet;
+    }
+
     public void getExternalData(StringJoiner sj) {
         if (EvsCommand.isInclude) {
             sj.merge(getEvsStringJoiner());
@@ -574,11 +578,11 @@ public class AnnotatedVariant extends Variant {
         if (IranomeCommand.getInstance().isInclude) {
             sj.add(getIranome());
         }
-        
+
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(getIGMAF());
         }
-        
+
         if (DBNSFPCommand.isInclude) {
             sj.add(dbNSFP.toString());
         }
@@ -687,7 +691,7 @@ public class AnnotatedVariant extends Variant {
     public String getIranome() {
         return FormatManager.getFloat(iranomeAF);
     }
-    
+
     public String getIGMAF() {
         return FormatManager.getFloat(igmAF);
     }

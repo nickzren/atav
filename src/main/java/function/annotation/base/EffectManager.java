@@ -70,7 +70,7 @@ public class EffectManager {
             // create table
             String sqlQuery = "CREATE TEMPORARY TABLE " + TMP_EFFECT_ID_TABLE + " ("
                     + "input_effect_id tinyint(3) NOT NULL, "
-                    + "PRIMARY KEY (input_effect_id)) ENGINE=MEMORY;";
+                    + "PRIMARY KEY (input_effect_id)) ENGINE=TokuDB;";
 
             stmt.executeUpdate(sqlQuery);
             stmt.closeOnCompletion();
@@ -207,7 +207,7 @@ public class EffectManager {
             stmt.executeUpdate(
                     "CREATE TEMPORARY TABLE " + TMP_IMPACT_TABLE + " ("
                     + "input_impact enum('HIGH','MODERATE','LOW','MODIFIER') NOT NULL, "
-                    + "PRIMARY KEY (input_impact)) ENGINE=MEMORY;");
+                    + "PRIMARY KEY (input_impact)) ENGINE=TokuDB;");
 
             // insert values
             stmt.executeUpdate("INSERT IGNORE INTO tmp_impact values " + impactList4SQL);

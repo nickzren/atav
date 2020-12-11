@@ -760,7 +760,7 @@ public class SampleManager {
 
             String sqlQuery = "CREATE TEMPORARY TABLE "
                     + sqlTable
-                    + "(input_sample_id mediumint, PRIMARY KEY (input_sample_id)) ENGINE=MEMORY";
+                    + "(input_sample_id mediumint, PRIMARY KEY (input_sample_id)) ENGINE=TokuDB";
 
             stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
         } catch (Exception e) {

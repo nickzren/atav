@@ -18,6 +18,7 @@ public class AnnotationLevelFilterCommand {
     public static String effectInput = "";
     public static String geneInput = "";
     public static String geneBoundaryFile = "";
+    public static String transcriptBoundaryFile = "";
     public static boolean isCcdsOnly = false;
     public static boolean isCanonicalOnly = false;
     public static String polyphenHumdiv = Data.NO_FILTER_STR;
@@ -40,6 +41,9 @@ public class AnnotationLevelFilterCommand {
                 case "--gene-boundaries":
                 case "--gene-boundary":
                     geneBoundaryFile = getValidPath(option);
+                    break;
+                case "--transcript-boundary":
+                    transcriptBoundaryFile = getValidPath(option);
                     break;
                 case "--ccds-only":
                     isCcdsOnly = true;

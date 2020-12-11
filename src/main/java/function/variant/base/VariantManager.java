@@ -141,8 +141,16 @@ public class VariantManager {
         int lineNum = 0;
 
         try {
-            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
-            Reader decoder = new InputStreamReader(in);
+            Reader decoder;
+
+            if (f.getName().endsWith(".gz")) {
+                InputStream fileStream = new FileInputStream(f);
+                InputStream gzipStream = new GZIPInputStream(fileStream);
+                decoder = new InputStreamReader(gzipStream);
+            } else {
+                decoder = new FileReader(f);
+            }
+
             BufferedReader br = new BufferedReader(decoder);
 
             while ((lineStr = br.readLine()) != null) {
@@ -157,7 +165,6 @@ public class VariantManager {
 
             br.close();
             decoder.close();
-            in.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in variant file: " + lineStr);

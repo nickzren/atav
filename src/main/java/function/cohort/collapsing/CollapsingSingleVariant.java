@@ -1,5 +1,6 @@
 package function.cohort.collapsing;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
 import function.cohort.base.CalledVariant;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
@@ -80,21 +81,28 @@ public class CollapsingSingleVariant extends CollapsingBase {
     }
 
     private void initSummaryList(CollapsingOutput output, ArrayList<CollapsingSummary> summaryList) {
-        if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
-            // gene summary
-            for (String geneName : output.getCalledVariant().getGeneList()) {
-                if (!geneName.equals(Data.STRING_NA)) {
-                    updateGeneSummaryMap(geneName);
-                    summaryList.add(summaryMap.get(geneName));
-                }
-            }
-        } else {
+        if (!CollapsingCommand.regionBoundaryFile.isEmpty()) {
             // region summary
             output.initRegionBoundaryNameSet();
 
             for (String regionName : output.regionBoundaryNameList) {
                 updateRegionSummaryMap(regionName);
                 summaryList.add(summaryMap.get(regionName));
+            }
+        } else if (!AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
+            // transcript summary
+            for (int id : output.getCalledVariant().getTranscriptSet()) {
+                String idStr = String.valueOf(id);
+                updateTranscriptSummaryMap(idStr);
+                summaryList.add(summaryMap.get(idStr));
+            }
+        } else {
+            // gene summary
+            for (String geneName : output.getCalledVariant().getGeneList()) {
+                if (!geneName.equals(Data.STRING_NA)) {
+                    updateGeneSummaryMap(geneName);
+                    summaryList.add(summaryMap.get(geneName));
+                }
             }
         }
     }

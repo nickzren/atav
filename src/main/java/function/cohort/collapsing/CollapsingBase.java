@@ -1,9 +1,11 @@
 package function.cohort.collapsing;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
 import function.cohort.base.CalledVariant;
 import function.cohort.base.Sample;
 import function.cohort.base.AnalysisBase4CalledVar;
 import function.annotation.base.GeneManager;
+import function.annotation.base.TranscriptManager;
 import function.cohort.base.SampleManager;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
@@ -43,13 +45,17 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
             bwSampleMatrix = new BufferedWriter(new FileWriter(matrixFilePath));
             bwSummary = new BufferedWriter(new FileWriter(summaryFilePath));
 
-            if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
+            if (!CollapsingCommand.regionBoundaryFile.isEmpty()) {
+                bwSampleMatrix.write("sample/region" + "\t");
+                bwSummary.write(CollapsingRegionSummary.getHeader());
+            } else if (!AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
+                bwSampleMatrix.write("sample/transcript" + "\t");
+                bwSummary.write(CollapsingTranscriptSummary.getHeader());
+            } else { // default is gene collapsing 
                 bwSampleMatrix.write("sample/gene" + "\t");
                 bwSummary.write(CollapsingGeneSummary.getHeader());
-            } else {
-                bwSampleMatrix.write("sample/region boundary" + "\t");
-                bwSummary.write(CollapsingRegionSummary.getHeader());
             }
+
             bwSummary.newLine();
 
             for (Sample sample : SampleManager.getList()) {
@@ -106,10 +112,12 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     private void initSummaryMap() {
-        if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
-            initGeneSummaryMap();
-        } else {
+        if (!CollapsingCommand.regionBoundaryFile.isEmpty()) {
             initRegionSummaryMap();
+        } else if (!AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
+            initTranscriptSummaryMap();
+        } else {
+            initGeneSummaryMap();
         }
     }
 
@@ -122,7 +130,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     private void initRegionSummaryMap() {
-        for (String chr : RegionManager.ALL_CHR) {
+        for (String chr : RegionManager.getChrList()) {
             List<RegionBoundary> list = RegionBoundaryManager.getList(chr);
             if (list != null) {
                 list.stream().forEach((regionBoundary) -> {
@@ -130,6 +138,12 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
                 });
             }
         }
+    }
+
+    private void initTranscriptSummaryMap() {
+        TranscriptManager.getTranscriptBoundaryMap().values().stream().forEach((transcriptBoundary) -> {
+            updateTranscriptSummaryMap(String.valueOf(transcriptBoundary.getId()));
+        });
     }
 
     public void updateGeneSummaryMap(String geneName) {
@@ -143,6 +157,12 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
             summaryMap.put(regionName, new CollapsingRegionSummary(regionName));
         }
     }
+    
+    public void updateTranscriptSummaryMap(String transcriptId) {
+        if (!summaryMap.containsKey(transcriptId)) {
+            summaryMap.put(transcriptId, new CollapsingTranscriptSummary(transcriptId));
+        }
+    }
 
     public void outputSummary() {
         LogManager.writeAndPrint("Output the data to matrix & summary file");
@@ -152,7 +172,8 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
             outputMatrix();
 
-            if (CollapsingCommand.regionBoundaryFile.isEmpty()) { // gene summary
+            if (CollapsingCommand.regionBoundaryFile.isEmpty()
+                && AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) { // gene summary
                 CollapsingGeneSummary.calculateLinearAndLogisticP(matrixFilePath, summaryMap);
             }
 
@@ -189,7 +210,8 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     }
 
     private void generatePvaluesQQPlot() {
-        if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
+        if (CollapsingCommand.regionBoundaryFile.isEmpty()
+                && AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
             if (CollapsingCommand.isCollapsingDoLogistic) {
                 ThirdPartyToolManager.generatePvaluesQQPlot(CollapsingGeneSummary.getHeader(),
                         "Logistic P", summaryFilePath, geneLogisticPQQPlotPath);
