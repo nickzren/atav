@@ -180,10 +180,14 @@ public class VariantLite {
             // --gene or --gene-boundary filter applied
             // --polyphen-humdiv filter applied
             // --ensemble-missens applied
+            // --ccds-only
+            // --canonical-only
             if (EffectManager.isEffectContained(effect)
                     && GeneManager.isValid(geneName, chr, pos)
                     && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
-                    && annotation.isEnsembleMissenseValid()) {
+                    && annotation.isEnsembleMissenseValid()
+                    && TranscriptManager.isCCDSTranscript(chr, stableId)
+                    && TranscriptManager.isCanonicalTranscript(chr, stableId)) {
                 if (!mostDamagingAnnotation.isValid()) {
                     mostDamagingAnnotation.setValid(true);
                 }
