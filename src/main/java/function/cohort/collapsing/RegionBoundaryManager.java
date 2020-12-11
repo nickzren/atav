@@ -1,6 +1,7 @@
 package function.cohort.collapsing;
 
 import function.variant.base.RegionManager;
+import function.variant.base.VariantManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -38,7 +39,7 @@ public class RegionBoundaryManager {
                     if (!RegionManager.isChrContained(regionBoundary.getChr())) {
                         continue;
                     }
-                    
+
                     regionBoundaryMap.putIfAbsent(regionBoundary.getChr(), new ArrayList<>());
                     regionBoundaryMap.get(regionBoundary.getChr()).add(regionBoundary);
 
@@ -48,8 +49,10 @@ public class RegionBoundaryManager {
                 }
             }
 
-            RegionManager.clear();
-            RegionManager.initRegionList(regionList.toArray(new String[regionList.size()]));
+            if (!VariantManager.isUsed()) {
+                RegionManager.clear();
+                RegionManager.initRegionList(regionList.toArray(new String[regionList.size()]));
+            }
 
             br.close();
             fr.close();

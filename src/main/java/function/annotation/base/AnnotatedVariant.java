@@ -89,6 +89,8 @@ public class AnnotatedVariant extends Variant {
     private boolean hasCCDS = false;
     private String geneName = "";
 
+    private List<Integer> canonicalEffectIdList = new ArrayList<>();
+
     private List<String> geneList = new ArrayList<>();
     private HashSet<Integer> transcriptSet = new HashSet<>();
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
@@ -253,6 +255,12 @@ public class AnnotatedVariant extends Variant {
             if (!geneList.contains(annotation.geneName)) {
                 geneList.add(annotation.geneName);
             }
+
+            if (!canonicalEffectIdList.contains(effectID)
+                    && AnnotationLevelFilterCommand.isOutputCanonicalTranscriptEffect
+                    && TranscriptManager.isCanonicalTranscript(chrStr, stableId)) {
+                canonicalEffectIdList.add(effectID);
+            }
         }
     }
 
@@ -396,6 +404,9 @@ public class AnnotatedVariant extends Variant {
         sj.add(getStableId(stableId));
         sj.add(Boolean.toString(hasCCDS));
         sj.add(effect);
+        if (AnnotationLevelFilterCommand.isOutputCanonicalTranscriptEffect) {
+            sj.add(getCanonicalEffect());
+        }
         sj.add(HGVS_c);
         sj.add(HGVS_p);
         sj.add(FormatManager.getFloat(polyphenHumdiv));
@@ -410,6 +421,19 @@ public class AnnotatedVariant extends Variant {
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
         sj.add(GeneManager.getAllGeneSymbol(geneList));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
+    }
+
+    private String getCanonicalEffect() {
+        StringJoiner sj = new StringJoiner("|");
+        for (int id : canonicalEffectIdList) {
+            sj.add(EffectManager.getEffectById(id));
+        }
+
+        if (sj.toString().contains("|")) {
+            System.out.println(sj.toString());
+        }
+
+        return sj.setEmptyValue(Data.STRING_NA).toString();
     }
 
     private String getStableId(int stableId) {

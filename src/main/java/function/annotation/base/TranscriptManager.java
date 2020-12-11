@@ -50,9 +50,9 @@ public class TranscriptManager {
         }
 
         // init canonical transcript
+        initFromTranscriptFile(CANONICAL_TRANSCRIPT_PATH, canonicalTranscriptIdMap);
         if (AnnotationLevelFilterCommand.isCanonicalOnly) {
             isUsed = true;
-            initFromTranscriptFile(CANONICAL_TRANSCRIPT_PATH, canonicalTranscriptIdMap);
             resetTranscriptSet(canonicalTranscriptIdMap);
         }
 
@@ -218,6 +218,16 @@ public class TranscriptManager {
         return idSet.contains(id);
     }
 
+    public static boolean isCanonicalTranscript(String chr, int id) {
+        HashSet<Integer> idSet = canonicalTranscriptIdMap.get(chr);
+
+        if (idSet == null) {
+            return false;
+        }
+
+        return idSet.contains(id);
+    }
+    
     public static void resetTranscriptSet(HashMap<String, HashSet<Integer>> map) {
         if (allTranscriptIdMap.isEmpty()) {
             allTranscriptIdMap = (HashMap<String, HashSet<Integer>>) map.clone();

@@ -16,6 +16,7 @@ import utils.ErrorManager;
 public class AnnotationLevelFilterCommand {
 
     public static String effectInput = "";
+    public static boolean isOutputCanonicalTranscriptEffect = false;
     public static String geneInput = "";
     public static String geneBoundaryFile = "";
     public static String transcriptBoundaryFile = "";
@@ -34,6 +35,9 @@ public class AnnotationLevelFilterCommand {
             switch (option.getName()) {
                 case "--effect":
                     effectInput = option.getValue();
+                    break;
+                case "--output-canonical-transcript-effect":
+                    isOutputCanonicalTranscriptEffect = true;
                     break;
                 case "--gene":
                     geneInput = option.getValue();
