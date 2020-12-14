@@ -129,7 +129,7 @@ public class DBNSFPManager {
                     if (transcripts.length != mutationTasterPreds.length) {
                         mutationTasterPredSJ.add(mutationTasterPred);
                     }
-                    
+
                     dbNSFP.transcriptID = getNonEmptyString(transcriptSJ.toString());
                     dbNSFP.siftPred = getNonEmptyString(siftPredsSJ.toString());
                     dbNSFP.polyphen2HDIVPred = getNonEmptyString(polyphen2HDIVPredSJ.toString());
@@ -145,6 +145,14 @@ public class DBNSFPManager {
         }
 
         return dbNSFP;
+    }
+
+    public static boolean isValid(DBNSFP dbNSFP, int id) {
+        if (!DBNSFPCommand.isInclude) {
+            return true;
+        }
+
+        return dbNSFP.isValid(id);
     }
 
     private static String getNonEmptyString(String value) {

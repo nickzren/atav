@@ -208,6 +208,14 @@ public class TranscriptManager {
         }
     }
 
+    public static boolean isCCDSValid(String chr, int id) {
+        if (AnnotationLevelFilterCommand.isCcdsOnly) {
+            return isCCDSTranscript(chr, id);
+        }
+
+        return true;
+    }
+
     public static boolean isCCDSTranscript(String chr, int id) {
         HashSet<Integer> idSet = ccdsTranscriptIdMap.get(chr);
 
@@ -218,6 +226,14 @@ public class TranscriptManager {
         return idSet.contains(id);
     }
 
+    public static boolean isCanonicalValid(String chr, int id) {
+        if (AnnotationLevelFilterCommand.isCanonicalOnly) {
+            return isCanonicalTranscript(chr, id);
+        }
+
+        return true;
+    }
+    
     public static boolean isCanonicalTranscript(String chr, int id) {
         HashSet<Integer> idSet = canonicalTranscriptIdMap.get(chr);
 
@@ -227,7 +243,7 @@ public class TranscriptManager {
 
         return idSet.contains(id);
     }
-    
+
     public static void resetTranscriptSet(HashMap<String, HashSet<Integer>> map) {
         if (allTranscriptIdMap.isEmpty()) {
             allTranscriptIdMap = (HashMap<String, HashSet<Integer>>) map.clone();

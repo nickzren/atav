@@ -176,18 +176,20 @@ public class VariantLite {
             annotation.revel = revel == null ? Data.FLOAT_NA : revel.getRevel();
             annotation.primateAI = primateAI == null ? Data.FLOAT_NA : primateAI.getPrimateDLScore();
 
-            // --effect filter applied
-            // --gene or --gene-boundary filter applied
-            // --polyphen-humdiv filter applied
-            // --ensemble-missens applied
+            // --effect
+            // --gene or --gene-boundary
+            // --polyphen-humdiv
+            // --ensemble-missens
             // --ccds-only
             // --canonical-only
+            // --filter-dbnsfp-all & --filter-dbnsfp-one
             if (EffectManager.isEffectContained(effect)
                     && GeneManager.isValid(geneName, chr, pos)
                     && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
                     && annotation.isEnsembleMissenseValid()
-                    && TranscriptManager.isCCDSTranscript(chr, stableId)
-                    && TranscriptManager.isCanonicalTranscript(chr, stableId)) {
+                    && TranscriptManager.isCCDSValid(chr, stableId)
+                    && TranscriptManager.isCanonicalValid(chr, stableId)
+                    && DBNSFPManager.isValid(dbNSFP, stableId)) {
                 if (!mostDamagingAnnotation.isValid()) {
                     mostDamagingAnnotation.setValid(true);
                 }

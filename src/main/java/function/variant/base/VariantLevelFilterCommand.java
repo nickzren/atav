@@ -437,6 +437,14 @@ public class VariantLevelFilterCommand {
                     IGMAFCommand.getInstance().minMAF = getValidFloat(option);
                     IGMAFCommand.getInstance().isInclude = true;
                     break;
+                case "--filter-dbnsfp-all":
+                    DBNSFPCommand.isFilterDBNSFPAll = true;
+                    DBNSFPCommand.isInclude = true;
+                    break;
+                case "--filter-dbnsfp-one":
+                    DBNSFPCommand.isFilterDBNSFPOne = true;
+                    DBNSFPCommand.isInclude = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isInclude = true;
                     break;
