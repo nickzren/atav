@@ -54,6 +54,7 @@ import global.Data;
 import global.Index;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
@@ -74,6 +75,7 @@ public class VariantLite {
     private boolean isSNV;
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
+    private HashSet<Integer> transcriptSet = new HashSet<>();
     private Annotation mostDamagingAnnotation = new Annotation();
     private ExAC exac;
     private GnomADExome gnomADExome;
@@ -189,7 +191,7 @@ public class VariantLite {
                     && annotation.isEnsembleMissenseValid()
                     && TranscriptManager.isCCDSValid(chr, stableId)
                     && TranscriptManager.isCanonicalValid(chr, stableId)
-                    && DBNSFPManager.isValid(dbNSFP, stableId)) {
+                    && DBNSFPManager.isValid(dbNSFP, stableId, effect)) {
                 if (!mostDamagingAnnotation.isValid()) {
                     mostDamagingAnnotation.setValid(true);
                 }
@@ -218,6 +220,9 @@ public class VariantLite {
                 allAnnotationSJ.add(geneTranscriptSJ.toString());
                 if (!geneList.contains(geneName) && !geneName.equals(Data.STRING_NA)) {
                     geneList.add(geneName);
+                }
+                if (stableId != Data.INTEGER_NA) {
+                    transcriptSet.add(stableId);
                 }
 
                 mostDamagingAnnotation.polyphenHumdiv = MathManager.max(mostDamagingAnnotation.polyphenHumdiv, polyphenHumdiv);
@@ -387,6 +392,7 @@ public class VariantLite {
         return mostDamagingAnnotation.isValid()
                 && VariantManager.isVariantIdIncluded(variantID)
                 && !geneList.isEmpty()
+                && !transcriptSet.isEmpty()
                 && isExacValid()
                 && isGnomADExomeValid()
                 && isGnomADGenomeValid()
@@ -434,6 +440,10 @@ public class VariantLite {
 
     public List<String> getGeneList() {
         return geneList;
+    }
+
+    public HashSet<Integer> getTranscriptSet() {
+        return transcriptSet;
     }
 
     public boolean isSNV() {

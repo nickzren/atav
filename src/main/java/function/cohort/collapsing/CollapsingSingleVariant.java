@@ -86,21 +86,21 @@ public class CollapsingSingleVariant extends CollapsingBase {
             output.initRegionBoundaryNameSet();
 
             for (String regionName : output.regionBoundaryNameList) {
-                updateRegionSummaryMap(regionName);
+                summaryMap.putIfAbsent(regionName, new CollapsingGeneSummary(regionName));
                 summaryList.add(summaryMap.get(regionName));
             }
         } else if (!AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
             // transcript summary
             for (int id : output.getCalledVariant().getTranscriptSet()) {
                 String idStr = String.valueOf(id);
-                updateTranscriptSummaryMap(idStr);
+                summaryMap.putIfAbsent(idStr, new CollapsingTranscriptSummary(idStr));
                 summaryList.add(summaryMap.get(idStr));
             }
         } else {
             // gene summary
             for (String geneName : output.getCalledVariant().getGeneList()) {
                 if (!geneName.equals(Data.STRING_NA)) {
-                    updateGeneSummaryMap(geneName);
+                    summaryMap.putIfAbsent(geneName, new CollapsingGeneSummary(geneName));
                     summaryList.add(summaryMap.get(geneName));
                 }
             }

@@ -41,14 +41,30 @@ public class DBNSFP {
             return false;
         }
 
+        int validCount = 0;
+        int naCount = 0;
+        
         String[] transcripts = transcriptID.split(";");
         String[] siftPreds = siftPred.split(";");
         String[] polyphen2HDIVPreds = polyphen2HDIVPred.split(";");
         String[] polyphen2HVARPreds = polyphen2HVARPred.split(";");
-        String[] lrtPreds = lrtPred.split(";");
-        String[] mutationTasterPreds = mutationTasterPred.split(";");
+        
+        // lrtPred only has one value
+        if (lrtPred.equals(Data.STRING_NA)) {
+            naCount++;
+        }
+        if (lrtPred.equals("D")) {
+            validCount++;
+        }
 
-        int validCount = 0;
+        // if one of the values is A or D 
+        if (mutationTasterPred.contains("A") || mutationTasterPred.contains("D")) {
+            validCount++;
+        } else if (!mutationTasterPred.contains("N") && !mutationTasterPred.contains("P")) {
+            // if all values are NA
+            naCount++;
+        }
+
         for (int i = 0; i < transcripts.length; i++) {
             int id = Integer.valueOf(transcripts[i]);
 
@@ -60,59 +76,47 @@ public class DBNSFP {
             if (transcripts.length == siftPreds.length) {
                 siftPred = siftPreds[i];
             }
-
             if (transcripts.length == polyphen2HDIVPreds.length) {
                 polyphen2HDIVPred = polyphen2HDIVPreds[i];
             }
-
             if (transcripts.length == polyphen2HVARPreds.length) {
                 polyphen2HVARPred = polyphen2HVARPreds[i];
             }
 
-            if (transcripts.length == lrtPreds.length) {
-                lrtPred = lrtPreds[i];
+            // count NA
+            if (siftPred.equals(Data.STRING_NA)) {
+                naCount++;
+            }
+            if (polyphen2HDIVPred.equals(Data.STRING_NA)) {
+                naCount++;
+            }
+            if (polyphen2HVARPred.equals(Data.STRING_NA)) {
+                naCount++;
             }
 
-            if (transcripts.length == mutationTasterPreds.length) {
-                mutationTasterPred = mutationTasterPreds[i];
-            }
-
-            if (siftPred.equals(Data.STRING_NA)
-                    && polyphen2HDIVPred.equals(Data.STRING_NA)
-                    && polyphen2HVARPred.equals(Data.STRING_NA)
-                    && lrtPred.equals(Data.STRING_NA)
-                    && mutationTasterPred.equals(Data.STRING_NA)) {
+            // exclude when all values are NA
+            if (naCount == 5) {
                 return false;
             }
 
-            if (siftPred.equals("D") || siftPred.equals(Data.STRING_NA)) {
+            // count valid
+            if (siftPred.equals("D")) {
+                validCount++;
+            }
+            if (polyphen2HDIVPred.equals("D")) {
+                validCount++;
+            }
+            if (polyphen2HVARPred.equals("D")) {
                 validCount++;
             }
 
-            if (polyphen2HDIVPred.equals("D") || polyphen2HDIVPred.equals(Data.STRING_NA)) {
-                validCount++;
-            }
-
-            if (polyphen2HVARPred.equals("D") || polyphen2HVARPred.equals(Data.STRING_NA)) {
-                validCount++;
-            }
-
-            if (lrtPred.equals("D") || lrtPred.equals(Data.STRING_NA)) {
-                validCount++;
-            }
-
-            if (mutationTasterPred.equals("A") || mutationTasterPred.equals("D")
-                    || mutationTasterPred.equals(Data.STRING_NA)) {
-                validCount++;
-            }
-
-            // all pass
-            if(DBNSFPCommand.isFilterDBNSFPAll && validCount == 5) {
+            // all pass (--filter-dbnsfp-all)
+            if (DBNSFPCommand.isFilterDBNSFPAll && validCount + naCount == 5) {
                 return true;
             }
-            
-            // at least one pass
-            if(DBNSFPCommand.isFilterDBNSFPOne && validCount >= 1) {
+
+            // at least one pass (--filter-dbnsfp-one)
+            if (DBNSFPCommand.isFilterDBNSFPOne && validCount >= 1) {
                 return true;
             }
         }

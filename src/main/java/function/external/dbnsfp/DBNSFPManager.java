@@ -147,12 +147,17 @@ public class DBNSFPManager {
         return dbNSFP;
     }
 
-    public static boolean isValid(DBNSFP dbNSFP, int id) {
+    public static boolean isValid(DBNSFP dbNSFP, int id, String effect) {
         if (!DBNSFPCommand.isInclude) {
             return true;
         }
-
-        return dbNSFP.isValid(id);
+        
+        // dbNSFP filters only applied to missense variant
+        if (effect.startsWith("missense_variant")) {
+            return dbNSFP.isValid(id);
+        } else {
+            return true;
+        }        
     }
 
     private static String getNonEmptyString(String value) {

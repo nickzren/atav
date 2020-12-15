@@ -124,7 +124,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
     private void initGeneSummaryMap() {
         GeneManager.getMap().values().stream().forEach((geneSet) -> {
             geneSet.stream().forEach((gene) -> {
-                updateGeneSummaryMap(gene.getName());
+                summaryMap.putIfAbsent(gene.getName(), new CollapsingGeneSummary(gene.getName()));
             });
         });
     }
@@ -134,7 +134,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
             List<RegionBoundary> list = RegionBoundaryManager.getList(chr);
             if (list != null) {
                 list.stream().forEach((regionBoundary) -> {
-                    updateRegionSummaryMap(regionBoundary.getName());
+                    summaryMap.putIfAbsent(regionBoundary.getName(), new CollapsingGeneSummary(regionBoundary.getName()));
                 });
             }
         }
@@ -142,26 +142,9 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     private void initTranscriptSummaryMap() {
         TranscriptManager.getTranscriptBoundaryMap().values().stream().forEach((transcriptBoundary) -> {
-            updateTranscriptSummaryMap(String.valueOf(transcriptBoundary.getId()));
+            String idStr = String.valueOf(transcriptBoundary.getId());
+            summaryMap.putIfAbsent(idStr, new CollapsingTranscriptSummary(idStr));
         });
-    }
-
-    public void updateGeneSummaryMap(String geneName) {
-        if (!summaryMap.containsKey(geneName)) {
-            summaryMap.put(geneName, new CollapsingGeneSummary(geneName));
-        }
-    }
-
-    public void updateRegionSummaryMap(String regionName) {
-        if (!summaryMap.containsKey(regionName)) {
-            summaryMap.put(regionName, new CollapsingRegionSummary(regionName));
-        }
-    }
-    
-    public void updateTranscriptSummaryMap(String transcriptId) {
-        if (!summaryMap.containsKey(transcriptId)) {
-            summaryMap.put(transcriptId, new CollapsingTranscriptSummary(transcriptId));
-        }
     }
 
     public void outputSummary() {
@@ -173,7 +156,7 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
             outputMatrix();
 
             if (CollapsingCommand.regionBoundaryFile.isEmpty()
-                && AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) { // gene summary
+                    && AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) { // gene summary
                 CollapsingGeneSummary.calculateLinearAndLogisticP(matrixFilePath, summaryMap);
             }
 
