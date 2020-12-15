@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.cohort.vcf.VCFCommand;
 import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
@@ -68,6 +69,10 @@ public class Variant extends Region {
 
     public String getRsNumberStr() {
         if (rsNumber == Data.INTEGER_NA) {
+            if (VCFCommand.isList) {
+                return Data.VCF_NA;
+            }
+            
             return Data.STRING_NA;
         }
 

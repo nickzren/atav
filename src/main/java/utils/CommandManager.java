@@ -86,7 +86,7 @@ public class CommandManager {
                 + "--collapsing-lite "
                 + "--exac-af 0 "
                 + "--out /Users/nick/Desktop/collapsing_lite_1";
-
+        
         optionArray = cmd.split("\\s+");
     }
 
@@ -345,7 +345,6 @@ public class CommandManager {
                     VarCommand.isList = true;
                     break;
                 case "--list-vcf":
-                    Data.STRING_NA = ".";
                     VCFCommand.isList = true;
                     break;
                 case "--list-af":

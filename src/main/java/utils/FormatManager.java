@@ -1,5 +1,6 @@
 package utils;
 
+import function.cohort.vcf.VCFCommand;
 import global.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,6 +15,10 @@ public class FormatManager {
 
     public static String getDouble(double value) {
         if (value == Data.DOUBLE_NA) {
+            if (VCFCommand.isList) {
+                return Data.VCF_NA;
+            }
+            
             return Data.STRING_NA;
         }
 
@@ -22,6 +27,10 @@ public class FormatManager {
 
     public static String getByte(byte value) {
         if (value == Data.BYTE_NA) {
+            if (VCFCommand.isList) {
+                return Data.VCF_NA;
+            }
+            
             return Data.STRING_NA;
         }
 
@@ -30,6 +39,10 @@ public class FormatManager {
 
     public static String getShort(short value) {
         if (value == Data.SHORT_NA) {
+            if (VCFCommand.isList) {
+                return Data.VCF_NA;
+            }
+            
             return Data.STRING_NA;
         }
 
@@ -38,6 +51,10 @@ public class FormatManager {
 
     public static String getInteger(int value) {
         if (value == Data.INTEGER_NA) {
+            if (VCFCommand.isList) {
+                return Data.VCF_NA;
+            }
+            
             return Data.STRING_NA;
         }
 
@@ -64,6 +81,10 @@ public class FormatManager {
 
     public static String getString(String str) {
         if (str == null) {
+            if (VCFCommand.isList) {
+                return Data.VCF_NA;
+            }
+            
             str = Data.STRING_NA;
         }
 
@@ -80,6 +101,10 @@ public class FormatManager {
 
     public static String getFloat(float value) {
         if (value == Data.FLOAT_NA) {
+            if (VCFCommand.isList) {
+                return Data.VCF_NA;
+            }
+            
             return Data.STRING_NA;
         }
 

@@ -66,8 +66,8 @@ public class VCFOutput extends Output {
         sj.add(calledVar.getRsNumberStr());
         sj.add(calledVar.getRefAllele());
         sj.add(calledVar.getAllele());
-        sj.add(Data.STRING_NA);
-        sj.add(Data.STRING_NA);
+        sj.add(Data.VCF_NA);
+        sj.add(Data.VCF_NA);
 
         StringJoiner infoSJ = new StringJoiner(";");
         infoSJ.add("NS=" + FormatManager.getInteger(calledVar.getNS()));

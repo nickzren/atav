@@ -1,5 +1,6 @@
 package function.annotation.base;
 
+import function.cohort.vcf.VCFCommand;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
@@ -235,7 +236,7 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(annotation.geneName);
             annotationSJ.add(getStableId(annotation.stableId));
             annotationSJ.add(annotation.HGVS_c);
-            annotationSJ.add(annotation.HGVS_p);
+            annotationSJ.add(FormatManager.getString(annotation.HGVS_p));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
 
@@ -438,6 +439,10 @@ public class AnnotatedVariant extends Variant {
 
     private String getStableId(int stableId) {
         if (stableId == Data.INTEGER_NA) {
+            if (VCFCommand.isList) {
+                return Data.VCF_NA;
+            }
+            
             return Data.STRING_NA;
         }
 
