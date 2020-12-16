@@ -391,6 +391,7 @@ public class VariantLite {
 
         return mostDamagingAnnotation.isValid()
                 && VariantManager.isVariantIdIncluded(variantID)
+                && !VariantManager.isVariantIdExcluded(variantID)
                 && !geneList.isEmpty()
                 && !transcriptSet.isEmpty()
                 && isExacValid()

@@ -322,7 +322,7 @@ public class VariantManager {
 
         return (isVariantIdIncluded(var.getVariantIdStr())
                 && isRsNumberIncluded(var.getRsNumber()))
-                && !isExcluded(var.getVariantIdStr());
+                && !isVariantIdExcluded(var.getVariantIdStr());
     }
 
     public static boolean isVariantIdIncluded(String varId) {
@@ -348,7 +348,7 @@ public class VariantManager {
         }
     }
 
-    public static boolean isExcluded(String varId) {
+    public static boolean isVariantIdExcluded(String varId) {
         return excludeVariantSet.contains(varId);
     }
 
