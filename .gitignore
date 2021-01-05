@@ -12,5 +12,4 @@ spark-warehouse
 *.prefs
 
 data/sample/*
-data/ccr/*
 config/atav.dragen.debug.system.config.properties
