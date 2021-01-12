@@ -98,7 +98,6 @@ public class AnnotatedVariant extends Variant {
 
     // external db annotations
     private ExAC exac;
-    private String exacGeneVariantCountStr;
     private GnomADExome gnomADExome;
     private GnomADGenome gnomADGenome;
     private Evs evs;
@@ -280,10 +279,6 @@ public class AnnotatedVariant extends Variant {
 
         if (DenovoDBCommand.isInclude) {
             denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
-        }
-
-        if (ExACCommand.isIncludeCount) {
-            exacGeneVariantCountStr = ExACManager.getLine(getGeneName());
         }
 
         if (DBNSFPCommand.isInclude) {
@@ -496,10 +491,6 @@ public class AnnotatedVariant extends Variant {
             sj.merge(getExacStringJoiner());
         }
 
-        if (ExACCommand.isIncludeCount) {
-            sj.add(getExacGeneVariantCount());
-        }
-
         if (GnomADExomeCommand.getInstance().isInclude) {
             sj.merge(getGnomADExomeStringJoiner());
         }
@@ -623,10 +614,6 @@ public class AnnotatedVariant extends Variant {
 
     public StringJoiner getExacStringJoiner() {
         return exac.getStringJoiner();
-    }
-
-    public String getExacGeneVariantCount() {
-        return exacGeneVariantCountStr;
     }
 
     public StringJoiner getGnomADExomeStringJoiner() {

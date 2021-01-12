@@ -9,8 +9,6 @@ import global.Data;
  */
 public class ExACCommand extends VariantAFCommand {
 
-    public static boolean isListCount = false;
-    public static boolean isIncludeCount = false;
 
     public static String pop = "global";
     public static float vqslodSnv = Data.NO_FILTER;

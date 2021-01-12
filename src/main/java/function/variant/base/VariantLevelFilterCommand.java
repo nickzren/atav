@@ -451,9 +451,6 @@ public class VariantLevelFilterCommand {
                 case "--include-exac":
                     ExACCommand.getInstance().isInclude = true;
                     break;
-                case "--include-exac-gene-variant-count":
-                    ExACCommand.isIncludeCount = true;
-                    break;
                 case "--include-gnomad-exome":
                     GnomADExomeCommand.getInstance().isInclude = true;
                     break;

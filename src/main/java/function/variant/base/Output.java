@@ -124,10 +124,6 @@ public class Output {
             sj.add(ExACManager.getHeader());
         }
 
-        if (ExACCommand.isIncludeCount) {
-            sj.add(ExACManager.getGeneVariantCountHeader());
-        }
-
         if (GnomADExomeCommand.getInstance().isInclude) {
             sj.add(GnomADManager.getExomeHeader());
         }
