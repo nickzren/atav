@@ -5,11 +5,9 @@ import global.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
 import java.util.Properties;
 import javax.mail.Message;
-import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -21,9 +19,8 @@ import javax.mail.internet.MimeMessage;
  */
 public class EmailManager {
 
-    private static String MAIL_SERVER;
-    private static String EMAIL_FROM;
-    private static String EMAIL_TO;
+    private static final String ATAV_MAIL = "atavmail@gmail.com";
+
     private static final long EXTERNAL_ANALYSTS_GROUP_ID = 1000018;
 
     public static void init() {
@@ -37,10 +34,6 @@ public class EmailManager {
             InputStream input = new FileInputStream(configPath);
             Properties prop = new Properties();
             prop.load(input);
-
-            MAIL_SERVER = prop.getProperty("mail-server");
-            EMAIL_FROM = prop.getProperty("email-from");
-            EMAIL_TO = prop.getProperty("email-to");
         } catch (IOException e) {
             ErrorManager.send(e);
         }
@@ -56,52 +49,58 @@ public class EmailManager {
         try {
             // only send email to user when --email used
             if (CommonCommand.email) {
-                Properties props = System.getProperties();
-                props.put("mail.smtp.host", MAIL_SERVER);
-                Session session = Session.getInstance(props, null);
+                Properties prop = new Properties();
+                prop.put("mail.smtp.host", "smtp.gmail.com");
+                prop.put("mail.smtp.port", "465");
+                prop.put("mail.smtp.auth", "true");
+                prop.put("mail.smtp.socketFactory.port", "465");
+                prop.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
-                MimeMessage msg = new MimeMessage(session);
-                //set message headers
-                msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
-                msg.addHeader("format", "flowed");
-                msg.addHeader("Content-Transfer-Encoding", "8bit");
+                Session session = Session.getInstance(prop,
+                        new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(ATAV_MAIL, "ATAVmail365");
+                    }
+                });
 
-                msg.setFrom(new InternetAddress(EMAIL_FROM, "IGM BIOINFO"));
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress("atavmail@gmail.com"));
+                message.setRecipients(
+                        Message.RecipientType.TO,
+                        InternetAddress.parse(to)
+                );
+                message.setSubject(subject);
+                message.setText(body);
 
-                msg.setReplyTo(InternetAddress.parse(EMAIL_FROM, false));
-
-                msg.setSubject(subject, "UTF-8");
-
-                msg.setText(body, "UTF-8");
-
-                msg.setSentDate(new Date());
-
-                msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
-
-                Transport.send(msg);
+                Transport.send(message);
             }
-        } catch (UnsupportedEncodingException | MessagingException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public static void sendEmailToBioinfo(String subject, String body) {
-        sendEmail(subject, body, EMAIL_TO);
+    public static void sendEmailToATAVMail(String subject, String body) {
+        sendEmail(subject, body, ATAV_MAIL);
     }
 
     public static void sendEmailToUser(String subject, String body) {
-        UnixSystem sys = new UnixSystem();
-
-        boolean hasExternalGroup = false;
-        for (long value : sys.getGroups()) {
-            if (value == EXTERNAL_ANALYSTS_GROUP_ID) {
-                hasExternalGroup = true;
-                break;
+        if (!CommonCommand.emailReceiver.isEmpty()) {
+            sendEmail(subject, body, CommonCommand.emailReceiver);
+        } else {
+            // IGM default use, send to valid CUMC account
+            UnixSystem sys = new UnixSystem();
+            boolean hasExternalGroup = false;
+            for (long value : sys.getGroups()) {
+                if (value == EXTERNAL_ANALYSTS_GROUP_ID) {
+                    hasExternalGroup = true;
+                    break;
+                }
             }
-        }
 
-        if (!hasExternalGroup) {
-            String to = Data.userName + "@cumc.columbia.edu";
-            sendEmail(subject, body, to);
+            if (!hasExternalGroup) {
+                String to = Data.userName + "@cumc.columbia.edu";
+                sendEmail(subject, body, to);
+            }
         }
     }
 }

@@ -86,7 +86,7 @@ public class CommandManager {
                 + "--collapsing-lite "
                 + "--exac-af 0 "
                 + "--out /Users/nick/Desktop/collapsing_lite_1";
-        
+
         optionArray = cmd.split("\\s+");
     }
 
@@ -254,6 +254,8 @@ public class CommandManager {
                     break;
                 case "--email":
                     CommonCommand.email = true;
+                    CommonCommand.emailReceiver = option.getValue();
+
                     break;
                 default:
                     continue;
@@ -546,7 +548,7 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     IranomeCommand.getInstance().isList = true;
                     IranomeCommand.getInstance().isInclude = true;
-                    break;    
+                    break;
                 case "--test":
                     // Test Functions
 //                    CommonCommand.isNonDBAnalysis = true;
