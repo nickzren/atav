@@ -30,9 +30,6 @@ import org.apache.commons.lang.StringEscapeUtils;
  */
 public class SampleManager {
 
-    private static final String SAMPLE_GROUP_RESTRICTION_PATH = Data.ATAV_HOME + "config/sample.group.restriction.txt";
-    private static final String USER_GROUP_RESTRICTION_PATH = Data.ATAV_HOME + "config/user.group.restriction.txt";
-
     public static final String TMP_SAMPLE_ID_TABLE = "tmp_sample_id";
 
     // sample permission
@@ -77,8 +74,6 @@ public class SampleManager {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
         }
-
-        initSamplePermission();
 
         checkSampleFile();
 
@@ -140,68 +135,6 @@ public class SampleManager {
             bwAllSample.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
-        }
-    }
-
-    private static void initSamplePermission() {
-        initSampleGroup();
-
-        initUserGroup();
-    }
-
-    private static void initSampleGroup() {
-        try {
-            File f = new File(SAMPLE_GROUP_RESTRICTION_PATH);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
-
-            String lineStr = "";
-            while ((lineStr = br.readLine()) != null) {
-                if (!lineStr.isEmpty()) {
-                    String[] tmp = lineStr.trim().split("\t");
-
-                    sampleGroupMap.put(tmp[0], tmp[1]);
-                }
-            }
-
-            br.close();
-            fr.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    private static void initUserGroup() {
-        try {
-            File f = new File(USER_GROUP_RESTRICTION_PATH);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
-
-            String lineStr = "";
-            while ((lineStr = br.readLine()) != null) {
-                if (!lineStr.isEmpty()) {
-                    String[] tmp = lineStr.trim().split("\t");
-
-                    String groupName = tmp[0];
-                    String[] users = tmp[1].split(",");
-
-                    HashSet<String> userSet = userGroupMap.get(groupName);
-
-                    if (userSet == null) {
-                        userSet = new HashSet<>();
-                        userGroupMap.put(groupName, userSet);
-                    }
-
-                    for (String user : users) {
-                        userSet.add(user);
-                    }
-                }
-            }
-
-            br.close();
-            fr.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
         }
     }
 
@@ -322,11 +255,6 @@ public class SampleManager {
                 Sample sample = new Sample(sampleId, familyId, individualId,
                         paternalId, maternalId, sex, pheno, sampleType, captureKit);
 
-                if (!checkSamplePermission(sample)) {
-                    restrictedSampleList.add(sample);
-                    continue;
-                }
-
                 if (sampleId == Data.INTEGER_NA) {
                     checkSampleList(sample);
                     continue;
@@ -371,12 +299,6 @@ public class SampleManager {
                     continue;
                 }
 
-//                if (!sampleNameSet.contains(individualId)) {
-//                    sampleNameSet.add(individualId);
-//                } else {
-//                    // do not allow duplicate samples
-//                    continue;
-//                }
                 String paternalId = "0";
                 String maternalId = "0";
                 byte sex = 1; // male
@@ -386,11 +308,6 @@ public class SampleManager {
 
                 Sample sample = new Sample(sampleId, familyId, individualId,
                         paternalId, maternalId, sex, pheno, sampleType, captureKit);
-
-                if (!checkSamplePermission(sample)) {
-                    restrictedSampleList.add(sample);
-                    continue;
-                }
 
                 sampleList.add(sample);
                 sampleMap.put(sampleId, sample);
@@ -412,23 +329,6 @@ public class SampleManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
-    }
-
-    private static boolean checkSamplePermission(Sample sample) {
-        if (sampleGroupMap.containsKey(sample.getName())) {
-            String groupName = sampleGroupMap.get(sample.getName());
-
-            HashSet<String> userSet = userGroupMap.get(groupName);
-
-            if (userSet.contains(Data.userName)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return true; // not in sample restricted list
-        }
-
     }
 
     private static void checkSampleList(Sample sample) {
