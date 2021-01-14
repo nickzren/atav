@@ -190,22 +190,25 @@ public class LogManager {
 
     private static long folderSize(File directory) {
         long length = 0;
-        for (File file : directory.listFiles()) {
-            if (file.isFile()) {
-                length += file.length();
-            } else {
-                length += folderSize(file);
+        try {
+            for (File file : directory.listFiles()) {
+                if (file.isFile()) {
+                    length += file.length();
+                } else {
+                    length += folderSize(file);
+                }
             }
+        } catch (Exception e) {
         }
         return length;
     }
 
     public static void logExternalDataVersion() {
         // collapsing lite is based on user input data
-        if(CollapsingCommand.isCollapsingLite) {
+        if (CollapsingCommand.isCollapsingLite) {
             return;
         }
-        
+
         String externalDataVersion = DataManager.getVersion();
 
         if (!externalDataVersion.isEmpty()) {
