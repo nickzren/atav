@@ -11,4 +11,5 @@ spark-warehouse
 
 *.prefs
 
-config/atav.dragen.debug.system.config.properties
+log/users.command.log
+log/users.command.failed.log
