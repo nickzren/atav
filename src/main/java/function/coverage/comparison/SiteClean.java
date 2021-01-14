@@ -241,20 +241,20 @@ public class SiteClean {
     public void outputLog() {
         LogManager.writeAndPrint("The total number of bases before pruning is "
                 + FormatManager.getDouble((double) GeneManager.getAllGeneBoundaryLength() / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The total number of bases with zero individuals passing min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
+                + FormatManager.getDouble((double) zeroIndividualPassMinCovSiteCount / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases with zero cases passing min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
                 + FormatManager.getDouble((double) zeroCasePassMinCovSiteCount / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases with zero controls passing min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
                 + FormatManager.getDouble((double) zeroCtrlPassMinCovSiteCount / 1000000.0) + " MB");
-        LogManager.writeAndPrint("The total number of bases with zero individuals passing min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
-                + FormatManager.getDouble((double) zeroIndividualPassMinCovSiteCount / 1000000.0) + " MB");
         LogManager.writeAndPrint("The total number of bases after pruning is "
                 + FormatManager.getDouble((double) totalCleanedBases / 1000000.0) + " MB");
+        LogManager.writeAndPrint("The % of bases with zero individuals passing min-coverage min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
+                + FormatManager.getDouble((double) zeroIndividualPassMinCovSiteCount / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
         LogManager.writeAndPrint("The % of bases with zero cases passing min-coverage min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
                 + FormatManager.getDouble((double) zeroCasePassMinCovSiteCount / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
         LogManager.writeAndPrint("The % of bases with zero controls passing min-coverage min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
                 + FormatManager.getDouble((double) zeroCtrlPassMinCovSiteCount / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
-        LogManager.writeAndPrint("The % of bases with zero individuals passing min-coverage min-coverage " + GenotypeLevelFilterCommand.minDpBin + " is "
-                + FormatManager.getDouble((double) zeroIndividualPassMinCovSiteCount / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
         LogManager.writeAndPrint("The % of bases pruned is "
                 + FormatManager.getDouble(100.0 - (double) totalCleanedBases / (double) GeneManager.getAllGeneBoundaryLength() * 100) + "%");
 
