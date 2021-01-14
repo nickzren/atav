@@ -35,6 +35,9 @@ public class DBManager {
     private static Connection concurReadOnlyConn;
     private static Statement concurReadOnlyStmt;
 
+    // count for all db servers that failed to connect
+    private static int failDBConnectionCount = 0;
+
     public static void init() {
         try {
             if (CommonCommand.isNonDBAnalysis) {
@@ -221,6 +224,13 @@ public class DBManager {
             stmt.close();
             conn.close();
         } catch (Exception e) {
+            failDBConnectionCount++;
+            
+            // if all available database servers failed to connect then throw errors
+            if (dbHostMap.size() == failDBConnectionCount) {
+                ErrorManager.send(e);
+            }
+
             return Integer.MAX_VALUE;
         }
 
