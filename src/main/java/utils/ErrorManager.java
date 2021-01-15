@@ -34,7 +34,7 @@ public class ErrorManager {
 
         if (!LogManager.isBioinfoTeam()) {
             String cmdLogStr = LogManager.getCommandLogStr(exit);
-            EmailManager.sendEmailToATAVMail("ATAV Job Failed",
+            EmailManager.errorReport("ATAV Job Failed",
                     cmdLogStr + "\n\n" + sw.toString());
         }
 

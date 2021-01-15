@@ -5,6 +5,7 @@ import global.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -19,9 +20,14 @@ import javax.mail.internet.MimeMessage;
  */
 public class EmailManager {
 
-    private static final String ATAV_MAIL = "atavmail@gmail.com";
+    // igm default use
+    private static String IGM_MAIL_SERVER;
+    private static String IGM_EMAIL_FROM;
+    private static String IGM_EMAIL_TO;
+    private static final long IGM_EXTERNAL_ANALYSTS_GROUP_ID = 1000018;
 
-    private static final long EXTERNAL_ANALYSTS_GROUP_ID = 1000018;
+    // free public use
+    private static final String ATAV_MAIL = "atavmail@gmail.com";
 
     public static void init() {
         try {
@@ -34,18 +40,50 @@ public class EmailManager {
             InputStream input = new FileInputStream(configPath);
             Properties prop = new Properties();
             prop.load(input);
+
+            // only IGM server provides below settings in config
+            IGM_MAIL_SERVER = prop.getProperty("mail-server", "");
+            IGM_EMAIL_FROM = prop.getProperty("email-from", "");
+            IGM_EMAIL_TO = prop.getProperty("email-to", "");
         } catch (IOException e) {
             ErrorManager.send(e);
         }
     }
 
-    /**
-     * Utility method to send simple HTML email
-     *
-     * @param subject
-     * @param body
-     */
-    private static void sendEmail(String subject, String body, String to) {
+    private static void sendEmailByColumbiaMail(String subject, String body, String to) {
+        try {
+            // only send email to user when --email used
+            if (CommonCommand.email) {
+                Properties props = System.getProperties();
+                props.put("mail.smtp.host", IGM_MAIL_SERVER);
+                Session session = Session.getInstance(props, null);
+
+                MimeMessage msg = new MimeMessage(session);
+                //set message headers
+                msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
+                msg.addHeader("format", "flowed");
+                msg.addHeader("Content-Transfer-Encoding", "8bit");
+
+                msg.setFrom(new InternetAddress(IGM_EMAIL_FROM, "IGM BIOINFO"));
+
+                msg.setReplyTo(InternetAddress.parse(IGM_EMAIL_FROM, false));
+
+                msg.setSubject(subject, "UTF-8");
+
+                msg.setText(body, "UTF-8");
+
+                msg.setSentDate(new Date());
+
+                msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+
+                Transport.send(msg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static void sendEmailByGmail(String subject, String body, String to) {
         try {
             // only send email to user when --email used
             if (CommonCommand.email) {
@@ -79,19 +117,21 @@ public class EmailManager {
         }
     }
 
-    public static void sendEmailToATAVMail(String subject, String body) {
-        sendEmail(subject, body, ATAV_MAIL);
+    public static void errorReport(String subject, String body) {
+        if(!IGM_MAIL_SERVER.isEmpty()) {
+            sendEmailByColumbiaMail(subject, body, IGM_EMAIL_TO);
+        } else {
+            sendEmailByGmail(subject, body, ATAV_MAIL);
+        }
     }
 
     public static void sendEmailToUser(String subject, String body) {
-        if (!CommonCommand.emailReceiver.isEmpty()) {
-            sendEmail(subject, body, CommonCommand.emailReceiver);
-        } else {
+        if(!IGM_MAIL_SERVER.isEmpty()) {
             // IGM default use, send to valid CUMC account
             UnixSystem sys = new UnixSystem();
             boolean hasExternalGroup = false;
             for (long value : sys.getGroups()) {
-                if (value == EXTERNAL_ANALYSTS_GROUP_ID) {
+                if (value == IGM_EXTERNAL_ANALYSTS_GROUP_ID) {
                     hasExternalGroup = true;
                     break;
                 }
@@ -99,8 +139,10 @@ public class EmailManager {
 
             if (!hasExternalGroup) {
                 String to = Data.userName + "@cumc.columbia.edu";
-                sendEmail(subject, body, to);
+                sendEmailByColumbiaMail(subject, body, to);
             }
+        } else if (!CommonCommand.emailReceiver.isEmpty()) {
+            sendEmailByGmail(subject, body, CommonCommand.emailReceiver);
         }
     }
 }
