@@ -52,73 +52,67 @@ public class EmailManager {
 
     private static void sendEmailByColumbiaMail(String subject, String body, String to) {
         try {
-            // only send email to user when --email used
-            if (CommonCommand.email) {
-                Properties props = System.getProperties();
-                props.put("mail.smtp.host", IGM_MAIL_SERVER);
-                Session session = Session.getInstance(props, null);
+            Properties props = System.getProperties();
+            props.put("mail.smtp.host", IGM_MAIL_SERVER);
+            Session session = Session.getInstance(props, null);
 
-                MimeMessage msg = new MimeMessage(session);
-                //set message headers
-                msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
-                msg.addHeader("format", "flowed");
-                msg.addHeader("Content-Transfer-Encoding", "8bit");
+            MimeMessage msg = new MimeMessage(session);
+            //set message headers
+            msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
+            msg.addHeader("format", "flowed");
+            msg.addHeader("Content-Transfer-Encoding", "8bit");
 
-                msg.setFrom(new InternetAddress(IGM_EMAIL_FROM, "IGM BIOINFO"));
+            msg.setFrom(new InternetAddress(IGM_EMAIL_FROM, "IGM BIOINFO"));
 
-                msg.setReplyTo(InternetAddress.parse(IGM_EMAIL_FROM, false));
+            msg.setReplyTo(InternetAddress.parse(IGM_EMAIL_FROM, false));
 
-                msg.setSubject(subject, "UTF-8");
+            msg.setSubject(subject, "UTF-8");
 
-                msg.setText(body, "UTF-8");
+            msg.setText(body, "UTF-8");
 
-                msg.setSentDate(new Date());
+            msg.setSentDate(new Date());
 
-                msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
 
-                Transport.send(msg);
-            }
+            Transport.send(msg);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     private static void sendEmailByGmail(String subject, String body, String to) {
         try {
-            // only send email to user when --email used
-            if (CommonCommand.email) {
-                Properties prop = new Properties();
-                prop.put("mail.smtp.host", "smtp.gmail.com");
-                prop.put("mail.smtp.port", "465");
-                prop.put("mail.smtp.auth", "true");
-                prop.put("mail.smtp.socketFactory.port", "465");
-                prop.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            Properties prop = new Properties();
+            prop.put("mail.smtp.host", "smtp.gmail.com");
+            prop.put("mail.smtp.port", "465");
+            prop.put("mail.smtp.auth", "true");
+            prop.put("mail.smtp.socketFactory.port", "465");
+            prop.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
-                Session session = Session.getInstance(prop,
-                        new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(ATAV_MAIL, "ATAVmail365");
-                    }
-                });
+            Session session = Session.getInstance(prop,
+                    new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(ATAV_MAIL, "ATAVmail365");
+                }
+            });
 
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress("atavmail@gmail.com"));
-                message.setRecipients(
-                        Message.RecipientType.TO,
-                        InternetAddress.parse(to)
-                );
-                message.setSubject(subject);
-                message.setText(body);
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("atavmail@gmail.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(to)
+            );
+            message.setSubject(subject);
+            message.setText(body);
 
-                Transport.send(message);
-            }
+            Transport.send(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void errorReport(String subject, String body) {
-        if(!IGM_MAIL_SERVER.isEmpty()) {
+        if (!IGM_MAIL_SERVER.isEmpty()) {
             sendEmailByColumbiaMail(subject, body, IGM_EMAIL_TO);
         } else {
             sendEmailByGmail(subject, body, ATAV_MAIL);
@@ -126,23 +120,26 @@ public class EmailManager {
     }
 
     public static void sendEmailToUser(String subject, String body) {
-        if(!IGM_MAIL_SERVER.isEmpty()) {
-            // IGM default use, send to valid CUMC account
-            UnixSystem sys = new UnixSystem();
-            boolean hasExternalGroup = false;
-            for (long value : sys.getGroups()) {
-                if (value == IGM_EXTERNAL_ANALYSTS_GROUP_ID) {
-                    hasExternalGroup = true;
-                    break;
+        // only send email to user when --email used
+        if (CommonCommand.email) {
+            if (!IGM_MAIL_SERVER.isEmpty()) {
+                // IGM default use, send to valid CUMC account
+                UnixSystem sys = new UnixSystem();
+                boolean hasExternalGroup = false;
+                for (long value : sys.getGroups()) {
+                    if (value == IGM_EXTERNAL_ANALYSTS_GROUP_ID) {
+                        hasExternalGroup = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!hasExternalGroup) {
-                String to = Data.userName + "@cumc.columbia.edu";
-                sendEmailByColumbiaMail(subject, body, to);
+                if (!hasExternalGroup) {
+                    String to = Data.userName + "@cumc.columbia.edu";
+                    sendEmailByColumbiaMail(subject, body, to);
+                }
+            } else if (!CommonCommand.emailReceiver.isEmpty()) {
+                sendEmailByGmail(subject, body, CommonCommand.emailReceiver);
             }
-        } else if (!CommonCommand.emailReceiver.isEmpty()) {
-            sendEmailByGmail(subject, body, CommonCommand.emailReceiver);
         }
     }
 }
