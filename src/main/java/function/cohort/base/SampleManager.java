@@ -671,7 +671,7 @@ public class SampleManager {
     private static void insertId2Table(String ids, String table) {
         try {
             if (!ids.isEmpty()) {
-                DBManager.executeUpdate("INSERT INTO " + table + " VALUES " + ids);
+                DBManager.executeUpdate("INSERT IGNORE INTO " + table + " VALUES " + ids);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
