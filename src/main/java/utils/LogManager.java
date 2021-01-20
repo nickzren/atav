@@ -142,8 +142,10 @@ public class LogManager {
         String str = "Completed";
         if (exit != ErrorManager.SUCCESS) {
             str = "Failed";
-            // hack to force send email when job failed to complete.
-            CommonCommand.email = true;
+            // hack to force send email when job failed to complete. Only for igm mail server
+            if(!EmailManager.IGM_MAIL_SERVER.isEmpty()) {
+                CommonCommand.email = true;
+            }
         }
 
         // email user job complete

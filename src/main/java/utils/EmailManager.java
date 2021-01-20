@@ -21,7 +21,7 @@ import javax.mail.internet.MimeMessage;
 public class EmailManager {
 
     // igm default use
-    private static String IGM_MAIL_SERVER;
+    public static String IGM_MAIL_SERVER;
     private static String IGM_EMAIL_FROM;
     private static String IGM_EMAIL_TO;
     private static final long IGM_EXTERNAL_ANALYSTS_GROUP_ID = 1000018;
