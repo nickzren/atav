@@ -43,7 +43,7 @@ conda config --add channels bioconda
 conda create -n atav-cli python=2.7 seaborn docopt plink samtools tabix
 ```
 
-#### Install ATAV
+#### Install ATAV CLI
 ```
 git clone https://github.com/nickzren/atav.git
 mvn clean compile assembly:single -f atav/pom.xml
