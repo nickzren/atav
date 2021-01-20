@@ -16,3 +16,9 @@ If you use ATAV for publication, please cite:
 ```
 Zhong Ren, Gundula Povysil, David B. Goldstein. (2020) ATAV - a comprehensive platform for population-scale genomic analyses. bioRxiv DOI: 10.1101/2020.06.08.136507
 ```
+
+#### ATAV Components:
+* [ATAV Command Line Tool](https://github.com/nickzren/atav)
+* [ATAV Data Broswer](https://github.com/nickzren/atavdb)
+* [ATAV Database](https://github.com/nickzren/atav-database)
+* [ATAV Paper](https://www.biorxiv.org/content/10.1101/2020.06.08.136507v3)
