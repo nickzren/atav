@@ -50,7 +50,7 @@ public class GeneManager {
         if (CommonCommand.isNonDBAnalysis) {
             return;
         }
-        
+
         initPreparedStatement4GeneChrom();
 
         initHgncGeneMap();
@@ -202,8 +202,18 @@ public class GeneManager {
         allGeneBoundaryLength = 0;
 
         File f = new File(AnnotationLevelFilterCommand.geneBoundaryFile);
-        FileReader fr = new FileReader(f);
-        BufferedReader br = new BufferedReader(fr);
+
+        Reader decoder;
+
+        if (f.getName().endsWith(".gz")) {
+            InputStream fileStream = new FileInputStream(f);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            decoder = new InputStreamReader(gzipStream);
+        } else {
+            decoder = new FileReader(f);
+        }
+
+        BufferedReader br = new BufferedReader(decoder);
 
         String line;
         while ((line = br.readLine()) != null) {
@@ -247,7 +257,7 @@ public class GeneManager {
         }
 
         br.close();
-        fr.close();
+        decoder.close();
 
         if (geneBoundaryList.isEmpty()) {
             ErrorManager.print("--gene-boundary input does not have any valid data.", ErrorManager.INPUT_PARSING);
