@@ -66,26 +66,17 @@ chmod 755 atav/lib/flashpca
 
 ## Run ATAV CLI
 
-#### Require setup
+#### Initial setup
 ```
 conda activate atav-cli
 export ATAV_HOME=$(pwd)/atav/
 
 # if not running on database server then update database connection settings, Ex. replace 127.0.0.1 with ec2-1-1-1-1.compute-1.amazonaws.com (fake)
-vi atav/config/atav.dragen.system.config.properties
-```
+vi $ATAV_HOME/config/atav.dragen.system.config.properties
 
-### Example commands
-
-#### Create output directory
-```
+# create output directory
 mkdir atav_output
 export OUTPUT=atav_output
-```
-
-#### Quick Start
-```
-java -jar $ATAV_HOME/atav_trunk.jar --list-var-geno --sample $ATAV_HOME/data/sample/NA12878.tsv --out $OUTPUT/hello_atav
 ```
 
 #### Create your sample file
@@ -94,6 +85,13 @@ Sex: 1=male, 2=female; Phenotype: 1=control, 2=case
 ```
 # set sample file as environment variable
 export SAMPLE_FILE=PATH_TO_YOUR_SAMPLE_FILE
+```
+
+### Example commands
+
+#### Quick Start
+```
+java -jar $ATAV_HOME/atav_trunk.jar --list-var-geno --sample $ATAV_HOME/data/sample/NA12878.tsv --out $OUTPUT/hello_atav
 ```
 
 #### Sample Pruning
@@ -157,4 +155,4 @@ java -jar $ATAV_HOME/atav_trunk.jar \
 --out $OUTPUT/trio
 ```
 
-Check the [Wiki](http://redmine.igm.cumc.columbia.edu/projects/atav/wiki) for more details.
+More analysis details, check [Collapsing Analysis Workflow](ATAV_COLLAPSING_ANALYSIS_WORKFLOW.md) and [Diagnostic Analysis Workflow](ATAV_DIAGNOSTIC_ANALYSIS_WORKFLOW.md)
