@@ -14,11 +14,11 @@ public class GnomADCommand extends VariantAFCommand {
 
     public static boolean isIncludeGeneMetrics = false;
 
-    public static Set<String> popSet = new HashSet<String>(Arrays.asList("global"));
-    public static float rfTpProbabilitySnv = Data.NO_FILTER;
-    public static float rfTpProbabilityIndel = Data.NO_FILTER;
+    public Set<String> popSet = new HashSet<String>(Arrays.asList("global"));
+    public float rfTpProbabilitySnv = Data.NO_FILTER;
+    public float rfTpProbabilityIndel = Data.NO_FILTER;
 
-    public static boolean isRfTpProbabilityValid(float value, boolean isSnv) {
+    public boolean isRfTpProbabilityValid(float value, boolean isSnv) {
         if (isSnv) {
             return isRfTpProbabilitySnvValid(value);
         } else {
@@ -26,7 +26,7 @@ public class GnomADCommand extends VariantAFCommand {
         }
     }
 
-    private static boolean isRfTpProbabilitySnvValid(float value) {
+    private boolean isRfTpProbabilitySnvValid(float value) {
         if (rfTpProbabilitySnv == Data.NO_FILTER) {
             return true;
         }
@@ -35,7 +35,7 @@ public class GnomADCommand extends VariantAFCommand {
                 || value == Data.FLOAT_NA;
     }
 
-    private static boolean isRfTpProbabilityIndelValid(float value) {
+    private boolean isRfTpProbabilityIndelValid(float value) {
         if (rfTpProbabilityIndel == Data.NO_FILTER) {
             return true;
         }

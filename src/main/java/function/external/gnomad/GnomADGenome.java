@@ -95,7 +95,7 @@ public class GnomADGenome {
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(record, "gnomAD Genome " + GnomADManager.GENOME_POP[i] + "_AF");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADGenomeCommand.popSet.contains(GnomADManager.GENOME_POP[i])) {
+                    && GnomADGenomeCommand.getInstance().popSet.contains(GnomADManager.GENOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
@@ -153,7 +153,7 @@ public class GnomADGenome {
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(rs, GnomADManager.GENOME_POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADGenomeCommand.popSet.contains(GnomADManager.GENOME_POP[i])) {
+                    && GnomADGenomeCommand.getInstance().popSet.contains(GnomADManager.GENOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
@@ -191,7 +191,7 @@ public class GnomADGenome {
 
     public boolean isValid() {
         return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF)
-                && GnomADGenomeCommand.isRfTpProbabilityValid(rf_tp_probability, isSnv);
+                && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 
     public String getVariantId() {

@@ -156,12 +156,12 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--gnomad-exome-pop":
                     checkValuesValid(GnomADManager.EXOME_POP, option);
-                    GnomADExomeCommand.popSet = getSet(option);
+                    GnomADExomeCommand.getInstance().popSet = getSet(option);
                     GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-genome-pop":
                     checkValuesValid(GnomADManager.GENOME_POP, option);
-                    GnomADGenomeCommand.popSet = getSet(option);
+                    GnomADGenomeCommand.getInstance().popSet = getSet(option);
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-exome-af":
@@ -210,22 +210,22 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--gnomad-exome-rf-tp-probability-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADExomeCommand.rfTpProbabilitySnv = getValidFloat(option);
+                    GnomADExomeCommand.getInstance().rfTpProbabilitySnv = getValidFloat(option);
                     GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-exome-rf-tp-probability-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADExomeCommand.rfTpProbabilityIndel = getValidFloat(option);
+                    GnomADExomeCommand.getInstance().rfTpProbabilityIndel = getValidFloat(option);
                     GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-genome-rf-tp-probability-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADGenomeCommand.rfTpProbabilitySnv = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().rfTpProbabilitySnv = getValidFloat(option);
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-genome-rf-tp-probability-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADGenomeCommand.rfTpProbabilityIndel = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().rfTpProbabilityIndel = getValidFloat(option);
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--known-var-only":

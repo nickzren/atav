@@ -96,7 +96,7 @@ public class GnomADExome {
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(record, "gnomAD Exome " + GnomADManager.EXOME_POP[i] + "_AF");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADExomeCommand.popSet.contains(GnomADManager.EXOME_POP[i])) {
+                    && GnomADExomeCommand.getInstance().popSet.contains(GnomADManager.EXOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
@@ -154,7 +154,7 @@ public class GnomADExome {
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(rs, GnomADManager.EXOME_POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADExomeCommand.popSet.contains(GnomADManager.EXOME_POP[i])) {
+                    && GnomADExomeCommand.getInstance().popSet.contains(GnomADManager.EXOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
@@ -193,7 +193,7 @@ public class GnomADExome {
 
     public boolean isValid() {
         return GnomADExomeCommand.getInstance().isAFValid(maxAF, minAF)
-                && GnomADExomeCommand.isRfTpProbabilityValid(rf_tp_probability, isSnv);
+                && GnomADExomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv);
     }
 
     public String getVariantId() {
