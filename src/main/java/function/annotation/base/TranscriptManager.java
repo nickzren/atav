@@ -149,6 +149,15 @@ public class TranscriptManager {
         try {
             HashMap<String, StringJoiner> chrAllTranscriptMap = new HashMap<>();
 
+            for (String chr : RegionManager.ALL_CHR) {
+                Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
+
+                // create table
+                stmt.executeUpdate("CREATE TEMPORARY TABLE " + TMP_TRANSCRIPT_TABLE + chr + "("
+                        + "input_transcript_stable_id int(11) NOT NULL, "
+                        + "PRIMARY KEY (input_transcript_stable_id)) ENGINE=TokuDB;");
+            }
+
             for (String chr : RegionManager.getChrList()) {
                 for (int id : allTranscriptIdMap.getOrDefault(chr, new HashSet<>())) {
                     chrAllTranscriptMap.putIfAbsent(chr, new StringJoiner(","));
@@ -157,11 +166,6 @@ public class TranscriptManager {
 
                 if (chrAllTranscriptMap.getOrDefault(chr, new StringJoiner(",")).length() > 0) {
                     Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
-
-                    // create table
-                    stmt.executeUpdate("CREATE TEMPORARY TABLE " + TMP_TRANSCRIPT_TABLE + chr + "("
-                            + "input_transcript_stable_id int(11) NOT NULL, "
-                            + "PRIMARY KEY (input_transcript_stable_id)) ENGINE=TokuDB;");
 
                     // insert values
                     stmt.executeUpdate("INSERT IGNORE INTO " + TMP_TRANSCRIPT_TABLE + chr
@@ -233,7 +237,7 @@ public class TranscriptManager {
 
         return true;
     }
-    
+
     public static boolean isCanonicalTranscript(String chr, int id) {
         HashSet<Integer> idSet = canonicalTranscriptIdMap.get(chr);
 
