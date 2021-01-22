@@ -18,7 +18,6 @@ import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExAC;
 import function.external.exac.ExACCommand;
-import function.external.exac.ExACManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gnomad.GnomADExome;
@@ -255,12 +254,11 @@ public class AnnotatedVariant extends Variant {
             if (!geneList.contains(annotation.geneName)) {
                 geneList.add(annotation.geneName);
             }
-
-            if (!canonicalEffectIdList.contains(effectID)
-                    && AnnotationLevelFilterCommand.isOutputCanonicalTranscriptEffect
-                    && TranscriptManager.isCanonicalTranscript(chrStr, stableId)) {
-                canonicalEffectIdList.add(effectID);
-            }
+            
+            if (!canonicalEffectIdList.contains(annotation.effectID)
+                    && TranscriptManager.isCanonicalTranscript(chrStr, annotation.stableId)) {
+                canonicalEffectIdList.add(annotation.effectID);
+            } 
         }
     }
 
@@ -400,9 +398,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(getStableId(stableId));
         sj.add(Boolean.toString(hasCCDS));
         sj.add(effect);
-        if (AnnotationLevelFilterCommand.isOutputCanonicalTranscriptEffect) {
-            sj.add(getCanonicalEffect());
-        }
+        sj.add(getCanonicalEffect());
         sj.add(HGVS_c);
         sj.add(HGVS_p);
         sj.add(FormatManager.getFloat(polyphenHumdiv));
@@ -425,10 +421,6 @@ public class AnnotatedVariant extends Variant {
             sj.add(EffectManager.getEffectById(id));
         }
 
-        if (sj.toString().contains("|")) {
-            System.out.println(sj.toString());
-        }
-
         return sj.setEmptyValue(Data.STRING_NA).toString();
     }
 
@@ -437,7 +429,7 @@ public class AnnotatedVariant extends Variant {
             if (VCFCommand.isList) {
                 return Data.VCF_NA;
             }
-            
+
             return Data.STRING_NA;
         }
 

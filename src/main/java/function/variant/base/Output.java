@@ -92,9 +92,7 @@ public class Output {
         sj.add("Transcript Stable Id");
         sj.add("Has CCDS Transcript");
         sj.add("Effect");
-        if(AnnotationLevelFilterCommand.isOutputCanonicalTranscriptEffect) {
-            sj.add("Canonical Transcript Effect");
-        }
+        sj.add("Canonical Transcript Effect");
         sj.add("HGVS_c");
         sj.add("HGVS_p");
         sj.add("Polyphen Humdiv Score");
