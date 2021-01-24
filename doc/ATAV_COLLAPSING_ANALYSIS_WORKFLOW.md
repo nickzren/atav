@@ -1,6 +1,6 @@
 # ATAV Collapsing Analysis Workflow
 
-The instruction of ATAV collapsing analysis workflow.
+Commands to run a collapsing analysis in ATAV.
 
 ## Requirement
 * [ATAV CLI](https://github.com/nickzren/atav/blob/master/doc/AWS_EC2_SETUP.md) and [ATAV Database](https://github.com/nickzren/atav-database/tree/main/ec2) setup on AWS EC2.
@@ -21,23 +21,27 @@ export OUTPUT=atav_output
 ```
 
 #### Create your sample file
+After selecting the cases and controls to be used in the analysis, create a ped file following this format: <br>
 Sample file format: Family ID, Individual ID, Paternal ID, Maternal ID, Sex, Phenotype, Sample Type, Capture Kit (tab-delimited)
 1. Family ID: specify a family ID or use the same value as Individual ID to indicate this sample
  is being used as a non family sample
 2. Individual ID: sample name
-3. Paternal ID: sample name or 0 indicate not available
+3. Paternal ID: sample name or 0 if not using.
 4. Maternal ID: sample name or 0 indicate not available
-5. Sex: 1=male,2=female
-6. Phenotype: 1=control, 2=case
-7. Sample Type: exome or genome
-8. Capture Kit: Genome_v1
+5. Sex: 1 for male, 2 for female
+6. Phenotype: 1 for control, 2 for case
+7. Sample Type: Exome or genome
+8. Capture Kit: The sequencing capture kit.
 ```
 # set sample file as environment variable
 export SAMPLE_FILE=PATH_TO_YOUR_SAMPLE_FILE
 ```
 
-#### Sample Pruning
-To run atav generate ped map file function, then atav will run king and flashpca downstream to remove related samples and ethnicity outliers from your input sample list.
+#### Cohort Pruning
+We remove all related samples from our cohort.<br>
+The "--ped-map" option creates the relevant ped file.<br>
+"--kinship" triggers KING to find relationships and then [a python script](https://github.com/igm-team/atav/blob/11f304bf337689ba454467bcb109018f2d4ee311/lib/run_kinship.py) to remove related individuals.<br>
+Finally, "--flashpca" runs PCA to help with ancestry pruning later.
 ```
 java -jar $ATAV_HOME/atav_trunk.jar
 --ped-map \
@@ -49,8 +53,11 @@ java -jar $ATAV_HOME/atav_trunk.jar
 --out $OUTPUT/pedmap
 ```
 
+#### Ancestry Pruning
+Users should follow the instructions in [the IGM's script to create ancestry clusters ](https://github.com/gpovysil/LouvainCMH/blob/master/lclust_Flash.R) to finalize their sample files for each ancestry cluster.
+
 #### Site Coverage Harmonization
-To run atav site coverage comparison function to remove noisy nucleotide sites (differential coverage between the case and control cohorts).
+"--site-coverage-comparison" corrects differential coverage between the case and control cohorts by removing any sites that have greater than 11 percent difference in coverage between cases and controls.
 ```
 java -jar $ATAV_HOME/atav_trunk.jar \
 --site-coverage-comparison \
@@ -59,6 +66,14 @@ java -jar $ATAV_HOME/atav_trunk.jar \
 --sample $SAMPLE_FILE \
 --out $OUTPUT/site_coverage_comparison
 ```
+The outputs from this command will be used in collapsing later. Set the following variables
+```
+GENE_BOUNDARIES=$PROJECT/Coverage/*_Coverage_site.clean.txt
+COVERAGE_SUMMARY=$PROJECT/Coverage/*_Coverage_coverage.summary.csv
+```
+
+#### Unfiltered Collapsing
+Collapsing models place filters upon the variants selected. In order to quickly rerun collapsing models later, we first run an unfiltered model to get all relevant variants. We later can run any specific models of interest.
 
 #### Synonymous Collapsing Analysis
 ```
