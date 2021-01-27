@@ -4,6 +4,8 @@
 
 ![img](img/atav_platform_framework_overview.png)
 
+#### ATAV is fully deployable in AWS, click [here](https://github.com/nickzren/atav/wiki/AWS-Setup) for details.
+
 #### This repository constains code and data primarily for ATAV command line tool. Click to check repository for [ATAV Database](https://github.com/nickzren/atav-database) and [ATAV Data Broswer](https://github.com/nickzren/atavdb).
 
 #### Any questions, feel free contact Nick Ren (<a href="mailto:z.ren@columbia.edu">z.ren@columbia.edu</a>)
@@ -14,7 +16,7 @@ ATAV command line tool is the interface to ATAV database. Written in java, ATAV 
 
 The modularized ATAV framework makes it extensible to continuously develop new functions that operate on sequencing/variant data sets. Critical to data integrity, all ATAV analyses allow an auditable log of software and database version, filter parameters adopted, the input sample lists used in the specific run and the runtime logs that ensure full reproducibility.  
 
-Check the [Wiki](http://redmine.igm.cumc.columbia.edu/projects/atav/wiki) for more details.
+Check the [User's Guide](http://redmine.igm.cumc.columbia.edu/projects/atav/wiki) for more details.
 
 ## Citation
 
