@@ -2,7 +2,7 @@
 
 ### ATAV is a comprehensive platform for population-scale genomic analyses including the database, the command line tool and the data browser.
 
-![Image](image/atav_platform_framework_overview.png)
+![img](img/atav_platform_framework_overview.png)
 
 #### This repository constains code and data primarily for ATAV command line tool. Click to check repository for [ATAV Database](https://github.com/nickzren/atav-database) and [ATAV Data Broswer](https://github.com/nickzren/atavdb).
 
