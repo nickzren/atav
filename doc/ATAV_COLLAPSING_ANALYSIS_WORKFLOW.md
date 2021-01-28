@@ -2,18 +2,6 @@
 
 Commands to run a collapsing analysis in ATAV.
 
-### Directory Structure
-Our standard folder layout has the following structure at the end:
-```
-atav_output # Parent directory for this analysis.
-├──Pruning # The pedmap output. Contains kinship pruning and principal component information.
-├──Coverage_MaxPercentDiff_07_Cluster0 # Site harmonization.
-└──Collapsing # The main analysis results.
-   ├──Unfiltered # An all-encompassing variant search, that can be parsed more easily later.
-   ├──dominantRareEnsemble # An example collapsing model.
-   └── ... # Other collapsing models.
-```
-
 ### Requirements
 * [ATAV CLI](https://github.com/nickzren/atav/blob/master/doc/AWS_EC2_SETUP.md) and [ATAV Database](https://github.com/nickzren/atav-database/tree/main/ec2) set up on AWS EC2.
 
@@ -30,6 +18,18 @@ export ATAV_HOME=$(pwd)/atav/
 # Create an output directory; rename to your specific project.
 mkdir atav_output
 export PROJECT=atav_output
+```
+
+### Directory Structure
+Our standard folder layout has the following structure at the end:
+```
+atav_output # Parent directory for this analysis.
+├──Pruning # The pedmap output. Contains kinship pruning and principal component information.
+├──Coverage_MaxPercentDiff_07 # Site harmonization.
+└──Collapsing # The main analysis results.
+   ├──Unfiltered # An all-encompassing variant search, that can be parsed more easily later.
+   ├──dominantRareEnsemble # An example collapsing model.
+   └── ... # Other collapsing models.
 ```
 
 #### Prepare sample file
@@ -54,30 +54,28 @@ export INITIAL_SAMPLE_FILE=PATH_TO_YOUR_SAMPLE_FILE
 This step is run on the full cohort, before clustering.<br>
 The `--ped-map` option creates the full ped file, which is required for the next steps.<br>
 `--kinship` triggers KING to find relationships and then [a python script](https://github.com/igm-team/atav/blob/11f304bf337689ba454467bcb109018f2d4ee311/lib/run_kinship.py) to remove related individuals.<br>
-Finally, `--flashpca` runs PCA to be used in the following step for ancestry clustering.
+Finally, `--flashpca-plink-pruning` runs PCA and removes outliers.
 ```
 java -jar $ATAV_HOME/atav_trunk.jar
 --ped-map \
 --kinship \
---flashpca \
+--flashpca-plink-pruning \
 --min-covered-case-percentage 95 --min-covered-ctrl-percentage 95 --min-coverage 10 \
 --variant atav/data/variant/informative_snvs.ld_pruned.txt.gz \
 --sample $INITIAL_SAMPLE_FILE \
 --out $PROJECT/Pruning
 ```
 
-The final output is the \*flashpca_pruned_sample_file text file. This should be inspected,<br>
-along with the PCA plots, to ensure that cases and controls are well-matched.<br>
-If the cases primarily have the same ancestry, for example, then perhaps consider selecting <br>
-the cluster of cases and controls that corresponds to that group.<br>
+The final output is the \*flashpca_pruned_sample_file text file. This should be inspected, along with the PCA plots, to ensure that cases and controls are well-matched.<br>
+If the cases primarily have the same ancestry, for example, then perhaps consider selecting the cluster of cases and controls that corresponds to that group.<br>
 (ATAV has clustering scripts that automate this that are currently in production and will be released soon.)<br>
 The path to the file should be saved as a variable. For example:
 ```
-PRUNED_SAMPLES=$PROJECT/Pruning/*Pruning_flashpca_pruned_sample_file.txt
+PRUNED_SAMPLES=$PROJECT/Pruning/*flashpca_pruned_sample_file.txt
 ```
 
 #### Site Coverage Harmonization
-`--site-coverage-comparison` corrects differential coverage between the case and control cohorts by removing any sites that have greater than 11 percent difference in coverage between cases and controls.<br>
+`--site-coverage-comparison` corrects differential coverage between the case and control cohorts by removing any sites that have greater than 7 percent difference in coverage between cases and controls.<br>
 It starts with sites in the CCDS, and then filters them to produce a final gene boundaries file to be used in collapsing.<br>
 First, save the coverage folder as a variable:
 ```
@@ -94,8 +92,8 @@ java -jar $ATAV_HOME/atav_trunk.jar \
 ```
 The outputs from this command will be used in collapsing later. Set the following variables
 ```
-GENE_BOUNDARIES=$COVERAGE_FOLDER/*_Coverage_site.clean.txt
-COVERAGE_SUMMARY=$COVERAGE_FOLDER/*_Coverage_coverage.summary.csv
+GENE_BOUNDARIES=$COVERAGE_FOLDER/*_site.clean.txt
+COVERAGE_SUMMARY=$COVERAGE_FOLDER/*_coverage.summary.csv
 ```
 
 ### Variables for Variant Searches
@@ -114,7 +112,7 @@ MISSENSE_ONLY="MODERATE:missense_variant+splice_region_variant,MODERATE:missense
 
 INCLUDES="--include-gnomad-genome --include-gnomad-exome --include-exac --include-mtr --include-gerp --include-rvis --include-sub-rvis --include-limbr --include-revel --include-trap --include-discovehr --include-known-var --include-primate-ai --include-ccr --include-loftee --include-gnomad-gene-metrics --include-pext --include-mpc --flag-repeat-region --include-syn-rvis --include-genome-asia --include-iranome --include-gme --include-top-med" 
 
-QC="--exclude-artifacts --filter pass,likely,intermediate --exclude-evs-qc-failed --ccds-only --min-coverage 10 --include-qc-missing --qd 5 --qual 50 --mq 40 --gq 20 --snv-fs 60 --indel-fs 200 --snv-sor 3 --indel-sor 10 --rprs -3 --mqrs -10 --het-percent-alt-read 0.3-1"
+QC="--exclude-artifacts --filter pass,likely,intermediate --exclude-evs-qc-failed --ccds-only --min-coverage 10 --include-qc-missing --qd 5 --qual 50 --mq 40 --gq 20 --snv-fs 60 --indel-fs 200 --snv-sor 3 --indel-sor 10 --rprs -3 --mqrs -10 --het-percent-alt-read 0.3-1 --gnomad-genome-rf-tp-probability-snv 0.01 --gnomad-genome-rf-tp-probability-indel 0.02 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 "
 ```
 
 #### Unfiltered Collapsing
@@ -132,26 +130,20 @@ Below are a few recommended models; the [options in the ATAV wiki](https://redmi
 ```
 UNFILTERED_GENOTYPES_FILE=$COLLAPSING_FOLDER/Unfiltered/*genotypes.csv
 ## Dominant Syn
-java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $SYN_EFFECTS --min-exac-vqslod-snv 5000 --min-exac-vqslod-indel 5000 --gnomad-genome-rf-tp-probability-snv 0.01 --gnomad-genome-rf-tp-probability-indel 0.02 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-genome-pop global --gnomad-genome-af 0 --gnomad-exome-pop global --gnomad-exome-af 0 --exac-pop global --exac-af 0 --loo-af 0.0005 --max-qc-fail-sample 0 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantSynonymous/
-sleep 2
+java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $SYN_EFFECTS --min-exac-vqslod-snv 5000 --min-exac-vqslod-indel 5000 --gnomad-genome-pop global --gnomad-genome-af 0 --gnomad-exome-pop global --gnomad-exome-af 0 --exac-pop global --exac-af 0 --loo-af 0.0005 --max-qc-fail-sample 0 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantSynonymous/
 
 ### Dominant Ultra-rare
-java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $FUNCTIONAL_EFFECTS --polyphen probably --min-exac-vqslod-snv 5000 --min-exac-vqslod-indel 5000 --gnomad-genome-rf-tp-probability-snv 0.01 --gnomad-genome-rf-tp-probability-indel 0.02 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-genome-pop global --gnomad-genome-af 0 --gnomad-exome-pop global --gnomad-exome-af 0 --exac-pop global --exac-af 0 --loo-af 0.0005 --max-qc-fail-sample 0 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantUltraRare_Polyphen/
-sleep 2
+java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $FUNCTIONAL_EFFECTS --polyphen probably --min-exac-vqslod-snv 5000 --min-exac-vqslod-indel 5000 --gnomad-genome-pop global --gnomad-genome-af 0 --gnomad-exome-pop global --gnomad-exome-af 0 --exac-pop global --exac-af 0 --loo-af 0.0005 --max-qc-fail-sample 0 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantUltraRare_Polyphen/
 
 ### Dominant PTV with LOFTEE
-java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $LOF_EFFECTS --exclude-false-loftee --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-genome-rf-tp-probability-snv 0.01 --gnomad-genome-rf-tp-probability-indel 0.02 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-genome-pop global --gnomad-genome-af 0.001 --gnomad-exome-pop afr,amr,asj,eas,sas,fin,nfe --gnomad-exome-af 0.001 --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantPTV_LOFTEE/
-sleep 2
+java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $LOF_EFFECTS --exclude-false-loftee --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-genome-pop global --gnomad-genome-af 0.001 --gnomad-exome-pop afr,amr,asj,eas,sas,fin,nfe --gnomad-exome-af 0.001 --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantPTV_LOFTEE/
 
 ### Dominant Ultra-rare Ensemble
-java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $FUNCTIONAL_EFFECTS --polyphen probably --min-primate-ai 0.8 --min-revel-score 0.5 --ensemble-missense --min-exac-vqslod-snv 5000 --min-exac-vqslod-indel 5000 --gnomad-genome-rf-tp-probability-snv 0.01 --gnomad-genome-rf-tp-probability-indel 0.02 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-genome-pop global --gnomad-genome-af 0 --gnomad-exome-pop global --gnomad-exome-af 0 --exac-pop global --exac-af 0 --loo-af 0.0005 --max-qc-fail-sample 0 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantUltraRareEnsemble/
-sleep 2
+java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $FUNCTIONAL_EFFECTS --polyphen probably --min-primate-ai 0.8 --min-revel-score 0.5 --ensemble-missense --min-exac-vqslod-snv 5000 --min-exac-vqslod-indel 5000 --gnomad-genome-pop global --gnomad-genome-af 0 --gnomad-exome-pop global --gnomad-exome-af 0 --exac-pop global --exac-af 0 --loo-af 0.0005 --max-qc-fail-sample 0 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantUltraRareEnsemble/
 
 ### Dominant Rare Ensemble
-java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $FUNCTIONAL_EFFECTS --polyphen probably --min-primate-ai 0.8 --min-revel-score 0.5 --ensemble-missense --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-genome-rf-tp-probability-snv 0.01 --gnomad-genome-rf-tp-probability-indel 0.02 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-genome-pop global --gnomad-genome-af 0.0005 --gnomad-exome-pop afr,amr,asj,eas,sas,fin,nfe --gnomad-exome-af 0.0005 --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.0005 --loo-af 0.001 --max-qc-fail-sample 2 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantRareEnsemble/
-sleep 2
+java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $FUNCTIONAL_EFFECTS --polyphen probably --min-primate-ai 0.8 --min-revel-score 0.5 --ensemble-missense --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-genome-pop global --gnomad-genome-af 0.0005 --gnomad-exome-pop afr,amr,asj,eas,sas,fin,nfe --gnomad-exome-af 0.0005 --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.0005 --loo-af 0.001 --max-qc-fail-sample 2 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantRareEnsemble/
 
 ### Dominant Flexible
-java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $FUNCTIONAL_EFFECTS --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-genome-rf-tp-probability-snv 0.01 --gnomad-genome-rf-tp-probability-indel 0.02 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-genome-pop global --gnomad-genome-af 0.001 --gnomad-exome-pop afr,amr,asj,eas,sas,fin,nfe --gnomad-exome-af 0.001 --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantFlexible_MAF0.1_NoFilter/
-sleep 2
+java -jar $ATAV_HOME/atav_trunk.jar --collapsing-lite --mann-whitney-test --genotype $UNFILTERED_GENOTYPES_FILE --effect $FUNCTIONAL_EFFECTS --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-genome-pop global --gnomad-genome-af 0.001 --gnomad-exome-pop afr,amr,asj,eas,sas,fin,nfe --gnomad-exome-af 0.001 --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --sample $PRUNED_SAMPLES --out $COLLAPSING_FOLDER/dominantFlexible_MAF0.1_NoFilter/
 ```
