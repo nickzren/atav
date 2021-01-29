@@ -5,12 +5,12 @@ Commands to run a collapsing analysis in ATAV.
 ### Requirements
 * [ATAV CLI](https://github.com/nickzren/atav/blob/master/doc/AWS_EC2_SETUP.md) and [ATAV Database](https://github.com/nickzren/atav-database/tree/main/ec2) set up on AWS EC2.
 
-#### Initial setup
+### Initial setup
 ```
 conda activate atav-cli
 export ATAV_HOME=$(pwd)/atav/
 
-# If you're not running on database server, update the database connection settings.
+# If you're not running on a database server, update the database connection settings.
 # For example, replace 127.0.0.1 with your server address (should look like
 # ec2-1-1-1-1.compute-1.amazonaws.com) in this file:
 # vi $ATAV_HOME/config/atav.dragen.system.config.properties
@@ -51,7 +51,6 @@ export INITIAL_SAMPLE_FILE=PATH_TO_YOUR_SAMPLE_FILE
 ```
 
 #### Cohort Pruning
-This step is run on the full cohort, before clustering.<br>
 The `--ped-map` option creates the full ped file, which is required for the next steps.<br>
 `--kinship` triggers KING to find relationships and then [a python script](https://github.com/igm-team/atav/blob/11f304bf337689ba454467bcb109018f2d4ee311/lib/run_kinship.py) to remove related individuals.<br>
 Finally, `--flashpca-plink-pruning` runs PCA and removes outliers.
