@@ -1,6 +1,6 @@
 # ATAV Command Line Tool AWS EC2
 
-The instruction of AWS EC2 setup for ATAV command line tool.
+Instruction of AWS EC2 setup for ATAV command line tool.
 
 ## Requirement
 * Setup ATAV database on AWS EC2, check [here](https://github.com/nickzren/atav-database/tree/main/ec2) for details. (Load testing data and restore externaldb data)
@@ -155,4 +155,4 @@ java -jar $ATAV_HOME/atav_trunk.jar \
 --out $OUTPUT/trio
 ```
 
-More analysis details, check [Collapsing Analysis Workflow](ATAV_COLLAPSING_ANALYSIS_WORKFLOW.md) and [Diagnostic Analysis Workflow](ATAV_DIAGNOSTIC_ANALYSIS_WORKFLOW.md)
+For more analysis details, check [Collapsing Analysis Workflow](ATAV_COLLAPSING_ANALYSIS_WORKFLOW.md) and [Diagnostic Analysis Workflow](ATAV_DIAGNOSTIC_ANALYSIS_WORKFLOW.md)
