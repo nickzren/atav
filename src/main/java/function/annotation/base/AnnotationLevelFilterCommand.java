@@ -24,6 +24,7 @@ public class AnnotationLevelFilterCommand {
     public static String polyphenHumdiv = Data.NO_FILTER_STR;
     public static String polyphenHumvar = Data.NO_FILTER_STR;
     public static boolean ensembleMissense = false;
+    public static boolean ensembleMissense2 = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -63,6 +64,9 @@ public class AnnotationLevelFilterCommand {
                 case "--ensemble-missense":
                     ensembleMissense = true;
                     break;
+                case "--ensemble-missense-2":
+                    ensembleMissense2 = true;
+                    break;
                 default:
                     continue;
             }
@@ -74,7 +78,7 @@ public class AnnotationLevelFilterCommand {
     }
 
     private static void checkEnsembleMissenseValid() {
-        if (ensembleMissense) {
+        if (ensembleMissense || ensembleMissense2) {
             if (polyphenHumdiv.equals(Data.NO_FILTER_STR)
                     || RevelCommand.minRevel == Data.NO_FILTER
                     || PrimateAICommand.minPrimateAI == Data.NO_FILTER) {
