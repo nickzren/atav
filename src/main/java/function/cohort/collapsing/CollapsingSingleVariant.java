@@ -61,6 +61,10 @@ public class CollapsingSingleVariant extends CollapsingBase {
         if (CollapsingCommand.isMannWhitneyTest) {
             ThirdPartyToolManager.runMannWhitneyTest(genotypesFilePath);
         }
+
+        if (CommonCommand.gzip) {
+            ThirdPartyToolManager.gzipFile(genotypesFilePath);
+        }
     }
 
     @Override

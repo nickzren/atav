@@ -50,6 +50,10 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         if (VarGenoCommand.isMannWhitneyTest) {
             ThirdPartyToolManager.runMannWhitneyTest(genotypesFilePath);
         }
+        
+        if (CommonCommand.gzip) {
+            ThirdPartyToolManager.gzipFile(genotypesFilePath);
+        }
     }
 
     @Override

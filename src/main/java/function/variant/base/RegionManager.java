@@ -15,32 +15,34 @@ import java.util.regex.Pattern;
  */
 public class RegionManager {
 
+    public static String regionInput = ""; // either a region or a region file path.
+
     private static ArrayList<Region> regionList = new ArrayList<>();
     private static ArrayList<String> chrList = new ArrayList<>();
     private static boolean isUsed = false;
 
     public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
         "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT"};
-    
+
     public static void init() {
         if (CommonCommand.isNonDBAnalysis) {
             return;
         }
 
-        if (CommonCommand.regionInput.isEmpty()) {
+        if (regionInput.isEmpty()) {
             initChrRegionList(ALL_CHR);
         } else {
             isUsed = true;
 
-            File f = new File(CommonCommand.regionInput);
+            File f = new File(regionInput);
 
-            if (CommonCommand.regionInput.equals("all")) {
+            if (regionInput.equals("all")) {
                 initChrRegionList(ALL_CHR);
             } else if (f.isFile()) {
                 initMultiChrRegionList(f);
             } else {
-                CommonCommand.regionInput = CommonCommand.regionInput.toLowerCase();
-                initChrRegionList(CommonCommand.regionInput.split(","));
+                regionInput = regionInput.toLowerCase();
+                initChrRegionList(regionInput.split(","));
             }
         }
 
@@ -185,10 +187,10 @@ public class RegionManager {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     public static void checkChrValid(String chr) {
         if (!isChrValid(chr)) {
             ErrorManager.print("Invalid chr: " + chr, ErrorManager.INPUT_PARSING);
@@ -217,15 +219,15 @@ public class RegionManager {
 
     /*
         return final chr list based on input
-    */
+     */
     public static ArrayList<String> getChrList() {
         return chrList;
     }
-    
+
     public static boolean isChrContained(String chr) {
         return chrList.contains(chr);
     }
-    
+
     public static boolean isRegionInputValid(String value) {
         if (Pattern.matches("^[chrxymtCHRXYMT0-9\\:\\-\\,]+$", value)) {
             return true;

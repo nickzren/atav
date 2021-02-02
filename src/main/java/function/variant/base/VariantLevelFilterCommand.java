@@ -72,7 +72,7 @@ public class VariantLevelFilterCommand {
             switch (option.getName()) {
                 case "--region":
                     if (RegionManager.isRegionInputValid(option.getValue())) {
-                        CommonCommand.regionInput = option.getValue();
+                        RegionManager.regionInput = option.getValue();
                     } else {
                         outputInvalidOptionValue(option);
                     }
