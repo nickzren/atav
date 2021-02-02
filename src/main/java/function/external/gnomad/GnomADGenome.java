@@ -191,7 +191,8 @@ public class GnomADGenome {
 
     public boolean isValid() {
         return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF)
-                && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv);
+                && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
+                && GnomADGenomeCommand.getInstance().isFilterPass(filter);
     }
 
     public String getVariantId() {

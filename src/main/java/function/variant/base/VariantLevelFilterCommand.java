@@ -228,6 +228,14 @@ public class VariantLevelFilterCommand {
                     GnomADGenomeCommand.getInstance().rfTpProbabilityIndel = getValidFloat(option);
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
+                case "--gnomad-exome-filter-pass":
+                    GnomADExomeCommand.getInstance().isFilterPass = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--gnomad-genome-filter-pass":
+                    GnomADGenomeCommand.getInstance().isFilterPass = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
                 case "--known-var-only":
                     KnownVarCommand.isKnownVarOnly = true;
                     KnownVarCommand.isInclude = true;

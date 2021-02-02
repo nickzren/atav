@@ -17,6 +17,7 @@ public class GnomADCommand extends VariantAFCommand {
     public Set<String> popSet = new HashSet<String>(Arrays.asList("global"));
     public float rfTpProbabilitySnv = Data.NO_FILTER;
     public float rfTpProbabilityIndel = Data.NO_FILTER;
+    public boolean isFilterPass = false;
 
     public boolean isRfTpProbabilityValid(float value, boolean isSnv) {
         if (isSnv) {
@@ -42,5 +43,13 @@ public class GnomADCommand extends VariantAFCommand {
 
         return value >= rfTpProbabilityIndel
                 || value == Data.FLOAT_NA;
+    }
+
+    public boolean isFilterPass(String filter) {
+        if (!isFilterPass) {
+            return true;
+        }
+
+        return filter.equals("PASS") || filter.equals(Data.STRING_NA);
     }
 }
