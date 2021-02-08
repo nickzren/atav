@@ -92,6 +92,7 @@ public class GnomADExome {
 
         maxAF = Float.MIN_VALUE;
         minAF = Float.MAX_VALUE;
+        GnomADExomeCommand.getInstance().resetPopAFValid();
         af = new float[GnomADManager.EXOME_POP.length];
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(record, "gnomAD Exome " + GnomADManager.EXOME_POP[i] + "_AF");
@@ -100,6 +101,9 @@ public class GnomADExome {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
+            
+            // --max-gnomad-exome-pop-af or --max-gnomad-exome-pop-maf
+            GnomADExomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
     }
 
@@ -151,6 +155,7 @@ public class GnomADExome {
 
         maxAF = Float.MIN_VALUE;
         minAF = Float.MAX_VALUE;
+        GnomADExomeCommand.getInstance().resetPopAFValid();
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(rs, GnomADManager.EXOME_POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
@@ -158,6 +163,9 @@ public class GnomADExome {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
+
+            // --max-gnomad-exome-pop-af or --max-gnomad-exome-pop-maf
+            GnomADExomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
 
     }
@@ -189,12 +197,15 @@ public class GnomADExome {
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             af[i] = value;
         }
+        
+        GnomADExomeCommand.getInstance().resetPopAFValid();
     }
 
-    public boolean isValid() {        
+    public boolean isValid() {
         return GnomADExomeCommand.getInstance().isAFValid(maxAF, minAF)
                 && GnomADExomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
-                && GnomADExomeCommand.getInstance().isFilterPass(filter);
+                && GnomADExomeCommand.getInstance().isFilterPass(filter)
+                && GnomADExomeCommand.getInstance().isPopAFValid();
     }
 
     public String getVariantId() {

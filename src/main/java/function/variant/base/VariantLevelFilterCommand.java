@@ -186,6 +186,16 @@ public class VariantLevelFilterCommand {
                     GnomADExomeCommand.getInstance().minMAF = getValidFloat(option);
                     GnomADExomeCommand.getInstance().isInclude = true;
                     break;
+                case "--max-gnomad-exome-pop-af":
+                    GnomADExomeCommand.getInstance().maxPopAFStr = option.getValue();
+                    GnomADExomeCommand.getInstance().initMaxPopAF();
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-gnomad-exome-pop-maf":
+                    GnomADExomeCommand.getInstance().maxPopMAFStr = option.getValue();
+                    GnomADExomeCommand.getInstance().initMaxPopMAF();
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
                 case "--gnomad-genome-af":
                 case "--max-gnomad-genome-af":
                     checkValueValid(1, 0, option);
@@ -206,6 +216,16 @@ public class VariantLevelFilterCommand {
                 case "--min-gnomad-genome-maf":
                     checkValueValid(0.5, 0, option);
                     GnomADGenomeCommand.getInstance().minMAF = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-gnomad-genome-pop-af":
+                    GnomADGenomeCommand.getInstance().maxPopAFStr = option.getValue();
+                    GnomADGenomeCommand.getInstance().initMaxPopAF();
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-gnomad-genome-pop-maf":
+                    GnomADGenomeCommand.getInstance().maxPopMAFStr = option.getValue();
+                    GnomADGenomeCommand.getInstance().initMaxPopMAF();
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-exome-rf-tp-probability-snv":

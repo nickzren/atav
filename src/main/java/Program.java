@@ -98,7 +98,6 @@ import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
 import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenomeCommand;
-import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;

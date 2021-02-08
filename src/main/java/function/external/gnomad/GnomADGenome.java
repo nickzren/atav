@@ -91,6 +91,7 @@ public class GnomADGenome {
 
         maxAF = Float.MIN_VALUE;
         minAF = Float.MAX_VALUE;
+        GnomADGenomeCommand.getInstance().resetPopAFValid();
         af = new float[GnomADManager.GENOME_POP.length];
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(record, "gnomAD Genome " + GnomADManager.GENOME_POP[i] + "_AF");
@@ -99,6 +100,9 @@ public class GnomADGenome {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
+            
+            // --max-gnomad-genome-pop-af or --max-gnomad-genome-pop-maf
+            GnomADGenomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
     }
 
@@ -150,6 +154,7 @@ public class GnomADGenome {
 
         maxAF = Float.MIN_VALUE;
         minAF = Float.MAX_VALUE;
+        GnomADGenomeCommand.getInstance().resetPopAFValid();
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(rs, GnomADManager.GENOME_POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
@@ -157,6 +162,9 @@ public class GnomADGenome {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
+            
+            // --max-gnomad-genome-pop-af or --max-gnomad-genome-pop-maf
+            GnomADGenomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
     }
 
@@ -187,12 +195,15 @@ public class GnomADGenome {
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = value;
         }
+        
+        GnomADGenomeCommand.getInstance().resetPopAFValid();
     }
 
     public boolean isValid() {
         return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF)
                 && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
-                && GnomADGenomeCommand.getInstance().isFilterPass(filter);
+                && GnomADGenomeCommand.getInstance().isFilterPass(filter)
+                && GnomADGenomeCommand.getInstance().isPopAFValid();
     }
 
     public String getVariantId() {

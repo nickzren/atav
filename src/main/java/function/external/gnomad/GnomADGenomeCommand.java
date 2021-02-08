@@ -14,4 +14,12 @@ public class GnomADGenomeCommand extends GnomADCommand {
 
         return single_instance;
     }
+    
+    public void initMaxPopAF() {
+        initMaxPopAF(GnomADManager.GENOME_POP);
+    }
+    
+    public void initMaxPopMAF() {
+        initMaxPopMAF(GnomADManager.GENOME_POP);
+    }
 }
