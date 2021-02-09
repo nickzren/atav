@@ -40,7 +40,6 @@ import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidFloat;
 import utils.CommandOption;
-import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
 import static utils.CommandManager.getNonEmptyValue;
 import static utils.CommandManager.outputInvalidOptionValue;
@@ -71,6 +70,13 @@ public class VariantLevelFilterCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
+                case "--chromosome":
+                    if (RegionManager.isChrInputValid(option.getValue())) {
+                        RegionManager.chrInput = option.getValue();
+                    } else {
+                        outputInvalidOptionValue(option);
+                    }
+                    break;
                 case "--region":
                     if (RegionManager.isRegionInputValid(option.getValue())) {
                         RegionManager.regionInput = option.getValue();

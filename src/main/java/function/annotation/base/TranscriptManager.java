@@ -137,8 +137,7 @@ public class TranscriptManager {
             }
 
             // reset chr
-            RegionManager.clear();
-            RegionManager.initChrRegionList(transcriptBoundaryIdMap.keySet().toArray(new String[transcriptBoundaryIdMap.keySet().size()]));
+            RegionManager.initOrResetChrRegionList(transcriptBoundaryIdMap.keySet().toArray(new String[transcriptBoundaryIdMap.keySet().size()]));
             RegionManager.sortRegionList();
         } catch (Exception ex) {
             ErrorManager.send(ex);

@@ -299,8 +299,7 @@ public class GeneManager {
                 }
             });
 
-            RegionManager.clear();
-            RegionManager.initChrRegionList(chrAllGeneMap.keySet().toArray(new String[chrAllGeneMap.keySet().size()]));
+            RegionManager.initOrResetChrRegionList(chrAllGeneMap.keySet().toArray(new String[chrAllGeneMap.keySet().size()]));
             RegionManager.sortRegionList();
         }
     }
