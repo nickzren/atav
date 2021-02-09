@@ -42,6 +42,7 @@ import static utils.CommandManager.getValidFloat;
 import utils.CommandOption;
 import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.getNonEmptyValue;
 import static utils.CommandManager.outputInvalidOptionValue;
 
 /**
@@ -85,10 +86,10 @@ public class VariantLevelFilterCommand {
                     }
                     break;
                 case "--rs-number":
-                    includeRsNumber = option.getValue();
+                    includeRsNumber = getNonEmptyValue(option);
                     break;
                 case "--exclude-variant":
-                    excludeVariantId = option.getValue();
+                    excludeVariantId = getNonEmptyValue(option);
                     break;
                 case "--exclude-artifacts":
                     isExcludeArtifacts = true;
@@ -187,12 +188,12 @@ public class VariantLevelFilterCommand {
                     GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--max-gnomad-exome-pop-af":
-                    GnomADExomeCommand.getInstance().maxPopAFStr = option.getValue();
+                    GnomADExomeCommand.getInstance().maxPopAFStr = getNonEmptyValue(option);
                     GnomADExomeCommand.getInstance().initMaxPopAF();
                     GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--max-gnomad-exome-pop-maf":
-                    GnomADExomeCommand.getInstance().maxPopMAFStr = option.getValue();
+                    GnomADExomeCommand.getInstance().maxPopMAFStr = getNonEmptyValue(option);
                     GnomADExomeCommand.getInstance().initMaxPopMAF();
                     GnomADExomeCommand.getInstance().isInclude = true;
                     break;
@@ -219,12 +220,12 @@ public class VariantLevelFilterCommand {
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--max-gnomad-genome-pop-af":
-                    GnomADGenomeCommand.getInstance().maxPopAFStr = option.getValue();
+                    GnomADGenomeCommand.getInstance().maxPopAFStr = getNonEmptyValue(option);
                     GnomADGenomeCommand.getInstance().initMaxPopAF();
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--max-gnomad-genome-pop-maf":
-                    GnomADGenomeCommand.getInstance().maxPopMAFStr = option.getValue();
+                    GnomADGenomeCommand.getInstance().maxPopMAFStr = getNonEmptyValue(option);
                     GnomADGenomeCommand.getInstance().initMaxPopMAF();
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     break;

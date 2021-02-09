@@ -12,10 +12,6 @@ public class CommandOption {
     public CommandOption(String n, String s) {
         name = n;
         value = s;
-        
-        if (value.isEmpty()) {
-            CommandManager.outputInvalidOptionValue(this);
-        }
     }
 
     public String getName() {
