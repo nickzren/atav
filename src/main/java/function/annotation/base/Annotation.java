@@ -131,7 +131,7 @@ public class Annotation {
         2. it required to use --polyphen-humdiv, --min-revel-score and --min-primate-ai
         3. when value passed one filter --> Valid_count++ , when value is NA --> NA_count++
         4. --ensemble-missense return true: when Valid_count >= 2 or (Valid_count >= 1 and NA_count >= 2) or NA_count >= 3
-        5. --ensemble-missense-2 return true: when Valid_count >= 1
+        5. --ensemble-missense-2 return true: when Valid_count >= 2 or (Valid_count >= 1 and NA_count >= 2)
      */
     public boolean isEnsembleMissenseValid() {
         if (AnnotationLevelFilterCommand.ensembleMissense
@@ -159,7 +159,8 @@ public class Annotation {
                             || (ensembleMissenseValidCount >= 1 && ensembleMissenseNACount >= 2)
                             || ensembleMissenseNACount >= 3;
                 } else if (AnnotationLevelFilterCommand.ensembleMissense2) {
-                    return ensembleMissenseValidCount >= 1;
+                    return ensembleMissenseValidCount >= 2
+                            || (ensembleMissenseValidCount >= 1 && ensembleMissenseNACount >= 2);
                 }
             }
         }
