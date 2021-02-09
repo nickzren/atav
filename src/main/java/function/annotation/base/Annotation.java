@@ -21,6 +21,8 @@ public class Annotation {
     private int pos;
     private String ref;
     private String alt;
+    // 0 -> SNV or MNV , < 0 -> deletion, > 0 -> insertion
+    public int indelLength;
     private boolean isMNV;
     public String effect;
     public int effectID;
@@ -49,6 +51,7 @@ public class Annotation {
         alt = rset.getString("ALT");
         isMNV = ref.length() > 1 && alt.length() > 1
                 && alt.length() == ref.length();
+        indelLength = rset.getInt("indel_length");
 
         int variantID = rset.getInt("variant_id");
         // only need to init once per variant
@@ -82,8 +85,8 @@ public class Annotation {
     }
 
     private void checkValid() {
-        isValid = GeneManager.isValid(this, chr, pos)
-                && TranscriptManager.isTranscriptBoundaryValid(stableId, pos)
+        isValid = GeneManager.isValid(this, chr, pos, indelLength)
+                && TranscriptManager.isTranscriptBoundaryValid(stableId, pos, indelLength)
                 && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
                 && isEnsembleMissenseValid();
     }

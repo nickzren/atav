@@ -385,7 +385,7 @@ public class GeneManager {
         return allGeneBoundaryLength;
     }
 
-    public static boolean isValid(Annotation annotation, String chr, int pos) {
+    public static boolean isValid(Annotation annotation, String chr, int pos, int indelLength) {
         if (geneMap.isEmpty()) {
             return true;
         }
@@ -397,7 +397,11 @@ public class GeneManager {
                 return true;
             } else {
                 for (Gene gene : set) {
-                    if (gene.contains(chr, pos)) {
+                    // use pos for SNVs, MNVs, Insertion
+                    // use pos and pos + indelLength for Deletion (indelLength is negative number here)
+                    if (gene.contains(chr, pos)
+                            || (indelLength < 0 && gene.contains(chr, pos - indelLength))) {
+
                         // reset gene name to gene domain name so the downstream procedure could match correctly
                         // only for gene boundary input
                         annotation.geneName = gene.getName();
@@ -410,7 +414,7 @@ public class GeneManager {
         return false;
     }
 
-    public static boolean isValid(String geneName, String chr, int pos) {
+    public static boolean isValid(String geneName, String chr, int pos, int indelLength) {
         if (geneMap.isEmpty()) {
             return true;
         }
@@ -422,7 +426,8 @@ public class GeneManager {
                 return true;
             } else {
                 for (Gene gene : set) {
-                    if (gene.contains(chr, pos)) {
+                    if (gene.contains(chr, pos)
+                            || (indelLength < 0 && gene.contains(chr, pos - indelLength))) {
                         return true;
                     }
                 }

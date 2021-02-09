@@ -289,7 +289,7 @@ public class TranscriptManager {
         }
     }
 
-    public static boolean isTranscriptBoundaryValid(int id, int pos) {
+    public static boolean isTranscriptBoundaryValid(int id, int pos, int indelLength) {
         if (transcriptBoundaryMap.isEmpty()) {
             return true;
         } else {
