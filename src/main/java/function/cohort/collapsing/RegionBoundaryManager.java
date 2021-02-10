@@ -50,7 +50,6 @@ public class RegionBoundaryManager {
             }
 
             if (!VariantManager.isUsed()) {
-                RegionManager.clear();
                 RegionManager.initRegionList(regionList.toArray(new String[regionList.size()]));
             }
 

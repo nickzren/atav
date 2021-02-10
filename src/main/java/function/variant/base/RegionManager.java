@@ -6,7 +6,10 @@ import utils.LogManager;
 import global.Data;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -15,7 +18,8 @@ import java.util.regex.Pattern;
  */
 public class RegionManager {
 
-    public static String regionInput = ""; // either a region or a region file path.
+    public static String chrInput = Data.NO_FILTER_STR;
+    public static String regionInput = Data.NO_FILTER_STR; // either a region or a region file path.
 
     private static ArrayList<Region> regionList = new ArrayList<>();
     private static ArrayList<String> chrList = new ArrayList<>();
@@ -29,24 +33,34 @@ public class RegionManager {
             return;
         }
 
-        if (regionInput.isEmpty()) {
-            initChrRegionList(ALL_CHR);
+        if (!chrInput.equals(Data.NO_FILTER_STR)) {
+            initChrList();
+        }
+
+        if (regionInput.equals(Data.NO_FILTER_STR)) {
+            initOrResetChrRegionList(ALL_CHR);
         } else {
             isUsed = true;
 
             File f = new File(regionInput);
 
             if (regionInput.equals("all")) {
-                initChrRegionList(ALL_CHR);
+                initOrResetChrRegionList(ALL_CHR);
             } else if (f.isFile()) {
                 initMultiChrRegionList(f);
             } else {
                 regionInput = regionInput.toLowerCase();
-                initChrRegionList(regionInput.split(","));
+                initOrResetChrRegionList(regionInput.split(","));
             }
         }
 
         sortRegionList();
+    }
+
+    public static void initChrList() {
+        for (String chr : chrInput.split(",")) {
+            initOneChrRegionList(chr);
+        }
     }
 
     public static void sortRegionList() {
@@ -77,8 +91,23 @@ public class RegionManager {
         }
     }
 
-    public static void initChrRegionList(String[] list) {
-        for (String chr : list) {
+    public static void initOrResetChrRegionList(String[] chrArray) {
+        ArrayList<String> intersectedChrList = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>(Arrays.asList(chrArray));
+
+        if (!chrList.isEmpty()) {
+            for (String chr : chrList) {
+                if (list.contains(chr)) {
+                    intersectedChrList.add(chr);
+                }
+            }
+
+            clear();
+        } else {
+            intersectedChrList = list;
+        }
+
+        for (String chr : intersectedChrList) {
             initOneChrRegionList(chr);
         }
     }
@@ -207,6 +236,7 @@ public class RegionManager {
         String[] values = varPos.split("-");
         String chr = values[0];
         int pos = Integer.valueOf(values[1]);
+
         regionList.add(new Region(chr, pos, pos));
         addChrList(chr);
     }
@@ -235,5 +265,17 @@ public class RegionManager {
             File file = new File(value);
             return file.exists();
         }
+    }
+
+    public static boolean isChrInputValid(String value) {
+        Set<String> chrSet = new HashSet<>(Arrays.asList(ALL_CHR));
+
+        for (String chr : value.split(",")) {
+            if (!chrSet.contains(chr.toUpperCase())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

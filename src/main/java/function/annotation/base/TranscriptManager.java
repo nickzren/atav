@@ -137,8 +137,7 @@ public class TranscriptManager {
             }
 
             // reset chr
-            RegionManager.clear();
-            RegionManager.initChrRegionList(transcriptBoundaryIdMap.keySet().toArray(new String[transcriptBoundaryIdMap.keySet().size()]));
+            RegionManager.initOrResetChrRegionList(transcriptBoundaryIdMap.keySet().toArray(new String[transcriptBoundaryIdMap.keySet().size()]));
             RegionManager.sortRegionList();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -290,7 +289,7 @@ public class TranscriptManager {
         }
     }
 
-    public static boolean isTranscriptBoundaryValid(int id, int pos) {
+    public static boolean isTranscriptBoundaryValid(int id, int pos, int indelLength) {
         if (transcriptBoundaryMap.isEmpty()) {
             return true;
         } else {

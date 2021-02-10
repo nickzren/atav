@@ -796,6 +796,14 @@ public class CommandManager {
 
         return false;
     }
+    
+    public static String getNonEmptyValue(CommandOption option) {
+        if (option.getValue().isEmpty()) {
+            CommandManager.outputInvalidOptionValue(option);
+        }
+        
+        return option.getValue();
+    }
 
     public static void outputInvalidOptionValue(CommandOption option) {
         ErrorManager.print("\nInvalid value '" + option.getValue()

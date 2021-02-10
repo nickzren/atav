@@ -5,6 +5,7 @@ import function.external.revel.RevelCommand;
 import global.Data;
 import java.util.Iterator;
 import static utils.CommandManager.checkValuesValid;
+import static utils.CommandManager.getNonEmptyValue;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
 import utils.ErrorManager;
@@ -34,10 +35,10 @@ public class AnnotationLevelFilterCommand {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--effect":
-                    effectInput = option.getValue();
+                    effectInput = getNonEmptyValue(option);
                     break;
                 case "--gene":
-                    geneInput = option.getValue();
+                    geneInput = getNonEmptyValue(option);
                     break;
                 case "--gene-boundaries":
                 case "--gene-boundary":

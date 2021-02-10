@@ -72,6 +72,7 @@ public class VariantLite {
     private int pos;
     private String ref;
     private String alt;
+    private int indelLength;
     private boolean isSNV;
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
@@ -109,7 +110,8 @@ public class VariantLite {
         pos = Integer.valueOf(tmp[1]);
         ref = tmp[2];
         alt = tmp[3];
-
+        indelLength = ref.length() - alt.length();
+        
         isSNV = ref.length() == alt.length();
 
         // init to apply per annotation
@@ -186,7 +188,7 @@ public class VariantLite {
             // --canonical-only
             // --filter-dbnsfp-all & --filter-dbnsfp-one
             if (EffectManager.isEffectContained(effect)
-                    && GeneManager.isValid(geneName, chr, pos)
+                    && GeneManager.isValid(geneName, chr, pos, indelLength)
                     && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
                     && annotation.isEnsembleMissenseValid()
                     && TranscriptManager.isCCDSValid(chr, stableId)

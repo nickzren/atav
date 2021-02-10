@@ -21,6 +21,8 @@ public class Annotation {
     private int pos;
     private String ref;
     private String alt;
+    // 0 -> SNV or MNV , < 0 -> deletion, > 0 -> insertion
+    public int indelLength;
     private boolean isMNV;
     public String effect;
     public int effectID;
@@ -49,6 +51,7 @@ public class Annotation {
         alt = rset.getString("ALT");
         isMNV = ref.length() > 1 && alt.length() > 1
                 && alt.length() == ref.length();
+        indelLength = rset.getInt("indel_length");
 
         int variantID = rset.getInt("variant_id");
         // only need to init once per variant
@@ -82,8 +85,8 @@ public class Annotation {
     }
 
     private void checkValid() {
-        isValid = GeneManager.isValid(this, chr, pos)
-                && TranscriptManager.isTranscriptBoundaryValid(stableId, pos)
+        isValid = GeneManager.isValid(this, chr, pos, indelLength)
+                && TranscriptManager.isTranscriptBoundaryValid(stableId, pos, indelLength)
                 && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
                 && isEnsembleMissenseValid();
     }
@@ -131,7 +134,7 @@ public class Annotation {
         2. it required to use --polyphen-humdiv, --min-revel-score and --min-primate-ai
         3. when value passed one filter --> Valid_count++ , when value is NA --> NA_count++
         4. --ensemble-missense return true: when Valid_count >= 2 or (Valid_count >= 1 and NA_count >= 2) or NA_count >= 3
-        5. --ensemble-missense-2 return true: when Valid_count >= 1
+        5. --ensemble-missense-2 return true: when Valid_count >= 2 or (Valid_count >= 1 and NA_count >= 2)
      */
     public boolean isEnsembleMissenseValid() {
         if (AnnotationLevelFilterCommand.ensembleMissense
@@ -159,7 +162,8 @@ public class Annotation {
                             || (ensembleMissenseValidCount >= 1 && ensembleMissenseNACount >= 2)
                             || ensembleMissenseNACount >= 3;
                 } else if (AnnotationLevelFilterCommand.ensembleMissense2) {
-                    return ensembleMissenseValidCount >= 1;
+                    return ensembleMissenseValidCount >= 2
+                            || (ensembleMissenseValidCount >= 1 && ensembleMissenseNACount >= 2);
                 }
             }
         }

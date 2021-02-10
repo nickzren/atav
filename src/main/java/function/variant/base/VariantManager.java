@@ -234,6 +234,11 @@ public class VariantManager {
         String pos = values[1];
         RegionManager.checkChrValid(chr);
 
+        // if used --region
+        if (!RegionManager.isChrContained(chr)) {
+            return;
+        }
+
         if (!variantSet.contains(str)) {
             if (isInclude) {
                 String varPos = chr + "-" + pos;
@@ -251,6 +256,14 @@ public class VariantManager {
 
         if (!rsNumberSet.contains(value)) {
             String varPos = VariantManager.getVariantPositionByRS(value);
+
+            String[] values = varPos.split("-");
+            String chr = values[0];
+
+            // if used --region
+            if (!RegionManager.isChrContained(chr)) {
+                return;
+            }
 
             if (!varPos.isEmpty()) {
                 if (isInclude) {
@@ -291,14 +304,13 @@ public class VariantManager {
     }
 
     private static void resetRegionList() throws SQLException {
-        RegionManager.clear();
-
         if (includeVariantSet.size() <= maxIncludeNum) {
+            RegionManager.clear();
             for (String varPos : includeVariantPosList) {
                 RegionManager.addRegionByVariantPos(varPos);
             }
         } else {
-            RegionManager.initChrRegionList(includeChrList.toArray(new String[includeChrList.size()]));
+            RegionManager.initOrResetChrRegionList(includeChrList.toArray(new String[includeChrList.size()]));
             RegionManager.sortRegionList();
         }
     }
