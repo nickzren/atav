@@ -15,7 +15,7 @@ public class FormatManager {
 
     public static String getDouble(double value) {
         if (value == Data.DOUBLE_NA) {
-            if (VCFCommand.isList) {
+            if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
             
@@ -27,7 +27,7 @@ public class FormatManager {
 
     public static String getByte(byte value) {
         if (value == Data.BYTE_NA) {
-            if (VCFCommand.isList) {
+            if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
             
@@ -39,7 +39,7 @@ public class FormatManager {
 
     public static String getShort(short value) {
         if (value == Data.SHORT_NA) {
-            if (VCFCommand.isList) {
+            if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
             
@@ -51,7 +51,7 @@ public class FormatManager {
 
     public static String getInteger(int value) {
         if (value == Data.INTEGER_NA) {
-            if (VCFCommand.isList) {
+            if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
             
@@ -81,7 +81,7 @@ public class FormatManager {
 
     public static String getString(String str) {
         if (str == null) {
-            if (VCFCommand.isList) {
+            if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
             
@@ -101,7 +101,7 @@ public class FormatManager {
 
     public static String getFloat(float value) {
         if (value == Data.FLOAT_NA) {
-            if (VCFCommand.isList) {
+            if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
             
@@ -124,11 +124,27 @@ public class FormatManager {
     }
 
     public static float getFloat(String str) {
-        if (str == null || str.equals(Data.STRING_NA)) {
+        if (str == null || str.equals(Data.STRING_NA) || str.equals(Data.VCF_NA)) {
             return Data.FLOAT_NA;
         }
 
         return Float.valueOf(str);
+    }
+    
+    public static short getShort(String str) {
+        if (str == null || str.equals(Data.STRING_NA) || str.equals(Data.VCF_NA)) {
+            return Data.SHORT_NA;
+        }
+
+        return Short.valueOf(str);
+    }
+    
+    public static byte getByte(String str) {
+        if (str == null || str.equals(Data.STRING_NA) || str.equals(Data.VCF_NA)) {
+            return Data.BYTE_NA;
+        }
+
+        return Byte.valueOf(str);
     }
 
     public static float getFloat(ResultSet rs, String strColName) throws SQLException {

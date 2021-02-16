@@ -41,6 +41,7 @@ public class GenotypeLevelFilterCommand {
     public static final String[] FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
     public static boolean isQcMissingIncluded = false;
     public static String genotypeFile = "";
+    public static String vcfFile = "";
     public static boolean isHomOnly = false;
     public static boolean isHetOnly = false;
 
@@ -166,6 +167,9 @@ public class GenotypeLevelFilterCommand {
                 case "--genotype":
                     genotypeFile = getValidPath(option);
                     break;
+                case "--vcf":
+                    vcfFile = getValidPath(option);
+                    break;
                 case "--hom-only":
                     isHomOnly = true;
                     break;
@@ -181,8 +185,6 @@ public class GenotypeLevelFilterCommand {
 
         initIsHighQualityVariantOnly();
     }
-    
-    
 
     private static void initIsHighQualityVariantOnly() {
         // QUAL >= 30, MQ >= 40, PASS,LIKELY,INTERMEDIATE, & >= 3 DP or DP Bin

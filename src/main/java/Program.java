@@ -82,6 +82,7 @@ import function.cohort.var.VarCommand;
 import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
+import function.cohort.vcf.ListVCFLite;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFPManager;
@@ -244,6 +245,9 @@ public class Program {
                 runAnalysis(new ListVar());
             } else if (VCFCommand.isList) {
                 runAnalysis(new ListVCF());
+            } else if (VCFCommand.isListLite) {
+               ListVCFLite listVCFLite = new ListVCFLite();
+               listVCFLite.run();
             } else if (AFCommand.isList) {
                 runAnalysis(new ListAF());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {

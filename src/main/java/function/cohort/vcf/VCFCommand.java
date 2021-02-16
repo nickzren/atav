@@ -7,4 +7,6 @@ package function.cohort.vcf;
 public class VCFCommand {
 
     public static boolean isList = false;
+    public static boolean isListLite = false;
+    public static boolean isOutputVCF = false;
 }

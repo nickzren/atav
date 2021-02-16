@@ -69,7 +69,7 @@ public class Variant extends Region {
 
     public String getRsNumberStr() {
         if (rsNumber == Data.INTEGER_NA) {
-            if (VCFCommand.isList) {
+            if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
             

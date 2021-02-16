@@ -426,7 +426,7 @@ public class AnnotatedVariant extends Variant {
 
     private String getStableId(int stableId) {
         if (stableId == Data.INTEGER_NA) {
-            if (VCFCommand.isList) {
+            if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
 

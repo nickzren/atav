@@ -23,7 +23,7 @@ public class CalledVariant extends AnnotatedVariant {
     private short[] dpBin = new short[SampleManager.getTotalSampleNum()];
 
     private int[] qcFailSample = new int[2];
-    public int[][] genoCount = new int[5][2];
+    public int[][] genoCount = new int[3][2];
     public float[] homFreq = new float[2];
     public float[] hetFreq = new float[2];
     public int ac;

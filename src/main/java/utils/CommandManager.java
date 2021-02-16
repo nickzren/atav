@@ -343,6 +343,11 @@ public class CommandManager {
                     break;
                 case "--list-vcf":
                     VCFCommand.isList = true;
+                    VCFCommand.isOutputVCF = true;
+                    break;
+                case "--list-vcf-lite":
+                    VCFCommand.isListLite = true;
+                    VCFCommand.isOutputVCF = true;
                     break;
                 case "--list-af":
                     AFCommand.isList = true;
@@ -796,12 +801,12 @@ public class CommandManager {
 
         return false;
     }
-    
+
     public static String getNonEmptyValue(CommandOption option) {
         if (option.getValue().isEmpty()) {
             CommandManager.outputInvalidOptionValue(option);
         }
-        
+
         return option.getValue();
     }
 

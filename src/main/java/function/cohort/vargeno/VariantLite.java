@@ -167,7 +167,7 @@ public class VariantLite {
             }
 
             String stableIdStr = values[2];
-            int stableId = getIntStableId(stableIdStr);
+            int stableId = TranscriptManager.getIntStableId(stableIdStr);
             String HGVS_c = values[3];
             String HGVS_p = values[4];
             float polyphenHumdiv = FormatManager.getFloat(values[5]);
@@ -366,14 +366,6 @@ public class VariantLite {
     private void initDBNSFP(CSVRecord record) {
         if (DBNSFPCommand.isInclude) {
             dbNSFP = new DBNSFP(record);
-        }
-    }
-
-    private int getIntStableId(String value) {
-        if (value.equals(Data.STRING_NA)) {
-            return Data.INTEGER_NA;
-        } else {
-            return Integer.valueOf(value.substring(4)); // remove ENST
         }
     }
 
