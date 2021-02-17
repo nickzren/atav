@@ -5,6 +5,7 @@ import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
 import function.annotation.base.PolyphenManager;
 import function.annotation.base.TranscriptManager;
+import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.SampleManager;
 import function.variant.base.VariantLevelFilterCommand;
@@ -40,6 +41,7 @@ public class VCFLite {
     private Annotation mostDamagingAnnotation = new Annotation();
 
     public int[] genoCount = new int[3];
+    private float af;
 
     private byte[] gtArr = new byte[SampleManager.getTotalSampleNum()];
     private short[] dpArr = new short[SampleManager.getTotalSampleNum()];
@@ -66,6 +68,8 @@ public class VCFLite {
 
         if (mostDamagingAnnotation.isValid()) {
             initAllGenotype(values);
+            
+            initAF();
         }
     }
 
@@ -155,7 +159,7 @@ public class VCFLite {
         for (int vcfColumnIndex = 9; vcfColumnIndex < values.length; vcfColumnIndex++) {
             String[] tmp = values[vcfColumnIndex].split(":"); // GT:DP:GQ
 
-            byte gt = getGT(tmp[0]);
+            byte gt = VCFManager.getGT(tmp[0]);
             short dp = FormatManager.getShort(tmp[1]);
             byte gq = FormatManager.getByte(tmp[2]);
             
@@ -184,11 +188,11 @@ public class VCFLite {
     }
 
     // AF = Allele Frequency
-    public float getAF() {
+    private void initAF() {
         int ac = 2 * genoCount[Index.HOM] + genoCount[Index.HET];
         int totalAC = ac + genoCount[Index.HET] + 2 * genoCount[Index.REF];
 
-        return MathManager.devide(ac, totalAC);
+        af = MathManager.devide(ac, totalAC);
     }
 
     @Override
@@ -205,7 +209,7 @@ public class VCFLite {
 
         StringJoiner infoSJ = new StringJoiner(";");
         infoSJ.add("NS=" + FormatManager.getInteger(getNS()));
-        infoSJ.add("AF=" + FormatManager.getFloat(getAF()));
+        infoSJ.add("AF=" + FormatManager.getFloat(af));
         infoSJ.add("ANN=" + allAnnotationSJ.toString());
         sj.add(infoSJ.toString());
 
@@ -216,8 +220,8 @@ public class VCFLite {
         sj.add(formatSJ.toString());
 
         for (int i = 0; i < SampleManager.getTotalSampleNum(); i++) {
-            formatSJ = new StringJoiner(":");
-            formatSJ.add(getGT4VCF(i));
+            formatSJ = new StringJoiner(":");            
+            formatSJ.add(VCFManager.getGT(getGT(i)));
             formatSJ.add(FormatManager.getShort(dpArr[i]));
             formatSJ.add(FormatManager.getByte(gqArr[i]));
             sj.add(formatSJ.toString());
@@ -232,34 +236,6 @@ public class VCFLite {
         }
 
         return gtArr[index];
-    }
-
-    public String getGT4VCF(int index) {
-        byte gt = getGT(index);
-
-        switch (gt) {
-            case Index.HOM:
-                return "1/1";
-            case Index.HET:
-                return "1/0";
-            case Index.REF:
-                return "0/0";
-            default:
-                return "./.";
-        }
-    }
-
-    public byte getGT(String gt) {
-        switch (gt) {
-            case "1/1":
-                return Index.HOM;
-            case "1/0":
-                return Index.HET;
-            case "0/0":
-                return Index.REF;
-            default:
-                return Data.BYTE_NA;
-        }
     }
 
     public boolean isValid() throws SQLException {
@@ -277,6 +253,7 @@ public class VCFLite {
                 && VariantManager.isVariantIdIncluded(variantID)
                 && !VariantManager.isVariantIdExcluded(variantID)
                 && !geneList.isEmpty()
-                && !transcriptSet.isEmpty();
+                && !transcriptSet.isEmpty()
+                && CohortLevelFilterCommand.isAFValid(af);
     }
 }

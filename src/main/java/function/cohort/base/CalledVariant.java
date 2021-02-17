@@ -4,6 +4,7 @@ import function.annotation.base.AnnotatedVariant;
 import function.cohort.statistics.HWEExact;
 import function.cohort.trio.TrioCommand;
 import function.cohort.trio.TrioManager;
+import function.cohort.vcf.VCFOutput;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
@@ -310,21 +311,6 @@ public class CalledVariant extends AnnotatedVariant {
         }
 
         return gt[index];
-    }
-
-    public String getGT4VCF(int index) {
-        byte gt = getGT(index);
-
-        switch (gt) {
-            case Index.HOM:
-                return "1/1";
-            case Index.HET:
-                return "1/0";
-            case Index.REF:
-                return "0/0";
-            default:
-                return "./.";
-        }
     }
 
     public Carrier getCarrier(int sampleId) {
