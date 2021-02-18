@@ -313,7 +313,7 @@ public class GeneManager {
                 stmt.executeUpdate(
                         "CREATE TEMPORARY TABLE " + TMP_GENE_TABLE + chr + "("
                         + "input_gene varchar(128) NOT NULL, "
-                        + "PRIMARY KEY (input_gene)) ENGINE=TokuDB;");
+                        + "PRIMARY KEY (input_gene));");
 
                 if (chrAllGeneMap.get(chr).length() > 0) {
                     // insert values

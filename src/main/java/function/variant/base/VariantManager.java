@@ -382,7 +382,6 @@ public class VariantManager {
 
                 String sqlQuery = "CREATE TEMPORARY TABLE tmp_case_variant_id_chr" + chr + " "
                         + "(case_variant_id INT NOT NULL,PRIMARY KEY (case_variant_id)) "
-                        + "ENGINE=TokuDB "
                         + "SELECT DISTINCT variant_id AS case_variant_id FROM called_variant_chr" + chr + " "
                         + "WHERE sample_id IN (" + SampleManager.getCaseIDSJ().toString() + ")";
 

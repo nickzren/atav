@@ -179,6 +179,8 @@ public class SampleManager {
             sqlCode += " and available_control_use = 1";
         }
         
+        sqlCode += " limit 10";
+        
         initSampleFromDB(sqlCode);
     }
 
@@ -660,7 +662,7 @@ public class SampleManager {
 
             String sqlQuery = "CREATE TEMPORARY TABLE "
                     + sqlTable
-                    + "(input_sample_id mediumint, PRIMARY KEY (input_sample_id)) ENGINE=TokuDB";
+                    + "(input_sample_id mediumint, PRIMARY KEY (input_sample_id));";
 
             stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
         } catch (Exception e) {
