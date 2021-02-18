@@ -65,7 +65,7 @@ import utils.MathManager;
  *
  * @author nick
  */
-public class VariantLite {
+public class VariantGenoLite {
 
     private String variantID;
     private String chr;
@@ -102,7 +102,7 @@ public class VariantLite {
     private float looAF;
     private CSVRecord record;
 
-    public VariantLite(CSVRecord record) {
+    public VariantGenoLite(CSVRecord record) {
         this.record = record;
         variantID = record.get(ListVarGenoLite.VARIANT_ID_HEADER);
         String[] tmp = variantID.split("-");

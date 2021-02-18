@@ -1,6 +1,7 @@
 package function.cohort.base;
 
 import global.Data;
+import global.Index;
 import java.util.Iterator;
 import java.util.Stack;
 import static utils.CommandManager.checkRangeValid;
@@ -468,5 +469,25 @@ public class GenotypeLevelFilterCommand {
         }
 
         return value <= maxPercentAltReadBinomialP;
+    }
+    
+    public static boolean isQualifiedGeno(byte geno) {
+        // --hom-only
+        if (isHomOnly) {
+            return geno == Index.HOM;
+        }
+
+        // --het-only
+        if (isHetOnly) {
+            return geno == Index.HET;
+        }
+
+        // --include-hom-ref
+        if (isIncludeHomRef && geno == Index.REF) {
+            return true;
+        }
+
+        // default: hom alt or het is valid 
+        return geno == Index.HOM || geno == Index.HET;
     }
 }

@@ -325,23 +325,7 @@ public class Output {
     }
 
     public boolean isQualifiedGeno(byte geno) {
-        // --hom-only
-        if (GenotypeLevelFilterCommand.isHomOnly) {
-            return geno == Index.HOM;
-        }
-
-        // --het-only
-        if (GenotypeLevelFilterCommand.isHetOnly) {
-            return geno == Index.HET;
-        }
-
-        // --include-hom-ref
-        if (GenotypeLevelFilterCommand.isIncludeHomRef && geno == Index.REF) {
-            return true;
-        }
-
-        // default: hom alt or het is valid 
-        return geno == Index.HOM || geno == Index.HET;
+        return GenotypeLevelFilterCommand.isQualifiedGeno(geno);
     }
 
     public void getGenoStatData(StringJoiner sj) {

@@ -18,6 +18,7 @@ public class CollapsingCommand {
     public static boolean isCollapsingSingleVariant = false;
     public static boolean isCollapsingCompHet = false;
     public static boolean isCollapsingLite = false;
+    public static boolean isCollapsingVCFLite = false;
     public static boolean isRecessive = false;
     public static String coverageSummaryFile = "";
     public static boolean isCollapsingDoLinear = false;

@@ -70,6 +70,7 @@ import function.external.trap.TrapCommand;
 import function.cohort.base.DPBinBlockManager;
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.collapsing.CollapsingLite;
+import function.cohort.collapsing.CollapsingVCFLite;
 import function.cohort.parent.ListParentCompHet;
 import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
@@ -257,6 +258,9 @@ public class Program {
             } else if (CollapsingCommand.isCollapsingLite) {
                 CollapsingLite collapsingLite = new CollapsingLite();
                 collapsingLite.run();
+            } else if (CollapsingCommand.isCollapsingVCFLite) {
+                CollapsingVCFLite collapsingVCFLite = new CollapsingVCFLite();
+                collapsingVCFLite.run();
             } else if (StatisticsCommand.isFisher) {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {

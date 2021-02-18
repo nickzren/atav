@@ -21,9 +21,9 @@ import utils.LogManager;
  */
 public class ListVCFLite {
 
-    static BufferedWriter bwVCF = null;
-    static final String vcfFilePath = CommonCommand.outputPath + "variants.vcf";
-    static final String vcfBGZFilePath = vcfFilePath + ".gz";
+    public static BufferedWriter bwVCF = null;
+    public static final String vcfFilePath = CommonCommand.outputPath + "variants.vcf";
+    public static final String vcfBGZFilePath = vcfFilePath + ".gz";
 
     public void initOutput() {
         try {
@@ -51,7 +51,6 @@ public class ListVCFLite {
             initOutput();
 
             File f = new File(GenotypeLevelFilterCommand.vcfFile);
-            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
             Reader decoder;
             if (f.getName().endsWith(".gz")) {
                 InputStream fileStream = new FileInputStream(f);
@@ -69,18 +68,17 @@ public class ListVCFLite {
                 }
 
                 String[] values = lineStr.split("\t");
-                VCFLite vcfLite = new VCFLite(values);
+                VariantVCFLite variantLite = new VariantVCFLite(values);
 
                 // output qualifed record to vcf file
-                if (vcfLite.isValid()) {
-                    bwVCF.write(vcfLite.toString());
+                if (variantLite.isValid()) {
+                    bwVCF.write(variantLite.toString());
                     bwVCF.newLine();
                 }
             }
 
             br.close();
             decoder.close();
-            in.close();
 
             closeOutput();
         } catch (Exception e) {

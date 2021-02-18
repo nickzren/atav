@@ -24,7 +24,7 @@ import utils.MathManager;
  *
  * @author nick
  */
-public class VCFLite {
+public class VariantVCFLite {
 
     private String variantID;
     private String rsNumber;
@@ -47,7 +47,7 @@ public class VCFLite {
     private short[] dpArr = new short[SampleManager.getTotalSampleNum()];
     private byte[] gqArr = new byte[SampleManager.getTotalSampleNum()];
 
-    public VCFLite(String values[]) {
+    public VariantVCFLite(String values[]) {
         chr = values[0];
         pos = Integer.valueOf(values[1]);
         rsNumber = values[2];
@@ -68,7 +68,7 @@ public class VCFLite {
 
         if (mostDamagingAnnotation.isValid()) {
             initAllGenotype(values);
-            
+
             initAF();
         }
     }
@@ -162,7 +162,7 @@ public class VCFLite {
             byte gt = VCFManager.getGT(tmp[0]);
             short dp = FormatManager.getShort(tmp[1]);
             byte gq = FormatManager.getByte(tmp[2]);
-            
+
             if (gt != Data.BYTE_NA) {
                 // apply --min-coverage or --min-gq filter
                 if (!GenotypeLevelFilterCommand.isMinGqValid(gq)
@@ -220,7 +220,7 @@ public class VCFLite {
         sj.add(formatSJ.toString());
 
         for (int i = 0; i < SampleManager.getTotalSampleNum(); i++) {
-            formatSJ = new StringJoiner(":");            
+            formatSJ = new StringJoiner(":");
             formatSJ.add(VCFManager.getGT(getGT(i)));
             formatSJ.add(FormatManager.getShort(dpArr[i]));
             formatSJ.add(FormatManager.getByte(gqArr[i]));
@@ -255,5 +255,33 @@ public class VCFLite {
                 && !geneList.isEmpty()
                 && !transcriptSet.isEmpty()
                 && CohortLevelFilterCommand.isAFValid(af);
+    }
+
+    public String getVariantID() {
+        return variantID;
+    }
+    
+    public Annotation getMostDamagingAnnotation() {
+        return mostDamagingAnnotation;
+    }
+
+    public String getAllAnnotation() {
+        return FormatManager.appendDoubleQuote(allAnnotationSJ.toString());
+    }
+
+    public List<String> getGeneList() {
+        return geneList;
+    }
+
+    public HashSet<Integer> getTranscriptSet() {
+        return transcriptSet;
+    }
+
+    public boolean isSNV() {
+        return isSNV;
+    }
+    
+    public byte[] getGTArr() {
+        return gtArr;
     }
 }
