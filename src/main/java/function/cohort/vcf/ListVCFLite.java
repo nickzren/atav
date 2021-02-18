@@ -81,8 +81,14 @@ public class ListVCFLite {
             decoder.close();
 
             closeOutput();
+            gzipFiles();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+    
+    private void gzipFiles() {        
+        VCFManager.bgzipVCF(vcfFilePath);
+        VCFManager.tabixVCF(vcfBGZFilePath);
     }
 }

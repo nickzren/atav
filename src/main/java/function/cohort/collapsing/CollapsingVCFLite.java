@@ -7,6 +7,7 @@ import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.cohort.vcf.ListVCFLite;
+import function.cohort.vcf.VCFManager;
 import function.cohort.vcf.VariantVCFLite;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -246,5 +247,8 @@ public class CollapsingVCFLite extends ListVCFLite {
 
     private void gzipFiles() {
         ThirdPartyToolManager.gzipFile(matrixFilePath);
+        
+        VCFManager.bgzipVCF(vcfFilePath);
+        VCFManager.tabixVCF(vcfBGZFilePath);
     }
 }
