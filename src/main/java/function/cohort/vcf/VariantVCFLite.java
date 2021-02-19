@@ -42,6 +42,8 @@ public class VariantVCFLite {
 
     public int[] genoCount = new int[3];
     private float af;
+    // The value will be dynamically updated per sample
+    private float looAF = 0;
 
     private byte[] gtArr = new byte[SampleManager.getTotalSampleNum()];
     private short[] dpArr = new short[SampleManager.getTotalSampleNum()];
@@ -173,10 +175,41 @@ public class VariantVCFLite {
                 }
             }
 
+            calculateLooAF(gt);
+            // apply --max-loo-af and --max-loo-maf
+            if (!CohortLevelFilterCommand.isLooAFValid(looAF)) {
+                gt = Data.BYTE_NA;
+            }
+
             sampleIndex = vcfColumnIndex - 9;
             gtArr[sampleIndex] = gt;
             dpArr[sampleIndex] = dp;
             gqArr[sampleIndex] = gq;
+        }
+    }
+
+    private void calculateLooAF(byte gt) {
+        // delete current sample geno as 'leave one out' concept
+        deleteSampleGeno(gt);
+
+        int ac = 2 * genoCount[Index.HOM] + genoCount[Index.HET];
+        int totalAC = ac + genoCount[Index.HET] + 2 * genoCount[Index.REF];
+
+        looAF = MathManager.devide(ac, totalAC);
+
+        // add deleted sample geno back
+        addSampleGeno(gt);
+    }
+
+    private void addSampleGeno(byte gt) {
+        if (gt != Data.BYTE_NA) {
+            genoCount[gt]++;
+        }
+    }
+
+    private void deleteSampleGeno(byte gt) {
+        if (gt != Data.BYTE_NA) {
+            genoCount[gt]--;
         }
     }
 
@@ -260,7 +293,7 @@ public class VariantVCFLite {
     public String getVariantID() {
         return variantID;
     }
-    
+
     public Annotation getMostDamagingAnnotation() {
         return mostDamagingAnnotation;
     }
@@ -280,7 +313,7 @@ public class VariantVCFLite {
     public boolean isSNV() {
         return isSNV;
     }
-    
+
     public byte[] getGTArr() {
         return gtArr;
     }
