@@ -183,7 +183,8 @@ public class VariantGenoLite {
             // --effect
             // --gene or --gene-boundary
             // --polyphen-humdiv
-            // --ensemble-missens
+            // --ensemble-missense
+            // --ensemble-missense-2
             // --ccds-only
             // --canonical-only
             // --filter-dbnsfp-all & --filter-dbnsfp-one

@@ -1,6 +1,5 @@
 package function.external.revel;
 
-import global.Data;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
