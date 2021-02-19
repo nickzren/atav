@@ -68,7 +68,7 @@ public class VCFOutput extends Output {
 
         sj.add(calledVar.getChrStr());
         sj.add(FormatManager.getInteger(calledVar.getStartPosition()));
-        sj.add(calledVar.getRsNumberStr());
+        sj.add(calledVar.getVariantIdStr());
         sj.add(calledVar.getRefAllele());
         sj.add(calledVar.getAllele());
         sj.add(Data.VCF_NA);
