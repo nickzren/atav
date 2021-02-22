@@ -1,4 +1,4 @@
-# ATAV
+# <img src="img/atav-logo.svg" width="175" height="55" />
 
 ### ATAV is an open-source platform for population-scale genomic analyses including the database, the command line tool and the data browser.
 
