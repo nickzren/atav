@@ -48,6 +48,18 @@ public class FormatManager {
 
         return String.valueOf(value);
     }
+    
+    public static String getInteger(Integer value) {
+        if (value == null) {
+            if (VCFCommand.isOutputVCF) {
+                return Data.VCF_NA;
+            }
+            
+            return Data.STRING_NA;
+        }
+
+        return String.valueOf(value);
+    }
 
     public static String getInteger(int value) {
         if (value == Data.INTEGER_NA) {

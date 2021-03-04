@@ -66,7 +66,10 @@ import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import utils.MathManager;
 
@@ -91,8 +94,8 @@ public class AnnotatedVariant extends Variant {
 
     private List<Integer> canonicalEffectIdList = new ArrayList<>();
 
-    private List<String> geneList = new ArrayList<>();
     private HashSet<Integer> transcriptSet = new HashSet<>();
+    private Map<String, Integer> geneTranscriptCountMap = new LinkedHashMap<>();
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
 
     // external db annotations
@@ -237,8 +240,13 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(FormatManager.getString(annotation.HGVS_p));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
-
-            transcriptSet.add(annotation.stableId);
+            
+            int geneTranscriptCount = geneTranscriptCountMap.getOrDefault(annotation.geneName, 0);
+            if (!transcriptSet.contains(annotation.stableId)) {
+                transcriptSet.add(annotation.stableId);
+                geneTranscriptCountMap.put(annotation.geneName, geneTranscriptCount + 1);
+            }
+            
             allAnnotationSJ.add(annotationSJ.toString());
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
@@ -251,14 +259,10 @@ public class AnnotatedVariant extends Variant {
                 hasCCDS = true;
             }
 
-            if (!geneList.contains(annotation.geneName)) {
-                geneList.add(annotation.geneName);
-            }
-            
             if (!canonicalEffectIdList.contains(annotation.effectID)
                     && TranscriptManager.isCanonicalTranscript(chrStr, annotation.stableId)) {
                 canonicalEffectIdList.add(annotation.effectID);
-            } 
+            }
         }
     }
 
@@ -332,7 +336,7 @@ public class AnnotatedVariant extends Variant {
     // init CCR score and applied filter only to non-LOF variants
     private boolean isCCRValid() {
         if (CCRCommand.isInclude) {
-            ccrOutput = new CCROutput(geneList, getChrStr(), getStartPosition());
+            ccrOutput = new CCROutput(geneTranscriptCountMap.keySet(), getChrStr(), getStartPosition());
 
             if (!EffectManager.isLOF(effectID)) {
                 return ccrOutput.isValid();
@@ -411,7 +415,8 @@ public class AnnotatedVariant extends Variant {
         sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(GeneManager.getAllGeneSymbol(geneList));
+        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
+        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
 
@@ -466,8 +471,8 @@ public class AnnotatedVariant extends Variant {
         return geneName;
     }
 
-    public List<String> getGeneList() {
-        return geneList;
+    public Set<String> getGeneSet() {
+        return geneTranscriptCountMap.keySet();
     }
 
     public HashSet<Integer> getTranscriptSet() {

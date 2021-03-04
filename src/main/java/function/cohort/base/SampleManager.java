@@ -179,8 +179,6 @@ public class SampleManager {
             sqlCode += " and available_control_use = 1";
         }
         
-        sqlCode += " limit 10";
-        
         initSampleFromDB(sqlCode);
     }
 

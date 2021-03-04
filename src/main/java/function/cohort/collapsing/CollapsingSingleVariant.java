@@ -102,7 +102,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             }
         } else {
             // gene summary
-            for (String geneName : output.getCalledVariant().getGeneList()) {
+            for (String geneName : output.getCalledVariant().getGeneSet()) {
                 if (!geneName.equals(Data.STRING_NA)) {
                     summaryMap.putIfAbsent(geneName, new CollapsingGeneSummary(geneName));
                     summaryList.add(summaryMap.get(geneName));
