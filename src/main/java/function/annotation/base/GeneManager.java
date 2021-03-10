@@ -1,6 +1,5 @@
 package function.annotation.base;
 
-import com.sun.tools.javac.util.Pair;
 import function.cohort.collapsing.CollapsingCommand;
 import utils.ErrorManager;
 import utils.LogManager;
