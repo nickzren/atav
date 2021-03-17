@@ -179,6 +179,10 @@ public class SampleManager {
             sqlCode += " and available_control_use = 1";
         }
         
+        if(CohortLevelFilterCommand.isExcludeLowQualitySample) {
+            sqlCode += " and low_quality != 1";
+        }
+
         initSampleFromDB(sqlCode);
     }
 
@@ -211,7 +215,7 @@ public class SampleManager {
 
                 if (CohortLevelFilterCommand.isExcludeIGMGnomadSample
                         && excludeIGMGnomadSampleSet.contains((individualId))) {
-                    LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
+                    LogManager.writeAndPrint("Excluded IGM gnomAD sample: " + individualId);
                     continue;
                 }
 
@@ -247,6 +251,12 @@ public class SampleManager {
                 }
 
                 int sampleId = getSampleId(individualId, sampleType, captureKit);
+
+                if (CohortLevelFilterCommand.isExcludeLowQualitySample 
+                        && isLowQualitySample(sampleId)) {
+                    LogManager.writeAndPrint("Excluded low quality sample: " + individualId);
+                    continue;
+                }
 
                 if (sampleMap.containsKey(sampleId)) {
                     continue;
@@ -682,7 +692,7 @@ public class SampleManager {
             String captureKit) throws Exception {
         int sampleId = Data.INTEGER_NA;
 
-        try {           
+        try {
             String sql = "SELECT sample_id FROM sample "
                     + "WHERE sample_name=? AND sample_type=? AND capture_kit=? "
                     + "AND sample_finished = 1 AND sample_failure = 0";
@@ -703,6 +713,28 @@ public class SampleManager {
         }
 
         return sampleId;
+    }
+
+    public static boolean isLowQualitySample(int sampleId) {
+        boolean isLowQualitySample = false;
+
+        try {
+            String sql = "SELECT low_quality FROM sample WHERE sample_id=?";
+
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setInt(1, sampleId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                isLowQualitySample = rs.getInt("low_quality") == 1;
+            }
+
+            rs.close();
+            preparedStatement.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        return isLowQualitySample;
     }
 
     public static int getIdByName(String sampleName) {
