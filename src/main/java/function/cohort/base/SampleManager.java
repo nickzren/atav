@@ -257,9 +257,11 @@ public class SampleManager {
                 if (sampleMap.containsKey(sampleId)) {
                     continue;
                 }
+                
+                int experimentId = getExperimentId(sampleId);
 
                 Sample sample = new Sample(sampleId, familyId, individualId,
-                        paternalId, maternalId, sex, pheno, sampleType, captureKit);
+                        paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
 
                 if (sampleId == Data.INTEGER_NA) {
                     checkSampleList(sample);
@@ -311,9 +313,10 @@ public class SampleManager {
                 byte pheno = 1; // control
                 String sampleType = rs.getString("sample_type").trim();
                 String captureKit = rs.getString("capture_kit").trim();
-
+                int experimentId = rs.getInt("experiment_id");
+                
                 Sample sample = new Sample(sampleId, familyId, individualId,
-                        paternalId, maternalId, sex, pheno, sampleType, captureKit);
+                        paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
 
                 sampleList.add(sample);
                 sampleMap.put(sampleId, sample);
@@ -711,7 +714,7 @@ public class SampleManager {
         return sampleId;
     }
 
-    public static boolean isLowQualitySample(int sampleId) {
+    private static boolean isLowQualitySample(int sampleId) {
         boolean isLowQualitySample = false;
 
         try {
@@ -731,6 +734,28 @@ public class SampleManager {
         }
 
         return isLowQualitySample;
+    }
+    
+    private static int getExperimentId(int sampleId) {
+        int experimentId = Data.INTEGER_NA;
+
+        try {
+            String sql = "SELECT experiment_id FROM sample WHERE sample_id=?";
+
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setInt(1, sampleId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                experimentId = rs.getInt("experiment_id");
+            }
+
+            rs.close();
+            preparedStatement.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        return experimentId;
     }
 
     public static int getIdByName(String sampleName) {

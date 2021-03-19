@@ -22,6 +22,7 @@ public class Sample {
     private float quantitativeTrait;
     private String type;
     private String captureKit;
+    private int experimentId;
 
     // covariate
     private ArrayList<Double> covariateList = new ArrayList<>();
@@ -30,7 +31,7 @@ public class Sample {
 
     public Sample(int sampled_id, String family_id, String child_id,
             String paternal_id, String maternal_id, byte _sex, byte _pheno,
-            String sample_type, String _captureKit) {
+            String sample_type, String _captureKit, int _experimentId) {
         id = sampled_id;
         type = sample_type;
         captureKit = _captureKit;
@@ -42,6 +43,7 @@ public class Sample {
         sex = _sex;
         pheno = (byte) (_pheno - 1);
         quantitativeTrait = Data.FLOAT_NA;
+        experimentId = _experimentId;
     }
 
     public int getId() {
@@ -148,4 +150,8 @@ public class Sample {
     public ArrayList<Double> getCovariateList() {
         return covariateList;
     }
-}
+    
+    public int getExperimentId() {
+        return experimentId;
+    }
+} 

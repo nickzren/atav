@@ -274,6 +274,7 @@ public class Output {
     public static StringJoiner getCarrierDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add("Experiment ID");
         sj.add("Sample Name");
         sj.add("Sample Type");
         sj.add("Sample Phenotype");
@@ -358,6 +359,7 @@ public class Output {
     }
 
     public void getCarrierData(StringJoiner sj, Carrier carrier, Sample sample) {
+        sj.add(FormatManager.getInteger(sample.getExperimentId()));
         sj.add(sample.getName());
         sj.add(sample.getType());
         sj.add(sample.getPhenotype());
