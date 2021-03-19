@@ -169,7 +169,7 @@ public class SampleManager {
     private static void initAllSampleFromDB() {
         String sqlCode = "SELECT * FROM sample "
                 + "WHERE sample_finished = 1 and sample_failure = 0 "
-                + "and sample_type != 'custom_capture'";
+                + "and sample_type != 'custom_capture' and low_quality != 1";
 
         if (CohortLevelFilterCommand.isAllExome) {
             sqlCode += " and sample_type = 'Exome'";
@@ -177,10 +177,6 @@ public class SampleManager {
 
         if (CohortLevelFilterCommand.isAvailableControlUseOnly) {
             sqlCode += " and available_control_use = 1";
-        }
-        
-        if(CohortLevelFilterCommand.isExcludeLowQualitySample) {
-            sqlCode += " and low_quality != 1";
         }
 
         initSampleFromDB(sqlCode);
@@ -252,7 +248,7 @@ public class SampleManager {
 
                 int sampleId = getSampleId(individualId, sampleType, captureKit);
 
-                if (CohortLevelFilterCommand.isExcludeLowQualitySample 
+                if (CohortLevelFilterCommand.isExcludeLowQualitySample
                         && isLowQualitySample(sampleId)) {
                     LogManager.writeAndPrint("Excluded low quality sample: " + individualId);
                     continue;
