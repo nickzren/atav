@@ -29,13 +29,13 @@ public class EffectManager {
     public static final String TMP_IMPACT_TABLE = "tmp_impact";
 
     public static final String LOF_EFFECT_FILE_PATH = Data.ATAV_HOME + "data/effect/lof.txt";
-    
+
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
     private static HashMap<String, Integer> impactEffect2IdMap = new HashMap<>();
     // potential problem here for the same effect name 
     private static HashMap<String, Integer> effect2IdMap = new HashMap<>();
-    
+
     // user input values
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
     private static HashSet<String> inputEffectSet = new HashSet<>();
@@ -48,17 +48,19 @@ public class EffectManager {
     public static int MISSENSE_VARIANT_ID;
     public static HashSet<Integer> LOF_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<String> LOF_EFFECT_SET = new HashSet<>();
-    
+
     private static boolean isUsed = false;
 
     public static void init() throws SQLException {
         if (CommonCommand.isNonDBAnalysis) {
             return;
         }
-        
+
         initDefaultEffectSet();
-        
+
         initLOFEffectIDSet();
+
+        initInputImpactSet();
 
         initInputEffectSet();
     }
@@ -77,6 +79,18 @@ public class EffectManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+
+    public static void main(String[] args) throws SQLException {
+        System.out.println("CREATE TEMPORARY TABLE " + TMP_EFFECT_ID_TABLE + " ("
+                + "input_effect_id tinyint(3) NOT NULL, "
+                + "PRIMARY KEY (input_effect_id));");
+
+        AnnotationLevelFilterCommand.impactInput = "HIGH,LOW";
+
+        initInputImpactSet();
+
+        System.out.println(inputImpactSet.stream().map(impact -> "'" + impact.name() + "'").collect(Collectors.joining(",")));
     }
 
     private static void initDefaultEffectSet() {
@@ -98,31 +112,44 @@ public class EffectManager {
                     MISSENSE_VARIANT_ID = id;
                 }
             }
-            
+
             rs.close();
             preparedStatement.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-    
+
     private static void initLOFEffectIDSet() {
         String lofEffect = initEffectFromFile(LOF_EFFECT_FILE_PATH);
-        
+
         for (String impactEffect : lofEffect.split(",")) {
             LOF_EFFECT_ID_SET.add(impactEffect2IdMap.get(impactEffect));
             LOF_EFFECT_SET.add(impactEffect.split(":")[1]);
         }
     }
 
+    private static void initInputImpactSet() throws SQLException {
+        String inputImpact = AnnotationLevelFilterCommand.impactInput;
+
+        if (inputImpact.isEmpty()) {
+            return;
+        }
+
+        for (String impact : inputImpact.split(",")) {
+            inputImpactSet.add(Impact.valueOf(impact));
+        }
+    }
+
     private static void initInputEffectSet() throws SQLException {
-        String inputEffect = AnnotationLevelFilterCommand.effectInput.replaceAll("( )+", "");
+        String inputEffect = AnnotationLevelFilterCommand.effectInput;
+        String inputImpact = AnnotationLevelFilterCommand.impactInput;
 
         if (CommandManager.isFileExist(inputEffect)) {
             inputEffect = initEffectFromFile(inputEffect);
         }
 
-        initEffectSet(inputEffect);
+        initEffectSet(inputImpact, inputEffect);
 
         initLowestImpact();
     }
@@ -130,7 +157,7 @@ public class EffectManager {
     private static String initEffectFromFile(String inputEffect) {
         String effectFilePath = inputEffect;
 
-        try (Stream<String> stream = Files.lines(Paths.get(effectFilePath))) {
+        try ( Stream<String> stream = Files.lines(Paths.get(effectFilePath))) {
             inputEffect = stream.map(line -> line.replaceAll("( )+", ""))
                     .collect(Collectors.joining(","));
         } catch (IOException e) {
@@ -140,8 +167,15 @@ public class EffectManager {
         return inputEffect;
     }
 
-    private static void initEffectSet(String inputEffect) throws SQLException {
-        if (inputEffect.isEmpty()) {
+    /*
+        1. --impact and --effect unused
+        2. --impact used but --effect unused
+        3. --impact unused but --effect used
+        4. --impact and --effect used
+     */
+    private static void initEffectSet(String inputImpact, String inputEffect) throws SQLException {
+        // --impact and --effect unused
+        if (inputImpact.isEmpty() && inputEffect.isEmpty()) {
             return;
         }
 
@@ -149,17 +183,50 @@ public class EffectManager {
 
         Statement stmt = DBManager.createStatementByConcurReadOnlyConn();
 
-        for (String impactEffect : inputEffect.split(",")) { // input impactEffect format: lowestImpact:effect
-            if (!impactEffect2IdMap.containsKey(impactEffect)) {
-                LogManager.writeAndPrint("Invalid effect: " + impactEffect);
-                continue;
+        // --impact used but --effect unused
+        if (!inputImpact.isEmpty() && inputEffect.isEmpty()) {
+            String impactSQL = "where impact in ("
+                    + inputImpactSet.stream().map(impact -> "'" + impact.name() + "'").collect(Collectors.joining(",")) + ");";
+
+            stmt.executeUpdate("INSERT INTO tmp_effect_id(input_effect_id) select id from effect_ranking " + impactSQL);
+
+            try {
+                String sql = "select effect from effect_ranking " + impactSQL;
+                PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+                ResultSet rs = preparedStatement.executeQuery();
+                while (rs.next()) {
+                    String effect = rs.getString("effect");
+                    inputEffectSet.add(effect);
+                }
+
+                rs.close();
+                preparedStatement.close();
+            } catch (Exception e) {
+                ErrorManager.send(e);
             }
+        } else {
+            // --impact unused but --effect used
+            // --impact and --effect used
+            for (String impactEffect : inputEffect.split(",")) { // input impactEffect format: lowestImpact:effect
+                if (!impactEffect2IdMap.containsKey(impactEffect)) {
+                    LogManager.writeAndPrint("Invalid effect: " + impactEffect);
+                    continue;
+                }
 
-            stmt.executeUpdate("INSERT IGNORE INTO tmp_effect_id values ("
-                    + impactEffect2IdMap.get(impactEffect) + ");");
+                Impact impact = Impact.valueOf(impactEffect.split(":")[0]);
+                String effect = impactEffect.split(":")[1];
 
-            inputImpactSet.add(Impact.valueOf(impactEffect.split(":")[0]));
-            inputEffectSet.add(impactEffect.split(":")[1]);
+                // skip effect that not match input impact
+                if (!inputImpact.isEmpty() && !inputImpactSet.contains(impact)) {
+                    continue;
+                }
+
+                stmt.executeUpdate("INSERT IGNORE INTO tmp_effect_id values ("
+                        + impactEffect2IdMap.get(impactEffect) + ");");
+
+                inputImpactSet.add(impact);
+                inputEffectSet.add(effect);
+            }
         }
 
         stmt.closeOnCompletion();
@@ -225,19 +292,19 @@ public class EffectManager {
     public static int getIdByEffect(String effect) {
         return effect2IdMap.get(effect);
     }
-    
+
     public static boolean isLOF(int effectID) {
         return LOF_EFFECT_ID_SET.contains(effectID);
     }
-    
+
     public static boolean isLOF(String effect) {
         return LOF_EFFECT_SET.contains(effect);
     }
-    
+
     public static boolean isEffectContained(String effect) {
         return inputEffectSet.isEmpty() || inputEffectSet.contains(effect);
     }
-    
+
     public static boolean isUsed() {
         return isUsed;
     }

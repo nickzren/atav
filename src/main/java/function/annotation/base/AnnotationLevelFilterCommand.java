@@ -16,6 +16,7 @@ import utils.ErrorManager;
  */
 public class AnnotationLevelFilterCommand {
 
+    public static String impactInput = "";
     public static String effectInput = "";
     public static String geneInput = "";
     public static String geneBoundaryFile = "";
@@ -34,8 +35,11 @@ public class AnnotationLevelFilterCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
+                case "--impact":
+                    impactInput = getNonEmptyValue(option).replaceAll("( )+", "").toUpperCase();
+                    break;
                 case "--effect":
-                    effectInput = getNonEmptyValue(option);
+                    effectInput = getNonEmptyValue(option).replaceAll("( )+", "");
                     break;
                 case "--gene":
                     geneInput = getNonEmptyValue(option);
