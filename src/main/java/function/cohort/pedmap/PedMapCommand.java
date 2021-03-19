@@ -25,6 +25,8 @@ public class PedMapCommand {
     public static float flashPCAzThresh = -3f;//Z value per nearest neghbor
     public static boolean flashPCAPlinkPruning = false;
 
+    public static boolean keepPed = false;
+    
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
         while (iterator.hasNext()) {
@@ -61,6 +63,9 @@ public class PedMapCommand {
                     break;
                 case "--kinship-relatedness-threshold":
                     kinshipRelatednessThreshold = getValidFloat(option);
+                    break;
+                case "--keep-ped":
+                    keepPed = true;
                     break;
                 default:
                     continue;
