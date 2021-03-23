@@ -1,6 +1,7 @@
 package function.cohort.base;
 
 import function.cohort.collapsing.CollapsingCommand;
+import function.cohort.pedmap.PedMapCommand;
 import function.cohort.statistics.StatisticsCommand;
 import global.Data;
 import global.Index;
@@ -23,6 +24,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import utils.FormatManager;
 
 /**
  *
@@ -257,7 +259,7 @@ public class SampleManager {
                 if (sampleMap.containsKey(sampleId)) {
                     continue;
                 }
-                
+
                 int experimentId = getExperimentId(sampleId);
 
                 Sample sample = new Sample(sampleId, familyId, individualId,
@@ -277,7 +279,21 @@ public class SampleManager {
 
                 countSampleNum(sample);
 
-                bwExistingSample.write(lineStr);
+                StringJoiner sj = new StringJoiner("\t");
+                sj.add(values[0]);
+                if (PedMapCommand.outputExperimentId) {
+                    sj.add(FormatManager.getInteger(experimentId));
+                } else {
+                    sj.add(values[1]);
+                }
+                sj.add(values[2]);
+                sj.add(values[3]);
+                sj.add(values[4]);
+                sj.add(values[5]);
+                sj.add(values[6]);
+                sj.add(values[7]);
+
+                bwExistingSample.write(sj.toString());
                 bwExistingSample.newLine();
             }
 
@@ -314,7 +330,7 @@ public class SampleManager {
                 String sampleType = rs.getString("sample_type").trim();
                 String captureKit = rs.getString("capture_kit").trim();
                 int experimentId = rs.getInt("experiment_id");
-                
+
                 Sample sample = new Sample(sampleId, familyId, individualId,
                         paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
 
@@ -735,7 +751,7 @@ public class SampleManager {
 
         return isLowQualitySample;
     }
-    
+
     private static int getExperimentId(int sampleId) {
         int experimentId = Data.INTEGER_NA;
 

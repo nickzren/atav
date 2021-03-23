@@ -18,8 +18,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import utils.ErrorManager;
+import utils.FormatManager;
 
 /**
  *
@@ -134,10 +136,12 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
     private void doOutput(CalledVariant calledVar) {
         try {
             qualifiedVariants++;
-            bwMap.write(calledVar.getChrStr() + "\t"
-                    + calledVar.getVariantIdStr() + "\t"
-                    + "0\t"
-                    + calledVar.getStartPosition());
+            StringJoiner sj = new StringJoiner("\t");
+            sj.add(calledVar.getChrStr());
+            sj.add(calledVar.getVariantIdStr());
+            sj.add("0");
+            sj.add(FormatManager.getInteger(calledVar.getStartPosition()));
+            bwMap.write(sj.toString());
             bwMap.newLine();
             outputTempGeno(calledVar);
         } catch (Exception ex) {
@@ -155,20 +159,28 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             long rowLen = 2 * SampleManager.getTotalSampleNum() + 1L;
             for (Sample sample : SampleManager.getList()) {
                 byte pheno = (byte) (sample.getPheno() + 1);
-                bwPed.write(sample.getFamilyId() + " "
-                        + sample.getName() + " "
-                        + sample.getPaternalId() + " "
-                        + sample.getMaternalId() + " "
-                        + sample.getSex() + " "
-                        + pheno);
+
+                StringJoiner sj = new StringJoiner(" ");
+                sj.add(sample.getFamilyId());
+                if (PedMapCommand.outputExperimentId) {
+                    sj.add(FormatManager.getInteger(sample.getExperimentId()));
+                } else {
+                    sj.add(sample.getName());
+                }
+                sj.add(sample.getPaternalId());
+                sj.add(sample.getMaternalId());
+                sj.add(FormatManager.getInteger(sample.getSex()));
+                sj.add(FormatManager.getByte(pheno));
+
                 for (int i = 0; i < qualifiedVariants; i++) {
                     for (int j = 0; j < 2; j++) {
                         long pos = i * rowLen + 2 * sample.getIndex() + j;
                         raf.seek(pos);
                         byte allele = raf.readByte();
-                        bwPed.write(" " + String.valueOf((char) allele));
+                        sj.add(String.valueOf((char) allele));
                     }
                 }
+                bwPed.write(sj.toString());
                 bwPed.newLine();
             }
             tmpFile.delete();
