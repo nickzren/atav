@@ -24,6 +24,7 @@ public class CohortLevelFilterCommand {
     public static boolean isAvailableControlUseOnly = false;
     public static boolean isExcludeIGMGnomadSample = false;
     public static boolean isExcludeLowQualitySample = false;
+    public static boolean isIncludeDefaultControlSample = false;
     public static float maxAF = Data.NO_FILTER;
     public static float minAF = Data.NO_FILTER;
     public static float maxMAF = Data.NO_FILTER;
@@ -69,6 +70,9 @@ public class CohortLevelFilterCommand {
                     break;
                 case "--exclude-low-quality-sample":
                     isExcludeLowQualitySample = true;
+                    break;
+                case "--include-default-control-sample":
+                    isIncludeDefaultControlSample = true;
                     break;
                 case "--disable-check-duplicate-sample":
                     isDisableCheckDuplicateSample = true;

@@ -61,11 +61,11 @@ public class Sample {
     public String getType() {
         return type;
     }
-    
+
     public void setType(String value) {
         type = value;
     }
-    
+
     public String getPhenotype() {
         if (pheno == 0) {
             return "ctrl";
@@ -77,7 +77,7 @@ public class Sample {
     public String getCaptureKit() {
         return captureKit;
     }
-    
+
     public void setCaptureKit(String value) {
         captureKit = value;
     }
@@ -110,9 +110,13 @@ public class Sample {
         return pheno;
     }
 
+    public String getPhenoForSampleFile() {
+        return String.valueOf(pheno + 1);
+    }
+
     public void setQuantitativeTrait(float value) {
         quantitativeTrait = value;
-    } 
+    }
 
     public float getQuantitativeTrait() {
         return quantitativeTrait;
@@ -150,8 +154,8 @@ public class Sample {
     public ArrayList<Double> getCovariateList() {
         return covariateList;
     }
-    
+
     public int getExperimentId() {
         return experimentId;
     }
-} 
+}
