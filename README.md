@@ -23,5 +23,5 @@ Check the [User's Guide](http://redmine.igm.cumc.columbia.edu/projects/atav/wiki
 If you use ATAV for a publication, please cite:
 
 ```
-Zhong Ren, Gundula Povysil, David B. Goldstein. (2020) ATAV: a comprehensive platform for population-scale genomic analyses. bioRxiv DOI: 10.1101/2020.06.08.136507
+Ren, Z., Povysil, G., Hostyk, J.A. et al. ATAV: a comprehensive platform for population-scale genomic analyses. BMC Bioinformatics 22, 149 (2021). https://doi.org/10.1186/s12859-021-04071-1
 ```
