@@ -70,6 +70,8 @@ public class VariantVCFLite {
     public float revel = Data.FLOAT_NA;
     public float primateAI = Data.FLOAT_NA;
 
+    private boolean isValid = true;
+
     public VariantVCFLite(String values[]) {
         chr = values[0];
         pos = Integer.valueOf(values[1]);
@@ -190,6 +192,7 @@ public class VariantVCFLite {
 
     private void initAllGenotype(String values[]) {
         int sampleIndex;
+
         for (int vcfColumnIndex = 9; vcfColumnIndex < values.length; vcfColumnIndex++) {
             String[] tmp = values[vcfColumnIndex].split(":"); // GT:DP:GQ
 
@@ -207,16 +210,25 @@ public class VariantVCFLite {
                 }
             }
 
-            calculateLooAF(gt);
-            // apply --max-loo-af and --max-loo-maf
-            if (!CohortLevelFilterCommand.isLooAFValid(looAF)) {
-                gt = Data.BYTE_NA;
-            }
-
             sampleIndex = vcfColumnIndex - 9;
             gtArr[sampleIndex] = gt;
             dpArr[sampleIndex] = dp;
             gqArr[sampleIndex] = gq;
+        }
+
+        boolean isLooAFValid = true;
+        for (int s = 0; s < SampleManager.getList().size(); s++) {
+            calculateLooAF(gtArr[s]);
+
+            // apply --max-loo-af and --max-loo-maf
+            if (!CohortLevelFilterCommand.isLooAFValid(looAF)) {
+                isLooAFValid = false;
+            }
+
+            if (!isLooAFValid) {
+                isValid = false;
+                break;
+            }
         }
     }
 
@@ -228,7 +240,6 @@ public class VariantVCFLite {
         int totalAC = ac + genoCount[Index.HET] + 2 * genoCount[Index.REF];
 
         looAF = MathManager.devide(ac, totalAC);
-
         // add deleted sample geno back
         addSampleGeno(gt);
     }
@@ -338,7 +349,8 @@ public class VariantVCFLite {
             return false;
         }
 
-        return mostDamagingAnnotation.isValid()
+        return isValid
+                && mostDamagingAnnotation.isValid()
                 && VariantManager.isVariantIdIncluded(variantID)
                 && !VariantManager.isVariantIdExcluded(variantID)
                 && !geneList.isEmpty()
