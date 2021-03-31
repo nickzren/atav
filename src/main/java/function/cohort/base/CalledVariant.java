@@ -4,7 +4,6 @@ import function.annotation.base.AnnotatedVariant;
 import function.cohort.statistics.HWEExact;
 import function.cohort.trio.TrioCommand;
 import function.cohort.trio.TrioManager;
-import function.cohort.vcf.VCFOutput;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;

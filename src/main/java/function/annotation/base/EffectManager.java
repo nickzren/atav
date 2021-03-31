@@ -39,6 +39,7 @@ public class EffectManager {
     // user input values
     private static HashSet<Impact> inputImpactSet = new HashSet<>();
     private static HashSet<String> inputEffectSet = new HashSet<>();
+    private static HashSet<Integer> inputExcludeEffectIdSet = new HashSet<>();
 
     private static final String HIGH_IMPACT = "('HIGH')";
     private static final String MODERATE_IMPACT = "('HIGH'),('MODERATE')";
@@ -59,6 +60,8 @@ public class EffectManager {
         initDefaultEffectSet();
 
         initLOFEffectIDSet();
+
+        initExcludeInputEffectSet();
 
         initInputImpactSet();
 
@@ -154,6 +157,17 @@ public class EffectManager {
         initLowestImpact();
     }
 
+    private static void initExcludeInputEffectSet() throws SQLException {
+        String excludeEffectInput = AnnotationLevelFilterCommand.excludeEffectInput;
+
+        for (String impactEffect : excludeEffectInput.split(",")) {
+            if (impactEffect2IdMap.containsKey(impactEffect)) {
+                LogManager.writeAndPrint("Excluded effect: " + impactEffect);
+                inputExcludeEffectIdSet.add(impactEffect2IdMap.get(impactEffect));
+            }
+        }
+    }
+
     private static String initEffectFromFile(String inputEffect) {
         String effectFilePath = inputEffect;
 
@@ -191,10 +205,16 @@ public class EffectManager {
             stmt.executeUpdate("INSERT INTO tmp_effect_id(input_effect_id) select id from effect_ranking " + impactSQL);
 
             try {
-                String sql = "select effect from effect_ranking " + impactSQL;
+                String sql = "select id,effect from effect_ranking " + impactSQL;
                 PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
                 ResultSet rs = preparedStatement.executeQuery();
                 while (rs.next()) {
+                    // apply --exclude-effect filter
+                    if (!inputExcludeEffectIdSet.isEmpty()
+                            && inputExcludeEffectIdSet.contains(rs.getInt("id"))) {
+                        continue;
+                    }
+
                     String effect = rs.getString("effect");
                     inputEffectSet.add(effect);
                 }
@@ -210,6 +230,12 @@ public class EffectManager {
             for (String impactEffect : inputEffect.split(",")) { // input impactEffect format: lowestImpact:effect
                 if (!impactEffect2IdMap.containsKey(impactEffect)) {
                     LogManager.writeAndPrint("Invalid effect: " + impactEffect);
+                    continue;
+                }
+
+                // apply --exclude-effect filter
+                if (!inputExcludeEffectIdSet.isEmpty()
+                        && inputExcludeEffectIdSet.contains(impactEffect2IdMap.get(impactEffect))) {
                     continue;
                 }
 
