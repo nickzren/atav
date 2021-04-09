@@ -49,7 +49,8 @@ public class CalledVariant extends AnnotatedVariant {
             calculateAlleleFreq();
 
             if (checkGenoCountValid()
-                    && checkAlleleFreqValid()) {
+                    && checkAlleleFreqValid()
+                    && checkLooAFValid()) {
                 switchGT();
 
                 initDPBinCoveredSampleBinomialP();
@@ -263,6 +264,46 @@ public class CalledVariant extends AnnotatedVariant {
         // all af
         ac = ctrlAC + caseAC;
         af[Index.ALL] = MathManager.devide(ac, ctrlTotalAC + caseTotalAC);
+    }
+
+    private boolean checkLooAFValid() {
+        if(CohortLevelFilterCommand.maxLooMAF == Data.NO_FILTER
+                && CohortLevelFilterCommand.maxLooAF == Data.NO_FILTER) {
+            return true;
+        }
+        
+        for (Carrier carrier : carrierMap.values()) {
+            byte geno = carrier.gt;
+            Sample sample = SampleManager.getMap().get(carrier.getSampleId());
+
+            // delete current sample geno as 'leave one out' concept
+            deleteSampleGeno(geno, sample);
+
+            // calculateLooAF
+            int alleleCount = 2 * genoCount[Index.HOM][Index.CASE]
+                    + genoCount[Index.HET][Index.CASE]
+                    + 2 * genoCount[Index.HOM][Index.CTRL]
+                    + genoCount[Index.HET][Index.CTRL];
+            int totalCount = alleleCount
+                    + genoCount[Index.HET][Index.CASE]
+                    + 2 * genoCount[Index.REF][Index.CASE]
+                    + genoCount[Index.HET][Index.CTRL]
+                    + 2 * genoCount[Index.REF][Index.CTRL];
+
+            float looAF = MathManager.devide(alleleCount, totalCount);
+
+            // add deleted sample geno back
+            addSampleGeno(geno, sample);
+            
+            // if any samples' loo af failed to pass the threshold, set variant to invalid
+            if (!CohortLevelFilterCommand.isLooAFValid(looAF)) {
+                isValid = false;
+                break;
+            }
+
+        }
+
+        return isValid;
     }
 
     private void calculateGenotypeFreq() {

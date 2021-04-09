@@ -1,6 +1,5 @@
 package function.variant.base;
 
-import function.annotation.base.AnnotationLevelFilterCommand;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCRManager;
 import function.external.denovo.DenovoDBCommand;
@@ -405,10 +404,6 @@ public class Output {
             // add deleted sample geno back
             calledVar.addSampleGeno(geno, sample);
         }
-    }
-
-    public boolean isMaxLooAFValid() {
-        return CohortLevelFilterCommand.isLooAFValid(looAF);
     }
 
     public double getLooAf() {
