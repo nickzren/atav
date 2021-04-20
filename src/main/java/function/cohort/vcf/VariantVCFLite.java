@@ -65,6 +65,7 @@ public class VariantVCFLite {
     private byte[] gtArr = new byte[SampleManager.getTotalSampleNum()];
     private short[] dpArr = new short[SampleManager.getTotalSampleNum()];
     private byte[] gqArr = new byte[SampleManager.getTotalSampleNum()];
+    private List<Byte> carrierGTList = new ArrayList<>();
 
     // external
     public float revel = Data.FLOAT_NA;
@@ -214,22 +215,23 @@ public class VariantVCFLite {
             gtArr[sampleIndex] = gt;
             dpArr[sampleIndex] = dp;
             gqArr[sampleIndex] = gq;
+            
+            if(GenotypeLevelFilterCommand.isQualifiedGeno(gt)) {
+                carrierGTList.add(gt);
+            }
         }
 
-        boolean isLooAFValid = true;
-        for (int s = 0; s < SampleManager.getList().size(); s++) {
-            calculateLooAF(gtArr[s]);
+        for (byte gt : carrierGTList) {
+            calculateLooAF(gt);
 
             // apply --max-loo-af and --max-loo-maf
             if (!CohortLevelFilterCommand.isLooAFValid(looAF)) {
-                isLooAFValid = false;
-            }
-
-            if (!isLooAFValid) {
                 isValid = false;
                 break;
             }
         }
+        
+        carrierGTList = null;
     }
 
     private void calculateLooAF(byte gt) {
