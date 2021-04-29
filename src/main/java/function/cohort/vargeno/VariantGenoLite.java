@@ -110,7 +110,7 @@ public class VariantGenoLite {
         pos = Integer.valueOf(tmp[1]);
         ref = tmp[2];
         alt = tmp[3];
-        indelLength = ref.length() - alt.length();
+        indelLength = alt.length() - ref.length();
         
         isSNV = ref.length() == alt.length();
 

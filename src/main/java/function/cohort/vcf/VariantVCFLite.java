@@ -80,7 +80,7 @@ public class VariantVCFLite {
         ref = values[3];
         alt = values[4];
 
-        indelLength = ref.length() - alt.length();
+        indelLength = alt.length() - ref.length();
         isSNV = ref.length() == alt.length();
         isMNV = ref.length() > 1 && alt.length() > 1
                 && alt.length() == ref.length();
