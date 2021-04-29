@@ -4,6 +4,8 @@ import function.external.ccr.CCRCommand;
 import function.external.ccr.CCRManager;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.denovo.DenovoDBCommand;
 import function.external.limbr.LIMBRManager;
 import function.external.denovo.DenovoDBManager;
@@ -123,6 +125,10 @@ public class DataManager {
 
         if (IGMAFCommand.getInstance().isInclude) {
             sb.append(IGMAFManager.getVersion());
+        }
+        
+        if(DefaultControlAFCommand.getInstance().isInclude) {
+            sb.append(DefaultControlAFManager.getVersion());
         }
         
         if (IranomeCommand.getInstance().isInclude) {

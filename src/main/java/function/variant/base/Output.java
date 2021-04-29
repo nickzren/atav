@@ -41,6 +41,8 @@ import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gevir.GeVIRCommand;
@@ -228,6 +230,10 @@ public class Output {
 
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(IGMAFManager.getHeader());
+        }
+        
+        if(DefaultControlAFCommand.getInstance().isInclude) {
+            sj.add(DefaultControlAFManager.getHeader());
         }
 
         if (DBNSFPCommand.isInclude) {

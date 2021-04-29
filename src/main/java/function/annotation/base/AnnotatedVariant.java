@@ -8,6 +8,9 @@ import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFP;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAF;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.denovo.DenovoDB;
@@ -124,6 +127,7 @@ public class AnnotatedVariant extends Variant {
     private float genomeasiaAF;
     private float iranomeAF;
     private float igmAF;
+    private DefaultControlAF defaultControlAF;
     private DBNSFP dbNSFP;
 
     public boolean isValid = true;
@@ -148,6 +152,12 @@ public class AnnotatedVariant extends Variant {
             igmAF = IGMAFManager.getAF(chrStr, variantId);
 
             isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
+        }
+
+        if (isValid && DefaultControlAFCommand.getInstance().isInclude) {
+            defaultControlAF = DefaultControlAFManager.getDefaultControlAF(chrStr, variantId);
+
+            isValid = DefaultControlAFCommand.getInstance().isAFValid(defaultControlAF.getAF());
         }
 
         if (isValid && GMECommand.getInstance().isInclude) {
@@ -240,13 +250,13 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(FormatManager.getString(annotation.HGVS_p));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
-            
+
             int geneTranscriptCount = geneTranscriptCountMap.getOrDefault(annotation.geneName, 0);
             if (!transcriptSet.contains(annotation.stableId)) {
                 transcriptSet.add(annotation.stableId);
                 geneTranscriptCountMap.put(annotation.geneName, geneTranscriptCount + 1);
             }
-            
+
             allAnnotationSJ.add(annotationSJ.toString());
 
             polyphenHumdiv = MathManager.max(polyphenHumdiv, annotation.polyphenHumdiv);
@@ -599,6 +609,10 @@ public class AnnotatedVariant extends Variant {
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(getIGMAF());
         }
+        
+        if (DefaultControlAFCommand.getInstance().isInclude) {
+            sj.merge(getDefaultControlAFStringJoiner());
+        }
 
         if (DBNSFPCommand.isInclude) {
             sj.add(dbNSFP.toString());
@@ -707,5 +721,9 @@ public class AnnotatedVariant extends Variant {
 
     public String getIGMAF() {
         return FormatManager.getFloat(igmAF);
+    }
+    
+    public StringJoiner getDefaultControlAFStringJoiner() {
+        return defaultControlAF.getStringJoiner();
     }
 }

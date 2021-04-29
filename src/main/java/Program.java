@@ -87,6 +87,7 @@ import function.cohort.vcf.ListVCFLite;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
@@ -225,6 +226,8 @@ public class Program {
             IranomeManager.init();
             
             IGMAFManager.init();
+            
+            DefaultControlAFManager.init();
             
             DBNSFPManager.init();
 
