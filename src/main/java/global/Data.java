@@ -8,7 +8,7 @@ public class Data {
 
     // software info
     public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String VERSION = "trunk";
+    public static String VERSION = "7.1.9";
     public static String userName = System.getProperty("user.name");
 
     // atav home path (location of executable jar file, config dir, data dir, lib dir etc.)
