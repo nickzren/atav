@@ -202,13 +202,13 @@ public class VariantVCFLite {
             byte gq = FormatManager.getByte(tmp[2]);
 
             if (gt != Data.BYTE_NA) {
-                // apply --min-coverage or --min-gq filter
-                if (!GenotypeLevelFilterCommand.isMinGqValid(gq)
-                        || !GenotypeLevelFilterCommand.isMinDpBinValid(dp)) {
-                    gt = Data.BYTE_NA;
-                } else {
+//                // apply --min-coverage or --min-gq filter
+//                if (!GenotypeLevelFilterCommand.isMinGqValid(gq)
+//                        || !GenotypeLevelFilterCommand.isMinDpBinValid(dp)) {
+//                    gt = Data.BYTE_NA;
+//                } else {
                     genoCount[gt]++;
-                }
+//                }
             }
 
             sampleIndex = vcfColumnIndex - 9;
