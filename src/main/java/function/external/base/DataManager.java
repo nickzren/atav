@@ -82,9 +82,13 @@ public class DataManager {
         if (ExACCommand.getInstance().isInclude) {
             sb.append(ExACManager.getVersion());
         }
-        
+
         if (DBNSFPCommand.isInclude) {
             sb.append(DBNSFPManager.getVersion());
+        }
+
+        if (DefaultControlAFCommand.getInstance().isInclude) {
+            sb.append(DefaultControlAFManager.getVersion());
         }
 
         if (DenovoDBCommand.isInclude) {
@@ -126,11 +130,7 @@ public class DataManager {
         if (IGMAFCommand.getInstance().isInclude) {
             sb.append(IGMAFManager.getVersion());
         }
-        
-        if(DefaultControlAFCommand.getInstance().isInclude) {
-            sb.append(DefaultControlAFManager.getVersion());
-        }
-        
+
         if (IranomeCommand.getInstance().isInclude) {
             sb.append(IranomeManager.getVersion());
         }
