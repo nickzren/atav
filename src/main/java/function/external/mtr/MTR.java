@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
-import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
 

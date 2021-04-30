@@ -35,6 +35,7 @@ import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMCommand;
 import function.external.dbnsfp.DBNSFPCommand;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
@@ -79,7 +80,7 @@ public class CommandManager {
                 + "1 --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-exome-af 0.001 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-exome-pop afr,amr,nfe,fin,eas,"
                 + "asj,sas --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --include-qc-missing --include-known-var --include-evs --include-exac --include-gnomad-genome --include-gnomad-ex"
                 + "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
-
+        
         optionArray = cmd.split("\\s+");
     }
 
@@ -343,6 +344,11 @@ public class CommandManager {
                     break;
                 case "--list-vcf":
                     VCFCommand.isList = true;
+                    VCFCommand.isOutputVCF = true;
+                    break;
+                case "--list-vcf-lite":
+                    VCFCommand.isListLite = true;
+                    VCFCommand.isOutputVCF = true;
                     break;
                 case "--list-af":
                     AFCommand.isList = true;
@@ -359,6 +365,9 @@ public class CommandManager {
                     break;
                 case "--collapsing-lite":
                     CollapsingCommand.isCollapsingLite = true;
+                    break;
+                case "--collapsing-vcf-lite":
+                    CollapsingCommand.isCollapsingVCFLite = true;
                     break;
                 case "--fisher":
                     StatisticsCommand.isFisher = true;
@@ -417,6 +426,7 @@ public class CommandManager {
                     GenomeAsiaCommand.getInstance().isInclude = true;
                     IranomeCommand.getInstance().isInclude = true;
                     IGMAFCommand.getInstance().isInclude = true;
+                    DefaultControlAFCommand.getInstance().isInclude = true;
                     DBNSFPCommand.isInclude = true;
                     break;
                 // Coverage Analysis Functions    
@@ -796,12 +806,12 @@ public class CommandManager {
 
         return false;
     }
-    
+
     public static String getNonEmptyValue(CommandOption option) {
         if (option.getValue().isEmpty()) {
             CommandManager.outputInvalidOptionValue(option);
         }
-        
+
         return option.getValue();
     }
 

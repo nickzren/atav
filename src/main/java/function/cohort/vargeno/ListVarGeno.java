@@ -50,7 +50,7 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         if (VarGenoCommand.isMannWhitneyTest) {
             ThirdPartyToolManager.runMannWhitneyTest(genotypesFilePath);
         }
-        
+
         if (CommonCommand.gzip) {
             ThirdPartyToolManager.gzipFile(genotypesFilePath);
         }
@@ -77,11 +77,8 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
                     if (output.isQualifiedGeno(geno)) {
                         output.calculateLooAF(sample);
 
-                        // --loo-af
-                        if (output.isMaxLooAFValid()) {
-                            bwGenotypes.write(output.getString(sample));
-                            bwGenotypes.newLine();
-                        }
+                        bwGenotypes.write(output.getString(sample));
+                        bwGenotypes.newLine();
                     }
                 }
             }

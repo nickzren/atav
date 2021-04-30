@@ -11,11 +11,13 @@ import function.variant.base.RegionManager;
 import global.Data;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
 import utils.CommonCommand;
 import utils.DBManager;
+import utils.FormatManager;
 
 /**
  *
@@ -26,6 +28,7 @@ public class GeneManager {
     public static final String TMP_GENE_TABLE = "tmp_gene_chr"; // need to append chr in real time
     public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_040320.tsv.gz";
     public static final String ALL_GENE_SYMBOL_MAP_PATH = "data/gene/hgnc_complete_set_to_GRCh37.87_040320.tsv.gz";
+    public static final String ALL_GENE_TRANSCRIPT_COUNT_MAP_PATH = "data/gene/gencode_gene_transcript_count_v24lift37.tsv.gz";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
@@ -34,6 +37,7 @@ public class GeneManager {
     // key: existing dragendb gene name, value: up to date gene name
     private static HashMap<String, String> hgncGeneMap = new HashMap<>();
     private static HashMap<String, String> allGeneSymbolMap = new HashMap<>();
+    private static HashMap<String, Integer> allGeneTranscriptCountMap = new HashMap<>();
 
     private static ArrayList<Gene> geneBoundaryList = new ArrayList<>();
     private static int allGeneBoundaryLength;
@@ -56,6 +60,8 @@ public class GeneManager {
         initHgncGeneMap();
 
         initAllGeneSymbolMap();
+
+        initAllGeneTranscriptCountMap();
 
         initGeneName();
 
@@ -113,6 +119,30 @@ public class GeneManager {
                     String[] tmp = line.split("\t");
 
                     allGeneSymbolMap.put(tmp[0], tmp[1]);
+                }
+            }
+
+            br.close();
+            decoder.close();
+            in.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private static void initAllGeneTranscriptCountMap() {
+        try {
+            File f = new File(Data.ATAV_HOME + ALL_GENE_TRANSCRIPT_COUNT_MAP_PATH);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("#")) {
+                    String[] tmp = line.split("\t");
+
+                    allGeneTranscriptCountMap.put(tmp[0], Integer.valueOf(tmp[1]));
                 }
             }
 
@@ -313,7 +343,7 @@ public class GeneManager {
                 stmt.executeUpdate(
                         "CREATE TEMPORARY TABLE " + TMP_GENE_TABLE + chr + "("
                         + "input_gene varchar(128) NOT NULL, "
-                        + "PRIMARY KEY (input_gene)) ENGINE=TokuDB;");
+                        + "PRIMARY KEY (input_gene));");
 
                 if (chrAllGeneMap.get(chr).length() > 0) {
                     // insert values
@@ -466,7 +496,7 @@ public class GeneManager {
         return upToDateGene == null ? dragendbGene : upToDateGene;
     }
 
-    public static String getAllGeneSymbol(List<String> geneList) {
+    public static String getAllGeneSymbol(Set<String> geneList) {
         if (geneList.isEmpty()) {
             return Data.STRING_NA;
         }
@@ -477,6 +507,19 @@ public class GeneManager {
             String allGeneSymbol = allGeneSymbolMap.get(gene);
             sj.add(allGeneSymbol == null ? gene : allGeneSymbol);
         }
+
+        return sj.toString();
+    }
+
+    public static String getAllGeneTranscriptCount(Map<String, Integer> geneTranscriptCountMap) {
+        if (geneTranscriptCountMap.isEmpty()) {
+            return Data.STRING_NA;
+        }
+
+        StringJoiner sj = new StringJoiner(";");
+
+        geneTranscriptCountMap.forEach((k, v) -> sj.add(
+                k + ":" + v + "/" + FormatManager.getInteger(allGeneTranscriptCountMap.get(k))));
 
         return sj.toString();
     }

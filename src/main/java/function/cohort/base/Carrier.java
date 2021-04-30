@@ -134,13 +134,11 @@ public class Carrier extends NonCarrier {
         return hpVariantId;
     }
 
-    public void applyQualityFilter(boolean isSnv) {
-        if (gt != Data.BYTE_NA) {
+     public void applyQualityFilter() { 
+         if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isMinAdAltValid(adAlt)
                     || !GenotypeLevelFilterCommand.isMinGqValid(gq)
-                    || !GenotypeLevelFilterCommand.isMaxSorValid(sor, isSnv)
-                    || !GenotypeLevelFilterCommand.isMaxFsValid(fs, isSnv)
                     || !GenotypeLevelFilterCommand.isMinMqValid(mq)
                     || !GenotypeLevelFilterCommand.isMinQdValid(qd)
                     || !GenotypeLevelFilterCommand.isMinQualValid(qual)
@@ -174,6 +172,15 @@ public class Carrier extends NonCarrier {
             }
 
             if (!GenotypeLevelFilterCommand.isMaxPercentAltReadBinomialPValid(percentAltReadBinomialP)) {
+                gt = Data.BYTE_NA;
+            }
+        }
+     }
+    
+    public void applyQualityFilter(boolean isSnv) {                
+        if (gt != Data.BYTE_NA) {
+            if (!GenotypeLevelFilterCommand.isMaxSorValid(sor, isSnv)
+                    || !GenotypeLevelFilterCommand.isMaxFsValid(fs, isSnv)) {
                 gt = Data.BYTE_NA;
             }
         }

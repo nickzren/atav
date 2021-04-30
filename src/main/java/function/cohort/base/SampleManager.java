@@ -1,6 +1,7 @@
 package function.cohort.base;
 
 import function.cohort.collapsing.CollapsingCommand;
+import function.cohort.pedmap.PedMapCommand;
 import function.cohort.statistics.StatisticsCommand;
 import global.Data;
 import global.Index;
@@ -23,6 +24,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import utils.FormatManager;
 
 /**
  *
@@ -70,6 +72,10 @@ public class SampleManager {
     private static final String IGM_GNOMAD_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/igm_gnomad_sample_062620.txt";
     private static Set<String> excludeIGMGnomadSampleSet = new HashSet<>();
 
+    // default control sample
+    private static final String DEFAULT_CONTROL_SAMPLE_PATH = Data.ATAV_HOME + "data/sample/default_control_sample.tsv";
+    private static ArrayList<Sample> defaultControlSampleList = new ArrayList<>();
+
     public static void init() {
         if (CommonCommand.isNonSampleAnalysis) {
             return;
@@ -82,6 +88,7 @@ public class SampleManager {
         if (!CohortLevelFilterCommand.sampleFile.isEmpty()) {
             initExistingSampleFile();
             initFromSampleFile();
+            initIncludeDefaultControlSample();
             closeExistingSampleFile();
         } else if (CohortLevelFilterCommand.isAllSample
                 || CohortLevelFilterCommand.isAllExome) {
@@ -156,6 +163,53 @@ public class SampleManager {
         }
     }
 
+    public static void initIncludeDefaultControlSample() {
+        if (CohortLevelFilterCommand.isIncludeDefaultControlSample) {
+            try {
+                File f = new File(DEFAULT_CONTROL_SAMPLE_PATH);
+                FileReader fr = new FileReader(f);
+                BufferedReader br = new BufferedReader(fr);
+
+                String lineStr = "";
+                while ((lineStr = br.readLine()) != null) {
+                    String[] values = lineStr.replaceAll("( )+", "").split("\t");
+
+                    String familyId = values[0];
+                    String individualId = values[1];
+                    String paternalId = values[2];
+                    String maternalId = values[3];
+                    byte sex = Byte.valueOf(values[4]);
+                    byte pheno = Byte.valueOf(values[5]);
+                    String sampleType = values[6];
+                    String captureKit = values[7];
+
+                    int sampleId = getSampleId(individualId, sampleType, captureKit);
+                    int experimentId = getExperimentId(sampleId);
+
+                    Sample sample = new Sample(sampleId, familyId, individualId,
+                            paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
+
+                    if (sampleMap.containsKey(sampleId)) {
+                        continue;
+                    }
+
+                    sampleList.add(sample);
+                    sampleMap.put(sampleId, sample);
+
+                    countSampleNum(sample);
+
+                    bwExistingSample.write(initStringLineForSampleFile(sample));
+                    bwExistingSample.newLine();
+                }
+
+                br.close();
+                fr.close();
+            } catch (Exception e) {
+                ErrorManager.send(e);
+            }
+        }
+    }
+
     private static void initSampleIndexAndSize() {
         int index = 0;
 
@@ -169,7 +223,7 @@ public class SampleManager {
     private static void initAllSampleFromDB() {
         String sqlCode = "SELECT * FROM sample "
                 + "WHERE sample_finished = 1 and sample_failure = 0 "
-                + "and sample_type != 'custom_capture'";
+                + "and sample_type != 'custom_capture' and low_quality != 1";
 
         if (CohortLevelFilterCommand.isAllExome) {
             sqlCode += " and sample_type = 'Exome'";
@@ -178,7 +232,7 @@ public class SampleManager {
         if (CohortLevelFilterCommand.isAvailableControlUseOnly) {
             sqlCode += " and available_control_use = 1";
         }
-        
+
         initSampleFromDB(sqlCode);
     }
 
@@ -211,7 +265,7 @@ public class SampleManager {
 
                 if (CohortLevelFilterCommand.isExcludeIGMGnomadSample
                         && excludeIGMGnomadSampleSet.contains((individualId))) {
-                    LogManager.writeAndPrint("Excluded IGM gnomAD Sample: " + individualId);
+                    LogManager.writeAndPrint("Excluded IGM gnomAD sample: " + individualId);
                     continue;
                 }
 
@@ -248,12 +302,20 @@ public class SampleManager {
 
                 int sampleId = getSampleId(individualId, sampleType, captureKit);
 
+                if (CohortLevelFilterCommand.isExcludeLowQualitySample
+                        && isLowQualitySample(sampleId)) {
+                    LogManager.writeAndPrint("Excluded low quality sample: " + individualId);
+                    continue;
+                }
+
                 if (sampleMap.containsKey(sampleId)) {
                     continue;
                 }
 
+                int experimentId = getExperimentId(sampleId);
+
                 Sample sample = new Sample(sampleId, familyId, individualId,
-                        paternalId, maternalId, sex, pheno, sampleType, captureKit);
+                        paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
 
                 if (sampleId == Data.INTEGER_NA) {
                     checkSampleList(sample);
@@ -269,7 +331,7 @@ public class SampleManager {
 
                 countSampleNum(sample);
 
-                bwExistingSample.write(lineStr);
+                bwExistingSample.write(initStringLineForSampleFile(sample));
                 bwExistingSample.newLine();
             }
 
@@ -281,6 +343,24 @@ public class SampleManager {
 
             ErrorManager.send(e);
         }
+    }
+
+    private static String initStringLineForSampleFile(Sample sample) {
+        StringJoiner sj = new StringJoiner("\t");
+        sj.add(sample.getFamilyId());
+        if (PedMapCommand.outputExperimentId) {
+            sj.add(FormatManager.getInteger(sample.getExperimentId()));
+        } else {
+            sj.add(sample.getName());
+        }
+        sj.add(sample.getPaternalId());
+        sj.add(sample.getMaternalId());
+        sj.add(String.valueOf(sample.getSex()));
+        sj.add(sample.getPhenoForSampleFile());
+        sj.add(sample.getType());
+        sj.add(sample.getCaptureKit());
+
+        return sj.toString();
     }
 
     private static void initSampleFromDB(String sqlCode) {
@@ -305,9 +385,10 @@ public class SampleManager {
                 byte pheno = 1; // control
                 String sampleType = rs.getString("sample_type").trim();
                 String captureKit = rs.getString("capture_kit").trim();
+                int experimentId = rs.getInt("experiment_id");
 
                 Sample sample = new Sample(sampleId, familyId, individualId,
-                        paternalId, maternalId, sex, pheno, sampleType, captureKit);
+                        paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
 
                 sampleList.add(sample);
                 sampleMap.put(sampleId, sample);
@@ -660,7 +741,7 @@ public class SampleManager {
 
             String sqlQuery = "CREATE TEMPORARY TABLE "
                     + sqlTable
-                    + "(input_sample_id mediumint, PRIMARY KEY (input_sample_id)) ENGINE=TokuDB";
+                    + "(input_sample_id mediumint, PRIMARY KEY (input_sample_id));";
 
             stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
         } catch (Exception e) {
@@ -682,7 +763,7 @@ public class SampleManager {
             String captureKit) throws Exception {
         int sampleId = Data.INTEGER_NA;
 
-        try {           
+        try {
             String sql = "SELECT sample_id FROM sample "
                     + "WHERE sample_name=? AND sample_type=? AND capture_kit=? "
                     + "AND sample_finished = 1 AND sample_failure = 0";
@@ -703,6 +784,50 @@ public class SampleManager {
         }
 
         return sampleId;
+    }
+
+    private static boolean isLowQualitySample(int sampleId) {
+        boolean isLowQualitySample = false;
+
+        try {
+            String sql = "SELECT low_quality FROM sample WHERE sample_id=?";
+
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setInt(1, sampleId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                isLowQualitySample = rs.getInt("low_quality") == 1;
+            }
+
+            rs.close();
+            preparedStatement.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        return isLowQualitySample;
+    }
+
+    private static int getExperimentId(int sampleId) {
+        int experimentId = Data.INTEGER_NA;
+
+        try {
+            String sql = "SELECT experiment_id FROM sample WHERE sample_id=?";
+
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setInt(1, sampleId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                experimentId = rs.getInt("experiment_id");
+            }
+
+            rs.close();
+            preparedStatement.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        return experimentId;
     }
 
     public static int getIdByName(String sampleName) {

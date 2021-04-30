@@ -1,6 +1,5 @@
 package function.variant.base;
 
-import function.annotation.base.AnnotationLevelFilterCommand;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCRManager;
 import function.external.denovo.DenovoDBCommand;
@@ -42,6 +41,8 @@ import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gevir.GeVIRCommand;
@@ -106,6 +107,7 @@ public class Output {
         sj.add("Gene Name");
         sj.add("UpToDate Gene Name");
         sj.add("All Gene Symbols");
+        sj.add("All Gene Transcript Count");
         sj.add("Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar");
 
         return sj;
@@ -229,6 +231,10 @@ public class Output {
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(IGMAFManager.getHeader());
         }
+        
+        if(DefaultControlAFCommand.getInstance().isInclude) {
+            sj.add(DefaultControlAFManager.getHeader());
+        }
 
         if (DBNSFPCommand.isInclude) {
             sj.add(DBNSFPManager.getHeader());
@@ -273,6 +279,7 @@ public class Output {
     public static StringJoiner getCarrierDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add("Experiment ID");
         sj.add("Sample Name");
         sj.add("Sample Type");
         sj.add("Sample Phenotype");
@@ -325,23 +332,7 @@ public class Output {
     }
 
     public boolean isQualifiedGeno(byte geno) {
-        // --hom-only
-        if (GenotypeLevelFilterCommand.isHomOnly) {
-            return geno == Index.HOM;
-        }
-
-        // --het-only
-        if (GenotypeLevelFilterCommand.isHetOnly) {
-            return geno == Index.HET;
-        }
-
-        // --include-hom-ref
-        if (GenotypeLevelFilterCommand.isIncludeHomRef && geno == Index.REF) {
-            return true;
-        }
-
-        // default: hom alt or het is valid 
-        return geno == Index.HOM || geno == Index.HET;
+        return GenotypeLevelFilterCommand.isQualifiedGeno(geno);
     }
 
     public void getGenoStatData(StringJoiner sj) {
@@ -373,6 +364,7 @@ public class Output {
     }
 
     public void getCarrierData(StringJoiner sj, Carrier carrier, Sample sample) {
+        sj.add(FormatManager.getInteger(sample.getExperimentId()));
         sj.add(sample.getName());
         sj.add(sample.getType());
         sj.add(sample.getPhenotype());
@@ -418,10 +410,6 @@ public class Output {
             // add deleted sample geno back
             calledVar.addSampleGeno(geno, sample);
         }
-    }
-
-    public boolean isMaxLooAFValid() {
-        return CohortLevelFilterCommand.isLooAFValid(looAF);
     }
 
     public double getLooAf() {

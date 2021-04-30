@@ -31,7 +31,7 @@ public class CarrierBlockManager {
         if (CommonCommand.isNonDBAnalysis) {
             return;
         }
-        
+
         for (String chr : RegionManager.ALL_CHR) {
             String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,VQSLOD,SOR,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0,PGT,PID_variant_id,HP_GT,HP_variant_id "
                     + "FROM called_variant_chr" + chr + "," + EffectManager.TMP_IMPACT_TABLE + ","
@@ -69,7 +69,7 @@ public class CarrierBlockManager {
     private static void initBlockCarrierMap(Variant var) {
         try {
             HashMap<Integer, Integer> validVariantCarrierCount = new HashMap<>();
-            
+
             PreparedStatement preparedStatement = preparedStatement4BlockMap.get(var.getChrStr());
             preparedStatement.setInt(1, currentBlockId);
             ResultSet rs = preparedStatement.executeQuery();
@@ -87,18 +87,18 @@ public class CarrierBlockManager {
 
                 carrier.checkValidOnXY(var);
 
-                carrier.applyQualityFilter(var.isSnv());
+                carrier.applyQualityFilter();
 
                 if (carrier.isValid()) {
                     validVariantCarrierCount.computeIfPresent(variantId, (k, v) -> v + 1);
                 }
-                
+
                 // add carrier in order to distinguish non-carrier
                 varCarrierMap.put(carrier.getSampleId(), carrier);
             }
 
             rs.close();
-            
+
             // remove variant if no qualified carriers
             for (Entry<Integer, Integer> entry : validVariantCarrierCount.entrySet()) {
                 if (entry.getValue() == 0) {
@@ -122,7 +122,7 @@ public class CarrierBlockManager {
 
                 carrier.checkValidOnXY(var);
 
-                carrier.applyQualityFilter(var.isSnv());
+                carrier.applyQualityFilter();
 
                 carrierMap.put(carrier.getSampleId(), carrier);
             }

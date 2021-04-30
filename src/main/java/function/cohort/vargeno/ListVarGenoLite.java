@@ -127,7 +127,7 @@ public class ListVarGenoLite {
                     isHeaderOutput = true;
                 }
 
-                VariantLite variantLite = new VariantLite(record);
+                VariantGenoLite variantLite = new VariantGenoLite(record);
 
                 // output qualifed record to genotypes file
                 if (variantLite.isValid()) {
@@ -306,7 +306,7 @@ public class ListVarGenoLite {
         bwGenotypes.newLine();
     }
 
-    public void outputGenotype(VariantLite variantLite) throws IOException {
+    public void outputGenotype(VariantGenoLite variantLite) throws IOException {
         CSVRecord record = variantLite.getRecord();
         Annotation mostDamagingAnnotation = variantLite.getMostDamagingAnnotation();
         String allAnnotation = variantLite.getAllAnnotation();

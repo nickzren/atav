@@ -16,7 +16,9 @@ import utils.ErrorManager;
  */
 public class AnnotationLevelFilterCommand {
 
+    public static String impactInput = "";
     public static String effectInput = "";
+    public static String excludeEffectInput = "";
     public static String geneInput = "";
     public static String geneBoundaryFile = "";
     public static String transcriptBoundaryFile = "";
@@ -34,8 +36,14 @@ public class AnnotationLevelFilterCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
+                case "--impact":
+                    impactInput = getNonEmptyValue(option).replaceAll("( )+", "").toUpperCase();
+                    break;
                 case "--effect":
-                    effectInput = getNonEmptyValue(option);
+                    effectInput = getNonEmptyValue(option).replaceAll("( )+", "");
+                    break;
+                case "--exclude-effect":
+                    excludeEffectInput = getNonEmptyValue(option).replaceAll("( )+", "");
                     break;
                 case "--gene":
                     geneInput = getNonEmptyValue(option);
@@ -74,7 +82,7 @@ public class AnnotationLevelFilterCommand {
 
             iterator.remove();
         }
-        
+
         checkEnsembleMissenseValid();
     }
 
@@ -83,7 +91,7 @@ public class AnnotationLevelFilterCommand {
             if (polyphenHumdiv.equals(Data.NO_FILTER_STR)
                     || RevelCommand.minRevel == Data.NO_FILTER
                     || PrimateAICommand.minPrimateAI == Data.NO_FILTER) {
-                ErrorManager.print("--ensemble-missense applied, it required to use --polyphen-humdiv, --min-revel-score and --min-primate-ai", 
+                ErrorManager.print("--ensemble-missense applied, it required to use --polyphen-humdiv, --min-revel-score and --min-primate-ai",
                         ErrorManager.COMMAND_PARSING);
             }
         }

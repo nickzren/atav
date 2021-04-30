@@ -134,16 +134,14 @@ public class CollapsingCompHet extends CollapsingBase {
                     if (output1.isQualifiedGeno(geno1)) {
                         output1.calculateLooAF(sample);
 
-                        if (output1.isMaxLooAFValid()) {
-                            if (isOutputValid(output1, geno1, sample, summary)) {
-                                continue;
-                            }
+                        if (isOutputValid(output1, geno1, sample, summary)) {
+                            continue;
+                        }
 
-                            for (int j = i + 1; j < outputSize; j++) {
-                                output2 = geneOutputList.get(j);
+                        for (int j = i + 1; j < outputSize; j++) {
+                            output2 = geneOutputList.get(j);
 
-                                checkOutputValid(output1, output2, sample, summary);
-                            }
+                            checkOutputValid(output1, output2, sample, summary);
                         }
                     }
                 }
@@ -192,20 +190,18 @@ public class CollapsingCompHet extends CollapsingBase {
             if (output2.isQualifiedGeno(geno2)) {
                 output2.calculateLooAF(sample);
 
-                if (output2.isMaxLooAFValid()) {
-                    summary.countQualifiedVariantBySample(sample.getIndex());
+                summary.countQualifiedVariantBySample(sample.getIndex());
 
-                    updateSummaryVariantCount(output1, summary);
-                    updateSummaryVariantCount(output2, summary);
+                updateSummaryVariantCount(output1, summary);
+                updateSummaryVariantCount(output2, summary);
 
-                    StringJoiner sj = new StringJoiner(",");
-                    sj.add(sample.getFamilyId());
-                    sj.merge(output1.getStringJoiner(sample));
-                    sj.merge(output2.getStringJoiner(sample));
+                StringJoiner sj = new StringJoiner(",");
+                sj.add(sample.getFamilyId());
+                sj.merge(output1.getStringJoiner(sample));
+                sj.merge(output2.getStringJoiner(sample));
 
-                    bwCompHet.write(sj.toString());
-                    bwCompHet.newLine();
-                }
+                bwCompHet.write(sj.toString());
+                bwCompHet.newLine();
             }
         }
     }

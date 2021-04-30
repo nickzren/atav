@@ -102,7 +102,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             }
         } else {
             // gene summary
-            for (String geneName : output.getCalledVariant().getGeneList()) {
+            for (String geneName : output.getCalledVariant().getGeneSet()) {
                 if (!geneName.equals(Data.STRING_NA)) {
                     summaryMap.putIfAbsent(geneName, new CollapsingGeneSummary(geneName));
                     summaryList.add(summaryMap.get(geneName));
@@ -117,17 +117,15 @@ public class CollapsingSingleVariant extends CollapsingBase {
             boolean hasQualifiedVariant = false;
 
             for (Sample sample : SampleManager.getList()) {
-                output.calculateLooAF(sample);
                 byte geno = output.getCalledVariant().getGT(sample.getIndex());
-
-                if (output.isMaxLooAFValid()
-                        && output.isQualifiedGeno(geno)) {
+                if (output.isQualifiedGeno(geno)) {
                     hasQualifiedVariant = true;
 
                     for (CollapsingSummary summary : summaryList) {
                         summary.countQualifiedVariantBySample(geno, sample.getIndex());
                     }
 
+                    output.calculateLooAF(sample);
                     outputQualifiedVariant(output, sample);
                 }
             }

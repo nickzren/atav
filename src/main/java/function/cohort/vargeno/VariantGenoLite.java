@@ -65,7 +65,7 @@ import utils.MathManager;
  *
  * @author nick
  */
-public class VariantLite {
+public class VariantGenoLite {
 
     private String variantID;
     private String chr;
@@ -102,7 +102,7 @@ public class VariantLite {
     private float looAF;
     private CSVRecord record;
 
-    public VariantLite(CSVRecord record) {
+    public VariantGenoLite(CSVRecord record) {
         this.record = record;
         variantID = record.get(ListVarGenoLite.VARIANT_ID_HEADER);
         String[] tmp = variantID.split("-");
@@ -110,7 +110,7 @@ public class VariantLite {
         pos = Integer.valueOf(tmp[1]);
         ref = tmp[2];
         alt = tmp[3];
-        indelLength = ref.length() - alt.length();
+        indelLength = alt.length() - ref.length();
         
         isSNV = ref.length() == alt.length();
 
@@ -167,7 +167,7 @@ public class VariantLite {
             }
 
             String stableIdStr = values[2];
-            int stableId = getIntStableId(stableIdStr);
+            int stableId = TranscriptManager.getIntStableId(stableIdStr);
             String HGVS_c = values[3];
             String HGVS_p = values[4];
             float polyphenHumdiv = FormatManager.getFloat(values[5]);
@@ -183,7 +183,8 @@ public class VariantLite {
             // --effect
             // --gene or --gene-boundary
             // --polyphen-humdiv
-            // --ensemble-missens
+            // --ensemble-missense
+            // --ensemble-missense-2
             // --ccds-only
             // --canonical-only
             // --filter-dbnsfp-all & --filter-dbnsfp-one
@@ -366,14 +367,6 @@ public class VariantLite {
     private void initDBNSFP(CSVRecord record) {
         if (DBNSFPCommand.isInclude) {
             dbNSFP = new DBNSFP(record);
-        }
-    }
-
-    private int getIntStableId(String value) {
-        if (value.equals(Data.STRING_NA)) {
-            return Data.INTEGER_NA;
-        } else {
-            return Integer.valueOf(value.substring(4)); // remove ENST
         }
     }
 

@@ -70,6 +70,7 @@ import function.external.trap.TrapCommand;
 import function.cohort.base.DPBinBlockManager;
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.collapsing.CollapsingLite;
+import function.cohort.collapsing.CollapsingVCFLite;
 import function.cohort.parent.ListParentCompHet;
 import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
@@ -82,9 +83,11 @@ import function.cohort.var.VarCommand;
 import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
+import function.cohort.vcf.ListVCFLite;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
@@ -224,6 +227,8 @@ public class Program {
             
             IGMAFManager.init();
             
+            DefaultControlAFManager.init();
+            
             DBNSFPManager.init();
 
             // output external data version
@@ -244,6 +249,9 @@ public class Program {
                 runAnalysis(new ListVar());
             } else if (VCFCommand.isList) {
                 runAnalysis(new ListVCF());
+            } else if (VCFCommand.isListLite) {
+               ListVCFLite listVCFLite = new ListVCFLite();
+               listVCFLite.run();
             } else if (AFCommand.isList) {
                 runAnalysis(new ListAF());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
@@ -253,6 +261,9 @@ public class Program {
             } else if (CollapsingCommand.isCollapsingLite) {
                 CollapsingLite collapsingLite = new CollapsingLite();
                 collapsingLite.run();
+            } else if (CollapsingCommand.isCollapsingVCFLite) {
+                CollapsingVCFLite collapsingVCFLite = new CollapsingVCFLite();
+                collapsingVCFLite.run();
             } else if (StatisticsCommand.isFisher) {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {

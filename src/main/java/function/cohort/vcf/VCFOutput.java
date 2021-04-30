@@ -15,6 +15,11 @@ import utils.FormatManager;
  * @author nick
  */
 public class VCFOutput extends Output {
+    
+    public static final String HOM = "1/1";
+    public static final String HET = "1/0";
+    public static final String REF = "0/0";
+    public static final String NA = "./.";
 
     public static String getHeader() {
         StringBuilder sb = new StringBuilder();
@@ -63,7 +68,7 @@ public class VCFOutput extends Output {
 
         sj.add(calledVar.getChrStr());
         sj.add(FormatManager.getInteger(calledVar.getStartPosition()));
-        sj.add(calledVar.getRsNumberStr());
+        sj.add(calledVar.getVariantIdStr());
         sj.add(calledVar.getRefAllele());
         sj.add(calledVar.getAllele());
         sj.add(Data.VCF_NA);
@@ -91,7 +96,7 @@ public class VCFOutput extends Output {
             Carrier carrier = calledVar.getCarrier(sample.getId());
 
             formatSJ = new StringJoiner(":");
-            formatSJ.add(calledVar.getGT4VCF(sample.getIndex()));
+            formatSJ.add(VCFManager.getGT(calledVar.getGT(sample.getIndex())));
             // return DP for carrier, return DP Bin for non-carrier 
             formatSJ.add(FormatManager.getShort(carrier != null ? carrier.getDP() : calledVar.getDPBin(sample.getIndex())));
             formatSJ.add(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA));

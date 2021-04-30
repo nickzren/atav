@@ -3,21 +3,26 @@ package function.cohort.collapsing;
 import function.annotation.base.AnnotationLevelFilterCommand;
 import function.annotation.base.GeneManager;
 import function.annotation.base.TranscriptManager;
+import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
-import function.cohort.vargeno.ListVarGenoLite;
-import function.cohort.vargeno.VariantGenoLite;
-import function.external.knownvar.KnownVarCommand;
-import function.external.knownvar.KnownVarManager;
-import global.Data;
-import global.Index;
+import function.cohort.vcf.ListVCFLite;
+import function.cohort.vcf.VCFManager;
+import function.cohort.vcf.VariantVCFLite;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.commons.csv.CSVRecord;
+import java.util.zip.GZIPInputStream;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -27,7 +32,7 @@ import utils.ThirdPartyToolManager;
  *
  * @author nick
  */
-public class CollapsingLite extends ListVarGenoLite {
+public class CollapsingVCFLite extends ListVCFLite {
 
     private static BufferedWriter bwSampleMatrix = null;
     private static BufferedWriter bwSummary = null;
@@ -43,10 +48,6 @@ public class CollapsingLite extends ListVarGenoLite {
         initOutput();
 
         initSummaryMap();
-
-        if (KnownVarCommand.isIncludeOMIM) {
-            KnownVarManager.initOMIMMap();
-        }
     }
 
     @Override
@@ -91,42 +92,50 @@ public class CollapsingLite extends ListVarGenoLite {
     @Override
     public void run() {
         try {
-            LogManager.writeAndPrint("Start running collapsing lite function");
+            LogManager.writeAndPrint("Start running collapsing vcf lite function");
 
             init();
 
-            boolean isHeaderOutput = false;
-            String previousVariantID = Data.STRING_NA;
-            Iterable<CSVRecord> records = getRecords();
-            for (CSVRecord record : records) {
-                if (!isHeaderOutput) {
-                    outputHeader(record);
-                    isHeaderOutput = true;
+            File f = new File(GenotypeLevelFilterCommand.vcfFile);
+            Reader decoder;
+            if (f.getName().endsWith(".gz")) {
+                InputStream fileStream = new FileInputStream(f);
+                InputStream gzipStream = new GZIPInputStream(fileStream);
+                decoder = new InputStreamReader(gzipStream);
+            } else {
+                decoder = new FileReader(f);
+            }
+            BufferedReader br = new BufferedReader(decoder);
+
+            String lineStr = "";
+            while ((lineStr = br.readLine()) != null) {
+                if (lineStr.startsWith("#")) {
+                    continue;
                 }
 
-                // each variantLite object represent one row data record in genotype file
-                VariantGenoLite variantLite = new VariantGenoLite(record);
+                String[] values = lineStr.split("\t");
+                VariantVCFLite variantLite = new VariantVCFLite(values);
 
+                // output qualifed record to vcf file
                 if (variantLite.isValid()) {
                     if (!AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
-                        updateTranscriptSummary(variantLite, previousVariantID);
+                        updateTranscriptSummary(variantLite);
                     } else {
-                        updateGeneSummary(variantLite, previousVariantID);
+                        updateGeneSummary(variantLite);
                     }
 
-                    // output qualifed record to genotypes file
-                    outputGenotype(variantLite);
+                    // output qualifed record to vcf file
+                    bwVCF.write(variantLite.toString());
+                    bwVCF.newLine();
                 }
-
-                previousVariantID = variantLite.getVariantID();
             }
+
+            br.close();
+            decoder.close();
 
             outputSummary();
             closeOutput();
 
-            if (CollapsingCommand.isMannWhitneyTest) {
-                ThirdPartyToolManager.runMannWhitneyTest(genotypeLiteFilePath);
-            }
             generatePvaluesQQPlot();
             gzipFiles();
         } catch (Exception e) {
@@ -134,36 +143,32 @@ public class CollapsingLite extends ListVarGenoLite {
         }
     }
 
-    private void updateGeneSummary(VariantGenoLite variantLite, String previousVariantID) {
+    private void updateGeneSummary(VariantVCFLite variantLite) {
         for (String geneName : variantLite.getGeneList()) {
             summaryMap.putIfAbsent(geneName, new CollapsingGeneSummary(geneName));
 
-            countQV(geneName, variantLite, previousVariantID);
+            countQV(geneName, variantLite);
         }
     }
 
-    private void updateTranscriptSummary(VariantGenoLite variantLite, String previousVariantID) {
+    private void updateTranscriptSummary(VariantVCFLite variantLite) {
         for (int id : variantLite.getTranscriptSet()) {
             String idStr = String.valueOf(id);
             summaryMap.putIfAbsent(idStr, new CollapsingTranscriptSummary(idStr));
 
-            countQV(idStr, variantLite, previousVariantID);
+            countQV(idStr, variantLite);
         }
     }
 
-    private void countQV(String collapsingKey, VariantGenoLite variantLite, String previousVariantID) {
-        String sampleName = variantLite.getRecord().get(SAMPLE_NAME_HEADER);
-        Sample sample = SampleManager.getSampleByName(sampleName);
-
-        String gtStr = variantLite.getRecord().get(GT_HEADER);
-        byte geno = getGeno(gtStr);
-
+    private void countQV(String collapsingKey, VariantVCFLite variantLite) {
         CollapsingSummary summary = summaryMap.get(collapsingKey);
-        summary.countQualifiedVariantBySample(geno, sample.getIndex());
+        summary.updateVariantCount(variantLite.isSNV());
 
-        // only count variant once per gene
-        if (!previousVariantID.equals(variantLite.getVariantID())) {
-            summary.updateVariantCount(variantLite.isSNV());
+        for (int i = 0; i < variantLite.getGTArr().length; i++) {
+            byte geno = variantLite.getGTArr()[i];
+            if (GenotypeLevelFilterCommand.isQualifiedGeno(geno)) {
+                summary.countQualifiedVariantBySample(geno, i);
+            }
         }
     }
 
@@ -188,19 +193,6 @@ public class CollapsingLite extends ListVarGenoLite {
             String idStr = String.valueOf(transcriptBoundary.getId());
             summaryMap.putIfAbsent(idStr, new CollapsingTranscriptSummary(idStr));
         });
-    }
-
-    private byte getGeno(String geno) {
-        switch (geno) {
-            case "hom":
-                return Index.HOM;
-            case "het":
-                return Index.HET;
-            case "hom ref":
-                return Index.REF;
-            default:
-                return Data.BYTE_NA;
-        }
     }
 
     private void outputSummary() {
@@ -255,5 +247,8 @@ public class CollapsingLite extends ListVarGenoLite {
 
     private void gzipFiles() {
         ThirdPartyToolManager.gzipFile(matrixFilePath);
+        
+        VCFManager.bgzipVCF(vcfFilePath);
+        VCFManager.tabixVCF(vcfBGZFilePath);
     }
 }
