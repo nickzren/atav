@@ -1,7 +1,9 @@
 package function.external.gnomad;
 
+import function.external.base.VariantAFCommand;
 import global.Data;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,120 +11,153 @@ import java.util.Set;
  *
  * @author nick
  */
-public class GnomADCommand {
+public class GnomADCommand extends VariantAFCommand {
 
-    public static boolean isListExome = false;
-    public static boolean isListGenome = false;
-    public static boolean isIncludeExome = false;
-    public static boolean isIncludeGenome = false;
     public static boolean isIncludeGeneMetrics = false;
 
-    public static Set<String> exomePopSet = new HashSet<String>(Arrays.asList("global"));
-    public static Set<String> genomePopSet = new HashSet<String>(Arrays.asList("global"));
-    public static float maxExomeAF = Data.NO_FILTER;
-    public static float maxGenomeAF = Data.NO_FILTER;
-    public static float exomeMAF = Data.NO_FILTER;
-    public static float genomeMAF = Data.NO_FILTER;
-    public static float exomeRfTpProbabilitySnv = Data.NO_FILTER;
-    public static float exomeRfTpProbabilityIndel = Data.NO_FILTER;
-    public static float genomeRfTpProbabilitySnv = Data.NO_FILTER;
-    public static float genomeRfTpProbabilityIndel = Data.NO_FILTER;
+    public Set<String> popSet = new HashSet<String>(Arrays.asList("global"));
+    public float rfTpProbabilitySnv = Data.NO_FILTER;
+    public float rfTpProbabilityIndel = Data.NO_FILTER;
+    public boolean isFilterPass = false;
 
-    public static boolean isExomeAFValid(float value) {
-        return isMaxExomeAFValid(value) && isExomeMAFValid(value);
-    }
+    // pop af filter
+    public String maxPopAFStr = Data.NO_FILTER_STR;
+    public float[] maxPopAFArray;
+    private boolean isMaxPopAFValid = true;
 
-    private static boolean isMaxExomeAFValid(float value) {
-        if (maxExomeAF == Data.NO_FILTER) {
-            return true;
-        }
+    // pop maf filter
+    public String maxPopMAFStr = Data.NO_FILTER_STR;
+    public float[] maxPopMAFArray;
+    private boolean isMaxPopMAFValid = true;
 
-        return value <= maxExomeAF
-                || value == Data.FLOAT_NA;
-    }
-
-    private static boolean isExomeMAFValid(float value) {
-        if (exomeMAF == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value <= exomeMAF
-                || value >= (1 - exomeMAF)
-                || value == Data.FLOAT_NA;
-    }
-
-    public static boolean isGenomeAFValid(float value) {
-        return isMaxGenomeAFValid(value) && isGenomeMAFValid(value);
-    }
-    
-    private static boolean isMaxGenomeAFValid(float value) {
-        if (maxGenomeAF == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value <= maxGenomeAF
-                || value == Data.FLOAT_NA;
-    }
-
-    private static boolean isGenomeMAFValid(float value) {
-        if (genomeMAF == Data.NO_FILTER) {
-            return true;
-        }
-
-        return value <= genomeMAF
-                || value >= (1 - genomeMAF)
-                || value == Data.FLOAT_NA;
-    }
-
-    public static boolean isExomeRfTpProbabilityValid(float value, boolean isSnv) {
+    public boolean isRfTpProbabilityValid(float value, boolean isSnv) {
         if (isSnv) {
-            return isExomeRfTpProbabilitySnvValid(value);
+            return isRfTpProbabilitySnvValid(value);
         } else {
-            return isExomeRfTpProbabilityIndelValid(value);
+            return isRfTpProbabilityIndelValid(value);
         }
     }
 
-    public static boolean isGenomeRfTpProbabilityValid(float value, boolean isSnv) {
-        if (isSnv) {
-            return isGenomeRfTpProbabilitySnvValid(value);
-        } else {
-            return isGenomeRfTpProbabilityIndelValid(value);
-        }
-    }
-
-    private static boolean isExomeRfTpProbabilitySnvValid(float value) {
-        if (exomeRfTpProbabilitySnv == Data.NO_FILTER) {
+    private boolean isRfTpProbabilitySnvValid(float value) {
+        if (rfTpProbabilitySnv == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= exomeRfTpProbabilitySnv
+        return value >= rfTpProbabilitySnv
                 || value == Data.FLOAT_NA;
     }
 
-    private static boolean isExomeRfTpProbabilityIndelValid(float value) {
-        if (exomeRfTpProbabilityIndel == Data.NO_FILTER) {
+    private boolean isRfTpProbabilityIndelValid(float value) {
+        if (rfTpProbabilityIndel == Data.NO_FILTER) {
             return true;
         }
 
-        return value >= exomeRfTpProbabilityIndel
+        return value >= rfTpProbabilityIndel
                 || value == Data.FLOAT_NA;
     }
 
-    private static boolean isGenomeRfTpProbabilitySnvValid(float value) {
-        if (genomeRfTpProbabilitySnv == Data.NO_FILTER) {
+    public boolean isFilterPass(String filter) {
+        if (!isFilterPass) {
             return true;
         }
 
-        return value >= genomeRfTpProbabilitySnv
-                || value == Data.FLOAT_NA;
+        return filter.equals("PASS") || filter.equals(Data.STRING_NA);
     }
 
-    private static boolean isGenomeRfTpProbabilityIndelValid(float value) {
-        if (genomeRfTpProbabilityIndel == Data.NO_FILTER) {
+    public void initMaxPopAF(String[] pop) {
+        maxPopAFArray = new float[pop.length];
+
+        HashMap<String, Integer> popIndexMap = new HashMap<>();
+        for (int i = 0; i < pop.length; i++) {
+            maxPopAFArray[i] = Data.NO_FILTER;
+            popIndexMap.put(pop[i], i);
+        }
+
+        for (String popAF : maxPopAFStr.split(",")) { // pop:af,pop:af
+            String[] tmp = popAF.split(":"); // pop:af
+
+            Integer index = popIndexMap.get(tmp[0]);
+            float af = Float.parseFloat(tmp[1]);
+            if (index != null) {
+                maxPopAFArray[index] = af;
+            }
+        }
+    }
+
+    public void initMaxPopMAF(String[] pop) {
+        maxPopMAFArray = new float[pop.length];
+
+        HashMap<String, Integer> popIndexMap = new HashMap<>();
+        for (int i = 0; i < pop.length; i++) {
+            maxPopMAFArray[i] = Data.NO_FILTER;
+            popIndexMap.put(pop[i], i);
+        }
+
+        for (String popAF : maxPopMAFStr.split(",")) { // pop:maf,pop:maf
+            String[] tmp = popAF.split(":"); // pop:maf
+
+            Integer index = popIndexMap.get(tmp[0]);
+            float maf = Float.parseFloat(tmp[1]);
+            if (index != null) {
+                maxPopMAFArray[index] = maf;
+            }
+        }
+    }
+
+    public void resetPopAFValid() {
+        isMaxPopAFValid = true;
+        isMaxPopMAFValid = true;
+    }
+
+    public void checkPopAFValid(int index, float value) {
+        checkMaxPopAFValid(index, value);
+        checkMaxPopMAFValid(index, value);
+    }
+
+    private void checkMaxPopAFValid(int index, float value) {
+        if (!maxPopAFStr.equals(Data.NO_FILTER_STR)) {
+            float maxAF = maxPopAFArray[index];
+
+            if (maxAF != Data.NO_FILTER && isMaxPopAFValid) {
+                isMaxPopAFValid &= value <= maxAF || value == Data.FLOAT_NA;
+            }
+        }
+    }
+
+    private void checkMaxPopMAFValid(int index, float value) {
+        if (!maxPopMAFStr.equals(Data.NO_FILTER_STR)) {
+            float maxMAF = maxPopMAFArray[index];
+
+            if (maxMAF != Data.NO_FILTER && isMaxPopMAFValid) {
+                isMaxPopMAFValid &= value <= maxMAF || value >= (1 - maxMAF)
+                        || value == Data.FLOAT_NA;
+            }
+        }
+    }
+
+    /*
+        1. NA return true
+        2. filter not applied return true
+        3. when filter applied, pass all return true
+     */
+    public boolean isPopAFValid() {
+        return isMaxPopAFValid()
+                && isMaxPopMAFValid();
+    }
+
+    private boolean isMaxPopAFValid() {
+        if (maxPopAFStr.equals(Data.NO_FILTER_STR)) {
             return true;
         }
 
-        return value >= genomeRfTpProbabilityIndel
-                || value == Data.FLOAT_NA;
+        return isMaxPopAFValid;
+    }
+
+    private boolean isMaxPopMAFValid() {
+        if (maxPopMAFStr.equals(Data.NO_FILTER_STR)) {
+            return true;
+        }
+
+        return isMaxPopMAFValid;
     }
 }

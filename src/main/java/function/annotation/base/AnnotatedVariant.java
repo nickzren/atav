@@ -1,9 +1,16 @@
 package function.annotation.base;
 
+import function.cohort.vcf.VCFCommand;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.dbnsfp.DBNSFP;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAF;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.denovo.DenovoDB;
@@ -14,7 +21,6 @@ import function.external.evs.Evs;
 import function.external.evs.EvsCommand;
 import function.external.exac.ExAC;
 import function.external.exac.ExACCommand;
-import function.external.exac.ExACManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gnomad.GnomADExome;
@@ -25,8 +31,12 @@ import function.external.gevir.GeVIRCommand;
 import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
+import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenome;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.gnomad.GnomADManager;
+import function.external.igmaf.IGMAFCommand;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.variant.base.Variant;
@@ -58,7 +68,11 @@ import global.Data;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import utils.MathManager;
 
@@ -81,12 +95,14 @@ public class AnnotatedVariant extends Variant {
     private boolean hasCCDS = false;
     private String geneName = "";
 
-    private List<String> geneList = new ArrayList<>();
+    private List<Integer> canonicalEffectIdList = new ArrayList<>();
+
+    private HashSet<Integer> transcriptSet = new HashSet<>();
+    private Map<String, Integer> geneTranscriptCountMap = new LinkedHashMap<>();
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
 
     // external db annotations
     private ExAC exac;
-    private String exacGeneVariantCountStr;
     private GnomADExome gnomADExome;
     private GnomADGenome gnomADGenome;
     private Evs evs;
@@ -110,6 +126,9 @@ public class AnnotatedVariant extends Variant {
     private float topmedAF;
     private float genomeasiaAF;
     private float iranomeAF;
+    private float igmAF;
+    private DefaultControlAF defaultControlAF;
+    private DBNSFP dbNSFP;
 
     public boolean isValid = true;
 
@@ -129,43 +148,55 @@ public class AnnotatedVariant extends Variant {
             isValid = !isRepeatRegion; // invalid when variant's repeat region is true
         }
 
-        if (isValid && GMECommand.isInclude) {
+        if (isValid && IGMAFCommand.getInstance().isInclude) {
+            igmAF = IGMAFManager.getAF(chrStr, variantId);
+
+            isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
+        }
+
+        if (isValid && DefaultControlAFCommand.getInstance().isInclude) {
+            defaultControlAF = DefaultControlAFManager.getDefaultControlAF(chrStr, variantId);
+
+            isValid = DefaultControlAFCommand.getInstance().isAFValid(defaultControlAF.getAF());
+        }
+
+        if (isValid && GMECommand.getInstance().isInclude) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
-            isValid = GMECommand.isAFValid(gmeAF);
+            isValid = GMECommand.getInstance().isAFValid(gmeAF);
         }
 
-        if (isValid && IranomeCommand.isInclude) {
+        if (isValid && IranomeCommand.getInstance().isInclude) {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
-            isValid = IranomeCommand.isAFValid(iranomeAF);
+            isValid = IranomeCommand.getInstance().isAFValid(iranomeAF);
         }
 
-        if (isValid && TopMedCommand.isInclude) {
+        if (isValid && TopMedCommand.getInstance().isInclude) {
             topmedAF = TopMedManager.getAF(variantIdStr);
 
-            isValid = TopMedCommand.isAFValid(topmedAF);
+            isValid = TopMedCommand.getInstance().isAFValid(topmedAF);
         }
 
-        if (isValid && GenomeAsiaCommand.isInclude) {
+        if (isValid && GenomeAsiaCommand.getInstance().isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
-            isValid = GenomeAsiaCommand.isAFValid(genomeasiaAF);
+            isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
         }
 
-        if (isValid && GnomADCommand.isIncludeExome) {
+        if (isValid && GnomADExomeCommand.getInstance().isInclude) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADExome.isValid();
         }
 
-        if (isValid && GnomADCommand.isIncludeGenome) {
+        if (isValid && GnomADGenomeCommand.getInstance().isInclude) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADGenome.isValid();
         }
 
-        if (isValid && ExACCommand.isInclude) {
+        if (isValid && ExACCommand.getInstance().isInclude) {
             exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
@@ -216,9 +247,15 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(annotation.geneName);
             annotationSJ.add(getStableId(annotation.stableId));
             annotationSJ.add(annotation.HGVS_c);
-            annotationSJ.add(annotation.HGVS_p);
+            annotationSJ.add(FormatManager.getString(annotation.HGVS_p));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
             annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
+
+            int geneTranscriptCount = geneTranscriptCountMap.getOrDefault(annotation.geneName, 0);
+            if (!transcriptSet.contains(annotation.stableId)) {
+                transcriptSet.add(annotation.stableId);
+                geneTranscriptCountMap.put(annotation.geneName, geneTranscriptCount + 1);
+            }
 
             allAnnotationSJ.add(annotationSJ.toString());
 
@@ -232,8 +269,9 @@ public class AnnotatedVariant extends Variant {
                 hasCCDS = true;
             }
 
-            if (!geneList.contains(annotation.geneName)) {
-                geneList.add(annotation.geneName);
+            if (!canonicalEffectIdList.contains(annotation.effectID)
+                    && TranscriptManager.isCanonicalTranscript(chrStr, annotation.stableId)) {
+                canonicalEffectIdList.add(annotation.effectID);
             }
         }
     }
@@ -255,8 +293,8 @@ public class AnnotatedVariant extends Variant {
             denovoDB = new DenovoDB(chrStr, startPosition, refAllele, allele);
         }
 
-        if (ExACCommand.isIncludeCount) {
-            exacGeneVariantCountStr = ExACManager.getLine(getGeneName());
+        if (DBNSFPCommand.isInclude) {
+            dbNSFP = DBNSFPManager.getDBNSFP(chrStr, startPosition, allele, isSnv(), transcriptSet);
         }
     }
 
@@ -308,7 +346,7 @@ public class AnnotatedVariant extends Variant {
     // init CCR score and applied filter only to non-LOF variants
     private boolean isCCRValid() {
         if (CCRCommand.isInclude) {
-            ccrOutput = new CCROutput(geneList, getChrStr(), getStartPosition());
+            ccrOutput = new CCROutput(geneTranscriptCountMap.keySet(), getChrStr(), getStartPosition());
 
             if (!EffectManager.isLOF(effectID)) {
                 return ccrOutput.isValid();
@@ -374,6 +412,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(getStableId(stableId));
         sj.add(Boolean.toString(hasCCDS));
         sj.add(effect);
+        sj.add(getCanonicalEffect());
         sj.add(HGVS_c);
         sj.add(HGVS_p);
         sj.add(FormatManager.getFloat(polyphenHumdiv));
@@ -386,12 +425,26 @@ public class AnnotatedVariant extends Variant {
         sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(GeneManager.getAllGeneSymbol(geneList));
+        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
+        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
+    }
+
+    private String getCanonicalEffect() {
+        StringJoiner sj = new StringJoiner("|");
+        for (int id : canonicalEffectIdList) {
+            sj.add(EffectManager.getEffectById(id));
+        }
+
+        return sj.setEmptyValue(Data.STRING_NA).toString();
     }
 
     private String getStableId(int stableId) {
         if (stableId == Data.INTEGER_NA) {
+            if (VCFCommand.isOutputVCF) {
+                return Data.VCF_NA;
+            }
+
             return Data.STRING_NA;
         }
 
@@ -428,8 +481,12 @@ public class AnnotatedVariant extends Variant {
         return geneName;
     }
 
-    public List<String> getGeneList() {
-        return geneList;
+    public Set<String> getGeneSet() {
+        return geneTranscriptCountMap.keySet();
+    }
+
+    public HashSet<Integer> getTranscriptSet() {
+        return transcriptSet;
     }
 
     public void getExternalData(StringJoiner sj) {
@@ -437,19 +494,15 @@ public class AnnotatedVariant extends Variant {
             sj.merge(getEvsStringJoiner());
         }
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             sj.merge(getExacStringJoiner());
         }
 
-        if (ExACCommand.isIncludeCount) {
-            sj.add(getExacGeneVariantCount());
-        }
-
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             sj.merge(getGnomADExomeStringJoiner());
         }
 
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             sj.merge(getGnomADGenomeStringJoiner());
         }
 
@@ -537,20 +590,32 @@ public class AnnotatedVariant extends Variant {
             sj.add(FormatManager.getBoolean(isRepeatRegion));
         }
 
-        if (GMECommand.isInclude) {
+        if (GMECommand.getInstance().isInclude) {
             sj.add(getGME());
         }
 
-        if (TopMedCommand.isInclude) {
+        if (TopMedCommand.getInstance().isInclude) {
             sj.add(getTopMed());
         }
 
-        if (GenomeAsiaCommand.isInclude) {
+        if (GenomeAsiaCommand.getInstance().isInclude) {
             sj.add(getGenomeAsia());
         }
 
-        if (IranomeCommand.isInclude) {
+        if (IranomeCommand.getInstance().isInclude) {
             sj.add(getIranome());
+        }
+
+        if (IGMAFCommand.getInstance().isInclude) {
+            sj.add(getIGMAF());
+        }
+        
+        if (DefaultControlAFCommand.getInstance().isInclude) {
+            sj.merge(getDefaultControlAFStringJoiner());
+        }
+
+        if (DBNSFPCommand.isInclude) {
+            sj.add(dbNSFP.toString());
         }
     }
 
@@ -560,10 +625,6 @@ public class AnnotatedVariant extends Variant {
 
     public StringJoiner getExacStringJoiner() {
         return exac.getStringJoiner();
-    }
-
-    public String getExacGeneVariantCount() {
-        return exacGeneVariantCountStr;
     }
 
     public StringJoiner getGnomADExomeStringJoiner() {
@@ -656,5 +717,13 @@ public class AnnotatedVariant extends Variant {
 
     public String getIranome() {
         return FormatManager.getFloat(iranomeAF);
+    }
+
+    public String getIGMAF() {
+        return FormatManager.getFloat(igmAF);
+    }
+    
+    public StringJoiner getDefaultControlAFStringJoiner() {
+        return defaultControlAF.getStringJoiner();
     }
 }

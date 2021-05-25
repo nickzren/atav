@@ -9,7 +9,8 @@ import function.external.discovehr.DiscovEHRCommand;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
-import function.external.gnomad.GnomADCommand;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBRManager;
@@ -88,6 +89,7 @@ public class ListVarGenoLite {
     public static final String ALL_ANNOTATION_HEADER = "Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar";
     public static int ALL_ANNOTATION_HEADER_INDEX = Data.INTEGER_NA;
     public static final String SAMPLE_NAME_HEADER = "Sample Name";
+    public static final String GT_HEADER = "GT";
     public static final String QC_FAIL_CASE_HEADER = "QC Fail Case";
     public static final String QC_FAIL_CTRL_HEADER = "QC Fail Ctrl";
     public static final String LOO_AF_HEADER = "LOO AF";
@@ -125,7 +127,7 @@ public class ListVarGenoLite {
                     isHeaderOutput = true;
                 }
 
-                VariantLite variantLite = new VariantLite(record);
+                VariantGenoLite variantLite = new VariantGenoLite(record);
 
                 // output qualifed record to genotypes file
                 if (variantLite.isValid()) {
@@ -163,15 +165,15 @@ public class ListVarGenoLite {
             LOO_AF_HEADER
         };
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, ExACManager.getHeader().split(","));
         }
 
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getExomeHeader().split(","));
         }
 
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             headers = (String[]) ArrayUtils.addAll(headers, GnomADManager.getGenomeHeader().split(","));
         }
 
@@ -228,7 +230,7 @@ public class ListVarGenoLite {
             InputStream gzipStream = new GZIPInputStream(fileStream);
             decoder = new InputStreamReader(gzipStream);
         } else {
-            decoder = new FileReader(GenotypeLevelFilterCommand.genotypeFile);
+            decoder = new FileReader(filename);
         }
         
         Iterable<CSVRecord> records = CSVFormat.DEFAULT
@@ -304,7 +306,7 @@ public class ListVarGenoLite {
         bwGenotypes.newLine();
     }
 
-    public void outputGenotype(VariantLite variantLite) throws IOException {
+    public void outputGenotype(VariantGenoLite variantLite) throws IOException {
         CSVRecord record = variantLite.getRecord();
         Annotation mostDamagingAnnotation = variantLite.getMostDamagingAnnotation();
         String allAnnotation = variantLite.getAllAnnotation();

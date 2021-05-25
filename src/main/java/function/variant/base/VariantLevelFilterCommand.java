@@ -2,6 +2,8 @@ package function.variant.base;
 
 import function.external.ccr.CCRCommand;
 import function.external.chm.CHMCommand;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
 import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
@@ -14,6 +16,9 @@ import function.external.gnomad.GnomADManager;
 import function.external.gerp.GerpCommand;
 import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
+import function.external.igmaf.IGMAFCommand;
 import function.external.iranome.IranomeCommand;
 import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
@@ -36,8 +41,8 @@ import static utils.CommandManager.checkValuesValid;
 import static utils.CommandManager.getValidDouble;
 import static utils.CommandManager.getValidFloat;
 import utils.CommandOption;
-import utils.CommonCommand;
 import static utils.CommandManager.checkValueValid;
+import static utils.CommandManager.getNonEmptyValue;
 import static utils.CommandManager.outputInvalidOptionValue;
 
 /**
@@ -66,9 +71,16 @@ public class VariantLevelFilterCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
+                case "--chromosome":
+                    if (RegionManager.isChrInputValid(option.getValue())) {
+                        RegionManager.chrInput = option.getValue();
+                    } else {
+                        outputInvalidOptionValue(option);
+                    }
+                    break;
                 case "--region":
                     if (RegionManager.isRegionInputValid(option.getValue())) {
-                        CommonCommand.regionInput = option.getValue();
+                        RegionManager.regionInput = option.getValue();
                     } else {
                         outputInvalidOptionValue(option);
                     }
@@ -81,10 +93,10 @@ public class VariantLevelFilterCommand {
                     }
                     break;
                 case "--rs-number":
-                    includeRsNumber = option.getValue();
+                    includeRsNumber = getNonEmptyValue(option);
                     break;
                 case "--exclude-variant":
-                    excludeVariantId = option.getValue();
+                    excludeVariantId = getNonEmptyValue(option);
                     break;
                 case "--exclude-artifacts":
                     isExcludeArtifacts = true;
@@ -116,80 +128,141 @@ public class VariantLevelFilterCommand {
                 case "--exac-pop":
                     checkValuesValid(ExACManager.POP, option);
                     ExACCommand.pop = option.getValue();
-                    ExACCommand.isInclude = true;
+                    ExACCommand.getInstance().isInclude = true;
                     break;
                 case "--exac-af":
                 case "--max-exac-af":
                     checkValueValid(1, 0, option);
-                    ExACCommand.maxAF = getValidFloat(option);
-                    ExACCommand.isInclude = true;
+                    ExACCommand.getInstance().maxAF = getValidFloat(option);
+                    ExACCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-exac-af":
+                    checkValueValid(1, 0, option);
+                    ExACCommand.getInstance().minAF = getValidFloat(option);
+                    ExACCommand.getInstance().isInclude = true;
                     break;
                 case "--exac-maf":
-                    checkValueValid(1, 0, option);
-                    ExACCommand.maf = getValidFloat(option);
-                    ExACCommand.isInclude = true;
-                    break;    
+                case "--max-exac-maf":
+                    checkValueValid(0.5, 0, option);
+                    ExACCommand.getInstance().maxMAF = getValidFloat(option);
+                    ExACCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-exac-maf":
+                    checkValueValid(0.5, 0, option);
+                    ExACCommand.getInstance().minMAF = getValidFloat(option);
+                    ExACCommand.getInstance().isInclude = true;
+                    break;
                 case "--min-exac-vqslod-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     ExACCommand.vqslodSnv = getValidFloat(option);
-                    ExACCommand.isInclude = true;
+                    ExACCommand.getInstance().isInclude = true;
                     break;
                 case "--min-exac-vqslod-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
                     ExACCommand.vqslodIndel = getValidFloat(option);
-                    ExACCommand.isInclude = true;
+                    ExACCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-exome-pop":
                     checkValuesValid(GnomADManager.EXOME_POP, option);
-                    GnomADCommand.exomePopSet = getSet(option);
-                    GnomADCommand.isIncludeExome = true;
+                    GnomADExomeCommand.getInstance().popSet = getSet(option);
+                    GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-genome-pop":
                     checkValuesValid(GnomADManager.GENOME_POP, option);
-                    GnomADCommand.genomePopSet = getSet(option);
-                    GnomADCommand.isIncludeGenome = true;
+                    GnomADGenomeCommand.getInstance().popSet = getSet(option);
+                    GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-exome-af":
                 case "--max-gnomad-exome-af":
                     checkValueValid(1, 0, option);
-                    GnomADCommand.maxExomeAF = getValidFloat(option);
-                    GnomADCommand.isIncludeExome = true;
+                    GnomADExomeCommand.getInstance().maxAF = getValidFloat(option);
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-gnomad-exome-af":
+                    checkValueValid(1, 0, option);
+                    GnomADExomeCommand.getInstance().minAF = getValidFloat(option);
+                    GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-exome-maf":
-                    checkValueValid(1, 0, option);
-                    GnomADCommand.exomeMAF = getValidFloat(option);
-                    GnomADCommand.isIncludeExome = true;
-                    break;    
+                case "--max-gnomad-exome-maf":
+                    checkValueValid(0.5, 0, option);
+                    GnomADExomeCommand.getInstance().maxMAF = getValidFloat(option);
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-gnomad-exome-maf":
+                    checkValueValid(0.5, 0, option);
+                    GnomADExomeCommand.getInstance().minMAF = getValidFloat(option);
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-gnomad-exome-pop-af":
+                    GnomADExomeCommand.getInstance().maxPopAFStr = getNonEmptyValue(option);
+                    GnomADExomeCommand.getInstance().initMaxPopAF();
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-gnomad-exome-pop-maf":
+                    GnomADExomeCommand.getInstance().maxPopMAFStr = getNonEmptyValue(option);
+                    GnomADExomeCommand.getInstance().initMaxPopMAF();
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
                 case "--gnomad-genome-af":
                 case "--max-gnomad-genome-af":
                     checkValueValid(1, 0, option);
-                    GnomADCommand.maxGenomeAF = getValidFloat(option);
-                    GnomADCommand.isIncludeGenome = true;
+                    GnomADGenomeCommand.getInstance().maxAF = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-gnomad-genome-af":
+                    checkValueValid(1, 0, option);
+                    GnomADGenomeCommand.getInstance().minAF = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-genome-maf":
-                    checkValueValid(1, 0, option);
-                    GnomADCommand.genomeMAF = getValidFloat(option);
-                    GnomADCommand.isIncludeGenome = true;
-                    break;      
+                case "--max-gnomad-genome-maf":
+                    checkValueValid(0.5, 0, option);
+                    GnomADGenomeCommand.getInstance().maxMAF = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-gnomad-genome-maf":
+                    checkValueValid(0.5, 0, option);
+                    GnomADGenomeCommand.getInstance().minMAF = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-gnomad-genome-pop-af":
+                    GnomADGenomeCommand.getInstance().maxPopAFStr = getNonEmptyValue(option);
+                    GnomADGenomeCommand.getInstance().initMaxPopAF();
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-gnomad-genome-pop-maf":
+                    GnomADGenomeCommand.getInstance().maxPopMAFStr = getNonEmptyValue(option);
+                    GnomADGenomeCommand.getInstance().initMaxPopMAF();
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
                 case "--gnomad-exome-rf-tp-probability-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADCommand.exomeRfTpProbabilitySnv = getValidFloat(option);
-                    GnomADCommand.isIncludeExome = true;
+                    GnomADExomeCommand.getInstance().rfTpProbabilitySnv = getValidFloat(option);
+                    GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-exome-rf-tp-probability-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADCommand.exomeRfTpProbabilityIndel = getValidFloat(option);
-                    GnomADCommand.isIncludeExome = true;
+                    GnomADExomeCommand.getInstance().rfTpProbabilityIndel = getValidFloat(option);
+                    GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-genome-rf-tp-probability-snv":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADCommand.genomeRfTpProbabilitySnv = getValidFloat(option);
-                    GnomADCommand.isIncludeGenome = true;
+                    GnomADGenomeCommand.getInstance().rfTpProbabilitySnv = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--gnomad-genome-rf-tp-probability-indel":
                     checkValueValid(Data.NO_FILTER, Data.NO_FILTER, option);
-                    GnomADCommand.genomeRfTpProbabilityIndel = getValidFloat(option);
-                    GnomADCommand.isIncludeGenome = true;
+                    GnomADGenomeCommand.getInstance().rfTpProbabilityIndel = getValidFloat(option);
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--gnomad-exome-filter-pass":
+                    GnomADExomeCommand.getInstance().isFilterPass = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--gnomad-genome-filter-pass":
+                    GnomADGenomeCommand.getInstance().isFilterPass = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--known-var-only":
                     KnownVarCommand.isKnownVarOnly = true;
@@ -297,58 +370,148 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--max-gme-af":
                     checkValueValid(1, 0, option);
-                    GMECommand.maxAF = getValidFloat(option);
-                    GMECommand.isInclude = true;
+                    GMECommand.getInstance().maxAF = getValidFloat(option);
+                    GMECommand.getInstance().isInclude = true;
+                    break;
+                case "--min-gme-af":
+                    checkValueValid(1, 0, option);
+                    GMECommand.getInstance().minAF = getValidFloat(option);
+                    GMECommand.getInstance().isInclude = true;
                     break;
                 case "--gme-maf":
-                    checkValueValid(1, 0, option);
-                    GMECommand.maf = getValidFloat(option);
-                    GMECommand.isInclude = true;
-                    break;    
+                case "--max-gme-maf":
+                    checkValueValid(0.5, 0, option);
+                    GMECommand.getInstance().maxMAF = getValidFloat(option);
+                    GMECommand.getInstance().isInclude = true;
+                    break;
+                case "--min-gme-maf":
+                    checkValueValid(0.5, 0, option);
+                    GMECommand.getInstance().minMAF = getValidFloat(option);
+                    GMECommand.getInstance().isInclude = true;
+                    break;
                 case "--max-top-med-af":
                     checkValueValid(1, 0, option);
-                    TopMedCommand.maxAF = getValidFloat(option);
-                    TopMedCommand.isInclude = true;
+                    TopMedCommand.getInstance().maxAF = getValidFloat(option);
+                    TopMedCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-top-med-af":
+                    checkValueValid(1, 0, option);
+                    TopMedCommand.getInstance().minAF = getValidFloat(option);
+                    TopMedCommand.getInstance().isInclude = true;
                     break;
                 case "--top-med-maf":
-                    checkValueValid(1, 0, option);
-                    TopMedCommand.maf = getValidFloat(option);
-                    TopMedCommand.isInclude = true;
-                    break;    
+                case "--max-top-med-maf":
+                    checkValueValid(0.5, 0, option);
+                    TopMedCommand.getInstance().maxMAF = getValidFloat(option);
+                    TopMedCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-top-med-maf":
+                    checkValueValid(0.5, 0, option);
+                    TopMedCommand.getInstance().minMAF = getValidFloat(option);
+                    TopMedCommand.getInstance().isInclude = true;
+                    break;
                 case "--max-genome-asia-af":
                     checkValueValid(1, 0, option);
-                    GenomeAsiaCommand.maxAF = getValidFloat(option);
-                    GenomeAsiaCommand.isInclude = true;
+                    GenomeAsiaCommand.getInstance().maxAF = getValidFloat(option);
+                    GenomeAsiaCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-genome-asia-af":
+                    checkValueValid(1, 0, option);
+                    GenomeAsiaCommand.getInstance().minAF = getValidFloat(option);
+                    GenomeAsiaCommand.getInstance().isInclude = true;
                     break;
                 case "--genome-asia-maf":
-                    checkValueValid(1, 0, option);
-                    GenomeAsiaCommand.maf = getValidFloat(option);
-                    GenomeAsiaCommand.isInclude = true;
+                case "--max-genome-asia-maf":
+                    checkValueValid(0.5, 0, option);
+                    GenomeAsiaCommand.getInstance().maxMAF = getValidFloat(option);
+                    GenomeAsiaCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-genome-asia-maf":
+                    checkValueValid(0.5, 0, option);
+                    GenomeAsiaCommand.getInstance().minMAF = getValidFloat(option);
+                    GenomeAsiaCommand.getInstance().isInclude = true;
                     break;
                 case "--max-iranome-af":
                     checkValueValid(1, 0, option);
-                    IranomeCommand.maxAF = getValidFloat(option);
-                    IranomeCommand.isInclude = true;
+                    IranomeCommand.getInstance().maxAF = getValidFloat(option);
+                    IranomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-iranome-af":
+                    checkValueValid(1, 0, option);
+                    IranomeCommand.getInstance().minAF = getValidFloat(option);
+                    IranomeCommand.getInstance().isInclude = true;
                     break;
                 case "--iranome-maf":
+                case "--max-iranome-maf":
+                    checkValueValid(0.5, 0, option);
+                    IranomeCommand.getInstance().maxMAF = getValidFloat(option);
+                    IranomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-iranome-maf":
+                    checkValueValid(0.5, 0, option);
+                    IranomeCommand.getInstance().minMAF = getValidFloat(option);
+                    IranomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-igm-af":
                     checkValueValid(1, 0, option);
-                    IranomeCommand.maf = getValidFloat(option);
-                    IranomeCommand.isInclude = true;
+                    IGMAFCommand.getInstance().maxAF = getValidFloat(option);
+                    IGMAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-igm-af":
+                    checkValueValid(1, 0, option);
+                    IGMAFCommand.getInstance().minAF = getValidFloat(option);
+                    IGMAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--igm-maf":
+                case "--max-igm-maf":
+                    checkValueValid(0.5, 0, option);
+                    IGMAFCommand.getInstance().maxMAF = getValidFloat(option);
+                    IGMAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-igm-maf":
+                    checkValueValid(0.5, 0, option);
+                    IGMAFCommand.getInstance().minMAF = getValidFloat(option);
+                    IGMAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-default-control-af":
+                    checkValueValid(1, 0, option);
+                    DefaultControlAFCommand.getInstance().maxAF = getValidFloat(option);
+                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-default-control-af":
+                    checkValueValid(1, 0, option);
+                    DefaultControlAFCommand.getInstance().minAF = getValidFloat(option);
+                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--max-default-control-maf":
+                    checkValueValid(0.5, 0, option);
+                    DefaultControlAFCommand.getInstance().maxMAF = getValidFloat(option);
+                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--min-default-control-maf":
+                    checkValueValid(0.5, 0, option);
+                    DefaultControlAFCommand.getInstance().minMAF = getValidFloat(option);
+                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--filter-dbnsfp-all":
+                    DBNSFPCommand.isFilterDBNSFPAll = true;
+                    DBNSFPCommand.isInclude = true;
+                    break;
+                case "--filter-dbnsfp-one":
+                    DBNSFPCommand.isFilterDBNSFPOne = true;
+                    DBNSFPCommand.isInclude = true;
                     break;
                 case "--include-evs":
                     EvsCommand.isInclude = true;
                     break;
                 case "--include-exac":
-                    ExACCommand.isInclude = true;
-                    break;
-                case "--include-exac-gene-variant-count":
-                    ExACCommand.isIncludeCount = true;
+                    ExACCommand.getInstance().isInclude = true;
                     break;
                 case "--include-gnomad-exome":
-                    GnomADCommand.isIncludeExome = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--include-gnomad-genome":
-                    GnomADCommand.isIncludeGenome = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--include-gnomad-gene-metrics":
                     GnomADCommand.isIncludeGeneMetrics = true;
@@ -421,16 +584,25 @@ public class VariantLevelFilterCommand {
                     CHMCommand.isExclude = true;
                     break;
                 case "--include-gme":
-                    GMECommand.isInclude = true;
+                    GMECommand.getInstance().isInclude = true;
                     break;
                 case "--include-top-med":
-                    TopMedCommand.isInclude = true;
+                    TopMedCommand.getInstance().isInclude = true;
                     break;
                 case "--include-genome-asia":
-                    GenomeAsiaCommand.isInclude = true;
+                    GenomeAsiaCommand.getInstance().isInclude = true;
                     break;
                 case "--include-iranome":
-                    IranomeCommand.isInclude = true;
+                    IranomeCommand.getInstance().isInclude = true;
+                    break;
+                case "--include-igm-af":
+                    IGMAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--include-default-control-af":
+                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    break;
+                case "--include-dbnsfp":
+                    DBNSFPCommand.isInclude = true;
                     break;
                 default:
                     continue;

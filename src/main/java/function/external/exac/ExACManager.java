@@ -1,15 +1,9 @@
 package function.external.exac;
 
 import function.external.base.DataManager;
-import global.Data;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.sql.PreparedStatement;
-import java.util.HashMap;
 import java.util.StringJoiner;
 import utils.DBManager;
-import utils.ErrorManager;
 
 /**
  *
@@ -22,11 +16,6 @@ public class ExACManager {
     private static final String coverageTable = "exac.coverage_03";
     private static String variantTable = "exac.variant_r03_2015_09_16";
     private static String mnvTable = "exac.mnv_r03_2015_09_16";
-
-    private static final String GENE_VARIANT_COUNT_PATH = "data/exac/ExAC.r0.3.damagingCounts.csv";
-    private static final HashMap<String, String> geneVariantCountMap = new HashMap<>();
-    private static String geneVariantCountHeader;
-    private static StringJoiner NA = new StringJoiner(",");
 
     private static PreparedStatement preparedStatement4Variant;
     private static PreparedStatement preparedStatement4MNV;
@@ -48,16 +37,8 @@ public class ExACManager {
         return sj.toString();
     }
 
-    public static String getGeneVariantCountHeader() {
-        return geneVariantCountHeader;
-    }
-
     public static void init() {
-        if (ExACCommand.isIncludeCount) {
-            initGeneVariantCountMap();
-        }
-
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             initPreparedStatement();
         }
     }
@@ -109,40 +90,6 @@ public class ExACManager {
 
         return "SELECT " + select + "FROM " + table + " "
                 + "WHERE chr=? AND pos=? AND ref_allele=? AND alt_allele=?";
-    }
-
-    private static void initGeneVariantCountMap() {
-        try {
-            File f = new File(Data.ATAV_HOME + GENE_VARIANT_COUNT_PATH);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
-            String lineStr = "";
-            while ((lineStr = br.readLine()) != null) {
-                int firstCommaIndex = lineStr.indexOf(",");
-                String geneName = lineStr.substring(0, firstCommaIndex);
-                String values = lineStr.substring(firstCommaIndex + 1);
-
-                if (geneName.equals("Gene")) {
-                    geneVariantCountHeader = values;
-
-                    for (int i = 0; i < values.split(",").length; i++) {
-                        NA.add(Data.STRING_NA);
-                    }
-                } else {
-                    geneVariantCountMap.put(geneName, values);
-                }
-            }
-            br.close();
-            fr.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    public static String getLine(String geneName) {
-        String line = geneVariantCountMap.get(geneName);
-
-        return line == null ? NA.toString() : line;
     }
 
     public static PreparedStatement getPreparedStatement4Variant(boolean isMNV) {

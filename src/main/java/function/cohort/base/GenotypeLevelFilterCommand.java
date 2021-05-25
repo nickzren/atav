@@ -1,6 +1,7 @@
 package function.cohort.base;
 
 import global.Data;
+import global.Index;
 import java.util.Iterator;
 import java.util.Stack;
 import static utils.CommandManager.checkRangeValid;
@@ -41,6 +42,7 @@ public class GenotypeLevelFilterCommand {
     public static final String[] FILTER = {"PASS", "LIKELY", "INTERMEDIATE", "FAIL"};
     public static boolean isQcMissingIncluded = false;
     public static String genotypeFile = "";
+    public static String vcfFile = "";
     public static boolean isHomOnly = false;
     public static boolean isHetOnly = false;
 
@@ -166,6 +168,9 @@ public class GenotypeLevelFilterCommand {
                 case "--genotype":
                     genotypeFile = getValidPath(option);
                     break;
+                case "--vcf":
+                    vcfFile = getValidPath(option);
+                    break;
                 case "--hom-only":
                     isHomOnly = true;
                     break;
@@ -181,7 +186,7 @@ public class GenotypeLevelFilterCommand {
 
         initIsHighQualityVariantOnly();
     }
-    
+
     private static void initIsHighQualityVariantOnly() {
         // FILTER = PASS
         if (filter != null) {
@@ -454,5 +459,25 @@ public class GenotypeLevelFilterCommand {
         }
 
         return value <= maxPercentAltReadBinomialP;
+    }
+    
+    public static boolean isQualifiedGeno(byte geno) {
+        // --hom-only
+        if (isHomOnly) {
+            return geno == Index.HOM;
+        }
+
+        // --het-only
+        if (isHetOnly) {
+            return geno == Index.HET;
+        }
+
+        // --include-hom-ref
+        if (isIncludeHomRef && geno == Index.REF) {
+            return true;
+        }
+
+        // default: hom alt or het is valid 
+        return geno == Index.HOM || geno == Index.HET;
     }
 }

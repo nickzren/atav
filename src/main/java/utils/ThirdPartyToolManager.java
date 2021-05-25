@@ -24,7 +24,6 @@ public class ThirdPartyToolManager {
     public static String PLINK;
     public static String TABIX;
 
-    public static String PERL;
     public static String PYTHON;
     public static String RSCRIPT;
 
@@ -55,7 +54,6 @@ public class ThirdPartyToolManager {
             PLINK = prop.getProperty("plink");
             TABIX = prop.getProperty("tabix");
 
-            PERL = prop.getProperty("perl");
             PYTHON = prop.getProperty("python");
             RSCRIPT = prop.getProperty("rscript");
         } catch (IOException e) {

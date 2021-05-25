@@ -34,9 +34,14 @@ import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMCommand;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
+import function.external.igmaf.IGMAFCommand;
 import function.external.iranome.IranomeCommand;
 import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
@@ -75,14 +80,7 @@ public class CommandManager {
                 + "1 --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-exome-af 0.001 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-exome-pop afr,amr,nfe,fin,eas,"
                 + "asj,sas --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --include-qc-missing --include-known-var --include-evs --include-exac --include-gnomad-genome --include-gnomad-ex"
                 + "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
-
-        cmd = "--disable-timestamp-from-out-path "
-                + "--sample /Users/nick/Desktop/collapsing/collapsing_existing.sample.txt "
-                + "--genotype /Users/nick/Desktop/collapsing/collapsing_genotypes.csv "
-                + "--collapsing-lite "
-                + "--exac-af 0 "
-                + "--out /Users/nick/Desktop/collapsing_lite_1";
-
+        
         optionArray = cmd.split("\\s+");
     }
 
@@ -250,6 +248,10 @@ public class CommandManager {
                     break;
                 case "--email":
                     CommonCommand.email = true;
+                    CommonCommand.emailReceiver = option.getValue();
+                    break;
+                case "--gzip":
+                    CommonCommand.gzip = true;
                     break;
                 default:
                     continue;
@@ -341,8 +343,12 @@ public class CommandManager {
                     VarCommand.isList = true;
                     break;
                 case "--list-vcf":
-                    Data.STRING_NA = ".";
                     VCFCommand.isList = true;
+                    VCFCommand.isOutputVCF = true;
+                    break;
+                case "--list-vcf-lite":
+                    VCFCommand.isListLite = true;
+                    VCFCommand.isOutputVCF = true;
                     break;
                 case "--list-af":
                     AFCommand.isList = true;
@@ -359,6 +365,9 @@ public class CommandManager {
                     break;
                 case "--collapsing-lite":
                     CollapsingCommand.isCollapsingLite = true;
+                    break;
+                case "--collapsing-vcf-lite":
+                    CollapsingCommand.isCollapsingVCFLite = true;
                     break;
                 case "--fisher":
                     StatisticsCommand.isFisher = true;
@@ -389,9 +398,9 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     VarAnnoCommand.isList = true;
                     EvsCommand.isInclude = true;
-                    ExACCommand.isInclude = true;
-                    GnomADCommand.isIncludeExome = true;
-                    GnomADCommand.isIncludeGenome = true;
+                    ExACCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
                     GnomADCommand.isIncludeGeneMetrics = true;
                     GerpCommand.isInclude = true;
                     TrapCommand.isInclude = true;
@@ -412,10 +421,13 @@ public class CommandManager {
                     MPCCommand.isInclude = true;
                     PextCommand.isInclude = true;
                     CHMCommand.isFlag = true;
-                    GMECommand.isInclude = true;
-                    TopMedCommand.isInclude = true;
-                    GenomeAsiaCommand.isInclude = true;
-                    IranomeCommand.isInclude = true;
+                    GMECommand.getInstance().isInclude = true;
+                    TopMedCommand.getInstance().isInclude = true;
+                    GenomeAsiaCommand.getInstance().isInclude = true;
+                    IranomeCommand.getInstance().isInclude = true;
+                    IGMAFCommand.getInstance().isInclude = true;
+                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    DBNSFPCommand.isInclude = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
@@ -439,18 +451,18 @@ public class CommandManager {
                     break;
                 case "--list-exac":
                     CommonCommand.isNonSampleAnalysis = true;
-                    ExACCommand.isList = true;
-                    ExACCommand.isInclude = true;
+                    ExACCommand.getInstance().isList = true;
+                    ExACCommand.getInstance().isInclude = true;
                     break;
                 case "--list-gnomad-exome":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GnomADCommand.isListExome = true;
-                    GnomADCommand.isIncludeExome = true;
+                    GnomADExomeCommand.getInstance().isList = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
                     break;
                 case "--list-gnomad-genome":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GnomADCommand.isListGenome = true;
-                    GnomADCommand.isIncludeGenome = true;
+                    GnomADGenomeCommand.getInstance().isList = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
                     break;
                 case "--list-known-var":
                     CommonCommand.isNonSampleAnalysis = true;
@@ -524,27 +536,27 @@ public class CommandManager {
                     break;
                 case "--list-gme":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GMECommand.isList = true;
-                    GMECommand.isInclude = true;
+                    GMECommand.getInstance().isList = true;
+                    GMECommand.getInstance().isInclude = true;
                     break;
                 case "--list-top-med":
                     CommonCommand.isNonSampleAnalysis = true;
-                    TopMedCommand.isList = true;
-                    TopMedCommand.isInclude = true;
+                    TopMedCommand.getInstance().isList = true;
+                    TopMedCommand.getInstance().isInclude = true;
                     break;
                 case "--list-genome-asia":
                     CommonCommand.isNonSampleAnalysis = true;
-                    GenomeAsiaCommand.isList = true;
-                    GenomeAsiaCommand.isInclude = true;
+                    GenomeAsiaCommand.getInstance().isList = true;
+                    GenomeAsiaCommand.getInstance().isInclude = true;
                     break;
                 case "--list-iranome":
                     CommonCommand.isNonSampleAnalysis = true;
-                    IranomeCommand.isList = true;
-                    IranomeCommand.isInclude = true;
-                    break;    
+                    IranomeCommand.getInstance().isList = true;
+                    IranomeCommand.getInstance().isInclude = true;
+                    break;
                 case "--test":
                     // Test Functions
-                    CommonCommand.isNonDBAnalysis = true;
+//                    CommonCommand.isNonDBAnalysis = true;
                     CommonCommand.isNonSampleAnalysis = true;
                     TestCommand.isTest = true;
                     break;
@@ -602,7 +614,7 @@ public class CommandManager {
             CoverageCommand.initSiteCoverageComparison(optionList.iterator());
         } else if (EvsCommand.isList) { // External Datasets Functions
 
-        } else if (GnomADCommand.isListExome) {
+        } else if (GnomADExomeCommand.getInstance().isList) {
 
         } else if (KnownVarCommand.isList) {
 
@@ -793,6 +805,14 @@ public class CommandManager {
         }
 
         return false;
+    }
+
+    public static String getNonEmptyValue(CommandOption option) {
+        if (option.getValue().isEmpty()) {
+            CommandManager.outputInvalidOptionValue(option);
+        }
+
+        return option.getValue();
     }
 
     public static void outputInvalidOptionValue(CommandOption option) {

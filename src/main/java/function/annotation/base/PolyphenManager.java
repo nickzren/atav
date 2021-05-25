@@ -46,9 +46,9 @@ public class PolyphenManager {
         }
     }
 
-    // when --ensemble-missense used, always return true here
+    // when --ensemble-missense or --ensemble-missense-2 used, always return true here
     public static boolean isValid(float polyphenHumdiv, float polyphenHumvar, String effect) {
-        if (AnnotationLevelFilterCommand.ensembleMissense) {
+        if (AnnotationLevelFilterCommand.ensembleMissense || AnnotationLevelFilterCommand.ensembleMissense2) {
             return true;
         }
 

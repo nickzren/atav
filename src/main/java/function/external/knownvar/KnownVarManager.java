@@ -23,11 +23,11 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2019_4";
-    public static final String clinVarTable = "knownvar.clinvar_2020_04_10";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2020_04_10";
-    public static final String clinGenTable = "knownvar.clingen_2020_04_10";
-    public static final String omimTable = "knownvar.omim_2020_04_10";
+    public static final String hgmdTable = "knownvar.hgmd_2021_1";
+    public static final String clinVarTable = "knownvar.clinvar_2021_04_08";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_04_08";
+    public static final String clinGenTable = "knownvar.clingen_2021_04_08";
+    public static final String omimTable = "knownvar.omim_2021_04_08";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
     public static final String acmgTable = "knownvar.ACMG_2016_11_19";
     public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";

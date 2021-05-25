@@ -6,7 +6,10 @@ import utils.LogManager;
 import global.Data;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -15,36 +18,49 @@ import java.util.regex.Pattern;
  */
 public class RegionManager {
 
+    public static String chrInput = Data.NO_FILTER_STR;
+    public static String regionInput = Data.NO_FILTER_STR; // either a region or a region file path.
+
     private static ArrayList<Region> regionList = new ArrayList<>();
     private static ArrayList<String> chrList = new ArrayList<>();
     private static boolean isUsed = false;
 
     public static final String[] ALL_CHR = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
         "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT"};
-    
+
     public static void init() {
         if (CommonCommand.isNonDBAnalysis) {
             return;
         }
 
-        if (CommonCommand.regionInput.isEmpty()) {
-            initChrRegionList(ALL_CHR);
+        if (!chrInput.equals(Data.NO_FILTER_STR)) {
+            initChrList();
+        }
+
+        if (regionInput.equals(Data.NO_FILTER_STR)) {
+            initOrResetChrRegionList(ALL_CHR);
         } else {
             isUsed = true;
 
-            File f = new File(CommonCommand.regionInput);
+            File f = new File(regionInput);
 
-            if (CommonCommand.regionInput.equals("all")) {
-                initChrRegionList(ALL_CHR);
+            if (regionInput.equals("all")) {
+                initOrResetChrRegionList(ALL_CHR);
             } else if (f.isFile()) {
                 initMultiChrRegionList(f);
             } else {
-                CommonCommand.regionInput = CommonCommand.regionInput.toLowerCase();
-                initChrRegionList(CommonCommand.regionInput.split(","));
+                regionInput = regionInput.toLowerCase();
+                initOrResetChrRegionList(regionInput.split(","));
             }
         }
 
         sortRegionList();
+    }
+
+    public static void initChrList() {
+        for (String chr : chrInput.split(",")) {
+            initOneChrRegionList(chr);
+        }
     }
 
     public static void sortRegionList() {
@@ -75,8 +91,23 @@ public class RegionManager {
         }
     }
 
-    public static void initChrRegionList(String[] list) {
-        for (String chr : list) {
+    public static void initOrResetChrRegionList(String[] chrArray) {
+        ArrayList<String> intersectedChrList = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>(Arrays.asList(chrArray));
+
+        if (!chrList.isEmpty()) {
+            for (String chr : chrList) {
+                if (list.contains(chr)) {
+                    intersectedChrList.add(chr);
+                }
+            }
+
+            clear();
+        } else {
+            intersectedChrList = list;
+        }
+
+        for (String chr : intersectedChrList) {
             initOneChrRegionList(chr);
         }
     }
@@ -185,10 +216,10 @@ public class RegionManager {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     public static void checkChrValid(String chr) {
         if (!isChrValid(chr)) {
             ErrorManager.print("Invalid chr: " + chr, ErrorManager.INPUT_PARSING);
@@ -205,6 +236,7 @@ public class RegionManager {
         String[] values = varPos.split("-");
         String chr = values[0];
         int pos = Integer.valueOf(values[1]);
+
         regionList.add(new Region(chr, pos, pos));
         addChrList(chr);
     }
@@ -217,11 +249,15 @@ public class RegionManager {
 
     /*
         return final chr list based on input
-    */
+     */
     public static ArrayList<String> getChrList() {
         return chrList;
     }
-    
+
+    public static boolean isChrContained(String chr) {
+        return chrList.contains(chr);
+    }
+
     public static boolean isRegionInputValid(String value) {
         if (Pattern.matches("^[chrxymtCHRXYMT0-9\\:\\-\\,]+$", value)) {
             return true;
@@ -229,5 +265,17 @@ public class RegionManager {
             File file = new File(value);
             return file.exists();
         }
+    }
+
+    public static boolean isChrInputValid(String value) {
+        Set<String> chrSet = new HashSet<>(Arrays.asList(ALL_CHR));
+
+        for (String chr : value.split(",")) {
+            if (!chrSet.contains(chr.toUpperCase())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

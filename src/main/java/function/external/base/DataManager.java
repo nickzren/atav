@@ -2,6 +2,10 @@ package function.external.base;
 
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCRManager;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.denovo.DenovoDBCommand;
 import function.external.limbr.LIMBRManager;
 import function.external.denovo.DenovoDBManager;
@@ -21,6 +25,10 @@ import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADCommand;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
+import function.external.igmaf.IGMAFCommand;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.external.knownvar.KnownVarCommand;
@@ -71,8 +79,16 @@ public class DataManager {
             sb.append(EvsManager.getVersion());
         }
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             sb.append(ExACManager.getVersion());
+        }
+
+        if (DBNSFPCommand.isInclude) {
+            sb.append(DBNSFPManager.getVersion());
+        }
+
+        if (DefaultControlAFCommand.getInstance().isInclude) {
+            sb.append(DefaultControlAFManager.getVersion());
         }
 
         if (DenovoDBCommand.isInclude) {
@@ -83,7 +99,7 @@ public class DataManager {
             sb.append(DiscovEHRManager.getVersion());
         }
 
-        if (GenomeAsiaCommand.isInclude) {
+        if (GenomeAsiaCommand.getInstance().isInclude) {
             sb.append(GenomeAsiaManager.getVersion());
         }
 
@@ -95,15 +111,15 @@ public class DataManager {
             sb.append(GeVIRManager.getVersion());
         }
 
-        if (GMECommand.isInclude) {
+        if (GMECommand.getInstance().isInclude) {
             sb.append(GMEManager.getVersion());
         }
 
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             sb.append(GnomADManager.getExomeVersion());
         }
 
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             sb.append(GnomADManager.getGenomeVersion());
         }
 
@@ -111,7 +127,11 @@ public class DataManager {
             sb.append(GnomADManager.getGeneMetricsVersion());
         }
 
-        if (IranomeCommand.isInclude) {
+        if (IGMAFCommand.getInstance().isInclude) {
+            sb.append(IGMAFManager.getVersion());
+        }
+
+        if (IranomeCommand.getInstance().isInclude) {
             sb.append(IranomeManager.getVersion());
         }
 
@@ -159,7 +179,7 @@ public class DataManager {
             sb.append(SynRvisManager.getVersion());
         }
 
-        if (TopMedCommand.isInclude) {
+        if (TopMedCommand.getInstance().isInclude) {
             sb.append(TopMedManager.getVersion());
         }
 

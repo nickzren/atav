@@ -8,12 +8,11 @@ public class Data {
 
     // software info
     public static final String APP_NAME = "ATAV (Analysis Tool for Annotated Variants)";
-    public static String VERSION = "pgl_trunk";
+    public static String VERSION = "pgl_7.1.9";
     public static String userName = System.getProperty("user.name");
 
-    // atav home path
-    public static final String ATAV_HOME = "/nfs/goldstein/software/atav_home/"; // location of compiled Jar file
-//    public static final String ATAV_HOME = ""; // local testing
+    // atav home path (location of executable jar file, config dir, data dir, lib dir etc.)
+    public static String ATAV_HOME = System.getenv().getOrDefault("ATAV_HOME", "");
 
     // system config file path
     public static final String SYSTEM_CONFIG = Data.ATAV_HOME +  "config/atav.pgl.system.config.properties";
@@ -29,5 +28,6 @@ public class Data {
     public static final float FLOAT_NA = Float.MIN_VALUE;
     public static final double DOUBLE_NA = Double.MIN_VALUE;
     public static String STRING_NA = "NA";
+    public static String VCF_NA = ".";
     public static String STRING_NAN = "NaN";
 }

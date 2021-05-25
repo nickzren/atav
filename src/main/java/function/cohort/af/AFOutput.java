@@ -2,7 +2,6 @@ package function.cohort.af;
 
 import function.cohort.base.CalledVariant;
 import function.variant.base.Output;
-import global.Data;
 import java.util.StringJoiner;
 import utils.FormatManager;
 

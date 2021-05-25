@@ -4,7 +4,7 @@ import function.cohort.base.CalledVariant;
 import function.variant.base.Output;
 import function.cohort.base.Sample;
 import global.Index;
-import java.util.HashSet;
+import java.util.List;
 import java.util.StringJoiner;
 import utils.FormatManager;
 
@@ -27,14 +27,14 @@ public class CollapsingOutput extends Output {
         return sj.toString();
     }
 
-    HashSet<String> regionBoundaryNameSet; // for --region-boundary only
+    List<String> regionBoundaryNameList; // for --region-boundary only
 
     public CollapsingOutput(CalledVariant c) {
         super(c);
     }
 
     public void initRegionBoundaryNameSet() {
-        regionBoundaryNameSet = RegionBoundaryManager.getNameSet(
+        regionBoundaryNameList = RegionBoundaryManager.getNameList(
                 calledVar.getChrStr(),
                 calledVar.getStartPosition());
     }

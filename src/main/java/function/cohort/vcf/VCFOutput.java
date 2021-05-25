@@ -2,6 +2,7 @@ package function.cohort.vcf;
 
 import function.cohort.base.CalledVariant;
 import function.cohort.base.Carrier;
+import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.variant.base.Output;
@@ -14,6 +15,11 @@ import utils.FormatManager;
  * @author nick
  */
 public class VCFOutput extends Output {
+    
+    public static final String HOM = "1/1";
+    public static final String HET = "1/0";
+    public static final String REF = "0/0";
+    public static final String NA = "./.";
 
     public static String getHeader() {
         StringBuilder sb = new StringBuilder();
@@ -39,6 +45,11 @@ public class VCFOutput extends Output {
         sj.add("FORMAT");
 
         for (Sample sample : SampleManager.getList()) {
+            if (CohortLevelFilterCommand.isCaseOnly
+                    && !sample.isCase()) {
+                continue;
+            }
+            
             sj.add(sample.getName());
         }
 
@@ -57,11 +68,11 @@ public class VCFOutput extends Output {
 
         sj.add(calledVar.getChrStr());
         sj.add(FormatManager.getInteger(calledVar.getStartPosition()));
-        sj.add(calledVar.getRsNumberStr());
+        sj.add(calledVar.getVariantIdStr());
         sj.add(calledVar.getRefAllele());
         sj.add(calledVar.getAllele());
-        sj.add(Data.STRING_NA);
-        sj.add(Data.STRING_NA);
+        sj.add(Data.VCF_NA);
+        sj.add(Data.VCF_NA);
 
         StringJoiner infoSJ = new StringJoiner(";");
         infoSJ.add("NS=" + FormatManager.getInteger(calledVar.getNS()));
@@ -76,10 +87,16 @@ public class VCFOutput extends Output {
         sj.add(formatSJ.toString());
 
         for (Sample sample : SampleManager.getList()) {
+            // output case samples only
+            if (CohortLevelFilterCommand.isCaseOnly
+                    && !sample.isCase()) {
+                continue;
+            }
+
             Carrier carrier = calledVar.getCarrier(sample.getId());
 
             formatSJ = new StringJoiner(":");
-            formatSJ.add(calledVar.getGT4VCF(sample.getIndex()));
+            formatSJ.add(VCFManager.getGT(calledVar.getGT(sample.getIndex())));
             // return DP for carrier, return DP Bin for non-carrier 
             formatSJ.add(FormatManager.getShort(carrier != null ? carrier.getDP() : calledVar.getDPBin(sample.getIndex())));
             formatSJ.add(FormatManager.getShort(carrier != null ? carrier.getGQ() : Data.SHORT_NA));

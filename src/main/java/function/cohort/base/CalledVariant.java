@@ -23,9 +23,10 @@ public class CalledVariant extends AnnotatedVariant {
     private short[] dpBin = new short[SampleManager.getTotalSampleNum()];
 
     private int[] qcFailSample = new int[2];
-    public int[][] genoCount = new int[5][2];
+    public int[][] genoCount = new int[3][2];
     public float[] homFreq = new float[2];
     public float[] hetFreq = new float[2];
+    public int ac;
     public float[] af = new float[3];
     public double[] hweP = new double[2];
     private int[] coveredSample = new int[2];
@@ -45,22 +46,22 @@ public class CalledVariant extends AnnotatedVariant {
 
             initGenoCovArray();
 
-            if (checkGenoCountValid()) {
-                calculateAlleleFreq();
+            calculateAlleleFreq();
 
-                if (checkAlleleFreqValid()) {
-                    switchGT();
+            if (checkGenoCountValid()
+                    && checkAlleleFreqValid()
+                    && checkLooAFValid()) {
+                switchGT();
 
-                    initDPBinCoveredSampleBinomialP();
+                initDPBinCoveredSampleBinomialP();
 
-                    initCoveredSamplePercentage();
+                initCoveredSamplePercentage();
 
-                    if (checkCoveredSampleBinomialP()
-                            && checkCoveredSamplePercentage()) {
-                        calculateGenotypeFreq();
+                if (checkCoveredSampleBinomialP()
+                        && checkCoveredSamplePercentage()) {
+                    calculateGenotypeFreq();
 
-                        calculateHweP();
-                    }
+                    calculateHweP();
                 }
             }
         }
@@ -99,7 +100,8 @@ public class CalledVariant extends AnnotatedVariant {
 
         isValid = CohortLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample)
                 && CohortLevelFilterCommand.isMinCaseCarrierValid(getCaseCarrier())
-                && CohortLevelFilterCommand.isMinVarPresentValid(carrierMap.size());
+                && CohortLevelFilterCommand.isMinVarPresentValid(carrierMap.size())
+                && CohortLevelFilterCommand.isACValid(ac);
 
         return isValid;
     }
@@ -119,7 +121,8 @@ public class CalledVariant extends AnnotatedVariant {
 
     private boolean checkAlleleFreqValid() {
         isValid = CohortLevelFilterCommand.isCtrlAFValid(af[Index.CTRL])
-                && CohortLevelFilterCommand.isCaseAFValid(af[Index.CASE]);
+                && CohortLevelFilterCommand.isCaseAFValid(af[Index.CASE])
+                && CohortLevelFilterCommand.isAFValid(af[Index.ALL]);
 
         return isValid;
     }
@@ -217,10 +220,11 @@ public class CalledVariant extends AnnotatedVariant {
         dpBin[s] = bin;
     }
 
-    // --ctrl-maf or --loo-maf will tigger to swich GT when its AF > 0.5
+    // --max-ctrl-maf or --max-loo-maf or --max-maf will tigger to swich GT when its AF > 0.5
     private void switchGT() {
-        if ((CohortLevelFilterCommand.ctrlMAF != Data.NO_FILTER && af[Index.CTRL] > 0.5)
-                || (CohortLevelFilterCommand.looMAF != Data.NO_FILTER && af[Index.ALL] > 0.5)) {
+        if ((CohortLevelFilterCommand.maxCtrlMAF != Data.NO_FILTER && af[Index.CTRL] > 0.5)
+                || (CohortLevelFilterCommand.maxLooMAF != Data.NO_FILTER && af[Index.ALL] > 0.5)
+                || (CohortLevelFilterCommand.maxMAF != Data.NO_FILTER && af[Index.ALL] > 0.5)) {
             // switch per sample GT
             for (int s = 0; s < SampleManager.getList().size(); s++) {
                 if (gt[s] == Index.REF) {
@@ -258,7 +262,48 @@ public class CalledVariant extends AnnotatedVariant {
         af[Index.CTRL] = MathManager.devide(ctrlAC, ctrlTotalAC);
 
         // all af
-        af[Index.ALL] = MathManager.devide(ctrlAC + caseAC, ctrlTotalAC + caseTotalAC);
+        ac = ctrlAC + caseAC;
+        af[Index.ALL] = MathManager.devide(ac, ctrlTotalAC + caseTotalAC);
+    }
+
+    private boolean checkLooAFValid() {
+        if(CohortLevelFilterCommand.maxLooMAF == Data.NO_FILTER
+                && CohortLevelFilterCommand.maxLooAF == Data.NO_FILTER) {
+            return true;
+        }
+        
+        for (Carrier carrier : carrierMap.values()) {
+            byte geno = carrier.gt;
+            Sample sample = SampleManager.getMap().get(carrier.getSampleId());
+
+            // delete current sample geno as 'leave one out' concept
+            deleteSampleGeno(geno, sample);
+
+            // calculateLooAF
+            int alleleCount = 2 * genoCount[Index.HOM][Index.CASE]
+                    + genoCount[Index.HET][Index.CASE]
+                    + 2 * genoCount[Index.HOM][Index.CTRL]
+                    + genoCount[Index.HET][Index.CTRL];
+            int totalCount = alleleCount
+                    + genoCount[Index.HET][Index.CASE]
+                    + 2 * genoCount[Index.REF][Index.CASE]
+                    + genoCount[Index.HET][Index.CTRL]
+                    + 2 * genoCount[Index.REF][Index.CTRL];
+
+            float looAF = MathManager.devide(alleleCount, totalCount);
+
+            // add deleted sample geno back
+            addSampleGeno(geno, sample);
+            
+            // if any samples' loo af failed to pass the threshold, set variant to invalid
+            if (!CohortLevelFilterCommand.isLooAFValid(looAF)) {
+                isValid = false;
+                break;
+            }
+
+        }
+
+        return isValid;
     }
 
     private void calculateGenotypeFreq() {
@@ -308,21 +353,6 @@ public class CalledVariant extends AnnotatedVariant {
         return gt[index];
     }
 
-    public String getGT4VCF(int index) {
-        byte gt = getGT(index);
-
-        switch (gt) {
-            case Index.HOM:
-                return "1/1";
-            case Index.HET:
-                return "1/0";
-            case Index.REF:
-                return "0/0";
-            default:
-                return "./.";
-        }
-    }
-
     public Carrier getCarrier(int sampleId) {
         return carrierMap.get(sampleId);
     }
@@ -354,10 +384,7 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     public int getAC() {
-        return 2 * genoCount[Index.HOM][Index.CASE]
-                + genoCount[Index.HET][Index.CASE]
-                + 2 * genoCount[Index.HOM][Index.CTRL]
-                + genoCount[Index.HET][Index.CTRL];
+        return ac;
     }
 
     public int getAN() {

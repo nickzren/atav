@@ -39,12 +39,20 @@ import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.dbnsfp.DBNSFPCommand;
+import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gevir.GeVIRCommand;
 import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
+import function.external.igmaf.IGMAFCommand;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.external.mpc.MPCCommand;
@@ -85,6 +93,7 @@ public class Output {
         sj.add("Transcript Stable Id");
         sj.add("Has CCDS Transcript");
         sj.add("Effect");
+        sj.add("Canonical Transcript Effect");
         sj.add("HGVS_c");
         sj.add("HGVS_p");
         sj.add("Polyphen Humdiv Score");
@@ -98,6 +107,7 @@ public class Output {
         sj.add("Gene Name");
         sj.add("UpToDate Gene Name");
         sj.add("All Gene Symbols");
+        sj.add("All Gene Transcript Count");
         sj.add("Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar");
 
         return sj;
@@ -110,19 +120,15 @@ public class Output {
             sj.add(EvsManager.getHeader());
         }
 
-        if (ExACCommand.isInclude) {
+        if (ExACCommand.getInstance().isInclude) {
             sj.add(ExACManager.getHeader());
         }
 
-        if (ExACCommand.isIncludeCount) {
-            sj.add(ExACManager.getGeneVariantCountHeader());
-        }
-
-        if (GnomADCommand.isIncludeExome) {
+        if (GnomADExomeCommand.getInstance().isInclude) {
             sj.add(GnomADManager.getExomeHeader());
         }
 
-        if (GnomADCommand.isIncludeGenome) {
+        if (GnomADGenomeCommand.getInstance().isInclude) {
             sj.add(GnomADManager.getGenomeHeader());
         }
 
@@ -206,20 +212,32 @@ public class Output {
             sj.add(CHMManager.getHeader());
         }
 
-        if (GMECommand.isInclude) {
+        if (GMECommand.getInstance().isInclude) {
             sj.add(GMEManager.getHeader());
         }
 
-        if (TopMedCommand.isInclude) {
+        if (TopMedCommand.getInstance().isInclude) {
             sj.add(TopMedManager.getHeader());
         }
 
-        if (GenomeAsiaCommand.isInclude) {
+        if (GenomeAsiaCommand.getInstance().isInclude) {
             sj.add(GenomeAsiaManager.getHeader());
         }
 
-        if (IranomeCommand.isInclude) {
+        if (IranomeCommand.getInstance().isInclude) {
             sj.add(IranomeManager.getHeader());
+        }
+
+        if (IGMAFCommand.getInstance().isInclude) {
+            sj.add(IGMAFManager.getHeader());
+        }
+        
+        if(DefaultControlAFCommand.getInstance().isInclude) {
+            sj.add(DefaultControlAFManager.getHeader());
+        }
+
+        if (DBNSFPCommand.isInclude) {
+            sj.add(DBNSFPManager.getHeader());
         }
 
         return sj;
@@ -250,6 +268,8 @@ public class Output {
         }
         sj.add("Case AF");
         sj.add("Ctrl AF");
+        sj.add("AC");
+        sj.add("AF");
         sj.add("Case HWE_P");
         sj.add("Ctrl HWE_P");
 
@@ -259,6 +279,7 @@ public class Output {
     public static StringJoiner getCarrierDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add("Experiment ID");
         sj.add("Sample Name");
         sj.add("Sample Type");
         sj.add("Sample Phenotype");
@@ -311,23 +332,7 @@ public class Output {
     }
 
     public boolean isQualifiedGeno(byte geno) {
-        // --hom-only
-        if (GenotypeLevelFilterCommand.isHomOnly) {
-            return geno == Index.HOM;
-        }
-
-        // --het-only
-        if (GenotypeLevelFilterCommand.isHetOnly) {
-            return geno == Index.HET;
-        }
-
-        // --include-hom-ref
-        if (GenotypeLevelFilterCommand.isIncludeHomRef && geno == Index.REF) {
-            return true;
-        }
-
-        // default: hom alt or het is valid 
-        return geno == Index.HOM || geno == Index.HET;
+        return GenotypeLevelFilterCommand.isQualifiedGeno(geno);
     }
 
     public void getGenoStatData(StringJoiner sj) {
@@ -352,11 +357,14 @@ public class Output {
         }
         sj.add(FormatManager.getFloat(calledVar.af[Index.CASE]));
         sj.add(FormatManager.getFloat(calledVar.af[Index.CTRL]));
+        sj.add(FormatManager.getFloat(calledVar.ac));
+        sj.add(FormatManager.getFloat(calledVar.af[Index.ALL]));
         sj.add(FormatManager.getDouble(calledVar.hweP[Index.CASE]));
         sj.add(FormatManager.getDouble(calledVar.hweP[Index.CTRL]));
     }
 
     public void getCarrierData(StringJoiner sj, Carrier carrier, Sample sample) {
+        sj.add(FormatManager.getInteger(sample.getExperimentId()));
         sj.add(sample.getName());
         sj.add(sample.getType());
         sj.add(sample.getPhenotype());
@@ -402,10 +410,6 @@ public class Output {
             // add deleted sample geno back
             calledVar.addSampleGeno(geno, sample);
         }
-    }
-
-    public boolean isMaxLooAFValid() {
-        return CohortLevelFilterCommand.isLooAFValid(looAF);
     }
 
     public double getLooAf() {

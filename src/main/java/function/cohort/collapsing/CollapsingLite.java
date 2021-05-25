@@ -1,12 +1,16 @@
 package function.cohort.collapsing;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
 import function.annotation.base.GeneManager;
+import function.annotation.base.TranscriptManager;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.cohort.vargeno.ListVarGenoLite;
-import function.cohort.vargeno.VariantLite;
+import function.cohort.vargeno.VariantGenoLite;
 import function.external.knownvar.KnownVarCommand;
 import function.external.knownvar.KnownVarManager;
+import global.Data;
+import global.Index;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,7 +42,7 @@ public class CollapsingLite extends ListVarGenoLite {
     private void init() {
         initOutput();
 
-        initGeneSummaryMap();
+        initSummaryMap();
 
         if (KnownVarCommand.isIncludeOMIM) {
             KnownVarManager.initOMIMMap();
@@ -53,15 +57,21 @@ public class CollapsingLite extends ListVarGenoLite {
             bwSampleMatrix = new BufferedWriter(new FileWriter(matrixFilePath));
             bwSummary = new BufferedWriter(new FileWriter(summaryFilePath));
 
-            bwSampleMatrix.write("sample/gene" + "\t");
-            bwSummary.write(CollapsingGeneSummary.getHeader());
+            if (!AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
+                bwSampleMatrix.write("sample/transcript" + "\t");
+                bwSummary.write(CollapsingTranscriptSummary.getHeader());
+            } else { // default is gene collapsing 
+                bwSampleMatrix.write("sample/gene" + "\t");
+                bwSummary.write(CollapsingGeneSummary.getHeader());
+            }
+
             bwSummary.newLine();
 
             for (Sample sample : SampleManager.getList()) {
                 bwSampleMatrix.write(sample.getName() + "\t");
             }
             bwSampleMatrix.newLine();
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ErrorManager.send(ex);
         }
     }
@@ -86,7 +96,7 @@ public class CollapsingLite extends ListVarGenoLite {
             init();
 
             boolean isHeaderOutput = false;
-            String previousVariantID = "";
+            String previousVariantID = Data.STRING_NA;
             Iterable<CSVRecord> records = getRecords();
             for (CSVRecord record : records) {
                 if (!isHeaderOutput) {
@@ -94,10 +104,15 @@ public class CollapsingLite extends ListVarGenoLite {
                     isHeaderOutput = true;
                 }
 
-                VariantLite variantLite = new VariantLite(record);
+                // each variantLite object represent one row data record in genotype file
+                VariantGenoLite variantLite = new VariantGenoLite(record);
 
                 if (variantLite.isValid()) {
-                    updateGeneSummary(variantLite, previousVariantID);
+                    if (!AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
+                        updateTranscriptSummary(variantLite, previousVariantID);
+                    } else {
+                        updateGeneSummary(variantLite, previousVariantID);
+                    }
 
                     // output qualifed record to genotypes file
                     outputGenotype(variantLite);
@@ -119,32 +134,72 @@ public class CollapsingLite extends ListVarGenoLite {
         }
     }
 
+    private void updateGeneSummary(VariantGenoLite variantLite, String previousVariantID) {
+        for (String geneName : variantLite.getGeneList()) {
+            summaryMap.putIfAbsent(geneName, new CollapsingGeneSummary(geneName));
+
+            countQV(geneName, variantLite, previousVariantID);
+        }
+    }
+
+    private void updateTranscriptSummary(VariantGenoLite variantLite, String previousVariantID) {
+        for (int id : variantLite.getTranscriptSet()) {
+            String idStr = String.valueOf(id);
+            summaryMap.putIfAbsent(idStr, new CollapsingTranscriptSummary(idStr));
+
+            countQV(idStr, variantLite, previousVariantID);
+        }
+    }
+
+    private void countQV(String collapsingKey, VariantGenoLite variantLite, String previousVariantID) {
+        String sampleName = variantLite.getRecord().get(SAMPLE_NAME_HEADER);
+        Sample sample = SampleManager.getSampleByName(sampleName);
+
+        String gtStr = variantLite.getRecord().get(GT_HEADER);
+        byte geno = getGeno(gtStr);
+
+        CollapsingSummary summary = summaryMap.get(collapsingKey);
+        summary.countQualifiedVariantBySample(geno, sample.getIndex());
+
+        // only count variant once per gene
+        if (!previousVariantID.equals(variantLite.getVariantID())) {
+            summary.updateVariantCount(variantLite.isSNV());
+        }
+    }
+
+    private void initSummaryMap() {
+        if (!AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
+            initTranscriptSummaryMap();
+        } else {
+            initGeneSummaryMap();
+        }
+    }
+
     private void initGeneSummaryMap() {
         GeneManager.getMap().values().stream().forEach((geneSet) -> {
             geneSet.stream().forEach((gene) -> {
-                if (!summaryMap.containsKey(gene.getName())) {
-                    summaryMap.put(gene.getName(), new CollapsingGeneSummary(gene.getName()));
-                }
+                summaryMap.putIfAbsent(gene.getName(), new CollapsingGeneSummary(gene.getName()));
             });
         });
     }
 
-    private void updateGeneSummary(VariantLite variantLite, String previousVariantID) {
-        for (String geneName : variantLite.getGeneList()) {
-            String sampleName = variantLite.getRecord().get(SAMPLE_NAME_HEADER);
-            Sample sample = SampleManager.getSampleByName(sampleName);
+    private void initTranscriptSummaryMap() {
+        TranscriptManager.getTranscriptBoundaryMap().values().stream().forEach((transcriptBoundary) -> {
+            String idStr = String.valueOf(transcriptBoundary.getId());
+            summaryMap.putIfAbsent(idStr, new CollapsingTranscriptSummary(idStr));
+        });
+    }
 
-            if (!summaryMap.containsKey(geneName)) {
-                summaryMap.put(geneName, new CollapsingGeneSummary(geneName));
-            }
-
-            CollapsingSummary summary = summaryMap.get(geneName);
-            summary.countQualifiedVariantBySample(sample.getIndex());
-
-            // only count variant once per gene
-            if (!previousVariantID.equals(variantLite.getVariantID())) {
-                summary.updateVariantCount(variantLite.isSNV());
-            }
+    private byte getGeno(String geno) {
+        switch (geno) {
+            case "hom":
+                return Index.HOM;
+            case "het":
+                return Index.HET;
+            case "hom ref":
+                return Index.REF;
+            default:
+                return Data.BYTE_NA;
         }
     }
 
@@ -193,7 +248,9 @@ public class CollapsingLite extends ListVarGenoLite {
     }
 
     private void generatePvaluesQQPlot() {
-        ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
+        if (AnnotationLevelFilterCommand.transcriptBoundaryFile.isEmpty()) {
+            ThirdPartyToolManager.generateQQPlot4CollapsingFetP(summaryFilePath, matrixFilePath, geneFetPQQPlotPath);
+        }
     }
 
     private void gzipFiles() {

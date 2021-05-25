@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import utils.CommonCommand;
 import utils.DBManager;
 import utils.ErrorManager;
 
@@ -27,6 +28,10 @@ public class CarrierBlockManager {
     private static final HashMap<String, PreparedStatement> preparedStatement4VariantMap = new HashMap<>();
 
     public static void init() {
+        if (CommonCommand.isNonDBAnalysis) {
+            return;
+        }
+
         for (String chr : RegionManager.ALL_CHR) {
             String sql = "SELECT sample_id,variant_id,block_id,GT,DP,AD_REF,AD_ALT,GQ,VQSLOD,SOR,FS,MQ,QD,QUAL,ReadPosRankSum,MQRankSum,FILTER+0,PGT,PID_variant_id,HP_GT,HP_variant_id "
                     + "FROM called_variant_chr" + chr + "," + EffectManager.TMP_IMPACT_TABLE + ","
@@ -78,20 +83,23 @@ public class CarrierBlockManager {
                 if (varCarrierMap == null) {
                     varCarrierMap = new HashMap<>();
                     blockCarrierMap.put(variantId, varCarrierMap);
-
-                    validVariantCarrierCount.put(variantId, 0);
                 }
+
+                carrier.checkValidOnXY(var);
+
+                carrier.applyQualityFilter();
 
                 if (carrier.isValid()) {
                     validVariantCarrierCount.computeIfPresent(variantId, (k, v) -> v + 1);
                 }
 
+                // add carrier in order to distinguish non-carrier
                 varCarrierMap.put(carrier.getSampleId(), carrier);
             }
 
             rs.close();
 
-            // removed no qualified carriers variant
+            // remove variant if no qualified carriers
             for (Entry<Integer, Integer> entry : validVariantCarrierCount.entrySet()) {
                 if (entry.getValue() == 0) {
                     blockCarrierMap.remove(entry.getKey());
@@ -114,7 +122,7 @@ public class CarrierBlockManager {
 
                 carrier.checkValidOnXY(var);
 
-                carrier.applyQualityFilter(var.isSnv());
+                carrier.applyQualityFilter();
 
                 carrierMap.put(carrier.getSampleId(), carrier);
             }

@@ -14,35 +14,41 @@ public class OutputSubsetSample {
 
     // minor config tweak for this task
     // CommonCommand.isNonSampleAnalysis = true;
-    public static final String OUTPUT_PATH = "/nfs/informatics/data/tmp/waldb/";
+    public static final String OUTPUT_PATH = "/nfs/informatics/data/tmp/waldb_120720/";
 
     public static void run() throws SQLException {
         String sql = "CREATE TEMPORARY TABLE IF NOT EXISTS exome_sample_id AS "
-                + "(SELECT sample_id FROM sample where sample_type = 'exome' "
-                + "and sample_name not like '%SRR%' "
-                + "and sample_finished = 1 "
-                + "and sample_failure = 0 limit 100)";
+                + "(SELECT sample_id FROM sample where sample_id in (111242))";
         updateSQL(sql);
 
-        sql = "SELECT sample_id,sample_id,sample_type,capture_kit,prep_id,NULL,0,1,0 FROM sample where sample_type = 'exome' "
-                + "and sample_name not like '%SRR%' "
-                + "and sample_finished = 1 "
-                + "and sample_failure = 0 limit 100 "
-                + "into outfile '" + OUTPUT_PATH + "db_load_100_exome_sample.txt';";
+        sql = "SELECT * FROM sample where "
+                + "sample_id in (111242) "
+                + "into outfile '" + OUTPUT_PATH + "sample';";
         executeSQL(sql);
-        sql = "SELECT sample_id,sample_id,0,0,1,1,sample_type,capture_kit FROM sample where sample_type = 'exome' "
-                + "and sample_name not like '%SRR%' "
-                + "and sample_finished = 1 "
-                + "and sample_failure = 0 limit 100 "
-                + "into outfile '" + OUTPUT_PATH + "100_exome_atav_sample.txt';";
+        
+        sql = "SELECT sample_id,sample_id,0,0,1,1,sample_type,capture_kit FROM sample where "
+                + " sample_id in (111242) "
+                + "into outfile '" + OUTPUT_PATH + "atav_sample.txt';";
         executeSQL(sql);
 
         sql = "SELECT * FROM hgnc "
-                + "into outfile '" + OUTPUT_PATH + "hgnc.txt';";
+                + "into outfile '" + OUTPUT_PATH + "hgnc';";
         executeSQL(sql);
         
         sql = "SELECT * FROM effect_ranking "
-                + "into outfile '" + OUTPUT_PATH + "effect_ranking.txt';";
+                + "into outfile '" + OUTPUT_PATH + "effect_ranking';";
+        executeSQL(sql);
+        
+        sql = "SELECT * FROM codingandsplice_effect "
+                + "into outfile '" + OUTPUT_PATH + "codingandsplice_effect';";
+        executeSQL(sql);
+        
+        sql = "SELECT * FROM full_impact "
+                + "into outfile '" + OUTPUT_PATH + "full_impact';";
+        executeSQL(sql);
+        
+        sql = "SELECT * FROM low_impact "
+                + "into outfile '" + OUTPUT_PATH + "low_impact';";
         executeSQL(sql);
         
         outputCarrierData();
@@ -84,9 +90,9 @@ public class OutputSubsetSample {
             sql = "select v.* from WalDB.variant_chr" + chr
                     + " v, WalDB.variant_id_chr" + chr + " i "
                     + " where v.variant_id = i.variant_id"
-                    + " into outfile '" + OUTPUT_PATH + "db_load_variant_chr" + chr + ".txt';";
+                    + " into outfile '" + OUTPUT_PATH + "variant_chr" + chr + "';";
             executeSQL(sql);
-//            cmd[0] = "gzip -9 " + OUTPUT_PATH + "db_load_variant_chr" + chr + ".txt ";
+//            cmd[0] = "gzip -9 " + OUTPUT_PATH + "variant_chr" + chr;
 //            ThirdPartyToolManager.systemCall(cmd);
             
             // create variant pos table            
@@ -112,9 +118,9 @@ public class OutputSubsetSample {
                     + ", WalDB.called_variant_chr" + chr + " c"
                     + ", exome_sample_id s "
                     + "where v.variant_id = c.variant_id and c.sample_id = s.sample_id "
-                    + "into outfile '" + OUTPUT_PATH + "db_load_called_variant_chr" + chr + ".txt';";
+                    + "into outfile '" + OUTPUT_PATH + "called_variant_chr" + chr + "';";
             executeSQL(sql);
-//            cmd[0] = "gzip -9 " + OUTPUT_PATH + "db_load_called_variant_chr" + chr + ".txt ";
+//            cmd[0] = "gzip -9 " + OUTPUT_PATH + "called_variant_chr" + chr;
 //            ThirdPartyToolManager.systemCall(cmd);
 
             sql = "drop table WalDB.variant_pos_chr" + chr;
@@ -126,9 +132,9 @@ public class OutputSubsetSample {
         for (String chr : RegionManager.ALL_CHR) {
             String sql = "select d.* from DP_bins_chr" + chr + " d, exome_sample_id s "
                     + "where d.sample_id = s.sample_id "
-                    + "into outfile '" + OUTPUT_PATH + "db_load_DP_bins_chr" + chr + ".txt';";
+                    + "into outfile '" + OUTPUT_PATH + "DP_bins_chr" + chr + "';";
             executeSQL(sql);
-//            String[] cmd = {"gzip -9 " + OUTPUT_PATH + "db_load_DP_bins_chr" + chr + ".txt "};
+//            String[] cmd = {"gzip -9 " + OUTPUT_PATH + "DP_bins_chr" + chr};
 //            ThirdPartyToolManager.systemCall(cmd);
         }
     }

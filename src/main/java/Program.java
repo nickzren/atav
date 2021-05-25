@@ -44,7 +44,6 @@ import function.external.evs.ListEvs;
 import function.external.exac.ExACCommand;
 import function.external.exac.ExACManager;
 import function.external.exac.ListExAC;
-import function.external.gnomad.GnomADCommand;
 import function.external.gnomad.GnomADManager;
 import function.external.gnomad.ListGnomADExome;
 import function.external.gerp.GerpCommand;
@@ -71,6 +70,7 @@ import function.external.trap.TrapCommand;
 import function.cohort.base.DPBinBlockManager;
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.collapsing.CollapsingLite;
+import function.cohort.collapsing.CollapsingVCFLite;
 import function.cohort.parent.ListParentCompHet;
 import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
@@ -83,8 +83,11 @@ import function.cohort.var.VarCommand;
 import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
+import function.cohort.vcf.ListVCFLite;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMManager;
+import function.external.dbnsfp.DBNSFPManager;
+import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
@@ -96,6 +99,9 @@ import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gme.ListGME;
+import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGenomeCommand;
+import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.external.iranome.ListIranome;
@@ -125,7 +131,7 @@ import utils.ThirdPartyToolManager;
  */
 public class Program {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {       
         try {
             RunTimeManager.start();
 
@@ -218,6 +224,12 @@ public class Program {
             GenomeAsiaManager.init();
             
             IranomeManager.init();
+            
+            IGMAFManager.init();
+            
+            DefaultControlAFManager.init();
+            
+            DBNSFPManager.init();
 
             // output external data version
             LogManager.logExternalDataVersion();
@@ -237,6 +249,9 @@ public class Program {
                 runAnalysis(new ListVar());
             } else if (VCFCommand.isList) {
                 runAnalysis(new ListVCF());
+            } else if (VCFCommand.isListLite) {
+               ListVCFLite listVCFLite = new ListVCFLite();
+               listVCFLite.run();
             } else if (AFCommand.isList) {
                 runAnalysis(new ListAF());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
@@ -246,6 +261,9 @@ public class Program {
             } else if (CollapsingCommand.isCollapsingLite) {
                 CollapsingLite collapsingLite = new CollapsingLite();
                 collapsingLite.run();
+            } else if (CollapsingCommand.isCollapsingVCFLite) {
+                CollapsingVCFLite collapsingVCFLite = new CollapsingVCFLite();
+                collapsingVCFLite.run();
             } else if (StatisticsCommand.isFisher) {
                 runAnalysis(new FisherExactTest());
             } else if (StatisticsCommand.isLinear) {
@@ -272,11 +290,11 @@ public class Program {
                 runAnalysis(new SiteCoverageComparison());
             } else if (EvsCommand.isList) { // External Datasets Functions
                 runAnalysis(new ListEvs());
-            } else if (ExACCommand.isList) {
+            } else if (ExACCommand.getInstance().isList) {
                 runAnalysis(new ListExAC());
-            } else if (GnomADCommand.isListExome) {
+            } else if (GnomADExomeCommand.getInstance().isList) {
                 runAnalysis(new ListGnomADExome());
-            } else if (GnomADCommand.isListGenome) {
+            } else if (GnomADGenomeCommand.getInstance().isList) {
                 runAnalysis(new ListGnomADGenome());
             } else if (KnownVarCommand.isList) {
                 runAnalysis(new ListKnownVar());
@@ -306,13 +324,13 @@ public class Program {
                 runAnalysis(new ListPext());
             } else if (MPCCommand.isList) {
                 runAnalysis(new ListMPC());
-            } else if (GMECommand.isList) {
+            } else if (GMECommand.getInstance().isList) {
                 runAnalysis(new ListGME());
-            } else if (TopMedCommand.isList) {
+            } else if (TopMedCommand.getInstance().isList) {
                 runAnalysis(new ListTopMed());
-            } else if (GenomeAsiaCommand.isList) {
+            } else if (GenomeAsiaCommand.getInstance().isList) {
                 runAnalysis(new ListGenomeAsia());
-            } else if (IranomeCommand.isList) {
+            } else if (IranomeCommand.getInstance().isList) {
                 runAnalysis(new ListIranome());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());

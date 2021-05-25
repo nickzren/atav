@@ -23,14 +23,16 @@ public class RevelCommand {
 
         return value >= minRevel;
     }
-    
-    // applied at variant level when --ensemble-missense not applied
+
+    // applied at variant level when both --ensemble-missense and --ensemble-missense-2 not applied
     public static boolean isValid(float revel, String effect) {
-        if (isInclude && !AnnotationLevelFilterCommand.ensembleMissense) {
+        if (isInclude
+                && !AnnotationLevelFilterCommand.ensembleMissense
+                && !AnnotationLevelFilterCommand.ensembleMissense2) {
             // REVEL filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
                 return isMinRevelValid(revel);
-            } 
+            }
         }
 
         return true;

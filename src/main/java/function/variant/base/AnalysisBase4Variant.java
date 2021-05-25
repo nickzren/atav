@@ -4,6 +4,7 @@ import function.AnalysisBase;
 import function.annotation.base.Annotation;
 import function.annotation.base.EffectManager;
 import function.annotation.base.GeneManager;
+import function.annotation.base.TranscriptManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import global.Data;
@@ -24,7 +25,7 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
 
     protected static ResultSet getAnnotationList(Region region) throws SQLException {
         String sql = "SELECT variant_id, POS, REF, ALT, rs_number, transcript_stable_id, "
-                + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene "
+                + "effect_id, HGVS_c, HGVS_p, polyphen_humdiv, polyphen_humvar, gene, indel_length "
                 + "FROM variant_chr" + region.getChrStr() + " ";
 
         if (GeneManager.isUsed()) {
@@ -44,6 +45,11 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         // gene filter - add tmp table
         if (GeneManager.isUsed()) {
             sql += "," + GeneManager.TMP_GENE_TABLE + region.getChrStr() + " ";
+        }
+        
+        // transcript filter - add tmp table
+        if (TranscriptManager.isUsed()) {
+            sql += "," + TranscriptManager.TMP_TRANSCRIPT_TABLE + region.getChrStr() + " ";
         }
 
         // region filter
@@ -74,6 +80,11 @@ public abstract class AnalysisBase4Variant extends AnalysisBase {
         // gene filter - join tmp table
         if (GeneManager.isUsed()) {
             sql = addFilter2SQL(sql, " gene = input_gene ");
+        }
+        
+        // transcript filter - join tmp table
+        if (TranscriptManager.isUsed()) {
+            sql = addFilter2SQL(sql, " transcript_stable_id = input_transcript_stable_id ");
         }
         
         // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP or DP Bin >= 3

@@ -11,10 +11,13 @@ import function.variant.base.RegionManager;
 import global.Data;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
+import utils.CommonCommand;
 import utils.DBManager;
+import utils.FormatManager;
 
 /**
  *
@@ -25,6 +28,7 @@ public class GeneManager {
     public static final String TMP_GENE_TABLE = "tmp_gene_chr"; // need to append chr in real time
     public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_040320.tsv.gz";
     public static final String ALL_GENE_SYMBOL_MAP_PATH = "data/gene/hgnc_complete_set_to_GRCh37.87_040320.tsv.gz";
+    public static final String ALL_GENE_TRANSCRIPT_COUNT_MAP_PATH = "data/gene/gencode_gene_transcript_count_v24lift37.tsv.gz";
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
@@ -33,6 +37,7 @@ public class GeneManager {
     // key: existing dragendb gene name, value: up to date gene name
     private static HashMap<String, String> hgncGeneMap = new HashMap<>();
     private static HashMap<String, String> allGeneSymbolMap = new HashMap<>();
+    private static HashMap<String, Integer> allGeneTranscriptCountMap = new HashMap<>();
 
     private static ArrayList<Gene> geneBoundaryList = new ArrayList<>();
     private static int allGeneBoundaryLength;
@@ -46,11 +51,17 @@ public class GeneManager {
     private static PreparedStatement preparedStatement4GeneChrom;
 
     public static void init() throws Exception {
+        if (CommonCommand.isNonDBAnalysis) {
+            return;
+        }
+
         initPreparedStatement4GeneChrom();
 
         initHgncGeneMap();
 
         initAllGeneSymbolMap();
+
+        initAllGeneTranscriptCountMap();
 
         initGeneName();
 
@@ -108,6 +119,30 @@ public class GeneManager {
                     String[] tmp = line.split("\t");
 
                     allGeneSymbolMap.put(tmp[0], tmp[1]);
+                }
+            }
+
+            br.close();
+            decoder.close();
+            in.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private static void initAllGeneTranscriptCountMap() {
+        try {
+            File f = new File(Data.ATAV_HOME + ALL_GENE_TRANSCRIPT_COUNT_MAP_PATH);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("#")) {
+                    String[] tmp = line.split("\t");
+
+                    allGeneTranscriptCountMap.put(tmp[0], Integer.valueOf(tmp[1]));
                 }
             }
 
@@ -197,8 +232,18 @@ public class GeneManager {
         allGeneBoundaryLength = 0;
 
         File f = new File(AnnotationLevelFilterCommand.geneBoundaryFile);
-        FileReader fr = new FileReader(f);
-        BufferedReader br = new BufferedReader(fr);
+
+        Reader decoder;
+
+        if (f.getName().endsWith(".gz")) {
+            InputStream fileStream = new FileInputStream(f);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            decoder = new InputStreamReader(gzipStream);
+        } else {
+            decoder = new FileReader(f);
+        }
+
+        BufferedReader br = new BufferedReader(decoder);
 
         String line;
         while ((line = br.readLine()) != null) {
@@ -242,7 +287,7 @@ public class GeneManager {
         }
 
         br.close();
-        fr.close();
+        decoder.close();
 
         if (geneBoundaryList.isEmpty()) {
             ErrorManager.print("--gene-boundary input does not have any valid data.", ErrorManager.INPUT_PARSING);
@@ -275,26 +320,16 @@ public class GeneManager {
 
     private static void initAllGeneMapAndResetRegionList() throws Exception {
         if (isUsed) {
-            ArrayList<String> chrList = new ArrayList<>();
-
-            for (String chr : RegionManager.ALL_CHR) {
-                chrAllGeneMap.put(chr, new StringJoiner(","));
-            }
-
             geneMap.entrySet().stream().forEach((entry) -> {
                 for (Gene gene : entry.getValue()) {
                     if (!gene.getChr().isEmpty()) {
-                        if (!chrList.contains(gene.getChr())) {
-                            chrList.add(gene.getChr());
-                        }
-
+                        chrAllGeneMap.putIfAbsent(gene.getChr(), new StringJoiner(","));
                         chrAllGeneMap.get(gene.getChr()).add("('" + entry.getKey() + "')");
                     }
                 }
             });
 
-            RegionManager.clear();
-            RegionManager.initChrRegionList(chrList.toArray(new String[chrList.size()]));
+            RegionManager.initOrResetChrRegionList(chrAllGeneMap.keySet().toArray(new String[chrAllGeneMap.keySet().size()]));
             RegionManager.sortRegionList();
         }
     }
@@ -308,7 +343,7 @@ public class GeneManager {
                 stmt.executeUpdate(
                         "CREATE TEMPORARY TABLE " + TMP_GENE_TABLE + chr + "("
                         + "input_gene varchar(128) NOT NULL, "
-                        + "PRIMARY KEY (input_gene)) ENGINE=MEMORY;");
+                        + "PRIMARY KEY (input_gene));");
 
                 if (chrAllGeneMap.get(chr).length() > 0) {
                     // insert values
@@ -380,7 +415,7 @@ public class GeneManager {
         return allGeneBoundaryLength;
     }
 
-    public static boolean isValid(Annotation annotation, String chr, int pos) {
+    public static boolean isValid(Annotation annotation, String chr, int pos, int indelLength) {
         if (geneMap.isEmpty()) {
             return true;
         }
@@ -392,7 +427,11 @@ public class GeneManager {
                 return true;
             } else {
                 for (Gene gene : set) {
-                    if (gene.contains(chr, pos)) {
+                    // use pos for SNVs, MNVs, Insertion
+                    // use pos and pos + indelLength for Deletion (indelLength is negative number here)
+                    if (gene.contains(chr, pos)
+                            || (indelLength < 0 && gene.contains(chr, pos - indelLength))) {
+
                         // reset gene name to gene domain name so the downstream procedure could match correctly
                         // only for gene boundary input
                         annotation.geneName = gene.getName();
@@ -405,7 +444,7 @@ public class GeneManager {
         return false;
     }
 
-    public static boolean isValid(String geneName, String chr, int pos) {
+    public static boolean isValid(String geneName, String chr, int pos, int indelLength) {
         if (geneMap.isEmpty()) {
             return true;
         }
@@ -417,7 +456,8 @@ public class GeneManager {
                 return true;
             } else {
                 for (Gene gene : set) {
-                    if (gene.contains(chr, pos)) {
+                    if (gene.contains(chr, pos)
+                            || (indelLength < 0 && gene.contains(chr, pos - indelLength))) {
                         return true;
                     }
                 }
@@ -456,7 +496,7 @@ public class GeneManager {
         return upToDateGene == null ? dragendbGene : upToDateGene;
     }
 
-    public static String getAllGeneSymbol(List<String> geneList) {
+    public static String getAllGeneSymbol(Set<String> geneList) {
         if (geneList.isEmpty()) {
             return Data.STRING_NA;
         }
@@ -467,6 +507,19 @@ public class GeneManager {
             String allGeneSymbol = allGeneSymbolMap.get(gene);
             sj.add(allGeneSymbol == null ? gene : allGeneSymbol);
         }
+
+        return sj.toString();
+    }
+
+    public static String getAllGeneTranscriptCount(Map<String, Integer> geneTranscriptCountMap) {
+        if (geneTranscriptCountMap.isEmpty()) {
+            return Data.STRING_NA;
+        }
+
+        StringJoiner sj = new StringJoiner(";");
+
+        geneTranscriptCountMap.forEach((k, v) -> sj.add(
+                k + ":" + v + "/" + FormatManager.getInteger(allGeneTranscriptCountMap.get(k))));
 
         return sj.toString();
     }

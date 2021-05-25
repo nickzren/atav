@@ -31,7 +31,7 @@ public class IranomeManager {
     }
 
     public static void init() {
-        if (IranomeCommand.isInclude) {
+        if (IranomeCommand.getInstance().isInclude) {
             initIranomeMap();
         }
     }

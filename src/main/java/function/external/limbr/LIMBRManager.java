@@ -4,10 +4,13 @@ import function.external.base.DataManager;
 import global.Data;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringJoiner;
+import java.util.zip.GZIPInputStream;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -17,8 +20,8 @@ import utils.FormatManager;
  */
 public class LIMBRManager {
 
-    private static final String DOMAIN_PATH = "data/limbr/DomainScoresAndPercentilesPathogenic_8-6-19.txt";
-    private static final String EXON_PATH = "data/limbr/ExonScoresAndPercentilesPathogenic_8-6-19.txt";
+    private static final String DOMAIN_PATH = "data/limbr/DomainScoresAndPercentilesPathogenic_8-6-19.txt.gz";
+    private static final String EXON_PATH = "data/limbr/ExonScoresAndPercentilesPathogenic_8-6-19.txt.gz";
 
     private static HashMap<String, ArrayList<LIMBRGene>> geneDomainMap = new HashMap<>();
     private static HashMap<String, ArrayList<LIMBRGene>> geneExonMap = new HashMap<>();
@@ -51,8 +54,9 @@ public class LIMBRManager {
     private static void initGeneMap(HashMap<String, ArrayList<LIMBRGene>> geneMap, String filePath) {
         try {
             File f = new File(filePath);
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
             
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
@@ -83,7 +87,8 @@ public class LIMBRManager {
             }
 
             br.close();
-            fr.close();
+            decoder.close();
+            in.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

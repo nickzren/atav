@@ -10,11 +10,14 @@ import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringJoiner;
+import java.util.zip.GZIPInputStream;
 import utils.MathManager;
 
 /**
@@ -23,7 +26,7 @@ import utils.MathManager;
  */
 public class TrioManager {
 
-    private static final String DENOVO_RULES_PATH = Data.ATAV_HOME + "data/trio_rule_021717.txt";
+    private static final String DENOVO_RULES_PATH = Data.ATAV_HOME + "data/trio_rule_021717.txt.gz";
 
     public static final String[] COMP_HET_FLAG = {
         "COMPOUND HETEROZYGOTE", // 0
@@ -137,12 +140,15 @@ public class TrioManager {
     private static void initDenovoRules() {
         String trioRulesPath = DENOVO_RULES_PATH;
 
-        File RuleFile = new File(trioRulesPath);
-        if (!RuleFile.exists()) {
+        File f = new File(trioRulesPath);
+        if (!f.exists()) {
             ErrorManager.print("The trio rule file (" + trioRulesPath + ") doesn't exist.", ErrorManager.INPUT_PARSING);
         }
         try {
-            BufferedReader br = new BufferedReader(new FileReader(trioRulesPath));
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+            
             String str;
             int LineCount = 0;
             while ((str = br.readLine()) != null) {
@@ -164,6 +170,8 @@ public class TrioManager {
                 LineCount++;
             }
             br.close();
+            decoder.close();
+            in.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }

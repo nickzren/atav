@@ -4,6 +4,7 @@ import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.cohort.statistics.FisherExact;
 import global.Data;
+import global.Index;
 import utils.MathManager;
 
 /**
@@ -47,10 +48,28 @@ public class CollapsingSummary implements Comparable {
         linearP = value;
     }
 
-    public void countQualifiedVariantBySample(int index) {
-        if (hasQualifiedVariantBySample[index] == 0) {
-            hasQualifiedVariantBySample[index] = 1;
+    public void countQualifiedVariantBySample(byte geno, int index) {
+        if (CollapsingCommand.isCollapsingMatrixHetHom) {
+            if (hasQualifiedVariantBySample[index] == 2) {
+                return;
+            }
+
+            // any hom, count as 2
+            // only het, count as 1
+            if (geno == Index.HOM) {
+                hasQualifiedVariantBySample[index] = 2;
+            } else if (geno == Index.HET) {
+                hasQualifiedVariantBySample[index] = 1;
+            }
+        } else {
+            countQualifiedVariantBySample(index);
         }
+
+    }
+
+    public void countQualifiedVariantBySample(int index) {
+        // any hom or het, count as 1
+        hasQualifiedVariantBySample[index] = 1;
     }
 
     public void updateVariantCount(boolean isSnv) {

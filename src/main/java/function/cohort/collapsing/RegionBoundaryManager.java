@@ -1,16 +1,12 @@
 package function.cohort.collapsing;
 
-import function.annotation.base.GeneManager;
-import function.cohort.collapsing.RegionBoundary.Region;
 import function.variant.base.RegionManager;
+import function.variant.base.VariantManager;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import utils.ErrorManager;
 
@@ -20,7 +16,7 @@ import utils.ErrorManager;
  */
 public class RegionBoundaryManager {
 
-    private static List<RegionBoundary> regionBoundaryList = new ArrayList<>();
+    private static HashMap<String, List<RegionBoundary>> regionBoundaryMap = new HashMap<>();
 
     public static void init() {
         if (CollapsingCommand.regionBoundaryFile.isEmpty()) {
@@ -32,56 +28,51 @@ public class RegionBoundaryManager {
             FileReader fr = new FileReader(f);
             BufferedReader br = new BufferedReader(fr);
 
+            ArrayList<String> regionList = new ArrayList<>();
+
             String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
                 if (!lineStr.isEmpty()) {
-                    regionBoundaryList.add(new RegionBoundary(lineStr));
+                    RegionBoundary regionBoundary = new RegionBoundary(lineStr);
+
+                    // if used --region
+                    if (!RegionManager.isChrContained(regionBoundary.getChr())) {
+                        continue;
+                    }
+
+                    regionBoundaryMap.putIfAbsent(regionBoundary.getChr(), new ArrayList<>());
+                    regionBoundaryMap.get(regionBoundary.getChr()).add(regionBoundary);
+
+                    for (int i = 0; i < regionBoundary.getIntevalArray().length; i++) {
+                        regionList.add(regionBoundary.getRegionStrByIndex(i));
+                    }
                 }
+            }
+
+            if (!VariantManager.isUsed()) {
+                RegionManager.initRegionList(regionList.toArray(new String[regionList.size()]));
             }
 
             br.close();
             fr.close();
-
-            resetRegionList();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    public static List<RegionBoundary> getList() {
-        return regionBoundaryList;
+    public static List<RegionBoundary> getList(String chr) {
+        return regionBoundaryMap.get(chr);
     }
 
-    public static HashSet<String> getNameSet(String chr, int pos) {
-        HashSet<String> nameSet = new HashSet<String>();
+    public static List<String> getNameList(String chr, int pos) {
+        List<String> nameList = new ArrayList<>();
 
-        for (RegionBoundary regionBoundary : regionBoundaryList) {
-            for (Region region : regionBoundary.getList()) {
-                if (region.isContained(chr, pos)) {
-                    nameSet.add(regionBoundary.getName());
-                    break;
-                }
+        for (RegionBoundary regionBoundary : regionBoundaryMap.get(chr)) {
+            if (regionBoundary.isContained(pos)) {
+                nameList.add(regionBoundary.getName());
             }
         }
 
-        return nameSet;
-    }
-
-    private static void resetRegionList() throws Exception {
-        if (!RegionManager.isUsed()
-                && !GeneManager.isUsed()) {
-            RegionManager.clear();
-
-            HashSet<String> regionSet = new HashSet<String>();
-
-            for (RegionBoundary regionBoundary : regionBoundaryList) {
-                for (Region region : regionBoundary.getList()) {
-                    regionSet.add(region.toString());
-                }
-            }
-
-            RegionManager.initRegionList(regionSet.toArray(new String[regionSet.size()]));
-            RegionManager.sortRegionList();
-        }
+        return nameList;
     }
 }

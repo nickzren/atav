@@ -1,7 +1,7 @@
 package function.external.ccr;
 
 import global.Data;
-import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
 import utils.FormatManager;
@@ -21,7 +21,7 @@ public class CCROutput {
     private String regionName = Data.STRING_NA;
     private float percentile = Data.FLOAT_NA;
 
-    public CCROutput(List<String> geneList, String chr, int pos) {
+    public CCROutput(Set<String> geneList, String chr, int pos) {
         // go through all qualified genes per variant
         for (String geneName : geneList) {
             CCRGene gene = CCRManager.getGene(geneName, chr, pos);

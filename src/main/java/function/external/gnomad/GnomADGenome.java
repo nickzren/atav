@@ -47,6 +47,7 @@ public class GnomADGenome {
 
     private float[] af;
     private float maxAF;
+    private float minAF;
 
     public GnomADGenome(String chr, int pos, String ref, String alt) {
         this.chr = chr;
@@ -88,14 +89,20 @@ public class GnomADGenome {
 
         rf_tp_probability = FormatManager.getFloat(record, "gnomAD Genome rf_tp_probability");
 
-        maxAF = Data.FLOAT_NA;
+        maxAF = Float.MIN_VALUE;
+        minAF = Float.MAX_VALUE;
+        GnomADGenomeCommand.getInstance().resetPopAFValid();
         af = new float[GnomADManager.GENOME_POP.length];
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(record, "gnomAD Genome " + GnomADManager.GENOME_POP[i] + "_AF");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.genomePopSet.contains(GnomADManager.GENOME_POP[i])) {
+                    && GnomADGenomeCommand.getInstance().popSet.contains(GnomADManager.GENOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
+                minAF = Math.min(minAF, af[i]);
             }
+            
+            // --max-gnomad-genome-pop-af or --max-gnomad-genome-pop-maf
+            GnomADGenomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
     }
 
@@ -114,7 +121,7 @@ public class GnomADGenome {
             } else {
                 resetAF(Data.FLOAT_NA);
             }
-            
+
             rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -145,13 +152,19 @@ public class GnomADGenome {
         non_neuro_nhomalt = FormatManager.getInt(rs, "non_neuro_nhomalt");
         non_neuro_nhemi = FormatManager.getInt(rs, "non_neuro_nhemi");
 
-        maxAF = Data.FLOAT_NA;
+        maxAF = Float.MIN_VALUE;
+        minAF = Float.MAX_VALUE;
+        GnomADGenomeCommand.getInstance().resetPopAFValid();
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(rs, GnomADManager.GENOME_POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.genomePopSet.contains(GnomADManager.GENOME_POP[i])) {
+                    && GnomADGenomeCommand.getInstance().popSet.contains(GnomADManager.GENOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
+                minAF = Math.min(minAF, af[i]);
             }
+            
+            // --max-gnomad-genome-pop-af or --max-gnomad-genome-pop-maf
+            GnomADGenomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
     }
 
@@ -182,11 +195,15 @@ public class GnomADGenome {
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = value;
         }
+        
+        GnomADGenomeCommand.getInstance().resetPopAFValid();
     }
 
     public boolean isValid() {
-        return GnomADCommand.isGenomeAFValid(maxAF)
-                && GnomADCommand.isGenomeRfTpProbabilityValid(rf_tp_probability, isSnv);
+        return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF)
+                && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
+                && GnomADGenomeCommand.getInstance().isFilterPass(filter)
+                && GnomADGenomeCommand.getInstance().isPopAFValid();
     }
 
     public String getVariantId() {

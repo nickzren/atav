@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 import utils.FormatManager;
@@ -29,7 +30,7 @@ import utils.FormatManager;
  */
 public class VariantManager {
 
-    private static final String ARTIFACTS_Variant_PATH = Data.ATAV_HOME + "data/artifacts_variant.txt";
+    private static final String ARTIFACTS_Variant_PATH = Data.ATAV_HOME + "data/artifacts_variant.txt.gz";
     public static final String[] VARIANT_TYPE = {"snv", "indel"};
 
     private static HashSet<String> includeVariantSet = new HashSet<>();
@@ -140,8 +141,17 @@ public class VariantManager {
         int lineNum = 0;
 
         try {
-            FileReader fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
+            Reader decoder;
+
+            if (f.getName().endsWith(".gz")) {
+                InputStream fileStream = new FileInputStream(f);
+                InputStream gzipStream = new GZIPInputStream(fileStream);
+                decoder = new InputStreamReader(gzipStream);
+            } else {
+                decoder = new FileReader(f);
+            }
+
+            BufferedReader br = new BufferedReader(decoder);
 
             while ((lineStr = br.readLine()) != null) {
                 lineNum++;
@@ -154,7 +164,7 @@ public class VariantManager {
             }
 
             br.close();
-            fr.close();
+            decoder.close();
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError line ("
                     + lineNum + ") in variant file: " + lineStr);
@@ -224,6 +234,11 @@ public class VariantManager {
         String pos = values[1];
         RegionManager.checkChrValid(chr);
 
+        // if used --region
+        if (!RegionManager.isChrContained(chr)) {
+            return;
+        }
+
         if (!variantSet.contains(str)) {
             if (isInclude) {
                 String varPos = chr + "-" + pos;
@@ -241,6 +256,14 @@ public class VariantManager {
 
         if (!rsNumberSet.contains(value)) {
             String varPos = VariantManager.getVariantPositionByRS(value);
+
+            String[] values = varPos.split("-");
+            String chr = values[0];
+
+            // if used --region
+            if (!RegionManager.isChrContained(chr)) {
+                return;
+            }
 
             if (!varPos.isEmpty()) {
                 if (isInclude) {
@@ -281,14 +304,13 @@ public class VariantManager {
     }
 
     private static void resetRegionList() throws SQLException {
-        RegionManager.clear();
-
         if (includeVariantSet.size() <= maxIncludeNum) {
+            RegionManager.clear();
             for (String varPos : includeVariantPosList) {
                 RegionManager.addRegionByVariantPos(varPos);
             }
         } else {
-            RegionManager.initChrRegionList(includeChrList.toArray(new String[includeChrList.size()]));
+            RegionManager.initOrResetChrRegionList(includeChrList.toArray(new String[includeChrList.size()]));
             RegionManager.sortRegionList();
         }
     }
@@ -312,7 +334,7 @@ public class VariantManager {
 
         return (isVariantIdIncluded(var.getVariantIdStr())
                 && isRsNumberIncluded(var.getRsNumber()))
-                && !isExcluded(var.getVariantIdStr());
+                && !isVariantIdExcluded(var.getVariantIdStr());
     }
 
     public static boolean isVariantIdIncluded(String varId) {
@@ -338,7 +360,7 @@ public class VariantManager {
         }
     }
 
-    public static boolean isExcluded(String varId) {
+    public static boolean isVariantIdExcluded(String varId) {
         return excludeVariantSet.contains(varId);
     }
 
@@ -360,7 +382,6 @@ public class VariantManager {
 
                 String sqlQuery = "CREATE TEMPORARY TABLE tmp_case_variant_id_chr" + chr + " "
                         + "(case_variant_id INT NOT NULL,PRIMARY KEY (case_variant_id)) "
-                        + "ENGINE=TokuDB "
                         + "SELECT DISTINCT variant_id AS case_variant_id FROM called_variant_chr" + chr + " "
                         + "WHERE sample_id IN (" + SampleManager.getCaseIDSJ().toString() + ")";
 

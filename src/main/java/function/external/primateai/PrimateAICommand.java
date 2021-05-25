@@ -8,7 +8,7 @@ import global.Data;
  * @author nick
  */
 public class PrimateAICommand {
-    
+
     public static boolean isList = false;
     public static boolean isInclude = false;
 
@@ -23,16 +23,18 @@ public class PrimateAICommand {
 
         return value >= minPrimateAI;
     }
-    
-    // applied at variant level when --ensemble-missense not applied
+
+    // applied at variant level when both --ensemble-missense and --ensemble-missense-2 not applied
     public static boolean isValid(float primateAI, String effect) {
-        if (isInclude && !AnnotationLevelFilterCommand.ensembleMissense) {
+        if (isInclude
+                && !AnnotationLevelFilterCommand.ensembleMissense
+                && !AnnotationLevelFilterCommand.ensembleMissense2) {
             // PrimateAI filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
                 return isMinPrimateAIValid(primateAI);
-            } 
+            }
         }
-        
+
         return true;
     }
 }

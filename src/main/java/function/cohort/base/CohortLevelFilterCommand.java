@@ -21,13 +21,22 @@ public class CohortLevelFilterCommand {
     public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
     public static boolean isAllExome = false;
+    public static boolean isAvailableControlUseOnly = false;
     public static boolean isExcludeIGMGnomadSample = false;
+    public static boolean isExcludeLowQualitySample = false;
+    public static boolean isIncludeDefaultControlSample = false;
+    public static float maxAF = Data.NO_FILTER;
+    public static float minAF = Data.NO_FILTER;
+    public static float maxMAF = Data.NO_FILTER;
+    public static float minMAF = Data.NO_FILTER;
     public static float maxCtrlAF = Data.NO_FILTER;
     public static float maxCaseAF = Data.NO_FILTER;
     public static float minCtrlAF = Data.NO_FILTER;
-    public static float ctrlMAF = Data.NO_FILTER;
-    public static float caseMAF = Data.NO_FILTER;
+    public static float maxCtrlMAF = Data.NO_FILTER;
+    public static float maxCaseMAF = Data.NO_FILTER;
     public static int minVarPresent = 1; // special case
+    public static int maxAC = Data.NO_FILTER;
+    public static int minAC = Data.NO_FILTER;
     public static int minCaseCarrier = Data.NO_FILTER;
     public static int maxQcFailSample = Data.NO_FILTER;
     public static double minCoveredSampleBinomialP = Data.NO_FILTER;
@@ -35,7 +44,7 @@ public class CohortLevelFilterCommand {
     public static boolean isCaseOnly = false;
     public static int maxCaseOnlyNumber = 3000;
     public static float maxLooAF = Data.NO_FILTER;
-    public static float looMAF = Data.NO_FILTER;
+    public static float maxLooMAF = Data.NO_FILTER;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -53,11 +62,36 @@ public class CohortLevelFilterCommand {
                 case "--all-exome":
                     isAllExome = true;
                     break;
+                case "--available-control-use-only":
+                    isAvailableControlUseOnly = true;
+                    break;
                 case "--exclude-igm-gnomad-sample":
                     isExcludeIGMGnomadSample = true;
                     break;
+                case "--exclude-low-quality-sample":
+                    isExcludeLowQualitySample = true;
+                    break;
+                case "--include-default-control-sample":
+                    isIncludeDefaultControlSample = true;
+                    break;
                 case "--disable-check-duplicate-sample":
                     isDisableCheckDuplicateSample = true;
+                    break;
+                case "--max-af":
+                    checkValueValid(1, 0, option);
+                    maxAF = getValidFloat(option);
+                    break;
+                case "--min-af":
+                    checkValueValid(1, 0, option);
+                    minAF = getValidFloat(option);
+                    break;
+                case "--max-maf":
+                    checkValueValid(0.5, 0, option);
+                    maxMAF = getValidFloat(option);
+                    break;
+                case "--min-maf":
+                    checkValueValid(0.5, 0, option);
+                    minMAF = getValidFloat(option);
                     break;
                 case "--ctrl-af":
                 case "--max-ctrl-af":
@@ -69,8 +103,9 @@ public class CohortLevelFilterCommand {
                     minCtrlAF = getValidFloat(option);
                     break;
                 case "--ctrl-maf":
+                case "--max-ctrl-maf":
                     checkValueValid(1, 0, option);
-                    ctrlMAF = getValidFloat(option);
+                    maxCtrlMAF = getValidFloat(option);
                     break;
                 case "--case-af":
                 case "--max-case-af":
@@ -78,8 +113,9 @@ public class CohortLevelFilterCommand {
                     maxCaseAF = getValidFloat(option);
                     break;
                 case "--case-maf":
-                    checkValueValid(1, 0, option);
-                    caseMAF = getValidFloat(option);
+                case "--max-case-maf":
+                    checkValueValid(0.5, 0, option);
+                    maxCaseMAF = getValidFloat(option);
                     break;
                 case "--loo-af":
                 case "--max-loo-af":
@@ -87,8 +123,17 @@ public class CohortLevelFilterCommand {
                     maxLooAF = getValidFloat(option);
                     break;
                 case "--loo-maf":
-                    checkValueValid(1, 0, option);
-                    looMAF = getValidFloat(option);
+                case "--max-loo-maf":
+                    checkValueValid(0.5, 0, option);
+                    maxLooMAF = getValidFloat(option);
+                    break;
+                case "--max-ac":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    maxAC = getValidInteger(option);
+                    break;
+                case "--min-ac":
+                    checkValueValid(Data.NO_FILTER, 0, option);
+                    minAC = getValidInteger(option);
                     break;
                 case "--min-variant-present":
                     checkValueValid(Data.NO_FILTER, 0, option);
@@ -124,11 +169,18 @@ public class CohortLevelFilterCommand {
             iterator.remove();
         }
     }
-    
+
+    public static boolean isAFValid(float value) {
+        return isMaxAFValid(value)
+                && isMinAFValid(value)
+                && isMaxMAFValid(value) 
+                && isMinMAFValid(value);
+    }
+
     public static boolean isCtrlAFValid(float value) {
         return isMinCtrlAFValid(value)
                 && isMaxCtrlAFValid(value)
-                && isCtrlMAFValid(value);
+                && isMaxCtrlMAFValid(value);
     }
 
     private static boolean isMinCtrlAFValid(float value) {
@@ -139,6 +191,38 @@ public class CohortLevelFilterCommand {
         return value >= minCtrlAF;
     }
 
+    private static boolean isMaxAFValid(float value) {
+        if (maxAF == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxAF;
+    }
+
+    private static boolean isMinAFValid(float value) {
+        if (minAF == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value > minAF;
+    }
+
+    private static boolean isMaxMAFValid(float value) {
+        if (maxMAF == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxMAF || value >= (1 - maxMAF);
+    }
+    
+    private static boolean isMinMAFValid(float value) {
+        if (minMAF == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value > minMAF && value < (1 - minMAF);
+    }
+
     private static boolean isMaxCtrlAFValid(float value) {
         if (maxCtrlAF == Data.NO_FILTER) {
             return true;
@@ -147,16 +231,16 @@ public class CohortLevelFilterCommand {
         return value <= maxCtrlAF;
     }
 
-    private static boolean isCtrlMAFValid(float value) {
-        if (ctrlMAF == Data.NO_FILTER) {
+    private static boolean isMaxCtrlMAFValid(float value) {
+        if (maxCtrlMAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= ctrlMAF || value >= (1 - ctrlMAF);
+        return value <= maxCtrlMAF || value >= (1 - maxCtrlMAF);
     }
 
     public static boolean isCaseAFValid(float value) {
-        return isMaxCaseAFValid(value) && isCaseMAFValid(value);
+        return isMaxCaseAFValid(value) && isMaxCaseMAFValid(value);
     }
 
     private static boolean isMaxCaseAFValid(float value) {
@@ -167,12 +251,12 @@ public class CohortLevelFilterCommand {
         return value <= maxCaseAF;
     }
 
-    private static boolean isCaseMAFValid(float value) {
-        if (caseMAF == Data.NO_FILTER) {
+    private static boolean isMaxCaseMAFValid(float value) {
+        if (maxCaseMAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= caseMAF || value >= (1 - caseMAF);
+        return value <= maxCaseMAF || value >= (1 - maxCaseMAF);
     }
 
     public static boolean isMinVarPresentValid(int value) {
@@ -181,6 +265,27 @@ public class CohortLevelFilterCommand {
         }
 
         return value >= minVarPresent;
+    }
+
+    public static boolean isACValid(int value) {
+        return isMaxACValid(value)
+                && isMinACValid(value);
+    }
+
+    private static boolean isMaxACValid(int value) {
+        if (maxAC == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value <= maxAC;
+    }
+
+    private static boolean isMinACValid(int value) {
+        if (minAC == Data.NO_FILTER) {
+            return true;
+        }
+
+        return value > minAC;
     }
 
     public static boolean isMinCaseCarrierValid(int value) {
@@ -237,7 +342,7 @@ public class CohortLevelFilterCommand {
     }
 
     public static boolean isLooAFValid(float value) {
-        return isMaxLooAFValid(value) && isLooMAFValid(value);
+        return isMaxLooAFValid(value) && isMaxLooMAFValid(value);
     }
 
     private static boolean isMaxLooAFValid(float value) {
@@ -248,11 +353,11 @@ public class CohortLevelFilterCommand {
         return value <= maxLooAF;
     }
 
-    private static boolean isLooMAFValid(float value) {
-        if (looMAF == Data.NO_FILTER) {
+    private static boolean isMaxLooMAFValid(float value) {
+        if (maxLooMAF == Data.NO_FILTER) {
             return true;
         }
 
-        return value <= looMAF || value >= (1 - looMAF);
+        return value <= maxLooMAF || value >= (1 - maxLooMAF);
     }
 }

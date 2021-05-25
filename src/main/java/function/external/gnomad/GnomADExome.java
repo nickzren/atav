@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
-import utils.DBManager;
 
 /**
  *
@@ -48,6 +47,7 @@ public class GnomADExome {
 
     private float[] af;
     private float maxAF;
+    private float minAF;
 
     public GnomADExome(String chr, int pos, String ref, String alt) {
         this.chr = chr;
@@ -90,14 +90,20 @@ public class GnomADExome {
 
         rf_tp_probability = FormatManager.getFloat(record, "gnomAD Exome rf_tp_probability");
 
-        maxAF = Data.FLOAT_NA;
+        maxAF = Float.MIN_VALUE;
+        minAF = Float.MAX_VALUE;
+        GnomADExomeCommand.getInstance().resetPopAFValid();
         af = new float[GnomADManager.EXOME_POP.length];
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(record, "gnomAD Exome " + GnomADManager.EXOME_POP[i] + "_AF");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.exomePopSet.contains(GnomADManager.EXOME_POP[i])) {
+                    && GnomADExomeCommand.getInstance().popSet.contains(GnomADManager.EXOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
+                minAF = Math.min(minAF, af[i]);
             }
+            
+            // --max-gnomad-exome-pop-af or --max-gnomad-exome-pop-maf
+            GnomADExomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
     }
 
@@ -116,7 +122,7 @@ public class GnomADExome {
             } else {
                 resetAF(Data.FLOAT_NA);
             }
-            
+
             rs.close();
         } catch (SQLException e) {
             ErrorManager.send(e);
@@ -147,14 +153,21 @@ public class GnomADExome {
         non_neuro_nhomalt = FormatManager.getInt(rs, "non_neuro_nhomalt");
         non_neuro_nhemi = FormatManager.getInt(rs, "non_neuro_nhemi");
 
-        maxAF = Data.FLOAT_NA;
+        maxAF = Float.MIN_VALUE;
+        minAF = Float.MAX_VALUE;
+        GnomADExomeCommand.getInstance().resetPopAFValid();
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             af[i] = FormatManager.getFloat(rs, GnomADManager.EXOME_POP[i] + "_af");
             if (af[i] != Data.FLOAT_NA
-                    && GnomADCommand.exomePopSet.contains(GnomADManager.EXOME_POP[i])) {
+                    && GnomADExomeCommand.getInstance().popSet.contains(GnomADManager.EXOME_POP[i])) {
                 maxAF = Math.max(maxAF, af[i]);
+                minAF = Math.min(minAF, af[i]);
             }
+
+            // --max-gnomad-exome-pop-af or --max-gnomad-exome-pop-maf
+            GnomADExomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
+
     }
 
     private void resetAF(float value) {
@@ -184,11 +197,15 @@ public class GnomADExome {
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             af[i] = value;
         }
+        
+        GnomADExomeCommand.getInstance().resetPopAFValid();
     }
 
     public boolean isValid() {
-        return GnomADCommand.isExomeAFValid(maxAF)
-                && GnomADCommand.isExomeRfTpProbabilityValid(rf_tp_probability, isSnv);
+        return GnomADExomeCommand.getInstance().isAFValid(maxAF, minAF)
+                && GnomADExomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
+                && GnomADExomeCommand.getInstance().isFilterPass(filter)
+                && GnomADExomeCommand.getInstance().isPopAFValid();
     }
 
     public String getVariantId() {
