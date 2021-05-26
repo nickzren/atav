@@ -29,7 +29,7 @@ public class KnownVarManager {
     public static final String clinGenTable = "knownvar.clingen_2021_04_08";
     public static final String omimTable = "knownvar.omim_2021_04_08";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
-    public static final String acmgTable = "knownvar.ACMG_2016_11_19";
+    public static final String acmgTable = "knownvar.acmg_v3";
     public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
 
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
@@ -340,9 +340,9 @@ public class KnownVarManager {
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
+                String gene = rs.getString("gene").toUpperCase();
                 String acmg = rs.getString("ACMG");
-                acmgMap.put(geneName, acmg);
+                acmgMap.put(gene, acmg);
             }
 
             rs.close();
