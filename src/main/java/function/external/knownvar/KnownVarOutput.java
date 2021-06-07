@@ -53,6 +53,14 @@ public class KnownVarOutput {
         return sj;
     }
 
+    public boolean isValid() {
+        if (KnownVarCommand.isKnownVarOnly) {
+            return this.hgmdOutput.isHGMDVariant() || this.clinVarOutput.isClinVar();
+        }
+
+        return true;
+    }
+
     @Override
     public String toString() {
         return getStringJoiner().toString();

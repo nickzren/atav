@@ -112,6 +112,10 @@ public class SampleManager {
     }
 
     private static void initExistingSampleFile() {
+        if (!PedMapCommand.isPedMap) {
+            return;
+        }
+
         try {
             bwExistingSample = new BufferedWriter(new FileWriter(existingSampleFile));
         } catch (Exception ex) {
@@ -128,6 +132,10 @@ public class SampleManager {
     }
 
     private static void closeExistingSampleFile() {
+        if (!PedMapCommand.isPedMap) {
+            return;
+        }
+
         try {
             bwExistingSample.flush();
             bwExistingSample.close();
@@ -198,8 +206,10 @@ public class SampleManager {
 
                     countSampleNum(sample);
 
-                    bwExistingSample.write(initStringLineForSampleFile(sample));
-                    bwExistingSample.newLine();
+                    if (PedMapCommand.isPedMap) {
+                        bwExistingSample.write(initStringLineForSampleFile(sample));
+                        bwExistingSample.newLine();
+                    }
                 }
 
                 br.close();
@@ -331,8 +341,10 @@ public class SampleManager {
 
                 countSampleNum(sample);
 
-                bwExistingSample.write(initStringLineForSampleFile(sample));
-                bwExistingSample.newLine();
+                if (PedMapCommand.isPedMap) {
+                    bwExistingSample.write(initStringLineForSampleFile(sample));
+                    bwExistingSample.newLine();
+                }
             }
 
             br.close();

@@ -143,6 +143,11 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantManager.isValid(this);
         }
 
+        if (isValid && KnownVarCommand.isInclude) {
+            knownVarOutput = new KnownVarOutput(this);
+            isValid = knownVarOutput.isValid();
+        }
+
         if (isValid && CHMCommand.isExclude) {
             isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
             isValid = !isRepeatRegion; // invalid when variant's repeat region is true
@@ -281,10 +286,6 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void initExternalData() {
-        if (KnownVarCommand.isInclude) {
-            knownVarOutput = new KnownVarOutput(this);
-        }
-
         if (MgiCommand.isInclude) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
@@ -609,7 +610,7 @@ public class AnnotatedVariant extends Variant {
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(getIGMAF());
         }
-        
+
         if (DefaultControlAFCommand.getInstance().isInclude) {
             sj.merge(getDefaultControlAFStringJoiner());
         }
@@ -722,7 +723,7 @@ public class AnnotatedVariant extends Variant {
     public String getIGMAF() {
         return FormatManager.getFloat(igmAF);
     }
-    
+
     public StringJoiner getDefaultControlAFStringJoiner() {
         return defaultControlAF.getStringJoiner();
     }

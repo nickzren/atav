@@ -19,6 +19,8 @@ public class ClinVarOutput {
     private int siteCount;
     private int pathogenicIndelsCount;
     private int allIndelsCount;
+    
+    private boolean isClinVar = false;
 
     public ClinVarOutput(Variant var, Collection<ClinVar> collection) {
         this.var = var;
@@ -59,6 +61,7 @@ public class ClinVarOutput {
             String idStr = var.getVariantIdStr();
 
             if (idStr.equals(tmpClinvar.getVariantId())) {
+                isClinVar = true;
                 return tmpClinvar;
             }
 
@@ -96,6 +99,10 @@ public class ClinVarOutput {
         }
 
         return clinvar;
+    }
+    
+    public boolean isClinVar() {
+        return isClinVar;
     }
 
     public StringJoiner getStringJoiner() {

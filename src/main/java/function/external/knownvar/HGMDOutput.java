@@ -24,6 +24,8 @@ public class HGMDOutput {
     private String p2Site;
     private int indel9bpflanks;
 
+    private boolean isHGMD = false;
+
     public HGMDOutput(Variant var, Collection<HGMD> collection) {
         this.var = var;
 
@@ -59,6 +61,7 @@ public class HGMDOutput {
             String idStr = var.getVariantIdStr();
 
             if (idStr.equals(tmpHgmd.getVariantId())) {
+                isHGMD = true;
                 return tmpHgmd;
             }
 
@@ -84,7 +87,7 @@ public class HGMDOutput {
 
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add(m2Site);
         sj.add(m1Site);
         sj.add(FormatManager.getInteger(siteCount));
@@ -94,10 +97,14 @@ public class HGMDOutput {
         sj.add(p1Site);
         sj.add(p2Site);
         sj.add(FormatManager.getInteger(indel9bpflanks));
-        
+
         return sj;
     }
-    
+
+    public boolean isHGMDVariant() {
+        return isHGMD;
+    }
+
     @Override
     public String toString() {
         return getStringJoiner().toString();
