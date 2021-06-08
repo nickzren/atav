@@ -3,8 +3,8 @@ package function.cohort.collapsing;
 import function.annotation.base.GeneManager;
 import function.external.gevir.GeVIRCommand;
 import function.external.gevir.GeVIRManager;
-import function.external.knownvar.KnownVarCommand;
-import function.external.knownvar.KnownVarManager;
+import function.external.omim.OMIMCommand;
+import function.external.omim.OMIMManager;
 import function.external.rvis.RvisCommand;
 import function.external.rvis.RvisManager;
 import function.external.synrvis.SynRvisCommand;
@@ -56,7 +56,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         if (SynRvisCommand.isInclude) {
             sj.add(SynRvisManager.getHeader());
         }
-        if (KnownVarCommand.isIncludeOMIM) {
+        if (OMIMCommand.isInclude) {
             sj.add("OMIM Disease");
         }
 
@@ -141,7 +141,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
             geneName = name.substring(0, name.indexOf("_"));
         }
 
-        return KnownVarManager.getOMIM(geneName);
+        return OMIMManager.getOMIM(geneName);
     }
     
     private String getLogisticP() {
@@ -180,7 +180,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
         if (SynRvisCommand.isInclude) {
             sj.add(getSynRvis());
         }
-        if (KnownVarCommand.isIncludeOMIM) {
+        if (OMIMCommand.isInclude) {
             sj.add(getOMIM());
         }
 

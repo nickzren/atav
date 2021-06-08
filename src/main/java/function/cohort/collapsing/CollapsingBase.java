@@ -7,8 +7,8 @@ import function.cohort.base.AnalysisBase4CalledVar;
 import function.annotation.base.GeneManager;
 import function.annotation.base.TranscriptManager;
 import function.cohort.base.SampleManager;
-import function.external.knownvar.KnownVarCommand;
-import function.external.knownvar.KnownVarManager;
+import function.external.omim.OMIMCommand;
+import function.external.omim.OMIMManager;
 import function.variant.base.RegionManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -96,8 +96,8 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
         SampleManager.generateCovariateFile();
 
-        if (KnownVarCommand.isIncludeOMIM) {
-            KnownVarManager.initOMIMMap();
+        if (OMIMCommand.isInclude) {
+            OMIMManager.init();
         }
     }
 

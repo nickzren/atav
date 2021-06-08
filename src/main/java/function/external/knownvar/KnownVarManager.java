@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -26,20 +25,14 @@ public class KnownVarManager {
     public static final String hgmdTable = "knownvar.hgmd_2021_1";
     public static final String clinVarTable = "knownvar.clinvar_2021_04_08";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_04_08";
-    public static final String clinGenTable = "knownvar.clingen_2021_04_08";
-    public static final String omimTable = "knownvar.omim_2021_04_08";
-    public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
-    public static final String acmgTable = "knownvar.acmg_v3";
-    public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
+//    public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
+//    public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
 
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
     private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
     private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<>();
-    private static final HashMap<String, ClinGen> clinGenMap = new HashMap<>();
-    private static final HashMap<String, String> omimMap = new HashMap<>();
-    private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
-    private static final HashMap<String, String> acmgMap = new HashMap<>();
-    private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
+//    private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
+//    private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
 
     private static PreparedStatement preparedStatement4HGMDSite;
     private static PreparedStatement preparedStatement4HGMDIndelFlankingCount;
@@ -101,15 +94,15 @@ public class KnownVarManager {
         sj.add("ClinVar Pathogenic SNV Nonsense Count");
         sj.add("ClinVar Pathogenic SNV Missense Count");
         sj.add("ClinVar Pathogenic Last Pathogenic Location");
-        sj.add("ClinGen");
-        sj.add("ClinGen HaploinsufficiencyDesc");
-        sj.add("ClinGen TriplosensitivityDesc");
-        sj.add("OMIM Disease");
-        sj.add("RecessiveCarrier");
-        sj.add("ACMG");
-        sj.add("dbDSM Disease");
-        sj.add("dbDSM Classification");
-        sj.add("dbDSM PubmedID");
+//        sj.add("ClinGen");
+//        sj.add("ClinGen HaploinsufficiencyDesc");
+//        sj.add("ClinGen TriplosensitivityDesc");
+//        sj.add("OMIM Disease");
+//        sj.add("RecessiveCarrier");
+//        sj.add("ACMG");
+//        sj.add("dbDSM Disease");
+//        sj.add("dbDSM Classification");
+//        sj.add("dbDSM PubmedID");
 
         return sj.toString();
     }
@@ -117,12 +110,7 @@ public class KnownVarManager {
     public static String getVersion() {
         return "HGMD: " + DataManager.getVersion(hgmdTable) + "\n"
                 + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n"
-                + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n"
-                + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
-                + "OMIM: " + DataManager.getVersion(omimTable) + "\n"
-                + "RecessiveCarrier: " + DataManager.getVersion(recessiveCarrierTable) + "\n"
-                + "ACMG: " + DataManager.getVersion(acmgTable) + "\n"
-                + "dbDSM: " + DataManager.getVersion(dbDSMTable) + "\n";
+                + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n";
 
     }
 
@@ -136,15 +124,9 @@ public class KnownVarManager {
 
             initClinVarPathoratioMap();
 
-            initClinGenMap();
+//            initRecessiveCarrierMap();
 
-            initOMIMMap();
-
-            initRecessiveCarrierMap();
-
-            initACMGMap();
-
-            initDBDSMMap();
+//            initDBDSMMap();
 
             if (KnownVarCommand.isKnownVarPathogenicOnly) {
                 VariantManager.reset2KnownVarSet();
@@ -270,112 +252,50 @@ public class KnownVarManager {
         }
     }
 
-    private static void initClinGenMap() {
-        try {
-            String sql = "SELECT * From " + clinGenTable;
+//    private static void initRecessiveCarrierMap() {
+//        try {
+//            String sql = "SELECT * From " + recessiveCarrierTable;
+//
+//            ResultSet rs = DBManager.executeQuery(sql);
+//
+//            while (rs.next()) {
+//                String geneName = rs.getString("geneName").toUpperCase();
+//
+//                recessiveCarrierSet.add(geneName);
+//            }
+//
+//            rs.close();
+//        } catch (Exception e) {
+//            ErrorManager.send(e);
+//        }
+//    }
 
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-                String haploinsufficiencyDesc = rs.getString("HaploinsufficiencyDesc");
-                String triplosensitivityDesc = rs.getString("TriplosensitivityDesc");
-
-                ClinGen clinGen = new ClinGen(haploinsufficiencyDesc, triplosensitivityDesc);
-
-                clinGenMap.put(geneName, clinGen);
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    public static void initOMIMMap() {
-        if (!omimMap.isEmpty()) {
-            return;
-        }
-
-        try {
-            String sql = "SELECT * From " + omimTable;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-                String diseaseName = rs.getString("diseaseName");
-                omimMap.put(geneName, diseaseName);
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    private static void initRecessiveCarrierMap() {
-        try {
-            String sql = "SELECT * From " + recessiveCarrierTable;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-
-                recessiveCarrierSet.add(geneName);
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    private static void initACMGMap() {
-        try {
-            String sql = "SELECT * From " + acmgTable;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            while (rs.next()) {
-                String gene = rs.getString("gene").toUpperCase();
-                String acmg = rs.getString("ACMG");
-                acmgMap.put(gene, acmg);
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
-    private static void initDBDSMMap() {
-        try {
-            String sql = "SELECT * From " + dbDSMTable;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            while (rs.next()) {
-                String chr = rs.getString("chr");
-                int pos = rs.getInt("pos");
-                String ref = rs.getString("ref");
-                String alt = rs.getString("alt");
-                String disease = FormatManager.getString(rs.getString("Disease"));
-                String classification = FormatManager.getString(rs.getString("Classification"));
-                String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
-
-                DBDSM dbDSM = new DBDSM(chr, pos, ref, alt,
-                        disease, classification, pubmedID);
-
-                dbDSMMultiMap.put(dbDSM.getSiteId(), dbDSM);
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
+//    private static void initDBDSMMap() {
+//        try {
+//            String sql = "SELECT * From " + dbDSMTable;
+//
+//            ResultSet rs = DBManager.executeQuery(sql);
+//
+//            while (rs.next()) {
+//                String chr = rs.getString("chr");
+//                int pos = rs.getInt("pos");
+//                String ref = rs.getString("ref");
+//                String alt = rs.getString("alt");
+//                String disease = FormatManager.getString(rs.getString("Disease"));
+//                String classification = FormatManager.getString(rs.getString("Classification"));
+//                String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
+//
+//                DBDSM dbDSM = new DBDSM(chr, pos, ref, alt,
+//                        disease, classification, pubmedID);
+//
+//                dbDSMMultiMap.put(dbDSM.getSiteId(), dbDSM);
+//            }
+//
+//            rs.close();
+//        } catch (Exception e) {
+//            ErrorManager.send(e);
+//        }
+//    }
 
     public static Multimap<String, HGMD> getHGMDMultiMap() {
         return hgmdMultiMap;
@@ -507,41 +427,23 @@ public class KnownVarManager {
         return clinVarPathoratio;
     }
 
-    public static ClinGen getClinGen(String geneName) {
-        ClinGen clinGen = clinGenMap.get(geneName);
+//    public static int getRecessiveCarrier(String geneName) {
+//        if (recessiveCarrierSet.contains(geneName)) {
+//            return 1;
+//        }
+//
+//        return 0;
+//    }
 
-        if (clinGen == null) {
-            clinGen = new ClinGen(Data.STRING_NA, Data.STRING_NA);
-        }
+//    public static Multimap<String, DBDSM> getDBDSMMultiMap() {
+//        return dbDSMMultiMap;
+//    }
 
-        return clinGen;
-    }
-
-    public static String getOMIM(String geneName) {
-        return FormatManager.getString(omimMap.get(geneName));
-    }
-
-    public static int getRecessiveCarrier(String geneName) {
-        if (recessiveCarrierSet.contains(geneName)) {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    public static String getACMG(String geneName) {
-        return FormatManager.getString(acmgMap.get(geneName));
-    }
-
-    public static Multimap<String, DBDSM> getDBDSMMultiMap() {
-        return dbDSMMultiMap;
-    }
-
-    public static DBDSMOutput getDBDSMOutput(Variant var) {
-        Collection<DBDSM> collection = dbDSMMultiMap.get(var.getSiteId());
-
-        DBDSMOutput output = new DBDSMOutput(var, collection);
-
-        return output;
-    }
+//    public static DBDSMOutput getDBDSMOutput(Variant var) {
+//        Collection<DBDSM> collection = dbDSMMultiMap.get(var.getSiteId());
+//
+//        DBDSMOutput output = new DBDSMOutput(var, collection);
+//
+//        return output;
+//    }
 }

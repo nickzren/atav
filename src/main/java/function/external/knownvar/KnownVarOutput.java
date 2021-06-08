@@ -3,7 +3,6 @@ package function.external.knownvar;
 import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.GeneManager;
 import java.util.StringJoiner;
-import utils.FormatManager;
 
 /**
  *
@@ -14,11 +13,8 @@ public class KnownVarOutput {
     private HGMDOutput hgmdOutput;
     private ClinVarOutput clinVarOutput;
     private ClinVarPathoratio clinVarPathoratio;
-    private ClinGen clinGen;
-    private String omimDiseaseName;
-    private int recessiveCarrier;
-    private String acmg;
-    private DBDSMOutput dbDSMOutput;
+//    private int recessiveCarrier;
+//    private DBDSMOutput dbDSMOutput;
 
     public static String getHeader() {
         return "Variant ID,"
@@ -31,11 +27,8 @@ public class KnownVarOutput {
         hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
         clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
         clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
-        clinGen = KnownVarManager.getClinGen(geneName);
-        omimDiseaseName = KnownVarManager.getOMIM(geneName);
-        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
-        acmg = KnownVarManager.getACMG(geneName);
-        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
+//        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
+//        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
     }
 
     public StringJoiner getStringJoiner() {
@@ -44,11 +37,8 @@ public class KnownVarOutput {
         sj.merge(hgmdOutput.getStringJoiner());
         sj.merge(clinVarOutput.getStringJoiner());
         sj.merge(clinVarPathoratio.getStringJoiner());
-        sj.merge(clinGen.getStringJoiner());
-        sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));
-        sj.add(FormatManager.getInteger(recessiveCarrier));
-        sj.add(acmg);
-        sj.merge(dbDSMOutput.getStringJoiner());
+//        sj.add(FormatManager.getInteger(recessiveCarrier));
+//        sj.merge(dbDSMOutput.getStringJoiner());
 
         return sj;
     }

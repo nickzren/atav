@@ -1,10 +1,15 @@
 package function.annotation.base;
 
 import function.cohort.vcf.VCFCommand;
+import function.external.acmg.ACMGCommand;
+import function.external.acmg.ACMGManager;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.clingen.ClinGen;
+import function.external.clingen.ClinGenCommand;
+import function.external.clingen.ClinGenManager;
 import function.external.dbnsfp.DBNSFP;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
@@ -49,6 +54,8 @@ import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.mtr.MTR;
 import function.external.mtr.MTRCommand;
+import function.external.omim.OMIMCommand;
+import function.external.omim.OMIMManager;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
 import function.external.primateai.PrimateAICommand;
@@ -110,6 +117,9 @@ public class AnnotatedVariant extends Variant {
     private float trapScore;
     private float pextRatio;
     private KnownVarOutput knownVarOutput;
+    private ClinGen clinGen;
+    private String omimDiseaseName;
+    private String acmg;
     private SubRvisOutput subRvisOutput;
     private LIMBROutput limbrOutput;
     private String mgiStr;
@@ -286,6 +296,18 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void initExternalData() {
+        if(ClinGenCommand.isInclude) {
+            clinGen = ClinGenManager.getClinGen(getGeneName());
+        }
+        
+        if (OMIMCommand.isInclude) {
+            omimDiseaseName = OMIMManager.getOMIM(getGeneName());
+        }
+        
+        if(ACMGCommand.isInclude) {
+            acmg = ACMGManager.getACMG(getGeneName());
+        }
+        
         if (MgiCommand.isInclude) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
@@ -515,6 +537,18 @@ public class AnnotatedVariant extends Variant {
             sj.merge(getKnownVarStringJoiner());
         }
 
+        if(ClinGenCommand.isInclude) {
+            sj.merge(getClinGenStringJoiner());
+        }
+        
+        if(OMIMCommand.isInclude) {
+            sj.add(getOMIM());
+        }
+        
+        if(ACMGCommand.isInclude) {
+            sj.add(getACMG());
+        }
+        
         if (RvisCommand.isInclude) {
             sj.add(getRvis());
         }
@@ -644,6 +678,18 @@ public class AnnotatedVariant extends Variant {
         return knownVarOutput.getStringJoiner();
     }
 
+    public StringJoiner getClinGenStringJoiner() {
+        return clinGen.getStringJoiner();
+    }
+    
+    public String getOMIM() {
+        return omimDiseaseName;
+    }
+    
+    public String getACMG() {
+        return acmg;
+    }
+    
     public String getRvis() {
         return RvisManager.getLine(getGeneName());
     }

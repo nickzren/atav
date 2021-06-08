@@ -1,4 +1,4 @@
-package function.external.knownvar;
+package function.external.clingen;
 
 import java.util.StringJoiner;
 import utils.FormatManager;

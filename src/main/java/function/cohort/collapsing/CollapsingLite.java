@@ -7,8 +7,8 @@ import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import function.cohort.vargeno.ListVarGenoLite;
 import function.cohort.vargeno.VariantGenoLite;
-import function.external.knownvar.KnownVarCommand;
-import function.external.knownvar.KnownVarManager;
+import function.external.omim.OMIMCommand;
+import function.external.omim.OMIMManager;
 import global.Data;
 import global.Index;
 import java.io.BufferedWriter;
@@ -44,8 +44,8 @@ public class CollapsingLite extends ListVarGenoLite {
 
         initSummaryMap();
 
-        if (KnownVarCommand.isIncludeOMIM) {
-            KnownVarManager.initOMIMMap();
+        if (OMIMCommand.isInclude) {
+            OMIMManager.init();
         }
     }
 

@@ -1,7 +1,9 @@
 package function.variant.base;
 
+import function.external.acmg.ACMGCommand;
 import function.external.ccr.CCRCommand;
 import function.external.chm.CHMCommand;
+import function.external.clingen.ClinGenCommand;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.defaultcontrolaf.DefaultControlAFCommand;
 import function.external.limbr.LIMBRCommand;
@@ -24,6 +26,7 @@ import function.external.knownvar.KnownVarCommand;
 import function.external.mgi.MgiCommand;
 import function.external.mpc.MPCCommand;
 import function.external.mtr.MTRCommand;
+import function.external.omim.OMIMCommand;
 import function.external.pext.PextCommand;
 import function.external.primateai.PrimateAICommand;
 import function.external.revel.RevelCommand;
@@ -525,8 +528,14 @@ public class VariantLevelFilterCommand {
                 case "--include-known-var":
                     KnownVarCommand.isInclude = true;
                     break;
+                case "--include-clingen":
+                    ClinGenCommand.isInclude = true;
+                    break;
                 case "--include-omim":
-                    KnownVarCommand.isIncludeOMIM = true;
+                    OMIMCommand.isInclude = true;
+                    break;
+                case "--include-acmg":
+                    ACMGCommand.isInclude = true;
                     break;
                 case "--include-rvis":
                     RvisCommand.isInclude = true;

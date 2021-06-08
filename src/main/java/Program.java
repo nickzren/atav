@@ -85,7 +85,9 @@ import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.ListVCF;
 import function.cohort.vcf.ListVCFLite;
 import function.cohort.vcf.VCFCommand;
+import function.external.acmg.ACMGManager;
 import function.external.chm.CHMManager;
+import function.external.clingen.ClinGenManager;
 import function.external.dbnsfp.DBNSFPManager;
 import function.external.defaultcontrolaf.DefaultControlAFManager;
 import function.external.denovo.DenovoDBManager;
@@ -109,6 +111,7 @@ import function.external.mpc.ListMPC;
 import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.mtr.MTRManager;
+import function.external.omim.OMIMManager;
 import function.external.pext.ListPext;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
@@ -180,6 +183,12 @@ public class Program {
             ExACManager.init();
 
             KnownVarManager.init();
+            
+            ClinGenManager.init();
+            
+            OMIMManager.init();
+            
+            ACMGManager.init();
 
             RvisManager.init();
 

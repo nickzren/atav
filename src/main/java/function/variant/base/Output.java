@@ -37,8 +37,12 @@ import function.cohort.base.Carrier;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
+import function.external.acmg.ACMGCommand;
+import function.external.acmg.ACMGManager;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
+import function.external.clingen.ClinGenCommand;
+import function.external.clingen.ClinGenManager;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
 import function.external.defaultcontrolaf.DefaultControlAFCommand;
@@ -57,6 +61,8 @@ import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
 import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
+import function.external.omim.OMIMCommand;
+import function.external.omim.OMIMManager;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
 import function.external.synrvis.SynRvisCommand;
@@ -138,6 +144,18 @@ public class Output {
 
         if (KnownVarCommand.isInclude) {
             sj.add(KnownVarManager.getHeader());
+        }
+
+        if (ClinGenCommand.isInclude) {
+            sj.add(ClinGenManager.getHeader());
+        }
+
+        if (OMIMCommand.isInclude) {
+            sj.add(OMIMManager.getHeader());
+        }
+
+        if (ACMGCommand.isInclude) {
+            sj.add(ACMGManager.getHeader());
         }
 
         if (RvisCommand.isInclude) {
@@ -231,8 +249,8 @@ public class Output {
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(IGMAFManager.getHeader());
         }
-        
-        if(DefaultControlAFCommand.getInstance().isInclude) {
+
+        if (DefaultControlAFCommand.getInstance().isInclude) {
             sj.add(DefaultControlAFManager.getHeader());
         }
 

@@ -1,7 +1,11 @@
 package function.external.base;
 
+import function.external.acmg.ACMGCommand;
+import function.external.acmg.ACMGManager;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCRManager;
+import function.external.clingen.ClinGenCommand;
+import function.external.clingen.ClinGenManager;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
 import function.external.defaultcontrolaf.DefaultControlAFCommand;
@@ -40,6 +44,8 @@ import function.external.mpc.MPCCommand;
 import function.external.mpc.MPCManager;
 import function.external.mtr.MTRCommand;
 import function.external.mtr.MTRManager;
+import function.external.omim.OMIMCommand;
+import function.external.omim.OMIMManager;
 import function.external.pext.PextCommand;
 import function.external.pext.PextManager;
 import function.external.primateai.PrimateAICommand;
@@ -138,7 +144,19 @@ public class DataManager {
         if (KnownVarCommand.isInclude) {
             sb.append(KnownVarManager.getVersion());
         }
+        
+        if (ClinGenCommand.isInclude) {
+            sb.append(ClinGenManager.getVersion());
+        }
 
+        if (OMIMCommand.isInclude) {
+            sb.append(OMIMManager.getVersion());
+        }
+        
+        if (ACMGCommand.isInclude) {
+            sb.append(ACMGManager.getVersion());
+        }
+        
         if (LIMBRCommand.isInclude) {
             sb.append(LIMBRManager.getVersion());
         }
