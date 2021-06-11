@@ -24,6 +24,7 @@ public class Annotation {
     // 0 -> SNV or MNV , < 0 -> deletion, > 0 -> insertion
     public int indelLength;
     private boolean isMNV;
+    public String impact;
     public String effect;
     public int effectID;
     public String geneName;
@@ -68,6 +69,7 @@ public class Annotation {
         }
 
         effectID = rset.getInt("effect_id");
+        impact = EffectManager.getImpactById(effectID);
         effect = EffectManager.getEffectById(effectID);
         HGVS_c = FormatManager.getString(rset.getString("HGVS_c"));
         HGVS_p = FormatManager.getString(rset.getString("HGVS_p"));

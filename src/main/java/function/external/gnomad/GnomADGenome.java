@@ -22,28 +22,28 @@ public class GnomADGenome {
     private boolean isSnv;
     private boolean isMNV;
 
-    private String filter;
-    private byte segdup;
-    private byte lcr;
-    private byte decoy;
-    private float rf_tp_probability;
-    private float qd;
-    private float pab_max;
+//    private String filter;
+//    private byte segdup;
+//    private byte lcr;
+//    private byte decoy;
+//    private float rf_tp_probability;
+//    private float qd;
+//    private float pab_max;
 
     private int global_AN;
     private int global_nhet;
     private int global_nhomalt;
     private int global_nhemi;
 
-    private int controls_AN;
-    private int controls_nhet;
-    private int controls_nhomalt;
-    private int controls_nhemi;
+//    private int controls_AN;
+//    private int controls_nhet;
+//    private int controls_nhomalt;
+//    private int controls_nhemi;
 
-    private int non_neuro_AN;
-    private int non_neuro_nhet;
-    private int non_neuro_nhomalt;
-    private int non_neuro_nhemi;
+//    private int non_neuro_AN;
+//    private int non_neuro_nhet;
+//    private int non_neuro_nhomalt;
+//    private int non_neuro_nhemi;
 
     private float[] af;
     private float maxAF;
@@ -87,7 +87,7 @@ public class GnomADGenome {
 
         isSnv = ref.length() == alt.length();
 
-        rf_tp_probability = FormatManager.getFloat(record, "gnomAD Genome rf_tp_probability");
+//        rf_tp_probability = FormatManager.getFloat(record, "gnomAD Genome rf_tp_probability");
 
         maxAF = Float.MIN_VALUE;
         minAF = Float.MAX_VALUE;
@@ -129,28 +129,28 @@ public class GnomADGenome {
     }
 
     private void setAF(ResultSet rs) throws SQLException {
-        filter = rs.getString("filter");
-        segdup = FormatManager.getByte(rs, "segdup");
-        lcr = FormatManager.getByte(rs, "lcr");
-        decoy = FormatManager.getByte(rs, "decoy");
-        rf_tp_probability = FormatManager.getFloat(rs, "rf_tp_probability");
-        qd = FormatManager.getFloat(rs, "qd");
-        pab_max = FormatManager.getFloat(rs, "pab_max");
+//        filter = rs.getString("filter");
+//        segdup = FormatManager.getByte(rs, "segdup");
+//        lcr = FormatManager.getByte(rs, "lcr");
+//        decoy = FormatManager.getByte(rs, "decoy");
+//        rf_tp_probability = FormatManager.getFloat(rs, "rf_tp_probability");
+//        qd = FormatManager.getFloat(rs, "qd");
+//        pab_max = FormatManager.getFloat(rs, "pab_max");
 
         global_AN = FormatManager.getInt(rs, "global_AN");
         global_nhet = FormatManager.getInt(rs, "global_nhet");
         global_nhomalt = FormatManager.getInt(rs, "global_nhomalt");
         global_nhemi = FormatManager.getInt(rs, "global_nhemi");
 
-        controls_AN = FormatManager.getInt(rs, "controls_AN");
-        controls_nhet = FormatManager.getInt(rs, "controls_nhet");
-        controls_nhomalt = FormatManager.getInt(rs, "controls_nhomalt");
-        controls_nhemi = FormatManager.getInt(rs, "controls_nhemi");
+//        controls_AN = FormatManager.getInt(rs, "controls_AN");
+//        controls_nhet = FormatManager.getInt(rs, "controls_nhet");
+//        controls_nhomalt = FormatManager.getInt(rs, "controls_nhomalt");
+//        controls_nhemi = FormatManager.getInt(rs, "controls_nhemi");
 
-        non_neuro_AN = FormatManager.getInt(rs, "non_neuro_AN");
-        non_neuro_nhet = FormatManager.getInt(rs, "non_neuro_nhet");
-        non_neuro_nhomalt = FormatManager.getInt(rs, "non_neuro_nhomalt");
-        non_neuro_nhemi = FormatManager.getInt(rs, "non_neuro_nhemi");
+//        non_neuro_AN = FormatManager.getInt(rs, "non_neuro_AN");
+//        non_neuro_nhet = FormatManager.getInt(rs, "non_neuro_nhet");
+//        non_neuro_nhomalt = FormatManager.getInt(rs, "non_neuro_nhomalt");
+//        non_neuro_nhemi = FormatManager.getInt(rs, "non_neuro_nhemi");
 
         maxAF = Float.MIN_VALUE;
         minAF = Float.MAX_VALUE;
@@ -169,28 +169,28 @@ public class GnomADGenome {
     }
 
     private void resetAF(float value) {
-        filter = Data.STRING_NA;
-        segdup = Data.BYTE_NA;
-        lcr = Data.BYTE_NA;
-        decoy = Data.BYTE_NA;
-        rf_tp_probability = Data.FLOAT_NA;
-        qd = Data.FLOAT_NA;
-        pab_max = Data.FLOAT_NA;
+//        filter = Data.STRING_NA;
+//        segdup = Data.BYTE_NA;
+//        lcr = Data.BYTE_NA;
+//        decoy = Data.BYTE_NA;
+//        rf_tp_probability = Data.FLOAT_NA;
+//        qd = Data.FLOAT_NA;
+//        pab_max = Data.FLOAT_NA;
 
         global_AN = Data.INTEGER_NA;
         global_nhet = Data.INTEGER_NA;
         global_nhomalt = Data.INTEGER_NA;
         global_nhemi = Data.INTEGER_NA;
 
-        controls_AN = Data.INTEGER_NA;
-        controls_nhet = Data.INTEGER_NA;
-        controls_nhomalt = Data.INTEGER_NA;
-        controls_nhemi = Data.INTEGER_NA;
+//        controls_AN = Data.INTEGER_NA;
+//        controls_nhet = Data.INTEGER_NA;
+//        controls_nhomalt = Data.INTEGER_NA;
+//        controls_nhemi = Data.INTEGER_NA;
 
-        non_neuro_AN = Data.INTEGER_NA;
-        non_neuro_nhet = Data.INTEGER_NA;
-        non_neuro_nhomalt = Data.INTEGER_NA;
-        non_neuro_nhemi = Data.INTEGER_NA;
+//        non_neuro_AN = Data.INTEGER_NA;
+//        non_neuro_nhet = Data.INTEGER_NA;
+//        non_neuro_nhomalt = Data.INTEGER_NA;
+//        non_neuro_nhemi = Data.INTEGER_NA;
 
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = value;
@@ -201,8 +201,8 @@ public class GnomADGenome {
 
     public boolean isValid() {
         return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF)
-                && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
-                && GnomADGenomeCommand.getInstance().isFilterPass(filter)
+//                && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
+//                && GnomADGenomeCommand.getInstance().isFilterPass(filter)
                 && GnomADGenomeCommand.getInstance().isPopAFValid();
     }
 
@@ -213,13 +213,13 @@ public class GnomADGenome {
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(filter);
-        sj.add(FormatManager.getByte(segdup));
-        sj.add(FormatManager.getByte(lcr));
-        sj.add(FormatManager.getByte(decoy));
-        sj.add(FormatManager.getFloat(rf_tp_probability));
-        sj.add(FormatManager.getFloat(qd));
-        sj.add(FormatManager.getFloat(pab_max));
+//        sj.add(filter);
+//        sj.add(FormatManager.getByte(segdup));
+//        sj.add(FormatManager.getByte(lcr));
+//        sj.add(FormatManager.getByte(decoy));
+//        sj.add(FormatManager.getFloat(rf_tp_probability));
+//        sj.add(FormatManager.getFloat(qd));
+//        sj.add(FormatManager.getFloat(pab_max));
 
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));
@@ -232,17 +232,17 @@ public class GnomADGenome {
                     sj.add(FormatManager.getInteger(global_nhemi));
                     break;
                 case 1:
-                    sj.add(FormatManager.getInteger(controls_AN));
-                    sj.add(FormatManager.getInteger(controls_nhet));
-                    sj.add(FormatManager.getInteger(controls_nhomalt));
-                    sj.add(FormatManager.getInteger(controls_nhemi));
+//                    sj.add(FormatManager.getInteger(controls_AN));
+//                    sj.add(FormatManager.getInteger(controls_nhet));
+//                    sj.add(FormatManager.getInteger(controls_nhomalt));
+//                    sj.add(FormatManager.getInteger(controls_nhemi));
                     break;
-                case 2:
-                    sj.add(FormatManager.getInteger(non_neuro_AN));
-                    sj.add(FormatManager.getInteger(non_neuro_nhet));
-                    sj.add(FormatManager.getInteger(non_neuro_nhomalt));
-                    sj.add(FormatManager.getInteger(non_neuro_nhemi));
-                    break;
+//                case 2:
+//                    sj.add(FormatManager.getInteger(non_neuro_AN));
+//                    sj.add(FormatManager.getInteger(non_neuro_nhet));
+//                    sj.add(FormatManager.getInteger(non_neuro_nhomalt));
+//                    sj.add(FormatManager.getInteger(non_neuro_nhemi));
+//                    break;
                 default:
                     break;
             }

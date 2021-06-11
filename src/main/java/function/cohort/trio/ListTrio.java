@@ -153,9 +153,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
     private void outputDenovo(TrioOutput output) throws Exception {
         if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
             StringJoiner sj = new StringJoiner(",");
-            sj.add(output.child.getFamilyId());
-            sj.add(output.motherName);
-            sj.add(output.fatherName);
+//            sj.add(output.child.getFamilyId());
+//            sj.add(output.motherName);
+//            sj.add(output.fatherName);
             sj.add(output.toString());
             bwDenovo.write(sj.toString());
             bwDenovo.newLine();
@@ -183,15 +183,15 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
-        float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
+//        float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(output1.child.getFamilyId());
-        sj.add(output1.motherName);
-        sj.add(output1.fatherName);
+//        sj.add(output1.child.getFamilyId());
+//        sj.add(output1.motherName);
+//        sj.add(output1.fatherName);
         sj.add(flag);
-        sj.add(FormatManager.getFloat(coFreq[Index.CASE]));
-        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
+//        sj.add(FormatManager.getFloat(coFreq[Index.CASE]));
+//        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(output1.toString());
         sj.add(output2.toString());
 

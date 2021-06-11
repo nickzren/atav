@@ -21,8 +21,8 @@ public class ClinGenManager {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
         sj.add("ClinGen");
-        sj.add("ClinGen HaploinsufficiencyDesc");
-        sj.add("ClinGen TriplosensitivityDesc");
+//        sj.add("ClinGen HaploinsufficiencyDesc");
+//        sj.add("ClinGen TriplosensitivityDesc");
 
         return sj.toString();
     }

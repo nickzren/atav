@@ -88,15 +88,15 @@ public class HGMDOutput {
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(m2Site);
-        sj.add(m1Site);
-        sj.add(FormatManager.getInteger(siteCount));
-        sj.add(hgmd.getDiseaseName());
-        sj.add(hgmd.getPmid());
+//        sj.add(m2Site);
+//        sj.add(m1Site);
+//        sj.add(FormatManager.getInteger(siteCount));
+//        sj.add(hgmd.getDiseaseName());
+//        sj.add(hgmd.getPmid());
         sj.add(hgmd.getVariantClass());
-        sj.add(p1Site);
-        sj.add(p2Site);
-        sj.add(FormatManager.getInteger(indel9bpflanks));
+//        sj.add(p1Site);
+//        sj.add(p2Site);
+//        sj.add(FormatManager.getInteger(indel9bpflanks));
 
         return sj;
     }

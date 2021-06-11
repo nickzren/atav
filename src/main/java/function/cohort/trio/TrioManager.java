@@ -47,9 +47,9 @@ public class TrioManager {
     public static String getHeader4Denovo() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Family ID");
-        sj.add("Mother");
-        sj.add("Father");
+//        sj.add("Family ID");
+//        sj.add("Mother");
+//        sj.add("Father");
         sj.merge(getHeaderByVariant());
 
         return sj.toString();
@@ -58,12 +58,12 @@ public class TrioManager {
     public static String getHeader4CompHet() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Family ID");
-        sj.add("Mother");
-        sj.add("Father");
+//        sj.add("Family ID");
+//        sj.add("Mother");
+//        sj.add("Father");
         sj.add("Comp Het Flag");
-        sj.add("Var Case Freq #1 & #2 (co-occurance)");
-        sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
+//        sj.add("Var Case Freq #1 & #2 (co-occurance)");
+//        sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
         sj.merge(initVarHeaderStr("1"));
         sj.merge(initVarHeaderStr("2"));
 
@@ -87,13 +87,17 @@ public class TrioManager {
 
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
-        sj.merge(Output.getCarrierDataHeader());
+        sj.merge(Output.getCarrierDataHeader_pgl());
         sj.add("GT (mother)");
         sj.add("DP Bin (mother)");
+        sj.add("AD ALT (mother)");
+        sj.add("DP (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
+        sj.add("AD ALT (father)");
+        sj.add("DP (father)");
         sj.add("Denovo Flag");
-        sj.merge(Output.getCohortLevelHeader());
+//        sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
 
         return sj;

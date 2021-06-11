@@ -22,17 +22,11 @@ import utils.ErrorManager;
 public class GnomADManager {
 
     public static final String[] EXOME_POP = {
-        "global", "controls", "non_neuro",
-        "afr", "amr", "asj", "eas", "sas", "fin", "nfe", "nfemax", "easmax",
-        "controls_afr", "controls_amr", "controls_asj", "controls_eas", "controls_sas", "controls_fin", "controls_nfe", "controls_nfemax", "controls_easmax",
-        "non_neuro_afr", "non_neuro_amr", "non_neuro_asj", "non_neuro_eas", "non_neuro_sas", "non_neuro_fin", "non_neuro_nfe", "non_neuro_nfemax", "non_neuro_easmax"
+        "global"
     };
 
     public static final String[] GENOME_POP = {
-        "global", "controls", "non_neuro",
-        "afr", "amr", "asj", "eas", "fin", "nfe", "nfemax", "easmax",
-        "controls_afr", "controls_amr", "controls_asj", "controls_eas", "controls_fin", "controls_nfe", "controls_nfemax", "controls_easmax",
-        "non_neuro_afr", "non_neuro_amr", "non_neuro_asj", "non_neuro_eas", "non_neuro_fin", "non_neuro_nfe", "non_neuro_nfemax", "non_neuro_easmax"
+        "global"
     };
 
     private static final String exomeVariantTable = "gnomad_2_1.exome_variant";
@@ -87,13 +81,13 @@ public class GnomADManager {
     public static String getExomeHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("gnomAD Exome FILTER");
-        sj.add("gnomAD Exome segdup");
-        sj.add("gnomAD Exome lcr");
-        sj.add("gnomAD Exome decoy");
-        sj.add("gnomAD Exome rf_tp_probability");
-        sj.add("gnomAD Exome qd");
-        sj.add("gnomAD Exome pab_max");
+//        sj.add("gnomAD Exome FILTER");
+//        sj.add("gnomAD Exome segdup");
+//        sj.add("gnomAD Exome lcr");
+//        sj.add("gnomAD Exome decoy");
+//        sj.add("gnomAD Exome rf_tp_probability");
+//        sj.add("gnomAD Exome qd");
+//        sj.add("gnomAD Exome pab_max");
 
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
             String pop = GnomADManager.EXOME_POP[i];
@@ -119,13 +113,13 @@ public class GnomADManager {
     public static String getGenomeHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("gnomAD Genome FILTER");
-        sj.add("gnomAD Genome segdup");
-        sj.add("gnomAD Genome lcr");
-        sj.add("gnomAD Genome decoy");
-        sj.add("gnomAD Genome rf_tp_probability");
-        sj.add("gnomAD Genome qd");
-        sj.add("gnomAD Genome pab_max");
+//        sj.add("gnomAD Genome FILTER");
+//        sj.add("gnomAD Genome segdup");
+//        sj.add("gnomAD Genome lcr");
+//        sj.add("gnomAD Genome decoy");
+//        sj.add("gnomAD Genome rf_tp_probability");
+//        sj.add("gnomAD Genome qd");
+//        sj.add("gnomAD Genome pab_max");
 
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             String pop = GnomADManager.GENOME_POP[i];

@@ -91,6 +91,7 @@ public class AnnotatedVariant extends Variant {
 
     // annotations / most damaging effect annotations
     private int stableId;
+    private String impact = "";
     private String effect = "";
     private int effectID;
     private String HGVS_c = "";
@@ -246,6 +247,7 @@ public class AnnotatedVariant extends Variant {
         if (isValid) {
             if (effect.isEmpty()) { // init most damaging effect annotations
                 stableId = annotation.stableId;
+                impact = annotation.impact;
                 effect = annotation.effect;
                 effectID = annotation.effectID;
                 HGVS_c = annotation.HGVS_c;
@@ -263,8 +265,8 @@ public class AnnotatedVariant extends Variant {
             annotationSJ.add(getStableId(annotation.stableId));
             annotationSJ.add(annotation.HGVS_c);
             annotationSJ.add(FormatManager.getString(annotation.HGVS_p));
-            annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
-            annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
+//            annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumdiv));
+//            annotationSJ.add(FormatManager.getFloat(annotation.polyphenHumvar));
 
             int geneTranscriptCount = geneTranscriptCountMap.getOrDefault(annotation.geneName, 0);
             if (!transcriptSet.contains(annotation.stableId)) {
@@ -433,23 +435,24 @@ public class AnnotatedVariant extends Variant {
 
     public void getAnnotationData(StringJoiner sj) {
         sj.add(getStableId(stableId));
-        sj.add(Boolean.toString(hasCCDS));
+//        sj.add(Boolean.toString(hasCCDS));
+        sj.add(impact);
         sj.add(effect);
         sj.add(getCanonicalEffect());
         sj.add(HGVS_c);
         sj.add(HGVS_p);
-        sj.add(FormatManager.getFloat(polyphenHumdiv));
-        sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
-        sj.add(FormatManager.getFloat(polyphenHumdivCCDS));
-        sj.add(PolyphenManager.getPrediction(polyphenHumdivCCDS, effect));
-        sj.add(FormatManager.getFloat(polyphenHumvar));
-        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
-        sj.add(FormatManager.getFloat(polyphenHumvarCCDS));
-        sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
+//        sj.add(FormatManager.getFloat(polyphenHumdiv));
+//        sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
+//        sj.add(FormatManager.getFloat(polyphenHumdivCCDS));
+//        sj.add(PolyphenManager.getPrediction(polyphenHumdivCCDS, effect));
+//        sj.add(FormatManager.getFloat(polyphenHumvar));
+//        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
+//        sj.add(FormatManager.getFloat(polyphenHumvarCCDS));
+//        sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
-        sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
-        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
+//        sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
+//        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
+//        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
 

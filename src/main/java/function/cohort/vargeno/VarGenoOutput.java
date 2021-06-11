@@ -17,9 +17,9 @@ public class VarGenoOutput extends Output {
         
         sj.merge(getVariantDataHeader());
         sj.merge(getAnnotationDataHeader());
-        sj.merge(getCarrierDataHeader());
-        sj.merge(getCohortLevelHeader());
-        sj.add("LOO AF");
+        sj.merge(getCarrierDataHeader_pgl());
+//        sj.merge(getCohortLevelHeader());
+//        sj.add("LOO AF");
         sj.merge(getExternalDataHeader());
         
         return sj.toString();
@@ -34,9 +34,9 @@ public class VarGenoOutput extends Output {
 
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
-        getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
-        getGenoStatData(sj);
-        sj.add(FormatManager.getDouble(getLooAf()));
+        getCarrierData_pgl(sj, calledVar.getCarrier(sample.getId()), sample);
+//        getGenoStatData(sj);
+//        sj.add(FormatManager.getDouble(getLooAf()));
         calledVar.getExternalData(sj);
 
         return sj.toString();

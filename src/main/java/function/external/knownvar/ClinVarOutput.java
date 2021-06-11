@@ -108,20 +108,20 @@ public class ClinVarOutput {
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(FormatManager.getInteger(siteCount));
-        sj.add(clinvar.getHGVS());
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSource()));
-        sj.add(clinvar.getAlleleOrigin());
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinRevStat()));
+//        sj.add(FormatManager.getInteger(siteCount));
+//        sj.add(clinvar.getHGVS());
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSource()));
+//        sj.add(clinvar.getAlleleOrigin());
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinRevStat()));
         sj.add(clinvar.getClinRevStar());
         sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSig()));
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSigIncl()));
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseDB()));
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseName()));
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getPubmedID()));
-        sj.add(clinvar.getRSID());
-        sj.add(FormatManager.getInteger(pathogenicIndelsCount));
-        sj.add(FormatManager.getInteger(allIndelsCount));
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSigIncl()));
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseDB()));
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseName()));
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getPubmedID()));
+//        sj.add(clinvar.getRSID());
+//        sj.add(FormatManager.getInteger(pathogenicIndelsCount));
+//        sj.add(FormatManager.getInteger(allIndelsCount));
 
         return sj;
     }

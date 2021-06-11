@@ -28,8 +28,8 @@ public class ClinGen {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(clinGen));
-        sj.add(FormatManager.getString(haploinsufficiencyDesc));
-        sj.add(FormatManager.getString(triplosensitivityDesc));
+//        sj.add(FormatManager.getString(haploinsufficiencyDesc));
+//        sj.add(FormatManager.getString(triplosensitivityDesc));
 
         return sj;
     }

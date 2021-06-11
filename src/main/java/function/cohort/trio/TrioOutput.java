@@ -25,9 +25,13 @@ public class TrioOutput extends Output {
     String motherName;
     byte mGeno;
     short mDPBin;
+    short mADAlt;
+    short mDP;
     String fatherName;
     byte fGeno;
     short fDPBin;
+    short fADAlt;
+    short fDP;
 
     public TrioOutput(CalledVariant c) {
         super(c);
@@ -42,10 +46,16 @@ public class TrioOutput extends Output {
         motherName = trio.getMotherName();
         mGeno = calledVar.getGT(trio.getMotherIndex());
         mDPBin = calledVar.getDPBin(trio.getMotherIndex());
+        Carrier mCarrier = calledVar.getCarrier(trio.getMotherId());
+        mADAlt = mCarrier == null ? Data.SHORT_NA : mCarrier.getADAlt();
+        mDP = mCarrier == null ? Data.SHORT_NA : mCarrier.getDP();
 
         fatherName = trio.getFatherName();
         fGeno = calledVar.getGT(trio.getFatherIndex());
         fDPBin = calledVar.getDPBin(trio.getFatherIndex());
+        Carrier fCarrier = calledVar.getCarrier(trio.getFatherId());
+        fADAlt = fCarrier == null ? Data.SHORT_NA : fCarrier.getADAlt();
+        fDP = fCarrier == null ? Data.SHORT_NA : fCarrier.getDP();
     }
 
     public void initDenovoFlag(Sample child) {
@@ -76,13 +86,17 @@ public class TrioOutput extends Output {
 
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
-        getCarrierData(sj, cCarrier, child);
+        getCarrierData_pgl(sj, cCarrier, child);
         sj.add(getGenoStr(mGeno));
         sj.add(FormatManager.getShort(mDPBin));
+        sj.add(FormatManager.getShort(mADAlt));
+        sj.add(FormatManager.getShort(mDP));
         sj.add(getGenoStr(fGeno));
         sj.add(FormatManager.getShort(fDPBin));
+        sj.add(FormatManager.getShort(fADAlt));
+        sj.add(FormatManager.getShort(fDP));
         sj.add(denovoFlag);
-        getGenoStatData(sj);
+//        getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
         return sj.toString();

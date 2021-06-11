@@ -65,35 +65,35 @@ public class KnownVarManager {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("HGMDm2site");
-        sj.add("HGMDm1site");
-        sj.add("HGMD site");
-        sj.add("HGMD Disease");
-        sj.add("HGMD PMID");
+//        sj.add("HGMDm2site");
+//        sj.add("HGMDm1site");
+//        sj.add("HGMD site");
+//        sj.add("HGMD Disease");
+//        sj.add("HGMD PMID");
         sj.add("HGMD Class");
-        sj.add("HGMDp1site");
-        sj.add("HGMDp2site");
-        sj.add("HGMD indel 9bpflanks");
-        sj.add("ClinVar");
-        sj.add("ClinVar HGVS");
-        sj.add("ClinVar ClinSource");
-        sj.add("ClinVar AlleleOrigin");
-        sj.add("ClinVar ClinRevStat");
+//        sj.add("HGMDp1site");
+//        sj.add("HGMDp2site");
+//        sj.add("HGMD indel 9bpflanks");
+//        sj.add("ClinVar");
+//        sj.add("ClinVar HGVS");
+//        sj.add("ClinVar ClinSource");
+//        sj.add("ClinVar AlleleOrigin");
+//        sj.add("ClinVar ClinRevStat");
         sj.add("ClinVar ClinRevStar");
         sj.add("ClinVar ClinSig");
-        sj.add("ClinVar ClinSigIncl");
-        sj.add("ClinVar DiseaseDB");
-        sj.add("ClinVar DiseaseName");
-        sj.add("ClinVar PubmedID");
-        sj.add("ClinVar rsID");
-        sj.add("ClinVar pathogenic indels");
-        sj.add("ClinVar all indels");
-        sj.add("ClinVar Pathogenic Indel Count");
-        sj.add("Clinvar Pathogenic CNV Count");
-        sj.add("ClinVar Pathogenic SNV Splice Count");
-        sj.add("ClinVar Pathogenic SNV Nonsense Count");
-        sj.add("ClinVar Pathogenic SNV Missense Count");
-        sj.add("ClinVar Pathogenic Last Pathogenic Location");
+//        sj.add("ClinVar ClinSigIncl");
+//        sj.add("ClinVar DiseaseDB");
+//        sj.add("ClinVar DiseaseName");
+//        sj.add("ClinVar PubmedID");
+//        sj.add("ClinVar rsID");
+//        sj.add("ClinVar pathogenic indels");
+//        sj.add("ClinVar all indels");
+//        sj.add("ClinVar Pathogenic Indel Count");
+//        sj.add("Clinvar Pathogenic CNV Count");
+//        sj.add("ClinVar Pathogenic SNV Splice Count");
+//        sj.add("ClinVar Pathogenic SNV Nonsense Count");
+//        sj.add("ClinVar Pathogenic SNV Missense Count");
+//        sj.add("ClinVar Pathogenic Last Pathogenic Location");
 //        sj.add("ClinGen");
 //        sj.add("ClinGen HaploinsufficiencyDesc");
 //        sj.add("ClinGen TriplosensitivityDesc");
@@ -109,8 +109,8 @@ public class KnownVarManager {
 
     public static String getVersion() {
         return "HGMD: " + DataManager.getVersion(hgmdTable) + "\n"
-                + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n"
-                + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n";
+                + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n";
+//                + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n";
 
     }
 

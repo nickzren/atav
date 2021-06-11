@@ -85,10 +85,10 @@ public class Output {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
-        sj.add("Variant Type");
-        sj.add("Ref Allele");
-        sj.add("Alt Allele");
-        sj.add("Rs Number");
+//        sj.add("Variant Type");
+//        sj.add("Ref Allele");
+//        sj.add("Alt Allele");
+//        sj.add("Rs Number");
 
         return sj;
     }
@@ -97,24 +97,25 @@ public class Output {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Transcript Stable Id");
-        sj.add("Has CCDS Transcript");
+//        sj.add("Has CCDS Transcript");
+        sj.add("Impact");
         sj.add("Effect");
         sj.add("Canonical Transcript Effect");
         sj.add("HGVS_c");
         sj.add("HGVS_p");
-        sj.add("Polyphen Humdiv Score");
-        sj.add("Polyphen Humdiv Prediction");
-        sj.add("Polyphen Humdiv Score (CCDS)");
-        sj.add("Polyphen Humdiv Prediction (CCDS)");
-        sj.add("Polyphen Humvar Score");
-        sj.add("Polyphen Humvar Prediction");
-        sj.add("Polyphen Humvar Score (CCDS)");
-        sj.add("Polyphen Humvar Prediction (CCDS)");
+//        sj.add("Polyphen Humdiv Score");
+//        sj.add("Polyphen Humdiv Prediction");
+//        sj.add("Polyphen Humdiv Score (CCDS)");
+//        sj.add("Polyphen Humdiv Prediction (CCDS)");
+//        sj.add("Polyphen Humvar Score");
+//        sj.add("Polyphen Humvar Prediction");
+//        sj.add("Polyphen Humvar Score (CCDS)");
+//        sj.add("Polyphen Humvar Prediction (CCDS)");
         sj.add("Gene Name");
-        sj.add("UpToDate Gene Name");
-        sj.add("All Gene Symbols");
-        sj.add("All Gene Transcript Count");
-        sj.add("Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar");
+//        sj.add("UpToDate Gene Name");
+//        sj.add("All Gene Symbols");
+//        sj.add("All Gene Transcript Count");
+        sj.add("Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p");
 
         return sj;
     }
@@ -321,6 +322,34 @@ public class Output {
 
         return sj;
     }
+    
+    public static StringJoiner getCarrierDataHeader_pgl() {
+        StringJoiner sj = new StringJoiner(",");
+
+//        sj.add("Experiment ID");
+//        sj.add("Sample Name");
+//        sj.add("Sample Type");
+//        sj.add("Sample Phenotype");
+        sj.add("GT");
+        sj.add("DP");
+        sj.add("DP Bin");
+        sj.add("AD REF");
+        sj.add("AD ALT");
+        sj.add("Percent Alt Read");
+//        sj.add("Percent Alt Read Binomial P");
+        sj.add("GQ");
+//        sj.add("VQSLOD");
+//        sj.add("SOR");
+//        sj.add("FS");
+//        sj.add("MQ");
+//        sj.add("QD");
+//        sj.add("Qual");
+//        sj.add("Read Pos Rank Sum");
+//        sj.add("MQ Rank Sum");
+        sj.add("FILTER");
+
+        return sj;
+    }
 
     protected CalledVariant calledVar;
     // The value will be dynamically updated per sample
@@ -402,6 +431,30 @@ public class Output {
         sj.add(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA));
+        sj.add(carrier != null ? carrier.getFILTER() : Data.STRING_NA);
+    }
+    
+    public void getCarrierData_pgl(StringJoiner sj, Carrier carrier, Sample sample) {
+//        sj.add(FormatManager.getInteger(sample.getExperimentId()));
+//        sj.add(sample.getName());
+//        sj.add(sample.getType());
+//        sj.add(sample.getPhenotype());
+        sj.add(getGenoStr(calledVar.getGT(sample.getIndex())));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA));
+        sj.add(FormatManager.getShort(calledVar.getDPBin(sample.getIndex())));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA));
+        sj.add(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA);
+//        sj.add(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA);
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getGQ() : Data.SHORT_NA));
+//        sj.add(FormatManager.getFloat(carrier != null ? carrier.getVQSLOD() : Data.FLOAT_NA));
+//        sj.add(FormatManager.getFloat(carrier != null ? carrier.getSOR() : Data.FLOAT_NA));
+//        sj.add(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA));
+//        sj.add(FormatManager.getShort(carrier != null ? carrier.getMQ() : Data.SHORT_NA));
+//        sj.add(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA));
+//        sj.add(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA));
+//        sj.add(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA));
+//        sj.add(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA));
         sj.add(carrier != null ? carrier.getFILTER() : Data.STRING_NA);
     }
 

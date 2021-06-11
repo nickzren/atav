@@ -101,9 +101,9 @@ public class Variant extends Region {
 
     public void getVariantData(StringJoiner sj) {
         sj.add(variantIdStr);
-        sj.add(getType());
-        sj.add(refAllele);
-        sj.add(allele);
-        sj.add(getRsNumberStr());
+//        sj.add(getType());
+//        sj.add(refAllele);
+//        sj.add(allele);
+//        sj.add(getRsNumberStr());
     }
 }

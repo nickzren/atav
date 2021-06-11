@@ -33,8 +33,8 @@ public class ParentalOutput extends Output {
         sj.add("Binomial (parent)");
         sj.merge(getVariantDataHeader());
         sj.merge(getAnnotationDataHeader());
-        sj.merge(getCarrierDataHeader());
-        sj.merge(getCohortLevelHeader());
+        sj.merge(getCarrierDataHeader_pgl());
+//        sj.merge(getCohortLevelHeader());
         sj.merge(getExternalDataHeader());
 
         return sj.toString();
@@ -115,8 +115,8 @@ public class ParentalOutput extends Output {
 
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
-        getCarrierData(sj, calledVar.getCarrier(child.getId()), child);
-        getGenoStatData(sj);
+        getCarrierData_pgl(sj, calledVar.getCarrier(child.getId()), child);
+//        getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
         return sj.toString();

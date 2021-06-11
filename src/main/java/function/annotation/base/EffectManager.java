@@ -32,6 +32,7 @@ public class EffectManager {
 
     // system defualt values
     private static HashMap<Integer, String> id2EffectMap = new HashMap<>();
+     private static HashMap<Integer, String> id2ImpactMap = new HashMap<>();
     private static HashMap<String, Integer> impactEffect2IdMap = new HashMap<>();
     // potential problem here for the same effect name 
     private static HashMap<String, Integer> effect2IdMap = new HashMap<>();
@@ -107,6 +108,7 @@ public class EffectManager {
                 Impact impact = Impact.valueOf(rs.getString("impact"));
                 String impactEffect = impact + ":" + effect;
 
+                id2ImpactMap.put(id, impact.name());
                 id2EffectMap.put(id, effect);
                 impactEffect2IdMap.put(impactEffect, id);
                 effect2IdMap.put(effect, id);
@@ -309,6 +311,10 @@ public class EffectManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+    }
+
+    public static String getImpactById(int id) {
+        return id2ImpactMap.get(id);
     }
 
     public static String getEffectById(int id) {
