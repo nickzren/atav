@@ -47,6 +47,7 @@ public class TrioManager {
     public static String getHeader4Denovo() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add("Tier Flag");
         sj.add("Family ID");
         sj.add("Mother");
         sj.add("Father");

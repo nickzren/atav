@@ -153,6 +153,21 @@ public class ListTrio extends AnalysisBase4CalledVar {
     private void outputDenovo(TrioOutput output) throws Exception {
         if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
             StringJoiner sj = new StringJoiner(",");
+
+            // apply tier rules
+            int tierFlag = Data.INTEGER_NA;
+            if (output.isDenovoTier1()
+                    || output.isHomozygousTier1()
+                    || output.isHemizygousTier1()) {
+                tierFlag = 1;
+            } else if (output.isMetTier2InclusionCriteria()
+                    && (output.isDenovoTier2()
+                    || output.isHomozygousTier2()
+                    || output.isHemizygousTier2())) {
+                tierFlag = 2;
+            }
+
+            sj.add(FormatManager.getInteger(tierFlag));
             sj.add(output.child.getFamilyId());
             sj.add(output.motherName);
             sj.add(output.fatherName);

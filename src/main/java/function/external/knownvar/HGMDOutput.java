@@ -82,9 +82,17 @@ public class HGMDOutput {
         return hgmd;
     }
 
+    public HGMD getHGMD() {
+        return hgmd;
+    }
+    
+    public boolean hasIndel9bpFlanks() {
+        return indel9bpflanks > 0;
+    }
+
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add(m2Site);
         sj.add(m1Site);
         sj.add(FormatManager.getInteger(siteCount));
@@ -94,10 +102,10 @@ public class HGMDOutput {
         sj.add(p1Site);
         sj.add(p2Site);
         sj.add(FormatManager.getInteger(indel9bpflanks));
-        
+
         return sj;
     }
-    
+
     @Override
     public String toString() {
         return getStringJoiner().toString();

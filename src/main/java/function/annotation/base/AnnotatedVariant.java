@@ -8,9 +8,9 @@ import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFP;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
-import function.external.defaultcontrolaf.DefaultControlAF;
-import function.external.defaultcontrolaf.DefaultControlAFCommand;
-import function.external.defaultcontrolaf.DefaultControlAFManager;
+import function.external.defaultcontrolaf.DefaultControl;
+import function.external.defaultcontrolaf.DefaultControlCommand;
+import function.external.defaultcontrolaf.DefaultControlManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.denovo.DenovoDB;
@@ -127,7 +127,7 @@ public class AnnotatedVariant extends Variant {
     private float genomeasiaAF;
     private float iranomeAF;
     private float igmAF;
-    private DefaultControlAF defaultControlAF;
+    private DefaultControl defaultControl;
     private DBNSFP dbNSFP;
 
     public boolean isValid = true;
@@ -154,10 +154,10 @@ public class AnnotatedVariant extends Variant {
             isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
         }
 
-        if (isValid && DefaultControlAFCommand.getInstance().isInclude) {
-            defaultControlAF = DefaultControlAFManager.getDefaultControlAF(chrStr, variantId);
+        if (isValid && DefaultControlCommand.getInstance().isInclude) {
+            defaultControl = DefaultControlManager.getDefaultControlAF(chrStr, variantId);
 
-            isValid = DefaultControlAFCommand.getInstance().isAFValid(defaultControlAF.getAF());
+            isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF());
         }
 
         if (isValid && GMECommand.getInstance().isInclude) {
@@ -609,9 +609,9 @@ public class AnnotatedVariant extends Variant {
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(getIGMAF());
         }
-        
-        if (DefaultControlAFCommand.getInstance().isInclude) {
-            sj.merge(getDefaultControlAFStringJoiner());
+
+        if (DefaultControlCommand.getInstance().isInclude) {
+            sj.merge(getDefaultControlStringJoiner());
         }
 
         if (DBNSFPCommand.isInclude) {
@@ -722,8 +722,28 @@ public class AnnotatedVariant extends Variant {
     public String getIGMAF() {
         return FormatManager.getFloat(igmAF);
     }
+
+    public StringJoiner getDefaultControlStringJoiner() {
+        return defaultControl.getStringJoiner();
+    }
+
+    public DefaultControl getDefaultControl() {
+        return defaultControl;
+    }
     
-    public StringJoiner getDefaultControlAFStringJoiner() {
-        return defaultControlAF.getStringJoiner();
+    public GnomADExome getGnomADExome() {
+        return gnomADExome;
+    }
+    
+    public GnomADGenome getGnomADGenome() {
+        return gnomADGenome;
+    }
+    
+    public KnownVarOutput getKnownVar() {
+        return knownVarOutput;
+    }
+    
+    public boolean isLOF() {
+        return EffectManager.isLOF(effectID);
     }
 }

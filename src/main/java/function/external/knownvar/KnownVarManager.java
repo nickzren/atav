@@ -51,7 +51,9 @@ public class KnownVarManager {
         preparedStatement4HGMDSite = DBManager.initPreparedStatement(sql);
 
         sql = "SELECT count(*) as count From " + hgmdTable
-                + " WHERE chr=? AND pos BETWEEN ? AND ? AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
+                + " WHERE chr=? AND pos BETWEEN ? AND ?"
+                + " AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)"
+                + " AND variantClass like '%DM%'";
         preparedStatement4HGMDIndelFlankingCount = DBManager.initPreparedStatement(sql);
 
         sql = "SELECT count(*) as count "

@@ -41,8 +41,8 @@ import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
-import function.external.defaultcontrolaf.DefaultControlAFCommand;
-import function.external.defaultcontrolaf.DefaultControlAFManager;
+import function.external.defaultcontrolaf.DefaultControlCommand;
+import function.external.defaultcontrolaf.DefaultControlManager;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.genomeasia.GenomeAsiaManager;
 import function.external.gevir.GeVIRCommand;
@@ -232,8 +232,8 @@ public class Output {
             sj.add(IGMAFManager.getHeader());
         }
         
-        if(DefaultControlAFCommand.getInstance().isInclude) {
-            sj.add(DefaultControlAFManager.getHeader());
+        if(DefaultControlCommand.getInstance().isInclude) {
+            sj.add(DefaultControlManager.getHeader());
         }
 
         if (DBNSFPCommand.isInclude) {
@@ -373,7 +373,7 @@ public class Output {
         sj.add(FormatManager.getShort(calledVar.getDPBin(sample.getIndex())));
         sj.add(FormatManager.getShort(carrier != null ? carrier.getADRef() : Data.SHORT_NA));
         sj.add(FormatManager.getShort(carrier != null ? carrier.getADAlt() : Data.SHORT_NA));
-        sj.add(carrier != null ? carrier.getPercAltRead() : Data.STRING_NA);
+        sj.add(carrier != null ? carrier.getPercAltReadStr() : Data.STRING_NA);
         sj.add(carrier != null ? FormatManager.getDouble(carrier.getPercentAltReadBinomialP()) : Data.STRING_NA);
         sj.add(FormatManager.getByte(carrier != null ? carrier.getGQ() : Data.BYTE_NA));
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getVQSLOD() : Data.FLOAT_NA));

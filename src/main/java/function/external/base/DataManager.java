@@ -4,8 +4,8 @@ import function.external.ccr.CCRCommand;
 import function.external.ccr.CCRManager;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
-import function.external.defaultcontrolaf.DefaultControlAFCommand;
-import function.external.defaultcontrolaf.DefaultControlAFManager;
+import function.external.defaultcontrolaf.DefaultControlCommand;
+import function.external.defaultcontrolaf.DefaultControlManager;
 import function.external.denovo.DenovoDBCommand;
 import function.external.limbr.LIMBRManager;
 import function.external.denovo.DenovoDBManager;
@@ -87,8 +87,8 @@ public class DataManager {
             sb.append(DBNSFPManager.getVersion());
         }
 
-        if (DefaultControlAFCommand.getInstance().isInclude) {
-            sb.append(DefaultControlAFManager.getVersion());
+        if (DefaultControlCommand.getInstance().isInclude) {
+            sb.append(DefaultControlManager.getVersion());
         }
 
         if (DenovoDBCommand.isInclude) {

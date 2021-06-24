@@ -114,8 +114,12 @@ public class Carrier extends NonCarrier {
         return GenotypeLevelFilterCommand.FILTER[filterValue - 1];
     }
 
-    public String getPercAltRead() {
+    public String getPercAltReadStr() {
         return FormatManager.getFloat(MathManager.devide(adAlt, dp));
+    }
+
+    public float getPercAltRead() {
+        return MathManager.devide(adAlt, dp);
     }
 
     public double getPercentAltReadBinomialP() {
@@ -134,8 +138,8 @@ public class Carrier extends NonCarrier {
         return hpVariantId;
     }
 
-     public void applyQualityFilter() { 
-         if (gt != Data.BYTE_NA) {
+    public void applyQualityFilter() {
+        if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isFilterValid(filterValue)
                     || !GenotypeLevelFilterCommand.isMinAdAltValid(adAlt)
                     || !GenotypeLevelFilterCommand.isMinGqValid(gq)
@@ -175,9 +179,9 @@ public class Carrier extends NonCarrier {
                 gt = Data.BYTE_NA;
             }
         }
-     }
-    
-    public void applyQualityFilter(boolean isSnv) {                
+    }
+
+    public void applyQualityFilter(boolean isSnv) {
         if (gt != Data.BYTE_NA) {
             if (!GenotypeLevelFilterCommand.isMaxSorValid(sor, isSnv)
                     || !GenotypeLevelFilterCommand.isMaxFsValid(fs, isSnv)) {

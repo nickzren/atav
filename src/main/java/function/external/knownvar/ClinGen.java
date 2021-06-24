@@ -34,6 +34,10 @@ public class ClinGen {
         return sj;
     }
     
+    public boolean isInClinGen() {
+        return clinGen == 1;
+    }
+    
     @Override
     public String toString() {
         return getStringJoiner().toString();

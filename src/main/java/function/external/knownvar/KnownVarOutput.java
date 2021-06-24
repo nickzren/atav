@@ -53,6 +53,26 @@ public class KnownVarOutput {
         return sj;
     }
 
+    public HGMD getHGMD() {
+        return hgmdOutput.getHGMD();
+    }
+    
+    public boolean hasIndel9bpFlanksInHGMD() {
+        return hgmdOutput.hasIndel9bpFlanks();
+    }
+    
+    public ClinVar getClinVar() {
+        return clinVarOutput.getClinVar();
+    }
+    
+    public ClinGen getClinGen() {
+        return clinGen;
+    }
+    
+    public ClinVarPathoratio getClinVarPathoratio() {
+        return clinVarPathoratio;
+    }
+    
     @Override
     public String toString() {
         return getStringJoiner().toString();

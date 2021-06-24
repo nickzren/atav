@@ -119,6 +119,10 @@ public class ClinVarOutput {
         return sj;
     }
 
+    public ClinVar getClinVar() {
+        return clinvar;
+    }
+    
     @Override
     public String toString() {
         return getStringJoiner().toString();

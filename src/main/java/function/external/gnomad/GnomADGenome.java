@@ -35,6 +35,7 @@ public class GnomADGenome {
     private int global_nhomalt;
     private int global_nhemi;
 
+    private float controls_AF;
     private int controls_AN;
     private int controls_nhet;
     private int controls_nhomalt;
@@ -100,7 +101,7 @@ public class GnomADGenome {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
-            
+
             // --max-gnomad-genome-pop-af or --max-gnomad-genome-pop-maf
             GnomADGenomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
@@ -142,6 +143,7 @@ public class GnomADGenome {
         global_nhomalt = FormatManager.getInt(rs, "global_nhomalt");
         global_nhemi = FormatManager.getInt(rs, "global_nhemi");
 
+        controls_AF = FormatManager.getFloat(rs, "controls_AF");
         controls_AN = FormatManager.getInt(rs, "controls_AN");
         controls_nhet = FormatManager.getInt(rs, "controls_nhet");
         controls_nhomalt = FormatManager.getInt(rs, "controls_nhomalt");
@@ -162,7 +164,7 @@ public class GnomADGenome {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
-            
+
             // --max-gnomad-genome-pop-af or --max-gnomad-genome-pop-maf
             GnomADGenomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
@@ -182,6 +184,7 @@ public class GnomADGenome {
         global_nhomalt = Data.INTEGER_NA;
         global_nhemi = Data.INTEGER_NA;
 
+        controls_AF = Data.FLOAT_NA;
         controls_AN = Data.INTEGER_NA;
         controls_nhet = Data.INTEGER_NA;
         controls_nhomalt = Data.INTEGER_NA;
@@ -195,7 +198,7 @@ public class GnomADGenome {
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = value;
         }
-        
+
         GnomADGenomeCommand.getInstance().resetPopAFValid();
     }
 
@@ -249,6 +252,32 @@ public class GnomADGenome {
         }
 
         return sj;
+    }
+
+    public int getControlAC() {
+        int controls_nhet = this.controls_nhet == Data.INTEGER_NA ? 0 :  this.controls_nhet;
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 :  this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 :  this.controls_nhemi;
+        
+        return controls_nhet + 2 * controls_nhomalt + 2 * controls_nhemi;
+    }
+    
+    public float getControlAF() {
+        return controls_AF;
+    }
+    
+    public float getControlNHOM() {
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 :  this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 :  this.controls_nhemi;
+        
+        return controls_nhomalt + controls_nhemi;
+    }
+
+    public boolean isNotObservedInControlHemiOrHom() {
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 :  this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 :  this.controls_nhemi;
+        
+        return controls_nhomalt == 0 && controls_nhemi == 0;
     }
 
     @Override
