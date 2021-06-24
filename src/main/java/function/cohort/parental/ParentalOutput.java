@@ -94,7 +94,8 @@ public class ParentalOutput extends Output {
         this.parent = parent;
         parentGeno = calledVar.getGT(parent.getIndex());
 
-        return isParentBinomialValid();
+        return isQualifiedGeno(parentGeno) &&
+                isParentBinomialValid();
     }
 
     private boolean isParentBinomialValid() {
