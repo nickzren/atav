@@ -200,7 +200,28 @@ public class ListTrio extends AnalysisBase4CalledVar {
     private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
         float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
 
+        // apply tier rules
+        int tierFlag = Data.INTEGER_NA;
+
+        // tier 1
+        if ( // neither parent is hom alt
+                output1.isParentsNotHom() && output2.isParentsNotHom()
+                // co-occurance freq in controls is 0
+                && coFreq[1] == 0
+                // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
+                && output1.isNotObservedInHomAmongControl() && output2.isNotObservedInHomAmongControl()
+                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
+                && output1.isControlAFValid() && output2.isControlAFValid()) {
+            tierFlag = 1;
+        } else if (// if one of the variant meets tier 2 inclusion criteria
+                (output1.isMetTier2InclusionCriteria() || output2.isMetTier2InclusionCriteria())
+                // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
+                && output1.isNHomFromControlsValid() && output2.isNHomFromControlsValid()) {
+            tierFlag = 2;
+        }
+
         StringJoiner sj = new StringJoiner(",");
+        sj.add(FormatManager.getInteger(tierFlag));
         sj.add(output1.child.getFamilyId());
         sj.add(output1.motherName);
         sj.add(output1.fatherName);

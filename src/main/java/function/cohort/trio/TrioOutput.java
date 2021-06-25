@@ -112,7 +112,7 @@ public class TrioOutput extends Output {
         return cDPBin >= 10 && mDPBin >= 10 && fDPBin >= 10;
     }
 
-    // variant is absent among IGM default controls and gnomAD (WES & WGS) controls
+    // variant is absent among IGM controls and gnomAD (WES & WGS) controls
     private boolean isVariantAbsentAmongControl() {
         return (this.calledVar.getDefaultControl().getAF() == 0
                 || this.calledVar.getDefaultControl().getAF() == Data.FLOAT_NA)
@@ -127,7 +127,7 @@ public class TrioOutput extends Output {
                 && isHetInBothParents()
                 && isChildHomPercAltReadValid()
                 && isNotObservedInHomAmongControl()
-                && isControlMAFValid()
+                && isControlAFValid()
                 && cCarrier.getMQ() >= 40;
     }
 
@@ -147,22 +147,18 @@ public class TrioOutput extends Output {
         return false;
     }
 
-    // genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-    private boolean isNotObservedInHomAmongControl() {
+    // genotype is not observed in Hemizygous or Homozygous from IGM controls and gnomAD (WES & WGS) controls
+    public boolean isNotObservedInHomAmongControl() {
         return this.calledVar.getDefaultControl().isNotObservedInControlHemiOrHom()
                 && this.calledVar.getGnomADExome().isNotObservedInControlHemiOrHom()
                 && this.calledVar.getGnomADGenome().isNotObservedInControlHemiOrHom();
     }
 
-    // max 0.5% MAF to IGM default controls and gnomAD (WES & WGS) controls
-    private boolean isControlMAFValid() {
-        return isMaxMAFValid(this.calledVar.getDefaultControl().getAF(), 0.005f)
-                && isMaxMAFValid(this.calledVar.getGnomADExome().getControlAF(), 0.005f)
-                && isMaxMAFValid(this.calledVar.getGnomADGenome().getControlAF(), 0.005f);
-    }
-
-    private boolean isMaxMAFValid(float af, float maxMAF) {
-        return af <= maxMAF || af >= (1 - maxMAF);
+    // max 0.5% AF to IGM controls and gnomAD (WES & WGS) controls
+    public boolean isControlAFValid() {
+        return this.calledVar.getDefaultControl().getAF() < 0.005f 
+                && this.calledVar.getGnomADExome().getControlAF() < 0.005f
+                && this.calledVar.getGnomADGenome().getControlAF() < 0.005f;
     }
 
     public boolean isHemizygousTier1() {
@@ -221,7 +217,7 @@ public class TrioOutput extends Output {
                 && isTotalACFromControlsValid();
     }
 
-    // less than 20 alleles observed from IGM default controls + gnomAD (WES & WGS) controls
+    // less than 20 alleles observed from IGM controls + gnomAD (WES & WGS) controls
     public boolean isTotalACFromControlsValid() {
         return this.calledVar.getDefaultControl().getAC()
                 + this.calledVar.getGnomADExome().getControlAC()
@@ -233,7 +229,7 @@ public class TrioOutput extends Output {
                 && isNHomFromControlsValid();
     }
 
-    // less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
+    // less than 10 homozygous observed from IGM controls + gnomAD (WES & WGS) controls
     public boolean isNHomFromControlsValid() {
         return this.calledVar.getDefaultControl().getNHOM()
                 + this.calledVar.getGnomADExome().getControlNHOM()
@@ -245,6 +241,11 @@ public class TrioOutput extends Output {
                 && isNHomFromControlsValid();
     }
 
+    // parents not hom
+    public boolean isParentsNotHom() {
+        return mGeno != Index.HOM && fGeno != Index.HOM;
+    }
+    
     @Override
     public String toString() {
         StringJoiner sj = new StringJoiner(",");

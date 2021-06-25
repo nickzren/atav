@@ -59,6 +59,7 @@ public class TrioManager {
     public static String getHeader4CompHet() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add("Tier Flag");
         sj.add("Family ID");
         sj.add("Mother");
         sj.add("Father");
@@ -498,4 +499,6 @@ public class TrioManager {
         return output1.isQualifiedGeno(geno1)
                 && output2.isQualifiedGeno(geno2);
     }
+    
+    
 }
