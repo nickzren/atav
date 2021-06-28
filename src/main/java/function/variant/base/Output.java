@@ -231,8 +231,8 @@ public class Output {
         if (IGMAFCommand.getInstance().isInclude) {
             sj.add(IGMAFManager.getHeader());
         }
-        
-        if(DefaultControlCommand.getInstance().isInclude) {
+
+        if (DefaultControlCommand.getInstance().isInclude) {
             sj.add(DefaultControlManager.getHeader());
         }
 
@@ -411,6 +411,72 @@ public class Output {
             calledVar.addSampleGeno(geno, sample);
         }
     }
+
+    /*
+        1. variant call DP >= 10
+        2. LoF and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
+        3. >= 25% reads support the variant call
+        4. QUAL >= 50, QD >= 2, GQ >= 50, MQ >= 40
+        5. variant is het call and <= 5 observed among IGM controls and gnomAD (WES & WGS) controls
+        6. variant has CCDS transcript
+        7. variant is a PASS variant call among gnomAD (WES & WGS)
+     */
+    public byte isDominantAndClinGenHaploinsufficient(Carrier carrier) {
+        if (carrier != null && carrier.getDP() >= 10 // 1
+                && this.calledVar.isLOF() && this.calledVar.getKnownVar().getClinGen().isInClinGenSufficientOrSomeEvidence() // 2
+                && carrier.getPercAltRead() >= 0.25 // 3
+                && carrier.getQual() >= 50 && carrier.getQD() >= 2 && carrier.getGQ() >= 50 && carrier.getMQ() >= 40 // 4
+                && carrier.getGT() == Index.HET && isObservedInControlHetValid() // 5
+                && this.calledVar.hasCCDS() // 6
+                && this.calledVar.getGnomADExome().isFilterPass() && this.calledVar.getGnomADGenome().isFilterPass() // 7
+                ) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /*
+        1. variant call DP >= 10
+        2. same variant curated as "DM" in HGMD or PLP in ClinVar
+        3. >= 25% reads support the variant call
+        4. QUAL >= 40, QD >= 2
+        5. variant is absent among IGM controls and gnomAD (WES & WGS) controls
+        6. variant has CCDS transcript
+        7. variant occurs in OMIM gene
+     */
+    public byte isPreviouslyPathogenicReported(Carrier carrier) {
+        if (carrier != null && carrier.getDP() >= 10 // 1
+                && (this.calledVar.getKnownVar().isHGMDDM() || this.calledVar.getKnownVar().isClinVarPLP()) // 2
+                && carrier.getPercAltRead() >= 0.25 // 3
+                && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
+                && isVariantAbsentAmongControl() // 5
+                && this.calledVar.hasCCDS() // 6
+                && this.calledVar.getKnownVar().isOMIMGene() // 7
+                ) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    // variant is absent among IGM controls and gnomAD (WES & WGS) controls
+    public boolean isVariantAbsentAmongControl() {
+        return (this.calledVar.getDefaultControl().getAF() == 0
+                || this.calledVar.getDefaultControl().getAF() == Data.FLOAT_NA)
+                && (this.calledVar.getGnomADExome().getControlAF() == 0
+                || this.calledVar.getGnomADExome().getControlAF() == Data.FLOAT_NA)
+                && (this.calledVar.getGnomADGenome().getControlAF() == 0
+                || this.calledVar.getGnomADGenome().getControlAF() == Data.FLOAT_NA);
+    }
+
+    public boolean isObservedInControlHetValid() {
+        return this.calledVar.getDefaultControl().getControlNHET()
+                + this.calledVar.getGnomADExome().getControlNHET()
+                + this.calledVar.getGnomADGenome().getControlNHET() <= 5;
+    }
+
+    
 
     public double getLooAf() {
         return looAF;

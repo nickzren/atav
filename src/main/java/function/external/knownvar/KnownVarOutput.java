@@ -2,6 +2,7 @@ package function.external.knownvar;
 
 import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.GeneManager;
+import global.Data;
 import java.util.StringJoiner;
 import utils.FormatManager;
 
@@ -53,16 +54,30 @@ public class KnownVarOutput {
         return sj;
     }
 
-    public HGMD getHGMD() {
-        return hgmdOutput.getHGMD();
+    public boolean isHGMDDM() {
+        return hgmdOutput.getHGMD().getVariantClass().equals("DM");
+    }
+    
+    public boolean hasHGMDDM() {
+        return hgmdOutput.getHGMD().getVariantClass().contains("DM");
     }
     
     public boolean hasIndel9bpFlanksInHGMD() {
         return hgmdOutput.hasIndel9bpFlanks();
     }
     
-    public ClinVar getClinVar() {
-        return clinVarOutput.getClinVar();
+    public boolean isClinVarPLP() {
+        return clinVarOutput.getClinVar().getClinSig().equals("Pathogenic")
+                || clinVarOutput.getClinVar().getClinSig().equals("Likely_pathogenic");
+    }
+    
+    public boolean hasClinVarPLP() {
+        return clinVarOutput.getClinVar().getClinSig().contains("Pathogenic")
+                || clinVarOutput.getClinVar().getClinSig().contains("Likely_pathogenic");
+    }
+    
+    public boolean isOMIMGene() {
+        return !omimDiseaseName.equals(Data.STRING_NA);
     }
     
     public ClinGen getClinGen() {

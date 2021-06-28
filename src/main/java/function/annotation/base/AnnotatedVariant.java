@@ -746,4 +746,45 @@ public class AnnotatedVariant extends Variant {
     public boolean isLOF() {
         return EffectManager.isLOF(effectID);
     }
+    
+    // tier 2 inclusion criteria
+    public boolean isMetTier2InclusionCriteria() {
+        return hasHGMDDM()
+                || hasClinVarPLP()
+                || isInClinGen()
+                || isInClinVarPathoratio()
+                || hasIndel9bpFlanksInHGMD();
+    }
+
+    // a variant at the same site has reported HGMD DM or ClinVar PLP
+    public boolean hasHGMDOrClinVar() {
+        return hasHGMDDM() || hasClinVarPLP();
+    }
+    
+    // a variant at the same site is reported HGMD as "DM" or "DM?"
+    private boolean hasHGMDDM() {
+        return getKnownVar().hasHGMDDM();
+    }
+
+    // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
+    private boolean hasClinVarPLP() {
+        return getKnownVar().hasClinVarPLP();
+    }
+
+    // LoF variant and occurs within a ClinGen disease gene
+    private boolean isInClinGen() {
+        return isLOF()
+                && getKnownVar().getClinGen().isInClinGen();
+    }
+
+    // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
+    private boolean isInClinVarPathoratio() {
+        return isLOF()
+                && getKnownVar().getClinVarPathoratio().isInClinVarPathoratio();
+    }
+
+    // an indel that occurs within 9 bases of at least one previously reported HGMD indel
+    private boolean hasIndel9bpFlanksInHGMD() {
+        return getKnownVar().hasIndel9bpFlanksInHGMD();
+    }
 }

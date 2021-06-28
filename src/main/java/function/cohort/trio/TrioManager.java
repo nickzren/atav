@@ -46,11 +46,11 @@ public class TrioManager {
 
     public static String getHeader4Denovo() {
         StringJoiner sj = new StringJoiner(",");
-
-        sj.add("Tier Flag");
+        
         sj.add("Family ID");
         sj.add("Mother");
         sj.add("Father");
+        sj.add("Tier Flag");
         sj.merge(getHeaderByVariant());
 
         return sj.toString();
@@ -59,15 +59,27 @@ public class TrioManager {
     public static String getHeader4CompHet() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Tier Flag");
         sj.add("Family ID");
         sj.add("Mother");
         sj.add("Father");
         sj.add("Comp Het Flag");
         sj.add("Var Case Freq #1 & #2 (co-occurance)");
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
+        sj.add("Tier Flag");
         sj.merge(initVarHeaderStr("1"));
         sj.merge(initVarHeaderStr("2"));
+
+        return sj.toString();
+    }
+
+    public static String getHeader4ChildVar() {
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("Family ID");
+        sj.add("Mother");
+        sj.add("Father");
+        sj.add("Tier Flag");
+        sj.merge(getHeaderByVariant());
 
         return sj.toString();
     }
@@ -87,6 +99,8 @@ public class TrioManager {
     private static StringJoiner getHeaderByVariant() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add("Dominant and ClinGen Haploinsufficient");
+        sj.add("Previously Pathogenic Reported");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
@@ -95,6 +109,7 @@ public class TrioManager {
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
         sj.add("Denovo Flag");
+        sj.add("Is Inherited Variant");
         sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
 
@@ -150,7 +165,7 @@ public class TrioManager {
             GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
             Reader decoder = new InputStreamReader(in);
             BufferedReader br = new BufferedReader(decoder);
-            
+
             String str;
             int LineCount = 0;
             while ((str = br.readLine()) != null) {
@@ -499,6 +514,5 @@ public class TrioManager {
         return output1.isQualifiedGeno(geno1)
                 && output2.isQualifiedGeno(geno2);
     }
-    
-    
+
 }

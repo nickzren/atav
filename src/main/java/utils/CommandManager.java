@@ -335,6 +335,10 @@ public class CommandManager {
                 // Genotype Analysis Functions
                 case "--list-var-geno":
                     VarGenoCommand.isList = true;
+                    DefaultControlCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    KnownVarCommand.isInclude = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -384,6 +388,7 @@ public class CommandManager {
                     DefaultControlCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().isInclude = true;
                     GnomADGenomeCommand.getInstance().isInclude = true;
+                    KnownVarCommand.isInclude = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;

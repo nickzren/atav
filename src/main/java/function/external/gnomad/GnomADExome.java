@@ -211,6 +211,10 @@ public class GnomADExome {
                 && GnomADExomeCommand.getInstance().isPopAFValid();
     }
 
+    public boolean isFilterPass() {
+        return filter.equals("PASS");
+    }
+
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
     }
@@ -257,29 +261,33 @@ public class GnomADExome {
     }
 
     public int getControlAC() {
-        int controls_nhet = this.controls_nhet == Data.INTEGER_NA ? 0 :  this.controls_nhet;
-        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 :  this.controls_nhomalt;
-        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 :  this.controls_nhemi;
-        
+        int controls_nhet = this.controls_nhet == Data.INTEGER_NA ? 0 : this.controls_nhet;
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 : this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 : this.controls_nhemi;
+
         return controls_nhet + 2 * controls_nhomalt + 2 * controls_nhemi;
     }
 
     public float getControlAF() {
         return controls_AF;
     }
-    
+
     public float getControlNHOM() {
-        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 :  this.controls_nhomalt;
-        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 :  this.controls_nhemi;
-        
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 : this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 : this.controls_nhemi;
+
         return controls_nhomalt + controls_nhemi;
     }
 
     public boolean isNotObservedInControlHemiOrHom() {
-        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 :  this.controls_nhomalt;
-        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 :  this.controls_nhemi;
-        
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 : this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 : this.controls_nhemi;
+
         return controls_nhomalt == 0 && controls_nhemi == 0;
+    }
+
+    public int getControlNHET() {
+        return this.controls_nhet == Data.INTEGER_NA ? 0 : this.controls_nhet;
     }
 
     public int getControlNhomalt() {

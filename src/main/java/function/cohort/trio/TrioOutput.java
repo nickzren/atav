@@ -112,16 +112,6 @@ public class TrioOutput extends Output {
         return cDPBin >= 10 && mDPBin >= 10 && fDPBin >= 10;
     }
 
-    // variant is absent among IGM controls and gnomAD (WES & WGS) controls
-    private boolean isVariantAbsentAmongControl() {
-        return (this.calledVar.getDefaultControl().getAF() == 0
-                || this.calledVar.getDefaultControl().getAF() == Data.FLOAT_NA)
-                && (this.calledVar.getGnomADExome().getControlAF() == 0
-                || this.calledVar.getGnomADExome().getControlAF() == Data.FLOAT_NA)
-                && (this.calledVar.getGnomADGenome().getControlAF() == 0
-                || this.calledVar.getGnomADGenome().getControlAF() == Data.FLOAT_NA);
-    }
-
     public boolean isHomozygousTier1() {
         return denovoFlag.contains("HOMOZYGOUS")
                 && isHetInBothParents()
@@ -156,7 +146,7 @@ public class TrioOutput extends Output {
 
     // max 0.5% AF to IGM controls and gnomAD (WES & WGS) controls
     public boolean isControlAFValid() {
-        return this.calledVar.getDefaultControl().getAF() < 0.005f 
+        return this.calledVar.getDefaultControl().getAF() < 0.005f
                 && this.calledVar.getGnomADExome().getControlAF() < 0.005f
                 && this.calledVar.getGnomADGenome().getControlAF() < 0.005f;
     }
@@ -172,43 +162,6 @@ public class TrioOutput extends Output {
     // mother is a het carrier and father is not hemizygous
     private boolean isMotherHetAndFatherNotHom() {
         return mGeno == Index.HET && fGeno != Index.HOM;
-    }
-
-    // tier 2 inclusion criteria
-    public boolean isMetTier2InclusionCriteria() {
-        return isHGMDDM()
-                || isClinVarPLP()
-                || isInClinGen()
-                || isInClinVarPathoratio()
-                || hasIndel9bpFlanksInHGMD();
-    }
-
-    // a variant at the same site is reported HGMD as "DM" or "DM?"
-    private boolean isHGMDDM() {
-        return this.calledVar.getKnownVar().getHGMD().getVariantClass().contains("DM");
-    }
-
-    // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
-    private boolean isClinVarPLP() {
-        return this.calledVar.getKnownVar().getClinVar().getClinSig().contains("Pathogenic")
-                || this.calledVar.getKnownVar().getClinVar().getClinSig().contains("Likely_pathogenic");
-    }
-
-    // LoF variant and occurs within a ClinGen disease gene
-    private boolean isInClinGen() {
-        return this.calledVar.isLOF()
-                && this.calledVar.getKnownVar().getClinGen().isInClinGen();
-    }
-
-    // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
-    private boolean isInClinVarPathoratio() {
-        return this.calledVar.isLOF()
-                && this.calledVar.getKnownVar().getClinVarPathoratio().isInClinVarPathoratio();
-    }
-
-    // an indel that occurs within 9 bases of at least one previously reported HGMD indel
-    private boolean hasIndel9bpFlanksInHGMD() {
-        return this.calledVar.getKnownVar().hasIndel9bpFlanksInHGMD();
     }
 
     public boolean isDenovoTier2() {
@@ -245,11 +198,18 @@ public class TrioOutput extends Output {
     public boolean isParentsNotHom() {
         return mGeno != Index.HOM && fGeno != Index.HOM;
     }
-    
+
+    // one of the parents is a carrier
+    public boolean isInheritedVariant() {
+        return isQualifiedGeno(mGeno) || isQualifiedGeno(fGeno);
+    }
+
     @Override
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add(FormatManager.getByte(isDominantAndClinGenHaploinsufficient(cCarrier)));
+        sj.add(FormatManager.getByte(isPreviouslyPathogenicReported(cCarrier)));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
@@ -258,6 +218,7 @@ public class TrioOutput extends Output {
         sj.add(getGenoStr(fGeno));
         sj.add(FormatManager.getShort(fDPBin));
         sj.add(denovoFlag);
+        sj.add(FormatManager.getInteger(isInheritedVariant() ? 1 : 0));
         getGenoStatData(sj);
         calledVar.getExternalData(sj);
 

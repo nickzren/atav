@@ -17,9 +17,9 @@ public class ClinGen {
         this.haploinsufficiencyDesc = haploinsufficiencyDesc;
         this.triplosensitivityDesc = triplosensitivityDesc;
 
-        if (haploinsufficiencyDesc.equals("Sufficient evidence") ||
-                haploinsufficiencyDesc.equals("Some evidence") ||
-                haploinsufficiencyDesc.equals("Recessive evidence")) {
+        if (haploinsufficiencyDesc.equals("Sufficient evidence")
+                || haploinsufficiencyDesc.equals("Some evidence")
+                || haploinsufficiencyDesc.equals("Recessive evidence")) {
             clinGen = 1;
         }
     }
@@ -33,11 +33,16 @@ public class ClinGen {
 
         return sj;
     }
-    
+
     public boolean isInClinGen() {
         return clinGen == 1;
     }
-    
+
+    public boolean isInClinGenSufficientOrSomeEvidence() {
+        return haploinsufficiencyDesc.equals("Sufficient evidence")
+                || haploinsufficiencyDesc.equals("Some evidence");
+    }
+
     @Override
     public String toString() {
         return getStringJoiner().toString();

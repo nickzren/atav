@@ -208,6 +208,10 @@ public class GnomADGenome {
                 && GnomADGenomeCommand.getInstance().isFilterPass(filter)
                 && GnomADGenomeCommand.getInstance().isPopAFValid();
     }
+    
+    public boolean isFilterPass() {
+        return filter.equals("PASS");
+    }
 
     public String getVariantId() {
         return chr + "-" + pos + "-" + ref + "-" + alt;
@@ -278,6 +282,10 @@ public class GnomADGenome {
         int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 :  this.controls_nhemi;
         
         return controls_nhomalt == 0 && controls_nhemi == 0;
+    }
+    
+    public int getControlNHET() {
+        return this.controls_nhet == Data.INTEGER_NA ? 0 :  this.controls_nhet;
     }
 
     @Override
