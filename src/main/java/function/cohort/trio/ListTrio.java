@@ -130,7 +130,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initDenovoFlag(trio.getChild());
                         outputDenovoOrHom(output1);
-                        outputChildVariant(output1);
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
@@ -152,11 +151,10 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void outputDenovoOrHom(TrioOutput output) throws Exception {
-        if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
-            StringJoiner sj = new StringJoiner(",");
+        byte tierFlag = Data.BYTE_NA;
 
-            // apply tier rules
-            byte tierFlag = Data.BYTE_NA;
+        // denovo or hom
+        if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
             if (output.isDenovoTier1()
                     || output.isHomozygousTier1()
                     || output.isHemizygousTier1()) {
@@ -167,23 +165,11 @@ public class ListTrio extends AnalysisBase4CalledVar {
                     || output.isHemizygousTier2())) {
                 tierFlag = 2;
             }
-
-            sj.add(output.child.getFamilyId());
-            sj.add(output.motherName);
-            sj.add(output.fatherName);
-            sj.add(FormatManager.getByte(tierFlag));
-            sj.add(output.toString());
-            bwDenovo.write(sj.toString());
-            bwDenovo.newLine();
+        } else { // child variant
+            tierFlag = output.getCalledVariant().isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
         }
-    }
 
-    private void outputChildVariant(TrioOutput output) throws Exception {
         StringJoiner sj = new StringJoiner(",");
-
-        // apply tier rules
-        byte tierFlag = output.getCalledVariant().isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
-
         sj.add(output.child.getFamilyId());
         sj.add(output.motherName);
         sj.add(output.fatherName);
@@ -232,7 +218,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         } else if (// if one of the variant meets tier 2 inclusion criteria
                 (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
                 // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
-                && output1.isNHomFromControlsValid() && output2.isNHomFromControlsValid()) {
+                && output1.isNHomFromControlsValid(10) && output2.isNHomFromControlsValid(10)) {
             tierFlag = 2;
         }
 

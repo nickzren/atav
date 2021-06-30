@@ -426,7 +426,7 @@ public class Output {
                 && this.calledVar.isLOF() && this.calledVar.getKnownVar().getClinGen().isInClinGenSufficientOrSomeEvidence() // 2
                 && carrier.getPercAltRead() >= 0.25 // 3
                 && carrier.getQual() >= 50 && carrier.getQD() >= 2 && carrier.getGQ() >= 50 && carrier.getMQ() >= 40 // 4
-                && carrier.getGT() == Index.HET && isObservedInControlHetValid() // 5
+                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 5
                 && this.calledVar.hasCCDS() // 6
                 && this.calledVar.getGnomADExome().isFilterPass() && this.calledVar.getGnomADGenome().isFilterPass() // 7
                 ) {
@@ -450,7 +450,7 @@ public class Output {
                 && (this.calledVar.getKnownVar().isHGMDDM() || this.calledVar.getKnownVar().isClinVarPLP()) // 2
                 && carrier.getPercAltRead() >= 0.25 // 3
                 && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
-                && isVariantAbsentAmongControl() // 5
+                && isGenotypeAbsentAmongControl(carrier.getGT()) // 5
                 && this.calledVar.hasCCDS() // 6
                 && this.calledVar.getKnownVar().isOMIMGene() // 7
                 ) {
@@ -458,6 +458,15 @@ public class Output {
         }
 
         return 0;
+    }
+
+    // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
+    public boolean isGenotypeAbsentAmongControl(int gt) {
+        if (gt == Index.HET) {
+            return isNHetFromControlsValid(0);
+        } else { // HOM Alt
+            return isNHomFromControlsValid(0);
+        }
     }
 
     // variant is absent among IGM controls and gnomAD (WES & WGS) controls
@@ -470,13 +479,19 @@ public class Output {
                 || this.calledVar.getGnomADGenome().getControlAF() == Data.FLOAT_NA);
     }
 
-    public boolean isObservedInControlHetValid() {
+    // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls
+    public boolean isNHetFromControlsValid(int count) {
         return this.calledVar.getDefaultControl().getControlNHET()
                 + this.calledVar.getGnomADExome().getControlNHET()
-                + this.calledVar.getGnomADGenome().getControlNHET() <= 5;
+                + this.calledVar.getGnomADGenome().getControlNHET() <= count;
     }
 
-    
+    // less than N homozygous observed from IGM controls + gnomAD (WES & WGS) controls
+    public boolean isNHomFromControlsValid(int count) {
+        return this.calledVar.getDefaultControl().getNHOM()
+                + this.calledVar.getGnomADExome().getControlNHOM()
+                + this.calledVar.getGnomADGenome().getControlNHOM() <= count;
+    }
 
     public double getLooAf() {
         return looAF;

@@ -179,19 +179,12 @@ public class TrioOutput extends Output {
 
     public boolean isHomozygousTier2() {
         return denovoFlag.contains("HOMOZYGOUS")
-                && isNHomFromControlsValid();
-    }
-
-    // less than 10 homozygous observed from IGM controls + gnomAD (WES & WGS) controls
-    public boolean isNHomFromControlsValid() {
-        return this.calledVar.getDefaultControl().getNHOM()
-                + this.calledVar.getGnomADExome().getControlNHOM()
-                + this.calledVar.getGnomADGenome().getControlNHOM() < 10;
+                && isNHomFromControlsValid(10);
     }
 
     public boolean isHemizygousTier2() {
         return denovoFlag.contains("HEMIZYGOUS")
-                && isNHomFromControlsValid();
+                && isNHomFromControlsValid(10);
     }
 
     // parents not hom
