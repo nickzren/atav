@@ -92,6 +92,7 @@ public class Output {
 
         sj.add("Transcript Stable Id");
         sj.add("Has CCDS Transcript");
+        sj.add("Impact");
         sj.add("Effect");
         sj.add("Canonical Transcript Effect");
         sj.add("HGVS_c");

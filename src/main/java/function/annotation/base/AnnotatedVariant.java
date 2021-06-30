@@ -84,6 +84,7 @@ public class AnnotatedVariant extends Variant {
 
     // annotations / most damaging effect annotations
     private int stableId;
+    private String impact = "";
     private String effect = "";
     private int effectID;
     private String HGVS_c = "";
@@ -231,6 +232,7 @@ public class AnnotatedVariant extends Variant {
         if (isValid) {
             if (effect.isEmpty()) { // init most damaging effect annotations
                 stableId = annotation.stableId;
+                impact = annotation.impact;
                 effect = annotation.effect;
                 effectID = annotation.effectID;
                 HGVS_c = annotation.HGVS_c;
@@ -411,6 +413,7 @@ public class AnnotatedVariant extends Variant {
     public void getAnnotationData(StringJoiner sj) {
         sj.add(getStableId(stableId));
         sj.add(Boolean.toString(hasCCDS));
+        sj.add(impact);
         sj.add(effect);
         sj.add(getCanonicalEffect());
         sj.add(HGVS_c);
