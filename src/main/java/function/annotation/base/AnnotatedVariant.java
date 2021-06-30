@@ -13,9 +13,9 @@ import function.external.clingen.ClinGenManager;
 import function.external.dbnsfp.DBNSFP;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.dbnsfp.DBNSFPManager;
-import function.external.defaultcontrolaf.DefaultControlAF;
-import function.external.defaultcontrolaf.DefaultControlAFCommand;
-import function.external.defaultcontrolaf.DefaultControlAFManager;
+import function.external.defaultcontrolaf.DefaultControl;
+import function.external.defaultcontrolaf.DefaultControlCommand;
+import function.external.defaultcontrolaf.DefaultControlManager;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.denovo.DenovoDB;
@@ -138,7 +138,7 @@ public class AnnotatedVariant extends Variant {
     private float genomeasiaAF;
     private float iranomeAF;
     private float igmAF;
-    private DefaultControlAF defaultControlAF;
+    private DefaultControl defaultControl;
     private DBNSFP dbNSFP;
 
     public boolean isValid = true;
@@ -170,10 +170,10 @@ public class AnnotatedVariant extends Variant {
             isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
         }
 
-        if (isValid && DefaultControlAFCommand.getInstance().isInclude) {
-            defaultControlAF = DefaultControlAFManager.getDefaultControlAF(chrStr, variantId);
+        if (isValid && DefaultControlCommand.getInstance().isInclude) {
+            defaultControl = DefaultControlManager.getDefaultControlAF(chrStr, startPosition, refAllele, allele);
 
-            isValid = DefaultControlAFCommand.getInstance().isAFValid(defaultControlAF.getAF());
+            isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF());
         }
 
         if (isValid && GMECommand.getInstance().isInclude) {
@@ -648,7 +648,7 @@ public class AnnotatedVariant extends Variant {
             sj.add(getIGMAF());
         }
 
-        if (DefaultControlAFCommand.getInstance().isInclude) {
+        if (DefaultControlCommand.getInstance().isInclude) {
             sj.merge(getDefaultControlAFStringJoiner());
         }
 
@@ -774,6 +774,74 @@ public class AnnotatedVariant extends Variant {
     }
 
     public StringJoiner getDefaultControlAFStringJoiner() {
-        return defaultControlAF.getStringJoiner();
+        return defaultControl.getStringJoiner();
+    }
+    
+    public DefaultControl getDefaultControl() {
+        return defaultControl;
+    }
+    
+    public GnomADExome getGnomADExome() {
+        return gnomADExome;
+    }
+    
+    public GnomADGenome getGnomADGenome() {
+        return gnomADGenome;
+    }
+    
+    public KnownVarOutput getKnownVar() {
+        return knownVarOutput;
+    }
+    
+    public ClinGen getClinGen() {
+        return clinGen;
+    }
+    
+    public boolean isLOF() {
+        return EffectManager.isLOF(effectID);
+    }
+    
+    // tier 2 inclusion criteria
+    public boolean isMetTier2InclusionCriteria() {
+        return hasHGMDDM()
+                || hasClinVarPLP()
+                || isInClinGen()
+                || isInClinVarPathoratio()
+                || hasIndel9bpFlanksInHGMD();
+    }
+
+    // a variant at the same site has reported HGMD DM or ClinVar PLP
+    public boolean hasHGMDOrClinVar() {
+        return hasHGMDDM() || hasClinVarPLP();
+    }
+    
+    // a variant at the same site is reported HGMD as "DM" or "DM?"
+    private boolean hasHGMDDM() {
+        return getKnownVar().hasHGMDDM();
+    }
+
+    // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
+    private boolean hasClinVarPLP() {
+        return getKnownVar().hasClinVarPLP();
+    }
+
+    // LoF variant and occurs within a ClinGen disease gene
+    private boolean isInClinGen() {
+        return isLOF() && clinGen.isInClinGen();
+    }
+
+    // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
+    private boolean isInClinVarPathoratio() {
+        return isLOF()
+                && getKnownVar().getClinVarPathoratio().isInClinVarPathoratio();
+    }
+
+    // an indel that occurs within 9 bases of at least one previously reported HGMD indel
+    private boolean hasIndel9bpFlanksInHGMD() {
+        return getKnownVar().hasIndel9bpFlanksInHGMD();
+    }
+    
+    public boolean isOMIMGene() {
+        return !omimDiseaseName.equals(Data.STRING_NA);
     }
 }

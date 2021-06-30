@@ -34,8 +34,9 @@ import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
 import function.external.chm.CHMCommand;
+import function.external.clingen.ClinGenCommand;
 import function.external.dbnsfp.DBNSFPCommand;
-import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlCommand;
 import function.external.genomeasia.GenomeAsiaCommand;
 import function.external.gevir.GeVIRCommand;
 import function.external.gme.GMECommand;
@@ -44,6 +45,7 @@ import function.external.gnomad.GnomADGenomeCommand;
 import function.external.igmaf.IGMAFCommand;
 import function.external.iranome.IranomeCommand;
 import function.external.mpc.MPCCommand;
+import function.external.omim.OMIMCommand;
 import function.external.pext.PextCommand;
 import function.external.synrvis.SynRvisCommand;
 import function.external.topmed.TopMedCommand;
@@ -335,6 +337,12 @@ public class CommandManager {
                 // Genotype Analysis Functions
                 case "--list-var-geno":
                     VarGenoCommand.isList = true;
+                    DefaultControlCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    KnownVarCommand.isInclude = true;
+                    ClinGenCommand.isInclude = true;
+                    OMIMCommand.isInclude = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -381,6 +389,12 @@ public class CommandManager {
                 case "--list-trio":
                     TrioCommand.isList = true;
                     CohortLevelFilterCommand.isCaseOnly = true;
+                    DefaultControlCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    KnownVarCommand.isInclude = true;
+                    ClinGenCommand.isInclude = true;
+                    OMIMCommand.isInclude = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;
@@ -426,7 +440,7 @@ public class CommandManager {
                     GenomeAsiaCommand.getInstance().isInclude = true;
                     IranomeCommand.getInstance().isInclude = true;
                     IGMAFCommand.getInstance().isInclude = true;
-                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    DefaultControlCommand.getInstance().isInclude = true;
                     DBNSFPCommand.isInclude = true;
                     break;
                 // Coverage Analysis Functions    

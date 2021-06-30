@@ -22,7 +22,7 @@ public class GnomADGenome {
     private boolean isSnv;
     private boolean isMNV;
 
-//    private String filter;
+    private String filter;
 //    private byte segdup;
 //    private byte lcr;
 //    private byte decoy;
@@ -30,21 +30,20 @@ public class GnomADGenome {
 //    private float qd;
 //    private float pab_max;
 
-    private int global_AN;
-    private int global_nhet;
-    private int global_nhomalt;
-    private int global_nhemi;
-
-//    private int controls_AN;
-//    private int controls_nhet;
-//    private int controls_nhomalt;
-//    private int controls_nhemi;
+//    private int global_AN;
+//    private int global_nhet;
+//    private int global_nhomalt;
+//    private int global_nhemi;
+    private float controls_AF;
+    private int controls_AN;
+    private int controls_nhet;
+    private int controls_nhomalt;
+    private int controls_nhemi;
 
 //    private int non_neuro_AN;
 //    private int non_neuro_nhet;
 //    private int non_neuro_nhomalt;
 //    private int non_neuro_nhemi;
-
     private float[] af;
     private float maxAF;
     private float minAF;
@@ -88,7 +87,6 @@ public class GnomADGenome {
         isSnv = ref.length() == alt.length();
 
 //        rf_tp_probability = FormatManager.getFloat(record, "gnomAD Genome rf_tp_probability");
-
         maxAF = Float.MIN_VALUE;
         minAF = Float.MAX_VALUE;
         GnomADGenomeCommand.getInstance().resetPopAFValid();
@@ -100,7 +98,7 @@ public class GnomADGenome {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
-            
+
             // --max-gnomad-genome-pop-af or --max-gnomad-genome-pop-maf
             GnomADGenomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
@@ -137,21 +135,20 @@ public class GnomADGenome {
 //        qd = FormatManager.getFloat(rs, "qd");
 //        pab_max = FormatManager.getFloat(rs, "pab_max");
 
-        global_AN = FormatManager.getInt(rs, "global_AN");
-        global_nhet = FormatManager.getInt(rs, "global_nhet");
-        global_nhomalt = FormatManager.getInt(rs, "global_nhomalt");
-        global_nhemi = FormatManager.getInt(rs, "global_nhemi");
-
-//        controls_AN = FormatManager.getInt(rs, "controls_AN");
-//        controls_nhet = FormatManager.getInt(rs, "controls_nhet");
-//        controls_nhomalt = FormatManager.getInt(rs, "controls_nhomalt");
-//        controls_nhemi = FormatManager.getInt(rs, "controls_nhemi");
+//        global_AN = FormatManager.getInt(rs, "global_AN");
+//        global_nhet = FormatManager.getInt(rs, "global_nhet");
+//        global_nhomalt = FormatManager.getInt(rs, "global_nhomalt");
+//        global_nhemi = FormatManager.getInt(rs, "global_nhemi");
+        controls_AF = FormatManager.getFloat(rs, "controls_AF");
+        controls_AN = FormatManager.getInt(rs, "controls_AN");
+        controls_nhet = FormatManager.getInt(rs, "controls_nhet");
+        controls_nhomalt = FormatManager.getInt(rs, "controls_nhomalt");
+        controls_nhemi = FormatManager.getInt(rs, "controls_nhemi");
 
 //        non_neuro_AN = FormatManager.getInt(rs, "non_neuro_AN");
 //        non_neuro_nhet = FormatManager.getInt(rs, "non_neuro_nhet");
 //        non_neuro_nhomalt = FormatManager.getInt(rs, "non_neuro_nhomalt");
 //        non_neuro_nhemi = FormatManager.getInt(rs, "non_neuro_nhemi");
-
         maxAF = Float.MIN_VALUE;
         minAF = Float.MAX_VALUE;
         GnomADGenomeCommand.getInstance().resetPopAFValid();
@@ -162,7 +159,7 @@ public class GnomADGenome {
                 maxAF = Math.max(maxAF, af[i]);
                 minAF = Math.min(minAF, af[i]);
             }
-            
+
             // --max-gnomad-genome-pop-af or --max-gnomad-genome-pop-maf
             GnomADGenomeCommand.getInstance().checkPopAFValid(i, af[i]);
         }
@@ -177,33 +174,36 @@ public class GnomADGenome {
 //        qd = Data.FLOAT_NA;
 //        pab_max = Data.FLOAT_NA;
 
-        global_AN = Data.INTEGER_NA;
-        global_nhet = Data.INTEGER_NA;
-        global_nhomalt = Data.INTEGER_NA;
-        global_nhemi = Data.INTEGER_NA;
-
-//        controls_AN = Data.INTEGER_NA;
-//        controls_nhet = Data.INTEGER_NA;
-//        controls_nhomalt = Data.INTEGER_NA;
-//        controls_nhemi = Data.INTEGER_NA;
+//        global_AN = Data.INTEGER_NA;
+//        global_nhet = Data.INTEGER_NA;
+//        global_nhomalt = Data.INTEGER_NA;
+//        global_nhemi = Data.INTEGER_NA;
+        controls_AF = Data.FLOAT_NA;
+        controls_AN = Data.INTEGER_NA;
+        controls_nhet = Data.INTEGER_NA;
+        controls_nhomalt = Data.INTEGER_NA;
+        controls_nhemi = Data.INTEGER_NA;
 
 //        non_neuro_AN = Data.INTEGER_NA;
 //        non_neuro_nhet = Data.INTEGER_NA;
 //        non_neuro_nhomalt = Data.INTEGER_NA;
 //        non_neuro_nhemi = Data.INTEGER_NA;
-
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             af[i] = value;
         }
-        
+
         GnomADGenomeCommand.getInstance().resetPopAFValid();
     }
 
     public boolean isValid() {
         return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF)
-//                && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
-//                && GnomADGenomeCommand.getInstance().isFilterPass(filter)
+                //                && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
+                //                && GnomADGenomeCommand.getInstance().isFilterPass(filter)
                 && GnomADGenomeCommand.getInstance().isPopAFValid();
+    }
+
+    public boolean isFilterPass() {
+        return filter.equals("PASS");
     }
 
     public String getVariantId() {
@@ -220,22 +220,21 @@ public class GnomADGenome {
 //        sj.add(FormatManager.getFloat(rf_tp_probability));
 //        sj.add(FormatManager.getFloat(qd));
 //        sj.add(FormatManager.getFloat(pab_max));
-
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
             sj.add(FormatManager.getFloat(af[i]));
 
             switch (i) {
                 case 0:
-                    sj.add(FormatManager.getInteger(global_AN));
-                    sj.add(FormatManager.getInteger(global_nhet));
-                    sj.add(FormatManager.getInteger(global_nhomalt));
-                    sj.add(FormatManager.getInteger(global_nhemi));
+//                    sj.add(FormatManager.getInteger(global_AN));
+//                    sj.add(FormatManager.getInteger(global_nhet));
+//                    sj.add(FormatManager.getInteger(global_nhomalt));
+//                    sj.add(FormatManager.getInteger(global_nhemi));
                     break;
                 case 1:
 //                    sj.add(FormatManager.getInteger(controls_AN));
-//                    sj.add(FormatManager.getInteger(controls_nhet));
-//                    sj.add(FormatManager.getInteger(controls_nhomalt));
-//                    sj.add(FormatManager.getInteger(controls_nhemi));
+                    sj.add(FormatManager.getInteger(controls_nhet));
+                    sj.add(FormatManager.getInteger(controls_nhomalt));
+                    sj.add(FormatManager.getInteger(controls_nhemi));
                     break;
 //                case 2:
 //                    sj.add(FormatManager.getInteger(non_neuro_AN));
@@ -249,6 +248,36 @@ public class GnomADGenome {
         }
 
         return sj;
+    }
+
+    public int getControlAC() {
+        int controls_nhet = this.controls_nhet == Data.INTEGER_NA ? 0 : this.controls_nhet;
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 : this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 : this.controls_nhemi;
+
+        return controls_nhet + 2 * controls_nhomalt + 2 * controls_nhemi;
+    }
+
+    public float getControlAF() {
+        return controls_AF;
+    }
+
+    public float getControlNHOM() {
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 : this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 : this.controls_nhemi;
+
+        return controls_nhomalt + controls_nhemi;
+    }
+
+    public boolean isNotObservedInControlHemiOrHom() {
+        int controls_nhomalt = this.controls_nhomalt == Data.INTEGER_NA ? 0 : this.controls_nhomalt;
+        int controls_nhemi = this.controls_nhemi == Data.INTEGER_NA ? 0 : this.controls_nhemi;
+
+        return controls_nhomalt == 0 && controls_nhemi == 0;
+    }
+
+    public int getControlNHET() {
+        return this.controls_nhet == Data.INTEGER_NA ? 0 : this.controls_nhet;
     }
 
     @Override

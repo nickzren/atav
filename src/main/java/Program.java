@@ -89,7 +89,7 @@ import function.external.acmg.ACMGManager;
 import function.external.chm.CHMManager;
 import function.external.clingen.ClinGenManager;
 import function.external.dbnsfp.DBNSFPManager;
-import function.external.defaultcontrolaf.DefaultControlAFManager;
+import function.external.defaultcontrolaf.DefaultControlManager;
 import function.external.denovo.DenovoDBManager;
 import function.external.discovehr.DiscovEHRManager;
 import function.external.evs.EvsManager;
@@ -236,7 +236,7 @@ public class Program {
             
             IGMAFManager.init();
             
-            DefaultControlAFManager.init();
+            DefaultControlManager.init();
             
             DBNSFPManager.init();
 

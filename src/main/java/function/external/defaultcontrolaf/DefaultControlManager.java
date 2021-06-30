@@ -12,14 +12,14 @@ import utils.ErrorManager;
  *
  * @author nick
  */
-public class DefaultControlAFManager {
+public class DefaultControlManager {
 
     private static final String table = "igm_af.default_control_variant_030421";
     private static PreparedStatement preparedStatement;
 
     public static void init() {
-        if (DefaultControlAFCommand.getInstance().isInclude) {
-            String sql = "SELECT ac,af,nhom FROM " + table + " WHERE chr=? AND variant_id=?";
+        if (DefaultControlCommand.getInstance().isInclude) {
+            String sql = "SELECT ac,af,nhom FROM " + table + " WHERE chr=? AND pos=? AND ref=? AND alt=?";
             preparedStatement = DBManager.initPreparedStatement(sql);
         }
     }
@@ -38,12 +38,14 @@ public class DefaultControlAFManager {
         return "Default Control AF: " + DataManager.getVersion(table) + "\n";
     }
 
-    public static DefaultControlAF getDefaultControlAF(String chr, int variantID) {
-        DefaultControlAF defaultControlAF = new DefaultControlAF();
+    public static DefaultControl getDefaultControlAF(String chr, int pos, String ref, String alt) {
+        DefaultControl defaultControlAF = new DefaultControl();
         
         try {
             preparedStatement.setString(1, chr);
-            preparedStatement.setInt(2, variantID);
+            preparedStatement.setInt(2, pos);
+            preparedStatement.setString(3, ref);
+            preparedStatement.setString(4, alt);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 int ac = rs.getInt("ac");

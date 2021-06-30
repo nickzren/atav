@@ -23,10 +23,10 @@ public class KnownVarOutput {
     }
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
-//        String geneName = GeneManager.getUpToDateGene(annotatedVar.getGeneName()).toUpperCase();
+        String geneName = GeneManager.getUpToDateGene(annotatedVar.getGeneName()).toUpperCase();
         hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
         clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
-//        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
+        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
 //        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
 //        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
     }
@@ -50,7 +50,33 @@ public class KnownVarOutput {
 
         return true;
     }
+    
+    public boolean isHGMDDM() {
+        return hgmdOutput.getHGMD().getVariantClass().equals("DM");
+    }
+    
+    public boolean hasHGMDDM() {
+        return hgmdOutput.getHGMD().getVariantClass().contains("DM");
+    }
+    
+    public boolean hasIndel9bpFlanksInHGMD() {
+        return hgmdOutput.hasIndel9bpFlanks();
+    }
+    
+    public boolean isClinVarPLP() {
+        return clinVarOutput.getClinVar().getClinSig().equals("Pathogenic")
+                || clinVarOutput.getClinVar().getClinSig().equals("Likely_pathogenic");
+    }
+    
+    public boolean hasClinVarPLP() {
+        return clinVarOutput.getClinVar().getClinSig().contains("Pathogenic")
+                || clinVarOutput.getClinVar().getClinSig().contains("Likely_pathogenic");
+    }
 
+    public ClinVarPathoratio getClinVarPathoratio() {
+        return clinVarPathoratio;
+    }
+    
     @Override
     public String toString() {
         return getStringJoiner().toString();

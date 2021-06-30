@@ -5,7 +5,7 @@ import function.external.ccr.CCRCommand;
 import function.external.chm.CHMCommand;
 import function.external.clingen.ClinGenCommand;
 import function.external.dbnsfp.DBNSFPCommand;
-import function.external.defaultcontrolaf.DefaultControlAFCommand;
+import function.external.defaultcontrolaf.DefaultControlCommand;
 import function.external.limbr.LIMBRCommand;
 import function.external.denovo.DenovoDBCommand;
 import function.external.discovehr.DiscovEHRCommand;
@@ -478,23 +478,23 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--max-default-control-af":
                     checkValueValid(1, 0, option);
-                    DefaultControlAFCommand.getInstance().maxAF = getValidFloat(option);
-                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    DefaultControlCommand.getInstance().maxAF = getValidFloat(option);
+                    DefaultControlCommand.getInstance().isInclude = true;
                     break;
                 case "--min-default-control-af":
                     checkValueValid(1, 0, option);
-                    DefaultControlAFCommand.getInstance().minAF = getValidFloat(option);
-                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    DefaultControlCommand.getInstance().minAF = getValidFloat(option);
+                    DefaultControlCommand.getInstance().isInclude = true;
                     break;
                 case "--max-default-control-maf":
                     checkValueValid(0.5, 0, option);
-                    DefaultControlAFCommand.getInstance().maxMAF = getValidFloat(option);
-                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    DefaultControlCommand.getInstance().maxMAF = getValidFloat(option);
+                    DefaultControlCommand.getInstance().isInclude = true;
                     break;
                 case "--min-default-control-maf":
                     checkValueValid(0.5, 0, option);
-                    DefaultControlAFCommand.getInstance().minMAF = getValidFloat(option);
-                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    DefaultControlCommand.getInstance().minMAF = getValidFloat(option);
+                    DefaultControlCommand.getInstance().isInclude = true;
                     break;
                 case "--filter-dbnsfp-all":
                     DBNSFPCommand.isFilterDBNSFPAll = true;
@@ -608,7 +608,7 @@ public class VariantLevelFilterCommand {
                     IGMAFCommand.getInstance().isInclude = true;
                     break;
                 case "--include-default-control-af":
-                    DefaultControlAFCommand.getInstance().isInclude = true;
+                    DefaultControlCommand.getInstance().isInclude = true;
                     break;
                 case "--include-dbnsfp":
                     DBNSFPCommand.isInclude = true;

@@ -104,6 +104,10 @@ public class ClinVarOutput {
     public boolean isClinVar() {
         return isClinVar;
     }
+    
+    public ClinVar getClinVar() {
+        return clinvar;
+    }
 
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");

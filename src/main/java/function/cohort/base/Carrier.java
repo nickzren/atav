@@ -114,8 +114,12 @@ public class Carrier extends NonCarrier {
         return GenotypeLevelFilterCommand.FILTER[filterValue - 1];
     }
 
-    public String getPercAltRead() {
+    public String getPercAltReadStr() {
         return FormatManager.getFloat(MathManager.devide(adAlt, dp));
+    }
+    
+    public float getPercAltRead() {
+        return MathManager.devide(adAlt, dp);
     }
 
     public double getPercentAltReadBinomialP() {

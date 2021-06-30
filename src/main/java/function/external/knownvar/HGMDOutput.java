@@ -96,7 +96,7 @@ public class HGMDOutput {
         sj.add(hgmd.getVariantClass());
 //        sj.add(p1Site);
 //        sj.add(p2Site);
-//        sj.add(FormatManager.getInteger(indel9bpflanks));
+        sj.add(FormatManager.getInteger(indel9bpflanks));
 
         return sj;
     }
@@ -105,6 +105,14 @@ public class HGMDOutput {
         return isHGMD;
     }
 
+    public HGMD getHGMD() {
+        return hgmd;
+    }
+    
+    public boolean hasIndel9bpFlanks() {
+        return indel9bpflanks > 0;
+    }
+    
     @Override
     public String toString() {
         return getStringJoiner().toString();

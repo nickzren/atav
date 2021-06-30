@@ -4,7 +4,6 @@ import function.cohort.base.CalledVariant;
 import function.cohort.base.AnalysisBase4CalledVar;
 import static function.cohort.trio.TrioManager.COMP_HET_FLAG;
 import global.Data;
-import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
@@ -129,7 +128,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initDenovoFlag(trio.getChild());
-                        outputDenovo(output1);
+                        outputDenovoOrHom(output1);
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
@@ -150,16 +149,30 @@ public class ListTrio extends AnalysisBase4CalledVar {
         }
     }
 
-    private void outputDenovo(TrioOutput output) throws Exception {
+    private void outputDenovoOrHom(TrioOutput output) throws Exception {
+        byte tierFlag = Data.BYTE_NA;
+
+        // denovo or hom
         if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
-            StringJoiner sj = new StringJoiner(",");
-//            sj.add(output.child.getFamilyId());
-//            sj.add(output.motherName);
-//            sj.add(output.fatherName);
-            sj.add(output.toString());
-            bwDenovo.write(sj.toString());
-            bwDenovo.newLine();
+            if (output.isDenovoTier1()
+                    || output.isHomozygousTier1()
+                    || output.isHemizygousTier1()) {
+                tierFlag = 1;
+            } else if (output.getCalledVariant().isMetTier2InclusionCriteria()
+                    && (output.isDenovoTier2()
+                    || output.isHomozygousTier2()
+                    || output.isHemizygousTier2())) {
+                tierFlag = 2;
+            }
+        } else { // inherited variant
+            tierFlag = output.getCalledVariant().isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
         }
+
+        StringJoiner sj = new StringJoiner(",");
+        sj.add(FormatManager.getByte(tierFlag));
+        sj.add(output.toString());
+        bwDenovo.write(sj.toString());
+        bwDenovo.newLine();
     }
 
     private void outputCompHet(TrioOutput output1, TrioOutput output2) throws Exception {
@@ -185,6 +198,24 @@ public class ListTrio extends AnalysisBase4CalledVar {
     private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
 //        float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
 
+        // apply tier rules
+        byte tierFlag = Data.BYTE_NA;
+
+        // tier 1
+        if ( // neither parent is hom alt
+                output1.isParentsNotHom() && output2.isParentsNotHom()
+                // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
+                && output1.isNotObservedInHomAmongControl() && output2.isNotObservedInHomAmongControl()
+                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
+                && output1.isControlAFValid() && output2.isControlAFValid()) {
+            tierFlag = 1;
+        } else if (// if one of the variant meets tier 2 inclusion criteria
+                (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
+                // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
+                && output1.isNHomFromControlsValid(10) && output2.isNHomFromControlsValid(10)) {
+            tierFlag = 2;
+        }
+
         StringJoiner sj = new StringJoiner(",");
 //        sj.add(output1.child.getFamilyId());
 //        sj.add(output1.motherName);
@@ -192,6 +223,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(flag);
 //        sj.add(FormatManager.getFloat(coFreq[Index.CASE]));
 //        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
+        sj.add(FormatManager.getByte(tierFlag));
         sj.add(output1.toString());
         sj.add(output2.toString());
 

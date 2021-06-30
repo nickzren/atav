@@ -22,11 +22,11 @@ import utils.ErrorManager;
 public class GnomADManager {
 
     public static final String[] EXOME_POP = {
-        "global"
+        "global", "controls"
     };
 
     public static final String[] GENOME_POP = {
-        "global"
+        "global", "controls"
     };
 
     private static final String exomeVariantTable = "gnomad_2_1.exome_variant";
@@ -94,10 +94,10 @@ public class GnomADManager {
             sj.add("gnomAD Exome " + pop + "_AF");
 
             switch (i) {
-                case 0: // global
+//                case 0: // global
                 case 1: // controls
-                case 2: // non_neuro
-                    sj.add("gnomAD Exome " + pop + "_AN");
+//                case 2: // non_neuro
+//                    sj.add("gnomAD Exome " + pop + "_AN");
                     sj.add("gnomAD Exome " + pop + "_nhet");
                     sj.add("gnomAD Exome " + pop + "_nhomalt");
                     sj.add("gnomAD Exome " + pop + "_nhemi");
@@ -126,10 +126,10 @@ public class GnomADManager {
             sj.add("gnomAD Genome " + pop + "_AF");
 
             switch (i) {
-                case 0: // global
+//                case 0: // global
                 case 1: // controls
-                case 2: // non_neuro
-                    sj.add("gnomAD Genome " + pop + "_AN");
+//                case 2: // non_neuro
+//                    sj.add("gnomAD Genome " + pop + "_AN");
                     sj.add("gnomAD Genome " + pop + "_nhet");
                     sj.add("gnomAD Genome " + pop + "_nhomalt");
                     sj.add("gnomAD Genome " + pop + "_nhemi");
