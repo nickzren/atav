@@ -70,10 +70,10 @@ public class TrioOutput extends Output {
         return geno;
     }
 
-    public boolean isDenovoTier1() {
+    public boolean isDenovoTier1() {        
         return denovoFlag.contains("DE NOVO")
                 && isVariantNotDetectedInParents()
-                && isChildHetPercAltReadValid()
+                && (isChildHetPercAltReadValid() || isChildHomPercAltReadValid())
                 && isChildGATKQCValid()
                 && isTrioDPBinValid()
                 && isVariantAbsentAmongControl();
