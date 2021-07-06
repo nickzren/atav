@@ -419,8 +419,7 @@ public class Output {
         3. >= 25% reads support the variant call
         4. QUAL >= 50, QD >= 2, GQ >= 50, MQ >= 40
         5. variant is het call and <= 5 observed among IGM controls and gnomAD (WES & WGS) controls
-        6. variant has CCDS transcript
-        7. variant is a PASS variant call among gnomAD (WES & WGS)
+        6. variant is a PASS variant call among gnomAD (WES & WGS)
      */
     public byte isDominantAndClinGenHaploinsufficient(Carrier carrier) {
         if (carrier != null && carrier.getDP() >= 10 // 1
@@ -428,8 +427,7 @@ public class Output {
                 && carrier.getPercAltRead() >= 0.25 // 3
                 && carrier.getQual() >= 50 && carrier.getQD() >= 2 && carrier.getGQ() >= 50 && carrier.getMQ() >= 40 // 4
                 && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 5
-                && this.calledVar.hasCCDS() // 6
-                && this.calledVar.getGnomADExome().isFilterPass() && this.calledVar.getGnomADGenome().isFilterPass() // 7
+                && this.calledVar.getGnomADExome().isFilterPass() && this.calledVar.getGnomADGenome().isFilterPass() // 6
                 ) {
             return 1;
         }
@@ -443,8 +441,6 @@ public class Output {
         3. >= 25% reads support the variant call
         4. QUAL >= 40, QD >= 2
         5. variant is absent among IGM controls and gnomAD (WES & WGS) controls
-        6. variant has CCDS transcript
-        7. variant occurs in OMIM gene
      */
     public byte isPreviouslyPathogenicReported(Carrier carrier) {
         if (carrier != null && carrier.getDP() >= 10 // 1
@@ -452,8 +448,6 @@ public class Output {
                 && carrier.getPercAltRead() >= 0.25 // 3
                 && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
                 && isGenotypeAbsentAmongControl(carrier.getGT()) // 5
-                && this.calledVar.hasCCDS() // 6
-                && this.calledVar.getKnownVar().isOMIMGene() // 7
                 ) {
             return 1;
         }
