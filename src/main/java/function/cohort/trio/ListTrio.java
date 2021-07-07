@@ -35,7 +35,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
     public void initOutput() {
         try {
             bwTrioVariant = new BufferedWriter(new FileWriter(denovoFilePath));
-            bwTrioVariant.write(TrioManager.getHeader4Denovo());
+            bwTrioVariant.write(TrioManager.getHeader());
             bwTrioVariant.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
@@ -146,17 +146,15 @@ public class ListTrio extends AnalysisBase4CalledVar {
         }
     }
 
-    private void outputDenovoOrHomOrInheritedVar(TrioOutput output) throws Exception {
+    private void outputDenovoOrHomOrInheritedVar(TrioOutput output) throws Exception {       
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
         carrierIDSB.append(output.cCarrier.getSampleId());
-        
+
         if (outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
-        } 
-
-        byte tierFlag4SingleVar = getTierFlag4SingleVar(output);
+        }
 
         StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getFamilyId());
@@ -167,33 +165,11 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
-        sj.add(FormatManager.getByte(tierFlag4SingleVar));
+        sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
 
         bwTrioVariant.write(sj.toString());
         bwTrioVariant.newLine();
-    }
-
-    private byte getTierFlag4SingleVar(TrioOutput output) {
-        byte tierFlag4SingleVar = Data.BYTE_NA;
-
-        // denovo or hom
-        if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
-            if (output.isDenovoTier1()
-                    || output.isHomozygousTier1()
-                    || output.isHemizygousTier1()) {
-                tierFlag4SingleVar = 1;
-            } else if (output.getCalledVariant().isMetTier2InclusionCriteria()
-                    && (output.isDenovoTier2()
-                    || output.isHomozygousTier2()
-                    || output.isHemizygousTier2())) {
-                tierFlag4SingleVar = 2;
-            }
-        } else { // child variant
-            tierFlag4SingleVar = output.getCalledVariant().isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
-        }
-
-        return tierFlag4SingleVar;
     }
 
     private void outputCompHet(TrioOutput output1, TrioOutput output2) throws Exception {
@@ -232,7 +208,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
                 && output1.isControlAFValid() && output2.isControlAFValid()) {
             tierFlag4CompVar = 1;
-        } else if (// if one of the variant meets tier 2 inclusion criteria
+        } else if ( // tier 2
+                // if one of the variant meets tier 2 inclusion criteria
                 (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
                 // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
                 && output1.isNHomFromControlsValid(10) && output2.isNHomFromControlsValid(10)) {
@@ -260,7 +237,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(compHetVar);
         sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));
-        sj.add(FormatManager.getByte(getTierFlag4SingleVar(output)));
+        sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
 
         bwTrioVariant.write(sj.toString());

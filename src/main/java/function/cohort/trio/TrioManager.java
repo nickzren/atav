@@ -44,7 +44,7 @@ public class TrioManager {
     private static final byte MEDIUM = 1;
     private static final byte LOW = 0;
 
-    public static String getHeader4Denovo() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family ID");
@@ -56,19 +56,10 @@ public class TrioManager {
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
         sj.add("Tier Flag (Compound Var)");
         sj.add("Tier Flag (Single Var)");
-
-        sj.merge(getHeaderByVariant());
-
-        return sj.toString();
-    }
-
-    private static StringJoiner getHeaderByVariant() {
-        StringJoiner sj = new StringJoiner(",");
-
         sj.add("Dominant and ClinGen Haploinsufficient");
         sj.add("Previously Pathogenic Reported");
         sj.add("Denovo Flag");
-        sj.add("Is Inherited Variant");
+        sj.add("Inherited From");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
@@ -79,7 +70,7 @@ public class TrioManager {
         sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
 
-        return sj;
+        return sj.toString();
     }
 
     public static void init() {

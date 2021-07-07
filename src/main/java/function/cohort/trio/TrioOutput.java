@@ -2,6 +2,7 @@ package function.cohort.trio;
 
 import function.cohort.base.CalledVariant;
 import function.cohort.base.Carrier;
+import function.cohort.base.Enum.INHERITED_FROM;
 import function.variant.base.Output;
 import function.cohort.base.Sample;
 import global.Data;
@@ -197,6 +198,41 @@ public class TrioOutput extends Output {
         return isQualifiedGeno(mGeno) || isQualifiedGeno(fGeno);
     }
 
+    public INHERITED_FROM getInheritedFrom() {
+        if ((mGeno == Index.HOM || mGeno == Index.HET)
+                && (fGeno == Index.HOM || fGeno == Index.HET)) {
+            return INHERITED_FROM.BOTH;
+        } else if (mGeno == Index.HOM || mGeno == Index.HET) {
+            return INHERITED_FROM.MOTHER;
+        } else if (fGeno == Index.HOM || fGeno == Index.HET) {
+            return INHERITED_FROM.FATHER;
+        } else {
+            return INHERITED_FROM.NA;
+        }
+    }
+    
+    public byte getTierFlag4SingleVar() {
+        byte tierFlag4SingleVar = Data.BYTE_NA;
+
+        // denovo or hom
+        if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
+            if (isDenovoTier1()
+                    || isHomozygousTier1()
+                    || isHemizygousTier1()) {
+                tierFlag4SingleVar = 1;
+            } else if (getCalledVariant().isMetTier2InclusionCriteria()
+                    && (isDenovoTier2()
+                    || isHomozygousTier2()
+                    || isHemizygousTier2())) {
+                tierFlag4SingleVar = 2;
+            }
+        } else { // child variant
+            tierFlag4SingleVar = getCalledVariant().isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
+        }
+
+        return tierFlag4SingleVar;
+    }
+
     @Override
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
@@ -204,7 +240,7 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getByte(isDominantAndClinGenHaploinsufficient(cCarrier)));
         sj.add(FormatManager.getByte(isPreviouslyPathogenicReported(cCarrier)));
         sj.add(denovoFlag);
-        sj.add(FormatManager.getInteger(isInheritedVariant() ? 1 : 0));
+        sj.add(getInheritedFrom().name());
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
