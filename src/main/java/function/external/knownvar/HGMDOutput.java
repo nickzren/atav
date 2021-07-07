@@ -22,6 +22,7 @@ public class HGMDOutput {
     private int siteCount;
     private String p1Site;
     private String p2Site;
+    private int snv2bpflanks;
     private int indel9bpflanks;
 
     public HGMDOutput(Variant var, Collection<HGMD> collection) {
@@ -36,7 +37,8 @@ public class HGMDOutput {
 
         siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
-        indel9bpflanks = var.isIndel() ? KnownVarManager.getHGMDIndelFlankingCount(var) : Data.INTEGER_NA; // only for INDELs
+        snv2bpflanks = var.isSnv() ? KnownVarManager.getHGMDFlankingCount(var, var.isSnv(), 2) : Data.INTEGER_NA; // for SNVs
+        indel9bpflanks = var.isIndel() ? KnownVarManager.getHGMDFlankingCount(var, var.isSnv(), 9) : Data.INTEGER_NA; // for indels
     }
 
     /*
@@ -101,6 +103,7 @@ public class HGMDOutput {
         sj.add(hgmd.getVariantClass());
         sj.add(p1Site);
         sj.add(p2Site);
+        sj.add(FormatManager.getInteger(snv2bpflanks));
         sj.add(FormatManager.getInteger(indel9bpflanks));
 
         return sj;
