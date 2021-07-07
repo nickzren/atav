@@ -70,7 +70,7 @@ public class TrioOutput extends Output {
         return geno;
     }
 
-    public boolean isDenovoTier1() {        
+    public boolean isDenovoTier1() {
         return denovoFlag.contains("DE NOVO")
                 && isVariantNotDetectedInParents()
                 && (isChildHetPercAltReadValid() || isChildHomPercAltReadValid())
@@ -203,6 +203,8 @@ public class TrioOutput extends Output {
 
         sj.add(FormatManager.getByte(isDominantAndClinGenHaploinsufficient(cCarrier)));
         sj.add(FormatManager.getByte(isPreviouslyPathogenicReported(cCarrier)));
+        sj.add(denovoFlag);
+        sj.add(FormatManager.getInteger(isInheritedVariant() ? 1 : 0));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
@@ -210,8 +212,6 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getShort(mDPBin));
         sj.add(getGenoStr(fGeno));
         sj.add(FormatManager.getShort(fDPBin));
-        sj.add(denovoFlag);
-        sj.add(FormatManager.getInteger(isInheritedVariant() ? 1 : 0));
         getGenoStatData(sj);
         calledVar.getExternalData(sj);
 

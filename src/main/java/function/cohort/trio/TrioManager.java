@@ -46,54 +46,20 @@ public class TrioManager {
 
     public static String getHeader4Denovo() {
         StringJoiner sj = new StringJoiner(",");
-        
-        sj.add("Family ID");
-        sj.add("Mother");
-        sj.add("Father");
-        sj.add("Tier Flag");
-        sj.merge(getHeaderByVariant());
-
-        return sj.toString();
-    }
-
-    public static String getHeader4CompHet() {
-        StringJoiner sj = new StringJoiner(",");
 
         sj.add("Family ID");
+        sj.add("Proband");
         sj.add("Mother");
         sj.add("Father");
         sj.add("Comp Het Flag");
-        sj.add("Var Case Freq #1 & #2 (co-occurance)");
+        sj.add("Compound Var");
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
-        sj.add("Tier Flag");
-        sj.merge(initVarHeaderStr("1"));
-        sj.merge(initVarHeaderStr("2"));
+        sj.add("Tier Flag (Compound Var)");
+        sj.add("Tier Flag (Single Var)");
 
-        return sj.toString();
-    }
-
-    public static String getHeader4ChildVar() {
-        StringJoiner sj = new StringJoiner(",");
-
-        sj.add("Family ID");
-        sj.add("Mother");
-        sj.add("Father");
-        sj.add("Tier Flag");
         sj.merge(getHeaderByVariant());
 
         return sj.toString();
-    }
-
-    private static StringJoiner initVarHeaderStr(String var) {
-        String[] columnList = getHeaderByVariant().toString().split(",");
-
-        StringJoiner sj = new StringJoiner(",");
-
-        for (String column : columnList) {
-            sj.add(column + " (#" + var + ")");
-        }
-
-        return sj;
     }
 
     private static StringJoiner getHeaderByVariant() {
@@ -101,6 +67,8 @@ public class TrioManager {
 
         sj.add("Dominant and ClinGen Haploinsufficient");
         sj.add("Previously Pathogenic Reported");
+        sj.add("Denovo Flag");
+        sj.add("Is Inherited Variant");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
@@ -108,8 +76,6 @@ public class TrioManager {
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
-        sj.add("Denovo Flag");
-        sj.add("Is Inherited Variant");
         sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
 

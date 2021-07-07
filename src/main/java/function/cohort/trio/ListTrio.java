@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -23,24 +24,19 @@ import utils.FormatManager;
  */
 public class ListTrio extends AnalysisBase4CalledVar {
 
-    BufferedWriter bwDenovo = null;
-    final String denovoFilePath = CommonCommand.outputPath + "denovoandhom.csv";
-
-    BufferedWriter bwCompHet = null;
-    final String compHetFilePath = CommonCommand.outputPath + "comphet.csv";
+    BufferedWriter bwTrioVariant = null;
+    final String denovoFilePath = CommonCommand.outputPath + "trio_variant.csv";
 
     HashMap<String, List<TrioOutput>> geneVariantListMap = new HashMap<>();
+    // avoid output duplicate carrier (comp var & single var)
+    HashSet<String> outputCarrierSet = new HashSet<>();
 
     @Override
     public void initOutput() {
         try {
-            bwDenovo = new BufferedWriter(new FileWriter(denovoFilePath));
-            bwDenovo.write(TrioManager.getHeader4Denovo());
-            bwDenovo.newLine();
-
-            bwCompHet = new BufferedWriter(new FileWriter(compHetFilePath));
-            bwCompHet.write(TrioManager.getHeader4CompHet());
-            bwCompHet.newLine();
+            bwTrioVariant = new BufferedWriter(new FileWriter(denovoFilePath));
+            bwTrioVariant.write(TrioManager.getHeader4Denovo());
+            bwTrioVariant.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -56,11 +52,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
     @Override
     public void closeOutput() {
         try {
-            bwDenovo.flush();
-            bwDenovo.close();
-
-            bwCompHet.flush();
-            bwCompHet.close();
+            bwTrioVariant.flush();
+            bwTrioVariant.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -121,6 +114,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     private void doOutput(List<TrioOutput> geneOutputList) {
         try {
+            outputCarrierSet.clear();
+
             for (int i = 0; i < geneOutputList.size(); i++) {
                 TrioOutput output1 = geneOutputList.get(i);
 
@@ -129,7 +124,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initDenovoFlag(trio.getChild());
-                        outputDenovoOrHom(output1);
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
@@ -142,6 +136,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
                                 outputCompHet(output1, output2);
                             }
                         }
+
+                        outputDenovoOrHomOrInheritedVar(output1);
                     }
                 }
             }
@@ -150,40 +146,61 @@ public class ListTrio extends AnalysisBase4CalledVar {
         }
     }
 
-    private void outputDenovoOrHom(TrioOutput output) throws Exception {
-        byte tierFlag = Data.BYTE_NA;
+    private void outputDenovoOrHomOrInheritedVar(TrioOutput output) throws Exception {
+        StringBuilder carrierIDSB = new StringBuilder();
+        carrierIDSB.append(output.getCalledVariant().variantId);
+        carrierIDSB.append("-");
+        carrierIDSB.append(output.cCarrier.getSampleId());
+        
+        if (outputCarrierSet.contains(carrierIDSB.toString())) {
+            return;
+        } 
+
+        byte tierFlag4SingleVar = getTierFlag4SingleVar(output);
+
+        StringJoiner sj = new StringJoiner(",");
+        sj.add(output.child.getFamilyId());
+        sj.add(output.child.getName());
+        sj.add(output.motherName);
+        sj.add(output.fatherName);
+        sj.add(Data.STRING_NA);
+        sj.add(Data.STRING_NA);
+        sj.add(Data.STRING_NA);
+        sj.add(Data.STRING_NA);
+        sj.add(FormatManager.getByte(tierFlag4SingleVar));
+        sj.add(output.toString());
+
+        bwTrioVariant.write(sj.toString());
+        bwTrioVariant.newLine();
+    }
+
+    private byte getTierFlag4SingleVar(TrioOutput output) {
+        byte tierFlag4SingleVar = Data.BYTE_NA;
 
         // denovo or hom
         if (!output.denovoFlag.equals("NO FLAG") && !output.denovoFlag.equals(Data.STRING_NA)) {
             if (output.isDenovoTier1()
                     || output.isHomozygousTier1()
                     || output.isHemizygousTier1()) {
-                tierFlag = 1;
+                tierFlag4SingleVar = 1;
             } else if (output.getCalledVariant().isMetTier2InclusionCriteria()
                     && (output.isDenovoTier2()
                     || output.isHomozygousTier2()
                     || output.isHemizygousTier2())) {
-                tierFlag = 2;
+                tierFlag4SingleVar = 2;
             }
         } else { // child variant
-            tierFlag = output.getCalledVariant().isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
+            tierFlag4SingleVar = output.getCalledVariant().isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
         }
 
-        StringJoiner sj = new StringJoiner(",");
-        sj.add(output.child.getFamilyId());
-        sj.add(output.motherName);
-        sj.add(output.fatherName);
-        sj.add(FormatManager.getByte(tierFlag));
-        sj.add(output.toString());
-        bwDenovo.write(sj.toString());
-        bwDenovo.newLine();
+        return tierFlag4SingleVar;
     }
 
     private void outputCompHet(TrioOutput output1, TrioOutput output2) throws Exception {
         String compHetFlag = getTrioCompHetFlag(output1, output2);
 
         if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
-            doCompHetOutput(bwCompHet, compHetFlag, output1, output2);
+            doCompHetOutput(compHetFlag, output1, output2);
         }
     }
 
@@ -199,12 +216,12 @@ public class ListTrio extends AnalysisBase4CalledVar {
         return flag;
     }
 
-    private void doCompHetOutput(BufferedWriter bw, String flag, TrioOutput output1, TrioOutput output2) throws Exception {
+    private void doCompHetOutput(String compHetFlag, TrioOutput output1, TrioOutput output2) throws Exception {
         float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
 
         // apply tier rules
-        byte tierFlag = Data.BYTE_NA;
-        
+        byte tierFlag4CompVar = Data.BYTE_NA;
+
         // tier 1
         if ( // neither parent is hom alt
                 output1.isParentsNotHom() && output2.isParentsNotHom()
@@ -214,27 +231,40 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 && output1.isNotObservedInHomAmongControl() && output2.isNotObservedInHomAmongControl()
                 // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
                 && output1.isControlAFValid() && output2.isControlAFValid()) {
-            tierFlag = 1;
+            tierFlag4CompVar = 1;
         } else if (// if one of the variant meets tier 2 inclusion criteria
                 (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
                 // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
                 && output1.isNHomFromControlsValid(10) && output2.isNHomFromControlsValid(10)) {
-            tierFlag = 2;
+            tierFlag4CompVar = 2;
         }
 
-        StringJoiner sj = new StringJoiner(",");
-        sj.add(output1.child.getFamilyId());
-        sj.add(output1.motherName);
-        sj.add(output1.fatherName);
-        sj.add(flag);
-        sj.add(FormatManager.getFloat(coFreq[Index.CASE]));
-        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
-        sj.add(FormatManager.getByte(tierFlag));
-        sj.add(output1.toString());
-        sj.add(output2.toString());
+        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, coFreq, "#1");
+        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, coFreq, "#2");
+    }
 
-        bw.write(sj.toString());
-        bw.newLine();
+    private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, TrioOutput output,
+            float[] coFreq, String compHetVar) throws Exception {
+        StringBuilder carrierIDSB = new StringBuilder();
+        carrierIDSB.append(output.getCalledVariant().variantId);
+        carrierIDSB.append("-");
+        carrierIDSB.append(output.cCarrier.getSampleId());
+        outputCarrierSet.add(carrierIDSB.toString());
+
+        StringJoiner sj = new StringJoiner(",");
+        sj.add(output.child.getFamilyId());
+        sj.add(output.child.getName());
+        sj.add(output.motherName);
+        sj.add(output.fatherName);
+        sj.add(compHetFlag);
+        sj.add(compHetVar);
+        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
+        sj.add(FormatManager.getByte(tierFlag4CompVar));
+        sj.add(FormatManager.getByte(getTierFlag4SingleVar(output)));
+        sj.add(output.toString());
+
+        bwTrioVariant.write(sj.toString());
+        bwTrioVariant.newLine();
     }
 
     private void clearList() {
