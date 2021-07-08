@@ -83,28 +83,28 @@ public class KnownVarManager {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("HGMDm2site");
-        sj.add("HGMDm1site");
+//        sj.add("HGMDm2site");
+//        sj.add("HGMDm1site");
         sj.add("HGMD site");
         sj.add("HGMD Disease");
-        sj.add("HGMD PMID");
+//        sj.add("HGMD PMID");
         sj.add("HGMD Class");
-        sj.add("HGMDp1site");
-        sj.add("HGMDp2site");
+//        sj.add("HGMDp1site");
+//        sj.add("HGMDp2site");
         sj.add("HGMD DM SNV 2bpflanks");
         sj.add("HGMD DM indel 9bpflanks");
-        sj.add("ClinVar");
-        sj.add("ClinVar HGVS");
-        sj.add("ClinVar ClinSource");
-        sj.add("ClinVar AlleleOrigin");
-        sj.add("ClinVar ClinRevStat");
+        sj.add("ClinVar site");
+//        sj.add("ClinVar HGVS");
+//        sj.add("ClinVar ClinSource");
+//        sj.add("ClinVar AlleleOrigin");
+//        sj.add("ClinVar ClinRevStat");
         sj.add("ClinVar ClinRevStar");
         sj.add("ClinVar ClinSig");
-        sj.add("ClinVar ClinSigIncl");
-        sj.add("ClinVar DiseaseDB");
+//        sj.add("ClinVar ClinSigIncl");
+//        sj.add("ClinVar DiseaseDB");
         sj.add("ClinVar DiseaseName");
-        sj.add("ClinVar PubmedID");
-        sj.add("ClinVar rsID");
+//        sj.add("ClinVar PubmedID");
+//        sj.add("ClinVar rsID");
         sj.add("ClinVar PLP SNV 2bpflanks");
         sj.add("ClinVar PLP indel 9bpflanks");
         sj.add("ClinVar Pathogenic Indel Count");
@@ -115,13 +115,13 @@ public class KnownVarManager {
         sj.add("ClinVar Pathogenic Last Pathogenic Location");
         sj.add("ClinGen");
         sj.add("ClinGen HaploinsufficiencyDesc");
-        sj.add("ClinGen TriplosensitivityDesc");
+//        sj.add("ClinGen TriplosensitivityDesc");
         sj.add("OMIM Disease");
-        sj.add("RecessiveCarrier");
+//        sj.add("RecessiveCarrier");
         sj.add("ACMG");
-        sj.add("dbDSM Disease");
-        sj.add("dbDSM Classification");
-        sj.add("dbDSM PubmedID");
+//        sj.add("dbDSM Disease");
+//        sj.add("dbDSM Classification");
+//        sj.add("dbDSM PubmedID");
 
         return sj.toString();
     }
@@ -132,9 +132,9 @@ public class KnownVarManager {
                 + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n"
                 + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
                 + "OMIM: " + DataManager.getVersion(omimTable) + "\n"
-                + "RecessiveCarrier: " + DataManager.getVersion(recessiveCarrierTable) + "\n"
-                + "ACMG: " + DataManager.getVersion(acmgTable) + "\n"
-                + "dbDSM: " + DataManager.getVersion(dbDSMTable) + "\n";
+//                + "RecessiveCarrier: " + DataManager.getVersion(recessiveCarrierTable) + "\n"
+                + "ACMG: " + DataManager.getVersion(acmgTable) + "\n";
+//                + "dbDSM: " + DataManager.getVersion(dbDSMTable) + "\n";
 
     }
 
@@ -152,11 +152,11 @@ public class KnownVarManager {
 
             initOMIMMap();
 
-            initRecessiveCarrierMap();
+//            initRecessiveCarrierMap();
 
             initACMGMap();
 
-            initDBDSMMap();
+//            initDBDSMMap();
 
             if (KnownVarCommand.isKnownVarOnly
                     || KnownVarCommand.isKnownVarPathogenicOnly) {

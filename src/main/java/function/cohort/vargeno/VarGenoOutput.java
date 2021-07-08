@@ -42,8 +42,8 @@ public class VarGenoOutput extends Output {
         byte tierFlag = this.calledVar.isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
         
         sj.add(FormatManager.getByte(tierFlag));
-        sj.add(FormatManager.getByte(isDominantAndClinGenHaploinsufficient(carrier)));
-        sj.add(FormatManager.getByte(isPreviouslyPathogenicReported(carrier)));
+        sj.add(FormatManager.getByte(calledVar.isDominantAndClinGenHaploinsufficient(carrier)));
+        sj.add(FormatManager.getByte(calledVar.isPreviouslyPathogenicReported(carrier)));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, carrier, sample);

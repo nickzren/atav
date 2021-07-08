@@ -204,15 +204,15 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 // co-occurance freq in controls is 0
                 && coFreq[Index.CTRL] == 0
                 // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-                && output1.isNotObservedInHomAmongControl() && output2.isNotObservedInHomAmongControl()
+                && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
                 // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
-                && output1.isControlAFValid() && output2.isControlAFValid()) {
+                && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
             tierFlag4CompVar = 1;
         } else if ( // tier 2
                 // if one of the variant meets tier 2 inclusion criteria
                 (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
                 // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
-                && output1.isNHomFromControlsValid(10) && output2.isNHomFromControlsValid(10)) {
+                && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
             tierFlag4CompVar = 2;
         }
 

@@ -11,11 +11,11 @@ public class ClinGen {
 
     private int clinGen;
     private String haploinsufficiencyDesc;
-    private String triplosensitivityDesc;
+//    private String triplosensitivityDesc;
 
     public ClinGen(String haploinsufficiencyDesc, String triplosensitivityDesc) {
         this.haploinsufficiencyDesc = haploinsufficiencyDesc;
-        this.triplosensitivityDesc = triplosensitivityDesc;
+//        this.triplosensitivityDesc = triplosensitivityDesc;
 
         if (haploinsufficiencyDesc.equals("Sufficient evidence")
                 || haploinsufficiencyDesc.equals("Some evidence")
@@ -29,7 +29,7 @@ public class ClinGen {
 
         sj.add(FormatManager.getInteger(clinGen));
         sj.add(FormatManager.getString(haploinsufficiencyDesc));
-        sj.add(FormatManager.getString(triplosensitivityDesc));
+//        sj.add(FormatManager.getString(triplosensitivityDesc));
 
         return sj;
     }

@@ -14,6 +14,7 @@ import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
 import utils.DBManager;
 import utils.ErrorManager;
+import utils.FormatManager;
 
 /**
  *
@@ -43,8 +44,7 @@ public class GnomADManager {
     // gene metrics
     private static final String GENE_METRICS_PATH = "data/gnomad/gnomad.v2.1.1.lof_metrics.subset.by_gene.csv.gz";
     private static StringJoiner geneMetricsHeader = new StringJoiner(",");
-    private static final HashMap<String, String> geneMap = new HashMap<>();
-    private static StringJoiner NA = new StringJoiner(",");
+    private static final HashMap<String, Float> geneMap = new HashMap<>();
 
     private static PreparedStatement preparedStatement4VariantExome;
     private static PreparedStatement preparedStatement4MNVExome;
@@ -88,14 +88,18 @@ public class GnomADManager {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("gnomAD Exome FILTER");
-        sj.add("gnomAD Exome segdup");
-        sj.add("gnomAD Exome lcr");
-        sj.add("gnomAD Exome decoy");
+//        sj.add("gnomAD Exome segdup");
+//        sj.add("gnomAD Exome lcr");
+//        sj.add("gnomAD Exome decoy");
         sj.add("gnomAD Exome rf_tp_probability");
-        sj.add("gnomAD Exome qd");
-        sj.add("gnomAD Exome pab_max");
+//        sj.add("gnomAD Exome qd");
+//        sj.add("gnomAD Exome pab_max");
 
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
+            if (!GnomADExomeCommand.getInstance().popSet.contains(GnomADManager.EXOME_POP[i])) {
+                continue;
+            }
+
             String pop = GnomADManager.EXOME_POP[i];
             sj.add("gnomAD Exome " + pop + "_AF");
 
@@ -120,14 +124,18 @@ public class GnomADManager {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("gnomAD Genome FILTER");
-        sj.add("gnomAD Genome segdup");
-        sj.add("gnomAD Genome lcr");
-        sj.add("gnomAD Genome decoy");
+//        sj.add("gnomAD Genome segdup");
+//        sj.add("gnomAD Genome lcr");
+//        sj.add("gnomAD Genome decoy");
         sj.add("gnomAD Genome rf_tp_probability");
-        sj.add("gnomAD Genome qd");
-        sj.add("gnomAD Genome pab_max");
+//        sj.add("gnomAD Genome qd");
+//        sj.add("gnomAD Genome pab_max");
 
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
+            if (!GnomADGenomeCommand.getInstance().popSet.contains(GnomADManager.GENOME_POP[i])) {
+                continue;
+            }
+
             String pop = GnomADManager.GENOME_POP[i];
             sj.add("gnomAD Genome " + pop + "_AF");
 
@@ -163,7 +171,7 @@ public class GnomADManager {
     public static String getGeneMetricsVersion() {
         return "gnomAD Gene Metrics: " + DataManager.getVersion(GENE_METRICS_PATH) + "\n";
     }
-    
+
     private static void initGeneMap() {
         try {
             File f = new File(Data.ATAV_HOME + GENE_METRICS_PATH);
@@ -174,20 +182,15 @@ public class GnomADManager {
             String lineStr = "";
             boolean isFirstLine = true;
             while ((lineStr = br.readLine()) != null) {
-                int firstCommaIndex = lineStr.indexOf(",");
-                String geneName = lineStr.substring(0, firstCommaIndex);
-                String values = lineStr.substring(firstCommaIndex + 1);
+                String[] tmp = lineStr.split(",");
+                String geneName = tmp[0];
 
                 if (isFirstLine) {
-                    for (String str : values.split(",")) {
-                        geneMetricsHeader.add("gnomAD Gene " + str);
-
-                        NA.add(Data.STRING_NA);
-                    }
+                    geneMetricsHeader.add("gnomAD Gene pLI");
 
                     isFirstLine = false;
                 } else {
-                    geneMap.put(geneName, values);
+                    geneMap.put(geneName, FormatManager.getFloat(tmp[1]));
                 }
             }
 
@@ -199,10 +202,18 @@ public class GnomADManager {
         }
     }
 
-    public static String getGeneMetricsLine(String geneName) {
-        String line = geneMap.get(geneName);
+    public static float getGenePLI(String geneName) {
+        return geneMap.get(geneName);
+    }
 
-        return line == null ? NA.toString() : line;
+    public static boolean isGenePLIValid(String geneName) {
+        Float value = geneMap.get(geneName);
+
+        if (value == null || value == Data.FLOAT_NA) {
+            return false;
+        } else {
+            return value >= 0.9;
+        }
     }
 
     public static PreparedStatement getPreparedStatement4VariantExome(boolean isMNV) {

@@ -30,10 +30,10 @@ public class HGMDOutput {
 
         hgmd = getHGMD(collection);
 
-        m2Site = KnownVarManager.getHGMDBySite(var, -2);
-        m1Site = KnownVarManager.getHGMDBySite(var, -1);
-        p1Site = KnownVarManager.getHGMDBySite(var, 1);
-        p2Site = KnownVarManager.getHGMDBySite(var, 2);
+//        m2Site = KnownVarManager.getHGMDBySite(var, -2);
+//        m1Site = KnownVarManager.getHGMDBySite(var, -1);
+//        p1Site = KnownVarManager.getHGMDBySite(var, 1);
+//        p2Site = KnownVarManager.getHGMDBySite(var, 2);
 
         siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
@@ -92,17 +92,25 @@ public class HGMDOutput {
         return indel9bpflanks > 0;
     }
 
+    public boolean isFlankingValid(boolean isSNV) {
+        if(isSNV) {
+            return snv2bpflanks > 0;
+        } else {
+            return indel9bpflanks > 0;
+        }
+    }
+    
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(m2Site);
-        sj.add(m1Site);
+//        sj.add(m2Site);
+//        sj.add(m1Site);
         sj.add(FormatManager.getInteger(siteCount));
         sj.add(hgmd.getDiseaseName());
-        sj.add(hgmd.getPmid());
+//        sj.add(hgmd.getPmid());
         sj.add(hgmd.getVariantClass());
-        sj.add(p1Site);
-        sj.add(p2Site);
+//        sj.add(p1Site);
+//        sj.add(p2Site);
         sj.add(FormatManager.getInteger(snv2bpflanks));
         sj.add(FormatManager.getInteger(indel9bpflanks));
 

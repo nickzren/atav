@@ -99,12 +99,6 @@ public class Output {
         sj.add("HGVS_p");
         sj.add("Polyphen Humdiv Score");
         sj.add("Polyphen Humdiv Prediction");
-        sj.add("Polyphen Humdiv Score (CCDS)");
-        sj.add("Polyphen Humdiv Prediction (CCDS)");
-        sj.add("Polyphen Humvar Score");
-        sj.add("Polyphen Humvar Prediction");
-        sj.add("Polyphen Humvar Score (CCDS)");
-        sj.add("Polyphen Humvar Prediction (CCDS)");
         sj.add("Gene Name");
         sj.add("UpToDate Gene Name");
         sj.add("All Gene Symbols");
@@ -411,81 +405,6 @@ public class Output {
             // add deleted sample geno back
             calledVar.addSampleGeno(geno, sample);
         }
-    }
-
-    /*
-        1. variant call DP >= 10
-        2. LoF and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
-        3. >= 25% reads support the variant call
-        4. QUAL >= 50, QD >= 2, GQ >= 50, MQ >= 40
-        5. variant is het call and <= 5 observed among IGM controls and gnomAD (WES & WGS) controls
-        6. variant is a PASS variant call among gnomAD (WES & WGS)
-     */
-    public byte isDominantAndClinGenHaploinsufficient(Carrier carrier) {
-        if (carrier != null && carrier.getDP() >= 10 // 1
-                && this.calledVar.isLOF() && this.calledVar.getKnownVar().getClinGen().isInClinGenSufficientOrSomeEvidence() // 2
-                && carrier.getPercAltRead() >= 0.25 // 3
-                && carrier.getQual() >= 50 && carrier.getQD() >= 2 && carrier.getGQ() >= 50 && carrier.getMQ() >= 40 // 4
-                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 5
-                && this.calledVar.getGnomADExome().isFilterPass() && this.calledVar.getGnomADGenome().isFilterPass() // 6
-                ) {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    /*
-        1. variant call DP >= 10
-        2. same variant curated as "DM" in HGMD or PLP in ClinVar
-        3. >= 25% reads support the variant call
-        4. QUAL >= 40, QD >= 2
-        5. variant is absent among IGM controls and gnomAD (WES & WGS) controls
-     */
-    public byte isPreviouslyPathogenicReported(Carrier carrier) {
-        if (carrier != null && carrier.getDP() >= 10 // 1
-                && (this.calledVar.getKnownVar().isHGMDDM() || this.calledVar.getKnownVar().isClinVarPLP()) // 2
-                && carrier.getPercAltRead() >= 0.25 // 3
-                && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
-                && isGenotypeAbsentAmongControl(carrier.getGT()) // 5
-                ) {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
-    public boolean isGenotypeAbsentAmongControl(int gt) {
-        if (gt == Index.HET) {
-            return isNHetFromControlsValid(0);
-        } else { // HOM Alt
-            return isNHomFromControlsValid(0);
-        }
-    }
-
-    // variant is absent among IGM controls and gnomAD (WES & WGS) controls
-    public boolean isVariantAbsentAmongControl() {
-        return (this.calledVar.getDefaultControl().getAF() == 0
-                || this.calledVar.getDefaultControl().getAF() == Data.FLOAT_NA)
-                && (this.calledVar.getGnomADExome().getControlAF() == 0
-                || this.calledVar.getGnomADExome().getControlAF() == Data.FLOAT_NA)
-                && (this.calledVar.getGnomADGenome().getControlAF() == 0
-                || this.calledVar.getGnomADGenome().getControlAF() == Data.FLOAT_NA);
-    }
-
-    // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls
-    public boolean isNHetFromControlsValid(int count) {
-        return this.calledVar.getDefaultControl().getControlNHET()
-                + this.calledVar.getGnomADExome().getControlNHET()
-                + this.calledVar.getGnomADGenome().getControlNHET() <= count;
-    }
-
-    // less than N homozygous observed from IGM controls + gnomAD (WES & WGS) controls
-    public boolean isNHomFromControlsValid(int count) {
-        return this.calledVar.getDefaultControl().getNHOM()
-                + this.calledVar.getGnomADExome().getControlNHOM()
-                + this.calledVar.getGnomADGenome().getControlNHOM() <= count;
     }
 
     public double getLooAf() {

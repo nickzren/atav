@@ -414,4 +414,55 @@ public class CalledVariant extends AnnotatedVariant {
 
         return MathManager.devide(ac, totalAC);
     }
+    
+        /*
+        1. variant call DP >= 10
+        2. LoF and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
+        3. >= 25% reads support the variant call
+        4. QUAL >= 50, QD >= 2, GQ >= 50, MQ >= 40
+        5. variant is het call and <= 5 observed among IGM controls and gnomAD (WES & WGS) controls
+        6. variant is a PASS variant call among gnomAD (WES & WGS)
+     */
+    public byte isDominantAndClinGenHaploinsufficient(Carrier carrier) {
+        if (carrier != null && carrier.getDP() >= 10 // 1
+                && isLOF() && getKnownVar().getClinGen().isInClinGenSufficientOrSomeEvidence() // 2
+                && carrier.getPercAltRead() >= 0.25 // 3
+                && carrier.getQual() >= 50 && carrier.getQD() >= 2 && carrier.getGQ() >= 50 && carrier.getMQ() >= 40 // 4
+                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 5
+                && getGnomADExome().isFilterPass() && getGnomADGenome().isFilterPass() // 6
+                ) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /*
+        1. variant call DP >= 10
+        2. same variant curated as "DM" in HGMD or PLP in ClinVar
+        3. >= 25% reads support the variant call
+        4. QUAL >= 40, QD >= 2
+        5. variant is absent among IGM controls and gnomAD (WES & WGS) controls
+     */
+    public byte isPreviouslyPathogenicReported(Carrier carrier) {
+        if (carrier != null && carrier.getDP() >= 10 // 1
+                && (getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP()) // 2
+                && carrier.getPercAltRead() >= 0.25 // 3
+                && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
+                && isGenotypeAbsentAmongControl(carrier.getGT()) // 5
+                ) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
+    public boolean isGenotypeAbsentAmongControl(int gt) {
+        if (gt == Index.HET) {
+            return isNHetFromControlsValid(0);
+        } else { // HOM Alt
+            return isNHomFromControlsValid(0);
+        }
+    }
 }

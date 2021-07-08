@@ -221,14 +221,18 @@ public class GnomADGenome {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(filter);
-        sj.add(FormatManager.getByte(segdup));
-        sj.add(FormatManager.getByte(lcr));
-        sj.add(FormatManager.getByte(decoy));
+//        sj.add(FormatManager.getByte(segdup));
+//        sj.add(FormatManager.getByte(lcr));
+//        sj.add(FormatManager.getByte(decoy));
         sj.add(FormatManager.getFloat(rf_tp_probability));
-        sj.add(FormatManager.getFloat(qd));
-        sj.add(FormatManager.getFloat(pab_max));
+//        sj.add(FormatManager.getFloat(qd));
+//        sj.add(FormatManager.getFloat(pab_max));
 
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
+            if(!GnomADGenomeCommand.getInstance().popSet.contains(GnomADManager.GENOME_POP[i])) {
+                continue;
+            }
+            
             sj.add(FormatManager.getFloat(af[i]));
 
             switch (i) {

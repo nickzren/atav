@@ -34,9 +34,9 @@ public class KnownVarOutput {
         clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
         clinGen = KnownVarManager.getClinGen(geneName);
         omimDiseaseName = KnownVarManager.getOMIM(geneName);
-        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
+//        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
         acmg = KnownVarManager.getACMG(geneName);
-        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
+//        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
     }
 
     public StringJoiner getStringJoiner() {
@@ -47,9 +47,9 @@ public class KnownVarOutput {
         sj.merge(clinVarPathoratio.getStringJoiner());
         sj.merge(clinGen.getStringJoiner());
         sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));
-        sj.add(FormatManager.getInteger(recessiveCarrier));
+//        sj.add(FormatManager.getInteger(recessiveCarrier));
         sj.add(acmg);
-        sj.merge(dbDSMOutput.getStringJoiner());
+//        sj.merge(dbDSMOutput.getStringJoiner());
 
         return sj;
     }
@@ -60,10 +60,6 @@ public class KnownVarOutput {
     
     public boolean hasHGMDDM() {
         return hgmdOutput.getHGMD().getVariantClass().contains("DM");
-    }
-    
-    public boolean hasIndel9bpFlanksInHGMD() {
-        return hgmdOutput.hasIndel9bpFlanks();
     }
     
     public boolean isClinVarPLP() {
@@ -86,6 +82,10 @@ public class KnownVarOutput {
     
     public ClinVarPathoratio getClinVarPathoratio() {
         return clinVarPathoratio;
+    }
+    
+    public boolean isHGMDOrClinVarFlankingValid(boolean isSNV) {
+        return hgmdOutput.isFlankingValid(isSNV) || clinVarOutput.isFlankingValid(isSNV);
     }
     
     @Override

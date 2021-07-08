@@ -77,7 +77,7 @@ public class TrioOutput extends Output {
                 && (isChildHetPercAltReadValid() || isChildHomPercAltReadValid())
                 && isChildGATKQCValid()
                 && isTrioDPBinValid()
-                && isVariantAbsentAmongControl();
+                && calledVar.isVariantAbsentAmongControl();
     }
 
     // variant not detected in parents
@@ -117,8 +117,8 @@ public class TrioOutput extends Output {
         return denovoFlag.contains("HOMOZYGOUS")
                 && isHetInBothParents()
                 && isChildHomPercAltReadValid()
-                && isNotObservedInHomAmongControl()
-                && isControlAFValid()
+                && calledVar.isNotObservedInHomAmongControl()
+                && calledVar.isControlAFValid()
                 && cCarrier.getMQ() >= 40;
     }
 
@@ -138,25 +138,11 @@ public class TrioOutput extends Output {
         return false;
     }
 
-    // genotype is not observed in Hemizygous or Homozygous from IGM controls and gnomAD (WES & WGS) controls
-    public boolean isNotObservedInHomAmongControl() {
-        return this.calledVar.getDefaultControl().isNotObservedInControlHemiOrHom()
-                && this.calledVar.getGnomADExome().isNotObservedInControlHemiOrHom()
-                && this.calledVar.getGnomADGenome().isNotObservedInControlHemiOrHom();
-    }
-
-    // max 0.5% AF to IGM controls and gnomAD (WES & WGS) controls
-    public boolean isControlAFValid() {
-        return this.calledVar.getDefaultControl().getAF() < 0.005f
-                && this.calledVar.getGnomADExome().getControlAF() < 0.005f
-                && this.calledVar.getGnomADGenome().getControlAF() < 0.005f;
-    }
-
     public boolean isHemizygousTier1() {
         return denovoFlag.contains("HEMIZYGOUS")
                 && isMotherHetAndFatherNotHom()
                 && isChildHomPercAltReadValid()
-                && isNotObservedInHomAmongControl()
+                && calledVar.isNotObservedInHomAmongControl()
                 && cCarrier.getMQ() >= 40;
     }
 
@@ -168,34 +154,22 @@ public class TrioOutput extends Output {
     public boolean isDenovoTier2() {
         return denovoFlag.contains("DE NOVO")
                 && isVariantNotDetectedInParents()
-                && isTotalACFromControlsValid();
-    }
-
-    // less than 20 alleles observed from IGM controls + gnomAD (WES & WGS) controls
-    public boolean isTotalACFromControlsValid() {
-        return this.calledVar.getDefaultControl().getAC()
-                + this.calledVar.getGnomADExome().getControlAC()
-                + this.calledVar.getGnomADGenome().getControlAC() < 20;
+                && calledVar.isTotalACFromControlsValid();
     }
 
     public boolean isHomozygousTier2() {
         return denovoFlag.contains("HOMOZYGOUS")
-                && isNHomFromControlsValid(10);
+                && calledVar.isNHomFromControlsValid(10);
     }
 
     public boolean isHemizygousTier2() {
         return denovoFlag.contains("HEMIZYGOUS")
-                && isNHomFromControlsValid(10);
+                && calledVar.isNHomFromControlsValid(10);
     }
 
     // parents not hom
     public boolean isParentsNotHom() {
         return mGeno != Index.HOM && fGeno != Index.HOM;
-    }
-
-    // one of the parents is a carrier
-    public boolean isInheritedVariant() {
-        return isQualifiedGeno(mGeno) || isQualifiedGeno(fGeno);
     }
 
     public INHERITED_FROM getInheritedFrom() {
@@ -220,14 +194,14 @@ public class TrioOutput extends Output {
                     || isHomozygousTier1()
                     || isHemizygousTier1()) {
                 tierFlag4SingleVar = 1;
-            } else if (getCalledVariant().isMetTier2InclusionCriteria()
+            } else if (calledVar.isMetTier2InclusionCriteria()
                     && (isDenovoTier2()
                     || isHomozygousTier2()
                     || isHemizygousTier2())) {
                 tierFlag4SingleVar = 2;
             }
         } else { // child variant
-            tierFlag4SingleVar = getCalledVariant().isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
+            tierFlag4SingleVar = calledVar.isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
         }
 
         return tierFlag4SingleVar;
@@ -237,8 +211,8 @@ public class TrioOutput extends Output {
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(FormatManager.getByte(isDominantAndClinGenHaploinsufficient(cCarrier)));
-        sj.add(FormatManager.getByte(isPreviouslyPathogenicReported(cCarrier)));
+        sj.add(FormatManager.getByte(calledVar.isDominantAndClinGenHaploinsufficient(cCarrier)));
+        sj.add(FormatManager.getByte(calledVar.isPreviouslyPathogenicReported(cCarrier)));
         sj.add(denovoFlag);
         sj.add(getInheritedFrom().name());
         calledVar.getVariantData(sj);

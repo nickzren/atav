@@ -70,7 +70,7 @@ public class DenovoDB {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getString(phenotyp));
-        sj.add(FormatManager.getString(pubmedID));
+//        sj.add(FormatManager.getString(pubmedID));
 
         return sj;
     }

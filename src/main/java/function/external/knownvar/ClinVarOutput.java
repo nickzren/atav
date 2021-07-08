@@ -102,17 +102,17 @@ public class ClinVarOutput {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(siteCount));
-        sj.add(clinvar.getHGVS());
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSource()));
-        sj.add(clinvar.getAlleleOrigin());
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinRevStat()));
+//        sj.add(clinvar.getHGVS());
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSource()));
+//        sj.add(clinvar.getAlleleOrigin());
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinRevStat()));
         sj.add(clinvar.getClinRevStar());
         sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSig()));
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSigIncl()));
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseDB()));
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSigIncl()));
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseDB()));
         sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseName()));
-        sj.add(FormatManager.appendDoubleQuote(clinvar.getPubmedID()));
-        sj.add(clinvar.getRSID());
+//        sj.add(FormatManager.appendDoubleQuote(clinvar.getPubmedID()));
+//        sj.add(clinvar.getRSID());
         sj.add(FormatManager.getInteger(snv2bpflanks));
         sj.add(FormatManager.getInteger(indel9bpflanks));
 
@@ -121,6 +121,14 @@ public class ClinVarOutput {
 
     public ClinVar getClinVar() {
         return clinvar;
+    }
+    
+    public boolean isFlankingValid(boolean isSNV) {
+        if(isSNV) {
+            return snv2bpflanks > 0;
+        } else {
+            return indel9bpflanks > 0;
+        }
     }
 
     @Override

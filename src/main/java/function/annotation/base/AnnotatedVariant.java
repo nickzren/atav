@@ -420,12 +420,6 @@ public class AnnotatedVariant extends Variant {
         sj.add(HGVS_p);
         sj.add(FormatManager.getFloat(polyphenHumdiv));
         sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
-        sj.add(FormatManager.getFloat(polyphenHumdivCCDS));
-        sj.add(PolyphenManager.getPrediction(polyphenHumdivCCDS, effect));
-        sj.add(FormatManager.getFloat(polyphenHumvar));
-        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
-        sj.add(FormatManager.getFloat(polyphenHumvarCCDS));
-        sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
         sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
@@ -510,7 +504,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (GnomADCommand.isIncludeGeneMetrics) {
-            sj.add(getGnomADGeneMetrics());
+            sj.add(getGnomADGenePLI());
         }
 
         if (KnownVarCommand.isInclude) {
@@ -638,8 +632,8 @@ public class AnnotatedVariant extends Variant {
         return gnomADGenome.getStringJoiner();
     }
 
-    public String getGnomADGeneMetrics() {
-        return GnomADManager.getGeneMetricsLine(getGeneName());
+    public String getGnomADGenePLI() {
+        return FormatManager.getFloat(GnomADManager.getGenePLI(getGeneName()));
     }
 
     public StringJoiner getKnownVarStringJoiner() {
@@ -733,61 +727,113 @@ public class AnnotatedVariant extends Variant {
     public DefaultControl getDefaultControl() {
         return defaultControl;
     }
-    
+
     public GnomADExome getGnomADExome() {
         return gnomADExome;
     }
-    
+
     public GnomADGenome getGnomADGenome() {
         return gnomADGenome;
     }
-    
+
     public KnownVarOutput getKnownVar() {
         return knownVarOutput;
     }
-    
+
     public boolean isLOF() {
         return EffectManager.isLOF(effectID);
     }
-    
+
     // tier 2 inclusion criteria
     public boolean isMetTier2InclusionCriteria() {
         return hasHGMDDM()
                 || hasClinVarPLP()
                 || isInClinGen()
                 || isInClinVarPathoratio()
-                || hasIndel9bpFlanksInHGMD();
+                || isGnomADGenePLIValid()
+                || isHGMDOrClinVarFlankingValid();
     }
 
     // a variant at the same site has reported HGMD DM or ClinVar PLP
     public boolean hasHGMDOrClinVar() {
         return hasHGMDDM() || hasClinVarPLP();
     }
-    
+
     // a variant at the same site is reported HGMD as "DM" or "DM?"
     private boolean hasHGMDDM() {
-        return getKnownVar().hasHGMDDM();
+        return knownVarOutput.hasHGMDDM();
     }
 
     // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
     private boolean hasClinVarPLP() {
-        return getKnownVar().hasClinVarPLP();
+        return knownVarOutput.hasClinVarPLP();
     }
 
     // LoF variant and occurs within a ClinGen disease gene
     private boolean isInClinGen() {
         return isLOF()
-                && getKnownVar().getClinGen().isInClinGen();
+                && knownVarOutput.getClinGen().isInClinGen();
     }
 
     // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
     private boolean isInClinVarPathoratio() {
         return isLOF()
-                && getKnownVar().getClinVarPathoratio().isInClinVarPathoratio();
+                && knownVarOutput.getClinVarPathoratio().isInClinVarPathoratio();
     }
 
-    // an indel that occurs within 9 bases of at least one previously reported HGMD indel
-    private boolean hasIndel9bpFlanksInHGMD() {
-        return getKnownVar().hasIndel9bpFlanksInHGMD();
+    // LoF variant in gnomAD LoF depleted genes with pLI >= 0.9
+    private boolean isGnomADGenePLIValid() {
+        return isLOF()
+                && GnomADManager.isGenePLIValid(geneName);
+    }
+
+    // any variants in 2bp (SNVs) or 9pb (indels) flanking regions either HGMD DM or ClinVar PLP
+    private boolean isHGMDOrClinVarFlankingValid() {
+        return knownVarOutput.isHGMDOrClinVarFlankingValid(isSnv());
+    }
+
+    // variant is absent among IGM controls and gnomAD (WES & WGS) controls
+    public boolean isVariantAbsentAmongControl() {
+        return (defaultControl.getAF() == 0
+                || defaultControl.getAF() == Data.FLOAT_NA)
+                && (gnomADExome.getControlAF() == 0
+                || gnomADExome.getControlAF() == Data.FLOAT_NA)
+                && (gnomADGenome.getControlAF() == 0
+                || gnomADGenome.getControlAF() == Data.FLOAT_NA);
+    }
+
+    // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls
+    public boolean isNHetFromControlsValid(int count) {
+        return defaultControl.getControlNHET()
+                + gnomADExome.getControlNHET()
+                + gnomADGenome.getControlNHET() <= count;
+    }
+
+    // less than N homozygous observed from IGM controls + gnomAD (WES & WGS) controls
+    public boolean isNHomFromControlsValid(int count) {
+        return defaultControl.getNHOM()
+                + gnomADExome.getControlNHOM()
+                + gnomADGenome.getControlNHOM() <= count;
+    }
+
+    // genotype is not observed in Hemizygous or Homozygous from IGM controls and gnomAD (WES & WGS) controls
+    public boolean isNotObservedInHomAmongControl() {
+        return defaultControl.isNotObservedInControlHemiOrHom()
+                && gnomADExome.isNotObservedInControlHemiOrHom()
+                && gnomADGenome.isNotObservedInControlHemiOrHom();
+    }
+
+    // max 0.5% AF to IGM controls and gnomAD (WES & WGS) controls
+    public boolean isControlAFValid() {
+        return defaultControl.getAF() < 0.005f
+                && gnomADExome.getControlAF() < 0.005f
+                && gnomADGenome.getControlAF() < 0.005f;
+    }
+
+    // less than 20 alleles observed from IGM controls + gnomAD (WES & WGS) controls
+    public boolean isTotalACFromControlsValid() {
+        return defaultControl.getAC()
+                + gnomADExome.getControlAC()
+                + gnomADGenome.getControlAC() < 20;
     }
 }

@@ -30,7 +30,7 @@ public class DenovoDBManager {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("DenovoDB Phenotype");
-        sj.add("DenovoDB PubmedID");
+//        sj.add("DenovoDB PubmedID");
 
         return sj.toString();
     }
