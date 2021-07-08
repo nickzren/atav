@@ -74,38 +74,17 @@ public class TrioOutput extends Output {
     public boolean isDenovoTier1() {
         return denovoFlag.contains("DE NOVO")
                 && isVariantNotDetectedInParents()
-                && (isChildHetPercAltReadValid() || isChildHomPercAltReadValid())
-                && isChildGATKQCValid()
+                && (calledVar.isCarrierHetPercAltReadValid(cCarrier)
+                || calledVar.isCarrieHomPercAltReadValid(cCarrier))
+                && calledVar.isCarrierGATKQCValid(cCarrier)
                 && isTrioDPBinValid()
-                && calledVar.isVariantAbsentAmongControl();
+                && calledVar.isGenotypeAbsentAmongControl(cCarrier.getGT());
     }
 
     // variant not detected in parents
     private boolean isVariantNotDetectedInParents() {
         return mGeno != Index.HOM && mGeno != Index.HET
                 && fGeno != Index.HOM && fGeno != Index.HET;
-    }
-
-    // child het carrier and >= 10% percent alt read
-    private boolean isChildHetPercAltReadValid() {
-        if (cGeno == Index.HET) {
-            float percAltRead = cCarrier != null ? cCarrier.getPercAltRead() : Data.FLOAT_NA;
-
-            return percAltRead != Data.FLOAT_NA && percAltRead >= 0.1;
-        }
-
-        return false;
-    }
-
-    // child Qual >= 50, QD >= 2, MQ >= 40
-    private boolean isChildGATKQCValid() {
-        if (cCarrier != null) {
-            return cCarrier.getQual() >= 50
-                    && cCarrier.getQD() >= 2
-                    && cCarrier.getMQ() >= 40;
-        }
-
-        return false;
     }
 
     // all family members have DP Bin >= 10
@@ -116,7 +95,7 @@ public class TrioOutput extends Output {
     public boolean isHomozygousTier1() {
         return denovoFlag.contains("HOMOZYGOUS")
                 && isHetInBothParents()
-                && isChildHomPercAltReadValid()
+                && calledVar.isCarrieHomPercAltReadValid(cCarrier)
                 && calledVar.isNotObservedInHomAmongControl()
                 && calledVar.isControlAFValid()
                 && cCarrier.getMQ() >= 40;
@@ -127,21 +106,10 @@ public class TrioOutput extends Output {
         return mGeno == Index.HET && fGeno == Index.HET;
     }
 
-    // child hom carrier and >= 80% percent alt read
-    private boolean isChildHomPercAltReadValid() {
-        if (cGeno == Index.HOM) {
-            float percAltRead = cCarrier != null ? cCarrier.getPercAltRead() : Data.FLOAT_NA;
-
-            return percAltRead != Data.FLOAT_NA && percAltRead >= 0.8;
-        }
-
-        return false;
-    }
-
     public boolean isHemizygousTier1() {
         return denovoFlag.contains("HEMIZYGOUS")
                 && isMotherHetAndFatherNotHom()
-                && isChildHomPercAltReadValid()
+                && calledVar.isCarrieHomPercAltReadValid(cCarrier)
                 && calledVar.isNotObservedInHomAmongControl()
                 && cCarrier.getMQ() >= 40;
     }
@@ -184,7 +152,7 @@ public class TrioOutput extends Output {
             return INHERITED_FROM.NA;
         }
     }
-    
+
     public byte getTierFlag4SingleVar() {
         byte tierFlag4SingleVar = Data.BYTE_NA;
 

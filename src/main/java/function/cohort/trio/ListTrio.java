@@ -199,8 +199,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         byte tierFlag4CompVar = Data.BYTE_NA;
 
         // tier 1
-        if ( // neither parent is hom alt
-                output1.isParentsNotHom() && output2.isParentsNotHom()
+        if ( output1.isParentsNotHom() && output2.isParentsNotHom()
                 // co-occurance freq in controls is 0
                 && coFreq[Index.CTRL] == 0
                 // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls

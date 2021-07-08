@@ -38,9 +38,15 @@ public class VarGenoOutput extends Output {
         Carrier carrier = calledVar.getCarrier(sample.getId());
 
         StringJoiner sj = new StringJoiner(",");
-        
-        byte tierFlag = this.calledVar.isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
-        
+
+        byte tierFlag = Data.BYTE_NA;
+        if (calledVar.isCaseVarTier1(carrier)) {
+            tierFlag = 1;
+        } else if (calledVar.isMetTier2InclusionCriteria()
+                && calledVar.isCaseVarTier2()) {
+            tierFlag = 2;
+        }
+
         sj.add(FormatManager.getByte(tierFlag));
         sj.add(FormatManager.getByte(calledVar.isDominantAndClinGenHaploinsufficient(carrier)));
         sj.add(FormatManager.getByte(calledVar.isPreviouslyPathogenicReported(carrier)));

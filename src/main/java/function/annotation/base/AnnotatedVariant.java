@@ -792,16 +792,6 @@ public class AnnotatedVariant extends Variant {
         return knownVarOutput.isHGMDOrClinVarFlankingValid(isSnv());
     }
 
-    // variant is absent among IGM controls and gnomAD (WES & WGS) controls
-    public boolean isVariantAbsentAmongControl() {
-        return (defaultControl.getAF() == 0
-                || defaultControl.getAF() == Data.FLOAT_NA)
-                && (gnomADExome.getControlAF() == 0
-                || gnomADExome.getControlAF() == Data.FLOAT_NA)
-                && (gnomADGenome.getControlAF() == 0
-                || gnomADGenome.getControlAF() == Data.FLOAT_NA);
-    }
-
     // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls
     public boolean isNHetFromControlsValid(int count) {
         return defaultControl.getControlNHET()

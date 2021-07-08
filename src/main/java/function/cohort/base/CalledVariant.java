@@ -267,11 +267,11 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     private boolean checkLooAFValid() {
-        if(CohortLevelFilterCommand.maxLooMAF == Data.NO_FILTER
+        if (CohortLevelFilterCommand.maxLooMAF == Data.NO_FILTER
                 && CohortLevelFilterCommand.maxLooAF == Data.NO_FILTER) {
             return true;
         }
-        
+
         for (Carrier carrier : carrierMap.values()) {
             byte geno = carrier.gt;
             Sample sample = SampleManager.getMap().get(carrier.getSampleId());
@@ -294,7 +294,7 @@ public class CalledVariant extends AnnotatedVariant {
 
             // add deleted sample geno back
             addSampleGeno(geno, sample);
-            
+
             // if any samples' loo af failed to pass the threshold, set variant to invalid
             if (!CohortLevelFilterCommand.isLooAFValid(looAF)) {
                 isValid = false;
@@ -318,10 +318,8 @@ public class CalledVariant extends AnnotatedVariant {
                 + genoCount[Index.REF][Index.CTRL];
 
         // hom / (hom + het + ref)
-        homFreq[Index.CASE] = MathManager.devide(
-                genoCount[Index.HOM][Index.CASE], totalCaseGenotypeCount);
-        homFreq[Index.CTRL] = MathManager.devide(
-                genoCount[Index.HOM][Index.CTRL], totalCtrlGenotypeCount);
+        homFreq[Index.CASE] = MathManager.devide(genoCount[Index.HOM][Index.CASE], totalCaseGenotypeCount);
+        homFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HOM][Index.CTRL], totalCtrlGenotypeCount);
 
         hetFreq[Index.CASE] = MathManager.devide(genoCount[Index.HET][Index.CASE], totalCaseGenotypeCount);
         hetFreq[Index.CTRL] = MathManager.devide(genoCount[Index.HET][Index.CTRL], totalCtrlGenotypeCount);
@@ -414,8 +412,8 @@ public class CalledVariant extends AnnotatedVariant {
 
         return MathManager.devide(ac, totalAC);
     }
-    
-        /*
+
+    /*
         1. variant call DP >= 10
         2. LoF and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
         3. >= 25% reads support the variant call
@@ -464,5 +462,54 @@ public class CalledVariant extends AnnotatedVariant {
         } else { // HOM Alt
             return isNHomFromControlsValid(0);
         }
+    }
+
+    /*
+        1. het carrier >= 10% percent alt read OR hom carrier >= 80% percent alt read
+        2. Qual >= 50, QD >= 2, MQ >= 40 
+        3. genotype is absent among IGM and gnomAD controls
+    */
+    public boolean isCaseVarTier1(Carrier carrier) {
+        return (isCarrierHetPercAltReadValid(carrier)
+                || isCarrieHomPercAltReadValid(carrier))
+                && isCarrierGATKQCValid(carrier)
+                && isGenotypeAbsentAmongControl(carrier.getGT());
+    }
+
+    // het carrier and >= 10% percent alt read
+    public boolean isCarrierHetPercAltReadValid(Carrier carrier) {
+        if (carrier.getGT() == Index.HET) {
+            float percAltRead = carrier != null ? carrier.getPercAltRead() : Data.FLOAT_NA;
+
+            return percAltRead != Data.FLOAT_NA && percAltRead >= 0.1;
+        }
+
+        return false;
+    }
+
+    // hom carrier and >= 80% percent alt read
+    public boolean isCarrieHomPercAltReadValid(Carrier carrier) {
+        if (carrier.getGT() == Index.HOM) {
+            float percAltRead = carrier != null ? carrier.getPercAltRead() : Data.FLOAT_NA;
+
+            return percAltRead != Data.FLOAT_NA && percAltRead >= 0.8;
+        }
+
+        return false;
+    }
+
+    // Qual >= 50, QD >= 2, MQ >= 40
+    public boolean isCarrierGATKQCValid(Carrier carrier) {
+        if (carrier != null) {
+            return carrier.getQual() >= 50
+                    && carrier.getQD() >= 2
+                    && carrier.getMQ() >= 40;
+        }
+
+        return false;
+    }
+
+    public boolean isCaseVarTier2() {
+        return isTotalACFromControlsValid();
     }
 }
