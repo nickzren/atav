@@ -67,6 +67,7 @@ import global.Data;
 import global.Index;
 import java.util.StringJoiner;
 import utils.FormatManager;
+import utils.LogManager;
 import utils.MathManager;
 
 /**
@@ -74,6 +75,13 @@ import utils.MathManager;
  * @author nick
  */
 public class Output {
+
+    public static int tier1SingleVarCount;
+    public static int tier2SingleVarCount;
+    public static int tier1CompoundVarCount;
+    public static int tier2CompoundVarCount;
+    public static int dominantAndHaploinsufficientCount;
+    public static int previouslyPathogenicReportedCount;
 
     public static StringJoiner getVariantDataHeader() {
         StringJoiner sj = new StringJoiner(",");
@@ -409,5 +417,14 @@ public class Output {
 
     public double getLooAf() {
         return looAF;
+    }
+
+    public static void logTierVariantCount() {
+        LogManager.writeAndPrintNoNewLine("Tier 1 Compond Var genotype count: " + tier1CompoundVarCount);
+        LogManager.writeAndPrintNoNewLine("Tier 2 Compond Var genotype count: " + tier2CompoundVarCount);
+        LogManager.writeAndPrintNoNewLine("Tier 1 Single Var genotype count: " + tier1SingleVarCount);
+        LogManager.writeAndPrintNoNewLine("Tier 2 Single Var genotype count: " + tier2SingleVarCount);
+        LogManager.writeAndPrintNoNewLine("Dominant And Haploinsufficient Var genotype count: " + dominantAndHaploinsufficientCount);
+        LogManager.writeAndPrintNoNewLine("Previously Pathogenic Reported Var genotype count: " + previouslyPathogenicReportedCount);
     }
 }

@@ -163,7 +163,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                 StringJoiner sj = new StringJoiner(" ");
                 sj.add(sample.getFamilyId());
                 if (PedMapCommand.outputExperimentId) {
-                    sj.add(FormatManager.getInteger(sample.getExperimentId()));
+                    sj.add(sample.getName() + "." + FormatManager.getInteger(sample.getExperimentId()));
                 } else {
                     sj.add(sample.getName());
                 }

@@ -107,7 +107,7 @@ public class HGMDOutput {
 //        sj.add(m1Site);
         sj.add(FormatManager.getInteger(siteCount));
         sj.add(hgmd.getDiseaseName());
-//        sj.add(hgmd.getPmid());
+        sj.add(hgmd.getPmid());
         sj.add(hgmd.getVariantClass());
 //        sj.add(p1Site);
 //        sj.add(p2Site);

@@ -87,7 +87,7 @@ public class KnownVarManager {
 //        sj.add("HGMDm1site");
         sj.add("HGMD site");
         sj.add("HGMD Disease");
-//        sj.add("HGMD PMID");
+        sj.add("HGMD PMID");
         sj.add("HGMD Class");
 //        sj.add("HGMDp1site");
 //        sj.add("HGMDp2site");
@@ -518,7 +518,7 @@ public class KnownVarManager {
     public static String getOMIM(String geneName) {
         return FormatManager.getString(omimMap.get(geneName));
     }
-
+    
     public static int getRecessiveCarrier(String geneName) {
         if (recessiveCarrierSet.contains(geneName)) {
             return 1;

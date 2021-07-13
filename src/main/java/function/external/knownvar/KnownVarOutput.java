@@ -57,37 +57,42 @@ public class KnownVarOutput {
     public boolean isHGMDDM() {
         return hgmdOutput.getHGMD().getVariantClass().equals("DM");
     }
-    
+
     public boolean hasHGMDDM() {
         return hgmdOutput.getHGMD().getVariantClass().contains("DM");
     }
-    
+
     public boolean isClinVarPLP() {
         return clinVarOutput.getClinVar().getClinSig().equals("Pathogenic")
                 || clinVarOutput.getClinVar().getClinSig().equals("Likely_pathogenic");
     }
-    
+
     public boolean hasClinVarPLP() {
         return clinVarOutput.getClinVar().getClinSig().contains("Pathogenic")
                 || clinVarOutput.getClinVar().getClinSig().contains("Likely_pathogenic");
     }
-    
+
     public boolean isOMIMGene() {
         return !omimDiseaseName.equals(Data.STRING_NA);
     }
-    
+
+    public boolean isOMIMDominant() {
+        return omimDiseaseName.contains("[AD]")
+                || omimDiseaseName.contains("[XLD]");
+    }
+
     public ClinGen getClinGen() {
         return clinGen;
     }
-    
+
     public ClinVarPathoratio getClinVarPathoratio() {
         return clinVarPathoratio;
     }
-    
+
     public boolean isHGMDOrClinVarFlankingValid(boolean isSNV) {
         return hgmdOutput.isFlankingValid(isSNV) || clinVarOutput.isFlankingValid(isSNV);
     }
-    
+
     @Override
     public String toString() {
         return getStringJoiner().toString();

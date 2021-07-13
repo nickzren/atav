@@ -18,8 +18,8 @@ public class VarGenoOutput extends Output {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Tier Flag");
-        sj.add("Dominant and ClinGen Haploinsufficient");
-        sj.add("Previously Pathogenic Reported");
+        sj.add("Dominant and Haploinsufficient Gene");
+        sj.add("Previously Pathogenic Reported Variant");
         sj.merge(getVariantDataHeader());
         sj.merge(getAnnotationDataHeader());
         sj.merge(getCarrierDataHeader());
@@ -42,13 +42,15 @@ public class VarGenoOutput extends Output {
         byte tierFlag = Data.BYTE_NA;
         if (calledVar.isCaseVarTier1(carrier)) {
             tierFlag = 1;
+            Output.tier1SingleVarCount++;
         } else if (calledVar.isMetTier2InclusionCriteria()
                 && calledVar.isCaseVarTier2()) {
             tierFlag = 2;
+            Output.tier2SingleVarCount++;
         }
 
         sj.add(FormatManager.getByte(tierFlag));
-        sj.add(FormatManager.getByte(calledVar.isDominantAndClinGenHaploinsufficient(carrier)));
+        sj.add(FormatManager.getByte(calledVar.isDominantAndHaploinsufficient(carrier)));
         sj.add(FormatManager.getByte(calledVar.isPreviouslyPathogenicReported(carrier)));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);

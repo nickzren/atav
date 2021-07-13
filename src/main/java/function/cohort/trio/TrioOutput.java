@@ -162,11 +162,13 @@ public class TrioOutput extends Output {
                     || isHomozygousTier1()
                     || isHemizygousTier1()) {
                 tierFlag4SingleVar = 1;
+                Output.tier1SingleVarCount++;
             } else if (calledVar.isMetTier2InclusionCriteria()
                     && (isDenovoTier2()
                     || isHomozygousTier2()
                     || isHemizygousTier2())) {
                 tierFlag4SingleVar = 2;
+                Output.tier2SingleVarCount++;
             }
         } else { // child variant
             tierFlag4SingleVar = calledVar.isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
@@ -179,7 +181,7 @@ public class TrioOutput extends Output {
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(FormatManager.getByte(calledVar.isDominantAndClinGenHaploinsufficient(cCarrier)));
+        sj.add(FormatManager.getByte(calledVar.isDominantAndHaploinsufficient(cCarrier)));
         sj.add(FormatManager.getByte(calledVar.isPreviouslyPathogenicReported(cCarrier)));
         sj.add(denovoFlag);
         sj.add(getInheritedFrom().name());

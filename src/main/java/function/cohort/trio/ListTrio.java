@@ -3,6 +3,7 @@ package function.cohort.trio;
 import function.cohort.base.CalledVariant;
 import function.cohort.base.AnalysisBase4CalledVar;
 import static function.cohort.trio.TrioManager.COMP_HET_FLAG;
+import function.variant.base.Output;
 import global.Data;
 import global.Index;
 import utils.CommonCommand;
@@ -61,6 +62,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
+        Output.logTierVariantCount();
     }
 
     @Override
@@ -146,7 +148,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         }
     }
 
-    private void outputDenovoOrHomOrInheritedVar(TrioOutput output) throws Exception {       
+    private void outputDenovoOrHomOrInheritedVar(TrioOutput output) throws Exception {
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -199,7 +201,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         byte tierFlag4CompVar = Data.BYTE_NA;
 
         // tier 1
-        if ( output1.isParentsNotHom() && output2.isParentsNotHom()
+        if (output1.isParentsNotHom() && output2.isParentsNotHom()
                 // co-occurance freq in controls is 0
                 && coFreq[Index.CTRL] == 0
                 // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
@@ -207,12 +209,14 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
                 && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
             tierFlag4CompVar = 1;
+            Output.tier1CompoundVarCount++;
         } else if ( // tier 2
                 // if one of the variant meets tier 2 inclusion criteria
                 (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
                 // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
                 && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
             tierFlag4CompVar = 2;
+            Output.tier2CompoundVarCount++;
         }
 
         doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, coFreq, "#1");

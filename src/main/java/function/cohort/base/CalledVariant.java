@@ -4,6 +4,7 @@ import function.annotation.base.AnnotatedVariant;
 import function.cohort.statistics.HWEExact;
 import function.cohort.trio.TrioCommand;
 import function.cohort.trio.TrioManager;
+import function.variant.base.Output;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
@@ -414,21 +415,16 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     /*
-        1. variant call DP >= 10
-        2. LoF and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
-        3. >= 25% reads support the variant call
-        4. QUAL >= 50, QD >= 2, GQ >= 50, MQ >= 40
-        5. variant is het call and <= 5 observed among IGM controls and gnomAD (WES & WGS) controls
-        6. variant is a PASS variant call among gnomAD (WES & WGS)
+        1. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
+        2. variant is het call and <= 5 observed among IGM and gnomAD controls
      */
-    public byte isDominantAndClinGenHaploinsufficient(Carrier carrier) {
-        if (carrier != null && carrier.getDP() >= 10 // 1
-                && isLOF() && getKnownVar().getClinGen().isInClinGenSufficientOrSomeEvidence() // 2
-                && carrier.getPercAltRead() >= 0.25 // 3
-                && carrier.getQual() >= 50 && carrier.getQD() >= 2 && carrier.getGQ() >= 50 && carrier.getMQ() >= 40 // 4
-                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 5
-                && getGnomADExome().isFilterPass() && getGnomADGenome().isFilterPass() // 6
+    public byte isDominantAndHaploinsufficient(Carrier carrier) {
+        if (isLOF()
+                && (getKnownVar().getClinGen().isInClinGenSufficientOrSomeEvidence()
+                || getKnownVar().isOMIMDominant()) // 1
+                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 2
                 ) {
+            Output.dominantAndHaploinsufficientCount++;
             return 1;
         }
 
@@ -436,19 +432,11 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     /*
-        1. variant call DP >= 10
-        2. same variant curated as "DM" in HGMD or PLP in ClinVar
-        3. >= 25% reads support the variant call
-        4. QUAL >= 40, QD >= 2
-        5. variant is absent among IGM controls and gnomAD (WES & WGS) controls
+        same variant curated as "DM" in HGMD or PLP in ClinVar
      */
     public byte isPreviouslyPathogenicReported(Carrier carrier) {
-        if (carrier != null && carrier.getDP() >= 10 // 1
-                && (getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP()) // 2
-                && carrier.getPercAltRead() >= 0.25 // 3
-                && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
-                && isGenotypeAbsentAmongControl(carrier.getGT()) // 5
-                ) {
+        if (getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP()) {
+            Output.previouslyPathogenicReportedCount++;
             return 1;
         }
 
@@ -468,7 +456,7 @@ public class CalledVariant extends AnnotatedVariant {
         1. het carrier >= 10% percent alt read OR hom carrier >= 80% percent alt read
         2. Qual >= 50, QD >= 2, MQ >= 40 
         3. genotype is absent among IGM and gnomAD controls
-    */
+     */
     public boolean isCaseVarTier1(Carrier carrier) {
         return (isCarrierHetPercAltReadValid(carrier)
                 || isCarrieHomPercAltReadValid(carrier))
@@ -498,10 +486,11 @@ public class CalledVariant extends AnnotatedVariant {
         return false;
     }
 
-    // Qual >= 50, QD >= 2, MQ >= 40
+    // DP bin >= 10, Qual >= 50, QD >= 2, MQ >= 40
     public boolean isCarrierGATKQCValid(Carrier carrier) {
         if (carrier != null) {
-            return carrier.getQual() >= 50
+            return carrier.getDPBin() >= 10
+                    && carrier.getQual() >= 50
                     && carrier.getQD() >= 2
                     && carrier.getMQ() >= 40;
         }

@@ -349,7 +349,7 @@ public class SampleManager {
         StringJoiner sj = new StringJoiner("\t");
         sj.add(sample.getFamilyId());
         if (PedMapCommand.outputExperimentId) {
-            sj.add(FormatManager.getInteger(sample.getExperimentId()));
+            sj.add(sample.getName() + "." + FormatManager.getInteger(sample.getExperimentId()));
         } else {
             sj.add(sample.getName());
         }
@@ -394,6 +394,10 @@ public class SampleManager {
                 sampleMap.put(sampleId, sample);
 
                 countSampleNum(sample);
+
+                if (PedMapCommand.outputExperimentId) {
+                    individualId += "." + experimentId;
+                }
 
                 bwAllSample.write(familyId + "\t"
                         + individualId + "\t"

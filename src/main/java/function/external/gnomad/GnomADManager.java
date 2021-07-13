@@ -203,7 +203,9 @@ public class GnomADManager {
     }
 
     public static float getGenePLI(String geneName) {
-        return geneMap.get(geneName);
+        Float pli = geneMap.get(geneName);
+        
+        return pli == null ? Data.FLOAT_NA : pli;
     }
 
     public static boolean isGenePLIValid(String geneName) {

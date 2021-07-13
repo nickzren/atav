@@ -56,8 +56,8 @@ public class TrioManager {
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
         sj.add("Tier Flag (Compound Var)");
         sj.add("Tier Flag (Single Var)");
-        sj.add("Dominant and ClinGen Haploinsufficient");
-        sj.add("Previously Pathogenic Reported");
+        sj.add("Dominant and Haploinsufficient Gene");
+        sj.add("Previously Pathogenic Reported Variant");
         sj.add("Denovo Flag");
         sj.add("Inherited From");
         sj.merge(Output.getVariantDataHeader());
