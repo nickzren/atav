@@ -73,6 +73,7 @@ import global.Data;
 import global.Index;
 import java.util.StringJoiner;
 import utils.FormatManager;
+import utils.LogManager;
 import utils.MathManager;
 
 /**
@@ -80,6 +81,13 @@ import utils.MathManager;
  * @author nick
  */
 public class Output {
+
+    public static int tier1SingleVarCount;
+    public static int tier2SingleVarCount;
+    public static int tier1CompoundVarCount;
+    public static int tier2CompoundVarCount;
+    public static int dominantAndHaploinsufficientCount;
+    public static int previouslyPathogenicReportedCount;
 
     public static StringJoiner getVariantDataHeader() {
         StringJoiner sj = new StringJoiner(",");
@@ -322,12 +330,12 @@ public class Output {
 
         return sj;
     }
-    
+
     public static StringJoiner getCarrierDataHeader_pgl() {
         StringJoiner sj = new StringJoiner(",");
 
 //        sj.add("Experiment ID");
-//        sj.add("Sample Name");
+        sj.add("Sample Name");
 //        sj.add("Sample Type");
 //        sj.add("Sample Phenotype");
         sj.add("GT");
@@ -433,10 +441,10 @@ public class Output {
         sj.add(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA));
         sj.add(carrier != null ? carrier.getFILTER() : Data.STRING_NA);
     }
-    
+
     public void getCarrierData_pgl(StringJoiner sj, Carrier carrier, Sample sample) {
 //        sj.add(FormatManager.getInteger(sample.getExperimentId()));
-//        sj.add(sample.getName());
+        sj.add(sample.getName());
 //        sj.add(sample.getType());
 //        sj.add(sample.getPhenotype());
         sj.add(getGenoStr(calledVar.getGT(sample.getIndex())));
@@ -487,84 +495,12 @@ public class Output {
         return looAF;
     }
     
-     /*
-        1. variant call DP >= 10
-        2. LoF and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
-        3. >= 25% reads support the variant call
-        4. QUAL >= 50, QD >= 2, GQ >= 50, MQ >= 40
-        5. variant is het call and <= 5 observed among IGM controls and gnomAD (WES & WGS) controls
-        6. variant has CCDS transcript
-        7. variant is a PASS variant call among gnomAD (WES & WGS)
-     */
-    public byte isDominantAndClinGenHaploinsufficient(Carrier carrier) {
-        if (carrier != null && carrier.getDP() >= 10 // 1
-                && this.calledVar.isLOF() && this.calledVar.getClinGen().isInClinGenSufficientOrSomeEvidence() // 2
-                && carrier.getPercAltRead() >= 0.25 // 3
-                && carrier.getQual() >= 50 && carrier.getQD() >= 2 && carrier.getGQ() >= 50 && carrier.getMQ() >= 40 // 4
-                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 5
-                && this.calledVar.hasCCDS() // 6
-                && this.calledVar.getGnomADExome().isFilterPass() && this.calledVar.getGnomADGenome().isFilterPass() // 7
-                ) {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    /*
-        1. variant call DP >= 10
-        2. same variant curated as "DM" in HGMD or PLP in ClinVar
-        3. >= 25% reads support the variant call
-        4. QUAL >= 40, QD >= 2
-        5. variant is absent among IGM controls and gnomAD (WES & WGS) controls
-        6. variant has CCDS transcript
-        7. variant occurs in OMIM gene
-     */
-    public byte isPreviouslyPathogenicReported(Carrier carrier) {
-        if (carrier != null && carrier.getDP() >= 10 // 1
-                && (this.calledVar.getKnownVar().isHGMDDM() || this.calledVar.getKnownVar().isClinVarPLP()) // 2
-                && carrier.getPercAltRead() >= 0.25 // 3
-                && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
-                && isGenotypeAbsentAmongControl(carrier.getGT()) // 5
-                && this.calledVar.hasCCDS() // 6
-                && this.calledVar.isOMIMGene() // 7
-                ) {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
-    public boolean isGenotypeAbsentAmongControl(int gt) {
-        if (gt == Index.HET) {
-            return isNHetFromControlsValid(0);
-        } else { // HOM Alt
-            return isNHomFromControlsValid(0);
-        }
-    }
-
-    // variant is absent among IGM controls and gnomAD (WES & WGS) controls
-    public boolean isVariantAbsentAmongControl() {
-        return (this.calledVar.getDefaultControl().getAF() == 0
-                || this.calledVar.getDefaultControl().getAF() == Data.FLOAT_NA)
-                && (this.calledVar.getGnomADExome().getControlAF() == 0
-                || this.calledVar.getGnomADExome().getControlAF() == Data.FLOAT_NA)
-                && (this.calledVar.getGnomADGenome().getControlAF() == 0
-                || this.calledVar.getGnomADGenome().getControlAF() == Data.FLOAT_NA);
-    }
-
-    // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls
-    public boolean isNHetFromControlsValid(int count) {
-        return this.calledVar.getDefaultControl().getControlNHET()
-                + this.calledVar.getGnomADExome().getControlNHET()
-                + this.calledVar.getGnomADGenome().getControlNHET() <= count;
-    }
-
-    // less than N homozygous observed from IGM controls + gnomAD (WES & WGS) controls
-    public boolean isNHomFromControlsValid(int count) {
-        return this.calledVar.getDefaultControl().getNHOM()
-                + this.calledVar.getGnomADExome().getControlNHOM()
-                + this.calledVar.getGnomADGenome().getControlNHOM() <= count;
+    public static void logTierVariantCount() {
+        LogManager.writeAndPrintNoNewLine("Tier 1 Compond Var genotype count: " + tier1CompoundVarCount);
+        LogManager.writeAndPrintNoNewLine("Tier 2 Compond Var genotype count: " + tier2CompoundVarCount);
+        LogManager.writeAndPrintNoNewLine("Tier 1 Single Var genotype count: " + tier1SingleVarCount);
+        LogManager.writeAndPrintNoNewLine("Tier 2 Single Var genotype count: " + tier2SingleVarCount);
+        LogManager.writeAndPrintNoNewLine("Dominant And Haploinsufficient Var genotype count: " + dominantAndHaploinsufficientCount);
+        LogManager.writeAndPrintNoNewLine("Previously Pathogenic Reported Var genotype count: " + previouslyPathogenicReportedCount);
     }
 }

@@ -17,8 +17,8 @@ public class ClinVarOutput {
     private ClinVar clinvar;
 
     private int siteCount;
-    private int pathogenicIndelsCount;
-    private int allIndelsCount;
+    private int snv2bpflanks;
+    private int indel9bpflanks;
     
     private boolean isClinVar = false;
 
@@ -29,8 +29,8 @@ public class ClinVarOutput {
 
         siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
-        pathogenicIndelsCount = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var) : Data.INTEGER_NA; // only for INDELs
-        allIndelsCount = var.isIndel() ? KnownVarManager.getClinVarAllIndelFlankingCount(var) : Data.INTEGER_NA; // only for INDELs
+        snv2bpflanks = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, var.isSnv(), 2) : Data.INTEGER_NA; // for INDELs
+        indel9bpflanks = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, var.isSnv(), 9) : Data.INTEGER_NA; // for INDELs
     }
 
     /*
@@ -109,10 +109,18 @@ public class ClinVarOutput {
         return clinvar;
     }
 
+    public boolean isFlankingValid(boolean isSNV) {
+        if(isSNV) {
+            return snv2bpflanks > 0;
+        } else {
+            return indel9bpflanks > 0;
+        }
+    }
+    
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-//        sj.add(FormatManager.getInteger(siteCount));
+        sj.add(FormatManager.getInteger(siteCount));
 //        sj.add(clinvar.getHGVS());
 //        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSource()));
 //        sj.add(clinvar.getAlleleOrigin());
@@ -124,8 +132,8 @@ public class ClinVarOutput {
 //        sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseName()));
 //        sj.add(FormatManager.appendDoubleQuote(clinvar.getPubmedID()));
 //        sj.add(clinvar.getRSID());
-//        sj.add(FormatManager.getInteger(pathogenicIndelsCount));
-//        sj.add(FormatManager.getInteger(allIndelsCount));
+        sj.add(FormatManager.getInteger(snv2bpflanks));
+        sj.add(FormatManager.getInteger(indel9bpflanks));
 
         return sj;
     }

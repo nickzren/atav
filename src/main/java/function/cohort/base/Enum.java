@@ -18,4 +18,8 @@ public class Enum {
             return value;
         }
     };
+    
+    public enum INHERITED_FROM {
+        BOTH, MOTHER, FATHER, NA;
+    };
 }

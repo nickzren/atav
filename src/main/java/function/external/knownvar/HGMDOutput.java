@@ -22,6 +22,7 @@ public class HGMDOutput {
     private int siteCount;
     private String p1Site;
     private String p2Site;
+    private int snv2bpflanks;
     private int indel9bpflanks;
 
     private boolean isHGMD = false;
@@ -31,14 +32,15 @@ public class HGMDOutput {
 
         hgmd = getHGMD(collection);
 
-        m2Site = KnownVarManager.getHGMDBySite(var, -2);
-        m1Site = KnownVarManager.getHGMDBySite(var, -1);
-        p1Site = KnownVarManager.getHGMDBySite(var, 1);
-        p2Site = KnownVarManager.getHGMDBySite(var, 2);
+//        m2Site = KnownVarManager.getHGMDBySite(var, -2);
+//        m1Site = KnownVarManager.getHGMDBySite(var, -1);
+//        p1Site = KnownVarManager.getHGMDBySite(var, 1);
+//        p2Site = KnownVarManager.getHGMDBySite(var, 2);
 
         siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
-        indel9bpflanks = var.isIndel() ? KnownVarManager.getHGMDIndelFlankingCount(var) : Data.INTEGER_NA; // only for INDELs
+        snv2bpflanks = var.isSnv() ? KnownVarManager.getHGMDFlankingCount(var, var.isSnv(), 2) : Data.INTEGER_NA; // for SNVs
+        indel9bpflanks = var.isIndel() ? KnownVarManager.getHGMDFlankingCount(var, var.isSnv(), 9) : Data.INTEGER_NA; // for indels
     }
 
     /*
@@ -90,12 +92,13 @@ public class HGMDOutput {
 
 //        sj.add(m2Site);
 //        sj.add(m1Site);
-//        sj.add(FormatManager.getInteger(siteCount));
+        sj.add(FormatManager.getInteger(siteCount));
 //        sj.add(hgmd.getDiseaseName());
-//        sj.add(hgmd.getPmid());
+        sj.add(hgmd.getPmid());
         sj.add(hgmd.getVariantClass());
 //        sj.add(p1Site);
 //        sj.add(p2Site);
+        sj.add(FormatManager.getInteger(snv2bpflanks));
         sj.add(FormatManager.getInteger(indel9bpflanks));
 
         return sj;
@@ -108,11 +111,19 @@ public class HGMDOutput {
     public HGMD getHGMD() {
         return hgmd;
     }
-    
+
     public boolean hasIndel9bpFlanks() {
         return indel9bpflanks > 0;
     }
-    
+
+    public boolean isFlankingValid(boolean isSNV) {
+        if (isSNV) {
+            return snv2bpflanks > 0;
+        } else {
+            return indel9bpflanks > 0;
+        }
+    }
+
     @Override
     public String toString() {
         return getStringJoiner().toString();

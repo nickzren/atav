@@ -77,6 +77,10 @@ public class KnownVarOutput {
         return clinVarPathoratio;
     }
     
+    public boolean isHGMDOrClinVarFlankingValid(boolean isSNV) {
+        return hgmdOutput.isFlankingValid(isSNV) || clinVarOutput.isFlankingValid(isSNV);
+    }
+    
     @Override
     public String toString() {
         return getStringJoiner().toString();

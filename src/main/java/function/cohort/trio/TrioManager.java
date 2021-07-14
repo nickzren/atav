@@ -48,47 +48,17 @@ public class TrioManager {
         StringJoiner sj = new StringJoiner(",");
 
 //        sj.add("Family ID");
-//        sj.add("Mother");
-//        sj.add("Father");
-        sj.add("Tier Flag");
-        sj.merge(getHeaderByVariant());
-
-        return sj.toString();
-    }
-
-    public static String getHeader4CompHet() {
-        StringJoiner sj = new StringJoiner(",");
-
-//        sj.add("Family ID");
-//        sj.add("Mother");
-//        sj.add("Father");
+        sj.add("Proband");
+        sj.add("Mother");
+        sj.add("Father");
         sj.add("Comp Het Flag");
-//        sj.add("Var Case Freq #1 & #2 (co-occurance)");
-//        sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
-        sj.add("Tier Flag");
-        sj.merge(initVarHeaderStr("1"));
-        sj.merge(initVarHeaderStr("2"));
-
-        return sj.toString();
-    }
-
-    private static StringJoiner initVarHeaderStr(String var) {
-        String[] columnList = getHeaderByVariant().toString().split(",");
-
-        StringJoiner sj = new StringJoiner(",");
-
-        for (String column : columnList) {
-            sj.add(column + " (#" + var + ")");
-        }
-
-        return sj;
-    }
-
-    private static StringJoiner getHeaderByVariant() {
-        StringJoiner sj = new StringJoiner(",");
-
-        sj.add("Dominant and ClinGen Haploinsufficient");
-        sj.add("Previously Pathogenic Reported");
+        sj.add("Compound Var");
+        sj.add("Tier Flag (Compound Var)");
+        sj.add("Tier Flag (Single Var)");
+        sj.add("Dominant and Haploinsufficient Gene");
+        sj.add("Previously Pathogenic Reported Variant");
+        sj.add("Denovo Flag");
+        sj.add("Inherited From");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader_pgl());
@@ -100,12 +70,9 @@ public class TrioManager {
         sj.add("DP Bin (father)");
         sj.add("AD ALT (father)");
         sj.add("DP (father)");
-        sj.add("Denovo Flag");
-        sj.add("Is Inherited Variant");
-//        sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
 
-        return sj;
+        return sj.toString();
     }
 
     public static void init() {

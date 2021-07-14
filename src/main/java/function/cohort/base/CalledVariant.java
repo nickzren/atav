@@ -4,6 +4,7 @@ import function.annotation.base.AnnotatedVariant;
 import function.cohort.statistics.HWEExact;
 import function.cohort.trio.TrioCommand;
 import function.cohort.trio.TrioManager;
+import function.variant.base.Output;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
@@ -413,5 +414,93 @@ public class CalledVariant extends AnnotatedVariant {
                 + 2 * genoCount[Index.REF][Index.CTRL];
 
         return MathManager.devide(ac, totalAC);
+    }
+    
+    /*
+        1. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
+        2. variant is het call and <= 5 observed among IGM and gnomAD controls
+     */
+    public byte isDominantAndHaploinsufficient(Carrier carrier) {
+        if (isLOF()
+                && (getClinGen().isInClinGenSufficientOrSomeEvidence()
+                || isOMIMDominant()) // 1
+                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 2
+                ) {
+            Output.dominantAndHaploinsufficientCount++;
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /*
+        same variant curated as "DM" in HGMD or PLP in ClinVar
+     */
+    public byte isPreviouslyPathogenicReported(Carrier carrier) {
+        if (getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP()) {
+            Output.previouslyPathogenicReportedCount++;
+            return 1;
+        }
+
+        return 0;
+    }
+
+    // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
+    public boolean isGenotypeAbsentAmongControl(int gt) {
+        if (gt == Index.HET) {
+            return isNHetFromControlsValid(0);
+        } else { // HOM Alt
+            return isNHomFromControlsValid(0);
+        }
+    }
+
+    /*
+        1. het carrier >= 10% percent alt read OR hom carrier >= 80% percent alt read
+        2. Qual >= 50, QD >= 2, MQ >= 40 
+        3. genotype is absent among IGM and gnomAD controls
+     */
+    public boolean isCaseVarTier1(Carrier carrier) {
+        return (isCarrierHetPercAltReadValid(carrier)
+                || isCarrieHomPercAltReadValid(carrier))
+                && isCarrierGATKQCValid(carrier)
+                && isGenotypeAbsentAmongControl(carrier.getGT());
+    }
+
+    // het carrier and >= 10% percent alt read
+    public boolean isCarrierHetPercAltReadValid(Carrier carrier) {
+        if (carrier.getGT() == Index.HET) {
+            float percAltRead = carrier != null ? carrier.getPercAltRead() : Data.FLOAT_NA;
+
+            return percAltRead != Data.FLOAT_NA && percAltRead >= 0.1;
+        }
+
+        return false;
+    }
+
+    // hom carrier and >= 80% percent alt read
+    public boolean isCarrieHomPercAltReadValid(Carrier carrier) {
+        if (carrier.getGT() == Index.HOM) {
+            float percAltRead = carrier != null ? carrier.getPercAltRead() : Data.FLOAT_NA;
+
+            return percAltRead != Data.FLOAT_NA && percAltRead >= 0.8;
+        }
+
+        return false;
+    }
+
+    // DP bin >= 10, Qual >= 50, QD >= 2, MQ >= 40
+    public boolean isCarrierGATKQCValid(Carrier carrier) {
+        if (carrier != null) {
+            return carrier.getDPBin() >= 10
+                    && carrier.getQual() >= 50
+                    && carrier.getQD() >= 2
+                    && carrier.getMQ() >= 40;
+        }
+
+        return false;
+    }
+
+    public boolean isCaseVarTier2() {
+        return isTotalACFromControlsValid();
     }
 }
