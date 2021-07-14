@@ -44,7 +44,7 @@ public class GnomADManager {
     // gene metrics
     private static final String GENE_METRICS_PATH = "data/gnomad/gnomad.v2.1.1.lof_metrics.subset.by_gene.csv.gz";
     private static StringJoiner geneMetricsHeader = new StringJoiner(",");
-    private static final HashMap<String, Float> geneMap = new HashMap<>();
+    private static final HashMap<String, GnomADGene> geneMap = new HashMap<>();
 
     private static PreparedStatement preparedStatement4VariantExome;
     private static PreparedStatement preparedStatement4MNVExome;
@@ -187,13 +187,18 @@ public class GnomADManager {
 
                 if (isFirstLine) {
                     geneMetricsHeader.add("gnomAD Gene pLI");
+                    geneMetricsHeader.add("gnomAD Gene mis_z");
 
                     isFirstLine = false;
                 } else {
-                    geneMap.put(geneName, FormatManager.getFloat(tmp[1]));
+                    GnomADGene gene = new GnomADGene();
+                    gene.pli = FormatManager.getFloat(tmp[1]);
+                    gene.misZ = FormatManager.getFloat(tmp[3]);
+                    
+                    geneMap.put(geneName, gene);
                 }
             }
-
+            
             br.close();
             decoder.close();
             in.close();
@@ -202,19 +207,39 @@ public class GnomADManager {
         }
     }
 
-    public static float getGenePLI(String geneName) {
-        Float pli = geneMap.get(geneName);
+    public static StringJoiner getGeneMetrics(String geneName) {
+        StringJoiner sj = new StringJoiner(",");
         
-        return pli == null ? Data.FLOAT_NA : pli;
+        GnomADGene gene = geneMap.get(geneName);
+        
+        if(gene == null) {
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+        } else {
+            sj.add(FormatManager.getFloat(gene.pli));
+            sj.add(FormatManager.getFloat(gene.misZ));
+        }
+        
+        return sj;
     }
 
     public static boolean isGenePLIValid(String geneName) {
-        Float value = geneMap.get(geneName);
+        GnomADGene gene = geneMap.get(geneName);
 
-        if (value == null || value == Data.FLOAT_NA) {
+        if (gene == null) {
             return false;
         } else {
-            return value >= 0.9;
+            return gene.pli >= 0.9;
+        }
+    }
+    
+    public static boolean isGeneMisZValid(String geneName) {
+        GnomADGene gene = geneMap.get(geneName);
+
+        if (gene == null) {
+            return false;
+        } else {
+            return gene.misZ >= 2;
         }
     }
 

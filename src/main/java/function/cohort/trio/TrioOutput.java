@@ -171,7 +171,7 @@ public class TrioOutput extends Output {
                 Output.tier2SingleVarCount++;
             }
         } else { // child variant
-            tierFlag4SingleVar = calledVar.isMetTier2InclusionCriteria() ? 2 : Data.BYTE_NA;
+            tierFlag4SingleVar = calledVar.isMetTier2InclusionCriteria() && calledVar.isCaseVarTier2() ? 2 : Data.BYTE_NA;
         }
 
         return tierFlag4SingleVar;

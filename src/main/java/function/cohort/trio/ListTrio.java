@@ -26,7 +26,7 @@ import utils.FormatManager;
 public class ListTrio extends AnalysisBase4CalledVar {
 
     BufferedWriter bwTrioVariant = null;
-    final String denovoFilePath = CommonCommand.outputPath + "trio_variant.csv";
+    final String denovoFilePath = CommonCommand.outputPath + "trio_genotypes.csv";
 
     HashMap<String, List<TrioOutput>> geneVariantListMap = new HashMap<>();
     // avoid output duplicate carrier (comp var & single var)
