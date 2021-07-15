@@ -5,6 +5,7 @@ import function.cohort.base.Sample;
 import function.cohort.base.AnalysisBase4CalledVar;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.SampleManager;
+import function.variant.base.Output;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -54,6 +55,8 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         if (CommonCommand.gzip) {
             ThirdPartyToolManager.gzipFile(genotypesFilePath);
         }
+        
+        Output.logTierVariantCount();
     }
 
     @Override
