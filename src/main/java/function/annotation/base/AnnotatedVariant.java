@@ -533,7 +533,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (GnomADCommand.isIncludeGeneMetrics) {
-            sj.add(getGnomADGenePLI());
+            sj.merge(getGeneMetrics());
         }
 
         if (KnownVarCommand.isInclude) {
@@ -673,8 +673,8 @@ public class AnnotatedVariant extends Variant {
         return gnomADGenome.getStringJoiner();
     }
 
-    public String getGnomADGenePLI() {
-        return FormatManager.getFloat(GnomADManager.getGenePLI(getGeneName()));
+    public StringJoiner getGeneMetrics() {
+        return GnomADManager.getGeneMetrics(getGeneName());
     }
 
     public StringJoiner getKnownVarStringJoiner() {
@@ -805,10 +805,11 @@ public class AnnotatedVariant extends Variant {
     public boolean isMetTier2InclusionCriteria() {
         return hasHGMDDM()
                 || hasClinVarPLP()
+                || isHGMDOrClinVarFlankingValid()
                 || isInClinGen()
                 || isInClinVarPathoratio()
                 || isGnomADGenePLIValid()
-                || isHGMDOrClinVarFlankingValid();
+                || isGeneMisZValid();
     }
 
     // a variant at the same site has reported HGMD DM or ClinVar PLP
@@ -842,6 +843,12 @@ public class AnnotatedVariant extends Variant {
     private boolean isGnomADGenePLIValid() {
         return isLOF()
                 && GnomADManager.isGenePLIValid(geneName);
+    }
+
+    // Missense variant in gnomAD gene with mis_z >= 2
+    private boolean isGeneMisZValid() {
+        return effect.startsWith("missense_variant")
+                && GnomADManager.isGeneMisZValid(geneName);
     }
 
     // any variants in 2bp (SNVs) or 9pb (indels) flanking regions either HGMD DM or ClinVar PLP
