@@ -13,7 +13,7 @@ import utils.FormatManager;
  */
 public class OMIMManager {
 
-    public static final String omimTable = "knownvar.omim_2021_04_08";
+    public static final String omimTable = "knownvar.omim_2021_07_14";
     private static final HashMap<String, String> omimMap = new HashMap<>();
 
     public static String getHeader() {

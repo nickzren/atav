@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.StringJoiner;
 import utils.DBManager;
 import utils.ErrorManager;
-import utils.FormatManager;
 
 /**
  *
@@ -15,7 +14,7 @@ import utils.FormatManager;
  */
 public class ClinGenManager {
 
-    public static final String clinGenTable = "knownvar.clingen_2021_04_08";
+    public static final String clinGenTable = "knownvar.clingen_2021_07_14";
     private static final HashMap<String, ClinGen> clinGenMap = new HashMap<>();
 
     public static String getHeader() {

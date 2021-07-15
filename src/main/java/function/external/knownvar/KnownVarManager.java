@@ -22,9 +22,9 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2021_1";
-    public static final String clinVarTable = "knownvar.clinvar_2021_04_08";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_04_08";
+    public static final String hgmdTable = "knownvar.hgmd_2021_2";
+    public static final String clinVarTable = "knownvar.clinvar_2021_07_14";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_07_14";
 //    public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
 //    public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
 
