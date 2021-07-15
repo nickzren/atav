@@ -45,14 +45,18 @@ public class KnownVarOutput {
 
     public boolean isValid() {
         if (KnownVarCommand.isKnownVarOnly) {
-            return this.hgmdOutput.isHGMDVariant() || this.clinVarOutput.isClinVar();
+            return hgmdOutput.isHGMDVariant() || clinVarOutput.isClinVar();
         }
 
+        if (KnownVarCommand.isKnownVarPathogenicOnly) {
+            return hgmdOutput.isHGMDDMVariant() || clinVarOutput.isClinVarPLP();
+        }
+        
         return true;
     }
     
     public boolean isHGMDDM() {
-        return hgmdOutput.getHGMD().getVariantClass().equals("DM");
+        return hgmdOutput.isHGMDDMVariant();
     }
     
     public boolean hasHGMDDM() {
@@ -62,10 +66,9 @@ public class KnownVarOutput {
     public boolean hasIndel9bpFlanksInHGMD() {
         return hgmdOutput.hasIndel9bpFlanks();
     }
-    
-    public boolean isClinVarPLP() {
-        return clinVarOutput.getClinVar().getClinSig().equals("Pathogenic")
-                || clinVarOutput.getClinVar().getClinSig().equals("Likely_pathogenic");
+
+    public boolean isClinVarPLP() {        
+        return clinVarOutput.isClinVarPLP();
     }
     
     public boolean hasClinVarPLP() {

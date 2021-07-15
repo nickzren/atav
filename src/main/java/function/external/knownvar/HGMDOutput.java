@@ -26,6 +26,7 @@ public class HGMDOutput {
     private int indel9bpflanks;
 
     private boolean isHGMD = false;
+    private boolean isHGMDDM = false;
 
     public HGMDOutput(Variant var, Collection<HGMD> collection) {
         this.var = var;
@@ -64,6 +65,11 @@ public class HGMDOutput {
 
             if (idStr.equals(tmpHgmd.getVariantId())) {
                 isHGMD = true;
+                
+                if(tmpHgmd.getVariantClass().equals("DM")) {
+                    isHGMDDM = true;
+                }
+                
                 return tmpHgmd;
             }
 
@@ -106,6 +112,10 @@ public class HGMDOutput {
 
     public boolean isHGMDVariant() {
         return isHGMD;
+    }
+    
+    public boolean isHGMDDMVariant() {
+        return isHGMDDM;
     }
 
     public HGMD getHGMD() {

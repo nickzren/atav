@@ -19,8 +19,9 @@ public class ClinVarOutput {
     private int siteCount;
     private int snv2bpflanks;
     private int indel9bpflanks;
-    
+
     private boolean isClinVar = false;
+    private boolean isClinVarPLP = false;
 
     public ClinVarOutput(Variant var, Collection<ClinVar> collection) {
         this.var = var;
@@ -62,6 +63,12 @@ public class ClinVarOutput {
 
             if (idStr.equals(tmpClinvar.getVariantId())) {
                 isClinVar = true;
+
+                if (tmpClinvar.getClinSig().contains("Pathogenic")
+                        && !tmpClinvar.getClinSig().contains("Conflicting_interpretations_of_pathogenicity")) {
+                    isClinVarPLP = true;
+                }
+
                 return tmpClinvar;
             }
 
@@ -100,23 +107,27 @@ public class ClinVarOutput {
 
         return clinvar;
     }
-    
+
     public boolean isClinVar() {
         return isClinVar;
     }
     
+    public boolean isClinVarPLP() {
+        return isClinVarPLP;
+    }
+
     public ClinVar getClinVar() {
         return clinvar;
     }
 
     public boolean isFlankingValid(boolean isSNV) {
-        if(isSNV) {
+        if (isSNV) {
             return snv2bpflanks > 0;
         } else {
             return indel9bpflanks > 0;
         }
     }
-    
+
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 

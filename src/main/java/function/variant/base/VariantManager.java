@@ -202,20 +202,6 @@ public class VariantManager {
         }
     }
 
-    public static void reset2KnownVarSet() throws SQLException {
-        clearIncludeVarSet();
-
-        // init ClinVar variants set
-        for (ClinVar clinvar : KnownVarManager.getClinVarMultiMap().values()) {
-            addVariantToList(clinvar.getVariantId(), includeVariantSet, true);
-        }
-
-        // init HGMD variants set
-        for (HGMD hgmd : KnownVarManager.getHGMDMultiMap().values()) {
-            addVariantToList(hgmd.getVariantId(), includeVariantSet, true);
-        }
-    }
-
     private static void addVariantToList(String str, HashSet<String> variantSet,
             boolean isInclude) throws SQLException {
         if (str.startsWith("rs")) {
