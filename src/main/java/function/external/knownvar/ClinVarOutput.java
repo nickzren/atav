@@ -20,6 +20,8 @@ public class ClinVarOutput {
     private int snv2bpflanks;
     private int indel9bpflanks;
 
+    private boolean isClinVarPLP = false;
+
     public ClinVarOutput(Variant var, Collection<ClinVar> collection) {
         this.var = var;
 
@@ -59,6 +61,11 @@ public class ClinVarOutput {
             String idStr = var.getVariantIdStr();
 
             if (idStr.equals(tmpClinvar.getVariantId())) {
+                if (tmpClinvar.getClinSig().contains("Pathogenic")
+                        && !tmpClinvar.getClinSig().contains("Conflicting_interpretations_of_pathogenicity")) {
+                    isClinVarPLP = true;
+                }
+
                 return tmpClinvar;
             }
 
@@ -122,9 +129,13 @@ public class ClinVarOutput {
     public ClinVar getClinVar() {
         return clinvar;
     }
-    
+
+    public boolean isClinVarPLP() {
+        return isClinVarPLP;
+    }
+
     public boolean isFlankingValid(boolean isSNV) {
-        if(isSNV) {
+        if (isSNV) {
             return snv2bpflanks > 0;
         } else {
             return indel9bpflanks > 0;

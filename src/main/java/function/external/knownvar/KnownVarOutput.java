@@ -63,8 +63,7 @@ public class KnownVarOutput {
     }
 
     public boolean isClinVarPLP() {
-        return clinVarOutput.getClinVar().getClinSig().equals("Pathogenic")
-                || clinVarOutput.getClinVar().getClinSig().equals("Likely_pathogenic");
+        return clinVarOutput.isClinVarPLP();
     }
 
     public boolean hasClinVarPLP() {
