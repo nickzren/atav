@@ -17,28 +17,17 @@ public class HGMDOutput {
     private HGMD hgmd;
 
     // new columns
-    private String m2Site;
-    private String m1Site;
     private int siteCount;
-    private String p1Site;
-    private String p2Site;
-    private int snv2bpflanks;
-    private int indel9bpflanks;
+    private int variant10bpflanks;
 
     public HGMDOutput(Variant var, Collection<HGMD> collection) {
         this.var = var;
 
         hgmd = getHGMD(collection);
 
-//        m2Site = KnownVarManager.getHGMDBySite(var, -2);
-//        m1Site = KnownVarManager.getHGMDBySite(var, -1);
-//        p1Site = KnownVarManager.getHGMDBySite(var, 1);
-//        p2Site = KnownVarManager.getHGMDBySite(var, 2);
-
         siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
-        snv2bpflanks = var.isSnv() ? KnownVarManager.getHGMDFlankingCount(var, var.isSnv(), 2) : Data.INTEGER_NA; // for SNVs
-        indel9bpflanks = var.isIndel() ? KnownVarManager.getHGMDFlankingCount(var, var.isSnv(), 9) : Data.INTEGER_NA; // for indels
+        variant10bpflanks = KnownVarManager.getHGMDFlankingCount(var, 10);
     }
 
     /*
@@ -88,31 +77,18 @@ public class HGMDOutput {
         return hgmd;
     }
     
-    public boolean hasIndel9bpFlanks() {
-        return indel9bpflanks > 0;
-    }
-
-    public boolean isFlankingValid(boolean isSNV) {
-        if(isSNV) {
-            return snv2bpflanks > 0;
-        } else {
-            return indel9bpflanks > 0;
-        }
+    public boolean is10bpFlankingValid() {
+        return variant10bpflanks > 0;
     }
     
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-//        sj.add(m2Site);
-//        sj.add(m1Site);
         sj.add(FormatManager.getInteger(siteCount));
         sj.add(hgmd.getDiseaseName());
         sj.add(hgmd.getPmid());
         sj.add(hgmd.getVariantClass());
-//        sj.add(p1Site);
-//        sj.add(p2Site);
-        sj.add(FormatManager.getInteger(snv2bpflanks));
-        sj.add(FormatManager.getInteger(indel9bpflanks));
+        sj.add(FormatManager.getInteger(variant10bpflanks));
 
         return sj;
     }

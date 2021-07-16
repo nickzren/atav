@@ -41,72 +41,36 @@ public class KnownVarManager {
     private static final HashMap<String, String> acmgMap = new HashMap<>();
     private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
 
-    private static PreparedStatement preparedStatement4HGMDSite;
-    private static PreparedStatement preparedStatement4HGMDSNVFlankingCount;
-    private static PreparedStatement preparedStatement4HGMDIndelFlankingCount;
-    private static PreparedStatement preparedStatement4ClinVarPLPSNVFlankingCount;
-    private static PreparedStatement preparedStatement4ClinVarPLPIndelFlankingCount;
+    private static PreparedStatement preparedStatement4HGMDVariantFlankingCount;
+    private static PreparedStatement preparedStatement4ClinVarPLPVariantFlankingCount;
 
     private static void initPreparedStatement() {
-        String sql = "SELECT ref,alt,DiseaseName,variantClass,pmid From " + hgmdTable + " WHERE chr=? AND pos=?";
-        preparedStatement4HGMDSite = DBManager.initPreparedStatement(sql);
-
-        sql = "SELECT count(*) as count From " + hgmdTable
+        String sql = "SELECT count(*) as count From " + hgmdTable
                 + " WHERE chr=? AND pos BETWEEN ? AND ?"
-                + " AND LENGTH(ref) = 1 AND LENGTH(alt) = 1"
                 + " AND variantClass like '%DM%'";
-        preparedStatement4HGMDSNVFlankingCount = DBManager.initPreparedStatement(sql);
-
-        sql = "SELECT count(*) as count From " + hgmdTable
-                + " WHERE chr=? AND pos BETWEEN ? AND ?"
-                + " AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)"
-                + " AND variantClass like '%DM%'";
-        preparedStatement4HGMDIndelFlankingCount = DBManager.initPreparedStatement(sql);
+        preparedStatement4HGMDVariantFlankingCount = DBManager.initPreparedStatement(sql);
 
         sql = "SELECT count(*) as count "
                 + "From " + clinVarTable + " "
                 + "WHERE chr=? "
                 + "AND pos BETWEEN ? AND ? "
-                + "AND ClinSig like '%Pathogenic%' and ClinSig not like '%Conflicting_interpretations_of_pathogenicity%' "
-                + "AND LENGTH(ref) = 1 AND LENGTH(alt) = 1";
-        preparedStatement4ClinVarPLPSNVFlankingCount = DBManager.initPreparedStatement(sql);
-
-        sql = "SELECT count(*) as count "
-                + "From " + clinVarTable + " "
-                + "WHERE chr=? "
-                + "AND pos BETWEEN ? AND ? "
-                + "AND ClinSig like '%Pathogenic%' and ClinSig not like '%Conflicting_interpretations_of_pathogenicity%' "
-                + "AND (LENGTH(ref) > 1 or LENGTH(alt) > 1)";
-        preparedStatement4ClinVarPLPIndelFlankingCount = DBManager.initPreparedStatement(sql);
+                + "AND ClinSig like '%Pathogenic%' and ClinSig not like '%Conflicting_interpretations_of_pathogenicity%'";
+        preparedStatement4ClinVarPLPVariantFlankingCount = DBManager.initPreparedStatement(sql);
     }
 
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-//        sj.add("HGMDm2site");
-//        sj.add("HGMDm1site");
         sj.add("HGMD site");
         sj.add("HGMD Disease");
         sj.add("HGMD PMID");
         sj.add("HGMD Class");
-//        sj.add("HGMDp1site");
-//        sj.add("HGMDp2site");
-        sj.add("HGMD DM SNV 2bpflanks");
-        sj.add("HGMD DM indel 9bpflanks");
+        sj.add("HGMD DM 10bpflanks Count");
         sj.add("ClinVar site");
-//        sj.add("ClinVar HGVS");
-//        sj.add("ClinVar ClinSource");
-//        sj.add("ClinVar AlleleOrigin");
-//        sj.add("ClinVar ClinRevStat");
         sj.add("ClinVar ClinRevStar");
         sj.add("ClinVar ClinSig");
-//        sj.add("ClinVar ClinSigIncl");
-//        sj.add("ClinVar DiseaseDB");
         sj.add("ClinVar DiseaseName");
-//        sj.add("ClinVar PubmedID");
-//        sj.add("ClinVar rsID");
-        sj.add("ClinVar PLP SNV 2bpflanks");
-        sj.add("ClinVar PLP indel 9bpflanks");
+        sj.add("ClinVar PLP 10bpflanks Count");
         sj.add("ClinVar Pathogenic Indel Count");
         sj.add("Clinvar Pathogenic CNV Count");
         sj.add("ClinVar Pathogenic SNV Splice Count");
@@ -115,13 +79,9 @@ public class KnownVarManager {
         sj.add("ClinVar Pathogenic Last Pathogenic Location");
         sj.add("ClinGen");
         sj.add("ClinGen HaploinsufficiencyDesc");
-//        sj.add("ClinGen TriplosensitivityDesc");
         sj.add("OMIM Disease");
-//        sj.add("RecessiveCarrier");
+        sj.add("OMIM Inheritance");
         sj.add("ACMG");
-//        sj.add("dbDSM Disease");
-//        sj.add("dbDSM Classification");
-//        sj.add("dbDSM PubmedID");
 
         return sj.toString();
     }
@@ -132,10 +92,7 @@ public class KnownVarManager {
                 + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n"
                 + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
                 + "OMIM: " + DataManager.getVersion(omimTable) + "\n"
-//                + "RecessiveCarrier: " + DataManager.getVersion(recessiveCarrierTable) + "\n"
                 + "ACMG: " + DataManager.getVersion(acmgTable) + "\n";
-//                + "dbDSM: " + DataManager.getVersion(dbDSMTable) + "\n";
-
     }
 
     public static void init() throws SQLException {
@@ -363,33 +320,6 @@ public class KnownVarManager {
         }
     }
 
-    private static void initDBDSMMap() {
-        try {
-            String sql = "SELECT * From " + dbDSMTable;
-
-            ResultSet rs = DBManager.executeQuery(sql);
-
-            while (rs.next()) {
-                String chr = rs.getString("chr");
-                int pos = rs.getInt("pos");
-                String ref = rs.getString("ref");
-                String alt = rs.getString("alt");
-                String disease = FormatManager.getString(rs.getString("Disease"));
-                String classification = FormatManager.getString(rs.getString("Classification"));
-                String pubmedID = FormatManager.getString(rs.getString("PubmedID"));
-
-                DBDSM dbDSM = new DBDSM(chr, pos, ref, alt,
-                        disease, classification, pubmedID);
-
-                dbDSMMultiMap.put(dbDSM.getSiteId(), dbDSM);
-            }
-
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-    }
-
     public static Multimap<String, HGMD> getHGMDMultiMap() {
         return hgmdMultiMap;
     }
@@ -402,15 +332,12 @@ public class KnownVarManager {
         return output;
     }
 
-    public static int getHGMDFlankingCount(Variant var, boolean isSNV, int width) {
+    public static int getHGMDFlankingCount(Variant var,int width) {
         try {
-            PreparedStatement preparedStatement = isSNV
-                    ? preparedStatement4HGMDSNVFlankingCount : preparedStatement4HGMDIndelFlankingCount;
-
-            preparedStatement.setString(1, var.getChrStr());
-            preparedStatement.setInt(2, var.getStartPosition() - width);
-            preparedStatement.setInt(3, var.getStartPosition() + width);
-            ResultSet rs = preparedStatement.executeQuery();
+            preparedStatement4HGMDVariantFlankingCount.setString(1, var.getChrStr());
+            preparedStatement4HGMDVariantFlankingCount.setInt(2, var.getStartPosition() - width);
+            preparedStatement4HGMDVariantFlankingCount.setInt(3, var.getStartPosition() + width);
+            ResultSet rs = preparedStatement4HGMDVariantFlankingCount.executeQuery();
             if (rs.next()) {
                 return rs.getInt("count");
             }
@@ -421,44 +348,6 @@ public class KnownVarManager {
         }
 
         return Data.INTEGER_NA;
-    }
-
-    public static String getHGMDBySite(Variant var, int distance) {
-        try {
-            if (var.isSnv()) { // only query for SNVs
-                StringBuilder sb = new StringBuilder();
-                int count = 0;
-                preparedStatement4HGMDSite.setString(1, var.getChrStr());
-                preparedStatement4HGMDSite.setInt(2, var.getStartPosition() + distance);
-                ResultSet rs = preparedStatement4HGMDSite.executeQuery();
-                while (rs.next()) {
-                    if (rs.getString("ref").length() > 1
-                            || rs.getString("alt").length() > 1) { // skip indels
-                        continue;
-                    }
-
-                    if (count > 0) {
-                        sb.append("|");
-                    }
-
-                    sb.append(rs.getString("DiseaseName")).append(";");
-                    sb.append(rs.getString("variantClass")).append(";");
-                    sb.append(rs.getString("pmid"));
-
-                    count++;
-                }
-
-                rs.close();
-
-                if (sb.length() > 0) {
-                    return count + ";" + sb.toString();
-                }
-            }
-        } catch (Exception e) {
-            ErrorManager.send(e);
-        }
-
-        return Data.STRING_NA;
     }
 
     public static Multimap<String, ClinVar> getClinVarMultiMap() {
@@ -475,13 +364,10 @@ public class KnownVarManager {
 
     public static int getClinVarPathogenicIndelFlankingCount(Variant var, boolean isSNV, int width) {
         try {
-            PreparedStatement preparedStatement = isSNV
-                    ? preparedStatement4ClinVarPLPSNVFlankingCount : preparedStatement4ClinVarPLPIndelFlankingCount;
-
-            preparedStatement.setString(1, var.getChrStr());
-            preparedStatement.setInt(2, var.getStartPosition() - width);
-            preparedStatement.setInt(3, var.getStartPosition() + width);
-            ResultSet rs = preparedStatement.executeQuery();
+            preparedStatement4ClinVarPLPVariantFlankingCount.setString(1, var.getChrStr());
+            preparedStatement4ClinVarPLPVariantFlankingCount.setInt(2, var.getStartPosition() - width);
+            preparedStatement4ClinVarPLPVariantFlankingCount.setInt(3, var.getStartPosition() + width);
+            ResultSet rs = preparedStatement4ClinVarPLPVariantFlankingCount.executeQuery();
             if (rs.next()) {
                 return rs.getInt("count");
             }

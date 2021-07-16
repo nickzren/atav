@@ -47,6 +47,7 @@ public class KnownVarOutput {
         sj.merge(clinVarPathoratio.getStringJoiner());
         sj.merge(clinGen.getStringJoiner());
         sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));
+        sj.add(getOMIMInheritance());
 //        sj.add(FormatManager.getInteger(recessiveCarrier));
         sj.add(acmg);
 //        sj.merge(dbDSMOutput.getStringJoiner());
@@ -80,6 +81,24 @@ public class KnownVarOutput {
                 || omimDiseaseName.contains("[XLD]");
     }
 
+    public boolean isOMIMRecessive() {
+        return omimDiseaseName.contains("[AR]")
+                || omimDiseaseName.contains("[XLR]");
+    }
+
+    public String getOMIMInheritance() {
+        if (isOMIMDominant()
+                && isOMIMRecessive()) {
+            return "BOTH";
+        } else if (isOMIMDominant()) {
+            return "DOMINANT";
+        } else if (isOMIMRecessive()) {
+            return "RECESSIVE";
+        } else {
+            return Data.STRING_NA;
+        }
+    }
+
     public ClinGen getClinGen() {
         return clinGen;
     }
@@ -88,8 +107,8 @@ public class KnownVarOutput {
         return clinVarPathoratio;
     }
 
-    public boolean isHGMDOrClinVarFlankingValid(boolean isSNV) {
-        return hgmdOutput.isFlankingValid(isSNV) || clinVarOutput.isFlankingValid(isSNV);
+    public boolean isHGMDOrClinVarFlankingValid() {
+        return hgmdOutput.is10bpFlankingValid() || clinVarOutput.is10bpFlankingValid();
     }
 
     @Override

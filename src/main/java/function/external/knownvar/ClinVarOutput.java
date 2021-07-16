@@ -17,8 +17,7 @@ public class ClinVarOutput {
     private ClinVar clinvar;
 
     private int siteCount;
-    private int snv2bpflanks;
-    private int indel9bpflanks;
+    private int variant10bpflanks;
 
     private boolean isClinVarPLP = false;
 
@@ -29,8 +28,7 @@ public class ClinVarOutput {
 
         siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
-        snv2bpflanks = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, var.isSnv(), 2) : Data.INTEGER_NA; // for INDELs
-        indel9bpflanks = var.isIndel() ? KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, var.isSnv(), 9) : Data.INTEGER_NA; // for INDELs
+        variant10bpflanks = KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, var.isSnv(), 2);
     }
 
     /*
@@ -109,19 +107,10 @@ public class ClinVarOutput {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(siteCount));
-//        sj.add(clinvar.getHGVS());
-//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSource()));
-//        sj.add(clinvar.getAlleleOrigin());
-//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinRevStat()));
         sj.add(clinvar.getClinRevStar());
         sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSig()));
-//        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSigIncl()));
-//        sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseDB()));
         sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseName()));
-//        sj.add(FormatManager.appendDoubleQuote(clinvar.getPubmedID()));
-//        sj.add(clinvar.getRSID());
-        sj.add(FormatManager.getInteger(snv2bpflanks));
-        sj.add(FormatManager.getInteger(indel9bpflanks));
+        sj.add(FormatManager.getInteger(variant10bpflanks));
 
         return sj;
     }
@@ -134,12 +123,8 @@ public class ClinVarOutput {
         return isClinVarPLP;
     }
 
-    public boolean isFlankingValid(boolean isSNV) {
-        if (isSNV) {
-            return snv2bpflanks > 0;
-        } else {
-            return indel9bpflanks > 0;
-        }
+    public boolean is10bpFlankingValid() {
+        return variant10bpflanks > 0;
     }
 
     @Override
