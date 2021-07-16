@@ -836,7 +836,7 @@ public class AnnotatedVariant extends Variant {
                 + gnomADGenome.getControlAC() < 20;
     }
 
-    // LoF Variant or Polyphen Humvar >= 0.95 
+    // LoF variant or Polyphen Humvar >= 0.95 
     // And meet any of rules below:
     // EdgeCase[EVS] is 'N' and (0.1%RVIS%[EVS] <= 25 or 0.05%_anypopn_RVIS%tile[ExAC] <= 25)
     // EdgeCase[EVS] is 'Y' and (OEratio%tile[EVS] <= 25 or OEratio%tile[ExAC] <= 25) 

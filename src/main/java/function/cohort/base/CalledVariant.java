@@ -434,9 +434,9 @@ public class CalledVariant extends AnnotatedVariant {
     /*
         same variant curated as "DM" in HGMD or PLP in ClinVar
      */
-    public byte isPreviouslyPathogenicReported(Carrier carrier) {
+    public byte isKnownPathogenicVariant(Carrier carrier) {
         if (getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP()) {
-            Output.previouslyPathogenicReportedCount++;
+            Output.knownPathogenicVariantCount++;
             return 1;
         }
 
