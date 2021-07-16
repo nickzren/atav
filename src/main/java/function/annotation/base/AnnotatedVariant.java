@@ -420,6 +420,8 @@ public class AnnotatedVariant extends Variant {
         sj.add(HGVS_p);
         sj.add(FormatManager.getFloat(polyphenHumdiv));
         sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
+        sj.add(FormatManager.getFloat(polyphenHumvar));
+        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
         sj.add("'" + geneName + "'");
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
         sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
@@ -793,7 +795,7 @@ public class AnnotatedVariant extends Variant {
         return effect.startsWith("missense_variant")
                 && GnomADManager.isGeneMisZValid(geneName);
     }
-    
+
     // any variants in 2bp (SNVs) or 9pb (indels) flanking regions either HGMD DM or ClinVar PLP
     private boolean isHGMDOrClinVarFlankingValid() {
         return knownVarOutput.isHGMDOrClinVarFlankingValid(isSnv());
@@ -832,5 +834,20 @@ public class AnnotatedVariant extends Variant {
         return defaultControl.getAC()
                 + gnomADExome.getControlAC()
                 + gnomADGenome.getControlAC() < 20;
+    }
+
+    // LoF Variant or Polyphen Humvar >= 0.95 
+    // And meet any of rules below:
+    // EdgeCase[EVS] is 'N' and (0.1%RVIS%[EVS] <= 25 or 0.05%_anypopn_RVIS%tile[ExAC] <= 25)
+    // EdgeCase[EVS] is 'Y' and (OEratio%tile[EVS] <= 25 or OEratio%tile[ExAC] <= 25) 
+    // GenicConstraint[EVS] <= 25
+    // GenicConstraint_mis-z%tile[ExAC] <= 25
+    public byte isHotZone() {
+        if ((isLOF() || polyphenHumvar >= 0.95)
+                && RvisManager.isHotZone(geneName)) {
+            return 1;
+        }
+
+        return 0;
     }
 }

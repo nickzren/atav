@@ -58,6 +58,7 @@ public class TrioManager {
         sj.add("Tier Flag (Single Var)");
         sj.add("Dominant and Haploinsufficient Gene");
         sj.add("Previously Pathogenic Reported Variant");
+        sj.add("Hot Zone");
         sj.add("Denovo Flag");
         sj.add("Inherited From");
         sj.merge(Output.getVariantDataHeader());

@@ -2,14 +2,17 @@ package function.external.rvis;
 
 import function.external.base.DataManager;
 import global.Data;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import utils.ErrorManager;
 
 /**
@@ -20,12 +23,29 @@ public class RvisManager {
 
     private static final String RVIS_PATH = "data/rvis/gene_score_140318.csv.gz";
 
-    private static String header;
-    private static final HashMap<String, String> rvisMap = new HashMap<>();
+    private static final HashMap<String, RVIS> rvisMap = new HashMap<>();
     private static StringJoiner NA = new StringJoiner(",");
 
+    public static final String GENE_HEADER = "Gene";
+    public static final String RVIS_EVS_HEADER = "0.1%RVIS%[EVS]";
+    public static final String EDGE_CASE_EVS_HEADER = "EdgeCase[EVS]";
+    public static final String OERATIO_PERCENTILE_EVS_HEADER = "OEratio%tile[EVS]";
+    public static final String GENIC_CONSTRAINT_EVS_HEADER = "GenicConstraint[EVS]";
+    public static final String ANYPOPN_RVIS_PERCENTILE_EXAC_HEADER = "0.05%_anypopn_RVIS%tile[ExAC]";
+    public static final String OERATIO_PERCENTILE_EXAC_HEADER = "OEratio%tile[ExAC]";
+    public static final String GENIC_CONSTRAINT_MIS_Z_PERCENTILE_EXAC_HEADER = "GenicConstraint_mis-z%tile[ExAC]";
+
     public static String getHeader() {
-        return header;
+        StringJoiner sj = new StringJoiner(",");
+        sj.add(RVIS_EVS_HEADER);
+        sj.add(EDGE_CASE_EVS_HEADER);
+        sj.add(OERATIO_PERCENTILE_EVS_HEADER);
+        sj.add(GENIC_CONSTRAINT_EVS_HEADER);
+        sj.add(ANYPOPN_RVIS_PERCENTILE_EXAC_HEADER);
+        sj.add(OERATIO_PERCENTILE_EXAC_HEADER);
+        sj.add(GENIC_CONSTRAINT_MIS_Z_PERCENTILE_EXAC_HEADER);
+
+        return sj.toString();
     }
 
     public static String getVersion() {
@@ -40,42 +60,59 @@ public class RvisManager {
 
     private static void initRvisMap() {
         try {
-            File f = new File(Data.ATAV_HOME + RVIS_PATH);
-            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
-            Reader decoder = new InputStreamReader(in);
-            BufferedReader br = new BufferedReader(decoder);
-            
-            String lineStr = "";
-            boolean isFirstLine = true;
-            while ((lineStr = br.readLine()) != null) {
-                int firstCommaIndex = lineStr.indexOf(",");
-                String geneName = lineStr.substring(0, firstCommaIndex);
-                String values = lineStr.substring(firstCommaIndex + 1);
+            Iterable<CSVRecord> records = getRecords();
+            for (CSVRecord record : records) {
+                String gene = record.get(GENE_HEADER);
 
-                if (isFirstLine) {
-                    header = values;
+                RVIS rvis = new RVIS(record);
 
-                    for (int i = 0; i < values.split(",").length; i++) {
-                        NA.add(Data.STRING_NA);
-                    }
-                    
-                    isFirstLine = false;
-                } else {
-                    rvisMap.put(geneName, values);
-                }
+                rvisMap.put(gene, rvis);
             }
-            
-            br.close();
-            decoder.close();
-            in.close();
+
+            for (int i = 0; i < getHeader().split(",").length; i++) {
+                NA.add(Data.STRING_NA);
+            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
-    public static String getLine(String geneName) {
-        String line = rvisMap.get(geneName);
+    private static Iterable<CSVRecord> getRecords() throws FileNotFoundException, IOException {
+        InputStream fileStream = new FileInputStream(Data.ATAV_HOME + RVIS_PATH);
+        InputStream gzipStream = new GZIPInputStream(fileStream);
+        Reader decoder = new InputStreamReader(gzipStream);
 
-        return line == null ? NA.toString() : line;
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT
+                .withHeader(getHeaders())
+                .withFirstRecordAsHeader()
+                .parse(decoder);
+
+        return records;
+    }
+
+    private static String[] getHeaders() {
+        String[] headers = {
+            GENE_HEADER,
+            RVIS_EVS_HEADER,
+            EDGE_CASE_EVS_HEADER,
+            OERATIO_PERCENTILE_EVS_HEADER,
+            GENIC_CONSTRAINT_EVS_HEADER,
+            ANYPOPN_RVIS_PERCENTILE_EXAC_HEADER,
+            OERATIO_PERCENTILE_EXAC_HEADER,
+            GENIC_CONSTRAINT_MIS_Z_PERCENTILE_EXAC_HEADER};
+
+        return headers;
+    }
+
+    public static String getLine(String geneName) {
+        RVIS rvis = rvisMap.get(geneName);
+
+        return rvis == null ? NA.toString() : rvis.toString();
+    }
+    
+    public static boolean isHotZone(String geneName) {
+        RVIS rvis = rvisMap.get(geneName);
+        
+        return rvis == null ? false : rvis.isHotZone();
     }
 }

@@ -340,6 +340,7 @@ public class CommandManager {
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
+                    RvisCommand.isInclude = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -391,6 +392,7 @@ public class CommandManager {
                     GnomADGenomeCommand.getInstance().isInclude = true;
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
+                    RvisCommand.isInclude = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;

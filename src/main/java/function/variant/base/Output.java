@@ -107,6 +107,8 @@ public class Output {
         sj.add("HGVS_p");
         sj.add("Polyphen Humdiv Score");
         sj.add("Polyphen Humdiv Prediction");
+        sj.add("Polyphen Humvar Score");
+        sj.add("Polyphen Humvar Prediction");
         sj.add("Gene Name");
         sj.add("UpToDate Gene Name");
         sj.add("All Gene Symbols");
