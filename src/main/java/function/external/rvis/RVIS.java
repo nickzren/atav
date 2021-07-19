@@ -29,8 +29,8 @@ public class RVIS {
     }
 
     public boolean isHotZone() {
-        return (edgeCaseEVS == "N" && (rvisEVS <= 25 || anypopnRVISPercentileExAC <= 25))
-                || (edgeCaseEVS == "Y" && (oEratioPercentileEVS <= 25 || oEratioPercentileExAC <= 25))
+        return (edgeCaseEVS.equals("N") && (rvisEVS <= 25 || anypopnRVISPercentileExAC <= 25))
+                || (edgeCaseEVS.equals("Y") && (oEratioPercentileEVS <= 25 || oEratioPercentileExAC <= 25))
                 || genicConstraintEVS <= 25
                 || genicConstraintMisZPercentileExAC <= 25;
     }
