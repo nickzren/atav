@@ -362,7 +362,7 @@ public class KnownVarManager {
         return output;
     }
 
-    public static int getClinVarPathogenicIndelFlankingCount(Variant var, boolean isSNV, int width) {
+    public static int getClinVarPathogenicIndelFlankingCount(Variant var, int width) {
         try {
             preparedStatement4ClinVarPLPVariantFlankingCount.setString(1, var.getChrStr());
             preparedStatement4ClinVarPLPVariantFlankingCount.setInt(2, var.getStartPosition() - width);

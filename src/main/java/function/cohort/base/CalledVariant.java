@@ -415,14 +415,14 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     /*
-        1. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
-        2. variant is het call and <= 5 observed among IGM and gnomAD controls
+        1. variant is het call
+        2. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
      */
     public byte isDominantAndHaploinsufficient(Carrier carrier) {
-        if (isLOF()
+        if (carrier.getGT() == Index.HET // 1
+                && isLOF()
                 && (getKnownVar().getClinGen().isInClinGenSufficientOrSomeEvidence()
-                || getKnownVar().isOMIMDominant()) // 1
-                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 2
+                || getKnownVar().isOMIMDominant()) // 2
                 ) {
             Output.dominantAndHaploinsufficientCount++;
             return 1;

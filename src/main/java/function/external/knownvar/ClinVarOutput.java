@@ -28,7 +28,7 @@ public class ClinVarOutput {
 
         siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
 
-        variant10bpflanks = KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, var.isSnv(), 2);
+        variant10bpflanks = KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, 10);
     }
 
     /*

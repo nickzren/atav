@@ -751,7 +751,7 @@ public class AnnotatedVariant extends Variant {
         return hasHGMDDM()
                 || hasClinVarPLP()
                 || isHGMDOrClinVarFlankingValid()
-                || isInClinGen()
+                || isInClinGenOrOMIM()
                 || isInClinVarPathoratio()
                 || isGnomADGenePLIValid()
                 || isGeneMisZValid();
@@ -772,10 +772,10 @@ public class AnnotatedVariant extends Variant {
         return knownVarOutput.hasClinVarPLP();
     }
 
-    // LoF variant and occurs within a ClinGen disease gene
-    private boolean isInClinGen() {
+    // LoF variant and occurs within a ClinGen/OMIM disease gene
+    private boolean isInClinGenOrOMIM() {
         return isLOF()
-                && knownVarOutput.getClinGen().isInClinGen();
+                && (knownVarOutput.getClinGen().isInClinGen() || knownVarOutput.isOMIMGene());
     }
 
     // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
