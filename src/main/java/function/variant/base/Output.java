@@ -115,7 +115,7 @@ public class Output {
 //        sj.add("Polyphen Humdiv Prediction");
 //        sj.add("Polyphen Humdiv Score (CCDS)");
 //        sj.add("Polyphen Humdiv Prediction (CCDS)");
-//        sj.add("Polyphen Humvar Score");
+        sj.add("Polyphen Humvar Score");
 //        sj.add("Polyphen Humvar Prediction");
 //        sj.add("Polyphen Humvar Score (CCDS)");
 //        sj.add("Polyphen Humvar Prediction (CCDS)");
