@@ -19,7 +19,7 @@ public class VarGenoOutput extends Output {
 
         sj.add("Tier Flag");
         sj.add("Dominant and Haploinsufficient Gene");
-        sj.add("Previously Pathogenic Reported Variant");
+        sj.add("Known Pathogenic Variant");
         sj.add("Hot Zone");
         sj.merge(getVariantDataHeader());
         sj.merge(getAnnotationDataHeader());
@@ -52,7 +52,7 @@ public class VarGenoOutput extends Output {
 
         sj.add(FormatManager.getByte(tierFlag));
         sj.add(FormatManager.getByte(calledVar.isDominantAndHaploinsufficient(carrier)));
-        sj.add(FormatManager.getByte(calledVar.isPreviouslyPathogenicReported(carrier)));
+        sj.add(FormatManager.getByte(calledVar.isKnownPathogenicVariant(carrier)));
         sj.add(FormatManager.getByte(calledVar.isHotZone()));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
