@@ -268,11 +268,11 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     private boolean checkLooAFValid() {
-        if(CohortLevelFilterCommand.maxLooMAF == Data.NO_FILTER
+        if (CohortLevelFilterCommand.maxLooMAF == Data.NO_FILTER
                 && CohortLevelFilterCommand.maxLooAF == Data.NO_FILTER) {
             return true;
         }
-        
+
         for (Carrier carrier : carrierMap.values()) {
             byte geno = carrier.gt;
             Sample sample = SampleManager.getMap().get(carrier.getSampleId());
@@ -295,7 +295,7 @@ public class CalledVariant extends AnnotatedVariant {
 
             // add deleted sample geno back
             addSampleGeno(geno, sample);
-            
+
             // if any samples' loo af failed to pass the threshold, set variant to invalid
             if (!CohortLevelFilterCommand.isLooAFValid(looAF)) {
                 isValid = false;
@@ -415,16 +415,15 @@ public class CalledVariant extends AnnotatedVariant {
 
         return MathManager.devide(ac, totalAC);
     }
-    
+
     /*
-        1. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
-        2. variant is het call and <= 5 observed among IGM and gnomAD controls
+        1. variant is het call
+        2. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
      */
     public byte isDominantAndHaploinsufficient(Carrier carrier) {
-        if (isLOF()
-                && (getClinGen().isInClinGenSufficientOrSomeEvidence()
-                || isOMIMDominant()) // 1
-                && carrier.getGT() == Index.HET && isNHetFromControlsValid(5) // 2
+        if (carrier.getGT() == Index.HET // 1
+                && isLOF()
+                && (getClinGen().isInClinGenSufficientOrSomeEvidence() || isOMIMDominant()) // 2
                 ) {
             Output.dominantAndHaploinsufficientCount++;
             return 1;

@@ -298,18 +298,18 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void initExternalData() {
-        if(ClinGenCommand.isInclude) {
+        if (ClinGenCommand.isInclude) {
             clinGen = ClinGenManager.getClinGen(getGeneName());
         }
-        
+
         if (OMIMCommand.isInclude) {
             omimDiseaseName = OMIMManager.getOMIM(getGeneName());
         }
-        
-        if(ACMGCommand.isInclude) {
+
+        if (ACMGCommand.isInclude) {
             acmg = ACMGManager.getACMG(getGeneName());
         }
-        
+
         if (MgiCommand.isInclude) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
@@ -540,18 +540,18 @@ public class AnnotatedVariant extends Variant {
             sj.merge(getKnownVarStringJoiner());
         }
 
-        if(ClinGenCommand.isInclude) {
+        if (ClinGenCommand.isInclude) {
             sj.merge(getClinGenStringJoiner());
         }
-        
-        if(OMIMCommand.isInclude) {
+
+        if (OMIMCommand.isInclude) {
             sj.add(getOMIM());
         }
-        
-        if(ACMGCommand.isInclude) {
+
+        if (ACMGCommand.isInclude) {
             sj.add(getACMG());
         }
-        
+
         if (RvisCommand.isInclude) {
             sj.add(getRvis());
         }
@@ -684,15 +684,15 @@ public class AnnotatedVariant extends Variant {
     public StringJoiner getClinGenStringJoiner() {
         return clinGen.getStringJoiner();
     }
-    
+
     public String getOMIM() {
         return omimDiseaseName;
     }
-    
+
     public String getACMG() {
         return acmg;
     }
-    
+
     public String getRvis() {
         return RvisManager.getLine(getGeneName());
     }
@@ -776,31 +776,31 @@ public class AnnotatedVariant extends Variant {
     public StringJoiner getDefaultControlAFStringJoiner() {
         return defaultControl.getStringJoiner();
     }
-    
+
     public DefaultControl getDefaultControl() {
         return defaultControl;
     }
-    
+
     public GnomADExome getGnomADExome() {
         return gnomADExome;
     }
-    
+
     public GnomADGenome getGnomADGenome() {
         return gnomADGenome;
     }
-    
+
     public KnownVarOutput getKnownVar() {
         return knownVarOutput;
     }
-    
+
     public ClinGen getClinGen() {
         return clinGen;
     }
-    
+
     public boolean isLOF() {
         return EffectManager.isLOF(effectID);
     }
-    
+
     // tier 2 inclusion criteria
     public boolean isMetTier2InclusionCriteria() {
         return hasHGMDDM()
@@ -827,10 +827,10 @@ public class AnnotatedVariant extends Variant {
         return knownVarOutput.hasClinVarPLP();
     }
 
-    // LoF variant and occurs within a ClinGen disease gene
+    // LoF variant and occurs within a ClinGen/OMIM disease gene
     private boolean isInClinGen() {
         return isLOF()
-                && clinGen.isInClinGen();
+                && (clinGen.isInClinGen() || isOMIMGene());
     }
 
     // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
@@ -890,7 +890,7 @@ public class AnnotatedVariant extends Variant {
                 + gnomADExome.getControlAC()
                 + gnomADGenome.getControlAC() < 20;
     }
-    
+
     public boolean isOMIMGene() {
         return !omimDiseaseName.equals(Data.STRING_NA);
     }
@@ -899,7 +899,7 @@ public class AnnotatedVariant extends Variant {
         return omimDiseaseName.contains("[AD]")
                 || omimDiseaseName.contains("[XLD]");
     }
-    
+
     // LoF variant or Polyphen Humvar >= 0.95 
     // And meet any of rules below:
     // EdgeCase[EVS] is 'N' and (0.1%RVIS%[EVS] <= 25 or 0.05%_anypopn_RVIS%tile[ExAC] <= 25)
