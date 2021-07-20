@@ -851,9 +851,9 @@ public class AnnotatedVariant extends Variant {
                 && GnomADManager.isGeneMisZValid(geneName);
     }
 
-    // any variants in 2bp (SNVs) or 9pb (indels) flanking regions either HGMD DM or ClinVar PLP
+    // any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
     private boolean isHGMDOrClinVarFlankingValid() {
-        return knownVarOutput.isHGMDOrClinVarFlankingValid(isSnv());
+        return knownVarOutput.isHGMDOrClinVarFlankingValid();
     }
 
     // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls

@@ -62,10 +62,6 @@ public class KnownVarOutput {
     public boolean hasHGMDDM() {
         return hgmdOutput.getHGMD().getVariantClass().contains("DM");
     }
-    
-    public boolean hasIndel9bpFlanksInHGMD() {
-        return hgmdOutput.hasIndel9bpFlanks();
-    }
 
     public boolean isClinVarPLP() {        
         return clinVarOutput.isClinVarPLP();
@@ -80,8 +76,8 @@ public class KnownVarOutput {
         return clinVarPathoratio;
     }
     
-    public boolean isHGMDOrClinVarFlankingValid(boolean isSNV) {
-        return hgmdOutput.isFlankingValid(isSNV) || clinVarOutput.isFlankingValid(isSNV);
+    public boolean isHGMDOrClinVarFlankingValid() {
+        return hgmdOutput.is10bpFlankingValid() || clinVarOutput.is10bpFlankingValid();
     }
     
     @Override
