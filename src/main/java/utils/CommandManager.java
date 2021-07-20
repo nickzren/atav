@@ -343,6 +343,7 @@ public class CommandManager {
                     KnownVarCommand.isInclude = true;
                     ClinGenCommand.isInclude = true;
                     OMIMCommand.isInclude = true;
+                    RvisCommand.isInclude = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -395,6 +396,7 @@ public class CommandManager {
                     KnownVarCommand.isInclude = true;
                     ClinGenCommand.isInclude = true;
                     OMIMCommand.isInclude = true;
+                    RvisCommand.isInclude = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;

@@ -88,6 +88,7 @@ public class Output {
     public static int tier2CompoundVarCount;
     public static int dominantAndHaploinsufficientCount;
     public static int knownPathogenicVarCount;
+    public static int hotZoneVarCount;
 
     public static StringJoiner getVariantDataHeader() {
         StringJoiner sj = new StringJoiner(",");
@@ -502,5 +503,6 @@ public class Output {
         LogManager.writeAndPrintNoNewLine("Tier 2 Single Var genotype count: " + tier2SingleVarCount);
         LogManager.writeAndPrintNoNewLine("Dominant And Haploinsufficient Var genotype count: " + dominantAndHaploinsufficientCount);
         LogManager.writeAndPrintNoNewLine("Known Pathogenic Var genotype count: " + knownPathogenicVarCount);
+        LogManager.writeAndPrintNoNewLine("Hot Zone Var genotype count: " + hotZoneVarCount);
     }
 }
