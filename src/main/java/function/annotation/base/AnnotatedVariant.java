@@ -807,7 +807,7 @@ public class AnnotatedVariant extends Variant {
         return hasHGMDDM()
                 || hasClinVarPLP()
                 || isHGMDOrClinVarFlankingValid()
-                || isInClinGen()
+                || isInClinGenOrOMIM()
                 || isInClinVarPathoratio()
                 || isGnomADGenePLIValid()
                 || isGeneMisZValid();
@@ -829,7 +829,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     // LoF variant and occurs within a ClinGen/OMIM disease gene
-    private boolean isInClinGen() {
+    private boolean isInClinGenOrOMIM() {
         return isLOF()
                 && (clinGen.isInClinGen() || isOMIMGene());
     }
