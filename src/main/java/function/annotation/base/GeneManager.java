@@ -1,6 +1,13 @@
 package function.annotation.base;
 
 import function.cohort.collapsing.CollapsingCommand;
+import function.external.acmg.ACMGCommand;
+import function.external.acmg.ACMGManager;
+import function.external.clingen.ClinGen;
+import function.external.clingen.ClinGenCommand;
+import function.external.clingen.ClinGenManager;
+import function.external.omim.OMIMCommand;
+import function.external.omim.OMIMManager;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -68,6 +75,8 @@ public class GeneManager {
         initGeneBoundaries();
 
         initGeneMap();
+
+        resetGeneMap();
 
         initAllGeneMapAndResetRegionList();
 
@@ -316,6 +325,56 @@ public class GeneManager {
                 }
             }
         }
+    }
+
+    public static void resetGeneMap() {
+        geneMap.clear();
+
+        if (ACMGCommand.isOnly) {
+            for (String geneName : ACMGManager.getAllGeneSet()) {
+                Gene gene = new Gene(geneName);
+
+                if (gene.isValid()) {
+                    HashSet<Gene> set = new HashSet<>();
+                    set.add(gene);
+                    geneMap.put(geneName, set);
+                }
+            }
+        } else if (ClinGenCommand.isHaploinsufficiencyOnly) {
+            for (Map.Entry<String, ClinGen> entry : ClinGenManager.getMap().entrySet()) {
+                if (entry.getValue().isInClinGenSufficientEvidence()) {
+                    Gene gene = new Gene(entry.getKey());
+
+                    if (gene.isValid()) {
+                        HashSet<Gene> set = new HashSet<>();
+                        set.add(gene);
+                        geneMap.put(gene.getName(), set);
+                    }
+                }
+            }
+        } else if (ClinGenCommand.isRecessiveOnly) {
+            for (Map.Entry<String, ClinGen> entry : ClinGenManager.getMap().entrySet()) {
+                if (entry.getValue().isInClinGenRecessiveEvidence()) {
+                    Gene gene = new Gene(entry.getKey());
+
+                    if (gene.isValid()) {
+                        HashSet<Gene> set = new HashSet<>();
+                        set.add(gene);
+                        geneMap.put(gene.getName(), set);
+                    }
+                }
+            }
+        } else if (OMIMCommand.isOnly) {
+            for (String geneName : OMIMManager.getAllGeneSet()) {
+                Gene gene = new Gene(geneName);
+
+                if (gene.isValid()) {
+                    HashSet<Gene> set = new HashSet<>();
+                    set.add(gene);
+                    geneMap.put(geneName, set);
+                }
+            }
+        } 
     }
 
     private static void initAllGeneMapAndResetRegionList() throws Exception {

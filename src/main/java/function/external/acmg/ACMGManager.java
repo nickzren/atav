@@ -3,6 +3,7 @@ package function.external.acmg;
 import function.external.base.DataManager;
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.Set;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -50,5 +51,9 @@ public class ACMGManager {
 
     public static String getACMG(String geneName) {
         return FormatManager.getString(acmgMap.get(geneName));
+    }
+    
+    public static Set<String> getAllGeneSet() {
+        return acmgMap.keySet();
     }
 }

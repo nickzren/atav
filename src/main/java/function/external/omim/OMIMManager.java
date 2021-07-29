@@ -3,6 +3,7 @@ package function.external.omim;
 import function.external.base.DataManager;
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.Set;
 import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
@@ -54,5 +55,9 @@ public class OMIMManager {
 
     public static String getOMIM(String geneName) {
         return FormatManager.getString(omimMap.get(geneName));
+    }
+    
+    public static Set<String> getAllGeneSet() {
+        return omimMap.keySet();
     }
 }

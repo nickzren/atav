@@ -504,6 +504,22 @@ public class VariantLevelFilterCommand {
                     DBNSFPCommand.isFilterDBNSFPOne = true;
                     DBNSFPCommand.isInclude = true;
                     break;
+                case "--acmg-only":
+                    ACMGCommand.isOnly = true;
+                    ACMGCommand.isInclude = true;
+                    break;
+                case "--clingen-haploinsufficiency-only":
+                    ClinGenCommand.isHaploinsufficiencyOnly = true;
+                    ClinGenCommand.isInclude = true;
+                    break;
+                case "--clingen-recessive-only":
+                    ClinGenCommand.isRecessiveOnly = true;
+                    ClinGenCommand.isInclude = true;
+                    break;
+                case "--omim-only":
+                    OMIMCommand.isOnly = true;
+                    OMIMCommand.isInclude = true;
+                    break;
                 case "--include-evs":
                     EvsCommand.isInclude = true;
                     break;

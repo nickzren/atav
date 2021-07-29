@@ -6,4 +6,5 @@ package function.external.acmg;
  */
 public class ACMGCommand {
     public static boolean isInclude = false;
+    public static boolean isOnly = false;
 }

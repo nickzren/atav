@@ -167,6 +167,12 @@ public class Program {
             SampleManager.init();
 
             RegionManager.init();
+            
+            ClinGenManager.init();
+            
+            OMIMManager.init();
+            
+            ACMGManager.init();
 
             GeneManager.init();
 
@@ -183,12 +189,6 @@ public class Program {
             ExACManager.init();
 
             KnownVarManager.init();
-            
-            ClinGenManager.init();
-            
-            OMIMManager.init();
-            
-            ACMGManager.init();
 
             RvisManager.init();
 

@@ -42,6 +42,14 @@ public class ClinGen {
         return haploinsufficiencyDesc.equals("Sufficient evidence")
                 || haploinsufficiencyDesc.equals("Some evidence");
     }
+    
+    public boolean isInClinGenSufficientEvidence() {
+        return haploinsufficiencyDesc.equals("Sufficient evidence");
+    }
+    
+    public boolean isInClinGenRecessiveEvidence() {
+        return haploinsufficiencyDesc.equals("Recessive evidence");
+    }
 
     @Override
     public String toString() {

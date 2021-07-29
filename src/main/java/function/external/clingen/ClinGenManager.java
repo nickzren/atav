@@ -67,4 +67,9 @@ public class ClinGenManager {
 
         return clinGen;
     }
+    
+    //Set<Map.Entry<K,V>>
+    public static HashMap<String, ClinGen> getMap() {
+        return clinGenMap;
+    }
 }
