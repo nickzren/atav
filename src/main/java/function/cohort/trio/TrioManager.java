@@ -82,8 +82,7 @@ public class TrioManager {
     private static void initTriosFromInputSamples() {
         for (Sample sample : SampleManager.getList()) {
             if (sample.isCase()
-                    && !sample.getPaternalId().equals("0")
-                    && !sample.getMaternalId().equals("0")
+                    && (!sample.getPaternalId().equals("0") || !sample.getMaternalId().equals("0"))
                     && !sample.getPaternalId().equals(sample.getMaternalId())) {
 
                 Trio trio = new Trio(sample);
@@ -91,8 +90,13 @@ public class TrioManager {
                 if (trio.isValid()) {
                     trioList.add(trio);
 
-                    parentIdSet.add(trio.getFatherId());
-                    parentIdSet.add(trio.getMotherId());
+                    if (trio.getFatherId() != Data.INTEGER_NA) {
+                        parentIdSet.add(trio.getFatherId());
+                    }
+
+                    if (trio.getMotherId() != Data.INTEGER_NA) {
+                        parentIdSet.add(trio.getMotherId());
+                    }
                 }
             }
         }

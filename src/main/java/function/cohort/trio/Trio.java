@@ -32,10 +32,8 @@ public class Trio {
     }
 
     public boolean isValid() {
-        if (fatherId != Data.INTEGER_NA
-                && !SampleManager.getMap().get(fatherId).isCase()
-                && motherId != Data.INTEGER_NA
-                && !SampleManager.getMap().get(motherId).isCase()) {
+        if ((fatherId != Data.INTEGER_NA && !SampleManager.getMap().get(fatherId).isCase())
+                || (motherId != Data.INTEGER_NA && !SampleManager.getMap().get(motherId).isCase())) {
             return true;
         }
 
