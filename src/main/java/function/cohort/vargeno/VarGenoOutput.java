@@ -52,7 +52,7 @@ public class VarGenoOutput extends Output {
 
         sj.add(FormatManager.getByte(tierFlag));
         sj.add(FormatManager.getByte(calledVar.isDominantAndHaploinsufficient(carrier)));
-        sj.add(FormatManager.getByte(calledVar.isKnownPathogenicVariant(carrier)));
+        sj.add(FormatManager.getByte(calledVar.isKnownPathogenicVariant()));
         sj.add(FormatManager.getByte(calledVar.isHotZone()));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
