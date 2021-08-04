@@ -101,6 +101,7 @@ public class Variant extends Region {
 
     public void getVariantData(StringJoiner sj) {
         sj.add(variantIdStr);
+        sj.add("\"=HYPERLINK(\"\"http://atavdb.org/variant/"+variantIdStr+"\"\",\"\"ATAV\"\")\"");
 //        sj.add(getType());
 //        sj.add(refAllele);
 //        sj.add(allele);

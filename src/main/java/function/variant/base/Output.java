@@ -94,6 +94,7 @@ public class Output {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
+        sj.add("ATAV");
 //        sj.add("Variant Type");
 //        sj.add("Ref Allele");
 //        sj.add("Alt Allele");
@@ -121,6 +122,7 @@ public class Output {
 //        sj.add("Polyphen Humvar Score (CCDS)");
 //        sj.add("Polyphen Humvar Prediction (CCDS)");
         sj.add("Gene Name");
+        sj.add("Gene Link");
 //        sj.add("UpToDate Gene Name");
 //        sj.add("All Gene Symbols");
 //        sj.add("All Gene Transcript Count");
