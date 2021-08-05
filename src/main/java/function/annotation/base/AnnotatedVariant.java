@@ -457,13 +457,13 @@ public class AnnotatedVariant extends Variant {
 //        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
-    
+
     private String getGeneLink() {
         // "=HYPERLINK(""url"",""name"")"
-        if(isOMIMGene()) {            
-            return "\"=HYPERLINK(\"\"https://omim.org/search?search="+geneName+"\"\",\"\"OMIM\"\")\"";
+        if (isOMIMGene()) {
+            return "\"=HYPERLINK(\"\"https://omim.org/search?search=" + geneName + "\"\",\"\"OMIM\"\")\"";
         } else {
-            return "\"=HYPERLINK(\"\"https://www.genecards.org/cgi-bin/carddisp.pl?gene="+geneName+"\"\",\"\"GeneCards\"\")\"";
+            return "\"=HYPERLINK(\"\"https://www.genecards.org/cgi-bin/carddisp.pl?gene=" + geneName + "\"\",\"\"GeneCards\"\")\"";
         }
     }
 
@@ -556,7 +556,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (OMIMCommand.isInclude) {
-            sj.add(getOMIM());
+            sj.merge(getOMIMStringJoiner());
         }
 
         if (ACMGCommand.isInclude) {
@@ -696,8 +696,13 @@ public class AnnotatedVariant extends Variant {
         return clinGen.getStringJoiner();
     }
 
-    public String getOMIM() {
-        return omimDiseaseName;
+    public StringJoiner getOMIMStringJoiner() {
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));
+        sj.add(getOMIMInheritance());
+
+        return sj;
     }
 
     public String getACMG() {
@@ -907,8 +912,86 @@ public class AnnotatedVariant extends Variant {
     }
 
     public boolean isOMIMDominant() {
-        return omimDiseaseName.contains("[AD]")
-                || omimDiseaseName.contains("[XLD]");
+        return omimDiseaseName.contains("Autosomal dominant")
+                || omimDiseaseName.contains("X-linked dominant")
+                || omimDiseaseName.contains("Pseudoautosomal dominant")
+                || omimDiseaseName.contains("Digenic dominant")
+                || omimDiseaseName.contains("Somatic mosaicism")
+                || omimDiseaseName.contains("Somatic mutation");
+    }
+
+    public String getOMIMInheritance() {
+        StringJoiner sj = new StringJoiner("|");
+
+        if (omimDiseaseName.contains("Autosomal dominant")) {
+            sj.add("AD");
+        }
+
+        if (omimDiseaseName.contains("Autosomal recessive")) {
+            sj.add("AR");
+        }
+
+        if (omimDiseaseName.contains("Pseudoautosomal dominant")) {
+            sj.add("PD");
+        }
+
+        if (omimDiseaseName.contains("Pseudoautosomal recessive")) {
+            sj.add("PR");
+        }
+
+        if (omimDiseaseName.contains("Digenic dominant")) {
+            sj.add("DD");
+        }
+
+        if (omimDiseaseName.contains("Digenic recessive")) {
+            sj.add("DR");
+        }
+
+        if (omimDiseaseName.contains("Isolated cases")) {
+            sj.add("IC");
+        }
+
+        if (omimDiseaseName.contains("Inherited chromosomal imbalance")) {
+            sj.add("ICB");
+        }
+
+        if (omimDiseaseName.contains("Mitochondrial")) {
+            sj.add("Mi");
+        }
+
+        if (omimDiseaseName.contains("Multifactorial")) {
+            sj.add("Mu");
+        }
+
+        if (omimDiseaseName.contains("Somatic mosaicism")) {
+            sj.add("SMo");
+        }
+
+        if (omimDiseaseName.contains("Somatic mutation")) {
+            sj.add("SMu");
+        }
+
+        if (omimDiseaseName.contains("X-linked")) {
+            sj.add("XL");
+        }
+
+        if (omimDiseaseName.contains("X-linked dominant")) {
+            sj.add("XLD");
+        }
+
+        if (omimDiseaseName.contains("X-linked recessive")) {
+            sj.add("XLR");
+        }
+
+        if (omimDiseaseName.contains("Y-linked")) {
+            sj.add("YL");
+        }
+
+        if (sj.length() == 0) {
+            return Data.STRING_NA;
+        }
+
+        return sj.toString();
     }
 
     // LoF variant or Polyphen Humvar >= 0.95 

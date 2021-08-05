@@ -14,11 +14,11 @@ import utils.FormatManager;
  */
 public class OMIMManager {
 
-    public static final String omimTable = "knownvar.omim_2021_07_14";
+    public static final String omimTable = "knownvar.omim_2021_08_05";
     private static final HashMap<String, String> omimMap = new HashMap<>();
 
     public static String getHeader() {
-        return "OMIM Disease";
+        return "OMIM Disease,OMIM Inheritance";
     }
 
     public static String getVersion() {
