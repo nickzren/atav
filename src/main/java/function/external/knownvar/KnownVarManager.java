@@ -27,7 +27,7 @@ public class KnownVarManager {
     public static final String clinVarTable = "knownvar.clinvar_2021_07_14";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_07_14";
     public static final String clinGenTable = "knownvar.clingen_2021_07_14";
-    public static final String omimTable = "knownvar.omim_2021_07_14";
+    public static final String omimTable = "knownvar.omim_2021_08_05";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
     public static final String acmgTable = "knownvar.acmg_v3";
     public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
