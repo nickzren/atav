@@ -123,9 +123,22 @@ public class TrioOutput extends Output {
                 && cCarrier.getMQ() >= 40;
     }
 
+    public boolean isCompoundDeletionTier1() {
+        return denovoFlag.equals("COMPOUND DELETION")
+                && isMotherOrFatherHet()
+                && calledVar.isCarrieHomPercAltReadValid(cCarrier)
+                && calledVar.isNotObservedInHomAmongControl()
+                && cCarrier.getMQ() >= 40;
+    }
+    
     // mother is a het carrier and father is not hemizygous
     private boolean isMotherHetAndFatherNotHom() {
         return mGeno == Index.HET && fGeno != Index.HOM;
+    }
+    
+    // one of the parent is a het carrier
+    private boolean isMotherOrFatherHet() {
+        return mGeno == Index.HET || fGeno == Index.HET;
     }
 
     public boolean isDenovoTier2() {
@@ -141,6 +154,11 @@ public class TrioOutput extends Output {
 
     public boolean isHemizygousTier2() {
         return denovoFlag.contains("HEMIZYGOUS")
+                && calledVar.isNHomFromControlsValid(10);
+    }
+    
+    public boolean isCompoundDeletionTier2() {
+        return denovoFlag.contains("COMPOUND DELETION")
                 && calledVar.isNHomFromControlsValid(10);
     }
 
@@ -169,13 +187,15 @@ public class TrioOutput extends Output {
         if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
             if (isDenovoTier1()
                     || isHomozygousTier1()
-                    || isHemizygousTier1()) {
+                    || isHemizygousTier1()
+                    || isCompoundDeletionTier1()) {
                 tierFlag4SingleVar = 1;
                 Output.tier1SingleVarCount++;
             } else if (calledVar.isMetTier2InclusionCriteria()
                     && (isDenovoTier2()
                     || isHomozygousTier2()
-                    || isHemizygousTier2())) {
+                    || isHemizygousTier2())
+                    || isCompoundDeletionTier2()) {
                 tierFlag4SingleVar = 2;
                 Output.tier2SingleVarCount++;
             }

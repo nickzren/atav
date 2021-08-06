@@ -499,8 +499,8 @@ public class Output {
     }
     
     public static void logTierVariantCount() {
-        LogManager.writeAndPrintNoNewLine("Tier 1 Compond Var genotype count: " + tier1CompoundVarCount);
-        LogManager.writeAndPrintNoNewLine("Tier 2 Compond Var genotype count: " + tier2CompoundVarCount);
+        LogManager.writeAndPrintNoNewLine("Tier 1 Compound Var genotype count: " + tier1CompoundVarCount);
+        LogManager.writeAndPrintNoNewLine("Tier 2 Compound Var genotype count: " + tier2CompoundVarCount);
         LogManager.writeAndPrintNoNewLine("Tier 1 Single Var genotype count: " + tier1SingleVarCount);
         LogManager.writeAndPrintNoNewLine("Tier 2 Single Var genotype count: " + tier2SingleVarCount);
         LogManager.writeAndPrintNoNewLine("Dominant And Haploinsufficient Var genotype count: " + dominantAndHaploinsufficientCount);

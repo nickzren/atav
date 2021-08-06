@@ -17,7 +17,7 @@ public class VarGenoOutput extends Output {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Tier Flag");
+        sj.add("Tier Flag (Single Var)");
         sj.add("Dominant and Haploinsufficient Gene");
         sj.add("Known Pathogenic Variant");
         sj.add("Hot Zone");
