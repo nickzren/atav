@@ -212,6 +212,7 @@ public class TrioOutput extends Output {
 
         sj.add(FormatManager.getByte(calledVar.isDominantAndHaploinsufficient(cCarrier)));
         sj.add(FormatManager.getByte(calledVar.isKnownPathogenicVariant()));
+        sj.add(FormatManager.getByte(calledVar.isKnownPLPVar10bpflanks()));
         sj.add(FormatManager.getByte(calledVar.isHotZone()));
         sj.add(denovoFlag);
         sj.add(getInheritedFrom().name());
