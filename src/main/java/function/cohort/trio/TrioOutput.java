@@ -200,7 +200,11 @@ public class TrioOutput extends Output {
                 Output.tier2SingleVarCount++;
             }
         } else { // child variant
-            tierFlag4SingleVar = calledVar.isMetTier2InclusionCriteria() && calledVar.isCaseVarTier2() ? 2 : Data.BYTE_NA;
+            if(calledVar.isMetTier2InclusionCriteria() && calledVar.isCaseVarTier2()) {
+                tierFlag4SingleVar = 2;
+            } else {
+                tierFlag4SingleVar = Data.BYTE_NA;
+            }
         }
 
         return tierFlag4SingleVar;
