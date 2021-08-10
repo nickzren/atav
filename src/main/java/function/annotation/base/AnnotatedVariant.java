@@ -868,7 +868,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     // any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
-    private boolean isHGMDOrClinVarFlankingValid() {
+    public boolean isHGMDOrClinVarFlankingValid() {
         return knownVarOutput.isHGMDOrClinVarFlankingValid();
     }
 

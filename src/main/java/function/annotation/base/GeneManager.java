@@ -167,7 +167,7 @@ public class GeneManager {
         if (AnnotationLevelFilterCommand.geneInput.isEmpty()) {
             return;
         }
-
+        
         isUsed = true;
 
         File f = new File(AnnotationLevelFilterCommand.geneInput);
@@ -328,9 +328,8 @@ public class GeneManager {
     }
 
     public static void resetGeneMap() {
-        geneMap.clear();
-
         if (ACMGCommand.isOnly) {
+            geneMap.clear();
             for (String geneName : ACMGManager.getAllGeneSet()) {
                 Gene gene = new Gene(geneName);
 
@@ -341,6 +340,7 @@ public class GeneManager {
                 }
             }
         } else if (ClinGenCommand.isHaploinsufficiencyOnly) {
+            geneMap.clear();
             for (Map.Entry<String, ClinGen> entry : ClinGenManager.getMap().entrySet()) {
                 if (entry.getValue().isInClinGenSufficientEvidence()) {
                     Gene gene = new Gene(entry.getKey());
@@ -353,6 +353,7 @@ public class GeneManager {
                 }
             }
         } else if (ClinGenCommand.isRecessiveOnly) {
+            geneMap.clear();
             for (Map.Entry<String, ClinGen> entry : ClinGenManager.getMap().entrySet()) {
                 if (entry.getValue().isInClinGenRecessiveEvidence()) {
                     Gene gene = new Gene(entry.getKey());
@@ -365,6 +366,7 @@ public class GeneManager {
                 }
             }
         } else if (OMIMCommand.isOnly) {
+            geneMap.clear();
             for (String geneName : OMIMManager.getAllGeneSet()) {
                 Gene gene = new Gene(geneName);
 

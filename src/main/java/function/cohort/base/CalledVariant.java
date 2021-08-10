@@ -443,6 +443,18 @@ public class CalledVariant extends AnnotatedVariant {
 
         return 0;
     }
+    
+    /*
+        any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
+     */
+    public byte isKnownPLPVar10bpflanks() {
+        if (this.isHGMDOrClinVarFlankingValid()) {
+            Output.knownPLPVar10bpflanksCount++;
+            return 1;
+        }
+
+        return 0;
+    }
 
     // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
     public boolean isGenotypeAbsentAmongControl(int gt) {

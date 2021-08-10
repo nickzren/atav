@@ -88,6 +88,7 @@ public class Output {
     public static int tier2CompoundVarCount;
     public static int dominantAndHaploinsufficientCount;
     public static int knownPathogenicVarCount;
+    public static int knownPLPVar10bpflanksCount;
     public static int hotZoneVarCount;
 
     public static StringJoiner getVariantDataHeader() {
@@ -352,9 +353,9 @@ public class Output {
 //        sj.add("VQSLOD");
 //        sj.add("SOR");
 //        sj.add("FS");
-//        sj.add("MQ");
-//        sj.add("QD");
-//        sj.add("Qual");
+        sj.add("MQ");
+        sj.add("QD");
+        sj.add("Qual");
 //        sj.add("Read Pos Rank Sum");
 //        sj.add("MQ Rank Sum");
         sj.add("FILTER");
@@ -461,9 +462,9 @@ public class Output {
 //        sj.add(FormatManager.getFloat(carrier != null ? carrier.getVQSLOD() : Data.FLOAT_NA));
 //        sj.add(FormatManager.getFloat(carrier != null ? carrier.getSOR() : Data.FLOAT_NA));
 //        sj.add(FormatManager.getFloat(carrier != null ? carrier.getFS() : Data.FLOAT_NA));
-//        sj.add(FormatManager.getShort(carrier != null ? carrier.getMQ() : Data.SHORT_NA));
-//        sj.add(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA));
-//        sj.add(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA));
+        sj.add(FormatManager.getShort(carrier != null ? carrier.getMQ() : Data.SHORT_NA));
+        sj.add(FormatManager.getByte(carrier != null ? carrier.getQD() : Data.BYTE_NA));
+        sj.add(FormatManager.getInteger(carrier != null ? carrier.getQual() : Data.INTEGER_NA));
 //        sj.add(FormatManager.getFloat(carrier != null ? carrier.getReadPosRankSum() : Data.FLOAT_NA));
 //        sj.add(FormatManager.getFloat(carrier != null ? carrier.getMQRankSum() : Data.FLOAT_NA));
         sj.add(carrier != null ? carrier.getFILTER() : Data.STRING_NA);
@@ -505,6 +506,7 @@ public class Output {
         LogManager.writeAndPrintNoNewLine("Tier 2 Single Var genotype count: " + tier2SingleVarCount);
         LogManager.writeAndPrintNoNewLine("Dominant And Haploinsufficient Var genotype count: " + dominantAndHaploinsufficientCount);
         LogManager.writeAndPrintNoNewLine("Known Pathogenic Var genotype count: " + knownPathogenicVarCount);
+        LogManager.writeAndPrintNoNewLine("Known PLP Var 10bpflanks genotype count: " + knownPLPVar10bpflanksCount);
         LogManager.writeAndPrintNoNewLine("Hot Zone Var genotype count: " + hotZoneVarCount);
     }
 }
