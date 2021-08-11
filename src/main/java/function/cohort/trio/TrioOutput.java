@@ -191,9 +191,7 @@ public class TrioOutput extends Output {
                 tierFlag4SingleVar = 2;
                 Output.tier2SingleVarCount++;
             }
-        } else { // child variant
-            tierFlag4SingleVar = calledVar.isMetTier2InclusionCriteria() && calledVar.isCaseVarTier2() ? 2 : Data.BYTE_NA;
-        }
+        } 
 
         return tierFlag4SingleVar;
     }
@@ -204,6 +202,8 @@ public class TrioOutput extends Output {
 
         sj.add(FormatManager.getByte(calledVar.isDominantAndHaploinsufficient(cCarrier)));
         sj.add(FormatManager.getByte(calledVar.isKnownPathogenicVariant()));
+        sj.add(FormatManager.getByte(calledVar.isKnownPLPVar10bpflanks()));
+        sj.add(FormatManager.getByte(calledVar.isRareVariant()));
         sj.add(FormatManager.getByte(calledVar.isHotZone()));
         sj.add(denovoFlag);
         sj.add(getInheritedFrom().name());

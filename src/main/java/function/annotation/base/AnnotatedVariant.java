@@ -63,6 +63,7 @@ import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
+import function.variant.base.Output;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import utils.FormatManager;
@@ -110,7 +111,7 @@ public class AnnotatedVariant extends Variant {
     private float gerpScore;
     private float trapScore;
     private float pextRatio;
-    private KnownVarOutput knownVarOutput;
+    public KnownVarOutput knownVarOutput;
     private SubRvisOutput subRvisOutput;
     private LIMBROutput limbrOutput;
     private String mgiStr;
@@ -845,6 +846,7 @@ public class AnnotatedVariant extends Variant {
     public byte isHotZone() {
         if ((isLOF() || polyphenHumvar >= 0.95)
                 && RvisManager.isHotZone(geneName)) {
+            Output.hotZoneVarCount++;
             return 1;
         }
 

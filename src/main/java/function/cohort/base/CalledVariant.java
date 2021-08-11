@@ -436,13 +436,37 @@ public class CalledVariant extends AnnotatedVariant {
      */
     public byte isKnownPathogenicVariant() {
         if (getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP()) {
-            Output.knownPathogenicVariantCount++;
+            Output.knownPathogenicVarCount++;
             return 1;
         }
 
         return 0;
     }
+    
+    /*
+        any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
+     */
+    public byte isKnownPLPVar10bpflanks() {
+        if (knownVarOutput.isHGMDOrClinVarFlankingValid()) {
+            Output.knownPLPVar10bpflanksCount++;
+            return 1;
+        }
 
+        return 0;
+    }
+    
+    /*
+        less than 20 alleles abserved from IGM + gnomAD controls
+     */
+    public byte isRareVariant() {
+        if (this.isTotalACFromControlsValid()) {
+            Output.rareVarCount++;
+            return 1;
+        }
+
+        return 0;
+    }
+    
     // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
     public boolean isGenotypeAbsentAmongControl(int gt) {
         if (gt == Index.HET) {
