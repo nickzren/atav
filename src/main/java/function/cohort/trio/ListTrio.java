@@ -202,6 +202,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
         // tier 1
         if (output1.isParentsNotHom() && output2.isParentsNotHom()
+                // Restrict to High or Moderate impact variants
+                && output1.getCalledVariant().isImpactHighOrModerate()
+                && output2.getCalledVariant().isImpactHighOrModerate()
                 // co-occurance freq in controls is 0
                 && coFreq[Index.CTRL] == 0
                 // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
@@ -219,8 +222,13 @@ public class ListTrio extends AnalysisBase4CalledVar {
             Output.tier2CompoundVarCount++;
         }
 
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, coFreq, "#1");
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, coFreq, "#2");
+        StringBuilder compHetVarSB = new StringBuilder();
+        compHetVarSB.append(output1.getCalledVariant().getVariantIdStr());
+        compHetVarSB.append("&");
+        compHetVarSB.append(output2.getCalledVariant().getVariantIdStr());
+        
+        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, coFreq, compHetVarSB.toString() + "#1");
+        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, coFreq, compHetVarSB.toString() + "#2");
     }
 
     private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, TrioOutput output,

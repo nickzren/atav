@@ -157,7 +157,7 @@ public class TrioOutput extends Output {
     public boolean isParentsNotHom() {
         return mGeno != Index.HOM && fGeno != Index.HOM;
     }
-
+    
     public INHERITED_FROM getInheritedFrom() {
         if ((mGeno == Index.HOM || mGeno == Index.HET)
                 && (fGeno == Index.HOM || fGeno == Index.HET)) {

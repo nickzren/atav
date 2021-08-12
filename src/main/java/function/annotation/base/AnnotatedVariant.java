@@ -743,8 +743,9 @@ public class AnnotatedVariant extends Variant {
         return knownVarOutput;
     }
 
+    // LoF effects or trap >= 0.5
     public boolean isLOF() {
-        return EffectManager.isLOF(effectID);
+        return EffectManager.isLOF(effectID) || trapScore >= 0.5;
     }
 
     // tier 2 inclusion criteria
@@ -851,5 +852,10 @@ public class AnnotatedVariant extends Variant {
         }
 
         return 0;
+    }
+    
+    // High or Moderate impacts or TraP >= 0.5
+    public boolean isImpactHighOrModerate() {
+        return impact.equals("HIGH") || impact.equals("MODERATE") || trapScore >= 0.5;
     }
 }
