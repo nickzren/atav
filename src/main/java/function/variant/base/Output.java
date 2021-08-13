@@ -100,21 +100,21 @@ public class Output {
     public static StringJoiner getAnnotationDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Transcript Stable Id");
-        sj.add("Has CCDS Transcript");
         sj.add("Impact");
         sj.add("Effect");
         sj.add("Canonical Transcript Effect");
+        sj.add("Gene Name");
+        sj.add("UpToDate Gene Name");
+        sj.add("All Gene Symbols");
+        sj.add("All Gene Transcript Count");
+        sj.add("Transcript Stable Id");
+        sj.add("Has CCDS Transcript");
         sj.add("HGVS_c");
         sj.add("HGVS_p");
         sj.add("Polyphen Humdiv Score");
         sj.add("Polyphen Humdiv Prediction");
         sj.add("Polyphen Humvar Score");
         sj.add("Polyphen Humvar Prediction");
-        sj.add("Gene Name");
-        sj.add("UpToDate Gene Name");
-        sj.add("All Gene Symbols");
-        sj.add("All Gene Transcript Count");
         sj.add("Consequence annotations: Effect|Gene|Transcript|HGVS_c|HGVS_p|Polyphen_Humdiv|Polyphen_Humvar");
 
         return sj;

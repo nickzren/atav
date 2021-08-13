@@ -412,21 +412,21 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getAnnotationData(StringJoiner sj) {
-        sj.add(getStableId(stableId));
-        sj.add(Boolean.toString(hasCCDS));
         sj.add(impact);
         sj.add(effect);
         sj.add(getCanonicalEffect());
+        sj.add("'" + geneName + "'");
+        sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
+        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
+        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
+        sj.add(getStableId(stableId));
+        sj.add(Boolean.toString(hasCCDS));
         sj.add(HGVS_c);
         sj.add(HGVS_p);
         sj.add(FormatManager.getFloat(polyphenHumdiv));
         sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
         sj.add(FormatManager.getFloat(polyphenHumvar));
         sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
-        sj.add("'" + geneName + "'");
-        sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
-        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
 
@@ -743,9 +743,9 @@ public class AnnotatedVariant extends Variant {
         return knownVarOutput;
     }
 
-    // LoF effects or trap >= 0.5
+    // LoF effects
     public boolean isLOF() {
-        return EffectManager.isLOF(effectID) || trapScore >= 0.5;
+        return EffectManager.isLOF(effectID);
     }
 
     // tier 2 inclusion criteria
@@ -853,9 +853,9 @@ public class AnnotatedVariant extends Variant {
 
         return 0;
     }
-    
-    // High or Moderate impacts or TraP >= 0.5
+
+    // High or Moderate impacts or TraP >= 0.4
     public boolean isImpactHighOrModerate() {
-        return impact.equals("HIGH") || impact.equals("MODERATE") || trapScore >= 0.5;
+        return impact.equals("HIGH") || impact.equals("MODERATE") || trapScore >= 0.4;
     }
 }

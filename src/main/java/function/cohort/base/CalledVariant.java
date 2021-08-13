@@ -499,6 +499,6 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     public boolean isCaseVarTier2() {
-        return isImpactHighOrModerate() && isTotalACFromControlsValid();
+        return isTotalACFromControlsValid();
     }
 }

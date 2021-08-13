@@ -126,7 +126,7 @@ public class TrioOutput extends Output {
     private boolean isMotherHetAndFatherNotHom() {
         return mGeno == Index.HET && fGeno != Index.HOM;
     }
-    
+
     // one of the parent is a het carrier
     private boolean isMotherOrFatherHet() {
         return mGeno == Index.HET || fGeno == Index.HET;
@@ -157,7 +157,7 @@ public class TrioOutput extends Output {
     public boolean isParentsNotHom() {
         return mGeno != Index.HOM && fGeno != Index.HOM;
     }
-    
+
     public INHERITED_FROM getInheritedFrom() {
         if ((mGeno == Index.HOM || mGeno == Index.HET)
                 && (fGeno == Index.HOM || fGeno == Index.HET)) {
@@ -174,28 +174,30 @@ public class TrioOutput extends Output {
     public byte getTierFlag4SingleVar() {
         byte tierFlag4SingleVar = Data.BYTE_NA;
 
-        // denovo or hom
-        if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
-            if (isDenovoTier1()
-                    || isHomozygousTier1()
-                    || isHemizygousTier1()
-                    || isCompoundDeletionTier1()
-                    ) {
-                tierFlag4SingleVar = 1;
-                Output.tier1SingleVarCount++;
-            } else if (calledVar.isMetTier2InclusionCriteria()
-                    && (isDenovoTier2()
-                    || isHomozygousTier2()
-                    || isHemizygousTier2())
-                    || isCompoundDeletionTier2()) {
-                tierFlag4SingleVar = 2;
-                Output.tier2SingleVarCount++;
-            }
-        } else {
-            if(calledVar.isMetTier2InclusionCriteria() &&
-                    calledVar.isCaseVarTier2()) {
-                tierFlag4SingleVar = 2;
-                Output.tier2SingleVarCount++;
+        // Restrict to High or Moderate impact or TraP >= 0.4 variants
+        if (getCalledVariant().isImpactHighOrModerate()) {
+            // denovo or hom
+            if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
+                if (isDenovoTier1()
+                        || isHomozygousTier1()
+                        || isHemizygousTier1()
+                        || isCompoundDeletionTier1()) {
+                    tierFlag4SingleVar = 1;
+                    Output.tier1SingleVarCount++;
+                } else if (calledVar.isMetTier2InclusionCriteria()
+                        && (isDenovoTier2()
+                        || isHomozygousTier2()
+                        || isHemizygousTier2())
+                        || isCompoundDeletionTier2()) {
+                    tierFlag4SingleVar = 2;
+                    Output.tier2SingleVarCount++;
+                }
+            } else {
+                if (calledVar.isMetTier2InclusionCriteria()
+                        && calledVar.isCaseVarTier2()) {
+                    tierFlag4SingleVar = 2;
+                    Output.tier2SingleVarCount++;
+                }
             }
         }
 

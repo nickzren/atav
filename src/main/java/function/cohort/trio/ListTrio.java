@@ -200,35 +200,36 @@ public class ListTrio extends AnalysisBase4CalledVar {
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
 
-        // tier 1
-        if (output1.isParentsNotHom() && output2.isParentsNotHom()
-                // Restrict to High or Moderate impact variants
-                && output1.getCalledVariant().isImpactHighOrModerate()
-                && output2.getCalledVariant().isImpactHighOrModerate()
-                // co-occurance freq in controls is 0
-                && coFreq[Index.CTRL] == 0
-                // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
-                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
-            tierFlag4CompVar = 1;
-            Output.tier1CompoundVarCount++;
-        } else if ( // tier 2
-                // if one of the variant meets tier 2 inclusion criteria
-                (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
-                // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
-            tierFlag4CompVar = 2;
-            Output.tier2CompoundVarCount++;
-        }
+        // Restrict to High or Moderate impact or TraP >= 0.4 variants
+        if (output1.getCalledVariant().isImpactHighOrModerate()
+                && output2.getCalledVariant().isImpactHighOrModerate()) {
+            // tier 1
+            if (output1.isParentsNotHom() && output2.isParentsNotHom()
+                    // co-occurance freq in controls is 0
+                    && coFreq[Index.CTRL] == 0
+                    // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
+                    && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
+                    // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
+                    && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
+                tierFlag4CompVar = 1;
+                Output.tier1CompoundVarCount++;
+            } else if ( // tier 2
+                    // if one of the variant meets tier 2 inclusion criteria
+                    (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
+                    // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
+                    && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
+                tierFlag4CompVar = 2;
+                Output.tier2CompoundVarCount++;
+            }
 
-        StringBuilder compHetVarSB = new StringBuilder();
-        compHetVarSB.append(output1.getCalledVariant().getVariantIdStr());
-        compHetVarSB.append("&");
-        compHetVarSB.append(output2.getCalledVariant().getVariantIdStr());
-        
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, coFreq, compHetVarSB.toString() + "#1");
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, coFreq, compHetVarSB.toString() + "#2");
+            StringBuilder compHetVarSB = new StringBuilder();
+            compHetVarSB.append(output1.getCalledVariant().getVariantIdStr());
+            compHetVarSB.append("&");
+            compHetVarSB.append(output2.getCalledVariant().getVariantIdStr());
+
+            doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, coFreq, compHetVarSB.toString() + "#1");
+            doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, coFreq, compHetVarSB.toString() + "#2");
+        }
     }
 
     private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, TrioOutput output,
