@@ -83,7 +83,6 @@ public class Output {
     public static int dominantAndHaploinsufficientCount;
     public static int knownPathogenicVarCount;
     public static int knownPLPVar10bpflanksCount;
-    public static int rareVarCount;
     public static int hotZoneVarCount;
 
     public static StringJoiner getVariantDataHeader() {
@@ -432,7 +431,6 @@ public class Output {
         LogManager.writeAndPrintNoNewLine("Dominant And Haploinsufficient Var genotype count: " + dominantAndHaploinsufficientCount);
         LogManager.writeAndPrintNoNewLine("Known Pathogenic Var genotype count: " + knownPathogenicVarCount);
         LogManager.writeAndPrintNoNewLine("Known PLP Var 10bpflanks genotype count: " + knownPLPVar10bpflanksCount);
-        LogManager.writeAndPrintNoNewLine("Rare Var genotype count: " + rareVarCount);
         LogManager.writeAndPrintNoNewLine("Hot Zone Var genotype count: " + hotZoneVarCount);
     }
 }

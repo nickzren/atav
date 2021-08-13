@@ -455,18 +455,6 @@ public class CalledVariant extends AnnotatedVariant {
         return 0;
     }
     
-    /*
-        less than 20 alleles abserved from IGM + gnomAD controls
-     */
-    public byte isRareVariant() {
-        if (this.isTotalACFromControlsValid()) {
-            Output.rareVarCount++;
-            return 1;
-        }
-
-        return 0;
-    }
-    
     // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
     public boolean isGenotypeAbsentAmongControl(int gt) {
         if (gt == Index.HET) {
@@ -474,18 +462,6 @@ public class CalledVariant extends AnnotatedVariant {
         } else { // HOM Alt
             return isNHomFromControlsValid(0);
         }
-    }
-
-    /*
-        1. het carrier >= 10% percent alt read OR hom carrier >= 80% percent alt read
-        2. Qual >= 50, QD >= 2, MQ >= 40 
-        3. genotype is absent among IGM and gnomAD controls
-     */
-    public boolean isCaseVarTier1(Carrier carrier) {
-        return (isCarrierHetPercAltReadValid(carrier)
-                || isCarrieHomPercAltReadValid(carrier))
-                && isCarrierGATKQCValid(carrier)
-                && isGenotypeAbsentAmongControl(carrier.getGT());
     }
 
     // het carrier and >= 10% percent alt read
@@ -523,6 +499,6 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     public boolean isCaseVarTier2() {
-        return isTotalACFromControlsValid();
+        return isImpactHighOrModerate() && isTotalACFromControlsValid();
     }
 }
