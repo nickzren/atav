@@ -465,18 +465,6 @@ public class CalledVariant extends AnnotatedVariant {
         }
     }
 
-    /*
-        1. het carrier >= 10% percent alt read OR hom carrier >= 80% percent alt read
-        2. Qual >= 50, QD >= 2, MQ >= 40 
-        3. genotype is absent among IGM and gnomAD controls
-     */
-    public boolean isCaseVarTier1(Carrier carrier) {
-        return (isCarrierHetPercAltReadValid(carrier)
-                || isCarrieHomPercAltReadValid(carrier))
-                && isCarrierGATKQCValid(carrier)
-                && isGenotypeAbsentAmongControl(carrier.getGT());
-    }
-
     // het carrier and >= 10% percent alt read
     public boolean isCarrierHetPercAltReadValid(Carrier carrier) {
         if (carrier.getGT() == Index.HET) {
@@ -509,9 +497,5 @@ public class CalledVariant extends AnnotatedVariant {
         }
 
         return false;
-    }
-
-    public boolean isCaseVarTier2() {
-        return isTotalACFromControlsValid();
     }
 }

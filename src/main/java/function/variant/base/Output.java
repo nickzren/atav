@@ -107,11 +107,13 @@ public class Output {
     public static StringJoiner getAnnotationDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Transcript Stable Id");
 //        sj.add("Has CCDS Transcript");
         sj.add("Impact");
         sj.add("Effect");
         sj.add("Canonical Transcript Effect");
+        sj.add("Gene Name");
+        sj.add("Gene Link");
+        sj.add("Transcript Stable Id");
         sj.add("HGVS_c");
         sj.add("HGVS_p");
 //        sj.add("Polyphen Humdiv Score");
@@ -122,8 +124,6 @@ public class Output {
 //        sj.add("Polyphen Humvar Prediction");
 //        sj.add("Polyphen Humvar Score (CCDS)");
 //        sj.add("Polyphen Humvar Prediction (CCDS)");
-        sj.add("Gene Name");
-        sj.add("Gene Link");
 //        sj.add("UpToDate Gene Name");
 //        sj.add("All Gene Symbols");
 //        sj.add("All Gene Transcript Count");
@@ -498,7 +498,7 @@ public class Output {
     public double getLooAf() {
         return looAF;
     }
-    
+
     public static void logTierVariantCount() {
         LogManager.writeAndPrintNoNewLine("Tier 1 Compound Var genotype count: " + tier1CompoundVarCount);
         LogManager.writeAndPrintNoNewLine("Tier 2 Compound Var genotype count: " + tier2CompoundVarCount);

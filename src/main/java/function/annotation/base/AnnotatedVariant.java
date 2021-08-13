@@ -435,11 +435,13 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getAnnotationData(StringJoiner sj) {
-        sj.add(getStableId(stableId));
 //        sj.add(Boolean.toString(hasCCDS));
         sj.add(impact);
         sj.add(effect);
         sj.add(getCanonicalEffect());
+        sj.add("'" + geneName + "'");
+        sj.add(getGeneLink());
+        sj.add(getStableId(stableId));
         sj.add(HGVS_c);
         sj.add(HGVS_p);
 //        sj.add(FormatManager.getFloat(polyphenHumdiv));
@@ -450,8 +452,6 @@ public class AnnotatedVariant extends Variant {
 //        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
 //        sj.add(FormatManager.getFloat(polyphenHumvarCCDS));
 //        sj.add(PolyphenManager.getPrediction(polyphenHumvarCCDS, effect));
-        sj.add("'" + geneName + "'");
-        sj.add(getGeneLink());
 //        sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
 //        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
 //        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
@@ -1008,5 +1008,14 @@ public class AnnotatedVariant extends Variant {
         }
 
         return 0;
+    }
+
+    public boolean isCaseVarTier2() {
+        return isTotalACFromControlsValid();
+    }
+
+    // High or Moderate impacts or TraP >= 0.4
+    public boolean isImpactHighOrModerate() {
+        return impact.equals("HIGH") || impact.equals("MODERATE") || trapScore >= 0.4;
     }
 }
