@@ -42,7 +42,11 @@ public class VarGenoOutput extends Output {
         StringJoiner sj = new StringJoiner(",");
 
         byte tierFlag = Data.BYTE_NA;
-        if (calledVar.isMetTier2InclusionCriteria()
+        
+        if(calledVar.isHomozygousTier1(carrier)) {
+            tierFlag = 1;
+            Output.tier1SingleVarCount++;
+        } else if (calledVar.isMetTier2InclusionCriteria()
                 && calledVar.isCaseVarTier2()) {
             tierFlag = 2;
             Output.tier2SingleVarCount++;

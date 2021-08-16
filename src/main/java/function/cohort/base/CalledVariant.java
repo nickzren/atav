@@ -501,4 +501,12 @@ public class CalledVariant extends AnnotatedVariant {
     public boolean isCaseVarTier2() {
         return isTotalACFromControlsValid();
     }
+    
+    public boolean isHomozygousTier1(Carrier carrier) {
+        return carrier.getGT() == Index.HOM
+                && isCarrieHomPercAltReadValid(carrier)
+                && isNotObservedInHomAmongControl()
+                && isControlAFValid()
+                && carrier.getMQ() >= 40;
+    }
 }
