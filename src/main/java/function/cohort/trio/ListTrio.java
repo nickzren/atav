@@ -215,8 +215,13 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 Output.tier2CompoundVarCount++;
             }
 
-            doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, "#1");
-            doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, "#2");
+            StringBuilder compHetVarSB = new StringBuilder();
+            compHetVarSB.append(output1.getCalledVariant().getVariantIdStr());
+            compHetVarSB.append("&");
+            compHetVarSB.append(output2.getCalledVariant().getVariantIdStr());
+
+            doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, compHetVarSB.toString() + "#1");
+            doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, compHetVarSB.toString() + "#2");
         }
     }
 
