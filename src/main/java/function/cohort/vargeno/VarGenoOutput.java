@@ -38,18 +38,21 @@ public class VarGenoOutput extends Output {
 
     public String getString(Sample sample) {
         Carrier carrier = calledVar.getCarrier(sample.getId());
-        
+
         StringJoiner sj = new StringJoiner(",");
 
         byte tierFlag = Data.BYTE_NA;
-        
-        if(calledVar.isHomozygousTier1(carrier)) {
-            tierFlag = 1;
-            Output.tier1SingleVarCount++;
-        } else if (calledVar.isMetTier2InclusionCriteria()
-                && calledVar.isCaseVarTier2()) {
-            tierFlag = 2;
-            Output.tier2SingleVarCount++;
+
+        // Restrict to High or Moderate impact or TraP >= 0.4 variants
+        if (getCalledVariant().isImpactHighOrModerate()) {
+            if (calledVar.isHomozygousTier1(carrier)) {
+                tierFlag = 1;
+                Output.tier1SingleVarCount++;
+            } else if (calledVar.isMetTier2InclusionCriteria()
+                    && calledVar.isCaseVarTier2()) {
+                tierFlag = 2;
+                Output.tier2SingleVarCount++;
+            }
         }
 
         sj.add(FormatManager.getByte(tierFlag));
