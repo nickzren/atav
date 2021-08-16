@@ -498,4 +498,12 @@ public class CalledVariant extends AnnotatedVariant {
 
         return false;
     }
+    
+    public boolean isHomozygousTier1(Carrier carrier) {
+        return carrier.getGT() == Index.HOM
+                && isCarrieHomPercAltReadValid(carrier)
+                && isNotObservedInHomAmongControl()
+                && isControlAFValid()
+                && carrier.getMQ() >= 40;
+    }
 }

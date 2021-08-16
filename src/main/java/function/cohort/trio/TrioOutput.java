@@ -105,10 +105,7 @@ public class TrioOutput extends Output {
     public boolean isHomozygousTier1() {
         return denovoFlag.contains("HOMOZYGOUS")
                 && isHetInBothParents()
-                && calledVar.isCarrieHomPercAltReadValid(cCarrier)
-                && calledVar.isNotObservedInHomAmongControl()
-                && calledVar.isControlAFValid()
-                && cCarrier.getMQ() >= 40;
+                && calledVar.isHomozygousTier1(cCarrier);
     }
 
     // both parents are het carriers of variant
