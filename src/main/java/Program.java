@@ -76,6 +76,8 @@ import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
 import function.cohort.pedmap.PedMapCommand;
 import function.cohort.sibling.SiblingCommand;
+import function.cohort.singleton.ListSingleton;
+import function.cohort.singleton.SingletonCommand;
 import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.var.ListVar;
@@ -242,6 +244,8 @@ public class Program {
         try {
             if (VarGenoCommand.isList) { // Genotype Analysis Functions
                 runAnalysis(new ListVarGeno());
+            } else if (SingletonCommand.isList) {
+                runAnalysis(new ListSingleton());
             } else if (VarGenoCommand.isListLite) {
                 ListVarGenoLite listVarGenoLite = new ListVarGenoLite();
                 listVarGenoLite.run();
