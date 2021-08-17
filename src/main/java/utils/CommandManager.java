@@ -28,6 +28,7 @@ import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
 import function.cohort.pedmap.PedMapCommand;
 import function.cohort.sibling.SiblingCommand;
+import function.cohort.singleton.SingletonCommand;
 import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
@@ -346,6 +347,19 @@ public class CommandManager {
                     RvisCommand.isInclude = true;
                     TrapCommand.isInclude = true;
                     break;
+                case "--list-singleton":
+                    SingletonCommand.isList = true;
+                    CohortLevelFilterCommand.isCaseOnly = true;
+                    DefaultControlCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().isInclude = true;
+                    GnomADCommand.isIncludeGeneMetrics = true;
+                    KnownVarCommand.isInclude = true;
+                    ClinGenCommand.isInclude = true;
+                    OMIMCommand.isInclude = true;
+                    RvisCommand.isInclude = true;
+                    TrapCommand.isInclude = true;
+                    break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
                     break;
@@ -394,6 +408,7 @@ public class CommandManager {
                     DefaultControlCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().isInclude = true;
                     GnomADGenomeCommand.getInstance().isInclude = true;
+                    GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
                     ClinGenCommand.isInclude = true;
                     OMIMCommand.isInclude = true;
@@ -596,7 +611,9 @@ public class CommandManager {
     private static void initSubOptions() throws Exception {
         if (VarGenoCommand.isList) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
-        } else if (VarGenoCommand.isListLite) { // Genotype Analysis Functions
+        } else if (SingletonCommand.isList) {
+            SingletonCommand.initOptions(optionList.iterator());
+        } else if (VarGenoCommand.isListLite) {
             VarGenoCommand.initOptions(optionList.iterator());
         } else if (VarCommand.isList) {
 

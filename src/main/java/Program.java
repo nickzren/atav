@@ -76,6 +76,8 @@ import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
 import function.cohort.pedmap.PedMapCommand;
 import function.cohort.sibling.SiblingCommand;
+import function.cohort.singleton.ListSingleton;
+import function.cohort.singleton.SingletonCommand;
 import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.var.ListVar;
@@ -134,7 +136,7 @@ import utils.ThirdPartyToolManager;
  */
 public class Program {
 
-    public static void main(String[] args) {       
+    public static void main(String[] args) {
         try {
             RunTimeManager.start();
 
@@ -159,7 +161,7 @@ public class Program {
             CommandManager.initOptions(options);
 
             DBManager.init();
-            
+
             ThirdPartyToolManager.init();
 
             EffectManager.init();
@@ -167,11 +169,11 @@ public class Program {
             SampleManager.init();
 
             RegionManager.init();
-            
+
             ClinGenManager.init();
-            
+
             OMIMManager.init();
-            
+
             ACMGManager.init();
 
             GeneManager.init();
@@ -179,13 +181,13 @@ public class Program {
             TranscriptManager.init();
 
             VariantManager.init();
-            
+
             CarrierBlockManager.init();
-            
+
             DPBinBlockManager.init();
 
             EvsManager.init();
-            
+
             ExACManager.init();
 
             KnownVarManager.init();
@@ -193,51 +195,51 @@ public class Program {
             RvisManager.init();
 
             SubRvisManager.init();
-            
+
             GeVIRManager.init();
-            
+
             SynRvisManager.init();
 
             LIMBRManager.init();
 
             MgiManager.init();
-            
+
             DenovoDBManager.init();
 
             DiscovEHRManager.init();
 
             MTRManager.init();
-            
+
             RevelManager.init();
-            
+
             PrimateAIManager.init();
-            
+
             GnomADManager.init();
 
             CCRManager.init();
-            
+
             GerpManager.init();
-            
+
             TrapManager.init();
 
             MPCManager.init();
-            
+
             PextManager.init();
-            
+
             CHMManager.init();
 
             GMEManager.init();
-            
+
             TopMedManager.init();
-            
+
             GenomeAsiaManager.init();
-            
+
             IranomeManager.init();
-            
+
             IGMAFManager.init();
-            
+
             DefaultControlManager.init();
-            
+
             DBNSFPManager.init();
 
             // output external data version
@@ -251,6 +253,8 @@ public class Program {
         try {
             if (VarGenoCommand.isList) { // Genotype Analysis Functions
                 runAnalysis(new ListVarGeno());
+            } else if (SingletonCommand.isList) {
+                runAnalysis(new ListSingleton());
             } else if (VarGenoCommand.isListLite) {
                 ListVarGenoLite listVarGenoLite = new ListVarGenoLite();
                 listVarGenoLite.run();
@@ -259,8 +263,8 @@ public class Program {
             } else if (VCFCommand.isList) {
                 runAnalysis(new ListVCF());
             } else if (VCFCommand.isListLite) {
-               ListVCFLite listVCFLite = new ListVCFLite();
-               listVCFLite.run();
+                ListVCFLite listVCFLite = new ListVCFLite();
+                listVCFLite.run();
             } else if (AFCommand.isList) {
                 runAnalysis(new ListAF());
             } else if (CollapsingCommand.isCollapsingSingleVariant) {
