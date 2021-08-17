@@ -121,7 +121,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             ErrorManager.send(e);
         }
     }
-    
+
     private void doOutput(List<SingletonOutput> geneOutputList) {
         try {
             outputCarrierSet.clear();
@@ -151,7 +151,6 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         }
     }
 
-    
     private void outputSingleVar(SingletonOutput output) throws Exception {
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
@@ -190,9 +189,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 && output2.getCalledVariant().isImpactHighOrModerate()) {
             // tier 1
             if (// for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-                output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
-                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
+                    output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
+                    // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
+                    && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()
+                    // one of the variant has to be tier 2 single var
+                    && (output1.getTierFlag4SingleVar() == 2 || output2.getTierFlag4SingleVar() == 2)) {
                 tierFlag4CompVar = 1;
                 Output.tier1CompoundVarCount++;
             } else if ( // tier 2
@@ -232,7 +233,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         bwSingletonGeno.write(sj.toString());
         bwSingletonGeno.newLine();
     }
-    
+
     private void clearList() {
         geneVariantListMap.clear();
     }
