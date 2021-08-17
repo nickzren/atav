@@ -6,6 +6,9 @@ import function.external.base.DataManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import global.Data;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +30,7 @@ public class KnownVarManager {
     public static final String clinVarTable = "knownvar.clinvar_2021_07_14";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_07_14";
     public static final String clinGenTable = "knownvar.clingen_2021_07_14";
-    public static final String omimTable = "knownvar.omim_2021_08_05";
+    public static final String genemap2File = Data.ATAV_HOME + "data/omim/genemap2.txt";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
     public static final String acmgTable = "knownvar.acmg_v3";
     public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
@@ -91,7 +94,6 @@ public class KnownVarManager {
                 + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n"
                 + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n"
                 + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
-                + "OMIM: " + DataManager.getVersion(omimTable) + "\n"
                 + "ACMG: " + DataManager.getVersion(acmgTable) + "\n";
     }
 
@@ -268,17 +270,34 @@ public class KnownVarManager {
         }
 
         try {
-            String sql = "SELECT * From " + omimTable;
+            BufferedReader br = new BufferedReader(new FileReader(new File(genemap2File)));
+            String lineStr = "";
+            while ((lineStr = br.readLine()) != null) {
+                if (lineStr.startsWith("#")) {
+                    continue;
+                }
 
-            ResultSet rs = DBManager.executeQuery(sql);
+                String[] tmp = lineStr.split("\t");
+                
+                if(tmp.length < 13) {
+                    continue;
+                }
 
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-                String diseaseName = rs.getString("diseaseName");
-                omimMap.put(geneName, diseaseName);
+                String[] geneSymbols = tmp[6].replaceAll("( )+", "").toUpperCase().split(",");
+
+                String phenotype = tmp[12];
+
+                for (String gene : geneSymbols) {
+                    if (!gene.isEmpty() && !phenotype.isEmpty()) {
+                        omimMap.put(gene, phenotype);
+                    }
+                }
+
+                String gene = tmp[8].toUpperCase();
+                if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene)) {
+                    omimMap.put(gene, phenotype);
+                }
             }
-
-            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -402,7 +421,7 @@ public class KnownVarManager {
     }
 
     public static String getOMIM(String geneName) {
-        return FormatManager.getString(omimMap.get(geneName));
+        return FormatManager.getString(omimMap.get(geneName.toUpperCase()));
     }
     
     public static int getRecessiveCarrier(String geneName) {
