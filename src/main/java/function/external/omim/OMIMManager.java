@@ -1,10 +1,11 @@
 package function.external.omim;
 
-import function.external.base.DataManager;
-import java.sql.ResultSet;
+import global.Data;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Set;
-import utils.DBManager;
 import utils.ErrorManager;
 import utils.FormatManager;
 
@@ -13,16 +14,11 @@ import utils.FormatManager;
  * @author nick
  */
 public class OMIMManager {
-
-    public static final String omimTable = "knownvar.omim_2021_08_05";
+    public static final String genemap2File = Data.ATAV_HOME + "data/omim/genemap2.txt";
     private static final HashMap<String, String> omimMap = new HashMap<>();
 
     public static String getHeader() {
         return "OMIM Disease,OMIM Inheritance";
-    }
-
-    public static String getVersion() {
-        return "OMIM: " + DataManager.getVersion(omimTable) + "\n";
     }
 
     public static void init() {
@@ -31,32 +27,53 @@ public class OMIMManager {
         }
     }
 
+    public static void main(String[] args) {
+        initMap();
+    }
+    
     private static void initMap() {
-       if (!omimMap.isEmpty()) {
+        if (!omimMap.isEmpty()) {
             return;
         }
 
         try {
-            String sql = "SELECT * From " + omimTable;
+            BufferedReader br = new BufferedReader(new FileReader(new File(genemap2File)));
+            String lineStr = "";
+            while ((lineStr = br.readLine()) != null) {
+                if (lineStr.startsWith("#")) {
+                    continue;
+                }
 
-            ResultSet rs = DBManager.executeQuery(sql);
+                String[] tmp = lineStr.split("\t");
+                
+                if(tmp.length < 13) {
+                    continue;
+                }
 
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-                String diseaseName = rs.getString("diseaseName");
-                omimMap.put(geneName, diseaseName);
+                String[] geneSymbols = tmp[6].replaceAll("( )+", "").toUpperCase().split(",");
+
+                String phenotype = tmp[12];
+
+                for (String gene : geneSymbols) {
+                    if (!gene.isEmpty() && !phenotype.isEmpty()) {
+                        omimMap.put(gene, phenotype);
+                    }
+                }
+
+                String gene = tmp[8].toUpperCase();
+                if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene)) {
+                    omimMap.put(gene, phenotype);
+                }
             }
-
-            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
 
     public static String getOMIM(String geneName) {
-        return FormatManager.getString(omimMap.get(geneName));
+        return FormatManager.getString(omimMap.get(geneName.toUpperCase()));
     }
-    
+
     public static Set<String> getAllGeneSet() {
         return omimMap.keySet();
     }
