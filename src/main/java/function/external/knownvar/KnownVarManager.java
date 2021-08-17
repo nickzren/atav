@@ -283,7 +283,7 @@ public class KnownVarManager {
                     continue;
                 }
 
-                String[] geneSymbols = tmp[6].replaceAll("( )+", "").toUpperCase().split(",");
+                String[] geneSymbols = tmp[6].replaceAll("( )+", "").split(",");
 
                 String phenotype = tmp[12];
 
@@ -293,7 +293,7 @@ public class KnownVarManager {
                     }
                 }
 
-                String gene = tmp[8].toUpperCase();
+                String gene = tmp[8];
                 if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene)) {
                     omimMap.put(gene, phenotype);
                 }
@@ -421,7 +421,7 @@ public class KnownVarManager {
     }
 
     public static String getOMIM(String geneName) {
-        return FormatManager.getString(omimMap.get(geneName.toUpperCase()));
+        return FormatManager.getString(omimMap.get(geneName));
     }
     
     public static int getRecessiveCarrier(String geneName) {
