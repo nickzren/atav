@@ -29,7 +29,7 @@ public class KnownVarManager {
     public static final String hgmdTable = "knownvar.hgmd_2021_2";
     public static final String clinVarTable = "knownvar.clinvar_2021_07_14";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_07_14";
-    public static final String clinGenTable = "knownvar.clingen_2021_07_14";
+    public static final String clingenFile =  Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
     public static final String genemap2File = Data.ATAV_HOME + "data/omim/genemap2.txt";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
     public static final String acmgTable = "knownvar.acmg_v3";
@@ -38,7 +38,7 @@ public class KnownVarManager {
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
     private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
     private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<>();
-    private static final HashMap<String, ClinGen> clinGenMap = new HashMap<>();
+    private static final HashMap<String, String> clinGenMap = new HashMap<>();
     private static final HashMap<String, String> omimMap = new HashMap<>();
     private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
     private static final HashMap<String, String> acmgMap = new HashMap<>();
@@ -81,7 +81,6 @@ public class KnownVarManager {
         sj.add("ClinVar Pathogenic SNV Missense Count");
         sj.add("ClinVar Pathogenic Last Pathogenic Location");
         sj.add("ClinGen");
-        sj.add("ClinGen HaploinsufficiencyDesc");
         sj.add("OMIM Disease");
         sj.add("OMIM Inheritance");
         sj.add("ACMG");
@@ -93,7 +92,6 @@ public class KnownVarManager {
         return "HGMD: " + DataManager.getVersion(hgmdTable) + "\n"
                 + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n"
                 + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n"
-                + "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n"
                 + "ACMG: " + DataManager.getVersion(acmgTable) + "\n";
     }
 
@@ -112,11 +110,9 @@ public class KnownVarManager {
             initOMIMMap();
 
 //            initRecessiveCarrierMap();
-
             initACMGMap();
 
 //            initDBDSMMap();
-
             if (KnownVarCommand.isKnownVarOnly
                     || KnownVarCommand.isKnownVarPathogenicOnly) {
                 VariantManager.reset2KnownVarSet();
@@ -242,23 +238,31 @@ public class KnownVarManager {
         }
     }
 
+    public static void main(String[] args) {
+        initClinGenMap();
+    }
+    
     private static void initClinGenMap() {
         try {
-            String sql = "SELECT * From " + clinGenTable;
+            BufferedReader br = new BufferedReader(new FileReader(new File(clingenFile)));
+            String lineStr = "";
+            while ((lineStr = br.readLine()) != null) {
+                if (lineStr.startsWith("#")) {
+                    continue;
+                }
 
-            ResultSet rs = DBManager.executeQuery(sql);
+                String[] tmp = lineStr.split("\t");
 
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-                String haploinsufficiencyDesc = rs.getString("HaploinsufficiencyDesc");
-                String triplosensitivityDesc = rs.getString("TriplosensitivityDesc");
+                String gene = tmp[0];
+                String haploinsufficiencyDescription = tmp[5].replace("Dosage sensitivity unlikely", "Unlikely");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Gene associated with autosomal recessive phenotype", "Recessive evidence");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("No evidence available", "No evidence");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Little evidence for dosage pathogenicity", "Little evidence");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Some evidence for dosage pathogenicity", "Some evidence");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Sufficient evidence for dosage pathogenicity", "Sufficient evidence");
 
-                ClinGen clinGen = new ClinGen(haploinsufficiencyDesc, triplosensitivityDesc);
-
-                clinGenMap.put(geneName, clinGen);
+                clinGenMap.put(gene, haploinsufficiencyDescription);
             }
-
-            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -278,8 +282,8 @@ public class KnownVarManager {
                 }
 
                 String[] tmp = lineStr.split("\t");
-                
-                if(tmp.length < 13) {
+
+                if (tmp.length < 13) {
                     continue;
                 }
 
@@ -351,7 +355,7 @@ public class KnownVarManager {
         return output;
     }
 
-    public static int getHGMDFlankingCount(Variant var,int width) {
+    public static int getHGMDFlankingCount(Variant var, int width) {
         try {
             preparedStatement4HGMDVariantFlankingCount.setString(1, var.getChrStr());
             preparedStatement4HGMDVariantFlankingCount.setInt(2, var.getStartPosition() - width);
@@ -410,20 +414,20 @@ public class KnownVarManager {
         return clinVarPathoratio;
     }
 
-    public static ClinGen getClinGen(String geneName) {
-        ClinGen clinGen = clinGenMap.get(geneName);
+    public static String getClinGen(String geneName) {
+        String value = clinGenMap.get(geneName);
 
-        if (clinGen == null) {
-            clinGen = new ClinGen(Data.STRING_NA, Data.STRING_NA);
+        if (value == null) {
+            return Data.STRING_NA;
         }
 
-        return clinGen;
+        return value;
     }
 
     public static String getOMIM(String geneName) {
         return FormatManager.getString(omimMap.get(geneName));
     }
-    
+
     public static int getRecessiveCarrier(String geneName) {
         if (recessiveCarrierSet.contains(geneName)) {
             return 1;

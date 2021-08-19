@@ -421,7 +421,7 @@ public class CalledVariant extends AnnotatedVariant {
     public byte isDominantAndHaploinsufficient(Carrier carrier) {
         if (carrier.getGT() == Index.HET // 1
                 && isLOF()
-                && (getKnownVar().getClinGen().isInClinGenSufficientOrSomeEvidence()
+                && (getKnownVar().isInClinGenSufficientOrSomeEvidence()
                 || getKnownVar().isOMIMDominant()) // 2
                 ) {
             Output.dominantAndHaploinsufficientCount++;
@@ -442,7 +442,7 @@ public class CalledVariant extends AnnotatedVariant {
 
         return 0;
     }
-    
+
     /*
         any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
      */
@@ -454,7 +454,7 @@ public class CalledVariant extends AnnotatedVariant {
 
         return 0;
     }
-    
+
     // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
     public boolean isGenotypeAbsentAmongControl(int gt) {
         if (gt == Index.HET) {
@@ -501,7 +501,7 @@ public class CalledVariant extends AnnotatedVariant {
     public boolean isCaseVarTier2() {
         return isTotalACFromControlsValid();
     }
-    
+
     public boolean isHomozygousTier1(Carrier carrier) {
         return carrier.getGT() == Index.HOM
                 && isCarrieHomPercAltReadValid(carrier)

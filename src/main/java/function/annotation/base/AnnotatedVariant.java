@@ -777,9 +777,9 @@ public class AnnotatedVariant extends Variant {
     // LoF variant and occurs within a ClinGen/OMIM disease gene
     private boolean isInClinGenOrOMIM() {
         return isLOF()
-                && (knownVarOutput.getClinGen().isInClinGen() || knownVarOutput.isOMIMGene());
+                && (knownVarOutput.isInClinGen() || knownVarOutput.isOMIMGene());
     }
-
+    
     // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
     private boolean isInClinVarPathoratio() {
         return isLOF()

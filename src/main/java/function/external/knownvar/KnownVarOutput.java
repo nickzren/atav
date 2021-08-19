@@ -15,7 +15,7 @@ public class KnownVarOutput {
     private HGMDOutput hgmdOutput;
     private ClinVarOutput clinVarOutput;
     private ClinVarPathoratio clinVarPathoratio;
-    private ClinGen clinGen;
+    private String clinGen;
     private String omimDiseaseName;
     private int recessiveCarrier;
     private String acmg;
@@ -45,7 +45,7 @@ public class KnownVarOutput {
         sj.merge(hgmdOutput.getStringJoiner());
         sj.merge(clinVarOutput.getStringJoiner());
         sj.merge(clinVarPathoratio.getStringJoiner());
-        sj.merge(clinGen.getStringJoiner());
+        sj.add(clinGen);
         sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));
         sj.add(getOMIMInheritance());
 //        sj.add(FormatManager.getInteger(recessiveCarrier));
@@ -151,16 +151,27 @@ public class KnownVarOutput {
         if (omimDiseaseName.contains("Y-linked")) {
             sj.add("YL");
         }
-        
-        if(sj.length() == 0) {
+
+        if (sj.length() == 0) {
             return Data.STRING_NA;
         }
-        
+
         return sj.toString();
     }
-    
-    public ClinGen getClinGen() {
+
+    public String getClinGen() {
         return clinGen;
+    }
+
+    public boolean isInClinGen() {
+        return clinGen.equals("Sufficient evidence")
+                || clinGen.equals("Some evidence")
+                || clinGen.equals("Recessive evidence");
+    }
+
+    public boolean isInClinGenSufficientOrSomeEvidence() {
+        return clinGen.equals("Sufficient evidence")
+                || clinGen.equals("Some evidence");
     }
 
     public ClinVarPathoratio getClinVarPathoratio() {
