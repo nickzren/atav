@@ -745,7 +745,7 @@ public class AnnotatedVariant extends Variant {
 
     // LoF effects
     public boolean isLOF() {
-        return EffectManager.isLOF(effectID);
+        return EffectManager.isLOF(effectID) || trapScore >= 0.676;
     }
 
     // tier 2 inclusion criteria
