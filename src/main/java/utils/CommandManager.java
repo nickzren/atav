@@ -336,13 +336,6 @@ public class CommandManager {
                 // Genotype Analysis Functions
                 case "--list-var-geno":
                     VarGenoCommand.isList = true;
-                    DefaultControlCommand.getInstance().isInclude = true;
-                    GnomADExomeCommand.getInstance().isInclude = true;
-                    GnomADGenomeCommand.getInstance().isInclude = true;
-                    GnomADCommand.isIncludeGeneMetrics = true;
-                    KnownVarCommand.isInclude = true;
-                    RvisCommand.isInclude = true;
-                    TrapCommand.isInclude = true;
                     break;
                 case "--list-singleton":
                     SingletonCommand.isList = true;

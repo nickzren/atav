@@ -56,8 +56,6 @@ public class ListVarGeno extends AnalysisBase4CalledVar {
         if (CommonCommand.gzip) {
             ThirdPartyToolManager.gzipFile(genotypesFilePath);
         }
-        
-        Output.logTierVariantCount();
     }
 
     @Override
