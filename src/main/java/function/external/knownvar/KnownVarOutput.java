@@ -17,6 +17,7 @@ public class KnownVarOutput {
     private ClinVarPathoratio clinVarPathoratio;
     private String clinGen;
     private String omimDiseaseName;
+    private String omimInheritance;
     private int recessiveCarrier;
     private String acmg;
     private DBDSMOutput dbDSMOutput;
@@ -34,6 +35,7 @@ public class KnownVarOutput {
         clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
         clinGen = KnownVarManager.getClinGen(geneName);
         omimDiseaseName = KnownVarManager.getOMIM(geneName);
+        omimInheritance = getOMIMInheritance();
 //        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
         acmg = KnownVarManager.getACMG(geneName);
 //        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
@@ -47,7 +49,7 @@ public class KnownVarOutput {
         sj.merge(clinVarPathoratio.getStringJoiner());
         sj.add(clinGen);
         sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));
-        sj.add(getOMIMInheritance());
+        sj.add(omimInheritance);
 //        sj.add(FormatManager.getInteger(recessiveCarrier));
         sj.add(acmg);
 //        sj.merge(dbDSMOutput.getStringJoiner());
@@ -73,16 +75,27 @@ public class KnownVarOutput {
     }
 
     public boolean isOMIMGene() {
-        return !omimDiseaseName.equals(Data.STRING_NA);
+        return omimInheritance.contains("AD")
+                || omimInheritance.contains("XLD")
+                || omimInheritance.contains("PD")
+                || omimInheritance.contains("DD")
+                || omimInheritance.contains("SMo")
+                || omimInheritance.contains("SMu")
+                || omimInheritance.contains("AR")
+                || omimInheritance.contains("PR")
+                || omimInheritance.contains("DR")
+                || omimInheritance.contains("XLR")
+                || omimInheritance.contains("XL")
+                || omimInheritance.contains("YL");
     }
 
     public boolean isOMIMDominant() {
-        return omimDiseaseName.contains("Autosomal dominant")
-                || omimDiseaseName.contains("X-linked dominant")
-                || omimDiseaseName.contains("Pseudoautosomal dominant")
-                || omimDiseaseName.contains("Digenic dominant")
-                || omimDiseaseName.contains("Somatic mosaicism")
-                || omimDiseaseName.contains("Somatic mutation");
+        return omimInheritance.contains("AD")
+                || omimInheritance.contains("XLD")
+                || omimInheritance.contains("PD")
+                || omimInheritance.contains("DD")
+                || omimInheritance.contains("SMo")
+                || omimInheritance.contains("SMu");
     }
 
     public String getOMIMInheritance() {
