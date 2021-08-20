@@ -89,7 +89,7 @@ public class KnownVarOutput {
                 || omimInheritance.contains("YL");
     }
 
-    public boolean isOMIMDominant() {
+    public boolean isOMIMDominant() {        
         return omimInheritance.contains("AD")
                 || omimInheritance.contains("XLD")
                 || omimInheritance.contains("PD")

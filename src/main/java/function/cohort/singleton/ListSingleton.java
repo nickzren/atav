@@ -3,8 +3,10 @@ package function.cohort.singleton;
 import function.cohort.base.CalledVariant;
 import function.cohort.base.AnalysisBase4CalledVar;
 import static function.cohort.singleton.SingletonManager.COMP_HET_FLAG;
+import function.cohort.trio.TrioManager;
 import function.variant.base.Output;
 import global.Data;
+import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
@@ -181,6 +183,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
     }
 
     private void doCompHetOutput(String compHetFlag, SingletonOutput output1, SingletonOutput output2) throws Exception {
+        float[] coFreq = SingletonManager.getCoOccurrenceFreq(output1, output2);
+        
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
 
@@ -188,12 +192,13 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         if (output1.getCalledVariant().isImpactHighOrModerate()
                 && output2.getCalledVariant().isImpactHighOrModerate()) {
             // tier 1
-            if (// for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-                    output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
+            if (coFreq[Index.CTRL] == 0
+                    // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
+                    && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
                     // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
                     && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()
                     // one of the variant has to be tier 2 single var
-                    && (output1.getTierFlag4SingleVar() == 2 || output2.getTierFlag4SingleVar() == 2)) {
+                    && (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())) {
                 tierFlag4CompVar = 1;
                 Output.tier1CompoundVarCount++;
             } else if ( // tier 2

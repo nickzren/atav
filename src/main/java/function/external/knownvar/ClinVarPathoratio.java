@@ -46,6 +46,10 @@ public class ClinVarPathoratio {
                 || snvSpliceCount > 0
                 || snvNonsenseCount > 0;
     }
+    
+    public boolean isClinVarPathoratioMissenseSNVValid() {
+        return snvMissenseCount > 0;
+    }
 
     @Override
     public String toString() {
