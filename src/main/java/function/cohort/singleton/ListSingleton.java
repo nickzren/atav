@@ -196,9 +196,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                     // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
                     && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
                     // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
-                    && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()
-                    // one of the variant has to be tier 2 single var
-                    && (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())) {
+                    && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
                 tierFlag4CompVar = 1;
                 Output.tier1CompoundVarCount++;
             } else if ( // tier 2
