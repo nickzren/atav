@@ -1,11 +1,10 @@
 package function.external.clingen;
 
-import function.external.base.DataManager;
 import global.Data;
-import java.sql.ResultSet;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
-import java.util.StringJoiner;
-import utils.DBManager;
 import utils.ErrorManager;
 
 /**
@@ -14,20 +13,11 @@ import utils.ErrorManager;
  */
 public class ClinGenManager {
 
-    public static final String clinGenTable = "knownvar.clingen_2021_07_14";
+    private static final String clingenFile = Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
     private static final HashMap<String, ClinGen> clinGenMap = new HashMap<>();
 
     public static String getHeader() {
-        StringJoiner sj = new StringJoiner(",");
-        sj.add("ClinGen");
-//        sj.add("ClinGen HaploinsufficiencyDesc");
-//        sj.add("ClinGen TriplosensitivityDesc");
-
-        return sj.toString();
-    }
-
-    public static String getVersion() {
-        return "ClinGen: " + DataManager.getVersion(clinGenTable) + "\n";
+        return "ClinGen"; // HaploinsufficiencyDesc
     }
 
     public static void init() {
@@ -38,21 +28,26 @@ public class ClinGenManager {
 
     private static void initMap() {
         try {
-            String sql = "SELECT * From " + clinGenTable;
+            BufferedReader br = new BufferedReader(new FileReader(new File(clingenFile)));
+            String lineStr = "";
+            while ((lineStr = br.readLine()) != null) {
+                if (lineStr.startsWith("#")) {
+                    continue;
+                }
 
-            ResultSet rs = DBManager.executeQuery(sql);
+                String[] tmp = lineStr.split("\t");
 
-            while (rs.next()) {
-                String geneName = rs.getString("geneName").toUpperCase();
-                String haploinsufficiencyDesc = rs.getString("HaploinsufficiencyDesc");
-                String triplosensitivityDesc = rs.getString("TriplosensitivityDesc");
+                String gene = tmp[0];
+                String haploinsufficiencyDescription = tmp[5].replace("Dosage sensitivity unlikely", "Unlikely");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Gene associated with autosomal recessive phenotype", "Recessive evidence");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("No evidence available", "No evidence");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Little evidence for dosage pathogenicity", "Little evidence");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Some evidence for dosage pathogenicity", "Some evidence");
+                haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Sufficient evidence for dosage pathogenicity", "Sufficient evidence");
 
-                ClinGen clinGen = new ClinGen(haploinsufficiencyDesc, triplosensitivityDesc);
-
-                clinGenMap.put(geneName, clinGen);
+                ClinGen clinGen = new ClinGen(haploinsufficiencyDescription);
+                clinGenMap.put(gene, clinGen);
             }
-
-            rs.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -62,13 +57,12 @@ public class ClinGenManager {
         ClinGen clinGen = clinGenMap.get(geneName);
 
         if (clinGen == null) {
-            clinGen = new ClinGen(Data.STRING_NA, Data.STRING_NA);
+            return new ClinGen(Data.STRING_NA);
         }
 
         return clinGen;
     }
-    
-    //Set<Map.Entry<K,V>>
+
     public static HashMap<String, ClinGen> getMap() {
         return clinGenMap;
     }

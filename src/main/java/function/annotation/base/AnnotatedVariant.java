@@ -552,7 +552,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (ClinGenCommand.isInclude) {
-            sj.merge(getClinGenStringJoiner());
+            sj.add(getClinGenStr());
         }
 
         if (OMIMCommand.isInclude) {
@@ -692,8 +692,8 @@ public class AnnotatedVariant extends Variant {
         return knownVarOutput.getStringJoiner();
     }
 
-    public StringJoiner getClinGenStringJoiner() {
-        return clinGen.getStringJoiner();
+    public String getClinGenStr() {
+        return clinGen.toString();
     }
 
     public StringJoiner getOMIMStringJoiner() {

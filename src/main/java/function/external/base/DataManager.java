@@ -145,10 +145,6 @@ public class DataManager {
             sb.append(KnownVarManager.getVersion());
         }
         
-        if (ClinGenCommand.isInclude) {
-            sb.append(ClinGenManager.getVersion());
-        }
-        
         if (ACMGCommand.isInclude) {
             sb.append(ACMGManager.getVersion());
         }
