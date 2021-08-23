@@ -499,12 +499,11 @@ public class CalledVariant extends AnnotatedVariant {
         return false;
     }
 
-    // DP bin >= 10, Qual >= 50, QD >= 2, MQ >= 40
+    // DP bin >= 10, Qual >= 50, MQ >= 40
     public boolean isCarrierGATKQCValid(Carrier carrier) {
         if (carrier != null) {
             return carrier.getDPBin() >= 10
                     && carrier.getQual() >= 50
-                    && carrier.getQD() >= 2
                     && carrier.getMQ() >= 40;
         }
 
