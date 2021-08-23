@@ -1,12 +1,10 @@
 package function.variant.base;
 
-import function.external.knownvar.ClinVar;
-import function.external.knownvar.HGMD;
-import function.external.knownvar.KnownVarManager;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.SampleManager;
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.parent.ParentCommand;
+import function.cohort.singleton.SingletonCommand;
 import function.cohort.trio.TrioCommand;
 import global.Data;
 import utils.ErrorManager;
@@ -50,6 +48,7 @@ public class VariantManager {
 
     public static void init() throws FileNotFoundException, Exception, SQLException {
         if (TrioCommand.isList
+                || SingletonCommand.isList
                 || ParentCommand.isList
                 || CollapsingCommand.isCollapsingCompHet) {
             // disable process region as variant by varaint way
