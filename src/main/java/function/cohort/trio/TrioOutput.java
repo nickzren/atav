@@ -201,6 +201,7 @@ public class TrioOutput extends Output {
                 }
             } else { // child variant
                 if (calledVar.isMetTier2InclusionCriteria()
+                        && isParentsNotHom()
                         && calledVar.isCaseVarTier2()) {
                     tierFlag4SingleVar = 2;
                     Output.tier2SingleVarCount++;
@@ -215,7 +216,9 @@ public class TrioOutput extends Output {
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(FormatManager.getByte(calledVar.isDominantAndHaploinsufficient(cCarrier)));
+        sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria() ? 1 : 0));
+        sj.add(FormatManager.getByte(calledVar.isLoFDominantAndHaploinsufficient(cCarrier)));
+        sj.add(FormatManager.getByte(calledVar.isMissenseDominantAndHaploinsufficient(cCarrier)));
         sj.add(FormatManager.getByte(calledVar.isKnownPathogenicVariant()));
         sj.add(FormatManager.getByte(calledVar.isKnownPLPVar10bpflanks()));
         sj.add(FormatManager.getByte(calledVar.isHotZone()));

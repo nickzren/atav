@@ -1031,4 +1031,8 @@ public class AnnotatedVariant extends Variant {
     public boolean isImpactHighOrModerate() {
         return impact.equals("HIGH") || impact.equals("MODERATE") || trapScore >= 0.4;
     }
+    
+    public boolean isMissense() {
+        return effect.startsWith("missense_variant");
+    }
 }

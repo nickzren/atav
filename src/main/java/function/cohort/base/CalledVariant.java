@@ -420,12 +420,29 @@ public class CalledVariant extends AnnotatedVariant {
         1. variant is het call
         2. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
      */
-    public byte isDominantAndHaploinsufficient(Carrier carrier) {
+    public byte isLoFDominantAndHaploinsufficient(Carrier carrier) {
         if (carrier.getGT() == Index.HET // 1
                 && isLOF()
                 && (getClinGen().isInClinGenSufficientOrSomeEvidence() || isOMIMDominant()) // 2
                 ) {
-            Output.dominantAndHaploinsufficientCount++;
+            Output.lofDominantAndHaploinsufficientCount++;
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /*
+        1. variant is het call
+        2. Missense variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
+        3. ClinVar pathogenic SNV missense count > 1 
+     */
+    public byte isMissenseDominantAndHaploinsufficient(Carrier carrier) {
+        if (carrier.getGT() == Index.HET // 1
+                && isMissense()
+                && (getClinGen().isInClinGenSufficientOrSomeEvidence() || isOMIMDominant()) // 2
+                && getKnownVar().getClinVarPathoratio().isClinVarPathoratioMissenseSNVValid() // 3
+                ) {
             return 1;
         }
 
@@ -443,13 +460,12 @@ public class CalledVariant extends AnnotatedVariant {
 
         return 0;
     }
-    
+
     /*
         any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
      */
     public byte isKnownPLPVar10bpflanks() {
         if (this.isHGMDOrClinVarFlankingValid()) {
-            Output.knownPLPVar10bpflanksCount++;
             return 1;
         }
 
@@ -468,9 +484,7 @@ public class CalledVariant extends AnnotatedVariant {
     // het carrier and >= 10% percent alt read
     public boolean isCarrierHetPercAltReadValid(Carrier carrier) {
         if (carrier.getGT() == Index.HET) {
-            float percAltRead = carrier != null ? carrier.getPercAltRead() : Data.FLOAT_NA;
-
-            return percAltRead != Data.FLOAT_NA && percAltRead >= 0.1;
+            return carrier.getPercAltRead() >= 0.1;
         }
 
         return false;
@@ -479,9 +493,7 @@ public class CalledVariant extends AnnotatedVariant {
     // hom carrier and >= 80% percent alt read
     public boolean isCarrieHomPercAltReadValid(Carrier carrier) {
         if (carrier.getGT() == Index.HOM) {
-            float percAltRead = carrier != null ? carrier.getPercAltRead() : Data.FLOAT_NA;
-
-            return percAltRead != Data.FLOAT_NA && percAltRead >= 0.8;
+            return carrier.getPercAltRead() >= 0.8;
         }
 
         return false;
@@ -498,12 +510,20 @@ public class CalledVariant extends AnnotatedVariant {
 
         return false;
     }
-    
+
     public boolean isHomozygousTier1(Carrier carrier) {
         return carrier.getGT() == Index.HOM
                 && isCarrieHomPercAltReadValid(carrier)
                 && isNotObservedInHomAmongControl()
                 && isControlAFValid()
                 && carrier.getMQ() >= 40;
+    }
+    
+    public boolean isHeterozygousTier1(Carrier carrier) {
+        return carrier.getGT() == Index.HET
+                && isCarrierHetPercAltReadValid(carrier)
+                && isCarrierGATKQCValid(carrier)
+                && carrier.getDPBin() >= 10
+                && isGenotypeAbsentAmongControl(carrier.getGT());
     }
 }

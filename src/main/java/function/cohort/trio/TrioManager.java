@@ -55,7 +55,9 @@ public class TrioManager {
         sj.add("Compound Var");
         sj.add("Tier Flag (Compound Var)");
         sj.add("Tier Flag (Single Var)");
-        sj.add("Dominant and Haploinsufficient Gene");
+        sj.add("Pass Tier 2 Inclusion Criteria");
+        sj.add("LoF Dominant and Haploinsufficient Gene");
+        sj.add("Missense Dominant and Haploinsufficient Gene");
         sj.add("Known Pathogenic Variant");
         sj.add("Known PLP Variants 10bpflanks");
         sj.add("Hot Zone");
