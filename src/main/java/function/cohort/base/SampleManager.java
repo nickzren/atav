@@ -183,18 +183,18 @@ public class SampleManager {
                     String sampleType = values[6];
                     String captureKit = values[7];
 
-                    int sampleId = getSampleId(individualId, sampleType, captureKit);
-                    int experimentId = getExperimentId(sampleId);
+                    TempSample tempSample = getTempSample(individualId, sampleType, captureKit);
 
-                    Sample sample = new Sample(sampleId, familyId, individualId,
-                            paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
+                    Sample sample = new Sample(tempSample.sampleId, familyId, individualId,
+                            paternalId, maternalId, sex, pheno, sampleType, captureKit,
+                            tempSample.experimentId, tempSample.ancestry, tempSample.broadPhenotype);
 
-                    if (sampleMap.containsKey(sampleId)) {
+                    if (sampleMap.containsKey(tempSample.sampleId)) {
                         continue;
                     }
 
                     sampleList.add(sample);
-                    sampleMap.put(sampleId, sample);
+                    sampleMap.put(tempSample.sampleId, sample);
 
                     countSampleNum(sample);
 
@@ -300,24 +300,23 @@ public class SampleManager {
                     captureKit = "N/A";
                 }
 
-                int sampleId = getSampleId(individualId, sampleType, captureKit);
+                TempSample tempSample = getTempSample(individualId, sampleType, captureKit);
 
                 if (CohortLevelFilterCommand.isExcludeLowQualitySample
-                        && isLowQualitySample(sampleId)) {
+                        && isLowQualitySample(tempSample.sampleId)) {
                     LogManager.writeAndPrint("Excluded low quality sample: " + individualId);
                     continue;
                 }
 
-                if (sampleMap.containsKey(sampleId)) {
+                if (sampleMap.containsKey(tempSample.sampleId)) {
                     continue;
                 }
 
-                int experimentId = getExperimentId(sampleId);
+                Sample sample = new Sample(tempSample.sampleId, familyId, individualId,
+                        paternalId, maternalId, sex, pheno, sampleType, captureKit,
+                        tempSample.experimentId, tempSample.ancestry, tempSample.broadPhenotype);
 
-                Sample sample = new Sample(sampleId, familyId, individualId,
-                        paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
-
-                if (sampleId == Data.INTEGER_NA) {
+                if (tempSample.sampleId == Data.INTEGER_NA) {
                     checkSampleList(sample);
                     continue;
                 }
@@ -327,7 +326,7 @@ public class SampleManager {
                 }
 
                 sampleList.add(sample);
-                sampleMap.put(sampleId, sample);
+                sampleMap.put(tempSample.sampleId, sample);
 
                 countSampleNum(sample);
 
@@ -386,9 +385,12 @@ public class SampleManager {
                 String sampleType = rs.getString("sample_type").trim();
                 String captureKit = rs.getString("capture_kit").trim();
                 int experimentId = rs.getInt("experiment_id");
+                String ancestry = FormatManager.getString(rs.getString("ancestry"));
+                String broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
 
                 Sample sample = new Sample(sampleId, familyId, individualId,
-                        paternalId, maternalId, sex, pheno, sampleType, captureKit, experimentId);
+                        paternalId, maternalId, sex, pheno, sampleType, captureKit, 
+                        experimentId, ancestry, broadPhenotype);
 
                 sampleList.add(sample);
                 sampleMap.put(sampleId, sample);
@@ -763,12 +765,13 @@ public class SampleManager {
         }
     }
 
-    private static int getSampleId(String sampleName, String sampleType,
+    private static TempSample getTempSample(String sampleName, String sampleType,
             String captureKit) throws Exception {
-        int sampleId = Data.INTEGER_NA;
+        TempSample s = new TempSample();
+        s.sampleId = Data.INTEGER_NA;
 
         try {
-            String sql = "SELECT sample_id FROM sample "
+            String sql = "SELECT sample_id,experiment_id,ancestry,broad_phenotype FROM sample "
                     + "WHERE sample_name=? AND sample_type=? AND capture_kit=? "
                     + "AND sample_finished = 1 AND sample_failure = 0";
 
@@ -778,7 +781,10 @@ public class SampleManager {
             preparedStatement.setString(3, captureKit);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                sampleId = rs.getInt("sample_id");
+                s.sampleId = rs.getInt("sample_id");
+                s.experimentId = rs.getInt("experiment_id");
+                s.ancestry = FormatManager.getString(rs.getString("ancestry"));
+                s.broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
             }
 
             rs.close();
@@ -787,7 +793,7 @@ public class SampleManager {
             ErrorManager.send(e);
         }
 
-        return sampleId;
+        return s;
     }
 
     private static boolean isLowQualitySample(int sampleId) {

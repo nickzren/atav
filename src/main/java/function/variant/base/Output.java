@@ -290,6 +290,8 @@ public class Output {
         sj.add("Sample Name");
         sj.add("Sample Type");
         sj.add("Sample Phenotype");
+        sj.add("Ancestry");
+        sj.add("Broad Phenotype");
         sj.add("GT");
         sj.add("DP");
         sj.add("DP Bin");
@@ -375,6 +377,8 @@ public class Output {
         sj.add(sample.getName());
         sj.add(sample.getType());
         sj.add(sample.getPhenotype());
+        sj.add(sample.getAncestry());
+        sj.add(sample.getBroadPhenotype());
         sj.add(getGenoStr(calledVar.getGT(sample.getIndex())));
         sj.add(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA));
         sj.add(FormatManager.getShort(calledVar.getDPBin(sample.getIndex())));

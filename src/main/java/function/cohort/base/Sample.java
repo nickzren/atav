@@ -23,6 +23,8 @@ public class Sample {
     private String type;
     private String captureKit;
     private int experimentId;
+    private String ancestry;
+    private String broadPhenotype;
 
     // covariate
     private ArrayList<Double> covariateList = new ArrayList<>();
@@ -31,7 +33,8 @@ public class Sample {
 
     public Sample(int sampled_id, String family_id, String child_id,
             String paternal_id, String maternal_id, byte _sex, byte _pheno,
-            String sample_type, String _captureKit, int _experimentId) {
+            String sample_type, String _captureKit, int _experimentId,
+            String ancestry, String broadPhenotype) {
         id = sampled_id;
         type = sample_type;
         captureKit = _captureKit;
@@ -44,6 +47,8 @@ public class Sample {
         pheno = (byte) (_pheno - 1);
         quantitativeTrait = Data.FLOAT_NA;
         experimentId = _experimentId;
+        this.ancestry = ancestry;
+        this.broadPhenotype = broadPhenotype;
     }
 
     public int getId() {
@@ -157,5 +162,13 @@ public class Sample {
 
     public int getExperimentId() {
         return experimentId;
+    }
+    
+    public String getAncestry() {
+        return ancestry;
+    }
+    
+    public String getBroadPhenotype() {
+        return broadPhenotype;
     }
 }
