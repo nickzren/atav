@@ -342,6 +342,10 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void initExternalData() {
+        if (KnownVarCommand.isInclude) {
+            knownVarOutput.initClinPathoratio(getGeneName());
+        }
+        
         if (ClinGenCommand.isInclude) {
             clinGen = ClinGenManager.getClinGen(getGeneName());
         }

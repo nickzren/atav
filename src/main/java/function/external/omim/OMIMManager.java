@@ -56,13 +56,13 @@ public class OMIMManager {
 
                 for (String gene : geneSymbols) {
                     if (!gene.isEmpty() && !phenotype.isEmpty()) {
-                        omimMap.put(gene, phenotype);
+                        omimMap.put(gene.toUpperCase(), phenotype);
                     }
                 }
 
                 String gene = tmp[8];
                 if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene)) {
-                    omimMap.put(gene, phenotype);
+                    omimMap.put(gene.toUpperCase(), phenotype);
                 }
             }
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class OMIMManager {
     }
 
     public static String getOMIM(String geneName) {
-        return FormatManager.getString(omimMap.get(geneName));
+        return FormatManager.getString(omimMap.get(geneName.toUpperCase()));
     }
 
     public static Set<String> getAllGeneSet() {

@@ -75,12 +75,12 @@ public class KnownVarManager {
 //        sj.add("ClinVar PubmedID");
 //        sj.add("ClinVar rsID");
         sj.add("ClinVar PLP 10bpflanks Count");
-//        sj.add("ClinVar Pathogenic Indel Count");
-//        sj.add("Clinvar Pathogenic CNV Count");
-//        sj.add("ClinVar Pathogenic SNV Splice Count");
-//        sj.add("ClinVar Pathogenic SNV Nonsense Count");
-//        sj.add("ClinVar Pathogenic SNV Missense Count");
-//        sj.add("ClinVar Pathogenic Last Pathogenic Location");
+        sj.add("ClinVar Pathogenic Indel Count");
+        sj.add("Clinvar Pathogenic CNV Count");
+        sj.add("ClinVar Pathogenic SNV Splice Count");
+        sj.add("ClinVar Pathogenic SNV Nonsense Count");
+        sj.add("ClinVar Pathogenic SNV Missense Count");
+        sj.add("ClinVar Pathogenic Last Pathogenic Location");
 //        sj.add("ClinGen");
 //        sj.add("ClinGen HaploinsufficiencyDesc");
 //        sj.add("ClinGen TriplosensitivityDesc");

@@ -50,7 +50,7 @@ public class ACMGManager {
     }
 
     public static String getACMG(String geneName) {
-        return FormatManager.getString(acmgMap.get(geneName));
+        return FormatManager.getString(acmgMap.get(geneName.toUpperCase()));
     }
     
     public static Set<String> getAllGeneSet() {

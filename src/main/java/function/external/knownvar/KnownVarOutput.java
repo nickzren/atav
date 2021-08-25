@@ -1,7 +1,6 @@
 package function.external.knownvar;
 
 import function.annotation.base.AnnotatedVariant;
-import function.annotation.base.GeneManager;
 import java.util.StringJoiner;
 
 /**
@@ -23,12 +22,14 @@ public class KnownVarOutput {
     }
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
-        String geneName = GeneManager.getUpToDateGene(annotatedVar.getGeneName()).toUpperCase();
         hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
         clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
-        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
 //        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
 //        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
+    }
+    
+    public void initClinPathoratio(String geneName) {
+        clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName.toUpperCase());
     }
 
     public StringJoiner getStringJoiner() {
@@ -36,7 +37,7 @@ public class KnownVarOutput {
 
         sj.merge(hgmdOutput.getStringJoiner());
         sj.merge(clinVarOutput.getStringJoiner());
-//        sj.merge(clinVarPathoratio.getStringJoiner());
+        sj.merge(clinVarPathoratio.getStringJoiner());
 //        sj.add(FormatManager.getInteger(recessiveCarrier));
 //        sj.merge(dbDSMOutput.getStringJoiner());
 

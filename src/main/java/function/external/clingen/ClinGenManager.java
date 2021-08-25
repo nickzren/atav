@@ -46,7 +46,7 @@ public class ClinGenManager {
                 haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Sufficient evidence for dosage pathogenicity", "Sufficient evidence");
 
                 ClinGen clinGen = new ClinGen(haploinsufficiencyDescription);
-                clinGenMap.put(gene, clinGen);
+                clinGenMap.put(gene.toUpperCase(), clinGen);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -54,7 +54,7 @@ public class ClinGenManager {
     }
 
     public static ClinGen getClinGen(String geneName) {
-        ClinGen clinGen = clinGenMap.get(geneName);
+        ClinGen clinGen = clinGenMap.get(geneName.toUpperCase());
 
         if (clinGen == null) {
             return new ClinGen(Data.STRING_NA);
