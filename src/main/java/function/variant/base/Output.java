@@ -87,6 +87,7 @@ public class Output {
     public static int tier1CompoundVarCount;
     public static int tier2CompoundVarCount;
     public static int lofDominantAndHaploinsufficientCount;
+    public static int missenseDominantAndHaploinsufficientCount;
     public static int knownPathogenicVarCount;
     public static int hotZoneVarCount;
 
@@ -98,7 +99,7 @@ public class Output {
 //        sj.add("Variant Type");
 //        sj.add("Ref Allele");
 //        sj.add("Alt Allele");
-//        sj.add("Rs Number");
+        sj.add("Rs Number");
 
         return sj;
     }
@@ -504,6 +505,7 @@ public class Output {
         LogManager.writeAndPrintNoNewLine("Tier 1 Single Var genotype count: " + tier1SingleVarCount);
         LogManager.writeAndPrintNoNewLine("Tier 2 Single Var genotype count: " + tier2SingleVarCount);
         LogManager.writeAndPrintNoNewLine("LoF Dominant And Haploinsufficient Var genotype count: " + lofDominantAndHaploinsufficientCount);
+        LogManager.writeAndPrintNoNewLine("Missense Dominant And Haploinsufficient Var genotype count: " + missenseDominantAndHaploinsufficientCount);
         LogManager.writeAndPrintNoNewLine("Known Pathogenic Var genotype count: " + knownPathogenicVarCount);
         LogManager.writeAndPrintNoNewLine("Hot Zone Var genotype count: " + hotZoneVarCount);
     }

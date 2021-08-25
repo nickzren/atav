@@ -443,6 +443,7 @@ public class CalledVariant extends AnnotatedVariant {
                 && (getClinGen().isInClinGenSufficientOrSomeEvidence() || isOMIMDominant()) // 2
                 && getKnownVar().getClinVarPathoratio().isClinVarPathoratioMissenseSNVValid() // 3
                 ) {
+            Output.missenseDominantAndHaploinsufficientCount++;
             return 1;
         }
 

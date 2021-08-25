@@ -105,6 +105,6 @@ public class Variant extends Region {
 //        sj.add(getType());
 //        sj.add(refAllele);
 //        sj.add(allele);
-//        sj.add(getRsNumberStr());
+        sj.add(getRsNumberStr());
     }
 }
