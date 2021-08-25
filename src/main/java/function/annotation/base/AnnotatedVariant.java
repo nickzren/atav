@@ -1,5 +1,7 @@
 package function.annotation.base;
 
+import function.cohort.singleton.SingletonCommand;
+import function.cohort.trio.TrioCommand;
 import function.cohort.vcf.VCFCommand;
 import function.external.ccr.CCRCommand;
 import function.external.ccr.CCROutput;
@@ -154,60 +156,100 @@ public class AnnotatedVariant extends Variant {
             igmAF = IGMAFManager.getAF(chrStr, variantId);
 
             isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && DefaultControlCommand.getInstance().isInclude) {
             defaultControl = DefaultControlManager.getDefaultControlAF(chrStr, variantId);
 
             isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF());
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && GMECommand.getInstance().isInclude) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
             isValid = GMECommand.getInstance().isAFValid(gmeAF);
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && IranomeCommand.getInstance().isInclude) {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
             isValid = IranomeCommand.getInstance().isAFValid(iranomeAF);
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && TopMedCommand.getInstance().isInclude) {
             topmedAF = TopMedManager.getAF(variantIdStr);
 
             isValid = TopMedCommand.getInstance().isAFValid(topmedAF);
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && GenomeAsiaCommand.getInstance().isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
             isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && GnomADExomeCommand.getInstance().isInclude) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADExome.isValid();
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && GnomADGenomeCommand.getInstance().isInclude) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADGenome.isValid();
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && ExACCommand.getInstance().isInclude) {
             exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && EvsCommand.isInclude) {
             evs = new Evs(chrStr, startPosition, refAllele, allele);
 
             isValid = evs.isValid();
+            
+            if (SingletonCommand.isList || TrioCommand.isList) {
+                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+            }
         }
 
         if (isValid && GerpCommand.isInclude) {
@@ -303,6 +345,7 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isValid() {
         return isValid
+                && isImpactValid4TrioOrSingleton()
                 && isSubRVISValid()
                 && isLIMBRValid()
                 && isTrapValid()
@@ -312,6 +355,20 @@ public class AnnotatedVariant extends Variant {
                 && RevelCommand.isValid(revel, effect)
                 && PrimateAICommand.isValid(primateAI, effect)
                 && isMPCValid();
+    }
+    
+    // Trio or Singleton analysis only
+    // HIGH or MODERATE or LOW or HGMD DM or ClinVar PLP
+    private boolean isImpactValid4TrioOrSingleton() {
+        if ((SingletonCommand.isList || TrioCommand.isList) && knownVarOutput != null) {
+            return impact.equals("HIGH")
+                    || impact.equals("MODERATE")
+                    || impact.equals("LOW")
+                    || knownVarOutput.isHGMDDM()
+                    || knownVarOutput.isClinVarPLP();
+        }
+
+        return true;
     }
 
     // init sub rvis score base on most damaging gene and applied filter
@@ -854,9 +911,13 @@ public class AnnotatedVariant extends Variant {
         return 0;
     }
 
-    // High or Moderate impacts or TraP >= 0.4
+    // High or Moderate impacts or TraP >= 0.4 or HGMD DM? or ClinVar P/LP
     public boolean isImpactHighOrModerate() {
-        return impact.equals("HIGH") || impact.equals("MODERATE") || trapScore >= 0.4;
+        return impact.equals("HIGH")
+                || impact.equals("MODERATE")
+                || trapScore >= 0.4
+                || getKnownVar().isHGMDDM()
+                || getKnownVar().isClinVarPLP();
     }
     
     public boolean isMissense() {

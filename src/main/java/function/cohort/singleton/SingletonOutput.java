@@ -30,7 +30,6 @@ public class SingletonOutput extends Output {
         sj.add("LoF Dominant and Haploinsufficient Gene");
         sj.add("Missense Dominant and Haploinsufficient Gene");
         sj.add("Known Pathogenic Variant");
-        sj.add("Known PLP Variants 10bpflanks");
         sj.add("Hot Zone");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
@@ -79,7 +78,6 @@ public class SingletonOutput extends Output {
         sj.add(FormatManager.getByte(calledVar.isLoFDominantAndHaploinsufficient(cCarrier)));
         sj.add(FormatManager.getByte(calledVar.isMissenseDominantAndHaploinsufficient(cCarrier)));
         sj.add(FormatManager.getByte(calledVar.isKnownPathogenicVariant()));
-        sj.add(FormatManager.getByte(calledVar.isKnownPLPVar10bpflanks()));
         sj.add(FormatManager.getByte(calledVar.isHotZone()));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
