@@ -32,6 +32,10 @@ public class ClinVarOutput {
         variant10bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 10);
     }
 
+    public static void main(String[] args) {
+        System.out.println("Pathogenic,_drug_response".contains("pathogenic"));
+    }
+    
     /*
      1. get ClinVar by matching chr-pos-ref-alt
      2. or return site accumulated ClinVar
@@ -62,8 +66,8 @@ public class ClinVarOutput {
             if (idStr.equals(tmpClinvar.getVariantId())) {
                 isClinVar = true;
 
-                if (tmpClinvar.getClinSig().contains("Pathogenic")
-                        && !tmpClinvar.getClinSig().contains("Conflicting_interpretations_of_pathogenicity")) {
+                if (tmpClinvar.getClinSig().startsWith("Pathogenic")
+                        || tmpClinvar.getClinSig().startsWith("Likely_pathogenic")) {
                     isClinVarPLP = true;
                 }
 
