@@ -59,8 +59,8 @@ public class ClinVarOutput {
             String idStr = var.getVariantIdStr();
 
             if (idStr.equals(tmpClinvar.getVariantId())) {
-                if (tmpClinvar.getClinSig().contains("Pathogenic")
-                        && !tmpClinvar.getClinSig().contains("Conflicting_interpretations_of_pathogenicity")) {
+                if (tmpClinvar.getClinSig().startsWith("Pathogenic")
+                        || tmpClinvar.getClinSig().startsWith("Likely_pathogenic")) {
                     isClinVarPLP = true;
                 }
 
