@@ -261,7 +261,7 @@ public class KnownVarManager {
                 haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Some evidence for dosage pathogenicity", "Some evidence");
                 haploinsufficiencyDescription = haploinsufficiencyDescription.replace("Sufficient evidence for dosage pathogenicity", "Sufficient evidence");
 
-                clinGenMap.put(gene, haploinsufficiencyDescription);
+                clinGenMap.put(gene.toUpperCase(), haploinsufficiencyDescription);
             }
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -293,13 +293,13 @@ public class KnownVarManager {
 
                 for (String gene : geneSymbols) {
                     if (!gene.isEmpty() && !phenotype.isEmpty()) {
-                        omimMap.put(gene, phenotype);
+                        omimMap.put(gene.toUpperCase(), phenotype);
                     }
                 }
 
                 String gene = tmp[8];
                 if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene)) {
-                    omimMap.put(gene, phenotype);
+                    omimMap.put(gene.toUpperCase(), phenotype);
                 }
             }
         } catch (Exception e) {
@@ -334,7 +334,7 @@ public class KnownVarManager {
             while (rs.next()) {
                 String gene = rs.getString("gene").toUpperCase();
                 String acmg = rs.getString("ACMG");
-                acmgMap.put(gene, acmg);
+                acmgMap.put(gene.toUpperCase(), acmg);
             }
 
             rs.close();
