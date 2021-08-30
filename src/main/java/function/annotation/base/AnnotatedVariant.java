@@ -146,6 +146,10 @@ public class AnnotatedVariant extends Variant {
         if (isValid) {
             isValid = VariantManager.isValid(this);
         }
+        
+        if (isValid && KnownVarCommand.isInclude) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
 
         if (isValid && CHMCommand.isExclude) {
             isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
@@ -326,10 +330,6 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void initExternalData() {
-        if (KnownVarCommand.isInclude) {
-            knownVarOutput = new KnownVarOutput(this);
-        }
-
         if (MgiCommand.isInclude) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
