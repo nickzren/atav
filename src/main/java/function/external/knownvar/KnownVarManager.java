@@ -22,16 +22,11 @@ import utils.FormatManager;
 public class KnownVarManager {
 
     public static final String hgmdTable = "knownvar.hgmd_2021_2";
-    public static final String clinVarTable = "knownvar.clinvar_2021_07_14";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_07_14";
-//    public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
-//    public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
-
+    public static final String clinVarTable = "knownvar.clinvar_2021_08_31";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_08_31";
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
     private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
     private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<>();
-//    private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
-//    private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
 
     private static PreparedStatement preparedStatement4HGMDVariantFlankingCount;
     private static PreparedStatement preparedStatement4ClinVarPLPVariantFlankingCount;
@@ -39,65 +34,45 @@ public class KnownVarManager {
     private static void initPreparedStatement() {
         String sql = "SELECT count(*) as count From " + hgmdTable
                 + " WHERE chr=? AND pos BETWEEN ? AND ?"
-                + " AND variantClass like '%DM%'";
+                + " AND variantClass = 'DM' AND is_in_clinvar = 0";
         preparedStatement4HGMDVariantFlankingCount = DBManager.initPreparedStatement(sql);
 
         sql = "SELECT count(*) as count "
                 + "From " + clinVarTable + " "
                 + "WHERE chr=? "
                 + "AND pos BETWEEN ? AND ? "
-                + "AND ClinSig like '%Pathogenic%' and ClinSig not like '%Conflicting_interpretations_of_pathogenicity%'";
+                + "AND (ClinSig like 'Pathogenic%' "
+                + "OR ClinSig like 'Likely_pathogenic%' "
+                + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like 'pathogenic%' OR ClinSigConf like 'Likely_pathogenic%')))";
         preparedStatement4ClinVarPLPVariantFlankingCount = DBManager.initPreparedStatement(sql);
     }
 
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-//        sj.add("HGMDm2site");
-//        sj.add("HGMDm1site");
-        sj.add("HGMD site");
-//        sj.add("HGMD Disease");
+        sj.add("HGMD DM Site Count");
+        sj.add("HGMD DM 10bpflanks Count");
         sj.add("HGMD PMID");
         sj.add("HGMD Class");
-//        sj.add("HGMDp1site");
-//        sj.add("HGMDp2site");
-        sj.add("HGMD DM 10bpflanks Count");
-        sj.add("ClinVar site");
-//        sj.add("ClinVar HGVS");
-//        sj.add("ClinVar ClinSource");
-//        sj.add("ClinVar AlleleOrigin");
-//        sj.add("ClinVar ClinRevStat");
+        sj.add("ClinVar PLP Site Count");
+        sj.add("ClinVar PLP 10bpflanks Count");
         sj.add("ClinVar ClinRevStar");
         sj.add("ClinVar ClinSig");
-//        sj.add("ClinVar ClinSigIncl");
-//        sj.add("ClinVar DiseaseDB");
-//        sj.add("ClinVar DiseaseName");
-//        sj.add("ClinVar PubmedID");
-//        sj.add("ClinVar rsID");
-        sj.add("ClinVar PLP 10bpflanks Count");
+        sj.add("ClinVar ClinSigConf");
         sj.add("ClinVar Pathogenic Indel Count");
         sj.add("Clinvar Pathogenic CNV Count");
         sj.add("ClinVar Pathogenic SNV Splice Count");
         sj.add("ClinVar Pathogenic SNV Nonsense Count");
         sj.add("ClinVar Pathogenic SNV Missense Count");
         sj.add("ClinVar Pathogenic Last Pathogenic Location");
-//        sj.add("ClinGen");
-//        sj.add("ClinGen HaploinsufficiencyDesc");
-//        sj.add("ClinGen TriplosensitivityDesc");
-//        sj.add("OMIM Disease");
-//        sj.add("RecessiveCarrier");
-//        sj.add("ACMG");
-//        sj.add("dbDSM Disease");
-//        sj.add("dbDSM Classification");
-//        sj.add("dbDSM PubmedID");
 
         return sj.toString();
     }
 
     public static String getVersion() {
         return "HGMD: " + DataManager.getVersion(hgmdTable) + "\n"
-                + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n";
-//                + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n";
+                + "ClinVar: " + DataManager.getVersion(clinVarTable) + "\n"
+                + "ClinVarPathoratio: " + DataManager.getVersion(clinVarPathoratioTable) + "\n";
 
     }
 
@@ -130,11 +105,10 @@ public class KnownVarManager {
                 String variantClass = FormatManager.getString(rs.getString("variantClass"));
                 String pmid = FormatManager.getString(rs.getString("pmid"));
                 String diseaseName = FormatManager.getString(rs.getString("DiseaseName"));
-
-                String id = chr + "-" + pos + "-" + ref + "-" + alt;
+                byte isInClinVar = FormatManager.getByte(rs, "is_in_clinvar");
 
                 HGMD hgmd = new HGMD(chr, pos, ref, alt,
-                        variantClass, pmid, diseaseName);
+                        variantClass, pmid, diseaseName, isInClinVar);
 
                 hgmdMultiMap.put(hgmd.getSiteId(), hgmd);
             }
@@ -147,7 +121,7 @@ public class KnownVarManager {
 
     private static void initClinVarMap() {
         try {
-            String sql = "SELECT * From " + clinVarTable;
+            String sql = "SELECT chr,pos,ref,alt,ClinRevStar,ClinSig,ClinSigConf,DiseaseName From " + clinVarTable;
 
             ResultSet rs = DBManager.executeQuery(sql);
 
@@ -157,30 +131,16 @@ public class KnownVarManager {
                 String ref = rs.getString("ref");
                 String alt = rs.getString("alt");
 
-                String HGVS = FormatManager.getString(rs.getString("HGVS"));
-                String ClinSource = FormatManager.getString(rs.getString("ClinSource"));
-                String AlleleOrigin = FormatManager.getInteger(FormatManager.getInt(rs, "AlleleOrigin"));
-                String ClinRevStat = FormatManager.getString(rs.getString("ClinRevStat"));
                 String ClinRevStar = FormatManager.getInteger(FormatManager.getInt(rs, "ClinRevStar"));
                 String ClinSig = FormatManager.getString(rs.getString("ClinSig"));
-                String ClinSigIncl = FormatManager.getString(rs.getString("ClinSigIncl"));
-                String DiseaseDB = FormatManager.getString(rs.getString("DiseaseDB"));
+                String ClinSigConf = FormatManager.getString(rs.getString("ClinSigConf"));
                 String DiseaseName = FormatManager.getString(rs.getString("DiseaseName"));
-                String PubmedID = FormatManager.getString(rs.getString("PubmedID"));
-                String rsID = FormatManager.getString(rs.getString("rsID"));
 
                 ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
-                        HGVS,
-                        ClinSource,
-                        AlleleOrigin,
-                        ClinRevStat,
                         ClinRevStar,
                         ClinSig,
-                        ClinSigIncl,
-                        DiseaseDB,
-                        DiseaseName,
-                        PubmedID,
-                        rsID);
+                        ClinSigConf,
+                        DiseaseName);
 
                 clinVarMultiMap.put(clinVar.getSiteId(), clinVar);
             }

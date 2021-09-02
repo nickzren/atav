@@ -141,7 +141,7 @@ public class CollapsingGeneSummary extends CollapsingSummary {
             geneName = name.substring(0, name.indexOf("_"));
         }
 
-        return OMIMManager.getOMIM(geneName);
+        return OMIMManager.getOMIM(geneName.toUpperCase());
     }
     
     private String getLogisticP() {

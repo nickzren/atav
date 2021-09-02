@@ -46,39 +46,34 @@ public class KnownVarOutput {
 
     public boolean isValid() {
         if (KnownVarCommand.isKnownVarOnly) {
-            return hgmdOutput.isHGMDVariant() || clinVarOutput.isClinVar();
+            return hgmdOutput.isHGMD() || clinVarOutput.isClinVar();
         }
 
         if (KnownVarCommand.isKnownVarPathogenicOnly) {
-            return hgmdOutput.isHGMDDMVariant() || clinVarOutput.isClinVarPLP();
+            return hgmdOutput.isHGMDDM() || clinVarOutput.isClinVarPLP();
         }
         
         return true;
     }
     
-    public boolean isHGMDDM() {
-        return hgmdOutput.isHGMDDMVariant();
-    }
-    
-    public boolean hasHGMDDM() {
-        return hgmdOutput.getHGMD().getVariantClass().contains("DM");
+    // a variant is either HGMD "DM" (not in CinVar) or ClinVar P/LP
+    public boolean isKnownVariant() {
+        return hgmdOutput.isHGMDDM()
+                || clinVarOutput.isClinVarPLP();
     }
 
-    public boolean isClinVarPLP() {        
-        return clinVarOutput.isClinVarPLP();
+    // a variant at the same site is reported HGDM as "DM" or "DM?"
+    // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
+    public boolean hasKnownVariantOnSite() {
+        return hgmdOutput.isDMSiteValid() || clinVarOutput.isPLPSiteValid();
     }
     
-    public boolean hasClinVarPLP() {
-        return clinVarOutput.getClinVar().getClinSig().contains("Pathogenic")
-                || clinVarOutput.getClinVar().getClinSig().contains("Likely_pathogenic");
-    }
-
     public ClinVarPathoratio getClinVarPathoratio() {
         return clinVarPathoratio;
     }
     
-    public boolean isHGMDOrClinVarFlankingValid() {
-        return hgmdOutput.is10bpFlankingValid() || clinVarOutput.is10bpFlankingValid();
+    public boolean isKnownVar10bpFlankingValid() {
+        return hgmdOutput.is10bpFlankingValid() || clinVarOutput.isPLP10bpFlankingValid();
     }
     
     @Override

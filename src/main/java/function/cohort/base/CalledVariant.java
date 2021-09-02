@@ -454,7 +454,7 @@ public class CalledVariant extends AnnotatedVariant {
         same variant curated as "DM" in HGMD or PLP in ClinVar
      */
     public byte isKnownPathogenicVariant() {
-        if (getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP()) {
+        if (getKnownVar().isKnownVariant()) {
             Output.knownPathogenicVarCount++;
             return 1;
         }
@@ -466,7 +466,7 @@ public class CalledVariant extends AnnotatedVariant {
         any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
      */
     public byte isKnownPLPVar10bpflanks() {
-        if (this.isHGMDOrClinVarFlankingValid()) {
+        if (this.isKnownVar10bpFlankingValid()) {
             return 1;
         }
 

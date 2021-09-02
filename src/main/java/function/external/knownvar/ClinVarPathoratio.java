@@ -39,10 +39,9 @@ public class ClinVarPathoratio {
         return sj;
     }
     
-    // a gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
+    // a gene that has pathogenic/likely pathogenic indel or spice/nonsense SNV
     public boolean isInClinVarPathoratio() {
         return indelCount > 0
-                || copyCount > 0
                 || snvSpliceCount > 0
                 || snvNonsenseCount > 0;
     }
