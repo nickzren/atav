@@ -20,13 +20,14 @@ public class HGMDOutput {
     private int siteCount;
     private int variant10bpflanks;
 
+    private boolean isHGMDDM = false;
+
     public HGMDOutput(Variant var, Collection<HGMD> collection) {
         this.var = var;
 
         hgmd = getHGMD(collection);
 
-        siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
-
+        siteCount = KnownVarManager.getHGMDFlankingCount(var, 0);
         variant10bpflanks = KnownVarManager.getHGMDFlankingCount(var, 10);
     }
 
@@ -42,7 +43,8 @@ public class HGMDOutput {
                 var.getAllele(),
                 Data.STRING_NA,
                 Data.STRING_NA,
-                Data.STRING_NA);
+                Data.STRING_NA,
+                Data.BYTE_NA);
 
         boolean isFirstSite = true;
 
@@ -50,6 +52,8 @@ public class HGMDOutput {
             String idStr = var.getVariantIdStr();
 
             if (idStr.equals(tmpHgmd.getVariantId())) {
+                isHGMDDM = tmpHgmd.isHGMDDM();
+                
                 return tmpHgmd;
             }
 
@@ -76,19 +80,27 @@ public class HGMDOutput {
     public HGMD getHGMD() {
         return hgmd;
     }
+
+    public boolean isHGMDDM() {
+        return isHGMDDM;
+    }
     
+    public boolean isDMSiteValid() {
+        return siteCount > 0;
+    }
+
     public boolean is10bpFlankingValid() {
         return variant10bpflanks > 0;
     }
-    
+
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(siteCount));
+        sj.add(FormatManager.getInteger(variant10bpflanks));
         sj.add(hgmd.getDiseaseName());
         sj.add(hgmd.getPmid());
         sj.add(hgmd.getVariantClass());
-        sj.add(FormatManager.getInteger(variant10bpflanks));
 
         return sj;
     }

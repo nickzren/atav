@@ -81,7 +81,7 @@ public class CommandManager {
                 + "1 --min-exac-vqslod-snv -2.632 --min-exac-vqslod-indel 1.262 --gnomad-exome-af 0.001 --gnomad-exome-rf-tp-probability-snv 0.01 --gnomad-exome-rf-tp-probability-indel 0.02 --gnomad-exome-pop afr,amr,nfe,fin,eas,"
                 + "asj,sas --exac-pop afr,amr,nfe,fin,eas,sas --exac-af 0.001 --loo-af 0.001 --max-qc-fail-sample 2 --include-qc-missing --include-known-var --include-evs --include-exac --include-gnomad-genome --include-gnomad-ex"
                 + "ome --include-gerp --include-rvis --include-sub-rvis --include-revel --include-mgi --include-trap --include-denovo-db --include-discovehr --include-mtr --include-primate-ai --include-ccr --out dominantFlexible_MAF0.1_NoIntoleranceFilter";
-        
+
         optionArray = cmd.split("\\s+");
     }
 
@@ -347,6 +347,8 @@ public class CommandManager {
                     KnownVarCommand.isInclude = true;
                     RvisCommand.isInclude = true;
                     TrapCommand.isInclude = true;
+                    MgiCommand.isInclude = true;
+                    RevelCommand.isInclude = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -400,6 +402,8 @@ public class CommandManager {
                     KnownVarCommand.isInclude = true;
                     RvisCommand.isInclude = true;
                     TrapCommand.isInclude = true;
+                    MgiCommand.isInclude = true;
+                    RevelCommand.isInclude = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;

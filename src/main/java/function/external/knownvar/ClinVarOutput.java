@@ -26,7 +26,7 @@ public class ClinVarOutput {
 
         clinvar = getClinVar(collection);
 
-        siteCount = var.isSnv() ? collection.size() : Data.INTEGER_NA; // only for SNVs
+        siteCount = KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, 0);
 
         variant10bpflanks = KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, 10);
     }
@@ -44,13 +44,6 @@ public class ClinVarOutput {
                 Data.STRING_NA,
                 Data.STRING_NA,
                 Data.STRING_NA,
-                Data.STRING_NA,
-                Data.STRING_NA,
-                Data.STRING_NA,
-                Data.STRING_NA,
-                Data.STRING_NA,
-                Data.STRING_NA,
-                Data.STRING_NA,
                 Data.STRING_NA);
 
         boolean isFirstSite = true;
@@ -60,7 +53,9 @@ public class ClinVarOutput {
 
             if (idStr.equals(tmpClinvar.getVariantId())) {
                 if (tmpClinvar.getClinSig().startsWith("Pathogenic")
-                        || tmpClinvar.getClinSig().startsWith("Likely_pathogenic")) {
+                        || tmpClinvar.getClinSig().startsWith("Likely_pathogenic")
+                        || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity") 
+                            && (tmpClinvar.getClinSigConf().startsWith("Pathogenic") || tmpClinvar.getClinSigConf().startsWith("Likely_pathogenic")))) {
                     isClinVarPLP = true;
                 }
 
@@ -73,30 +68,16 @@ public class ClinVarOutput {
 
             if (isFirstSite) {
                 isFirstSite = false;
-                clinvar.setHGVS(tmpClinvar.getHGVS());
-                clinvar.setClinSource(tmpClinvar.getClinSource());
-                clinvar.setAlleleOrigin(tmpClinvar.getAlleleOrigin());
-                clinvar.setClinRevStat(tmpClinvar.getClinRevStat());
                 clinvar.setClinRevStar(tmpClinvar.getClinRevStar());
                 clinvar.setClinSig(tmpClinvar.getClinSig());
-                clinvar.setClinSigIncl(tmpClinvar.getClinSigIncl());
-                clinvar.setDiseaseDB(tmpClinvar.getDiseaseDB());
+                clinvar.setClinSigConf(tmpClinvar.getClinSigConf());
                 clinvar.setDiseaseName("?Site - " + tmpClinvar.getDiseaseName());
-                clinvar.setPubmedID(tmpClinvar.getPubmedID());
-                clinvar.setRSID(tmpClinvar.getRSID());
             } else {
                 clinvar.append(
-                        tmpClinvar.getHGVS(),
-                        tmpClinvar.getClinSource(),
-                        tmpClinvar.getAlleleOrigin(),
-                        tmpClinvar.getClinRevStat(),
                         tmpClinvar.getClinRevStar(),
                         tmpClinvar.getClinSig(),
-                        tmpClinvar.getClinSigIncl(),
-                        tmpClinvar.getDiseaseDB(),
-                        tmpClinvar.getDiseaseName(),
-                        tmpClinvar.getPubmedID(),
-                        tmpClinvar.getRSID());
+                        tmpClinvar.getClinSigConf(),
+                        tmpClinvar.getDiseaseName());
             }
         }
 
@@ -107,10 +88,11 @@ public class ClinVarOutput {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(siteCount));
+        sj.add(FormatManager.getInteger(variant10bpflanks));
         sj.add(clinvar.getClinRevStar());
         sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSig()));
+        sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSigConf()));
         sj.add(FormatManager.appendDoubleQuote(clinvar.getDiseaseName()));
-        sj.add(FormatManager.getInteger(variant10bpflanks));
 
         return sj;
     }
@@ -123,7 +105,11 @@ public class ClinVarOutput {
         return isClinVarPLP;
     }
 
-    public boolean is10bpFlankingValid() {
+    public boolean isPLPSiteValid() {
+        return siteCount > 0;
+    }
+    
+    public boolean isPLP10bpFlankingValid() {
         return variant10bpflanks > 0;
     }
 

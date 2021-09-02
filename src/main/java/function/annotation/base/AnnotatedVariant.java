@@ -162,7 +162,7 @@ public class AnnotatedVariant extends Variant {
             isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -172,7 +172,7 @@ public class AnnotatedVariant extends Variant {
             isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF());
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -182,7 +182,7 @@ public class AnnotatedVariant extends Variant {
             isValid = GMECommand.getInstance().isAFValid(gmeAF);
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -192,7 +192,7 @@ public class AnnotatedVariant extends Variant {
             isValid = IranomeCommand.getInstance().isAFValid(iranomeAF);
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -202,7 +202,7 @@ public class AnnotatedVariant extends Variant {
             isValid = TopMedCommand.getInstance().isAFValid(topmedAF);
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -212,7 +212,7 @@ public class AnnotatedVariant extends Variant {
             isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -222,7 +222,7 @@ public class AnnotatedVariant extends Variant {
             isValid = gnomADExome.isValid();
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -232,7 +232,7 @@ public class AnnotatedVariant extends Variant {
             isValid = gnomADGenome.isValid();
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -242,7 +242,7 @@ public class AnnotatedVariant extends Variant {
             isValid = exac.isValid();
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -252,7 +252,7 @@ public class AnnotatedVariant extends Variant {
             isValid = evs.isValid();
             
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isHGMDDM() || getKnownVar().isClinVarPLP();
+                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
         }
 
@@ -330,6 +330,10 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void initExternalData() {
+        if (KnownVarCommand.isInclude) {
+            knownVarOutput.init(getGeneName());
+        }
+        
         if (MgiCommand.isInclude) {
             mgiStr = MgiManager.getLine(getGeneName());
         }
@@ -358,14 +362,13 @@ public class AnnotatedVariant extends Variant {
     }
     
     // Trio or Singleton analysis only
-    // HIGH or MODERATE or LOW or HGMD DM or ClinVar PLP
+    // HIGH or MODERATE or LOW or has known variants on the site
     private boolean isImpactValid4TrioOrSingleton() {
         if ((SingletonCommand.isList || TrioCommand.isList) && knownVarOutput != null) {
             return impact.equals("HIGH")
                     || impact.equals("MODERATE")
                     || impact.equals("LOW")
-                    || knownVarOutput.isHGMDDM()
-                    || knownVarOutput.isClinVarPLP();
+                    || knownVarOutput.hasKnownVariantOnSite();
         }
 
         return true;
@@ -807,28 +810,11 @@ public class AnnotatedVariant extends Variant {
 
     // tier 2 inclusion criteria
     public boolean isMetTier2InclusionCriteria() {
-        return hasHGMDDM()
-                || hasClinVarPLP()
-                || isHGMDOrClinVarFlankingValid()
+        return isKnownVar10bpFlankingValid()
                 || isInClinGenOrOMIM()
                 || isInClinVarPathoratio()
                 || isGnomADGenePLIValid()
                 || isGeneMisZValid();
-    }
-
-    // a variant at the same site has reported HGMD DM or ClinVar PLP
-    public boolean hasHGMDOrClinVar() {
-        return hasHGMDDM() || hasClinVarPLP();
-    }
-
-    // a variant at the same site is reported HGMD as "DM" or "DM?"
-    private boolean hasHGMDDM() {
-        return knownVarOutput.hasHGMDDM();
-    }
-
-    // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
-    private boolean hasClinVarPLP() {
-        return knownVarOutput.hasClinVarPLP();
     }
 
     // LoF variant and occurs within a ClinGen/OMIM disease gene
@@ -856,8 +842,8 @@ public class AnnotatedVariant extends Variant {
     }
 
     // any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
-    private boolean isHGMDOrClinVarFlankingValid() {
-        return knownVarOutput.isHGMDOrClinVarFlankingValid();
+    private boolean isKnownVar10bpFlankingValid() {
+        return knownVarOutput.isKnownVar10bpFlankingValid();
     }
 
     // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls
@@ -916,8 +902,7 @@ public class AnnotatedVariant extends Variant {
         return impact.equals("HIGH")
                 || impact.equals("MODERATE")
                 || trapScore >= 0.4
-                || getKnownVar().isHGMDDM()
-                || getKnownVar().isClinVarPLP();
+                || getKnownVar().isKnownVariant();
     }
     
     public boolean isMissense() {

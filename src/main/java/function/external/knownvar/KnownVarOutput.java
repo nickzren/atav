@@ -18,7 +18,6 @@ public class KnownVarOutput {
     private String clinGen;
     private String omimDiseaseName;
     private String omimInheritance;
-    private int recessiveCarrier;
     private String acmg;
     private DBDSMOutput dbDSMOutput;
 
@@ -29,10 +28,14 @@ public class KnownVarOutput {
     }
 
     public KnownVarOutput(AnnotatedVariant annotatedVar) {
-        String geneName = GeneManager.getUpToDateGene(annotatedVar.getGeneName()).toUpperCase();
         hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
         clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
+    }
+
+    public void init(String gene) {
+        String geneName = GeneManager.getUpToDateGene(gene).toUpperCase();
         clinVarPathoratio = KnownVarManager.getClinPathoratio(geneName);
+
         clinGen = KnownVarManager.getClinGen(geneName);
         omimDiseaseName = KnownVarManager.getOMIM(geneName);
         omimInheritance = getOMIMInheritance();
@@ -57,21 +60,16 @@ public class KnownVarOutput {
         return sj;
     }
 
-    public boolean isHGMDDM() {
-        return hgmdOutput.getHGMD().getVariantClass().equals("DM");
+    // a variant is either HGMD "DM" (not in CinVar) or ClinVar P/LP
+    public boolean isKnownVariant() {
+        return hgmdOutput.isHGMDDM()
+                || clinVarOutput.isClinVarPLP();
     }
 
-    public boolean hasHGMDDM() {
-        return hgmdOutput.getHGMD().getVariantClass().contains("DM");
-    }
-
-    public boolean isClinVarPLP() {
-        return clinVarOutput.isClinVarPLP();
-    }
-
-    public boolean hasClinVarPLP() {
-        return clinVarOutput.getClinVar().getClinSig().contains("Pathogenic")
-                || clinVarOutput.getClinVar().getClinSig().contains("Likely_pathogenic");
+    // a variant at the same site is reported HGDM as "DM" or "DM?"
+    // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
+    public boolean hasKnownVariantOnSite() {
+        return hgmdOutput.isDMSiteValid() || clinVarOutput.isPLPSiteValid();
     }
 
     public boolean isOMIMGene() {
@@ -89,7 +87,7 @@ public class KnownVarOutput {
                 || omimInheritance.contains("YL");
     }
 
-    public boolean isOMIMDominant() {        
+    public boolean isOMIMDominant() {
         return omimInheritance.contains("AD")
                 || omimInheritance.contains("XLD")
                 || omimInheritance.contains("PD")
@@ -191,8 +189,8 @@ public class KnownVarOutput {
         return clinVarPathoratio;
     }
 
-    public boolean isHGMDOrClinVarFlankingValid() {
-        return hgmdOutput.is10bpFlankingValid() || clinVarOutput.is10bpFlankingValid();
+    public boolean isKnownVar10bpFlankingValid() {
+        return hgmdOutput.is10bpFlankingValid() || clinVarOutput.isPLP10bpFlankingValid();
     }
 
     @Override
