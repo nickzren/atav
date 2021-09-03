@@ -387,13 +387,13 @@ public class AnnotatedVariant extends Variant {
     }
 
     // Trio or Singleton analysis only
-    // HIGH or MODERATE or LOW or HGMD DM or ClinVar PLP
+    // MODIFIER and Known variant site
     private boolean isImpactValid4TrioOrSingleton() {
-        if ((SingletonCommand.isList || TrioCommand.isList) && knownVarOutput != null) {
-            return impact.equals("HIGH")
-                    || impact.equals("MODERATE")
-                    || impact.equals("LOW")
-                    || knownVarOutput.hasKnownVariantOnSite();
+        if ((SingletonCommand.isList || TrioCommand.isList)
+                && knownVarOutput != null
+                && AnnotationLevelFilterCommand.isModifierOnly) {
+            return impact.equals("MODIFIER")
+                    && knownVarOutput.hasKnownVariantOnSite();
         }
 
         return true;
