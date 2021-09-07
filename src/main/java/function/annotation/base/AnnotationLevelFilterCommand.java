@@ -47,7 +47,6 @@ public class AnnotationLevelFilterCommand {
                     excludeEffectInput = getNonEmptyValue(option).replaceAll("( )+", "");
                     break;
                 case "--modifier-only":
-                    impactInput = "MODIFIER";
                     isModifierOnly = true;
                     break;
                 case "--gene":
