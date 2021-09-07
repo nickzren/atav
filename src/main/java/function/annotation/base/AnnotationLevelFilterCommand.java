@@ -19,6 +19,7 @@ public class AnnotationLevelFilterCommand {
     public static String impactInput = "";
     public static String effectInput = "";
     public static String excludeEffectInput = "";
+    public static boolean isModifierOnly = false;
     public static String geneInput = "";
     public static String geneBoundaryFile = "";
     public static String transcriptBoundaryFile = "";
@@ -44,6 +45,9 @@ public class AnnotationLevelFilterCommand {
                     break;
                 case "--exclude-effect":
                     excludeEffectInput = getNonEmptyValue(option).replaceAll("( )+", "");
+                    break;
+                case "--modifier-only":
+                    isModifierOnly = true;
                     break;
                 case "--gene":
                     geneInput = getNonEmptyValue(option);
