@@ -61,7 +61,7 @@ public class SingletonOutput extends Output {
                 tierFlag = 1;
                 Output.tier1SingleVarCount++;
             } else if (calledVar.isMetTier2InclusionCriteria()
-                    && calledVar.isCaseVarTier2()) {
+                    && calledVar.isCaseVarTier2(cCarrier)) {
                 tierFlag = 2;
                 Output.tier2SingleVarCount++;
             }

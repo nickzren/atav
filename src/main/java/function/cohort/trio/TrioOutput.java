@@ -192,7 +192,7 @@ public class TrioOutput extends Output {
             } else {
                 if (calledVar.isMetTier2InclusionCriteria()
                         && isParentsNotHom()
-                        && calledVar.isCaseVarTier2()) {
+                        && calledVar.isCaseVarTier2(cCarrier)) {
                     tierFlag4SingleVar = 2;
                     Output.tier2SingleVarCount++;
                 }
