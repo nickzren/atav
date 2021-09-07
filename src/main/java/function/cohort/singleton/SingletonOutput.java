@@ -55,11 +55,12 @@ public class SingletonOutput extends Output {
 
         // Restrict to High or Moderate impact or TraP >= 0.4 variants
         if (getCalledVariant().isImpactHighOrModerate()) {
-            if (calledVar.isHomozygousTier1(cCarrier)) {
+            if (calledVar.isHeterozygousTier1(cCarrier) ||
+                    calledVar.isHomozygousTier1(cCarrier)) {
                 tierFlag = 1;
                 Output.tier1SingleVarCount++;
             } else if (calledVar.isMetTier2InclusionCriteria()
-                    && calledVar.isCaseVarTier2()) {
+                    && calledVar.isCaseVarTier2(cCarrier)) {
                 tierFlag = 2;
                 Output.tier2SingleVarCount++;
             }

@@ -1,5 +1,6 @@
 package function.annotation.base;
 
+import function.cohort.base.Carrier;
 import function.cohort.singleton.SingletonCommand;
 import function.cohort.trio.TrioCommand;
 import function.cohort.vcf.VCFCommand;
@@ -75,6 +76,7 @@ import function.external.trap.TrapManager;
 import function.variant.base.Output;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
+import global.Index;
 import utils.FormatManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -192,7 +194,7 @@ public class AnnotatedVariant extends Variant {
             gmeAF = GMEManager.getAF(variantIdStr);
 
             isValid = GMECommand.getInstance().isAFValid(gmeAF);
-            
+
             if (SingletonCommand.isList || TrioCommand.isList) {
                 isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
@@ -202,7 +204,7 @@ public class AnnotatedVariant extends Variant {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
             isValid = IranomeCommand.getInstance().isAFValid(iranomeAF);
-            
+
             if (SingletonCommand.isList || TrioCommand.isList) {
                 isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
@@ -212,7 +214,7 @@ public class AnnotatedVariant extends Variant {
             topmedAF = TopMedManager.getAF(variantIdStr);
 
             isValid = TopMedCommand.getInstance().isAFValid(topmedAF);
-            
+
             if (SingletonCommand.isList || TrioCommand.isList) {
                 isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
@@ -222,7 +224,7 @@ public class AnnotatedVariant extends Variant {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
             isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
-            
+
             if (SingletonCommand.isList || TrioCommand.isList) {
                 isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
@@ -232,7 +234,7 @@ public class AnnotatedVariant extends Variant {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADExome.isValid();
-            
+
             if (SingletonCommand.isList || TrioCommand.isList) {
                 isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
@@ -242,7 +244,7 @@ public class AnnotatedVariant extends Variant {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
             isValid = gnomADGenome.isValid();
-            
+
             if (SingletonCommand.isList || TrioCommand.isList) {
                 isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
@@ -252,7 +254,7 @@ public class AnnotatedVariant extends Variant {
             exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
             isValid = exac.isValid();
-            
+
             if (SingletonCommand.isList || TrioCommand.isList) {
                 isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
@@ -262,7 +264,7 @@ public class AnnotatedVariant extends Variant {
             evs = new Evs(chrStr, startPosition, refAllele, allele);
 
             isValid = evs.isValid();
-            
+
             if (SingletonCommand.isList || TrioCommand.isList) {
                 isValid = isValid || getKnownVar().hasKnownVariantOnSite();
             }
@@ -345,7 +347,7 @@ public class AnnotatedVariant extends Variant {
         if (KnownVarCommand.isInclude) {
             knownVarOutput.initClinPathoratio(getGeneName());
         }
-        
+
         if (ClinGenCommand.isInclude) {
             clinGen = ClinGenManager.getClinGen(getGeneName());
         }
@@ -372,7 +374,7 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
-    public boolean isValid() {        
+    public boolean isValid() {
         return isValid
                 && isImpactValid4TrioOrSingleton()
                 && isSubRVISValid()
@@ -1065,10 +1067,6 @@ public class AnnotatedVariant extends Variant {
         }
 
         return 0;
-    }
-
-    public boolean isCaseVarTier2() {
-        return isTotalACFromControlsValid();
     }
 
     // High or Moderate impacts or TraP >= 0.4 or HGMD DM? or ClinVar P/LP

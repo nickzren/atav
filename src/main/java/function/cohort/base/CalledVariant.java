@@ -518,12 +518,22 @@ public class CalledVariant extends AnnotatedVariant {
                 && isControlAFValid()
                 && carrier.getMQ() >= 40;
     }
-    
+
     public boolean isHeterozygousTier1(Carrier carrier) {
         return carrier.getGT() == Index.HET
                 && isCarrierHetPercAltReadValid(carrier)
                 && isCarrierGATKQCValid(carrier)
                 && carrier.getDPBin() >= 10
                 && isGenotypeAbsentAmongControl(carrier.getGT());
+    }
+
+    public boolean isCaseVarTier2(Carrier carrier) {
+        if (carrier.getGT() == Index.HET) {
+            return isTotalACFromControlsValid();
+        } else if (carrier.getGT() == Index.HOM) {
+            return isNHomFromControlsValid(10);
+        }
+
+        return false;
     }
 }
