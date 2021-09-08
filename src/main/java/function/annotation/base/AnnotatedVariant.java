@@ -476,6 +476,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(effect);
         sj.add(getCanonicalEffect());
         sj.add("'" + geneName + "'");
+        sj.add(getGeneLink());
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
         sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
         sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
@@ -488,6 +489,15 @@ public class AnnotatedVariant extends Variant {
         sj.add(FormatManager.getFloat(polyphenHumvar));
         sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
+    }
+    
+    private String getGeneLink() {
+        // "=HYPERLINK(""url"",""name"")"
+        if(knownVarOutput != null && knownVarOutput.isOMIMGene()) {            
+            return "\"=HYPERLINK(\"\"https://omim.org/search?search="+geneName+"\"\",\"\"OMIM\"\")\"";
+        } else {
+            return "\"=HYPERLINK(\"\"https://www.genecards.org/cgi-bin/carddisp.pl?gene="+geneName+"\"\",\"\"GeneCards\"\")\"";
+        }
     }
 
     private String getCanonicalEffect() {
