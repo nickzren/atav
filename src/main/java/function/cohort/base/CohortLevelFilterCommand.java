@@ -1,5 +1,6 @@
 package function.cohort.base;
 
+import function.annotation.base.AnnotationLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
@@ -173,7 +174,7 @@ public class CohortLevelFilterCommand {
     public static boolean isAFValid(float value) {
         return isMaxAFValid(value)
                 && isMinAFValid(value)
-                && isMaxMAFValid(value) 
+                && isMaxMAFValid(value)
                 && isMinMAFValid(value);
     }
 
@@ -214,7 +215,7 @@ public class CohortLevelFilterCommand {
 
         return value <= maxMAF || value >= (1 - maxMAF);
     }
-    
+
     private static boolean isMinMAFValid(float value) {
         if (minMAF == Data.NO_FILTER) {
             return true;
@@ -332,13 +333,18 @@ public class CohortLevelFilterCommand {
         return value >= minCoveredSamplePercentage[Index.CTRL];
     }
 
+    /*
+        only init case variants tmp tables when:
+        1) total case# < 500 
+        2) --variant not used 
+        3) --modifier-only not used
+    */
     public static boolean isCaseOnlyValid2CreateTempTable() {
-        // only init case variants tmp tables when 1) total case# < 500 and 2) --variant not used
-
         return isCaseOnly
                 && SampleManager.getCaseNum() > 0
                 && SampleManager.getCaseNum() <= maxCaseOnlyNumber
-                && !VariantManager.isUsed();
+                && !VariantManager.isUsed()
+                && !AnnotationLevelFilterCommand.isModifierOnly;
     }
 
     public static boolean isLooAFValid(float value) {
