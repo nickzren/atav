@@ -2,7 +2,9 @@ package function.cohort.base;
 
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.pedmap.PedMapCommand;
+import function.cohort.singleton.SingletonCommand;
 import function.cohort.statistics.StatisticsCommand;
+import function.cohort.trio.TrioCommand;
 import global.Data;
 import global.Index;
 import utils.CommonCommand;
@@ -85,9 +87,9 @@ public class SampleManager {
 
         initExcludeIGMGnomADSample();
 
-        if (!CohortLevelFilterCommand.sampleFile.isEmpty()) {
+        if (!CohortLevelFilterCommand.inputSample.isEmpty()) {
             initExistingSampleFile();
-            initFromSampleFile();
+            initFromSampleInput(CohortLevelFilterCommand.inputSample);
             initIncludeDefaultControlSample();
             closeExistingSampleFile();
         } else if (CohortLevelFilterCommand.isAllSample
@@ -95,7 +97,7 @@ public class SampleManager {
             initAllSampleFile();
             initAllSampleFromDB();
             closeAllSampleFile();
-            CohortLevelFilterCommand.sampleFile = allSampleFile;
+            CohortLevelFilterCommand.inputSample = allSampleFile;
         }
 
         initCovariate();
@@ -146,7 +148,7 @@ public class SampleManager {
     }
 
     private static void checkSampleFile() {
-        if (CohortLevelFilterCommand.sampleFile.isEmpty()
+        if (CohortLevelFilterCommand.inputSample.isEmpty()
                 && !CohortLevelFilterCommand.isAllSample
                 && !CohortLevelFilterCommand.isAllExome) {
             ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
@@ -236,12 +238,173 @@ public class SampleManager {
         initSampleFromDB(sqlCode);
     }
 
-    private static void initFromSampleFile() {
+    private static void initFromSampleInput(String input) {
+        if (input.isEmpty()) {
+            return;
+        }
+
+        File f = new File(input);
+
+        if (f.isFile()) {
+            initFromSampleFile(input);
+        } else {
+            String[] list = input.split(",");
+
+            for (String s : list) {
+                addSampleToList(s);
+            }
+        }
+    }
+
+    // only trio or singleton analysis support sample name as input for --sample
+    private static void addSampleToList(String sampleName) {
+        if (!SingletonCommand.isList && !TrioCommand.isList) {
+            ErrorManager.print("Only --list-trio or --list-singleton allows input sample name for option --sample.", ErrorManager.INPUT_PARSING);
+        }
+
+        try {
+            if (SingletonCommand.isList) {
+                addSampleToSingletonList(sampleName);
+            }
+
+            if (TrioCommand.isList) {
+                addSampleToTrioList(sampleName);
+            }
+        } catch (Exception e) {
+            LogManager.writeAndPrintNoNewLine("\nError sample (" + sampleName + ") in sample file.");
+
+            ErrorManager.send(e);
+        }
+    }
+
+    private static void addSampleToTrioList(String sampleName) throws Exception {
+        TempSample tempSample = getTempSample(sampleName);
+
+        if (!tempSample.familyRelationProband.equals("Proband")
+                && !tempSample.familyRelationProband.equals("Sibling")
+                && !tempSample.familyId.equals("N/A")) {
+            ErrorManager.print("Invalid trio sample: " + sampleName, ErrorManager.INPUT_PARSING);
+        }
+
+        if (tempSample.isGenderMismatch()) {
+            ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+        }
+
+        initParents(tempSample);
+
+        tempSample.pheno = Byte.valueOf("2");
+
+        // add proband
+        addSample(tempSample);
+        
+        // add parents
+        addParent(tempSample.paternalId);
+        addParent(tempSample.maternalId);
+    }
+    
+    private static void addParent(String sampleName) throws Exception {
+        if(sampleName.equals("0")) {
+            return;
+        }
+        
+        TempSample tempSample = getTempSample(sampleName);
+
+        tempSample.paternalId = "0";
+        tempSample.maternalId = "0";
+        tempSample.pheno = Byte.valueOf("1");
+
+        addSample(tempSample);
+    }
+
+    private static void addSampleToSingletonList(String sampleName) throws Exception {
+        TempSample tempSample = getTempSample(sampleName);
+
+        tempSample.familyId = sampleName;
+        tempSample.paternalId = "0";
+        tempSample.maternalId = "0";
+        tempSample.pheno = Byte.valueOf("2");
+
+        addSample(tempSample);
+    }
+
+    private static void initParents(TempSample tempSample) {
+        try {
+            String sql = "SELECT sample_name, seq_gender, self_decl_gender FROM sample "
+                    + "WHERE family_id=? AND family_relation_proband = 'Parent' "
+                    + "AND sample_finished = 1 AND sample_failure = 0 order by sample_id desc";
+
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setString(1, tempSample.familyId);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            tempSample.paternalId = "0";
+            tempSample.maternalId = "0";
+
+            while (rs.next()) {
+                String sampleName = FormatManager.getString(rs.getString("sample_name"));
+                String seqGender = FormatManager.getString(rs.getString("seq_gender"));
+                String selfDeclGender = FormatManager.getString(rs.getString("self_decl_gender"));
+
+                if (seqGender.equals("Ambiguous") || seqGender.equals(Data.STRING_NA)
+                        || selfDeclGender.equals("Unknown") || selfDeclGender.equals(Data.STRING_NA)
+                        || !seqGender.equals(selfDeclGender)) {
+                    ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+                }
+
+                if (seqGender.equals("M")) {
+                    tempSample.paternalId = sampleName;
+                } else {
+                    tempSample.maternalId = sampleName;
+                }
+            }
+
+            rs.close();
+            preparedStatement.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private static void addSample(TempSample tempSample) throws Exception {
+        if (CohortLevelFilterCommand.isExcludeLowQualitySample
+                && isLowQualitySample(tempSample.sampleId)) {
+            LogManager.writeAndPrint("Excluded low quality sample: " + tempSample.sampleName);
+            return;
+        }
+
+        if (sampleMap.containsKey(tempSample.sampleId)) {
+            return;
+        }
+
+        Sample sample = new Sample(tempSample.sampleId, tempSample.familyId, tempSample.sampleName,
+                tempSample.paternalId, tempSample.maternalId, tempSample.sex, tempSample.pheno,
+                tempSample.sampleType, tempSample.captureKit,
+                tempSample.experimentId, tempSample.ancestry, tempSample.broadPhenotype);
+
+        if (tempSample.sampleId == Data.INTEGER_NA) {
+            checkSampleList(sample);
+            return;
+        }
+
+        if (sample.isCase()) {
+            caseIDSJ.add(String.valueOf(sample.getId()));
+        }
+
+        sampleList.add(sample);
+        sampleMap.put(tempSample.sampleId, sample);
+
+        countSampleNum(sample);
+
+        bwExistingSample.write(initStringLineForSampleFile(sample));
+        bwExistingSample.newLine();
+    }
+
+    private static void initFromSampleFile(String sampleFile) {
         String lineStr = "";
         int lineNum = 0;
 
         try {
-            File f = new File(CohortLevelFilterCommand.sampleFile);
+            File f = new File(sampleFile);
             FileReader fr = new FileReader(f);
             BufferedReader br = new BufferedReader(fr);
 
@@ -254,84 +417,88 @@ public class SampleManager {
 
                 String[] values = lineStr.replaceAll("( )+", "").split("\t");
 
-                String familyId = values[0];
+                if (values.length == 1) {
+                    addSampleToList(values[0]);
+                } else {
+                    String familyId = values[0];
 
-                if (familyId.equals("N/A")) {
-                    ErrorManager.print("\nWrong FamilyID: " + familyId
-                            + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
-                }
-
-                String individualId = values[1];
-
-                if (CohortLevelFilterCommand.isExcludeIGMGnomadSample
-                        && excludeIGMGnomadSampleSet.contains((individualId))) {
-                    LogManager.writeAndPrint("Excluded IGM gnomAD sample: " + individualId);
-                    continue;
-                }
-
-                if (!CohortLevelFilterCommand.isDisableCheckDuplicateSample) {
-                    if (!sampleNameSet.contains(individualId)) {
-                        sampleNameSet.add(individualId);
-                    } else {
-                        ErrorManager.print("\nDuplicate sample: " + individualId
+                    if (familyId.equals("N/A")) {
+                        ErrorManager.print("\nWrong FamilyID: " + familyId
                                 + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
                     }
+
+                    String individualId = values[1];
+
+                    if (CohortLevelFilterCommand.isExcludeIGMGnomadSample
+                            && excludeIGMGnomadSampleSet.contains((individualId))) {
+                        LogManager.writeAndPrint("Excluded IGM gnomAD sample: " + individualId);
+                        continue;
+                    }
+
+                    if (!CohortLevelFilterCommand.isDisableCheckDuplicateSample) {
+                        if (!sampleNameSet.contains(individualId)) {
+                            sampleNameSet.add(individualId);
+                        } else {
+                            ErrorManager.print("\nDuplicate sample: " + individualId
+                                    + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
+                        }
+                    }
+
+                    String paternalId = values[2];
+                    String maternalId = values[3];
+
+                    byte sex = Byte.valueOf(values[4]);
+                    if (sex != 1 && sex != 2) {
+                        ErrorManager.print("\nWrong Sex: " + sex
+                                + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
+                    }
+
+                    byte pheno = Byte.valueOf(values[5]);
+                    if (pheno != 1 && pheno != 2) {
+                        ErrorManager.print("\nWrong Phenotype: " + pheno
+                                + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
+                    }
+
+                    String sampleType = values[6];
+                    String captureKit = values[7];
+
+                    if (sampleType.equalsIgnoreCase("genome")) {
+                        captureKit = "N/A";
+                    }
+
+                    TempSample tempSample = getTempSample(individualId, sampleType, captureKit);
+
+                    if (CohortLevelFilterCommand.isExcludeLowQualitySample
+                            && isLowQualitySample(tempSample.sampleId)) {
+                        LogManager.writeAndPrint("Excluded low quality sample: " + individualId);
+                        continue;
+                    }
+
+                    if (sampleMap.containsKey(tempSample.sampleId)) {
+                        continue;
+                    }
+
+                    Sample sample = new Sample(tempSample.sampleId, familyId, individualId,
+                            paternalId, maternalId, sex, pheno, sampleType, captureKit,
+                            tempSample.experimentId, tempSample.ancestry, tempSample.broadPhenotype);
+
+                    if (tempSample.sampleId == Data.INTEGER_NA) {
+                        checkSampleList(sample);
+                        continue;
+                    }
+
+                    if (sample.isCase()) {
+                        caseIDSJ.add(String.valueOf(sample.getId()));
+                    }
+
+                    sampleList.add(sample);
+                    sampleMap.put(tempSample.sampleId, sample);
+
+                    countSampleNum(sample);
+
+                    bwExistingSample.write(initStringLineForSampleFile(sample));
+                    bwExistingSample.newLine();
                 }
-
-                String paternalId = values[2];
-                String maternalId = values[3];
-
-                byte sex = Byte.valueOf(values[4]);
-                if (sex != 1 && sex != 2) {
-                    ErrorManager.print("\nWrong Sex: " + sex
-                            + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
-                }
-
-                byte pheno = Byte.valueOf(values[5]);
-                if (pheno != 1 && pheno != 2) {
-                    ErrorManager.print("\nWrong Phenotype: " + pheno
-                            + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
-                }
-
-                String sampleType = values[6];
-                String captureKit = values[7];
-
-                if (sampleType.equalsIgnoreCase("genome")) {
-                    captureKit = "N/A";
-                }
-
-                TempSample tempSample = getTempSample(individualId, sampleType, captureKit);
-
-                if (CohortLevelFilterCommand.isExcludeLowQualitySample
-                        && isLowQualitySample(tempSample.sampleId)) {
-                    LogManager.writeAndPrint("Excluded low quality sample: " + individualId);
-                    continue;
-                }
-
-                if (sampleMap.containsKey(tempSample.sampleId)) {
-                    continue;
-                }
-
-                Sample sample = new Sample(tempSample.sampleId, familyId, individualId,
-                        paternalId, maternalId, sex, pheno, sampleType, captureKit,
-                        tempSample.experimentId, tempSample.ancestry, tempSample.broadPhenotype);
-
-                if (tempSample.sampleId == Data.INTEGER_NA) {
-                    checkSampleList(sample);
-                    continue;
-                }
-
-                if (sample.isCase()) {
-                    caseIDSJ.add(String.valueOf(sample.getId()));
-                }
-
-                sampleList.add(sample);
-                sampleMap.put(tempSample.sampleId, sample);
-
-                countSampleNum(sample);
-
-                bwExistingSample.write(initStringLineForSampleFile(sample));
-                bwExistingSample.newLine();
             }
 
             br.close();
@@ -389,7 +556,7 @@ public class SampleManager {
                 String broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
 
                 Sample sample = new Sample(sampleId, familyId, individualId,
-                        paternalId, maternalId, sex, pheno, sampleType, captureKit, 
+                        paternalId, maternalId, sex, pheno, sampleType, captureKit,
                         experimentId, ancestry, broadPhenotype);
 
                 sampleList.add(sample);
@@ -785,6 +952,43 @@ public class SampleManager {
                 s.experimentId = rs.getInt("experiment_id");
                 s.ancestry = FormatManager.getString(rs.getString("ancestry"));
                 s.broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
+            }
+
+            rs.close();
+            preparedStatement.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+
+        return s;
+    }
+
+    private static TempSample getTempSample(String sampleName) throws Exception {
+        TempSample s = new TempSample();
+        s.sampleId = Data.INTEGER_NA;
+        s.sampleName = sampleName;
+
+        try {
+            String sql = "SELECT sample_id,experiment_id,sample_type,capture_kit,seq_gender,self_decl_gender,"
+                    + "ancestry,broad_phenotype,family_id,family_relation_proband FROM sample "
+                    + "WHERE sample_name=? AND sample_finished = 1 AND sample_failure = 0 order by sample_id desc";
+
+            PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
+            preparedStatement.setString(1, sampleName);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                s.sampleId = rs.getInt("sample_id");
+                s.experimentId = rs.getInt("experiment_id");
+                s.sampleType = FormatManager.getString(rs.getString("sample_type"));
+                s.captureKit = FormatManager.getString(rs.getString("capture_kit"));
+                s.seqGender = FormatManager.getString(rs.getString("seq_gender"));
+                s.sex = s.seqGender.equals("F") ? (byte) 2 : (byte) 1;
+                s.selfDeclGender = FormatManager.getString(rs.getString("self_decl_gender"));
+                s.ancestry = FormatManager.getString(rs.getString("ancestry"));
+                s.broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
+                s.familyId = FormatManager.getString(rs.getString("family_id"));
+                s.familyRelationProband = FormatManager.getString(rs.getString("family_relation_proband"));
             }
 
             rs.close();

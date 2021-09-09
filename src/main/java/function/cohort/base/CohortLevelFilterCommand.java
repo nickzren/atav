@@ -1,6 +1,8 @@
 package function.cohort.base;
 
 import function.annotation.base.AnnotationLevelFilterCommand;
+import function.cohort.singleton.SingletonCommand;
+import function.cohort.trio.TrioCommand;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
@@ -18,7 +20,8 @@ import utils.CommandOption;
  */
 public class CohortLevelFilterCommand {
 
-    public static String sampleFile = "";
+    public static String inputSample = "";
+    public static String sampleNameInput = "";
     public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
     public static boolean isAllExome = false;
@@ -55,7 +58,12 @@ public class CohortLevelFilterCommand {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
                 case "--sample":
-                    sampleFile = getValidPath(option);
+                    // diagnostic analysis allow input sample name
+                    if (SingletonCommand.isList || TrioCommand.isList) {
+                        inputSample = option.getValue();
+                    } else {
+                        inputSample = getValidPath(option);
+                    }
                     break;
                 case "--all-sample":
                     isAllSample = true;
