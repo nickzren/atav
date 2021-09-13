@@ -345,14 +345,12 @@ public class CohortLevelFilterCommand {
         only init case variants tmp tables when:
         1) total case# < 500 
         2) --variant not used 
-        3) --modifier-only not used
     */
     public static boolean isCaseOnlyValid2CreateTempTable() {
         return isCaseOnly
                 && SampleManager.getCaseNum() > 0
                 && SampleManager.getCaseNum() <= maxCaseOnlyNumber
-                && !VariantManager.isUsed()
-                && !AnnotationLevelFilterCommand.isModifierOnly;
+                && !VariantManager.isUsed();
     }
 
     public static boolean isLooAFValid(float value) {

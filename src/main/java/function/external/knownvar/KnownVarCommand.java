@@ -11,4 +11,5 @@ public class KnownVarCommand {
     public static boolean isKnownVarPathogenicOnly = false;
     public static boolean isInclude = false;
     public static boolean isIncludeOMIM = false;
+    public static boolean isExcludeClinVarBLB = false;
 }

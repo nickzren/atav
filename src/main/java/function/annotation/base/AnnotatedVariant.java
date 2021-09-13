@@ -149,6 +149,7 @@ public class AnnotatedVariant extends Variant {
         
         if (isValid && KnownVarCommand.isInclude) {
             knownVarOutput = new KnownVarOutput(this);
+            isValid = knownVarOutput.isExcludeClinVarBLB();
         }
 
         if (isValid && CHMCommand.isExclude) {
@@ -900,7 +901,6 @@ public class AnnotatedVariant extends Variant {
     public byte isHotZone() {
         if ((isLOF() || polyphenHumvar >= 0.95)
                 && RvisManager.isHotZone(geneName)) {
-            Output.hotZoneVarCount++;
             return 1;
         }
 

@@ -11,6 +11,7 @@ public class SingletonCommand {
 
     public static boolean isList = false;
     public static boolean isMannWhitneyTest = false;
+    public static boolean isExcludeNoFlag = false;
 
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -20,6 +21,9 @@ public class SingletonCommand {
             switch (option.getName()) {
                 case "--mann-whitney-test":
                     isMannWhitneyTest = true;
+                    break;
+                case "--exclude-no-flag":
+                    isExcludeNoFlag = true;
                     break;
                 default:
                     continue;

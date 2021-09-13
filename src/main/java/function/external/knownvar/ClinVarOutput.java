@@ -20,6 +20,7 @@ public class ClinVarOutput {
     private int variant10bpflanks;
 
     private boolean isClinVarPLP = false;
+    private boolean isClinVarBLB = false;
 
     public ClinVarOutput(Variant var, Collection<ClinVar> collection) {
         this.var = var;
@@ -57,6 +58,11 @@ public class ClinVarOutput {
                         || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity") 
                             && (tmpClinvar.getClinSigConf().startsWith("Pathogenic") || tmpClinvar.getClinSigConf().startsWith("Likely_pathogenic")))) {
                     isClinVarPLP = true;
+                }
+                
+                if (tmpClinvar.getClinSig().startsWith("Benign")
+                        || tmpClinvar.getClinSig().startsWith("Likely_benign")) {
+                    isClinVarBLB = true;
                 }
 
                 return tmpClinvar;
@@ -105,6 +111,10 @@ public class ClinVarOutput {
         return isClinVarPLP;
     }
 
+    public boolean isClinVarBLB() {
+        return isClinVarBLB;
+    }
+    
     public boolean isPLPSiteValid() {
         return siteCount > 0;
     }

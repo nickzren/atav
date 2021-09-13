@@ -66,6 +66,15 @@ public class KnownVarOutput {
                 || clinVarOutput.isClinVarPLP();
     }
 
+    // a variant is ClinVar B/LB
+    public boolean isExcludeClinVarBLB() {
+        if (KnownVarCommand.isExcludeClinVarBLB) {
+            return !clinVarOutput.isClinVarBLB();
+        }
+
+        return true;
+    }
+
     // a variant at the same site is reported HGDM as "DM" or "DM?"
     // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
     public boolean hasKnownVariantOnSite() {

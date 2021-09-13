@@ -3,7 +3,6 @@ package function.cohort.singleton;
 import function.cohort.base.CalledVariant;
 import function.cohort.base.AnalysisBase4CalledVar;
 import static function.cohort.singleton.SingletonManager.COMP_HET_FLAG;
-import function.cohort.trio.TrioManager;
 import function.variant.base.Output;
 import global.Data;
 import global.Index;
@@ -135,11 +134,15 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                     output1.initSingletonData(singleton);
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
+                        output1.initTierFlag4SingleVar();
+                        
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             SingletonOutput output2 = geneOutputList.get(j);
                             output2.initSingletonData(singleton);
 
                             if (output2.isQualifiedGeno(output2.cGeno)) {
+                                output2.initTierFlag4SingleVar();
+                                
                                 outputCompHet(output1, output2);
                             }
                         }
@@ -154,6 +157,12 @@ public class ListSingleton extends AnalysisBase4CalledVar {
     }
 
     private void outputSingleVar(SingletonOutput output) throws Exception {
+        if (SingletonCommand.isExcludeNoFlag
+                && output.getTierFlag4SingleVar() == Data.BYTE_NA
+                && !output.isFlag()) {
+            return;
+        }
+        
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -162,6 +171,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         if (outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
+        
+        output.countSingleVar();
 
         StringJoiner sj = new StringJoiner(",");
         sj.add(Data.STRING_NA);
@@ -184,7 +195,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
     private void doCompHetOutput(String compHetFlag, SingletonOutput output1, SingletonOutput output2) throws Exception {
         float[] coFreq = SingletonManager.getCoOccurrenceFreq(output1, output2);
-        
+
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
 
@@ -220,6 +231,15 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
     private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, SingletonOutput output,
             String compHetVar) throws Exception {
+        if (SingletonCommand.isExcludeNoFlag
+                && tierFlag4CompVar == Data.BYTE_NA
+                && output.getTierFlag4SingleVar() == Data.BYTE_NA
+                && !output.isFlag()) {
+            return;
+        }
+
+        output.countSingleVar();
+        
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");

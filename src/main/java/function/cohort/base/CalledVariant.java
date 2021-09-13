@@ -34,6 +34,8 @@ public class CalledVariant extends AnnotatedVariant {
     private double coveredSampleBinomialP;
     private float[] coveredSamplePercentage = new float[2];
 
+    
+    
     public CalledVariant(String chr, int variantId, ResultSet rset) throws Exception {
         super(chr, variantId, rset);
 
@@ -424,13 +426,12 @@ public class CalledVariant extends AnnotatedVariant {
                 && (getKnownVar().isInClinGenSufficientOrSomeEvidence()
                 || getKnownVar().isOMIMDominant()) // 2
                 ) {
-            Output.lofDominantAndHaploinsufficientCount++;
             return 1;
         }
 
         return 0;
     }
-
+    
     /*
         1. variant is het call
         2. Missense variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
@@ -442,7 +443,6 @@ public class CalledVariant extends AnnotatedVariant {
                 && (getKnownVar().isInClinGenSufficientOrSomeEvidence() || getKnownVar().isOMIMDominant()) // 2
                 && getKnownVar().getClinVarPathoratio().isClinVarPathoratioMissenseSNVValid() // 3
                 ) {
-            Output.missenseDominantAndHaploinsufficientCount++;
             return 1;
         }
 
@@ -454,7 +454,6 @@ public class CalledVariant extends AnnotatedVariant {
      */
     public byte isKnownPathogenicVariant() {
         if (getKnownVar().isKnownVariant()) {
-            Output.knownPathogenicVarCount++;
             return 1;
         }
 
@@ -499,12 +498,11 @@ public class CalledVariant extends AnnotatedVariant {
         return false;
     }
 
-    // DP bin >= 10, Qual >= 50, QD >= 2, MQ >= 40
+    // DP bin >= 10, Qual >= 50, MQ >= 40
     public boolean isCarrierGATKQCValid(Carrier carrier) {
         if (carrier != null) {
             return carrier.getDPBin() >= 10
                     && carrier.getQual() >= 50
-                    && carrier.getQD() >= 2
                     && carrier.getMQ() >= 40;
         }
 

@@ -272,6 +272,10 @@ public class VariantLevelFilterCommand {
                     KnownVarCommand.isKnownVarPathogenicOnly = true;
                     KnownVarCommand.isInclude = true;
                     break;
+                case "--exclude-clinvar-benign":
+                    KnownVarCommand.isExcludeClinVarBLB = true;
+                    KnownVarCommand.isInclude = true;
+                    break;
                 case "--min-gerp-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
                     GerpCommand.minGerpScore = getValidFloat(option);
