@@ -214,7 +214,7 @@ public class TrioOutput extends Output {
 
     public boolean isFlag() {
         return isLoFDominantAndHaploinsufficient == 1
-                || calledVar.getKnownVar().isKnownVariant();
+                || calledVar.getKnownVar().isKnownVariantSite();
     }
 
     public void countSingleVar() {

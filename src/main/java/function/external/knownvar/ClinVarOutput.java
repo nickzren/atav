@@ -115,7 +115,7 @@ public class ClinVarOutput {
         return isClinVarBLB;
     }
     
-    public boolean isPLPSiteValid() {
+    public boolean isClinVarPLPSite() {
         return siteCount > 0;
     }
     
