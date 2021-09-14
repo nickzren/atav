@@ -65,11 +65,9 @@ public class SingletonOutput extends Output {
             if (calledVar.isHeterozygousTier1(cCarrier)
                     || calledVar.isHomozygousTier1(cCarrier)) {
                 tierFlag4SingleVar = 1;
-                Output.tier1SingleVarCount++;
             } else if (calledVar.isMetTier2InclusionCriteria()
                     && calledVar.isCaseVarTier2(cCarrier)) {
                 tierFlag4SingleVar = 2;
-                Output.tier2SingleVarCount++;
             }
         }
 
