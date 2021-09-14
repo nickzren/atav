@@ -27,9 +27,9 @@ public class ClinVarOutput {
 
         clinvar = getClinVar(collection);
 
-        siteCount = KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, 0);
+        siteCount = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 0);
 
-        variant10bpflanks = KnownVarManager.getClinVarPathogenicIndelFlankingCount(var, 10);
+        variant10bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 10);
     }
 
     /*
@@ -61,7 +61,9 @@ public class ClinVarOutput {
                 }
                 
                 if (tmpClinvar.getClinSig().startsWith("Benign")
-                        || tmpClinvar.getClinSig().startsWith("Likely_benign")) {
+                        || tmpClinvar.getClinSig().startsWith("Likely_benign")
+                        || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity") 
+                            && (tmpClinvar.getClinSigConf().startsWith("Benign") || tmpClinvar.getClinSigConf().startsWith("Likely_benign")))) {
                     isClinVarBLB = true;
                 }
 
