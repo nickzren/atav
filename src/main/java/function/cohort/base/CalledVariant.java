@@ -425,7 +425,6 @@ public class CalledVariant extends AnnotatedVariant {
                 && isLOF()
                 && (getClinGen().isInClinGenSufficientOrSomeEvidence() || isOMIMDominant()) // 2
                 ) {
-            Output.lofDominantAndHaploinsufficientCount++;
             return 1;
         }
 
@@ -443,7 +442,6 @@ public class CalledVariant extends AnnotatedVariant {
                 && (getClinGen().isInClinGenSufficientOrSomeEvidence() || isOMIMDominant()) // 2
                 && getKnownVar().getClinVarPathoratio().isClinVarPathoratioMissenseSNVValid() // 3
                 ) {
-            Output.missenseDominantAndHaploinsufficientCount++;
             return 1;
         }
 
@@ -455,7 +453,6 @@ public class CalledVariant extends AnnotatedVariant {
      */
     public byte isKnownPathogenicVariant() {
         if (getKnownVar().isKnownVariant()) {
-            Output.knownPathogenicVarCount++;
             return 1;
         }
 

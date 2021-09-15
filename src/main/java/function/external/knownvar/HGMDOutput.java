@@ -103,7 +103,7 @@ public class HGMDOutput {
         return hgmd;
     }
 
-    public boolean isDMSiteValid() {
+    public boolean isHGMDDMSite() {
         return siteCount > 0;
     }
     

@@ -53,19 +53,23 @@ public class KnownVarOutput {
             return hgmdOutput.isHGMDDM() || clinVarOutput.isClinVarPLP();
         }
         
+        if (KnownVarCommand.isExcludeClinVarBLB) {
+            return !clinVarOutput.isClinVarBLB();
+        }
+        
         return true;
     }
     
-    // a variant is either HGMD "DM" (not in CinVar) or ClinVar P/LP
+    // a variant is either HGMD "DM" (not CinVar B/LB) or ClinVar P/LP
     public boolean isKnownVariant() {
         return hgmdOutput.isHGMDDM()
                 || clinVarOutput.isClinVarPLP();
     }
 
-    // a variant at the same site is reported HGDM as "DM" or "DM?"
-    // a variant at the same site is reported ClinVar as "Pathogenic" or "Likely_pathogenic"
-    public boolean hasKnownVariantOnSite() {
-        return hgmdOutput.isDMSiteValid() || clinVarOutput.isPLPSiteValid();
+    // a site has variant is either HGMD "DM" (not CinVar B/LB) or ClinVar P/LP
+    public boolean isKnownVariantSite() {
+        return hgmdOutput.isHGMDDMSite() 
+                || clinVarOutput.isClinVarPLPSite();
     }
     
     public ClinVarPathoratio getClinVarPathoratio() {

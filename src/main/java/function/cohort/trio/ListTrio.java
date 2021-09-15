@@ -125,6 +125,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initDenovoFlag(trio.getChild());
+                        output1.initTierFlag4SingleVar();
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
@@ -133,6 +134,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                             if (output2.isQualifiedGeno(output2.cGeno)) {
                                 // init variant denovo flag for finding potential comp het
                                 output2.initDenovoFlag(trio.getChild());
+                                output2.initTierFlag4SingleVar();
 
                                 outputCompHet(output1, output2);
                             }
@@ -148,6 +150,12 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     private void outputDenovoOrHomOrInheritedVar(TrioOutput output) throws Exception {
+        if (TrioCommand.isExcludeNoFlag
+                && output.getTierFlag4SingleVar() == Data.BYTE_NA
+                && !output.isFlag()) {
+            return;
+        }
+        
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -157,6 +165,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
             return;
         }
 
+        output.countSingleVar();
+        
         StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getName());
         sj.add(output.motherName);
@@ -227,6 +237,15 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, TrioOutput output,
             String compHetVar) throws Exception {
+        if (TrioCommand.isExcludeNoFlag
+                && tierFlag4CompVar == Data.BYTE_NA
+                && output.getTierFlag4SingleVar() == Data.BYTE_NA
+                && !output.isFlag()) {
+            return;
+        }
+        
+        output.countSingleVar();
+        
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");

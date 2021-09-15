@@ -9,5 +9,6 @@ public class KnownVarCommand {
     public static boolean isList = false;
     public static boolean isKnownVarOnly = false;
     public static boolean isKnownVarPathogenicOnly = false;
+    public static boolean isExcludeClinVarBLB = false;
     public static boolean isInclude = false;
 }

@@ -18,6 +18,12 @@ public class SingletonOutput extends Output {
     Carrier cCarrier;
     byte cGeno;
     short cDPBin;
+    
+    byte tierFlag4SingleVar;
+    byte isLoFDominantAndHaploinsufficient;
+    byte isMissenseDominantAndHaploinsufficient;
+    byte isKnownPathogenicVariant;
+    byte isHotZone;
 
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
@@ -50,34 +56,68 @@ public class SingletonOutput extends Output {
         cCarrier = calledVar.getCarrier(singleton.getChild().getId());
     }
 
-    public byte getTierFlag4SingleVar() {
-        byte tierFlag = Data.BYTE_NA;
+    public void initTierFlag4SingleVar() {
+        tierFlag4SingleVar = Data.BYTE_NA;
 
         // Restrict to High or Moderate impact or TraP >= 0.4 variants
         if (getCalledVariant().isImpactHighOrModerate()) {
-            if (calledVar.isHeterozygousTier1(cCarrier) ||
-                    calledVar.isHomozygousTier1(cCarrier)) {
-                tierFlag = 1;
-                Output.tier1SingleVarCount++;
+            if (calledVar.isHeterozygousTier1(cCarrier)
+                    || calledVar.isHomozygousTier1(cCarrier)) {
+                tierFlag4SingleVar = 1;
             } else if (calledVar.isMetTier2InclusionCriteria()
                     && calledVar.isCaseVarTier2(cCarrier)) {
-                tierFlag = 2;
-                Output.tier2SingleVarCount++;
+                tierFlag4SingleVar = 2;
             }
         }
 
-        return tierFlag;
+        isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
+        isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
+        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
+        isHotZone = calledVar.isHotZone();
     }
 
+    public byte getTierFlag4SingleVar() {
+        return tierFlag4SingleVar;
+    }
+    
+    public boolean isFlag() {
+        return isLoFDominantAndHaploinsufficient == 1
+                || calledVar.getKnownVar().isKnownVariantSite();
+    }
+    
+    public void countSingleVar() {
+        if (tierFlag4SingleVar == 1) {
+            Output.tier1SingleVarCount++;
+        } else if (tierFlag4SingleVar == 2) {
+            Output.tier2SingleVarCount++;
+        }
+
+        if (isLoFDominantAndHaploinsufficient == 1) {
+            Output.lofDominantAndHaploinsufficientCount++;
+        }
+
+        if (isMissenseDominantAndHaploinsufficient == 1) {
+            Output.missenseDominantAndHaploinsufficientCount++;
+        }
+
+        if (isKnownPathogenicVariant == 1) {
+            Output.knownPathogenicVarCount++;
+        }
+
+        if (isHotZone == 1) {
+            Output.hotZoneVarCount++;
+        }
+    }
+    
     @Override
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria() ? 1 : 0));
-        sj.add(FormatManager.getByte(calledVar.isLoFDominantAndHaploinsufficient(cCarrier)));
-        sj.add(FormatManager.getByte(calledVar.isMissenseDominantAndHaploinsufficient(cCarrier)));
-        sj.add(FormatManager.getByte(calledVar.isKnownPathogenicVariant()));
-        sj.add(FormatManager.getByte(calledVar.isHotZone()));
+        sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
+        sj.add(FormatManager.getByte(isMissenseDominantAndHaploinsufficient));
+        sj.add(FormatManager.getByte(isKnownPathogenicVariant));
+        sj.add(FormatManager.getByte(isHotZone));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData_pgl(sj, cCarrier, child);

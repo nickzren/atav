@@ -176,7 +176,7 @@ public class AnnotatedVariant extends Variant {
             isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -186,7 +186,7 @@ public class AnnotatedVariant extends Variant {
             isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF());
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -196,7 +196,7 @@ public class AnnotatedVariant extends Variant {
             isValid = GMECommand.getInstance().isAFValid(gmeAF);
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -206,7 +206,7 @@ public class AnnotatedVariant extends Variant {
             isValid = IranomeCommand.getInstance().isAFValid(iranomeAF);
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -216,7 +216,7 @@ public class AnnotatedVariant extends Variant {
             isValid = TopMedCommand.getInstance().isAFValid(topmedAF);
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -226,7 +226,7 @@ public class AnnotatedVariant extends Variant {
             isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -236,7 +236,7 @@ public class AnnotatedVariant extends Variant {
             isValid = gnomADExome.isValid();
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -246,7 +246,7 @@ public class AnnotatedVariant extends Variant {
             isValid = gnomADGenome.isValid();
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -256,7 +256,7 @@ public class AnnotatedVariant extends Variant {
             isValid = exac.isValid();
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -266,7 +266,7 @@ public class AnnotatedVariant extends Variant {
             isValid = evs.isValid();
 
             if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().hasKnownVariantOnSite();
+                isValid = isValid || getKnownVar().isKnownVariantSite();
             }
         }
 
@@ -395,7 +395,7 @@ public class AnnotatedVariant extends Variant {
                 && knownVarOutput != null
                 && AnnotationLevelFilterCommand.isModifierOnly) {
             return impact.equals("MODIFIER")
-                    && knownVarOutput.hasKnownVariantOnSite();
+                    && knownVarOutput.isKnownVariantSite();
         }
 
         return true;
@@ -883,7 +883,7 @@ public class AnnotatedVariant extends Variant {
 
     // tier 2 inclusion criteria
     public boolean isMetTier2InclusionCriteria() {
-        return knownVarOutput.hasKnownVariantOnSite()
+        return knownVarOutput.isKnownVariantSite()
                 || isKnownVar10bpFlankingValid()
                 || isInClinGenOrOMIM()
                 || isInClinVarPathoratio()
@@ -1062,7 +1062,6 @@ public class AnnotatedVariant extends Variant {
     public byte isHotZone() {
         if ((isLOF() || polyphenHumvar >= 0.95)
                 && RvisManager.isHotZone(geneName)) {
-            Output.hotZoneVarCount++;
             return 1;
         }
 
@@ -1074,7 +1073,7 @@ public class AnnotatedVariant extends Variant {
         return impact.equals("HIGH")
                 || impact.equals("MODERATE")
                 || trapScore >= 0.4
-                || knownVarOutput.hasKnownVariantOnSite();
+                || knownVarOutput.isKnownVariantSite();
     }
 
     public boolean isMissense() {
