@@ -319,6 +319,10 @@ public class SampleManager {
     private static void addSampleToSingletonList(String sampleName) throws Exception {
         TempSample tempSample = getTempSample(sampleName);
 
+        if (tempSample.isGenderMismatch()) {
+            ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+        }
+        
         tempSample.familyId = sampleName;
         tempSample.paternalId = "0";
         tempSample.maternalId = "0";
