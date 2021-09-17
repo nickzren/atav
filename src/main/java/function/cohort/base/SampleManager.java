@@ -280,8 +280,10 @@ public class SampleManager {
     private static void addSampleToTrioList(String sampleName) throws Exception {
         TempSample tempSample = getTempSample(sampleName);
 
-        if (!tempSample.familyRelationProband.equals("Proband")
+        if (tempSample.familyRelationProband != null
+                && !tempSample.familyRelationProband.equals("Proband")
                 && !tempSample.familyRelationProband.equals("Sibling")
+                && !tempSample.familyRelationProband.equals("Child")
                 && !tempSample.familyId.equals("N/A")) {
             ErrorManager.print("Invalid trio sample: " + sampleName, ErrorManager.INPUT_PARSING);
         }
@@ -333,10 +335,16 @@ public class SampleManager {
 
     private static void initParents(TempSample tempSample) {
         try {
-            String sql = "SELECT sample_name, seq_gender, self_decl_gender FROM sample "
-                    + "WHERE family_id=? AND family_relation_proband = 'Parent' "
-                    + "AND sample_finished = 1 AND sample_failure = 0 order by sample_id desc";
+            String sql = "SELECT sample_name, seq_gender, self_decl_gender FROM sample WHERE family_id=? ";
+            
+            if(tempSample.familyRelationProband.equals("Proband")) {
+                sql +=  "AND family_relation_proband = 'Parent' ";
+            } else if(tempSample.familyRelationProband.equals("Child")) {
+                sql += "AND family_relation_proband in ('Proband','Spouse') ";
+            }
 
+            sql += "AND sample_finished = 1 AND sample_failure = 0 order by sample_id desc";
+            
             PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
             preparedStatement.setString(1, tempSample.familyId);
             ResultSet rs = preparedStatement.executeQuery();
