@@ -237,9 +237,21 @@ public class ListTrio extends AnalysisBase4CalledVar {
         compHetVarSB.append(output1.getCalledVariant().getVariantIdStr());
         compHetVarSB.append("&");
         compHetVarSB.append(output2.getCalledVariant().getVariantIdStr());
+        
+        String compHetVar1 = compHetVarSB.toString() + "#1";
+        String compHetVar2 = compHetVarSB.toString() + "#2";
+        
+        // output as single var if compound var not tier 1 or 2 when --exclude-no-flag used 
+        if (TrioCommand.isExcludeNoFlag
+                && tierFlag4CompVar == Data.BYTE_NA) {
+            compHetFlag = Data.STRING_NA;
+            compHetVar1 = Data.STRING_NA;
+            compHetVar2 = Data.STRING_NA;
+            coFreq[Index.CTRL] = Data.FLOAT_NA;
+        }
 
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, coFreq, compHetVarSB.toString() + "#1");
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, coFreq, compHetVarSB.toString() + "#2");
+        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, coFreq, compHetVar1);
+        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, coFreq, compHetVar2);
     }
 
     private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, TrioOutput output,
