@@ -135,14 +135,14 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initTierFlag4SingleVar();
-                        
+
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             SingletonOutput output2 = geneOutputList.get(j);
                             output2.initSingletonData(singleton);
 
                             if (output2.isQualifiedGeno(output2.cGeno)) {
                                 output2.initTierFlag4SingleVar();
-                                
+
                                 outputCompHet(output1, output2);
                             }
                         }
@@ -162,7 +162,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 && !output.isFlag()) {
             return;
         }
-        
+
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -171,15 +171,21 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         if (outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
-        
+
         output.countSingleVar();
 
         StringJoiner sj = new StringJoiner(",");
+        sj.add(output.child.getName());
+        sj.add(output.child.getAncestry());
+        sj.add(output.child.getBroadPhenotype());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
+        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
         bwSingletonGeno.write(sj.toString());
         bwSingletonGeno.newLine();
@@ -189,11 +195,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         String compHetFlag = SingletonManager.getCompHetFlag(output1.cGeno, output2.cGeno);
 
         if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
-            doCompHetOutput(compHetFlag, output1, output2);
+            doCompHetOutput(output1, output2);
         }
     }
 
-    private void doCompHetOutput(String compHetFlag, SingletonOutput output1, SingletonOutput output2) throws Exception {
+    private void doCompHetOutput(SingletonOutput output1, SingletonOutput output2) throws Exception {
         float[] coFreq = SingletonManager.getCoOccurrenceFreq(output1, output2);
 
         // apply tier rules
@@ -225,12 +231,22 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         compHetVarSB.append("&");
         compHetVarSB.append(output2.getCalledVariant().getVariantIdStr());
 
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, compHetVarSB.toString() + "#1");
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, compHetVarSB.toString() + "#2");
+        String compHetVar1 = compHetVarSB.toString() + "#1";
+        String compHetVar2 = compHetVarSB.toString() + "#2";
+
+        // output as single var if compound var not tier 1 or 2 when --exclude-no-flag used 
+        if (SingletonCommand.isExcludeNoFlag
+                && tierFlag4CompVar == Data.BYTE_NA) {
+            compHetVar1 = Data.STRING_NA;
+            compHetVar2 = Data.STRING_NA;
+            coFreq[Index.CTRL] = Data.FLOAT_NA;
+        }
+
+        doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1);
+        doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, SingletonOutput output,
-            String compHetVar) throws Exception {
+    private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output, float[] coFreq, String compHetVar) throws Exception {
         if (SingletonCommand.isExcludeNoFlag
                 && tierFlag4CompVar == Data.BYTE_NA
                 && output.getTierFlag4SingleVar() == Data.BYTE_NA
@@ -239,7 +255,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         }
 
         output.countSingleVar();
-        
+
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -247,11 +263,17 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         outputCarrierSet.add(carrierIDSB.toString());
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(compHetFlag);
+        sj.add(output.child.getName());
+        sj.add(output.child.getAncestry());
+        sj.add(output.child.getBroadPhenotype());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(compHetVar);
+        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));
         sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
+        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
         bwSingletonGeno.write(sj.toString());
         bwSingletonGeno.newLine();

@@ -298,17 +298,17 @@ public class SampleManager {
 
         // add proband
         addSample(tempSample);
-        
+
         // add parents
         addParent(tempSample.paternalId);
         addParent(tempSample.maternalId);
     }
-    
+
     private static void addParent(String sampleName) throws Exception {
-        if(sampleName.equals("0")) {
+        if (sampleName.equals("0")) {
             return;
         }
-        
+
         TempSample tempSample = getTempSample(sampleName);
 
         tempSample.paternalId = "0";
@@ -324,7 +324,7 @@ public class SampleManager {
         if (tempSample.isGenderMismatch()) {
             ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
         }
-        
+
         tempSample.familyId = sampleName;
         tempSample.paternalId = "0";
         tempSample.maternalId = "0";
@@ -336,15 +336,16 @@ public class SampleManager {
     private static void initParents(TempSample tempSample) {
         try {
             String sql = "SELECT sample_name, seq_gender, self_decl_gender FROM sample WHERE family_id=? ";
-            
-            if(tempSample.familyRelationProband.equals("Proband")) {
-                sql +=  "AND family_relation_proband = 'Parent' ";
-            } else if(tempSample.familyRelationProband.equals("Child")) {
+
+            if (tempSample.familyRelationProband.equals("Proband")
+                    || tempSample.familyRelationProband.equals("Sibling")) {
+                sql += "AND family_relation_proband = 'Parent' ";
+            } else if (tempSample.familyRelationProband.equals("Child")) {
                 sql += "AND family_relation_proband in ('Proband','Spouse') ";
             }
 
             sql += "AND sample_finished = 1 AND sample_failure = 0 order by sample_id desc";
-            
+
             PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
             preparedStatement.setString(1, tempSample.familyId);
             ResultSet rs = preparedStatement.executeQuery();

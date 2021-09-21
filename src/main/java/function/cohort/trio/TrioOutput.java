@@ -29,6 +29,7 @@ public class TrioOutput extends Output {
     String fatherName;
     byte fGeno;
     short fDPBin;
+    boolean isDUO;
 
     byte tierFlag4SingleVar;
     byte isLoFDominantAndHaploinsufficient;
@@ -53,6 +54,8 @@ public class TrioOutput extends Output {
         fatherName = trio.getFatherName();
         fGeno = calledVar.getGT(trio.getFatherIndex());
         fDPBin = calledVar.getDPBin(trio.getFatherIndex());
+        
+        isDUO = trio.isDUO();
     }
 
     public void initDenovoFlag(Sample child) {
@@ -239,6 +242,23 @@ public class TrioOutput extends Output {
         if (isHotZone == 1) {
             Output.hotZoneVarCount++;
         }
+    }
+
+    public String getSummary() {
+        StringJoiner sj = new StringJoiner("\n");
+
+        sj.add("'" + calledVar.getGeneName() + "'");
+        sj.add(calledVar.getVariantIdStr());
+        sj.add(isDUO ? "DUO" : "TRIO");
+        sj.add(calledVar.getEffect());
+        sj.add(calledVar.getStableId());
+        sj.add(calledVar.getHGVS_c());
+        sj.add(calledVar.getHGVS_p());
+        sj.add("DP = " + cCarrier.getDP());
+        sj.add("PercAltRead = " + cCarrier.getPercAltReadStr());
+        sj.add("GQ = " + cCarrier.getGQ());
+
+        return sj.toString();
     }
 
     @Override

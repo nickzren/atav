@@ -66,4 +66,9 @@ public class Trio {
     public String getMotherName() {
         return motherName;
     }
+
+    public boolean isDUO() {
+        return fatherId == Data.INTEGER_NA
+                || motherId == Data.INTEGER_NA;
+    }
 }
