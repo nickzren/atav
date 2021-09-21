@@ -221,8 +221,18 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         compHetVarSB.append("&");
         compHetVarSB.append(output2.getCalledVariant().getVariantIdStr());
 
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, compHetVarSB.toString() + "#1");
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, compHetVarSB.toString() + "#2");
+        String compHetVar1 = compHetVarSB.toString() + "#1";
+        String compHetVar2 = compHetVarSB.toString() + "#2";
+
+        // output as single var if compound var not tier 1 or 2 when --exclude-no-flag used 
+        if (SingletonCommand.isExcludeNoFlag
+                && tierFlag4CompVar == Data.BYTE_NA) {
+            compHetVar1 = Data.STRING_NA;
+            compHetVar2 = Data.STRING_NA;
+        }
+        
+        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, compHetVar1);
+        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, compHetVar2);
     }
 
     private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, SingletonOutput output,
