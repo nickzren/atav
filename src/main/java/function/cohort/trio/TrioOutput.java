@@ -33,6 +33,7 @@ public class TrioOutput extends Output {
     short fDPBin;
     short fADAlt;
     short fDP;
+    boolean isDUO;
 
     byte tierFlag4SingleVar;
     byte isLoFDominantAndHaploinsufficient;
@@ -63,6 +64,8 @@ public class TrioOutput extends Output {
         Carrier fCarrier = calledVar.getCarrier(trio.getFatherId());
         fADAlt = fCarrier == null ? Data.SHORT_NA : fCarrier.getADAlt();
         fDP = fCarrier == null ? Data.SHORT_NA : fCarrier.getDP();
+        
+        isDUO = trio.isDUO();
     }
 
     public void initDenovoFlag(Sample child) {
@@ -251,6 +254,23 @@ public class TrioOutput extends Output {
         }
     }
 
+    public String getSummary() {
+        StringJoiner sj = new StringJoiner("\n");
+
+        sj.add("'" + calledVar.getGeneName() + "'");
+        sj.add(calledVar.getVariantIdStr());
+        sj.add(isDUO ? "DUO" : "TRIO");
+        sj.add(calledVar.getEffect());
+        sj.add(calledVar.getStableId());
+        sj.add(calledVar.getHGVS_c());
+        sj.add(calledVar.getHGVS_p());
+        sj.add("DP = " + cCarrier.getDP());
+        sj.add("PercAltRead = " + cCarrier.getPercAltReadStr());
+        sj.add("GQ = " + cCarrier.getGQ());
+
+        return sj.toString();
+    }
+    
     @Override
     public String toString() {
         StringJoiner sj = new StringJoiner(",");

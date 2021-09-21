@@ -504,7 +504,6 @@ public class AnnotatedVariant extends Variant {
         sj.add(effect);
         sj.add(getCanonicalEffect());
         sj.add("'" + geneName + "'");
-        sj.add(getGeneLink());
         sj.add(getStableId(stableId));
         sj.add(HGVS_c);
         sj.add(HGVS_p);
@@ -522,7 +521,11 @@ public class AnnotatedVariant extends Variant {
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
 
-    private String getGeneLink() {
+    public String getStableId() {
+        return getStableId(stableId);
+    }
+    
+    public String getGeneLink() {
         // "=HYPERLINK(""url"",""name"")"
         if (isOMIMGene()) {
             return "\"=HYPERLINK(\"\"https://omim.org/search?search=" + geneName + "\"\",\"\"OMIM\"\")\"";

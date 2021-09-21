@@ -51,7 +51,8 @@ public class TrioManager {
         sj.add("Proband");
         sj.add("Mother");
         sj.add("Father");
-        sj.add("Comp Het Flag");
+        sj.add("Gene Name");
+        sj.add("Gene Link");
         sj.add("Compound Var");
         sj.add("Tier Flag (Compound Var)");
         sj.add("Tier Flag (Single Var)");
@@ -74,7 +75,8 @@ public class TrioManager {
         sj.add("AD ALT (father)");
         sj.add("DP (father)");
         sj.merge(Output.getExternalDataHeader());
-
+        sj.add("Summary");
+        
         return sj.toString();
     }
 

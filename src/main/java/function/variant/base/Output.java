@@ -112,7 +112,6 @@ public class Output {
         sj.add("Effect");
         sj.add("Canonical Transcript Effect");
         sj.add("Gene Name");
-        sj.add("Gene Link");
         sj.add("Transcript Stable Id");
         sj.add("HGVS_c");
         sj.add("HGVS_p");

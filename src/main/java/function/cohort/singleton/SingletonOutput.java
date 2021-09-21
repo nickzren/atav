@@ -28,7 +28,9 @@ public class SingletonOutput extends Output {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Comp Het Flag");
+        sj.add("Proband");
+        sj.add("Gene Name");
+        sj.add("Gene Link");
         sj.add("Compound Var");
         sj.add("Tier Flag (Compound Var)");
         sj.add("Tier Flag (Single Var)");
@@ -41,6 +43,7 @@ public class SingletonOutput extends Output {
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader_pgl());
         sj.merge(Output.getExternalDataHeader());
+        sj.add("Summary");
 
         return sj.toString();
     }
@@ -107,6 +110,23 @@ public class SingletonOutput extends Output {
         if (isHotZone == 1) {
             Output.hotZoneVarCount++;
         }
+    }
+    
+    public String getSummary() {
+        StringJoiner sj = new StringJoiner("\n");
+
+        sj.add("'" + calledVar.getGeneName() + "'");
+        sj.add(calledVar.getVariantIdStr());
+        sj.add("SINGLETON");
+        sj.add(calledVar.getEffect());
+        sj.add(calledVar.getStableId());
+        sj.add(calledVar.getHGVS_c());
+        sj.add(calledVar.getHGVS_p());
+        sj.add("DP = " + cCarrier.getDP());
+        sj.add("PercAltRead = " + cCarrier.getPercAltReadStr());
+        sj.add("GQ = " + cCarrier.getGQ());
+
+        return sj.toString();
     }
     
     @Override

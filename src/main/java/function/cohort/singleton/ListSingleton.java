@@ -174,11 +174,14 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         output.countSingleVar();
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(Data.STRING_NA);
+        sj.add(output.child.getName());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
+        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
         bwSingletonGeno.write(sj.toString());
         bwSingletonGeno.newLine();
@@ -188,11 +191,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         String compHetFlag = SingletonManager.getCompHetFlag(output1.cGeno, output2.cGeno);
 
         if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
-            doCompHetOutput(compHetFlag, output1, output2);
+            doCompHetOutput(output1, output2);
         }
     }
 
-    private void doCompHetOutput(String compHetFlag, SingletonOutput output1, SingletonOutput output2) throws Exception {
+    private void doCompHetOutput(SingletonOutput output1, SingletonOutput output2) throws Exception {
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
 
@@ -231,12 +234,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             compHetVar2 = Data.STRING_NA;
         }
         
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, compHetVar1);
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, compHetVar2);
+        doCompHetOutput(tierFlag4CompVar, output1, compHetVar1);
+        doCompHetOutput(tierFlag4CompVar, output2, compHetVar2);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, SingletonOutput output,
-            String compHetVar) throws Exception {
+    private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output, String compHetVar) throws Exception {
         if (SingletonCommand.isExcludeNoFlag
                 && tierFlag4CompVar == Data.BYTE_NA
                 && output.getTierFlag4SingleVar() == Data.BYTE_NA
@@ -253,12 +255,15 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         outputCarrierSet.add(carrierIDSB.toString());
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(compHetFlag);
+        sj.add(output.child.getName());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(compHetVar);
         sj.add(FormatManager.getByte(tierFlag4CompVar));
         sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
-
+        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
+        
         bwSingletonGeno.write(sj.toString());
         bwSingletonGeno.newLine();
     }

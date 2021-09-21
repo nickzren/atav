@@ -171,12 +171,14 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.child.getName());
         sj.add(output.motherName);
         sj.add(output.fatherName);
-        sj.add(Data.STRING_NA);
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
-
+        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
+        
         bwTrioGeno.write(sj.toString());
         bwTrioGeno.newLine();
     }
@@ -185,7 +187,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         String compHetFlag = getTrioCompHetFlag(output1, output2);
 
         if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
-            doCompHetOutput(compHetFlag, output1, output2);
+            doCompHetOutput(output1, output2);
         }
     }
 
@@ -201,7 +203,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         return flag;
     }
 
-    private void doCompHetOutput(String compHetFlag, TrioOutput output1, TrioOutput output2) throws Exception {
+    private void doCompHetOutput(TrioOutput output1, TrioOutput output2) throws Exception {
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
 
@@ -237,17 +239,15 @@ public class ListTrio extends AnalysisBase4CalledVar {
         // output as single var if compound var not tier 1 or 2 when --exclude-no-flag used 
         if (TrioCommand.isExcludeNoFlag
                 && tierFlag4CompVar == Data.BYTE_NA) {
-            compHetFlag = Data.STRING_NA;
             compHetVar1 = Data.STRING_NA;
             compHetVar2 = Data.STRING_NA;
         }
         
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output1, compHetVar1);
-        doCompHetOutput(tierFlag4CompVar, compHetFlag, output2, compHetVar2);
+        doCompHetOutput(tierFlag4CompVar, output1, compHetVar1);
+        doCompHetOutput(tierFlag4CompVar, output2, compHetVar2);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, String compHetFlag, TrioOutput output,
-            String compHetVar) throws Exception {
+    private void doCompHetOutput(byte tierFlag4CompVar, TrioOutput output, String compHetVar) throws Exception {
         if (TrioCommand.isExcludeNoFlag
                 && tierFlag4CompVar == Data.BYTE_NA
                 && output.getTierFlag4SingleVar() == Data.BYTE_NA
@@ -267,11 +267,13 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.child.getName());
         sj.add(output.motherName);
         sj.add(output.fatherName);
-        sj.add(compHetFlag);
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(compHetVar);
         sj.add(FormatManager.getByte(tierFlag4CompVar));
         sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
+        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
         bwTrioGeno.write(sj.toString());
         bwTrioGeno.newLine();
