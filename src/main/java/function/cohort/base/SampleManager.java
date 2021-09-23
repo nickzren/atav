@@ -451,8 +451,8 @@ public class SampleManager {
                     }
 
                     if (!CohortLevelFilterCommand.isDisableCheckDuplicateSample) {
-                        if (!sampleNameSet.contains(individualId)) {
-                            sampleNameSet.add(individualId);
+                        if (!sampleNameSet.contains(individualId.toUpperCase())) {
+                            sampleNameSet.add(individualId.toUpperCase());
                         } else {
                             ErrorManager.print("\nDuplicate sample: " + individualId
                                     + " (line " + lineNum + " in sample file)", ErrorManager.INPUT_PARSING);
@@ -574,8 +574,8 @@ public class SampleManager {
                 String broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
 
                 // skip duplicate samples
-                if (!sampleNameSet.contains(individualId)) {
-                    sampleNameSet.add(individualId);
+                if (!sampleNameSet.contains(individualId.toUpperCase())) {
+                    sampleNameSet.add(individualId.toUpperCase());
                 } else {
                     continue;
                 }
