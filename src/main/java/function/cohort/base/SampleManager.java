@@ -235,6 +235,8 @@ public class SampleManager {
             sqlCode += " and available_control_use = 1";
         }
 
+        sqlCode += " order by sample_id desc ";
+
         initSampleFromDB(sqlCode);
     }
 
@@ -560,13 +562,23 @@ public class SampleManager {
 
                 String paternalId = "0";
                 String maternalId = "0";
-                byte sex = 1; // male
+
+                String seqGender = FormatManager.getString(rs.getString("seq_gender"));
+                byte sex = seqGender.equals("M") ? (byte) 1 : (byte) 2;
+
                 byte pheno = 1; // control
                 String sampleType = rs.getString("sample_type").trim();
                 String captureKit = rs.getString("capture_kit").trim();
                 int experimentId = rs.getInt("experiment_id");
                 String ancestry = FormatManager.getString(rs.getString("ancestry"));
                 String broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
+
+                // skip duplicate samples
+                if (!sampleNameSet.contains(individualId)) {
+                    sampleNameSet.add(individualId);
+                } else {
+                    continue;
+                }
 
                 Sample sample = new Sample(sampleId, familyId, individualId,
                         paternalId, maternalId, sex, pheno, sampleType, captureKit,
@@ -996,7 +1008,7 @@ public class SampleManager {
                 s.sampleType = FormatManager.getString(rs.getString("sample_type"));
                 s.captureKit = FormatManager.getString(rs.getString("capture_kit"));
                 s.seqGender = FormatManager.getString(rs.getString("seq_gender"));
-                s.sex = s.seqGender.equals("F") ? (byte) 2 : (byte) 1;
+                s.sex = s.seqGender.equals("M") ? (byte) 1 : (byte) 2;
                 s.selfDeclGender = FormatManager.getString(rs.getString("self_decl_gender"));
                 s.ancestry = FormatManager.getString(rs.getString("ancestry"));
                 s.broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
