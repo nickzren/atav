@@ -164,6 +164,10 @@ public class ListTrio extends AnalysisBase4CalledVar {
         if (outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
+        
+        if(output.getCalledVariant().getVariantIdStr().equals("2-179402201-T-C")) {
+            System.out.println(carrierIDSB.toString());
+        }
 
         output.countSingleVar();
         
@@ -262,6 +266,11 @@ public class ListTrio extends AnalysisBase4CalledVar {
         carrierIDSB.append("-");
         carrierIDSB.append(output.cCarrier.getSampleId());
         outputCarrierSet.add(carrierIDSB.toString());
+        
+        // if output as single var then ignore duplicate output
+        if(compHetVar.equals(Data.STRING_NA) && outputCarrierSet.contains(carrierIDSB.toString())) {
+            return;
+        }
 
         StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getName());
