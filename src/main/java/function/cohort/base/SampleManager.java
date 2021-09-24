@@ -327,7 +327,6 @@ public class SampleManager {
             ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
         }
 
-        tempSample.familyId = sampleName;
         tempSample.paternalId = "0";
         tempSample.maternalId = "0";
         tempSample.pheno = Byte.valueOf("2");
@@ -551,7 +550,7 @@ public class SampleManager {
 
             while (rs.next()) {
                 int sampleId = rs.getInt("sample_id");
-                String familyId = rs.getString("sample_name").trim();
+                String familyId = rs.getString("family_id").trim();
                 String individualId = rs.getString("sample_name").trim();
 
                 if (CohortLevelFilterCommand.isExcludeIGMGnomadSample

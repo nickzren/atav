@@ -175,6 +175,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         output.countSingleVar();
 
         StringJoiner sj = new StringJoiner(",");
+        sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
         sj.add(output.child.getAncestry());
         sj.add(output.child.getBroadPhenotype());
@@ -268,6 +269,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         }
 
         StringJoiner sj = new StringJoiner(",");
+        sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
         sj.add(output.child.getAncestry());
         sj.add(output.child.getBroadPhenotype());

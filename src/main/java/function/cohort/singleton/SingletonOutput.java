@@ -28,6 +28,7 @@ public class SingletonOutput extends Output {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add("Family ID");
         sj.add("Proband");
         sj.add("Ancestry");
         sj.add("Broad Phenotype");
