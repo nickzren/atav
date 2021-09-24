@@ -824,11 +824,12 @@ public class AnnotatedVariant extends Variant {
 
     // tier 2 inclusion criteria
     public boolean isMetTier2InclusionCriteria() {
-        return isKnownVar10bpFlankingValid()
+        return isKnownVar2bpFlankingValid()
                 || isInClinGenOrOMIM()
                 || isInClinVarPathoratio()
                 || isGnomADGenePLIValid()
-                || isGeneMisZValid();
+                || isGeneMisZValid()
+                || isClinVar25bpFlankingValid();
     }
 
     // LoF variant and occurs within a ClinGen/OMIM disease gene
@@ -855,9 +856,14 @@ public class AnnotatedVariant extends Variant {
                 && GnomADManager.isGeneMisZValid(geneName);
     }
 
-    // any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
-    private boolean isKnownVar10bpFlankingValid() {
-        return knownVarOutput.isKnownVar10bpFlankingValid();
+    // any variants in 2bp flanking regions either HGMD DM or ClinVar PLP
+    private boolean isKnownVar2bpFlankingValid() {
+        return knownVarOutput.isKnownVar2bpFlankingValid();
+    }
+    
+    // missense variant in 25bp flanking regions with >= 6 ClinVar P/LP
+    private boolean isClinVar25bpFlankingValid() {
+        return isMissense() && knownVarOutput.isClinVar25bpFlankingValid();
     }
 
     // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls

@@ -67,12 +67,13 @@ public class KnownVarManager {
         StringJoiner sj = new StringJoiner(",");
         
         sj.add("HGMD DM Site Count");
-        sj.add("HGMD DM 10bpflanks Count");
+        sj.add("HGMD DM 2bpflanks Count");
         sj.add("HGMD Disease");
         sj.add("HGMD PMID");
         sj.add("HGMD Class");
         sj.add("ClinVar PLP Site Count");
-        sj.add("ClinVar PLP 10bpflanks Count");
+        sj.add("ClinVar PLP 2bpflanks Count");
+        sj.add("ClinVar PLP 25bpflanks Count");
         sj.add("ClinVar ClinRevStar");
         sj.add("ClinVar ClinSig");
         sj.add("ClinVar ClinSigConf");
