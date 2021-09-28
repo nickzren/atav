@@ -550,8 +550,8 @@ public class SampleManager {
 
             while (rs.next()) {
                 int sampleId = rs.getInt("sample_id");
-                String familyId = rs.getString("family_id").trim();
-                String individualId = rs.getString("sample_name").trim();
+                String familyId = rs.getString("family_id");
+                String individualId = rs.getString("sample_name");
 
                 if (CohortLevelFilterCommand.isExcludeIGMGnomadSample
                         && excludeIGMGnomadSampleSet.contains((individualId))) {

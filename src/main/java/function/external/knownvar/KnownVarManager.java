@@ -50,7 +50,7 @@ public class KnownVarManager {
     private static void initPreparedStatement() {
         String sql = "SELECT count(*) as count From " + hgmdTable
                 + " WHERE chr=? AND pos BETWEEN ? AND ?"
-                + " AND variantClass = 'DM' AND is_in_clinvar = 0";
+                + " AND variantClass like '%DM%' AND is_in_clinvar = 0";
         preparedStatement4HGMDVariantFlankingCount = DBManager.initPreparedStatement(sql);
 
         sql = "SELECT count(*) as count "

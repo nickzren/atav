@@ -66,7 +66,8 @@ public class ClinVarOutput {
                 if (tmpClinvar.getClinSig().startsWith("Benign")
                         || tmpClinvar.getClinSig().startsWith("Likely_benign")
                         || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity") 
-                            && (tmpClinvar.getClinSigConf().startsWith("Benign") || tmpClinvar.getClinSigConf().startsWith("Likely_benign")))) {
+                            && (tmpClinvar.getClinSigConf().startsWith("Benign") || tmpClinvar.getClinSigConf().startsWith("Likely_benign"))
+                            && !tmpClinvar.getClinSigConf().contains("Pathogenic") && !tmpClinvar.getClinSigConf().contains("Likely_pathogenic"))) {
                     isClinVarBLB = true;
                 }
 
