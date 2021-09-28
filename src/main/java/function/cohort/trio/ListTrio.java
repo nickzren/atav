@@ -229,7 +229,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 Output.tier1CompoundVarCount++;
             } else if ( // tier 2
                     // if one of the variant meets tier 2 inclusion criteria
-                    (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
+                    (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
+                    || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
                     // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
                     && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
                 tierFlag4CompVar = 2;
@@ -272,9 +273,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
         carrierIDSB.append("-");
         carrierIDSB.append(output.cCarrier.getSampleId());
         outputCarrierSet.add(carrierIDSB.toString());
-        
+
         // if output as single var then ignore duplicate output
-        if(compHetVar.equals(Data.STRING_NA) && outputCarrierSet.contains(carrierIDSB.toString())) {
+        if (compHetVar.equals(Data.STRING_NA) && outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
 

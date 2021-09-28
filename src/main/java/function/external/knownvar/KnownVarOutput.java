@@ -102,9 +102,18 @@ public class KnownVarOutput {
                 || omimInheritance.contains("PD")
                 || omimInheritance.contains("DD")
                 || omimInheritance.contains("SMo")
-                || omimInheritance.contains("SMu");
+                || omimInheritance.contains("SMu")
+                || omimInheritance.contains("XL");
     }
 
+    public boolean isOMIMRecessive() {
+        return omimInheritance.contains("AR")
+                || omimInheritance.contains("PR")
+                || omimInheritance.contains("DR")
+                || omimInheritance.contains("XLR")
+                || omimInheritance.contains("XL");
+    }
+    
     public String getOMIMInheritance() {
         StringJoiner sj = new StringJoiner("|");
 
@@ -192,6 +201,10 @@ public class KnownVarOutput {
     public boolean isInClinGenSufficientOrSomeEvidence() {
         return clinGen.equals("Sufficient evidence")
                 || clinGen.equals("Some evidence");
+    }
+    
+    public boolean isInClinGenRecessiveEvidence() {
+        return clinGen.equals("Recessive evidence");
     }
 
     public ClinVarPathoratio getClinVarPathoratio() {

@@ -189,7 +189,7 @@ public class TrioOutput extends Output {
                         || isHemizygousTier1()
                         || isCompoundDeletionTier1()) {
                     tierFlag4SingleVar = 1;
-                } else if (calledVar.isMetTier2InclusionCriteria()
+                } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
                         && (isDenovoTier2()
                         || isHomozygousTier2()
                         || isHemizygousTier2())
@@ -197,7 +197,7 @@ public class TrioOutput extends Output {
                     tierFlag4SingleVar = 2;
                 }
             } else {
-                if (calledVar.isMetTier2InclusionCriteria()
+                if (calledVar.isMetTier2InclusionCriteria(cCarrier)
                         && calledVar.isCaseVarTier2(cCarrier)) {
                     tierFlag4SingleVar = 2;
                 }
@@ -264,7 +264,7 @@ public class TrioOutput extends Output {
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria() ? 1 : 0));
+        sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isMissenseDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
