@@ -282,21 +282,23 @@ public class SampleManager {
     private static void addSampleToTrioList(String sampleName) throws Exception {
         TempSample tempSample = getTempSample(sampleName);
 
-        if (tempSample.familyRelationProband != null
-                && !tempSample.familyRelationProband.equals("Proband")
-                && !tempSample.familyRelationProband.equals("Sibling")
-                && !tempSample.familyRelationProband.equals("Child")
-                && !tempSample.familyId.equals("N/A")) {
-            ErrorManager.print("Invalid trio sample: " + sampleName, ErrorManager.INPUT_PARSING);
+        if (tempSample.sampleId != Data.INTEGER_NA) {
+            if (tempSample.familyRelationProband != null
+                    && !tempSample.familyRelationProband.equals("Proband")
+                    && !tempSample.familyRelationProband.equals("Sibling")
+                    && !tempSample.familyRelationProband.equals("Child")
+                    && !tempSample.familyId.equals("N/A")) {
+                ErrorManager.print("Invalid trio sample: " + sampleName, ErrorManager.INPUT_PARSING);
+            }
+
+            if (tempSample.isGenderMismatch()) {
+                ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+            }
+
+            initParents(tempSample);
+
+            tempSample.pheno = Byte.valueOf("2");
         }
-
-        if (tempSample.isGenderMismatch()) {
-            ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
-        }
-
-        initParents(tempSample);
-
-        tempSample.pheno = Byte.valueOf("2");
 
         // add proband
         addSample(tempSample);
@@ -307,7 +309,7 @@ public class SampleManager {
     }
 
     private static void addParent(String sampleName) throws Exception {
-        if (sampleName.equals("0")) {
+        if (sampleName == null || sampleName.equals("0")) {
             return;
         }
 
@@ -323,7 +325,8 @@ public class SampleManager {
     private static void addSampleToSingletonList(String sampleName) throws Exception {
         TempSample tempSample = getTempSample(sampleName);
 
-        if (tempSample.isGenderMismatch()) {
+        if (tempSample.sampleId != Data.INTEGER_NA &&
+                tempSample.isGenderMismatch()) {
             ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
         }
 
