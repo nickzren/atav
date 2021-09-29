@@ -256,8 +256,6 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             return;
         }
 
-        output.countSingleVar();
-
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -268,6 +266,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             return;
         }
         
+        output.countSingleVar();
         outputCarrierSet.add(carrierIDSB.toString());
 
         StringJoiner sj = new StringJoiner(",");

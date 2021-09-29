@@ -340,9 +340,12 @@ public class CommandManager {
                 case "--list-singleton":
                     SingletonCommand.isList = true;
                     CohortLevelFilterCommand.isCaseOnly = true;
+                    CohortLevelFilterCommand.isIncludeDefaultControlSample = true;
                     DefaultControlCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADGenomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
                     RvisCommand.isInclude = true;
@@ -395,9 +398,12 @@ public class CommandManager {
                 case "--list-trio":
                     TrioCommand.isList = true;
                     CohortLevelFilterCommand.isCaseOnly = true;
+                    CohortLevelFilterCommand.isIncludeDefaultControlSample = true;
                     DefaultControlCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADGenomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
                     RvisCommand.isInclude = true;
