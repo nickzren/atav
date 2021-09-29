@@ -272,13 +272,14 @@ public class ListTrio extends AnalysisBase4CalledVar {
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
         carrierIDSB.append(output.cCarrier.getSampleId());
-        outputCarrierSet.add(carrierIDSB.toString());
 
         // if output as single var then ignore duplicate output
         if (compHetVar.equals(Data.STRING_NA) && outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
 
+        outputCarrierSet.add(carrierIDSB.toString());
+        
         StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
