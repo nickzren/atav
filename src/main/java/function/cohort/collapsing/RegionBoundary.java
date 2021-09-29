@@ -66,6 +66,7 @@ public class RegionBoundary {
 
     private void initRegionList(String boundaryStr) {
         String[] intervalStrArray = boundaryStr.split(",");
+        intervalAarry = new int[intervalStrArray.length][2];
 
         for (int i = 0; i < intervalStrArray.length; i++) {
             String[] tmp = intervalStrArray[i].split(":|-");
