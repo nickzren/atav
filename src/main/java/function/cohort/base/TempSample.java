@@ -24,9 +24,12 @@ public class TempSample {
     byte pheno;
     byte sex;
 
-    public boolean isGenderMismatch() {        
+    public boolean isGenderMismatch() {
+        if(selfDeclGender.equals("Unknown")) {
+            return false;
+        }
+        
         return seqGender.equals("Ambiguous") || seqGender.equals(Data.STRING_NA)
-                || selfDeclGender.equals("Unknown") || selfDeclGender.equals(Data.STRING_NA)
-                || !seqGender.equals(selfDeclGender);
+                ||  selfDeclGender.equals(Data.STRING_NA) || !seqGender.equals(selfDeclGender);
     }
 }
