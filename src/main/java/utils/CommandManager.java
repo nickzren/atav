@@ -344,7 +344,9 @@ public class CommandManager {
                     CohortLevelFilterCommand.isCaseOnly = true;
                     DefaultControlCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADGenomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
                     ClinGenCommand.isInclude = true;
@@ -402,7 +404,9 @@ public class CommandManager {
                     CohortLevelFilterCommand.isCaseOnly = true;
                     DefaultControlCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADGenomeCommand.getInstance().isInclude = true;
+                    GnomADGenomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
                     ClinGenCommand.isInclude = true;
