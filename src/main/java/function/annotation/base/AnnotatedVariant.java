@@ -524,7 +524,7 @@ public class AnnotatedVariant extends Variant {
     public String getStableId() {
         return getStableId(stableId);
     }
-    
+
     public String getGeneLink() {
         // "=HYPERLINK(""url"",""name"")"
         if (isOMIMGene()) {
@@ -884,42 +884,52 @@ public class AnnotatedVariant extends Variant {
         return EffectManager.isLOF(effectID) || trapScore >= 0.676;
     }
 
-    // tier 2 inclusion criteria
-    public boolean isMetTier2InclusionCriteria() {
-        return isKnownVar10bpFlankingValid()
-                || isInClinGenOrOMIM()
-                || isInClinVarPathoratio()
-                || isGnomADGenePLIValid()
-                || isGeneMisZValid();
-    }
+    // LoF variant and occurs within a ClinGen/OMIM disease gene and genotype is consistent with inheritance
+    public boolean isInClinGenOrOMIM(Carrier carrier) {
+        if (isLOF()) {
+            if (carrier.getGT() == Index.HET) {
+                return clinGen.isInClinGenSufficientOrSomeEvidence()
+                        || isOMIMDominant();
+            } else if (carrier.getGT() == Index.HOM) {
+                return clinGen.isInClinGenRecessiveEvidence()
+                        || isOMIMRecessive();
+            }
+        }
 
-    // LoF variant and occurs within a ClinGen/OMIM disease gene
-    private boolean isInClinGenOrOMIM() {
-        return isLOF()
-                && (clinGen.isInClinGen() || isOMIMGene());
+        return false;
     }
 
     // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or CNV or spice/nonsense SNV
-    private boolean isInClinVarPathoratio() {
+    public boolean isInClinVarPathoratio() {
         return isLOF()
                 && knownVarOutput.getClinVarPathoratio().isInClinVarPathoratio();
     }
 
     // LoF variant in gnomAD LoF depleted genes with pLI >= 0.9
-    private boolean isGnomADGenePLIValid() {
+    public boolean isGnomADGenePLIValid() {
         return isLOF()
                 && GnomADManager.isGenePLIValid(geneName);
     }
 
     // Missense variant in gnomAD gene with mis_z >= 2
-    private boolean isGeneMisZValid() {
+    public boolean isGeneMisZValid() {
         return effect.startsWith("missense_variant")
                 && GnomADManager.isGeneMisZValid(geneName);
     }
 
     // any variants in 10bp flanking regions either HGMD DM or ClinVar PLP
     public boolean isKnownVar10bpFlankingValid() {
-        return knownVarOutput.isKnownVar10bpFlankingValid();
+        return knownVarOutput.isKnownVar2bpFlankingValid();
+    }
+
+    // any variants in 2bp flanking regions either HGMD DM or ClinVar PLP
+    public boolean isKnownVar2bpFlankingValid() {
+        return knownVarOutput.isKnownVar2bpFlankingValid();
+    }
+
+    // missense variant in 25bp flanking regions with >= 6 ClinVar P/LP
+    public boolean isClinVar25bpFlankingValid() {
+        return isMissense() && knownVarOutput.isClinVar25bpFlankingValid();
     }
 
     // less than N heterozygous observed from IGM controls + gnomAD (WES & WGS) controls
@@ -978,7 +988,16 @@ public class AnnotatedVariant extends Variant {
                 || omimInheritance.contains("PD")
                 || omimInheritance.contains("DD")
                 || omimInheritance.contains("SMo")
-                || omimInheritance.contains("SMu");
+                || omimInheritance.contains("SMu")
+                || omimInheritance.contains("XL");
+    }
+
+    public boolean isOMIMRecessive() {
+        return omimInheritance.contains("AR")
+                || omimInheritance.contains("PR")
+                || omimInheritance.contains("DR")
+                || omimInheritance.contains("XLR")
+                || omimInheritance.contains("XL");
     }
 
     public String getOMIMInheritance() {
@@ -1070,11 +1089,11 @@ public class AnnotatedVariant extends Variant {
         return 0;
     }
 
-    // High or Moderate impacts or TraP >= 0.4 or HGMD DM? or ClinVar P/LP
+    // High or Moderate impacts or TraP >= 0.4 (or NA) or Site has variant HGMD DM or ClinVar P/LP
     public boolean isImpactHighOrModerate() {
         return impact.equals("HIGH")
                 || impact.equals("MODERATE")
-                || trapScore >= 0.4
+                || trapScore >= 0.4 || trapScore == Data.FLOAT_NA
                 || knownVarOutput.isKnownVariantSite();
     }
 

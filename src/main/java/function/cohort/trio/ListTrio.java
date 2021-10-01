@@ -155,7 +155,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 && !output.isFlag()) {
             return;
         }
-        
+
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -164,9 +164,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
         if (outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
-        
+
         output.countSingleVar();
-        
+
         StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getName());
         sj.add(output.motherName);
@@ -178,7 +178,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
         sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
-        
+
         bwTrioGeno.write(sj.toString());
         bwTrioGeno.newLine();
     }
@@ -220,7 +220,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 Output.tier1CompoundVarCount++;
             } else if ( // tier 2
                     // if one of the variant meets tier 2 inclusion criteria
-                    (output1.getCalledVariant().isMetTier2InclusionCriteria() || output2.getCalledVariant().isMetTier2InclusionCriteria())
+                    (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
+                    || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
                     // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
                     && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
                 tierFlag4CompVar = 2;
@@ -232,7 +233,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         compHetVarSB.append(output1.getCalledVariant().getVariantIdStr());
         compHetVarSB.append("&");
         compHetVarSB.append(output2.getCalledVariant().getVariantIdStr());
-        
+
         String compHetVar1 = compHetVarSB.toString() + "#1";
         String compHetVar2 = compHetVarSB.toString() + "#2";
 
@@ -242,7 +243,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
             compHetVar1 = Data.STRING_NA;
             compHetVar2 = Data.STRING_NA;
         }
-        
+
         doCompHetOutput(tierFlag4CompVar, output1, compHetVar1);
         doCompHetOutput(tierFlag4CompVar, output2, compHetVar2);
     }
@@ -254,17 +255,17 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 && !output.isFlag()) {
             return;
         }
-        
+
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
         carrierIDSB.append(output.cCarrier.getSampleId());
-        
+
         // if output as single var then ignore duplicate output
-        if(compHetVar.equals(Data.STRING_NA) && outputCarrierSet.contains(carrierIDSB.toString())) {
+        if (compHetVar.equals(Data.STRING_NA) && outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
-        
+
         output.countSingleVar();
         outputCarrierSet.add(carrierIDSB.toString());
 

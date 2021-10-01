@@ -34,7 +34,7 @@ public class KnownVarManager {
     private static void initPreparedStatement() {
         String sql = "SELECT count(*) as count From " + hgmdTable
                 + " WHERE chr=? AND pos BETWEEN ? AND ?"
-                + " AND variantClass = 'DM' AND is_in_clinvar = 0";
+                + " AND variantClass like '%DM%' AND is_in_clinvar = 0";
         preparedStatement4HGMDVariantFlankingCount = DBManager.initPreparedStatement(sql);
 
         sql = "SELECT count(*) as count "
@@ -51,11 +51,12 @@ public class KnownVarManager {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("HGMD DM Site Count");
-        sj.add("HGMD DM 10bpflanks Count");
+        sj.add("HGMD DM 2bpflanks Count");
         sj.add("HGMD PMID");
         sj.add("HGMD Class");
         sj.add("ClinVar PLP Site Count");
-        sj.add("ClinVar PLP 10bpflanks Count");
+        sj.add("ClinVar PLP 2bpflanks Count");
+        sj.add("ClinVar PLP 25bpflanks Count");
         sj.add("ClinVar ClinRevStar");
         sj.add("ClinVar ClinSig");
         sj.add("ClinVar ClinSigConf");

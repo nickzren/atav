@@ -18,7 +18,7 @@ public class HGMDOutput {
 
     // new columns
     private int siteCount;
-    private int variant10bpflanks;
+    private int variant2bpflanks;
 
     private boolean isHGMD = false;
     private boolean isHGMDDM = false;
@@ -30,7 +30,7 @@ public class HGMDOutput {
 
         siteCount = KnownVarManager.getHGMDFlankingCount(var, 0);
 
-        variant10bpflanks = KnownVarManager.getHGMDFlankingCount(var, 10);
+        variant2bpflanks = KnownVarManager.getHGMDFlankingCount(var, 2);
     }
 
     /*
@@ -84,7 +84,7 @@ public class HGMDOutput {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(siteCount));
-        sj.add(FormatManager.getInteger(variant10bpflanks));
+        sj.add(FormatManager.getInteger(variant2bpflanks));
         sj.add(hgmd.getPmid());
         sj.add(hgmd.getVariantClass());
 
@@ -107,8 +107,8 @@ public class HGMDOutput {
         return siteCount > 0;
     }
     
-    public boolean is10bpFlankingValid() {
-        return variant10bpflanks > 0;
+    public boolean is2bpFlankingValid() {
+        return variant2bpflanks > 0;
     }
 
     @Override

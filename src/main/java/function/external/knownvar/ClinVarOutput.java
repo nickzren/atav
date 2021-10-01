@@ -17,7 +17,8 @@ public class ClinVarOutput {
     private ClinVar clinvar;
 
     private int siteCount;
-    private int variant10bpflanks;
+    private int variant2bpflanks;
+    private int variant25bpflanks;
 
     private boolean isClinVar = false;
     private boolean isClinVarPLP = false;
@@ -30,7 +31,9 @@ public class ClinVarOutput {
 
         siteCount = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 0);
 
-        variant10bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 10);
+        variant2bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 2);
+        
+        variant25bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 25);
     }
 
     public static void main(String[] args) {
@@ -70,7 +73,8 @@ public class ClinVarOutput {
                 if (tmpClinvar.getClinSig().startsWith("Benign")
                         || tmpClinvar.getClinSig().startsWith("Likely_benign")
                         || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity") 
-                            && (tmpClinvar.getClinSigConf().startsWith("Benign") || tmpClinvar.getClinSigConf().startsWith("Likely_benign")))) {
+                            && (tmpClinvar.getClinSigConf().startsWith("Benign") || tmpClinvar.getClinSigConf().startsWith("Likely_benign"))
+                            && !tmpClinvar.getClinSigConf().contains("Pathogenic") && !tmpClinvar.getClinSigConf().contains("Likely_pathogenic"))) {
                     isClinVarBLB = true;
                 }
 
@@ -119,15 +123,20 @@ public class ClinVarOutput {
         return isClinVarBLB;
     }
     
-    public boolean isPLP10bpFlankingValid() {
-        return variant10bpflanks > 0;
+    public boolean isPLP2bpFlankingValid() {
+        return variant2bpflanks > 0;
+    }
+    
+    public boolean isPLP25bpFlankingValid() {
+        return variant25bpflanks >= 6;
     }
 
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add(FormatManager.getInteger(siteCount));        
-        sj.add(FormatManager.getInteger(variant10bpflanks));
+        sj.add(FormatManager.getInteger(variant2bpflanks));
+        sj.add(FormatManager.getInteger(variant25bpflanks));
         sj.add(clinvar.getClinRevStar());
         sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSig()));
         sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSigConf()));

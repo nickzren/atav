@@ -4,7 +4,6 @@ import function.annotation.base.AnnotatedVariant;
 import function.cohort.statistics.HWEExact;
 import function.cohort.trio.TrioCommand;
 import function.cohort.trio.TrioManager;
-import function.variant.base.Output;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
@@ -415,7 +414,17 @@ public class CalledVariant extends AnnotatedVariant {
 
         return MathManager.devide(ac, totalAC);
     }
-
+    
+    // tier 2 inclusion criteria
+    public boolean isMetTier2InclusionCriteria(Carrier carrier) {
+        return isKnownVar2bpFlankingValid()
+                || isInClinGenOrOMIM(carrier)
+                || isInClinVarPathoratio()
+                || isGnomADGenePLIValid()
+                || isGeneMisZValid()
+                || isClinVar25bpFlankingValid();
+    }
+    
     /*
         1. variant is het call
         2. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence

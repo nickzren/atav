@@ -76,8 +76,12 @@ public class KnownVarOutput {
         return clinVarPathoratio;
     }
     
-    public boolean isKnownVar10bpFlankingValid() {
-        return hgmdOutput.is10bpFlankingValid() || clinVarOutput.isPLP10bpFlankingValid();
+    public boolean isKnownVar2bpFlankingValid() {
+        return hgmdOutput.is2bpFlankingValid() || clinVarOutput.isPLP2bpFlankingValid();
+    }
+    
+    public boolean isClinVar25bpFlankingValid() {
+        return clinVarOutput.isPLP25bpFlankingValid();
     }
     
     @Override
