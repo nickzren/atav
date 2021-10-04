@@ -923,6 +923,10 @@ public class AnnotatedVariant extends Variant {
 
     // High or Moderate impacts or TraP >= 0.4 (or NA) or Site has variant HGMD DM or ClinVar P/LP
     public boolean isImpactHighOrModerate() {
+        if(VariantLevelFilterCommand.disableCommonTierFilter) {
+            return true;
+        }
+        
         return impact.equals("HIGH")
                 || impact.equals("MODERATE")
                 || trapScore >= 0.4 || trapScore == Data.FLOAT_NA

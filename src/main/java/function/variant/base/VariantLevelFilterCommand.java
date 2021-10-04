@@ -63,6 +63,7 @@ public class VariantLevelFilterCommand {
     public static boolean disableCheckOnSexChr = false;
     public static boolean isIncludeLOFTEE = false;
     public static boolean isExcludeFalseLOFTEE = false;
+    public static boolean disableCommonTierFilter = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -275,6 +276,9 @@ public class VariantLevelFilterCommand {
                 case "--exclude-clinvar-benign":
                     KnownVarCommand.isExcludeClinVarBLB = true;
                     KnownVarCommand.isInclude = true;
+                    break;
+                case "--disable-common-tier-filter":
+                    disableCommonTierFilter = true;
                     break;
                 case "--min-gerp-score":
                     checkValueValid(Data.NO_FILTER, 0, option);
