@@ -63,11 +63,18 @@ public class ClinVarOutput {
                     isClinVarPLP = true;
                 }
                 
+                /*
+                    ClinVar B/LB
+                    1. exact B or LB
+                    2. treat conflicting as benign only when B/LB count > 1 and no P/LP
+                */
                 if (tmpClinvar.getClinSig().startsWith("Benign")
                         || tmpClinvar.getClinSig().startsWith("Likely_benign")
                         || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity") 
-                            && (tmpClinvar.getClinSigConf().startsWith("Benign") || tmpClinvar.getClinSigConf().startsWith("Likely_benign"))
-                            && !tmpClinvar.getClinSigConf().contains("Pathogenic") && !tmpClinvar.getClinSigConf().contains("Likely_pathogenic"))) {
+                            && !tmpClinvar.getClinSigConf().contains("Pathogenic") && !tmpClinvar.getClinSigConf().contains("Likely_pathogenic")
+                            && ((tmpClinvar.getClinSigConf().startsWith("Benign") && !tmpClinvar.getClinSigConf().startsWith("Benign(1)")) 
+                            || tmpClinvar.getClinSigConf().startsWith("Benign(1),Likely_benign") 
+                            || (tmpClinvar.getClinSigConf().startsWith("Likely_benign") && !tmpClinvar.getClinSigConf().startsWith("Likely_benign(1)"))))) {
                     isClinVarBLB = true;
                 }
 
