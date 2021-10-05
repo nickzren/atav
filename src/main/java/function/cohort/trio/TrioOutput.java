@@ -54,7 +54,7 @@ public class TrioOutput extends Output {
         fatherName = trio.getFatherName();
         fGeno = calledVar.getGT(trio.getFatherIndex());
         fDPBin = calledVar.getDPBin(trio.getFatherIndex());
-        
+
         isDUO = trio.isDUO();
     }
 
@@ -180,27 +180,24 @@ public class TrioOutput extends Output {
     public void initTierFlag4SingleVar() {
         tierFlag4SingleVar = Data.BYTE_NA;
 
-        // Restrict to High or Moderate impact or TraP >= 0.4 variants
-        if (getCalledVariant().isImpactHighOrModerate()) {
-            // denovo or hom
-            if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
-                if (isDenovoTier1()
-                        || isHomozygousTier1()
-                        || isHemizygousTier1()
-                        || isCompoundDeletionTier1()) {
-                    tierFlag4SingleVar = 1;
-                } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                        && (isDenovoTier2()
-                        || isHomozygousTier2()
-                        || isHemizygousTier2())
-                        || isCompoundDeletionTier2()) {
-                    tierFlag4SingleVar = 2;
-                }
-            } else {
-                if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                        && calledVar.isCaseVarTier2(cCarrier)) {
-                    tierFlag4SingleVar = 2;
-                }
+        // denovo or hom
+        if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
+            if (isDenovoTier1()
+                    || isHomozygousTier1()
+                    || isHemizygousTier1()
+                    || isCompoundDeletionTier1()) {
+                tierFlag4SingleVar = 1;
+            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
+                    && (isDenovoTier2()
+                    || isHomozygousTier2()
+                    || isHemizygousTier2())
+                    || isCompoundDeletionTier2()) {
+                tierFlag4SingleVar = 2;
+            }
+        } else {
+            if (calledVar.isMetTier2InclusionCriteria(cCarrier)
+                    && calledVar.isCaseVarTier2(cCarrier)) {
+                tierFlag4SingleVar = 2;
             }
         }
 
@@ -216,7 +213,7 @@ public class TrioOutput extends Output {
 
     public boolean isFlag() {
         return isLoFDominantAndHaploinsufficient == 1
-                || calledVar.getKnownVar().isKnownVariantSite();
+                || calledVar.getKnownVar().isKnownVariant();
     }
 
     public void countSingleVar() {

@@ -75,6 +75,7 @@ public class KnownVarManager {
         sj.add("ClinVar PLP 2bpflanks Count");
         sj.add("ClinVar PLP 25bpflanks Count");
         sj.add("ClinVar ClinRevStar");
+        sj.add("ClinVar Benign");
         sj.add("ClinVar ClinSig");
         sj.add("ClinVar ClinSigConf");
         sj.add("ClinVar DiseaseName");

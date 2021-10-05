@@ -67,15 +67,12 @@ public class SingletonOutput extends Output {
     public void initTierFlag4SingleVar() {
         tierFlag4SingleVar = Data.BYTE_NA;
 
-        // Restrict to High or Moderate impact or TraP >= 0.4 variants
-        if (getCalledVariant().isImpactHighOrModerate()) {
-            if (calledVar.isHeterozygousTier1(cCarrier)
-                    || calledVar.isHomozygousTier1(cCarrier)) {
-                tierFlag4SingleVar = 1;
-            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                    && calledVar.isCaseVarTier2(cCarrier)) {
-                tierFlag4SingleVar = 2;
-            }
+        if (calledVar.isHeterozygousTier1(cCarrier)
+                || calledVar.isHomozygousTier1(cCarrier)) {
+            tierFlag4SingleVar = 1;
+        } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
+                && calledVar.isCaseVarTier2(cCarrier)) {
+            tierFlag4SingleVar = 2;
         }
 
         isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
@@ -87,10 +84,10 @@ public class SingletonOutput extends Output {
     public byte getTierFlag4SingleVar() {
         return tierFlag4SingleVar;
     }
-
+    
     public boolean isFlag() {
         return isLoFDominantAndHaploinsufficient == 1
-                || calledVar.getKnownVar().isKnownVariantSite();
+                || calledVar.getKnownVar().isKnownVariant();
     }
 
     public void countSingleVar() {
@@ -116,7 +113,7 @@ public class SingletonOutput extends Output {
             Output.hotZoneVarCount++;
         }
     }
-    
+
     public String getSummary() {
         StringJoiner sj = new StringJoiner("\n");
 
