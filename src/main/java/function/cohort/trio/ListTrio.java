@@ -250,27 +250,25 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
             tierFlag4CompVar = 2;
             Output.tier2CompoundVarCount++;
-        } else {
-            // output as single var if compound var not tier 1 or 2
-            compHetVar1 = Data.STRING_NA;
-            compHetVar2 = Data.STRING_NA;
-            coFreq[Index.CTRL] = Data.FLOAT_NA;
         }
 
-        doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1);
-        doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2);
+        // single var tier 1 or 2 or LoF or KV
+        boolean hasSingleVarFlagged
+                = output1.getTierFlag4SingleVar() != Data.BYTE_NA
+                || output1.isFlag()
+                || output2.getTierFlag4SingleVar() != Data.BYTE_NA
+                || output2.isFlag();
+
+        doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1, hasSingleVarFlagged);
+        doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2, hasSingleVarFlagged);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, TrioOutput output, float[] coFreq, String compHetVar) throws Exception {
+    private void doCompHetOutput(byte tierFlag4CompVar, TrioOutput output, float[] coFreq,
+            String compHetVar, boolean hasSingleVarFlagged) throws Exception {
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
         carrierIDSB.append(output.cCarrier.getSampleId());
-
-        // if output as single var then ignore duplicate output
-        if (compHetVar.equals(Data.STRING_NA) && outputCarrierSet.contains(carrierIDSB.toString())) {
-            return;
-        }
 
         output.countSingleVar();
         outputCarrierSet.add(carrierIDSB.toString());
@@ -291,9 +289,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.toString());
         sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
-        if (tierFlag4CompVar != Data.BYTE_NA
-                || output.getTierFlag4SingleVar() != Data.BYTE_NA
-                || output.isFlag()) {
+        if (tierFlag4CompVar != Data.BYTE_NA || hasSingleVarFlagged) {
             bwTrioGenotype.write(sj.toString());
             bwTrioGenotype.newLine();
         } else {
