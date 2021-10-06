@@ -26,7 +26,7 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2021_2";
+    public static final String hgmdTable = "knownvar.hgmd_2021_3";
     public static final String clinVarTable = "knownvar.clinvar_2021_10_01";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_10_01";
     public static final String clingenFile =  Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
