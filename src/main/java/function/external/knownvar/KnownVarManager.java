@@ -21,9 +21,9 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2021_2";
-    public static final String clinVarTable = "knownvar.clinvar_2021_08_31";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_08_31";
+    public static final String hgmdTable = "knownvar.hgmd_2021_3";
+    public static final String clinVarTable = "knownvar.clinvar_2021_10_01";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2021_10_01";
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
     private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
     private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<>();
