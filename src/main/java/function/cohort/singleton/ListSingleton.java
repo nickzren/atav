@@ -28,6 +28,9 @@ public class ListSingleton extends AnalysisBase4CalledVar {
     BufferedWriter bwSingletonGeno = null;
     final String genotypesFilePath = CommonCommand.outputPath + "singleton_genotypes.csv";
 
+    BufferedWriter bwSingletonGenoNoFlag = null;
+    final String genotypesFilePathNoFlag = CommonCommand.outputPath + "singleton_genotypes_noflag.csv";
+
     HashMap<String, List<SingletonOutput>> geneVariantListMap = new HashMap<>();
     // avoid output duplicate carrier (comp var & single var)
     HashSet<String> outputCarrierSet = new HashSet<>();
@@ -38,6 +41,10 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             bwSingletonGeno = new BufferedWriter(new FileWriter(genotypesFilePath));
             bwSingletonGeno.write(SingletonOutput.getHeader());
             bwSingletonGeno.newLine();
+            
+            bwSingletonGenoNoFlag = new BufferedWriter(new FileWriter(genotypesFilePathNoFlag));
+            bwSingletonGenoNoFlag.write(SingletonOutput.getHeader());
+            bwSingletonGenoNoFlag.newLine();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -55,6 +62,9 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         try {
             bwSingletonGeno.flush();
             bwSingletonGeno.close();
+            
+            bwSingletonGenoNoFlag.flush();
+            bwSingletonGenoNoFlag.close();
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -156,12 +166,6 @@ public class ListSingleton extends AnalysisBase4CalledVar {
     }
 
     private void outputSingleVar(SingletonOutput output) throws Exception {
-        if (SingletonCommand.isExcludeNoFlag
-                && output.getTierFlag4SingleVar() == Data.BYTE_NA
-                && !output.isFlag()) {
-            return;
-        }
-
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -183,8 +187,14 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         sj.add(output.toString());
         sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
-        bwSingletonGeno.write(sj.toString());
-        bwSingletonGeno.newLine();
+        if (output.getTierFlag4SingleVar() != Data.BYTE_NA
+                || output.isFlag()) {
+            bwSingletonGeno.write(sj.toString());
+            bwSingletonGeno.newLine();
+        } else {
+            bwSingletonGenoNoFlag.write(sj.toString());
+            bwSingletonGenoNoFlag.newLine();
+        }
     }
 
     private void outputCompHet(SingletonOutput output1, SingletonOutput output2) throws Exception {
@@ -199,25 +209,21 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
 
-        // Restrict to High or Moderate impact or TraP >= 0.4 variants
-        if (output1.getCalledVariant().isImpactHighOrModerate()
-                && output2.getCalledVariant().isImpactHighOrModerate()) {
-            // tier 1
-            if (// for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-                    output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
-                    // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
-                    && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
-                tierFlag4CompVar = 1;
-                Output.tier1CompoundVarCount++;
-            } else if ( // tier 2
-                    // if one of the variant meets tier 2 inclusion criteria
-                    (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
-                    || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
-                    // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
-                    && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
-                tierFlag4CompVar = 2;
-                Output.tier2CompoundVarCount++;
-            }
+        // tier 1
+        if (// for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
+                output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
+                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
+                && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
+            tierFlag4CompVar = 1;
+            Output.tier1CompoundVarCount++;
+        } else if ( // tier 2
+                // if one of the variant meets tier 2 inclusion criteria
+                (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
+                || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
+                // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
+                && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
+            tierFlag4CompVar = 2;
+            Output.tier2CompoundVarCount++;
         }
 
         StringBuilder compHetVarSB = new StringBuilder();
@@ -228,34 +234,23 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         String compHetVar1 = compHetVarSB.toString() + "#1";
         String compHetVar2 = compHetVarSB.toString() + "#2";
 
-        // output as single var if compound var not tier 1 or 2 when --exclude-no-flag used 
-        if (SingletonCommand.isExcludeNoFlag
-                && tierFlag4CompVar == Data.BYTE_NA) {
-            compHetVar1 = Data.STRING_NA;
-            compHetVar2 = Data.STRING_NA;
-        }
-
-        doCompHetOutput(tierFlag4CompVar, output1, compHetVar1);
-        doCompHetOutput(tierFlag4CompVar, output2, compHetVar2);
+        // single var tier 1 or 2 or LoF or KV
+        boolean hasSingleVarFlagged
+                = output1.getTierFlag4SingleVar() != Data.BYTE_NA
+                || output1.isFlag()
+                || output2.getTierFlag4SingleVar() != Data.BYTE_NA
+                || output2.isFlag();
+        
+        doCompHetOutput(tierFlag4CompVar, output1, compHetVar1, hasSingleVarFlagged);
+        doCompHetOutput(tierFlag4CompVar, output2, compHetVar2, hasSingleVarFlagged);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output, String compHetVar) throws Exception {
-        if (SingletonCommand.isExcludeNoFlag
-                && tierFlag4CompVar == Data.BYTE_NA
-                && output.getTierFlag4SingleVar() == Data.BYTE_NA
-                && !output.isFlag()) {
-            return;
-        }
-
+    private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output, 
+            String compHetVar, boolean hasSingleVarFlagged) throws Exception {
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
         carrierIDSB.append(output.cCarrier.getSampleId());
-
-        // if output as single var then ignore duplicate output
-        if (compHetVar.equals(Data.STRING_NA) && outputCarrierSet.contains(carrierIDSB.toString())) {
-            return;
-        }
 
         output.countSingleVar();
         outputCarrierSet.add(carrierIDSB.toString());
@@ -270,8 +265,13 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         sj.add(output.toString());
         sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
-        bwSingletonGeno.write(sj.toString());
-        bwSingletonGeno.newLine();
+        if (tierFlag4CompVar != Data.BYTE_NA || hasSingleVarFlagged) {
+            bwSingletonGeno.write(sj.toString());
+            bwSingletonGeno.newLine();
+        } else {
+            bwSingletonGenoNoFlag.write(sj.toString());
+            bwSingletonGenoNoFlag.newLine();
+        }
     }
 
     private void clearList() {

@@ -145,6 +145,7 @@ public class ClinVarOutput {
         sj.add(FormatManager.getInteger(variant2bpflanks));
         sj.add(FormatManager.getInteger(variant25bpflanks));
         sj.add(clinvar.getClinRevStar());
+        sj.add(isClinVarBLB ? "1" : "0");
         sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSig()));
         sj.add(FormatManager.appendDoubleQuote(clinvar.getClinSigConf()));
 

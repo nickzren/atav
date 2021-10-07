@@ -44,7 +44,7 @@ public class TrioManager {
     private static final byte MEDIUM = 1;
     private static final byte LOW = 0;
 
-    public static String getHeader4Denovo() {
+    public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
 //        sj.add("Family ID");

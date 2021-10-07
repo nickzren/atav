@@ -40,7 +40,7 @@ public class TrioOutput extends Output {
     byte isMissenseDominantAndHaploinsufficient;
     byte isKnownPathogenicVariant;
     byte isHotZone;
-    
+
     public TrioOutput(CalledVariant c) {
         super(c);
     }
@@ -64,7 +64,7 @@ public class TrioOutput extends Output {
         Carrier fCarrier = calledVar.getCarrier(trio.getFatherId());
         fADAlt = fCarrier == null ? Data.SHORT_NA : fCarrier.getADAlt();
         fDP = fCarrier == null ? Data.SHORT_NA : fCarrier.getDP();
-        
+
         isDUO = trio.isDUO();
     }
 
@@ -190,27 +190,24 @@ public class TrioOutput extends Output {
     public void initTierFlag4SingleVar() {
         tierFlag4SingleVar = Data.BYTE_NA;
 
-        // Restrict to High or Moderate impact or TraP >= 0.4 variants
-        if (getCalledVariant().isImpactHighOrModerate()) {
-            // denovo or hom
-            if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
-                if (isDenovoTier1()
-                        || isHomozygousTier1()
-                        || isHemizygousTier1()
-                        || isCompoundDeletionTier1()) {
-                    tierFlag4SingleVar = 1;
-                } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                        && (isDenovoTier2()
-                        || isHomozygousTier2()
-                        || isHemizygousTier2())
-                        || isCompoundDeletionTier2()) {
-                    tierFlag4SingleVar = 2;
-                }
-            } else { // child variant
-                if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                        && calledVar.isCaseVarTier2(cCarrier)) {
-                    tierFlag4SingleVar = 2;
-                }
+        // denovo or hom
+        if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
+            if (isDenovoTier1()
+                    || isHomozygousTier1()
+                    || isHemizygousTier1()
+                    || isCompoundDeletionTier1()) {
+                tierFlag4SingleVar = 1;
+            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
+                    && (isDenovoTier2()
+                    || isHomozygousTier2()
+                    || isHemizygousTier2())
+                    || isCompoundDeletionTier2()) {
+                tierFlag4SingleVar = 2;
+            }
+        } else { // child variant
+            if (calledVar.isMetTier2InclusionCriteria(cCarrier)
+                    && calledVar.isCaseVarTier2(cCarrier)) {
+                tierFlag4SingleVar = 2;
             }
         }
 
@@ -219,14 +216,14 @@ public class TrioOutput extends Output {
         isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
         isHotZone = calledVar.isHotZone();
     }
-    
+
     public byte getTierFlag4SingleVar() {
         return tierFlag4SingleVar;
     }
 
     public boolean isFlag() {
         return isLoFDominantAndHaploinsufficient == 1
-                || calledVar.getKnownVar().isKnownVariantSite();
+                || calledVar.getKnownVar().isKnownVariant();
     }
 
     public void countSingleVar() {
@@ -269,7 +266,7 @@ public class TrioOutput extends Output {
 
         return sj.toString();
     }
-    
+
     @Override
     public String toString() {
         StringJoiner sj = new StringJoiner(",");

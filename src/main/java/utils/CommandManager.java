@@ -634,7 +634,6 @@ public class CommandManager {
         } else if (SiblingCommand.isSiblingCompHet) {
 
         } else if (TrioCommand.isList) {
-            TrioCommand.initOptions(optionList.iterator());
         } else if (ParentalCommand.isParentalMosaic) {
             ParentalCommand.initOptions(optionList.iterator());
         } else if (PedMapCommand.isPedMap) {
