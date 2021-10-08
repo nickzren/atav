@@ -288,24 +288,30 @@ public class SampleManager {
                     && !tempSample.familyRelationProband.equals("Sibling")
                     && !tempSample.familyRelationProband.equals("Child")
                     && !tempSample.familyId.equals("N/A")) {
-                ErrorManager.print("Invalid trio sample: " + sampleName, ErrorManager.INPUT_PARSING);
+                LogManager.writeAndPrint("Invalid proband: " + sampleName);
+                return;
             }
 
             if (tempSample.isGenderMismatch()) {
-                ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+                LogManager.writeAndPrint("Proband gender mismatch: " + sampleName);
+                return;
             }
 
-            initParents(tempSample);
+            if (!initParents(tempSample)) {
+                return;
+            }
 
             tempSample.pheno = Byte.valueOf("2");
+
+            // add proband
+            addSample(tempSample);
+
+            // add parents
+            addParent(tempSample.paternalId);
+            addParent(tempSample.maternalId);
+        } else {
+            LogManager.writeAndPrint("Proband is missing: " + sampleName);
         }
-
-        // add proband
-        addSample(tempSample);
-
-        // add parents
-        addParent(tempSample.paternalId);
-        addParent(tempSample.maternalId);
     }
 
     private static void addParent(String sampleName) throws Exception {
@@ -325,9 +331,15 @@ public class SampleManager {
     private static void addSampleToSingletonList(String sampleName) throws Exception {
         TempSample tempSample = getTempSample(sampleName);
 
-        if (tempSample.sampleId != Data.INTEGER_NA &&
-                tempSample.isGenderMismatch()) {
-            ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+        if (tempSample.sampleId != Data.INTEGER_NA) {
+            if (tempSample.isGenderMismatch()) {
+                LogManager.writeAndPrint("Gender mismatch: " + sampleName);
+                return;
+                
+            }
+        } else {
+            LogManager.writeAndPrint("Invalid singleton sample: " + sampleName);
+            return;
         }
 
         tempSample.paternalId = "0";
@@ -337,7 +349,7 @@ public class SampleManager {
         addSample(tempSample);
     }
 
-    private static void initParents(TempSample tempSample) {
+    private static boolean initParents(TempSample tempSample) {
         try {
             String sql = "SELECT sample_name, seq_gender, self_decl_gender FROM sample WHERE family_id=? ";
 
@@ -365,7 +377,8 @@ public class SampleManager {
                 if (seqGender.equals("Ambiguous") || seqGender.equals(Data.STRING_NA)
                         || selfDeclGender.equals("Unknown") || selfDeclGender.equals(Data.STRING_NA)
                         || !seqGender.equals(selfDeclGender)) {
-                    ErrorManager.print("Gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+                    LogManager.writeAndPrint("Parent gender mismatch: " + sampleName);
+                    return false;
                 }
 
                 if (seqGender.equals("M")) {
@@ -380,6 +393,8 @@ public class SampleManager {
         } catch (Exception e) {
             ErrorManager.send(e);
         }
+
+        return true;
     }
 
     private static void addSample(TempSample tempSample) throws Exception {
