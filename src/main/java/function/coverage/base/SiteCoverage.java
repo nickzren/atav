@@ -12,7 +12,7 @@ public class SiteCoverage {
     int[][][] caseCtrlSiteCovArray; // case or ctrl , accumulated site coverage
 
     public SiteCoverage(int length) {
-        caseCtrlSiteCovArray = new int[2][5][length];
+        caseCtrlSiteCovArray = new int[2][1][length];
     }
 
     public void addValue(boolean isCase, int dpBinIndex, int posIndex) {
@@ -36,18 +36,10 @@ public class SiteCoverage {
     }
 
     public int getCaseSiteCov(int pos) {
-        return caseCtrlSiteCovArray[Index.CASE][Index.DP_BIN_10][pos]
-                + caseCtrlSiteCovArray[Index.CASE][Index.DP_BIN_20][pos]
-                + caseCtrlSiteCovArray[Index.CASE][Index.DP_BIN_30][pos]
-                + caseCtrlSiteCovArray[Index.CASE][Index.DP_BIN_50][pos]
-                + caseCtrlSiteCovArray[Index.CASE][Index.DP_BIN_200][pos];
+        return caseCtrlSiteCovArray[Index.CASE][Index.DP_BIN_10][pos];
     }
 
     public int getCtrlSiteCov(int pos) {
-        return caseCtrlSiteCovArray[Index.CTRL][Index.DP_BIN_10][pos]
-                + caseCtrlSiteCovArray[Index.CTRL][Index.DP_BIN_20][pos]
-                + caseCtrlSiteCovArray[Index.CTRL][Index.DP_BIN_30][pos]
-                + caseCtrlSiteCovArray[Index.CTRL][Index.DP_BIN_50][pos]
-                + caseCtrlSiteCovArray[Index.CTRL][Index.DP_BIN_200][pos];
+        return caseCtrlSiteCovArray[Index.CTRL][Index.DP_BIN_10][pos];
     }
 }
