@@ -236,6 +236,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
         if (output1.isParentsNotHom() && output2.isParentsNotHom()
                 // co-occurance freq in controls is 0
                 && coFreq[Index.CTRL] == 0
+                // for each one of the variants, restrict to High or Moderate impact or with TraP >= 0.4
+                && output1.getCalledVariant().isImpactHighOrModerate() && output2.getCalledVariant().isImpactHighOrModerate()
                 // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
                 && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
                 // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
