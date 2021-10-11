@@ -126,6 +126,7 @@ public class TrioOutput extends Output {
         return denovoFlag.contains("HEMIZYGOUS")
                 && isMotherHetAndFatherNotHom()
                 && calledVar.isCarrieHomPercAltReadValid(cCarrier)
+                && calledVar.isImpactHighOrModerate()
                 && calledVar.isNotObservedInHomAmongControl()
                 && cCarrier.getMQ() >= 40;
     }

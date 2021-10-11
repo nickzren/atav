@@ -41,7 +41,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             bwSingletonGeno = new BufferedWriter(new FileWriter(genotypesFilePath));
             bwSingletonGeno.write(SingletonOutput.getHeader());
             bwSingletonGeno.newLine();
-            
+
             bwSingletonGenoNoFlag = new BufferedWriter(new FileWriter(genotypesFilePathNoFlag));
             bwSingletonGenoNoFlag.write(SingletonOutput.getHeader());
             bwSingletonGenoNoFlag.newLine();
@@ -62,7 +62,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         try {
             bwSingletonGeno.flush();
             bwSingletonGeno.close();
-            
+
             bwSingletonGenoNoFlag.flush();
             bwSingletonGenoNoFlag.close();
         } catch (Exception ex) {
@@ -210,8 +210,10 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         byte tierFlag4CompVar = Data.BYTE_NA;
 
         // tier 1
-        if (// for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-                output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
+        if ( // for each one of the variants, restrict to High or Moderate impact or with TraP >= 0.4
+                output1.getCalledVariant().isImpactHighOrModerate() && output2.getCalledVariant().isImpactHighOrModerate()
+                // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
+                && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
                 // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
                 && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
             tierFlag4CompVar = 1;
@@ -240,12 +242,12 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 || output1.isFlag()
                 || output2.getTierFlag4SingleVar() != Data.BYTE_NA
                 || output2.isFlag();
-        
+
         doCompHetOutput(tierFlag4CompVar, output1, compHetVar1, hasSingleVarFlagged);
         doCompHetOutput(tierFlag4CompVar, output2, compHetVar2, hasSingleVarFlagged);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output, 
+    private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output,
             String compHetVar, boolean hasSingleVarFlagged) throws Exception {
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
