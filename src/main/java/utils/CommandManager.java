@@ -34,6 +34,7 @@ import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
+import function.external.acmg.ACMGCommand;
 import function.external.chm.CHMCommand;
 import function.external.clingen.ClinGenCommand;
 import function.external.dbnsfp.DBNSFPCommand;
@@ -349,6 +350,7 @@ public class CommandManager {
                     GnomADGenomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
+                    ACMGCommand.isInclude = true;
                     ClinGenCommand.isInclude = true;
                     OMIMCommand.isInclude = true;
                     RvisCommand.isInclude = true;
@@ -409,6 +411,7 @@ public class CommandManager {
                     GnomADGenomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
+                    ACMGCommand.isInclude = true;
                     ClinGenCommand.isInclude = true;
                     OMIMCommand.isInclude = true;
                     RvisCommand.isInclude = true;
