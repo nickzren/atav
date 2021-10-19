@@ -82,18 +82,7 @@ public class KnownVarOutput {
     }
 
     public boolean isOMIMGene() {
-        return omimInheritance.contains("AD")
-                || omimInheritance.contains("XLD")
-                || omimInheritance.contains("PD")
-                || omimInheritance.contains("DD")
-                || omimInheritance.contains("SMo")
-                || omimInheritance.contains("SMu")
-                || omimInheritance.contains("AR")
-                || omimInheritance.contains("PR")
-                || omimInheritance.contains("DR")
-                || omimInheritance.contains("XLR")
-                || omimInheritance.contains("XL")
-                || omimInheritance.contains("YL");
+        return !omimDiseaseName.equals(Data.STRING_NA);
     }
 
     public boolean isOMIMDominant() {
