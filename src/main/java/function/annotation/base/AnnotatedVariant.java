@@ -66,7 +66,6 @@ import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
-import function.variant.base.Output;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
@@ -857,8 +856,7 @@ public class AnnotatedVariant extends Variant {
 
     // Missense variant in gnomAD gene with mis_z >= 2
     public boolean isGeneMisZValid() {
-        return effect.startsWith("missense_variant")
-                && GnomADManager.isGeneMisZValid(geneName);
+        return isMissense() && GnomADManager.isGeneMisZValid(geneName);
     }
 
     // any variants in 2bp flanking regions either HGMD DM or ClinVar PLP
@@ -929,6 +927,6 @@ public class AnnotatedVariant extends Variant {
     }
 
     public boolean isMissense() {
-        return effect.startsWith("missense_variant");
+        return EffectManager.isMISSENSE(effectID);
     }
 }
