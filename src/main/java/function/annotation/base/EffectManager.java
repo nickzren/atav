@@ -47,7 +47,7 @@ public class EffectManager {
     private static final String LOW_IMPACT = "('HIGH'),('MODERATE'),('LOW')";
     private static final String MODIFIER_IMPACT = "('HIGH'),('MODERATE'),('LOW'),('MODIFIER')";
 
-    public static int MISSENSE_VARIANT_ID;
+    public static HashSet<Integer> MISSENSE_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<Integer> LOF_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<String> LOF_EFFECT_SET = new HashSet<>();
 
@@ -113,8 +113,12 @@ public class EffectManager {
                 impactEffect2IdMap.put(impactEffect, id);
                 effect2IdMap.put(effect, id);
 
-                if (effect.equals("missense_variant")) {
-                    MISSENSE_VARIANT_ID = id;
+                if (effect.startsWith("missense_variant") ||
+                        effect.equals("disruptive_inframe_deletion") ||
+                        effect.equals("disruptive_inframe_insertion") ||
+                        effect.equals("conservative_inframe_deletion") ||
+                        effect.equals("conservative_inframe_insertion")) {
+                    MISSENSE_EFFECT_ID_SET.add(id);
                 }
             }
 
@@ -325,6 +329,10 @@ public class EffectManager {
         return effect2IdMap.get(effect);
     }
 
+    public static boolean isMISSENSE(int effectID) {
+        return MISSENSE_EFFECT_ID_SET.contains(effectID);
+    }
+    
     public static boolean isLOF(int effectID) {
         return LOF_EFFECT_ID_SET.contains(effectID);
     }
