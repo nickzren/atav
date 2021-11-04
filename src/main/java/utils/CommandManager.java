@@ -341,6 +341,7 @@ public class CommandManager {
                     SingletonCommand.isList = true;
                     CohortLevelFilterCommand.isCaseOnly = true;
                     CohortLevelFilterCommand.isIncludeDefaultControlSample = true;
+                    CHMCommand.isFlag = true;
                     DefaultControlCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
@@ -399,6 +400,7 @@ public class CommandManager {
                     TrioCommand.isList = true;
                     CohortLevelFilterCommand.isCaseOnly = true;
                     CohortLevelFilterCommand.isIncludeDefaultControlSample = true;
+                    CHMCommand.isFlag = true;
                     DefaultControlCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().isInclude = true;
                     GnomADExomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
