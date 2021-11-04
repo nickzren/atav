@@ -23,11 +23,13 @@ import utils.FormatManager;
 public class GnomADManager {
 
     public static final String[] EXOME_POP = {
-        "global", "controls"
+        "global", "controls", 
+        "controls_afr", "controls_amr", "controls_asj", "controls_eas", "controls_sas", "controls_fin", "controls_nfe",
     };
 
     public static final String[] GENOME_POP = {
-        "global", "controls"
+        "global", "controls", 
+        "controls_afr", "controls_amr", "controls_asj", "controls_eas", "controls_fin", "controls_nfe", 
     };
 
     private static final String exomeVariantTable = "gnomad_2_1.exome_variant";
