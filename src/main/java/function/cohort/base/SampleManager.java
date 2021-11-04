@@ -5,6 +5,7 @@ import function.cohort.pedmap.PedMapCommand;
 import function.cohort.singleton.SingletonCommand;
 import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
+import function.coverage.base.CoverageCommand;
 import global.Data;
 import global.Index;
 import utils.CommonCommand;
@@ -268,12 +269,12 @@ public class SampleManager {
 
     // only trio or singleton analysis support sample name as input for --sample
     private static void addSampleToList(String sampleName) {
-        if (!SingletonCommand.isList && !TrioCommand.isList) {
-            ErrorManager.print("Only --list-trio or --list-singleton allows input sample name for option --sample.", ErrorManager.INPUT_PARSING);
+        if (!SingletonCommand.isList && !TrioCommand.isList && !CoverageCommand.isCoverageSummary) {
+            ErrorManager.print("Only --list-trio or --list-singleton or --coverage-summary allows input sample name for option --sample.", ErrorManager.INPUT_PARSING);
         }
 
         try {
-            if (SingletonCommand.isList) {
+            if (SingletonCommand.isList || CoverageCommand.isCoverageSummary) {
                 addSampleToSingletonList(sampleName);
             }
 
