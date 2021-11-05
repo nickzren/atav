@@ -229,27 +229,23 @@ public class GnomADGenome {
 //        sj.add(FormatManager.getFloat(pab_max));
 
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
-            if(!GnomADGenomeCommand.getInstance().popSet.contains(GnomADManager.GENOME_POP[i])) {
-                continue;
-            }
-            
             sj.add(FormatManager.getFloat(af[i]));
 
             switch (i) {
                 case 0:
-                    sj.add(FormatManager.getInteger(global_AN));
+//                    sj.add(FormatManager.getInteger(global_AN));
                     sj.add(FormatManager.getInteger(global_nhet));
                     sj.add(FormatManager.getInteger(global_nhomalt));
                     sj.add(FormatManager.getInteger(global_nhemi));
                     break;
                 case 1:
-                    sj.add(FormatManager.getInteger(controls_AN));
+//                    sj.add(FormatManager.getInteger(controls_AN));
                     sj.add(FormatManager.getInteger(controls_nhet));
                     sj.add(FormatManager.getInteger(controls_nhomalt));
                     sj.add(FormatManager.getInteger(controls_nhemi));
                     break;
                 case 2:
-                    sj.add(FormatManager.getInteger(non_neuro_AN));
+//                    sj.add(FormatManager.getInteger(non_neuro_AN));
                     sj.add(FormatManager.getInteger(non_neuro_nhet));
                     sj.add(FormatManager.getInteger(non_neuro_nhomalt));
                     sj.add(FormatManager.getInteger(non_neuro_nhemi));

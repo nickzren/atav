@@ -96,10 +96,6 @@ public class GnomADManager {
 //        sj.add("gnomAD Exome pab_max");
 
         for (int i = 0; i < GnomADManager.EXOME_POP.length; i++) {
-            if (!GnomADExomeCommand.getInstance().popSet.contains(GnomADManager.EXOME_POP[i])) {
-                continue;
-            }
-
             String pop = GnomADManager.EXOME_POP[i];
             sj.add("gnomAD Exome " + pop + "_AF");
 
@@ -107,7 +103,7 @@ public class GnomADManager {
                 case 0: // global
                 case 1: // controls
                 case 2: // non_neuro
-                    sj.add("gnomAD Exome " + pop + "_AN");
+//                    sj.add("gnomAD Exome " + pop + "_AN");
                     sj.add("gnomAD Exome " + pop + "_nhet");
                     sj.add("gnomAD Exome " + pop + "_nhomalt");
                     sj.add("gnomAD Exome " + pop + "_nhemi");
@@ -132,10 +128,6 @@ public class GnomADManager {
 //        sj.add("gnomAD Genome pab_max");
 
         for (int i = 0; i < GnomADManager.GENOME_POP.length; i++) {
-            if (!GnomADGenomeCommand.getInstance().popSet.contains(GnomADManager.GENOME_POP[i])) {
-                continue;
-            }
-
             String pop = GnomADManager.GENOME_POP[i];
             sj.add("gnomAD Genome " + pop + "_AF");
 
@@ -143,7 +135,7 @@ public class GnomADManager {
                 case 0: // global
                 case 1: // controls
                 case 2: // non_neuro
-                    sj.add("gnomAD Genome " + pop + "_AN");
+//                    sj.add("gnomAD Genome " + pop + "_AN");
                     sj.add("gnomAD Genome " + pop + "_nhet");
                     sj.add("gnomAD Genome " + pop + "_nhomalt");
                     sj.add("gnomAD Genome " + pop + "_nhemi");
