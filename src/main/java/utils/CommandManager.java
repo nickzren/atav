@@ -284,7 +284,7 @@ public class CommandManager {
                 System.exit(0);
             }
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddYY");
 
             CommonCommand.realOutputPath = path;
             CommonCommand.outputDirName = dir.getName();
