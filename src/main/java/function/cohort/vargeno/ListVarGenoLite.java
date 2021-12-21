@@ -58,6 +58,8 @@ public class ListVarGenoLite {
     public static final String genotypeLiteFilePath = CommonCommand.outputPath + "genotypes.csv";
 
     public static final String VARIANT_ID_HEADER = "Variant ID";
+    public static final String ATAV_HEADER = "ATAV";
+    public static int ATAV_HEADER_INDEX = Data.INTEGER_NA;
     public static final String STABLE_ID_HEADER = "Transcript Stable Id";
     public static int STABLE_ID_HEADER_INDEX = Data.INTEGER_NA;
     public static final String EFFECT_HEADER = "Effect";
@@ -144,6 +146,7 @@ public class ListVarGenoLite {
     private static String[] getHeaders() {
         String[] headers = {
             VARIANT_ID_HEADER,
+            ATAV_HEADER,
             STABLE_ID_HEADER,
             EFFECT_HEADER,
             HAS_CCDS_HEADER,
@@ -220,9 +223,9 @@ public class ListVarGenoLite {
         return headers;
     }
 
-    public Iterable<CSVRecord> getRecords() throws FileNotFoundException, IOException {        
+    public Iterable<CSVRecord> getRecords() throws FileNotFoundException, IOException {
         String filename = GenotypeLevelFilterCommand.genotypeFile;
-        
+
         Reader decoder;
 
         if (filename.endsWith(".gz")) {
@@ -232,7 +235,7 @@ public class ListVarGenoLite {
         } else {
             decoder = new FileReader(filename);
         }
-        
+
         Iterable<CSVRecord> records = CSVFormat.DEFAULT
                 .withHeader(getHeaders())
                 .withFirstRecordAsHeader()
@@ -247,6 +250,9 @@ public class ListVarGenoLite {
         for (int headerIndex = 0; headerIndex < record.getParser().getHeaderNames().size(); headerIndex++) {
             String value = record.getParser().getHeaderNames().get(headerIndex);
             switch (value) {
+                case ATAV_HEADER:
+                    ATAV_HEADER_INDEX = headerIndex;
+                    break;
                 case STABLE_ID_HEADER:
                     STABLE_ID_HEADER_INDEX = headerIndex;
                     break;
@@ -312,11 +318,13 @@ public class ListVarGenoLite {
         String allAnnotation = variantLite.getAllAnnotation();
 
         StringJoiner sj = new StringJoiner(",");
-        
-        for (int headerIndex = 0; headerIndex < record.size(); headerIndex++) {            
+
+        for (int headerIndex = 0; headerIndex < record.size(); headerIndex++) {
             String value = "";
 
-            if (headerIndex == STABLE_ID_HEADER_INDEX) {
+            if (headerIndex == ATAV_HEADER_INDEX) {
+                value = variantLite.getATAVLink();
+            } else if (headerIndex == STABLE_ID_HEADER_INDEX) {
                 value = mostDamagingAnnotation.getStableId();
             } else if (headerIndex == EFFECT_HEADER_INDEX) {
                 value = mostDamagingAnnotation.effect;
@@ -355,7 +363,7 @@ public class ListVarGenoLite {
             if (value.contains(",")) {
                 value = FormatManager.appendDoubleQuote(value);
             }
-            
+
             sj.add(value);
         }
 

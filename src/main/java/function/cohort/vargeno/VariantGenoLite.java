@@ -594,4 +594,8 @@ public class VariantGenoLite {
     public float getTrapScore() {
         return trapScore;
     }
+    
+    public String getATAVLink() {
+        return "\"=HYPERLINK(\"\"http://atavdb.org/variant/"+variantID+"\"\",\"\"ATAV\"\")\"";
+    }
 }
