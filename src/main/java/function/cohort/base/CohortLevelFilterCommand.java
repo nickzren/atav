@@ -3,6 +3,7 @@ package function.cohort.base;
 import function.annotation.base.AnnotationLevelFilterCommand;
 import function.cohort.singleton.SingletonCommand;
 import function.cohort.trio.TrioCommand;
+import function.coverage.base.CoverageCommand;
 import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
@@ -59,7 +60,7 @@ public class CohortLevelFilterCommand {
             switch (option.getName()) {
                 case "--sample":
                     // diagnostic analysis allow input sample name
-                    if (SingletonCommand.isList || TrioCommand.isList) {
+                    if (SingletonCommand.isList || TrioCommand.isList || CoverageCommand.isCoverageSummary) {
                         inputSample = option.getValue();
                     } else {
                         inputSample = getValidPath(option);

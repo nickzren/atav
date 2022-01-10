@@ -5,6 +5,7 @@ import function.cohort.pedmap.PedMapCommand;
 import function.cohort.singleton.SingletonCommand;
 import function.cohort.statistics.StatisticsCommand;
 import function.cohort.trio.TrioCommand;
+import function.coverage.base.CoverageCommand;
 import global.Data;
 import global.Index;
 import utils.CommonCommand;
@@ -258,18 +259,20 @@ public class SampleManager {
         }
     }
 
-    // only trio or singleton analysis support sample name as input for --sample
+    // only trio or singleton or coverage summary analysis support sample name as input for --sample
     private static void addSampleToList(String sampleName) {
-        if (!SingletonCommand.isList && !TrioCommand.isList) {
-            ErrorManager.print("Only --list-trio or --list-singleton allows input sample name for option --sample.", ErrorManager.INPUT_PARSING);
+        if (!SingletonCommand.isList && !TrioCommand.isList && !CoverageCommand.isCoverageSummary) {
+            ErrorManager.print("Only --list-trio or --list-singleton or --coverage-summary allows input sample name for option --sample.", ErrorManager.INPUT_PARSING);
         }
 
         try {
-            if (SingletonCommand.isList) {
+            if (SingletonCommand.isList
+                    || (CoverageCommand.isCoverageSummary && !CoverageCommand.isTrio)) {
                 addSampleToSingletonList(sampleName);
             }
 
-            if (TrioCommand.isList) {
+            if (TrioCommand.isList
+                    || (CoverageCommand.isCoverageSummary && CoverageCommand.isTrio)) {
                 addSampleToTrioList(sampleName);
             }
         } catch (Exception e) {
@@ -335,7 +338,7 @@ public class SampleManager {
             if (tempSample.isGenderMismatch()) {
                 LogManager.writeAndPrint("Gender mismatch: " + sampleName);
                 return;
-                
+
             }
         } else {
             LogManager.writeAndPrint("Invalid singleton sample: " + sampleName);

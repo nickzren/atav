@@ -24,6 +24,7 @@ public class CoverageCommand {
     public static float exonCleanCutoff = Data.NO_FILTER;
     public static float geneCleanCutoff = 1;
     public static float siteCleanCutoff = Data.NO_FILTER;
+    public static boolean isTrio = false;
 
     // coverage comparison 
     public static boolean isCoverageComparison = false;
@@ -72,6 +73,9 @@ public class CoverageCommand {
                     break;
                 case "--include-coverage-detail":
                     isIncludeCoverageDetail = true;
+                    break;
+                case "--trio":
+                    isTrio = true;
                     break;
                 default:
                     continue;
