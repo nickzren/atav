@@ -36,6 +36,7 @@ public class Test extends AnalysisBase {
     public void processDatabaseData() {
         try {
 //            OutputSubsetSample.run();
+            ConvertTSVToVCF.run();
         } catch (Exception ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }
