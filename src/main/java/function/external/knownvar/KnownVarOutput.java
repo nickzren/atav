@@ -26,6 +26,7 @@ public class KnownVarOutput {
         clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
 //        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
 //        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
+        initClinPathoratio(annotatedVar.getGeneName());
     }
     
     public void initClinPathoratio(String geneName) {
