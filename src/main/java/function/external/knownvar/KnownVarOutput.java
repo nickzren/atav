@@ -48,7 +48,7 @@ public class KnownVarOutput {
         StringJoiner sj = new StringJoiner(",");
 
         sj.merge(hgmdOutput.getStringJoiner());
-        sj.merge(clinVarOutput.getStringJoiner());
+        sj.merge(clinVarOutput.getStringJoiner());        
         sj.merge(clinVarPathoratio.getStringJoiner());
         sj.add(clinGen);
         sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));

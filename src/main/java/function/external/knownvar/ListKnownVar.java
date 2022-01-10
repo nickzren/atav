@@ -53,7 +53,7 @@ public class ListKnownVar extends AnalysisBase4AnnotatedVar {
     public void processVariant(AnnotatedVariant annotatedVar) {
         try {
             KnownVarOutput knownVarOutput = new KnownVarOutput(annotatedVar);
-
+            knownVarOutput.init(annotatedVar.getGeneName());
             bwKnownVar.write(annotatedVar.getVariantIdStr() + ",");
             bwKnownVar.write(annotatedVar.getGeneName() + ",");
             bwKnownVar.write(knownVarOutput.toString());
