@@ -409,6 +409,7 @@ public class CommandManager {
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
                     RvisCommand.isInclude = true;
+                    SubRvisCommand.isInclude = true;
                     TrapCommand.isInclude = true;
                     MgiCommand.isInclude = true;
                     RevelCommand.isInclude = true;

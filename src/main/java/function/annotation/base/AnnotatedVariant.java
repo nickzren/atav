@@ -920,7 +920,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     // High or Moderate impacts or TraP >= 0.4
-    public boolean isImpactHighOrModerate() {        
+    public boolean isImpactHighOrModerate() {
         return impact.equals("HIGH")
                 || impact.equals("MODERATE")
                 || trapScore >= 0.4;
@@ -928,5 +928,125 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isMissense() {
         return EffectManager.isMISSENSE(effectID);
+    }
+
+    public boolean isSynonymous() {
+        return EffectManager.isSYNONYMOUS(effectID);
+    }
+
+    public boolean isInframe() {
+        return EffectManager.isINFRAME(effectID);
+    }
+
+    public boolean isStopLost() {
+        return EffectManager.isStopLost(effectID);
+    }
+
+    // Automated interpretation of ACMG criteria
+    // IGM and gnomAD control AF > 5%
+    public boolean isBA1() {
+        return defaultControl.getAF() > 0.05f
+                && gnomADExome.getControlAF() > 0.05f
+                && gnomADGenome.getControlAF() > 0.05f;
+
+    }
+
+    // IGM and gnomAD control AF >= 1%
+    public boolean isBS1() {
+        return defaultControl.getAF() > 0.01f
+                && gnomADExome.getControlAF() > 0.01f
+                && gnomADGenome.getControlAF() > 0.01f;
+
+    }
+
+    /*
+        OMIM Inheritance NA --> do not apply
+        OMIM Dominant & Recessive / X-Linked with IGM and gnomAD control HOM/HEMI count >= 3
+        OMIM Recessive/X-Linked with IGM and gnomAD control HOM/HEMI count >= 3
+        OMIM Dominant with IGM and gnomAD control HET count >= 3
+     */
+    public boolean isBS2() {
+        if (knownVarOutput.getOMIMInheritance().equals(Data.STRING_NA)) {
+            return false;
+        } else {
+            if (knownVarOutput.isOMIMDominant() && knownVarOutput.isOMIMRecessive()) {
+                return defaultControl.getNHOM()
+                        + gnomADExome.getControlNHOM()
+                        + gnomADGenome.getControlNHOM() >= 3;
+            } else if (knownVarOutput.isOMIMRecessive()) {
+                return defaultControl.getNHOM()
+                        + gnomADExome.getControlNHOM()
+                        + gnomADGenome.getControlNHOM() >= 3;
+            } else if (knownVarOutput.isOMIMDominant()) {
+                return defaultControl.getControlNHET()
+                        + gnomADExome.getControlNHET()
+                        + gnomADGenome.getControlNHET() >= 3;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    // when effect contains/end with 'synonymous_variant' and TraP < 0.4
+    public boolean isBP7() {
+        return isSynonymous() && trapScore < 0.4;
+    }
+
+    // missense variant and gene fall into intervar bp1_genes list
+    public boolean isBP1() {
+        return isMissense() && GeneManager.isInterVarBP1Gene(geneName);
+    }
+
+    // missense variant in 25bp flanking regions with >= 6 ClinVar P/LP
+    public boolean isPM1() {
+        return isMissense() && isClinVar25bpFlankingValid();
+    }
+
+    // missense variant and gene fall into intervar pp2_gene list
+    public boolean isPP2() {
+        return isMissense() && GeneManager.isInterVarPP2Gene(geneName);
+    }
+
+    // missense variant and (polyphenHumvar < 0.4335 or REVEL < 0.2 or SubRVIS exon/domain centile > 50)
+    public boolean isBP4() {
+        return isMissense()
+                && ((polyphenHumvar < 0.4335 && polyphenHumvar != Data.FLOAT_NA)
+                || (revel < 0.2 && revel != Data.FLOAT_NA)
+                || subRvisOutput.getExonPercentile() > 50
+                || subRvisOutput.getDomainPercentile() > 50);
+    }
+
+    // missense variant and (polyphenHumvar >= 0.9035 or REVEL > 0.8 or SubRVIS exon/domain centile < 35)
+    public boolean isPP3() {
+        return isMissense()
+                && (polyphenHumvar >= 0.9035
+                || revel >= 0.8
+                || subRvisOutput.getExonPercentile() <= 35
+                || subRvisOutput.getDomainPercentile() <= 35);
+    }
+
+    // missense variant in 2bp flanking regions either HGMD DM (not ClinVar B/LB) or ClinVar P/LP
+    public boolean isPM5() {
+        return isMissense() && isKnownVar2bpFlankingValid();
+    }
+
+    // In-frame in/del in repeat region
+    public boolean isBP3() {
+        return isInframe() && isRepeatRegion;
+    }
+
+    // in-frame in/del in a non-repeat region or stop-loss variant
+    public boolean isPM4() {
+        return (isInframe() && !isRepeatRegion) || isStopLost();
+    }
+
+    // Known Pathogenic Variant
+    public boolean isPP5() {
+        return knownVarOutput.isKnownVariant();
+    }
+
+    // ClinVar B/LB
+    public boolean isBP6() {
+        return knownVarOutput.isClinVarBLB();
     }
 }

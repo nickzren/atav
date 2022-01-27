@@ -1,6 +1,8 @@
 package function.annotation.base;
 
 import function.cohort.collapsing.CollapsingCommand;
+import function.cohort.singleton.SingletonCommand;
+import function.cohort.trio.TrioCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.*;
@@ -29,6 +31,12 @@ public class GeneManager {
     public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_040320.tsv.gz";
     public static final String ALL_GENE_SYMBOL_MAP_PATH = "data/gene/hgnc_complete_set_to_GRCh37.87_040320.tsv.gz";
     public static final String ALL_GENE_TRANSCRIPT_COUNT_MAP_PATH = "data/gene/gencode_gene_transcript_count_v24lift37.tsv.gz";
+
+    // InterVar data
+    public static final String INTERVAR_BP1_GENE_PATH = "data/gene/BP1.genes.hg19.gz";
+    public static final String INTERVAR_PP2_GENE_PATH = "data/gene/PP2.genes.hg19.gz";
+    private static HashSet<String> bp1GeneSet = new HashSet<>();
+    private static HashSet<String> pp2GeneSet = new HashSet<>();
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
@@ -72,6 +80,11 @@ public class GeneManager {
         initAllGeneMapAndResetRegionList();
 
         initTempTable();
+
+        if (SingletonCommand.isList || TrioCommand.isList) {
+            initInterVarBP1GeneSet();
+            initInterVarPP2GeneSet();
+        }
     }
 
     private static void initPreparedStatement4GeneChrom() {
@@ -522,5 +535,51 @@ public class GeneManager {
                 k + ":" + v + "/" + FormatManager.getInteger(allGeneTranscriptCountMap.get(k))));
 
         return sj.toString();
+    }
+
+    private static void initInterVarBP1GeneSet() {
+        try {
+            File f = new File(Data.ATAV_HOME + INTERVAR_BP1_GENE_PATH);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                bp1GeneSet.add(line);
+            }
+            br.close();
+            decoder.close();
+            in.close();
+        } catch (IOException ex) {
+            ErrorManager.send(ex);
+        }
+    }
+    
+    private static void initInterVarPP2GeneSet() {
+        try {
+            File f = new File(Data.ATAV_HOME + INTERVAR_PP2_GENE_PATH);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                pp2GeneSet.add(line);
+            }
+            br.close();
+            decoder.close();
+            in.close();
+        } catch (IOException ex) {
+            ErrorManager.send(ex);
+        }
+    }
+    
+    public static boolean isInterVarBP1Gene(String gene) {
+        return bp1GeneSet.contains(gene);
+    }
+    
+    public static boolean isInterVarPP2Gene(String gene) {
+        return pp2GeneSet.contains(gene);
     }
 }

@@ -80,6 +80,10 @@ public class KnownVarOutput {
 
         return true;
     }
+    
+    public boolean isClinVarBLB() {
+        return clinVarOutput.isClinVarBLB();
+    }
 
     public boolean isOMIMGene() {
         return !omimDiseaseName.equals(Data.STRING_NA);
