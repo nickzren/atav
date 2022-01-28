@@ -33,8 +33,8 @@ public class GeneManager {
     public static final String ALL_GENE_TRANSCRIPT_COUNT_MAP_PATH = "data/gene/gencode_gene_transcript_count_v24lift37.tsv.gz";
 
     // InterVar data
-    public static final String INTERVAR_BP1_GENE_PATH = "data/gene/BP1.genes.hg19.gz";
-    public static final String INTERVAR_PP2_GENE_PATH = "data/gene/PP2.genes.hg19.gz";
+    public static final String INTERVAR_BP1_GENE_PATH = "data/intervar/BP1.genes.hg19.gz";
+    public static final String INTERVAR_PP2_GENE_PATH = "data/intervar/PP2.genes.hg19.gz";
     private static HashSet<String> bp1GeneSet = new HashSet<>();
     private static HashSet<String> pp2GeneSet = new HashSet<>();
 

@@ -137,6 +137,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initDenovoFlag(trio.getChild());
                         output1.initTierFlag4SingleVar();
+                        output1.initACMG();
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
@@ -146,6 +147,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                                 // init variant denovo flag for finding potential comp het
                                 output2.initDenovoFlag(trio.getChild());
                                 output2.initTierFlag4SingleVar();
+                                output2.initACMG();
 
                                 outputCompHet(output1, output2);
                             }
@@ -181,6 +183,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.fatherName);
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
+        sj.add(output.getACMGClassification());
+        sj.add(output.getACMGPathogenicCriteria());
+        sj.add(output.getACMGBenignCriteria());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
@@ -261,6 +266,34 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 || output2.getTierFlag4SingleVar() != Data.BYTE_NA
                 || output2.isFlag();
 
+        boolean isV1KVandV2NonKV = output1.getCalledVariant().getKnownVar().isKnownVariant()
+                && !output2.getCalledVariant().getKnownVar().isKnownVariant();
+
+        boolean isV2KVandV1NonKV = output2.getCalledVariant().getKnownVar().isKnownVariant()
+                && !output1.getCalledVariant().getKnownVar().isKnownVariant();
+
+        // OMIM Recessive and comphet and one of the var is KV
+        // Only non-KV variant will be labeled PM3
+        if (output1.getCalledVariant().getKnownVar().isOMIMRecessive()) {
+            output2.isPM3 = isV1KVandV2NonKV;
+            output1.isPM3 = isV2KVandV1NonKV;
+        }
+
+        // OMIM Dominant and comphet and one of the var is KV
+        // Only non-KV variant will be labeled BP2 
+        if (output1.getCalledVariant().getKnownVar().isOMIMDominant()) {
+            output2.isBP2 = isV1KVandV2NonKV;
+            output1.isBP2 = isV2KVandV1NonKV;
+        }
+
+        if (output1.isPM3 || output1.isBP2) {
+            output1.initACMG();
+        }
+
+        if (output2.isPM3 || output2.isBP2) {
+            output2.initACMG();
+        }
+
         doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1, hasSingleVarFlagged);
         doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2, hasSingleVarFlagged);
     }
@@ -284,6 +317,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.fatherName);
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
+        sj.add(output.getACMGClassification());
+        sj.add(output.getACMGPathogenicCriteria());
+        sj.add(output.getACMGBenignCriteria());
         sj.add(compHetVar);
         sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));

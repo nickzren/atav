@@ -1,5 +1,7 @@
 package function.external.dbnsfp;
 
+import function.cohort.singleton.SingletonCommand;
+import function.cohort.trio.TrioCommand;
 import global.Data;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
@@ -117,6 +119,11 @@ public class DBNSFP {
 
             // at least one pass (--filter-dbnsfp-one)
             if (DBNSFPCommand.isFilterDBNSFPOne && validCount >= 1) {
+                return true;
+            }
+            
+            // at least one pass for trio or singleton analysis
+            if ((SingletonCommand.isList || TrioCommand.isList) && validCount >= 1) {
                 return true;
             }
         }

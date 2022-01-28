@@ -55,6 +55,9 @@ public class TrioManager {
         sj.add("Father");
         sj.add("Gene Name");
         sj.add("Gene Link");
+        sj.add("ACMG Classification");
+        sj.add("ACMG Pathogenic Criteria");
+        sj.add("ACMG Benign Criteria");
         sj.add("Compound Var");
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
         sj.add("Tier Flag (Compound Var)");

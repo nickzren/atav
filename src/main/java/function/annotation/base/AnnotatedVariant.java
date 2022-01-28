@@ -153,9 +153,12 @@ public class AnnotatedVariant extends Variant {
             isValid = knownVarOutput.isExcludeClinVarBLB();
         }
 
-        if (isValid && CHMCommand.isExclude) {
+        if (isValid && CHMCommand.isFlag) {
             isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
-            isValid = !isRepeatRegion; // invalid when variant's repeat region is true
+
+            if (CHMCommand.isExclude) {
+                isValid = !isRepeatRegion; // invalid when variant's repeat region is true
+            }
         }
 
         if (isValid && IGMAFCommand.getInstance().isInclude) {
@@ -662,10 +665,6 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (CHMCommand.isFlag) {
-            if (isRepeatRegion == null) {
-                isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
-            }
-
             sj.add(FormatManager.getBoolean(isRepeatRegion));
         }
 
@@ -1016,13 +1015,14 @@ public class AnnotatedVariant extends Variant {
                 || subRvisOutput.getDomainPercentile() > 50);
     }
 
-    // missense variant and (polyphenHumvar >= 0.9035 or REVEL > 0.8 or SubRVIS exon/domain centile < 35)
+    // missense variant and (polyphenHumvar >= 0.9035 or REVEL > 0.8 or SubRVIS exon/domain centile < 35 || dbNSFP siftPred is D || dbNSFP polyphen2HDIVPred is D || dbNSFP polyphen2HVARPred is D)
     public boolean isPP3() {
         return isMissense()
                 && (polyphenHumvar >= 0.9035
                 || revel >= 0.8
                 || subRvisOutput.getExonPercentile() <= 35
-                || subRvisOutput.getDomainPercentile() <= 35);
+                || subRvisOutput.getDomainPercentile() <= 35
+                || dbNSFP.isValid(stableId));
     }
 
     // missense variant in 2bp flanking regions either HGMD DM (not ClinVar B/LB) or ClinVar P/LP

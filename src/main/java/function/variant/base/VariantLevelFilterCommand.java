@@ -586,6 +586,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--exclude-repeat-region":
                     CHMCommand.isExclude = true;
+                    CHMCommand.isFlag = true;
                     break;
                 case "--include-gme":
                     GMECommand.getInstance().isInclude = true;

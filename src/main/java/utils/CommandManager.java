@@ -353,6 +353,7 @@ public class CommandManager {
                     TrapCommand.isInclude = true;
                     MgiCommand.isInclude = true;
                     RevelCommand.isInclude = true;
+                    DBNSFPCommand.isInclude = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -413,6 +414,7 @@ public class CommandManager {
                     TrapCommand.isInclude = true;
                     MgiCommand.isInclude = true;
                     RevelCommand.isInclude = true;
+                    DBNSFPCommand.isInclude = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;
