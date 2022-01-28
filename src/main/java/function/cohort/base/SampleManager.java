@@ -289,6 +289,7 @@ public class SampleManager {
             if (tempSample.familyRelationProband != null
                     && !tempSample.familyRelationProband.equals("Proband")
                     && !tempSample.familyRelationProband.equals("Sibling")
+                    && !tempSample.familyRelationProband.equals("Half sibling")
                     && !tempSample.familyRelationProband.equals("Child")
                     && !tempSample.familyId.equals("N/A")) {
                 LogManager.writeAndPrint("Invalid proband: " + sampleName);
@@ -357,21 +358,22 @@ public class SampleManager {
             String sql = "SELECT sample_name, seq_gender, self_decl_gender FROM sample WHERE family_id=? ";
 
             if (tempSample.familyRelationProband.equals("Proband")
-                    || tempSample.familyRelationProband.equals("Sibling")) {
+                    || tempSample.familyRelationProband.equals("Sibling")
+                    || tempSample.familyRelationProband.equals("Half sibling")) {
                 sql += "AND family_relation_proband = 'Parent' ";
             } else if (tempSample.familyRelationProband.equals("Child")) {
                 sql += "AND family_relation_proband in ('Proband','Spouse') ";
             }
 
             sql += "AND sample_finished = 1 AND sample_failure = 0 order by sample_id desc";
-
+            
             PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
             preparedStatement.setString(1, tempSample.familyId);
             ResultSet rs = preparedStatement.executeQuery();
 
             tempSample.paternalId = "0";
             tempSample.maternalId = "0";
-
+            
             while (rs.next()) {
                 String sampleName = FormatManager.getString(rs.getString("sample_name"));
                 String seqGender = FormatManager.getString(rs.getString("seq_gender"));
