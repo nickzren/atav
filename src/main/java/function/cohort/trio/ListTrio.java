@@ -259,6 +259,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
             Output.tier2CompoundVarCount++;
         }
 
+        initACMGPM3orBP2(output1, output2);
+
         // single var tier 1 or 2 or LoF or KV
         boolean hasSingleVarFlagged
                 = output1.getTierFlag4SingleVar() != Data.BYTE_NA
@@ -266,6 +268,11 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 || output2.getTierFlag4SingleVar() != Data.BYTE_NA
                 || output2.isFlag();
 
+        doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1, hasSingleVarFlagged);
+        doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2, hasSingleVarFlagged);
+    }
+
+    private void initACMGPM3orBP2(TrioOutput output1, TrioOutput output2) {
         boolean isV1KVandV2NonKV = output1.getCalledVariant().getKnownVar().isKnownVariant()
                 && !output2.getCalledVariant().getKnownVar().isKnownVariant();
 
@@ -293,9 +300,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
         if (output2.isPM3 || output2.isBP2) {
             output2.initACMG();
         }
-
-        doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1, hasSingleVarFlagged);
-        doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2, hasSingleVarFlagged);
     }
 
     private void doCompHetOutput(byte tierFlag4CompVar, TrioOutput output, float[] coFreq,

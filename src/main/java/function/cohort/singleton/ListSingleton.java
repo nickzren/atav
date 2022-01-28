@@ -145,6 +145,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initTierFlag4SingleVar();
+                        output1.initACMG();
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             SingletonOutput output2 = geneOutputList.get(j);
@@ -152,6 +153,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
                             if (output2.isQualifiedGeno(output2.cGeno)) {
                                 output2.initTierFlag4SingleVar();
+                                output2.initACMG();
 
                                 outputCompHet(output1, output2);
                             }
@@ -185,6 +187,9 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         sj.add(output.child.getBroadPhenotype());
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
+        sj.add(output.getACMGClassification());
+        sj.add(output.getACMGPathogenicCriteria());
+        sj.add(output.getACMGBenignCriteria());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
@@ -244,6 +249,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             Output.tier2CompoundVarCount++;
         }
 
+        initACMGPM3orBP2(output1, output2);
+
         // single var tier 1 or 2 or LoF or KV
         boolean hasSingleVarFlagged
                 = output1.getTierFlag4SingleVar() != Data.BYTE_NA
@@ -253,6 +260,36 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
         doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1, hasSingleVarFlagged);
         doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2, hasSingleVarFlagged);
+    }
+
+    private void initACMGPM3orBP2(SingletonOutput output1, SingletonOutput output2) {
+        boolean isV1KVandV2NonKV = output1.getCalledVariant().getKnownVar().isKnownVariant()
+                && !output2.getCalledVariant().getKnownVar().isKnownVariant();
+
+        boolean isV2KVandV1NonKV = output2.getCalledVariant().getKnownVar().isKnownVariant()
+                && !output1.getCalledVariant().getKnownVar().isKnownVariant();
+
+        // OMIM Recessive and comphet and one of the var is KV
+        // Only non-KV variant will be labeled PM3
+        if (output1.getCalledVariant().getKnownVar().isOMIMRecessive()) {
+            output2.isPM3 = isV1KVandV2NonKV;
+            output1.isPM3 = isV2KVandV1NonKV;
+        }
+
+        // OMIM Dominant and comphet and one of the var is KV
+        // Only non-KV variant will be labeled BP2 
+        if (output1.getCalledVariant().getKnownVar().isOMIMDominant()) {
+            output2.isBP2 = isV1KVandV2NonKV;
+            output1.isBP2 = isV2KVandV1NonKV;
+        }
+
+        if (output1.isPM3 || output1.isBP2) {
+            output1.initACMG();
+        }
+
+        if (output2.isPM3 || output2.isBP2) {
+            output2.initACMG();
+        }
     }
 
     private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output, float[] coFreq,
@@ -265,13 +302,16 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         output.countSingleVar();
         outputCarrierSet.add(carrierIDSB.toString());
 
-        StringJoiner sj = new StringJoiner(","); 
+        StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
         sj.add(output.child.getAncestry());
         sj.add(output.child.getBroadPhenotype());
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
+        sj.add(output.getACMGClassification());
+        sj.add(output.getACMGPathogenicCriteria());
+        sj.add(output.getACMGBenignCriteria());
         sj.add(compHetVar);
         sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));

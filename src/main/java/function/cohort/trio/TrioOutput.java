@@ -40,11 +40,11 @@ public class TrioOutput extends Output {
     // ACMG
     private String acmgPathogenicCriteria;
     private String acmgBenignCriteria;
-    private int acmgPSCount = 0;
-    private int acmgPMCount = 0;
-    private int acmgPPCount = 0;
-    private int acmgBSCount = 0;
-    private int acmgBPCount = 0;
+    private int acmgPSCount;
+    private int acmgPMCount;
+    private int acmgPPCount;
+    private int acmgBSCount;
+    private int acmgBPCount;
     boolean isPM3 = false;
     boolean isBP2 = false;
 
@@ -317,6 +317,12 @@ public class TrioOutput extends Output {
     }
 
     public void initACMG() {
+        acmgPSCount = 0;
+        acmgPMCount = 0;
+        acmgPPCount = 0;
+        acmgBSCount = 0;
+        acmgBPCount = 0;
+        
         initACMGPathogenicCriteria();
         initACMGBenignCriteria();
     }
