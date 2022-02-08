@@ -48,6 +48,11 @@ public class ConvertTSVToVCF {
                 bw.write(sb.toString());
                 bw.newLine();
 
+                // MT failed to perform liftover
+                if (chr.equals("MT")) {
+                    chr = "M";
+                }
+
                 while ((lineStr = br.readLine()) != null) {
                     String[] tmp = lineStr.split("\t");
                     String pos = tmp[0];
@@ -57,6 +62,7 @@ public class ConvertTSVToVCF {
                     String trap = tmp[4];
 
                     sj = new StringJoiner("\t");
+
                     sj.add(chr);
                     sj.add(pos);
                     sj.add(".");
@@ -69,7 +75,7 @@ public class ConvertTSVToVCF {
                     bw.write(sj.toString());
                     bw.newLine();
                 }
-                
+
                 br.close();
                 decoder.close();
                 in.close();
