@@ -478,21 +478,21 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getAnnotationData(StringJoiner sj) {
-        sj.add(impact);
+//        sj.add(impact);
         sj.add(effect);
-        sj.add(getCanonicalEffect());
-        sj.add("'" + geneName + "'");
-        sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
-        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
-        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
+//        sj.add(getCanonicalEffect());
+        sj.add(geneName);
+//        sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
+//        sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
+//        sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
         sj.add(getStableId(stableId));
-        sj.add(Boolean.toString(hasCCDS));
+//        sj.add(Boolean.toString(hasCCDS));
         sj.add(HGVS_c);
         sj.add(HGVS_p);
-        sj.add(FormatManager.getFloat(polyphenHumdiv));
-        sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
-        sj.add(FormatManager.getFloat(polyphenHumvar));
-        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
+//        sj.add(FormatManager.getFloat(polyphenHumdiv));
+//        sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
+//        sj.add(FormatManager.getFloat(polyphenHumvar));
+//        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
 

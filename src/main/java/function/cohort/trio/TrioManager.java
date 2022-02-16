@@ -47,25 +47,25 @@ public class TrioManager {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Family ID");
+//        sj.add("Family ID");
         sj.add("Proband");
         sj.add("Ancestry");
         sj.add("Broad Phenotype");
-        sj.add("Mother");
-        sj.add("Father");
-        sj.add("Gene Name");
-        sj.add("Gene Link");
+//        sj.add("Mother");
+//        sj.add("Father");
+//        sj.add("Gene Name");
+//        sj.add("Gene Link");
         sj.add("Compound Var");
-        sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
-        sj.add("Tier Flag (Compound Var)");
-        sj.add("Tier Flag (Single Var)");
-        sj.add("Pass Tier 2 Inclusion Criteria");
-        sj.add("LoF Dominant and Haploinsufficient Gene");
-        sj.add("Missense Dominant and Haploinsufficient Gene");
-        sj.add("Known Pathogenic Variant");
-        sj.add("Hot Zone");
-        sj.add("Denovo Flag");
-        sj.add("Inherited From");
+//        sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
+//        sj.add("Tier Flag (Compound Var)");
+//        sj.add("Tier Flag (Single Var)");
+//        sj.add("Pass Tier 2 Inclusion Criteria");
+//        sj.add("LoF Dominant and Haploinsufficient Gene");
+//        sj.add("Missense Dominant and Haploinsufficient Gene");
+//        sj.add("Known Pathogenic Variant");
+//        sj.add("Hot Zone");
+//        sj.add("Denovo Flag");
+//        sj.add("Inherited From");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
@@ -73,9 +73,9 @@ public class TrioManager {
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
-        sj.merge(Output.getCohortLevelHeader());
+//        sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
-        sj.add("Summary");
+//        sj.add("Summary");
 
         return sj.toString();
     }
@@ -103,6 +103,8 @@ public class TrioManager {
                     if (trio.getMotherId() != Data.INTEGER_NA) {
                         parentIdSet.add(trio.getMotherId());
                     }
+                } else {
+                    System.out.println(sample.getName());
                 }
             }
         }
@@ -110,7 +112,7 @@ public class TrioManager {
         if (trioList.isEmpty()) {
             ErrorManager.print("Missing trio from --sample.", ErrorManager.INPUT_PARSING);
         } else {
-            LogManager.writeAndPrint("Total trios: " + trioList.size());
+            LogManager.writeAndPrint(" : " + trioList.size());
         }
     }
 

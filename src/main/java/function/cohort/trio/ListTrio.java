@@ -136,7 +136,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initDenovoFlag(trio.getChild());
-                        output1.initTierFlag4SingleVar();
+//                        output1.initTierFlag4SingleVar();
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
@@ -145,13 +145,13 @@ public class ListTrio extends AnalysisBase4CalledVar {
                             if (output2.isQualifiedGeno(output2.cGeno)) {
                                 // init variant denovo flag for finding potential comp het
                                 output2.initDenovoFlag(trio.getChild());
-                                output2.initTierFlag4SingleVar();
+//                                output2.initTierFlag4SingleVar();
 
                                 outputCompHet(output1, output2);
                             }
                         }
 
-                        outputDenovoOrHomOrInheritedVar(output1);
+//                        outputDenovoOrHomOrInheritedVar(output1);
                     }
                 }
             }
@@ -201,7 +201,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
     private void outputCompHet(TrioOutput output1, TrioOutput output2) throws Exception {
         String compHetFlag = getTrioCompHetFlag(output1, output2);
 
-        if (!compHetFlag.equals(COMP_HET_FLAG[2])) { // no flag
+        if (compHetFlag.equals(COMP_HET_FLAG[0])) { // only COMPOUND HETEROZYGOTE
             doCompHetOutput(output1, output2);
         }
     }
@@ -232,27 +232,27 @@ public class ListTrio extends AnalysisBase4CalledVar {
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
 
-        // tier 1
-        if (output1.isParentsNotHom() && output2.isParentsNotHom()
-                // co-occurance freq in controls is 0
-                && coFreq[Index.CTRL] == 0
-                // for each one of the variants, restrict to High or Moderate impact or with TraP >= 0.4
-                && output1.getCalledVariant().isImpactHighOrModerate() && output2.getCalledVariant().isImpactHighOrModerate()
-                // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
-                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
-            tierFlag4CompVar = 1;
-            Output.tier1CompoundVarCount++;
-        } else if ( // tier 2
-                // if one of the variant meets tier 2 inclusion criteria
-                (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
-                || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
-                // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
-            tierFlag4CompVar = 2;
-            Output.tier2CompoundVarCount++;
-        }
+//        // tier 1
+//        if (output1.isParentsNotHom() && output2.isParentsNotHom()
+//                // co-occurance freq in controls is 0
+//                && coFreq[Index.CTRL] == 0
+//                // for each one of the variants, restrict to High or Moderate impact or with TraP >= 0.4
+//                && output1.getCalledVariant().isImpactHighOrModerate() && output2.getCalledVariant().isImpactHighOrModerate()
+//                // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
+//                && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
+//                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
+//                && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
+//            tierFlag4CompVar = 1;
+//            Output.tier1CompoundVarCount++;
+//        } else if ( // tier 2
+//                // if one of the variant meets tier 2 inclusion criteria
+//                (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
+//                || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
+//                // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
+//                && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
+//            tierFlag4CompVar = 2;
+//            Output.tier2CompoundVarCount++;
+//        }
 
         // single var tier 1 or 2 or LoF or KV
         boolean hasSingleVarFlagged
@@ -276,28 +276,28 @@ public class ListTrio extends AnalysisBase4CalledVar {
         outputCarrierSet.add(carrierIDSB.toString());
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(output.child.getFamilyId());
-        sj.add(output.child.getName());
+//        sj.add(output.child.getFamilyId());
+        sj.add(String.valueOf(output.child.getId()));
         sj.add(output.child.getAncestry());
         sj.add(output.child.getBroadPhenotype());
-        sj.add(output.motherName);
-        sj.add(output.fatherName);
-        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
-        sj.add(output.getCalledVariant().getGeneLink());
+//        sj.add(output.motherName);
+//        sj.add(output.fatherName);
+//        sj.add(output.getCalledVariant().getGeneName());
+//        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(compHetVar);
-        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
-        sj.add(FormatManager.getByte(tierFlag4CompVar));
-        sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
+//        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
+//        sj.add(FormatManager.getByte(tierFlag4CompVar));
+//        sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
-        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
+//        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
-        if (tierFlag4CompVar != Data.BYTE_NA || hasSingleVarFlagged) {
+//        if (tierFlag4CompVar != Data.BYTE_NA || hasSingleVarFlagged) {
             bwTrioGenotype.write(sj.toString());
             bwTrioGenotype.newLine();
-        } else {
-            bwTrioGenotypeNoFlag.write(sj.toString());
-            bwTrioGenotypeNoFlag.newLine();
-        }
+//        } else {
+//            bwTrioGenotypeNoFlag.write(sj.toString());
+//            bwTrioGenotypeNoFlag.newLine();
+//        }
     }
 
     private void clearList() {

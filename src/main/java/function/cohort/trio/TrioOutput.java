@@ -262,13 +262,13 @@ public class TrioOutput extends Output {
     public String toString() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
-        sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
-        sj.add(FormatManager.getByte(isMissenseDominantAndHaploinsufficient));
-        sj.add(FormatManager.getByte(isKnownPathogenicVariant));
-        sj.add(FormatManager.getByte(isHotZone));
-        sj.add(denovoFlag);
-        sj.add(getInheritedFrom().name());
+//        sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
+//        sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
+//        sj.add(FormatManager.getByte(isMissenseDominantAndHaploinsufficient));
+//        sj.add(FormatManager.getByte(isKnownPathogenicVariant));
+//        sj.add(FormatManager.getByte(isHotZone));
+//        sj.add(denovoFlag);
+//        sj.add(getInheritedFrom().name());
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
@@ -276,7 +276,7 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getShort(mDPBin));
         sj.add(getGenoStr(fGeno));
         sj.add(FormatManager.getShort(fDPBin));
-        getGenoStatData(sj);
+//        getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
         return sj.toString();

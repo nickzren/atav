@@ -32,7 +32,7 @@ public class Trio {
     }
 
     public boolean isValid() {
-        if (fatherId != Data.INTEGER_NA || motherId != Data.INTEGER_NA) {
+        if (fatherId != Data.INTEGER_NA && motherId != Data.INTEGER_NA) {
             return true;
         }
 

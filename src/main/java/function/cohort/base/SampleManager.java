@@ -390,6 +390,10 @@ public class SampleManager {
                     tempSample.maternalId = sampleName;
                 }
             }
+            
+            if(tempSample.maternalId.equals("0") || tempSample.maternalId.equals("0")) {
+                return false;
+            }
 
             rs.close();
             preparedStatement.close();
