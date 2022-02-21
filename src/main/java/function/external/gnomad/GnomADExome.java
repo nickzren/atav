@@ -222,11 +222,11 @@ public class GnomADExome {
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(filter);
+//        sj.add(filter);
 //        sj.add(FormatManager.getByte(segdup));
 //        sj.add(FormatManager.getByte(lcr));
 //        sj.add(FormatManager.getByte(decoy));
-        sj.add(FormatManager.getFloat(rf_tp_probability));
+//        sj.add(FormatManager.getFloat(rf_tp_probability));
 //        sj.add(FormatManager.getFloat(qd));
 //        sj.add(FormatManager.getFloat(pab_max));
 
@@ -236,21 +236,21 @@ public class GnomADExome {
             switch (i) {
                 case 0:
 //                    sj.add(FormatManager.getInteger(global_AN));
-                    sj.add(FormatManager.getInteger(global_nhet));
-                    sj.add(FormatManager.getInteger(global_nhomalt));
-                    sj.add(FormatManager.getInteger(global_nhemi));
+//                    sj.add(FormatManager.getInteger(global_nhet));
+//                    sj.add(FormatManager.getInteger(global_nhomalt));
+//                    sj.add(FormatManager.getInteger(global_nhemi));
                     break;
                 case 1:
 //                    sj.add(FormatManager.getInteger(controls_AN));
-                    sj.add(FormatManager.getInteger(controls_nhet));
-                    sj.add(FormatManager.getInteger(controls_nhomalt));
-                    sj.add(FormatManager.getInteger(controls_nhemi));
+//                    sj.add(FormatManager.getInteger(controls_nhet));
+//                    sj.add(FormatManager.getInteger(controls_nhomalt));
+//                    sj.add(FormatManager.getInteger(controls_nhemi));
                     break;
                 case 2:
 //                    sj.add(FormatManager.getInteger(non_neuro_AN));
-                    sj.add(FormatManager.getInteger(non_neuro_nhet));
-                    sj.add(FormatManager.getInteger(non_neuro_nhomalt));
-                    sj.add(FormatManager.getInteger(non_neuro_nhemi));
+//                    sj.add(FormatManager.getInteger(non_neuro_nhet));
+//                    sj.add(FormatManager.getInteger(non_neuro_nhomalt));
+//                    sj.add(FormatManager.getInteger(non_neuro_nhemi));
                     break;
                 default:
                     break;

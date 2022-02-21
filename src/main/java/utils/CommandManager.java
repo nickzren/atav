@@ -402,7 +402,7 @@ public class CommandManager {
 //                    CohortLevelFilterCommand.isIncludeDefaultControlSample = true;
 //                    CHMCommand.isFlag = true;
 //                    DefaultControlCommand.getInstance().isInclude = true;
-//                    GnomADExomeCommand.getInstance().isInclude = true;
+                    GnomADExomeCommand.getInstance().isInclude = true;
 //                    GnomADExomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
 //                    GnomADGenomeCommand.getInstance().isInclude = true;
 //                    GnomADGenomeCommand.getInstance().popSet = new HashSet<>(Arrays.asList("controls"));
