@@ -171,9 +171,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
         if (outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
-
+        
         output.countSingleVar();
-
+        
         StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
@@ -186,6 +186,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.getACMGClassification());
         sj.add(output.getACMGPathogenicCriteria());
         sj.add(output.getACMGBenignCriteria());
+        sj.add(output.getVariantPrioritization());
+        sj.add(output.getVariantPrioritizationFlags());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
@@ -324,6 +326,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.getACMGClassification());
         sj.add(output.getACMGPathogenicCriteria());
         sj.add(output.getACMGBenignCriteria());
+        sj.add(output.getVariantPrioritization());
+        sj.add(output.getVariantPrioritizationFlags());
         sj.add(compHetVar);
         sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));

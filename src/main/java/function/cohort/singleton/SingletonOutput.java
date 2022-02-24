@@ -48,6 +48,7 @@ public class SingletonOutput extends Output {
         sj.add("ACMG Classification");
         sj.add("ACMG Pathogenic Criteria");
         sj.add("ACMG Benign Criteria");
+        sj.add("Variant Prioritization");
         sj.add("Compound Var");
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
         sj.add("Tier Flag (Compound Var)");

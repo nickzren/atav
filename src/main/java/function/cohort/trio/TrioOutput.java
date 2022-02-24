@@ -48,8 +48,13 @@ public class TrioOutput extends Output {
     boolean isPM3 = false;
     boolean isBP2 = false;
 
+    private String variantPrioritization;
+    private StringJoiner variantPrioritizationFlags = new StringJoiner("|");
+
     public TrioOutput(CalledVariant c) {
         super(c);
+
+        variantPrioritization = "";
     }
 
     public void initTrioData(Trio trio) {
@@ -190,21 +195,41 @@ public class TrioOutput extends Output {
     }
 
     public void initTierFlag4SingleVar() {
+        if (!variantPrioritization.isEmpty()) {
+            return;
+        }
+
+        isHotZone = calledVar.isHotZone();
+        isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
+        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
+        isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
+
         tierFlag4SingleVar = Data.BYTE_NA;
 
         // denovo or hom
         if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
-            if (isDenovoTier1()
-                    || isHomozygousTier1()
+            if (isDenovoTier1()) {
+                if (isHotZone == 1) {
+                    setVariantPrioritization("01_TIER1_DNM_HZ");
+                } else {
+                    setVariantPrioritization("02_TIER1_DNM");
+                }
+                tierFlag4SingleVar = 1;
+            } else if (isHomozygousTier1()
                     || isHemizygousTier1()
                     || isCompoundDeletionTier1()) {
+                setVariantPrioritization("03_TIER1_HOM_HEMI");
                 tierFlag4SingleVar = 1;
-            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                    && (isDenovoTier2()
-                    || isHomozygousTier2()
-                    || isHemizygousTier2())
-                    || isCompoundDeletionTier2()) {
-                tierFlag4SingleVar = 2;
+            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)) {
+                if (isDenovoTier2()) {
+                    setVariantPrioritization("04_TIER2_DNM");
+                    tierFlag4SingleVar = 2;
+                } else if (isHomozygousTier2()
+                        || isHemizygousTier2()
+                        || isCompoundDeletionTier2()) {
+                    setVariantPrioritization("05_TIER2_HOM_HEMI");
+                    tierFlag4SingleVar = 2;
+                }
             }
         } else {
             if (calledVar.isMetTier2InclusionCriteria(cCarrier)
@@ -213,10 +238,58 @@ public class TrioOutput extends Output {
             }
         }
 
-        isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
-        isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
-        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
-        isHotZone = calledVar.isHotZone();
+        if (isLoFDominantAndHaploinsufficient == 1) {
+            setVariantPrioritization("06_LOF_GENE");
+        }
+
+        if (isKnownPathogenicVariant == 1) {
+            setVariantPrioritization("07_KNOWN_VAR");
+        } else {
+            if (calledVar.getKnownVar().isClinVarPLPSite()) {
+                setVariantPrioritization("08_CLINVAR_SITE");
+            }
+
+            if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
+                setVariantPrioritization("09_CLINVAR_2BP");
+            }
+
+            if (calledVar.getKnownVar().isHGMDDMSite()) {
+                setVariantPrioritization("10_HGMD_SITE");
+            }
+        }
+
+        if (isMissenseDominantAndHaploinsufficient == 1
+                && calledVar.isClinVar25bpFlankingValid()) {
+            setVariantPrioritization("11_MISSENSE_HS");
+        }
+
+        if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
+            setVariantPrioritization("12_ACMG_GENE");
+        }
+    }
+
+    public void setVariantPrioritization(String str) {
+        if (variantPrioritization.isEmpty()) {
+            variantPrioritization = str;
+        }
+
+        variantPrioritizationFlags.add(str);
+    }
+
+    public String getVariantPrioritization() {
+        if (variantPrioritization.isEmpty()) {
+            return Data.STRING_NA;
+        }
+
+        return variantPrioritization;
+    }
+
+    public String getVariantPrioritizationFlags() {
+        if (variantPrioritizationFlags.length() == 0) {
+            return Data.STRING_NA;
+        }
+
+        return variantPrioritizationFlags.toString();
     }
 
     public byte getTierFlag4SingleVar() {
@@ -257,7 +330,7 @@ public class TrioOutput extends Output {
         boolean isLikelyPathogenic = false;
         boolean isBenign = false;
         boolean isLikeBenign = false;
-        
+
         boolean isPVS1 = calledVar.isPVS1(cCarrier);
 
         if (isPVS1
@@ -267,18 +340,18 @@ public class TrioOutput extends Output {
                 || acmgPPCount >= 2)) {
             isPathogenic = true;
         }
-        
+
         if (acmgPSCount >= 2) {
             isPathogenic = true;
-        } 
-        
-        if (acmgPSCount == 1 && 
-                (acmgPMCount >= 3 
+        }
+
+        if (acmgPSCount == 1
+                && (acmgPMCount >= 3
                 || (acmgPMCount == 2 && acmgPPCount >= 2)
                 || (acmgPMCount == 1 && acmgPPCount >= 4))) {
             isPathogenic = true;
-        } 
-        
+        }
+
         if ((isPVS1 && acmgPMCount == 1)
                 || (acmgPSCount == 1 && acmgPMCount >= 1)
                 || (acmgPSCount == 1 && acmgPPCount >= 2)
@@ -286,30 +359,30 @@ public class TrioOutput extends Output {
                 || (acmgPMCount == 2 && acmgPPCount >= 2)
                 || (acmgPMCount == 1 && acmgPPCount >= 4)) {
             isLikelyPathogenic = true;
-        } 
-        
-        if(calledVar.isBA1() || acmgBSCount >= 2) {
+        }
+
+        if (calledVar.isBA1() || acmgBSCount >= 2) {
             isBenign = true;
-        } 
-        
-        if((acmgBSCount == 1 && acmgBPCount == 1)
+        }
+
+        if ((acmgBSCount == 1 && acmgBPCount == 1)
                 || acmgBPCount >= 2) {
             isLikeBenign = true;
         }
-        
-        if((!isPathogenic && !isLikelyPathogenic && !isBenign && !isLikeBenign) // Other criteria shown above are not met
+
+        if ((!isPathogenic && !isLikelyPathogenic && !isBenign && !isLikeBenign) // Other criteria shown above are not met
                 || ((isPathogenic || isLikelyPathogenic)) && (isBenign || isLikeBenign) // the criteria for benign and pathogenic are contradictory
                 ) {
             return "Uncertain significance";
         }
 
-        if(isPathogenic) {
+        if (isPathogenic) {
             return "Pathogenic";
-        } else if(isLikelyPathogenic) {
+        } else if (isLikelyPathogenic) {
             return "Likely pathogenic";
-        } else if(isBenign) {
+        } else if (isBenign) {
             return "Benign";
-        } else if(isLikeBenign) {
+        } else if (isLikeBenign) {
             return "Like benign";
         } else {
             return "Uncertain significance";
@@ -322,11 +395,11 @@ public class TrioOutput extends Output {
         acmgPPCount = 0;
         acmgBSCount = 0;
         acmgBPCount = 0;
-        
+
         initACMGPathogenicCriteria();
         initACMGBenignCriteria();
     }
-    
+
     private void initACMGPathogenicCriteria() {
         StringJoiner sj = new StringJoiner("|");
 
@@ -358,11 +431,11 @@ public class TrioOutput extends Output {
             acmgPMCount++;
         }
 
-        if(isPM3) {
+        if (isPM3) {
             sj.add("PM3");
             acmgPMCount++;
         }
-        
+
         if (calledVar.isPM4()) {
             sj.add("PM4");
             acmgPMCount++;
@@ -399,8 +472,8 @@ public class TrioOutput extends Output {
         }
 
         acmgPathogenicCriteria = sj.toString();
-        
-        if(acmgPathogenicCriteria.isEmpty()) {
+
+        if (acmgPathogenicCriteria.isEmpty()) {
             acmgPathogenicCriteria = Data.STRING_NA;
         }
     }
@@ -464,8 +537,8 @@ public class TrioOutput extends Output {
         }
 
         acmgBenignCriteria = sj.toString();
-        
-        if(acmgBenignCriteria.isEmpty()) {
+
+        if (acmgBenignCriteria.isEmpty()) {
             acmgBenignCriteria = Data.STRING_NA;
         }
     }
@@ -477,9 +550,15 @@ public class TrioOutput extends Output {
     public String getSummary() {
         StringJoiner sj = new StringJoiner("\n");
 
-        sj.add("'" + calledVar.getGeneName() + "'");
+        sj.add(calledVar.getGeneName());
         sj.add(calledVar.getVariantIdStr());
         sj.add(isDUO ? "DUO" : "TRIO");
+        if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
+            sj.add(denovoFlag);
+        }
+        if (getInheritedFrom() != INHERITED_FROM.NA) {
+            sj.add("Inherited from " + getInheritedFrom().name());
+        }
         sj.add(calledVar.getEffect());
         sj.add(calledVar.getStableId());
         sj.add(calledVar.getHGVS_c());
