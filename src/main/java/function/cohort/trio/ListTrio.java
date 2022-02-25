@@ -2,9 +2,9 @@ package function.cohort.trio;
 
 import function.cohort.base.CalledVariant;
 import function.cohort.base.AnalysisBase4CalledVar;
+import function.cohort.base.Sample;
 import static function.cohort.trio.TrioManager.COMP_HET_FLAG;
 import function.variant.base.Output;
-import global.Data;
 import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import utils.FormatManager;
 
 /**
  *
@@ -126,32 +125,46 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     private void doOutput(List<TrioOutput> geneOutputList) {
         try {
-            outputCarrierSet.clear();
-
             for (int i = 0; i < geneOutputList.size(); i++) {
                 TrioOutput output1 = geneOutputList.get(i);
 
                 for (Trio trio : TrioManager.getList()) {
                     output1.initTrioData(trio);
 
-                    if (output1.isQualifiedGeno(output1.cGeno)) {
-                        output1.initDenovoFlag(trio.getChild());
-//                        output1.initTierFlag4SingleVar();
-
+                    if (output1.isQualifiedGeno(output1.cGeno)
+                            || output1.isQualifiedGeno(output1.fGeno)
+                            || output1.isQualifiedGeno(output1.mGeno)) {
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
                             output2.initTrioData(trio);
 
-                            if (output2.isQualifiedGeno(output2.cGeno)) {
-                                // init variant denovo flag for finding potential comp het
-                                output2.initDenovoFlag(trio.getChild());
-//                                output2.initTierFlag4SingleVar();
+                            if (output1.isQualifiedGeno(output1.cGeno)
+                                    && output2.isQualifiedGeno(output2.cGeno)) {
+                                String compHetFlag = getTrioCompHetFlag(output1, output2);
 
-                                outputCompHet(output1, output2);
+                                if (compHetFlag.equals(COMP_HET_FLAG[0])) { // only COMPOUND HETEROZYGOTE
+                                    doCompHetOutput(output1, output2, "child");
+                                }
+                            }
+
+                            // father's v1 and v2 as HET, mother's v1 and v2 is REF
+                            // child's v1 and v2 either (het and ref) or (ref and het)
+                            if (output1.fGeno == Index.HET && output2.fGeno == Index.HET
+                                    && output1.mGeno == Index.REF && output2.mGeno == Index.REF
+                                    && ((output1.cGeno == Index.HET && output2.cGeno == Index.REF)
+                                    || (output2.cGeno == Index.HET && output1.cGeno == Index.REF))) {
+                                doCompHetOutput(output1, output2, "father");
+                            }
+                            
+                            // mother's v1 and v2 as HET, father's v1 and v2 is REF
+                            // child's v1 and v2 either (het and ref) or (ref and het)
+                            if (output1.mGeno == Index.HET && output2.mGeno == Index.HET
+                                    && output1.fGeno == Index.REF && output2.fGeno == Index.REF
+                                    && ((output1.cGeno == Index.HET && output2.cGeno == Index.REF)
+                                    || (output2.cGeno == Index.HET && output1.cGeno == Index.REF))) {
+                                doCompHetOutput(output1, output2, "mother");
                             }
                         }
-
-//                        outputDenovoOrHomOrInheritedVar(output1);
                     }
                 }
             }
@@ -160,67 +173,15 @@ public class ListTrio extends AnalysisBase4CalledVar {
         }
     }
 
-    private void outputDenovoOrHomOrInheritedVar(TrioOutput output) throws Exception {
-        StringBuilder carrierIDSB = new StringBuilder();
-        carrierIDSB.append(output.getCalledVariant().variantId);
-        carrierIDSB.append("-");
-        carrierIDSB.append(output.cCarrier.getSampleId());
-
-        if (outputCarrierSet.contains(carrierIDSB.toString())) {
-            return;
-        }
-
-        output.countSingleVar();
-
-        StringJoiner sj = new StringJoiner(",");
-        sj.add(output.child.getFamilyId());
-        sj.add(output.child.getName());
-        sj.add(output.child.getAncestry());
-        sj.add(output.child.getBroadPhenotype());
-        sj.add(output.motherName);
-        sj.add(output.fatherName);
-        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
-        sj.add(output.getCalledVariant().getGeneLink());
-        sj.add(Data.STRING_NA);
-        sj.add(Data.STRING_NA);
-        sj.add(Data.STRING_NA);
-        sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
-        sj.add(output.toString());
-        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
-
-        if (output.getTierFlag4SingleVar() != Data.BYTE_NA
-                || output.isFlag()) {
-            bwTrioGenotype.write(sj.toString());
-            bwTrioGenotype.newLine();
-        } else {
-            bwTrioGenotypeNoFlag.write(sj.toString());
-            bwTrioGenotypeNoFlag.newLine();
-        }
-    }
-
-    private void outputCompHet(TrioOutput output1, TrioOutput output2) throws Exception {
-        String compHetFlag = getTrioCompHetFlag(output1, output2);
-
-        if (compHetFlag.equals(COMP_HET_FLAG[0])) { // only COMPOUND HETEROZYGOTE
-            doCompHetOutput(output1, output2);
-        }
-    }
-
     private String getTrioCompHetFlag(TrioOutput output1, TrioOutput output2) {
         String flag = TrioManager.getCompHetFlag(
                 output1.cGeno, output1.mGeno, output1.fGeno,
                 output2.cGeno, output2.mGeno, output2.fGeno);
 
-        flag = TrioManager.getCompHetFlagByDenovo(flag,
-                output1.cGeno, output1.mGeno, output1.fGeno, output1.denovoFlag,
-                output2.cGeno, output2.mGeno, output2.fGeno, output2.denovoFlag);
-
         return flag;
     }
 
-    private void doCompHetOutput(TrioOutput output1, TrioOutput output2) throws Exception {
-        float[] coFreq = TrioManager.getCoOccurrenceFreq(output1, output2);
-
+    private void doCompHetOutput(TrioOutput output1, TrioOutput output2, String member) throws Exception {
         StringBuilder compHetVarSB = new StringBuilder();
         compHetVarSB.append(output1.getCalledVariant().getVariantIdStr());
         compHetVarSB.append("&");
@@ -229,75 +190,28 @@ public class ListTrio extends AnalysisBase4CalledVar {
         String compHetVar1 = compHetVarSB.toString() + "#1";
         String compHetVar2 = compHetVarSB.toString() + "#2";
 
-        // apply tier rules
-        byte tierFlag4CompVar = Data.BYTE_NA;
-
-//        // tier 1
-//        if (output1.isParentsNotHom() && output2.isParentsNotHom()
-//                // co-occurance freq in controls is 0
-//                && coFreq[Index.CTRL] == 0
-//                // for each one of the variants, restrict to High or Moderate impact or with TraP >= 0.4
-//                && output1.getCalledVariant().isImpactHighOrModerate() && output2.getCalledVariant().isImpactHighOrModerate()
-//                // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-//                && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
-//                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
-//                && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
-//            tierFlag4CompVar = 1;
-//            Output.tier1CompoundVarCount++;
-//        } else if ( // tier 2
-//                // if one of the variant meets tier 2 inclusion criteria
-//                (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
-//                || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
-//                // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
-//                && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
-//            tierFlag4CompVar = 2;
-//            Output.tier2CompoundVarCount++;
-//        }
-
-        // single var tier 1 or 2 or LoF or KV
-        boolean hasSingleVarFlagged
-                = output1.getTierFlag4SingleVar() != Data.BYTE_NA
-                || output1.isFlag()
-                || output2.getTierFlag4SingleVar() != Data.BYTE_NA
-                || output2.isFlag();
-
-        doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1, hasSingleVarFlagged);
-        doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2, hasSingleVarFlagged);
+        doCompHetOutput(output1, compHetVar1, member);
+        doCompHetOutput(output2, compHetVar2, member);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, TrioOutput output, float[] coFreq,
-            String compHetVar, boolean hasSingleVarFlagged) throws Exception {
-        StringBuilder carrierIDSB = new StringBuilder();
-        carrierIDSB.append(output.getCalledVariant().variantId);
-        carrierIDSB.append("-");
-        carrierIDSB.append(output.cCarrier.getSampleId());
-
-        output.countSingleVar();
-        outputCarrierSet.add(carrierIDSB.toString());
+    private void doCompHetOutput(TrioOutput output, String compHetVar, String member) throws Exception {
+        Sample sample = output.child;
+        if (member.equals("father")) {
+            sample = output.father;
+        } else if (member.equals("mother")) {
+            sample = output.mother;
+        }
 
         StringJoiner sj = new StringJoiner(",");
-//        sj.add(output.child.getFamilyId());
-        sj.add(String.valueOf(output.child.getId()));
-        sj.add(output.child.getAncestry());
-        sj.add(output.child.getBroadPhenotype());
-//        sj.add(output.motherName);
-//        sj.add(output.fatherName);
-//        sj.add(output.getCalledVariant().getGeneName());
-//        sj.add(output.getCalledVariant().getGeneLink());
+        sj.add(String.valueOf(sample.getId()));
+        sj.add(member);
+        sj.add(sample.getAncestry());
+        sj.add(sample.getBroadPhenotype());
         sj.add(compHetVar);
-//        sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
-//        sj.add(FormatManager.getByte(tierFlag4CompVar));
-//        sj.add(FormatManager.getByte(output.getTierFlag4SingleVar()));
         sj.add(output.toString());
-//        sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
-//        if (tierFlag4CompVar != Data.BYTE_NA || hasSingleVarFlagged) {
-            bwTrioGenotype.write(sj.toString());
-            bwTrioGenotype.newLine();
-//        } else {
-//            bwTrioGenotypeNoFlag.write(sj.toString());
-//            bwTrioGenotypeNoFlag.newLine();
-//        }
+        bwTrioGenotype.write(sj.toString());
+        bwTrioGenotype.newLine();
     }
 
     private void clearList() {

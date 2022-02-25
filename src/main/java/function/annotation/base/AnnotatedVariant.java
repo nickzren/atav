@@ -493,7 +493,7 @@ public class AnnotatedVariant extends Variant {
 //        sj.add(PolyphenManager.getPrediction(polyphenHumdiv, effect));
 //        sj.add(FormatManager.getFloat(polyphenHumvar));
 //        sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
-        sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
+//        sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
 
     public String getStableId() {

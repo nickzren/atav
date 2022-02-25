@@ -11,7 +11,9 @@ import function.cohort.base.SampleManager;
 public class Trio {
 
     private Sample child;
-
+    public Sample father;
+    public Sample mother;
+    
     private int fatherId;
     private int fatherIndex;
     private String fatherName;
@@ -25,10 +27,12 @@ public class Trio {
         fatherName = child.getPaternalId();
         fatherId = SampleManager.getIdByName(fatherName);
         fatherIndex = SampleManager.getIndexById(fatherId);
+        father = SampleManager.getSampleByName(fatherName);
 
         motherName = child.getMaternalId();
         motherId = SampleManager.getIdByName(motherName);
         motherIndex = SampleManager.getIndexById(motherId);
+        mother = SampleManager.getSampleByName(motherName);
     }
 
     public boolean isValid() {

@@ -48,34 +48,18 @@ public class TrioManager {
         StringJoiner sj = new StringJoiner(",");
 
 //        sj.add("Family ID");
-        sj.add("Proband");
+        sj.add("Sample ID");
+        sj.add("Family Member");
         sj.add("Ancestry");
         sj.add("Broad Phenotype");
-//        sj.add("Mother");
-//        sj.add("Father");
-//        sj.add("Gene Name");
-//        sj.add("Gene Link");
         sj.add("Compound Var");
-//        sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
-//        sj.add("Tier Flag (Compound Var)");
-//        sj.add("Tier Flag (Single Var)");
-//        sj.add("Pass Tier 2 Inclusion Criteria");
-//        sj.add("LoF Dominant and Haploinsufficient Gene");
-//        sj.add("Missense Dominant and Haploinsufficient Gene");
-//        sj.add("Known Pathogenic Variant");
-//        sj.add("Hot Zone");
-//        sj.add("Denovo Flag");
-//        sj.add("Inherited From");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
-        sj.merge(Output.getCarrierDataHeader());
-        sj.add("GT (mother)");
-        sj.add("DP Bin (mother)");
-        sj.add("GT (father)");
-        sj.add("DP Bin (father)");
-//        sj.merge(Output.getCohortLevelHeader());
+        sj.add("Child GT");
+        sj.add("Father GT");
+        sj.add("Mother GT");
         sj.merge(Output.getExternalDataHeader());
-//        sj.add("Summary");
+//        sj.merge(Output.getCarrierDataHeader());
 
         return sj.toString();
     }
@@ -104,7 +88,7 @@ public class TrioManager {
                         parentIdSet.add(trio.getMotherId());
                     }
                 } else {
-                    System.out.println(sample.getName());
+//                    System.out.println(sample.getName());
                 }
             }
         }
@@ -436,45 +420,45 @@ public class TrioManager {
         return Data.BYTE_NA;
     }
 
-    /*
-     * The number of people who have BOTH of the variants divided by the total
-     * number of covered people. freq[0] Frequency of Variant #1 & #2
-     * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
-     * (co-occurance) in ctrls
-     */
-    public static float[] getCoOccurrenceFreq(TrioOutput output1, TrioOutput output2) {
-        float[] freq = new float[2];
-
-        int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
-        int totalCaseCount = 0, totalCtrlCount = 0;
-
-        for (Sample sample : SampleManager.getList()) {
-            if (sample.getName().equals(output1.fatherName)
-                    || sample.getName().equals(output1.motherName)) // ignore parents trio
-            {
-                continue;
-            }
-
-            boolean isCoQualifiedGeno = isCoQualifiedGeno(output1, output2, sample.getIndex());
-
-            if (sample.isCase()) {
-                totalCaseCount++;
-                if (isCoQualifiedGeno) {
-                    quanlifiedCaseCount++;
-                }
-            } else {
-                totalCtrlCount++;
-                if (isCoQualifiedGeno) {
-                    qualifiedCtrlCount++;
-                }
-            }
-        }
-
-        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
-        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
-
-        return freq;
-    }
+//    /*
+//     * The number of people who have BOTH of the variants divided by the total
+//     * number of covered people. freq[0] Frequency of Variant #1 & #2
+//     * (co-occurance) in cases. freq[1] Frequency of Variant #1 & #2
+//     * (co-occurance) in ctrls
+//     */
+//    public static float[] getCoOccurrenceFreq(TrioOutput output1, TrioOutput output2) {
+//        float[] freq = new float[2];
+//
+//        int quanlifiedCaseCount = 0, qualifiedCtrlCount = 0;
+//        int totalCaseCount = 0, totalCtrlCount = 0;
+//
+//        for (Sample sample : SampleManager.getList()) {
+//            if (sample.getName().equals(output1.fatherName)
+//                    || sample.getName().equals(output1.motherName)) // ignore parents trio
+//            {
+//                continue;
+//            }
+//
+//            boolean isCoQualifiedGeno = isCoQualifiedGeno(output1, output2, sample.getIndex());
+//
+//            if (sample.isCase()) {
+//                totalCaseCount++;
+//                if (isCoQualifiedGeno) {
+//                    quanlifiedCaseCount++;
+//                }
+//            } else {
+//                totalCtrlCount++;
+//                if (isCoQualifiedGeno) {
+//                    qualifiedCtrlCount++;
+//                }
+//            }
+//        }
+//
+//        freq[Index.CTRL] = MathManager.devide(qualifiedCtrlCount, totalCtrlCount);
+//        freq[Index.CASE] = MathManager.devide(quanlifiedCaseCount, totalCaseCount);
+//
+//        return freq;
+//    }
 
     private static boolean isCoQualifiedGeno(TrioOutput output1,
             TrioOutput output2, int index) {
