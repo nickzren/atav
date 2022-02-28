@@ -550,7 +550,7 @@ public class SampleManager {
         }
     }
 
-    private static String initStringLineForSampleFile(Sample sample) {
+    public static String initStringLineForSampleFile(Sample sample) {
         StringJoiner sj = new StringJoiner("\t");
         sj.add(sample.getFamilyId());
         if (PedMapCommand.outputExperimentId) {

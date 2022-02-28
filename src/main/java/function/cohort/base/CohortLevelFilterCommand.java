@@ -1,6 +1,5 @@
 package function.cohort.base;
 
-import function.annotation.base.AnnotationLevelFilterCommand;
 import function.cohort.singleton.SingletonCommand;
 import function.cohort.trio.TrioCommand;
 import function.coverage.base.CoverageCommand;

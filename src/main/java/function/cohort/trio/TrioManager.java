@@ -9,8 +9,11 @@ import global.Index;
 import utils.ErrorManager;
 import utils.LogManager;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
+import utils.CommonCommand;
 import utils.MathManager;
 
 /**
@@ -47,7 +51,7 @@ public class TrioManager {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-//        sj.add("Family ID");
+        sj.add("Family ID");
         sj.add("Sample ID");
         sj.add("Family Member");
         sj.add("Ancestry");
@@ -69,35 +73,63 @@ public class TrioManager {
         initDenovoRules();
     }
 
+    private static BufferedWriter bwSample = null;
+    private final static String sampleFile = CommonCommand.outputPath + "trio_sample.txt";
+
     private static void initTriosFromInputSamples() {
-        for (Sample sample : SampleManager.getList()) {
-            if (sample.isCase()
-                    && (!sample.getPaternalId().equals("0") || !sample.getMaternalId().equals("0"))
-                    && !sample.getPaternalId().equals(sample.getMaternalId())) {
+        try {
+            bwSample = new BufferedWriter(new FileWriter(sampleFile));
 
-                Trio trio = new Trio(sample);
+            for (Sample sample : SampleManager.getList()) {
+                if(sample.getFamilyId().equalsIgnoreCase("diagseq7") ||
+                        sample.getFamilyId().equalsIgnoreCase("Diagseq200") ||
+                        sample.getFamilyId().equalsIgnoreCase("Diagseq569") ||
+                        sample.getFamilyId().equalsIgnoreCase("Diagseq639") ||
+                        sample.getFamilyId().equalsIgnoreCase("Diagseq658") ||
+                        sample.getFamilyId().equalsIgnoreCase("Diagseq761") ||
+                        sample.getFamilyId().equalsIgnoreCase("DiagSeq816") ||
+                        sample.getFamilyId().equalsIgnoreCase("Diagseq895") ||
+                        sample.getFamilyId().equalsIgnoreCase("DiagSeq915") ||
+                        sample.getFamilyId().equalsIgnoreCase("Neuro31") ||
+                        sample.getFamilyId().equalsIgnoreCase("Neuro282")) {
+                    continue;
+                }
+                
+                if (sample.isCase()
+                        && (!sample.getPaternalId().equals("0") || !sample.getMaternalId().equals("0"))
+                        && !sample.getPaternalId().equals(sample.getMaternalId())) {
 
-                if (trio.isValid()) {
-                    trioList.add(trio);
+                    Trio trio = new Trio(sample);
 
-                    if (trio.getFatherId() != Data.INTEGER_NA) {
+                    if (trio.isValid()) {
+                        trioList.add(trio);
+                        bwSample.write(SampleManager.initStringLineForSampleFile(trio.getChild()));
+                        bwSample.newLine();
+
                         parentIdSet.add(trio.getFatherId());
-                    }
+                        bwSample.write(SampleManager.initStringLineForSampleFile(trio.father));
+                        bwSample.newLine();
 
-                    if (trio.getMotherId() != Data.INTEGER_NA) {
                         parentIdSet.add(trio.getMotherId());
+                        bwSample.write(SampleManager.initStringLineForSampleFile(trio.mother));
+                        bwSample.newLine();
                     }
-                } else {
-//                    System.out.println(sample.getName());
                 }
             }
+
+            bwSample.flush();
+            bwSample.close();
+        } catch (Exception e) {
+
         }
 
         if (trioList.isEmpty()) {
             ErrorManager.print("Missing trio from --sample.", ErrorManager.INPUT_PARSING);
         } else {
-            LogManager.writeAndPrint(" : " + trioList.size());
+            LogManager.writeAndPrint("Total trios: " + trioList.size());
         }
+
+//        System.exit(0);
     }
 
     public static ArrayList<Trio> getList() {
@@ -459,7 +491,6 @@ public class TrioManager {
 //
 //        return freq;
 //    }
-
     private static boolean isCoQualifiedGeno(TrioOutput output1,
             TrioOutput output2, int index) {
         byte geno1 = output1.getCalledVariant().getGT(index);

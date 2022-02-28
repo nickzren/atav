@@ -203,7 +203,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
         }
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(String.valueOf(sample.getId()));
+        sj.add(sample.getFamilyId());
+        sj.add(sample.getName());
         sj.add(member);
         sj.add(sample.getAncestry());
         sj.add(sample.getBroadPhenotype());
