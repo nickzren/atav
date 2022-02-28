@@ -42,7 +42,7 @@ public class GnomADManager {
     private static final String genomeMNVTable = "gnomad_2_1.genome_mnv";
 
     // gene metrics
-    private static final String GENE_METRICS_PATH = "data/gnomad/gnomad.v2.1.1.lof_metrics.subset.by_gene.csv.gz";
+    private static final String GENE_METRICS_PATH = "data/gnomad/gnomad.v2.1.1.lof_metrics.subset2.by_gene.csv.gz";
     private static StringJoiner geneMetricsHeader = new StringJoiner(",");
     private static final HashMap<String, GnomADGene> geneMap = new HashMap<>();
 
@@ -178,14 +178,20 @@ public class GnomADManager {
                 String geneName = tmp[0];
 
                 if (isFirstLine) {
-                    geneMetricsHeader.add("gnomAD Gene pLI");
-                    geneMetricsHeader.add("gnomAD Gene mis_z");
+                    geneMetricsHeader.add("gnomAD pLI");
+                    geneMetricsHeader.add("gnomAD pRec");
+                    geneMetricsHeader.add("gnomAD oe_lof_upper");
+                    geneMetricsHeader.add("gnomAD mis_z");
+                    geneMetricsHeader.add("gnomAD oe_lof_upper_bin");
 
                     isFirstLine = false;
                 } else {
                     GnomADGene gene = new GnomADGene();
                     gene.pli = FormatManager.getFloat(tmp[1]);
-                    gene.misZ = FormatManager.getFloat(tmp[3]);
+                    gene.pRec = FormatManager.getFloat(tmp[2]);
+                    gene.oe_lof_upper = FormatManager.getFloat(tmp[3]);
+                    gene.misZ = FormatManager.getFloat(tmp[4]);
+                    gene.oe_lof_upper_bin = FormatManager.getFloat(tmp[5]);
                     
                     geneMap.put(geneName, gene);
                 }
@@ -207,9 +213,15 @@ public class GnomADManager {
         if(gene == null) {
             sj.add(Data.STRING_NA);
             sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
         } else {
             sj.add(FormatManager.getFloat(gene.pli));
+            sj.add(FormatManager.getFloat(gene.pRec));
+            sj.add(FormatManager.getFloat(gene.oe_lof_upper));
             sj.add(FormatManager.getFloat(gene.misZ));
+            sj.add(FormatManager.getFloat(gene.oe_lof_upper_bin));
         }
         
         return sj;
