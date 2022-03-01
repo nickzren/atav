@@ -66,6 +66,14 @@ public class KnownVarOutput {
                 || clinVarOutput.isClinVarPLP();
     }
     
+    public boolean isHGMDDM() {
+        return hgmdOutput.isHGMDDM();
+    }
+    
+    public boolean isClinVarPLP() {
+        return clinVarOutput.isClinVarPLP();
+    }
+    
     // a site has variant is either HGMD "DM" (not CinVar B/LB) or ClinVar P/LP
     public boolean isKnownVariantSite() {
         return hgmdOutput.isHGMDDMSite()
@@ -214,6 +222,10 @@ public class KnownVarOutput {
 
     public boolean isKnownVar2bpFlankingValid() {
         return hgmdOutput.is2bpFlankingValid() || clinVarOutput.isPLP2bpFlankingValid();
+    }
+    
+    public boolean isHGMD2bpFlankingValid() {
+        return hgmdOutput.is2bpFlankingValid();
     }
     
     public boolean isClinVar2bpFlankingValid() {

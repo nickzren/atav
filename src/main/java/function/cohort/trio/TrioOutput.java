@@ -7,6 +7,8 @@ import function.variant.base.Output;
 import function.cohort.base.Sample;
 import global.Data;
 import global.Index;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.StringJoiner;
 import utils.FormatManager;
 
@@ -49,7 +51,7 @@ public class TrioOutput extends Output {
     boolean isBP2 = false;
 
     private String variantPrioritization;
-    private StringJoiner variantPrioritizationFlags = new StringJoiner("|");
+    private LinkedHashSet<String> bioinformaticsSignatureSet = new LinkedHashSet<>();
 
     public TrioOutput(CalledVariant c) {
         super(c);
@@ -218,7 +220,7 @@ public class TrioOutput extends Output {
             } else if (isHomozygousTier1()
                     || isHemizygousTier1()
                     || isCompoundDeletionTier1()) {
-                setVariantPrioritization("03_TIER1_HOM_HEMI");
+                setVariantPrioritization("03_TIER1_HOMO_HEMI");
                 tierFlag4SingleVar = 1;
             } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)) {
                 if (isDenovoTier2()) {
@@ -227,7 +229,7 @@ public class TrioOutput extends Output {
                 } else if (isHomozygousTier2()
                         || isHemizygousTier2()
                         || isCompoundDeletionTier2()) {
-                    setVariantPrioritization("05_TIER2_HOM_HEMI");
+                    setVariantPrioritization("05_TIER2_HOMO_HEMI");
                     tierFlag4SingleVar = 2;
                 }
             }
@@ -266,14 +268,105 @@ public class TrioOutput extends Output {
         if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
             setVariantPrioritization("12_ACMG_GENE");
         }
+
+        initBioinformaticsSignatures();
     }
 
     public void setVariantPrioritization(String str) {
         if (variantPrioritization.isEmpty()) {
             variantPrioritization = str;
         }
+    }
 
-        variantPrioritizationFlags.add(str);
+    public void initBioinformaticsSignatures() {
+        if (denovoFlag.contains("DE NOVO")) {
+            bioinformaticsSignatureSet.add("DNM");
+        } else if (denovoFlag.contains("HOMOZYGOUS")) {
+            bioinformaticsSignatureSet.add("HOMO");
+        } else if (denovoFlag.contains("HEMIZYGOUS")) {
+            bioinformaticsSignatureSet.add("HEMI");
+        } else if (denovoFlag.contains("COMPOUND DELETION")) {
+            bioinformaticsSignatureSet.add("C_DEL");
+        }
+
+        if (calledVar.isGenotypeAbsentAmongControl(cCarrier.getGT())) {
+            bioinformaticsSignatureSet.add("ULTRA_RARE");
+        }
+
+        if (calledVar.isLOF()) {
+            bioinformaticsSignatureSet.add("LOF_VAR");
+        }
+
+        if (calledVar.hasCCDS()) {
+            bioinformaticsSignatureSet.add("CCDS");
+        }
+
+        if (cCarrier.getGT() == Index.HET) {
+            if (calledVar.getKnownVar().isInClinGenSufficientOrSomeEvidence()) {
+                bioinformaticsSignatureSet.add("CLINGEN_GENE");
+            }
+
+            if (calledVar.getKnownVar().isOMIMDominant()) {
+                bioinformaticsSignatureSet.add("OMIM_GENE");
+            }
+        } else if (cCarrier.getGT() == Index.HOM) {
+            if (calledVar.getKnownVar().isInClinGenRecessiveEvidence()) {
+                bioinformaticsSignatureSet.add("CLINGEN_GENE");
+            }
+
+            if (calledVar.getKnownVar().isOMIMRecessive()) {
+                bioinformaticsSignatureSet.add("OMIM_GENE");
+            }
+        }
+
+        if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
+            bioinformaticsSignatureSet.add("ACMG_GENE");
+        }
+
+        if (calledVar.getMgi().split(",")[1].equals("1")) {
+            bioinformaticsSignatureSet.add("MGI_ESSENTIAL");
+        }
+
+        if (calledVar.getKnownVar().isClinVarPLP()) {
+            bioinformaticsSignatureSet.add("CLINVAR_PLP");
+        } else if (calledVar.getKnownVar().isClinVarPLPSite()) {
+            bioinformaticsSignatureSet.add("CLINVAR_PLP_SITE");
+        } else if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
+            bioinformaticsSignatureSet.add("CLINVAR_PLP_2BP");
+        }
+
+        if (calledVar.isInClinVarPathoratio()) {
+            bioinformaticsSignatureSet.add("CLINVAR_PATHORATIO");
+        }
+
+        if (calledVar.getKnownVar().isHGMDDM()) {
+            bioinformaticsSignatureSet.add("HGMD_DM");
+        } else if (calledVar.getKnownVar().isHGMDDMSite()) {
+            bioinformaticsSignatureSet.add("HGMD_DM_SITE");
+        } else if (calledVar.getKnownVar().isHGMD2bpFlankingValid()) {
+            bioinformaticsSignatureSet.add("HGMD_DM_2BP");
+        }
+
+        if (isHotZone == 1) {
+            bioinformaticsSignatureSet.add("HOT_ZONE");
+        }
+
+        if (isMissenseDominantAndHaploinsufficient == 1
+                && calledVar.isClinVar25bpFlankingValid()) {
+            bioinformaticsSignatureSet.add("MIS_HOT_SPOT");
+        }
+
+        if (calledVar.isGnomADGenePLIValid()) {
+            bioinformaticsSignatureSet.add("PLI");
+        }
+
+        if (calledVar.isGeneMisZValid()) {
+            bioinformaticsSignatureSet.add("MIS_Z");
+        }
+
+        if (calledVar.isRepeatRegion()) {
+            bioinformaticsSignatureSet.add("REPEAT_REGION");
+        }
     }
 
     public String getVariantPrioritization() {
@@ -284,12 +377,18 @@ public class TrioOutput extends Output {
         return variantPrioritization;
     }
 
-    public String getVariantPrioritizationFlags() {
-        if (variantPrioritizationFlags.length() == 0) {
+    public String getBioinformaticsSignatures() {
+        if (bioinformaticsSignatureSet.isEmpty()) {
             return Data.STRING_NA;
         }
 
-        return variantPrioritizationFlags.toString();
+        StringJoiner bioinformaticsSignatures = new StringJoiner("|");
+        Iterator itr = bioinformaticsSignatureSet.iterator();
+        while (itr.hasNext()) {
+            bioinformaticsSignatures.add((String) itr.next());
+        }
+
+        return bioinformaticsSignatures.toString();
     }
 
     public byte getTierFlag4SingleVar() {

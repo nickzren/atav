@@ -1040,6 +1040,10 @@ public class AnnotatedVariant extends Variant {
         return (isInframe() && !isRepeatRegion) || isStopLost();
     }
 
+    public boolean isRepeatRegion() {
+        return isRepeatRegion;
+    }
+    
     // Known Pathogenic Variant
     public boolean isPP5() {
         return knownVarOutput.isKnownVariant();
