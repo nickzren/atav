@@ -62,9 +62,7 @@ public class SingletonOutput extends Output {
         sj.add("Tier Flag (Single Var)");
         sj.add("Pass Tier 2 Inclusion Criteria");
         sj.add("LoF Dominant and Haploinsufficient Gene");
-        sj.add("Missense Dominant and Haploinsufficient Gene");
         sj.add("Known Pathogenic Variant");
-        sj.add("Hot Zone");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
@@ -293,16 +291,8 @@ public class SingletonOutput extends Output {
             Output.lofDominantAndHaploinsufficientCount++;
         }
 
-        if (isMissenseDominantAndHaploinsufficient == 1) {
-            Output.missenseDominantAndHaploinsufficientCount++;
-        }
-
         if (isKnownPathogenicVariant == 1) {
             Output.knownPathogenicVarCount++;
-        }
-
-        if (isHotZone == 1) {
-            Output.hotZoneVarCount++;
         }
     }
 
@@ -542,9 +532,7 @@ public class SingletonOutput extends Output {
 
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
-        sj.add(FormatManager.getByte(isMissenseDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
-        sj.add(FormatManager.getByte(isHotZone));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);

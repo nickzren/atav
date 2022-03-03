@@ -411,16 +411,8 @@ public class TrioOutput extends Output {
             Output.lofDominantAndHaploinsufficientCount++;
         }
 
-        if (isMissenseDominantAndHaploinsufficient == 1) {
-            Output.missenseDominantAndHaploinsufficientCount++;
-        }
-
         if (isKnownPathogenicVariant == 1) {
             Output.knownPathogenicVarCount++;
-        }
-
-        if (isHotZone == 1) {
-            Output.hotZoneVarCount++;
         }
     }
 
@@ -675,9 +667,7 @@ public class TrioOutput extends Output {
 
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
-        sj.add(FormatManager.getByte(isMissenseDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
-        sj.add(FormatManager.getByte(isHotZone));
         sj.add(denovoFlag);
         sj.add(getInheritedFrom().name());
         calledVar.getVariantData(sj);
