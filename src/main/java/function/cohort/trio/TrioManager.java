@@ -67,6 +67,9 @@ public class TrioManager {
         sj.add("Pass Tier 2 Inclusion Criteria");
         sj.add("LoF Dominant and Haploinsufficient Gene");
         sj.add("Known Pathogenic Variant");
+        sj.add("Denovo HZ[E]");
+        sj.add("ClinGen/Var [LoF]");
+        sj.add("LoF depleted/pLI");
         sj.add("Denovo Flag");
         sj.add("Inherited From");
         sj.merge(Output.getVariantDataHeader());

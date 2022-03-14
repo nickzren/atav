@@ -97,6 +97,10 @@ public class MTR {
         return sj;
     }
 
+    public float getFDR() {
+        return mtrFDR;
+    }
+    
     @Override
     public String toString() {
         return getStringJoiner().toString();

@@ -306,6 +306,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     private void doCompHetOutput(byte tierFlag4CompVar, TrioOutput output, float[] coFreq,
             String compHetVar, boolean hasSingleVarFlagged) throws Exception {
+        output.initClinGenVarLoF4CHET();
+        output.initLoFdepletedpLI4CHET();
+        
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");

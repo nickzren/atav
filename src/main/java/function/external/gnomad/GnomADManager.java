@@ -205,46 +205,8 @@ public class GnomADManager {
         }
     }
 
-    public static StringJoiner getGeneMetrics(String geneName) {
-        StringJoiner sj = new StringJoiner(",");
-        
-        GnomADGene gene = geneMap.get(geneName);
-        
-        if(gene == null) {
-            sj.add(Data.STRING_NA);
-            sj.add(Data.STRING_NA);
-            sj.add(Data.STRING_NA);
-            sj.add(Data.STRING_NA);
-            sj.add(Data.STRING_NA);
-        } else {
-            sj.add(FormatManager.getFloat(gene.pli));
-            sj.add(FormatManager.getFloat(gene.pRec));
-            sj.add(FormatManager.getFloat(gene.oe_lof_upper));
-            sj.add(FormatManager.getFloat(gene.misZ));
-            sj.add(FormatManager.getFloat(gene.oe_lof_upper_bin));
-        }
-        
-        return sj;
-    }
-
-    public static boolean isGenePLIValid(String geneName) {
-        GnomADGene gene = geneMap.get(geneName);
-
-        if (gene == null) {
-            return false;
-        } else {
-            return gene.pli >= 0.9;
-        }
-    }
-    
-    public static boolean isGeneMisZValid(String geneName) {
-        GnomADGene gene = geneMap.get(geneName);
-
-        if (gene == null) {
-            return false;
-        } else {
-            return gene.misZ >= 2;
-        }
+    public static GnomADGene getGnomADGene(String geneName) {
+        return geneMap.get(geneName);
     }
 
     public static PreparedStatement getPreparedStatement4VariantExome(boolean isMNV) {

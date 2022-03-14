@@ -418,8 +418,8 @@ public class CalledVariant extends AnnotatedVariant {
         return isKnownVar2bpFlankingValid()
                 || isInClinGenOrOMIM(carrier)
                 || isInClinVarPathoratio()
-                || isGnomADGenePLIValid()
-                || isGeneMisZValid()
+                || isLoFPLIValid()
+                || isMissenseMisZValid()
                 || isClinVar25bpFlankingValid();
     }
 
@@ -559,6 +559,6 @@ public class CalledVariant extends AnnotatedVariant {
     public boolean isPVS1(Carrier carrier) {
         return isInClinGenOrOMIM(carrier)
                 || isInClinVarPathoratio()
-                || isGnomADGenePLIValid();
+                || isLoFPLIValid();
     }
 }

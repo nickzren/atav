@@ -38,15 +38,17 @@ public class TrioOutput extends Output {
     byte isMissenseDominantAndHaploinsufficient;
     byte isKnownPathogenicVariant;
     byte isHotZone;
+    byte isClinGenVarLoF;
+    byte isLoFdepletedpLI;
 
     // ACMG
     private String acmgPathogenicCriteria;
     private String acmgBenignCriteria;
-    private int acmgPSCount;
-    private int acmgPMCount;
-    private int acmgPPCount;
-    private int acmgBSCount;
-    private int acmgBPCount;
+    private short acmgPSCount;
+    private short acmgPMCount;
+    private short acmgPPCount;
+    private short acmgBSCount;
+    private short acmgBPCount;
     boolean isPM3 = false;
     boolean isBP2 = false;
 
@@ -205,6 +207,8 @@ public class TrioOutput extends Output {
         isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
         isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
         isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
+        isClinGenVarLoF = initClinGenVarLoF4SingleVar();
+        isLoFdepletedpLI = initLoFdepletedpLI4SingleVar();
 
         tierFlag4SingleVar = Data.BYTE_NA;
 
@@ -270,6 +274,63 @@ public class TrioOutput extends Output {
         }
 
         initBioinformaticsSignatures();
+    }
+
+    // ClinGen/Var [LoF]- A protein-truncating predicted variant found in a ClinGen defined dosage sensitive gene, 
+    // or a gene where at least one ClinVar "Pathogenic" loss-of-function allele has been reported. Screen is applied across all four models DNM, HEM, HOM, CHET
+    public byte initClinGenVarLoF4SingleVar() {
+        if (calledVar.isLOF()) {
+            if (denovoFlag.contains("DE NOVO")) {
+                if (calledVar.getKnownVar().isInClinGenSufficientOrSomeEvidence()
+                        || calledVar.isInClinVarPathoratio()) {
+                    return 1;
+                }
+            } else if (denovoFlag.contains("HOMOZYGOUS")
+                    || denovoFlag.contains("HEMIZYGOUS")) {
+                if (calledVar.getKnownVar().isInClinGenRecessiveEvidence()
+                        || calledVar.isInClinVarPathoratio()) {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    // A protein-truncating predicted de novo allele found in a gene reported to be loss-of-function depleted (FDR<0.01, Petrovski et al.), 
+    // or defined as LoF intolerant based on the ExAC paper (p>0.9). Restricted to de novo mutations. For recessive genotypes (HEM, HOM, CHET), pLI/pREC>0.9.
+    public byte initLoFdepletedpLI4SingleVar() {
+        if (calledVar.isLOF()) {
+            if (denovoFlag.contains("DE NOVO")) {
+                if (calledVar.isFDRValid() || calledVar.isPLIValid()) {
+                    return 1;
+                }
+            } else if (denovoFlag.contains("HOMOZYGOUS")
+                    || denovoFlag.contains("HEMIZYGOUS")) {
+                if (calledVar.isPLIValid() || calledVar.isPRECValid()) {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    public void initClinGenVarLoF4CHET() {
+        if (isClinGenVarLoF == 0
+                && calledVar.isLOF()
+                && (calledVar.getKnownVar().isInClinGenRecessiveEvidence()
+                || calledVar.isInClinVarPathoratio())) {
+            isClinGenVarLoF = 1;
+        }
+    }
+
+    public void initLoFdepletedpLI4CHET() {
+        if (isLoFdepletedpLI == 0
+                && calledVar.isLOF()
+                && (calledVar.isPLIValid() || calledVar.isPRECValid())) {
+            isLoFdepletedpLI = 1;
+        }
     }
 
     public void setVariantPrioritization(String str) {
@@ -356,11 +417,11 @@ public class TrioOutput extends Output {
             bioinformaticsSignatureSet.add("MIS_HOT_SPOT");
         }
 
-        if (calledVar.isGnomADGenePLIValid()) {
+        if (calledVar.isLoFPLIValid()) {
             bioinformaticsSignatureSet.add("PLI");
         }
 
-        if (calledVar.isGeneMisZValid()) {
+        if (calledVar.isMissenseMisZValid()) {
             bioinformaticsSignatureSet.add("MIS_Z");
         }
 
@@ -668,6 +729,12 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
+        sj.add(FormatManager.getInteger(
+                denovoFlag.contains("DE NOVO")
+                && isHotZone == 1
+                && calledVar.getMgi().split(",")[1].equals("1") ? 1 : 0));
+        sj.add(FormatManager.getInteger(isClinGenVarLoF));
+        sj.add(FormatManager.getInteger(isLoFdepletedpLI));
         sj.add(denovoFlag);
         sj.add(getInheritedFrom().name());
         calledVar.getVariantData(sj);

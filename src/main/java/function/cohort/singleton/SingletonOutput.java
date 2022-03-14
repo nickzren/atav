@@ -151,7 +151,7 @@ public class SingletonOutput extends Output {
 
         if (tierFlag4SingleVar == 1
                 && (calledVar.isMissense() || calledVar.isInframe())
-                && calledVar.isGeneMisZValid()) {
+                && calledVar.isMissenseMisZValid()) {
             setVariantPrioritization("12_MIS_INFRAME");
         }
 
@@ -236,11 +236,11 @@ public class SingletonOutput extends Output {
             bioinformaticsSignatureSet.add("MIS_HOT_SPOT");
         }
 
-        if (calledVar.isGnomADGenePLIValid()) {
+        if (calledVar.isLoFPLIValid()) {
             bioinformaticsSignatureSet.add("PLI");
         }
 
-        if (calledVar.isGeneMisZValid()) {
+        if (calledVar.isMissenseMisZValid()) {
             bioinformaticsSignatureSet.add("MIS_Z");
         }
 
@@ -512,7 +512,7 @@ public class SingletonOutput extends Output {
     public String getSummary() {
         StringJoiner sj = new StringJoiner("\n");
 
-        sj.add("'" + calledVar.getGeneName() + "'");
+        sj.add(calledVar.getGeneName());
         sj.add(calledVar.getVariantIdStr());
         sj.add("SINGLETON");
         sj.add(calledVar.getEffect());

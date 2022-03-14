@@ -35,6 +35,7 @@ import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGene;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADGenomeCommand;
 import function.external.gnomad.GnomADManager;
@@ -110,6 +111,7 @@ public class AnnotatedVariant extends Variant {
     private ExAC exac;
     private GnomADExome gnomADExome;
     private GnomADGenome gnomADGenome;
+    private GnomADGene gnomADGene;
     private Evs evs;
     private float gerpScore;
     private float trapScore;
@@ -354,6 +356,10 @@ public class AnnotatedVariant extends Variant {
         if (DBNSFPCommand.isInclude) {
             dbNSFP = DBNSFPManager.getDBNSFP(chrStr, startPosition, allele, isSnv(), transcriptSet);
         }
+
+        if (GnomADCommand.isIncludeGeneMetrics) {
+            gnomADGene = GnomADManager.getGnomADGene(geneName);
+        }
     }
 
     public boolean isValid() {
@@ -431,10 +437,10 @@ public class AnnotatedVariant extends Variant {
     // init MTR score based on most damaging transcript and applied filter
     private boolean isMTRValid() {
         if (MTRCommand.isInclude) {
+            mtr = new MTR(chrStr, startPosition);
+
             // MTR filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
-                mtr = new MTR(chrStr, startPosition);
-
                 return mtr.isValid();
             }
         }
@@ -641,7 +647,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (MTRCommand.isInclude) {
-            sj.add(getMTR());
+            sj.add(getMTRStr());
         }
 
         if (RevelCommand.isInclude) {
@@ -714,7 +720,17 @@ public class AnnotatedVariant extends Variant {
     }
 
     public StringJoiner getGeneMetrics() {
-        return GnomADManager.getGeneMetrics(getGeneName());
+        if (gnomADGene == null) {
+            StringJoiner sj = new StringJoiner(",");
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            return sj;
+        } else {
+            return gnomADGene.getGeneMetricsSJ();
+        }
     }
 
     public StringJoiner getKnownVarStringJoiner() {
@@ -769,12 +785,16 @@ public class AnnotatedVariant extends Variant {
         return discovEHR.toString();
     }
 
-    public String getMTR() {
+    public String getMTRStr() {
         if (mtr != null) {
             return mtr.toString();
         } else {
             return "NA,NA,NA";
         }
+    }
+
+    public MTR getMTR() {
+        return mtr;
     }
 
     public String getMPC() {
@@ -848,14 +868,47 @@ public class AnnotatedVariant extends Variant {
     }
 
     // LoF variant in gnomAD LoF depleted genes with pLI >= 0.9
-    public boolean isGnomADGenePLIValid() {
-        return isLOF()
-                && GnomADManager.isGenePLIValid(geneName);
+    public boolean isLoFPLIValid() {
+        return isLOF() && isPLIValid();
+    }
+
+    // LoF variant in gnomAD LoF depleted genes with pREC >= 0.9
+    public boolean isLoFPRECValid() {
+        return isLOF() && isPRECValid();
     }
 
     // Missense variant in gnomAD gene with mis_z >= 2
-    public boolean isGeneMisZValid() {
-        return isMissense() && GnomADManager.isGeneMisZValid(geneName);
+    public boolean isMissenseMisZValid() {
+        return isMissense() && isMisZValid();
+    }
+
+    public boolean isPLIValid() {
+        if (gnomADGene == null) {
+            return false;
+        } else {
+            return gnomADGene.pli >= 0.9;
+        }
+    }
+
+    public boolean isPRECValid() {
+        if (gnomADGene == null) {
+            return false;
+        } else {
+            return gnomADGene.pRec >= 0.9;
+        }
+    }
+
+    public boolean isMisZValid() {
+        if (gnomADGene == null) {
+            return false;
+        } else {
+            return gnomADGene.misZ >= 2;
+        }
+    }
+
+    public boolean isFDRValid() {
+        return mtr.getFDR() != Data.FLOAT_NA
+                && mtr.getFDR() < 0.01;
     }
 
     // any variants in 2bp flanking regions either HGMD DM or ClinVar PLP
@@ -1043,7 +1096,7 @@ public class AnnotatedVariant extends Variant {
     public boolean isRepeatRegion() {
         return isRepeatRegion;
     }
-    
+
     // Known Pathogenic Variant
     public boolean isPP5() {
         return knownVarOutput.isKnownVariant();
