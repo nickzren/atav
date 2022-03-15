@@ -34,17 +34,13 @@ public class DPBinBlockManager {
         
         dpBin.put('b', Data.SHORT_NA);
         dpBin.put('c', (short) 10);
-        dpBin.put('d', (short) 20);
-        dpBin.put('e', (short) 30);
-        dpBin.put('f', (short) 50);
-        dpBin.put('g', (short) 200);
+        dpBin.put('d', (short) 10);
+        dpBin.put('e', (short) 10);
+        dpBin.put('f', (short) 10);
+        dpBin.put('g', (short) 10);
 
         dpBinIndex.put(Data.SHORT_NA, Data.BYTE_NA);
         dpBinIndex.put((short) 10, Index.DP_BIN_10);
-        dpBinIndex.put((short) 20, Index.DP_BIN_10);
-        dpBinIndex.put((short) 30, Index.DP_BIN_10);
-        dpBinIndex.put((short) 50, Index.DP_BIN_10);
-        dpBinIndex.put((short) 200, Index.DP_BIN_10);
         
         for (String chr : RegionManager.ALL_CHR) {
             String sql = "SELECT sample_id, DP_string FROM DP_bins_chr" + chr + "," + SampleManager.TMP_SAMPLE_ID_TABLE
