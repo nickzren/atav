@@ -290,6 +290,7 @@ public class SampleManager {
                     && !tempSample.familyRelationProband.equals("Proband")
                     && !tempSample.familyRelationProband.equals("Sibling")
                     && !tempSample.familyRelationProband.equals("Half sibling")
+                    && !tempSample.familyRelationProband.equals("Monozygotic twin")
                     && !tempSample.familyRelationProband.equals("Child")
                     && !tempSample.familyId.equals("N/A")) {
                 LogManager.writeAndPrint("Invalid proband: " + sampleName);
@@ -359,7 +360,8 @@ public class SampleManager {
 
             if (tempSample.familyRelationProband.equals("Proband")
                     || tempSample.familyRelationProband.equals("Sibling")
-                    || tempSample.familyRelationProband.equals("Half sibling")) {
+                    || tempSample.familyRelationProband.equals("Half sibling")
+                    || tempSample.familyRelationProband.equals("Monozygotic twin")) {
                 sql += "AND family_relation_proband = 'Parent' ";
             } else if (tempSample.familyRelationProband.equals("Child")) {
                 sql += "AND family_relation_proband in ('Proband','Spouse') ";
