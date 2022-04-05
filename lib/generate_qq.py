@@ -5,6 +5,8 @@ empirical permutation-based Q-Q plot.
 Written by Charlie Wolock <cw3026@cumc.columbia.edu> 
 """
 
+import os
+import csv
 from functools import partial
 from operator import le, lt
 from scipy import stats
@@ -239,7 +241,20 @@ if __name__ == '__main__':
                                      min_value=0, max_value=10, arg_type=int),
                         default=4,
                         help='Specify number of concurrent processes')
+    parser.add_argument('--save_qq_values', action='store_true',
+                        help='Write the values from the QQ plot to a separate file.')    
+    # parser.set_defaults(save_qq_values=False)
     args = parser.parse_args()
+    print args
+    if args.save_qq_values:
+        folder = os.path.dirname(args.matrix_file)
+        filename = os.path.basename(args.matrix_file)
+        timestamp = "_".join(filename.split("_")[:2])
+        print folder
+        print timestamp
+        filename = timestamp + "_qqValues.csv"
+        outputQQvaluesFilePath = os.path.join(folder, filename)
+        print outputQQvaluesFilePath
 
     # read summary file to get dictionary of gene-level info
     # num of cases, controls, and maximum number of qualified samples in any
@@ -335,5 +350,23 @@ if __name__ == '__main__':
     obs_pvals = np.array([x[1][-1] for x in ordered])
     exp_pvals = np.mean(perm_pvals, axis=1)
 
+    if args.save_qq_values:
+        folder = os.path.dirname(args.output)
+        ### If has timestamp:
+        if args.output.count("_") > 1:
+            filename = os.path.basename(args.output)
+            timestamp = "_".join(filename.split("_")[:2])
+            print folder
+            print timestamp
+            outputFilename = timestamp + "_qqValues.csv"
+        else:
+            outputFilename = "qqValues.csv"
+        outputQQvaluesFilePath = os.path.join(folder, outputFilename)
+        print len(exp_pvals), len(obs_pvals), len(bottom_perc), len(top_perc), len(sorted_genes)
+        writer = csv.writer(open(outputQQvaluesFilePath, "w"))
+        writer.writerow(["ExpectedPvalue", "ObservedPvalue", "Bottom2.5Percentile", "Top97.5Percentile", "Gene"])
+        for (exp_pval, obs_pval, bottom_percValues, top_percValue, gene) in zip(exp_pvals, obs_pvals, bottom_perc, top_perc, sorted_genes):
+            writer.writerow([exp_pval, obs_pval, bottom_percValues, top_percValue, gene.replace("'", "")])
+        
     # generate qq plot
     plot_qq(args.output, exp_pvals, obs_pvals, bottom_perc, top_perc, sorted_genes)
