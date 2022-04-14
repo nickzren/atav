@@ -63,7 +63,7 @@ public class VariantLevelFilterCommand {
     public static boolean isExcludeMultiallelicVariant2 = false;
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
-    public static boolean disableCheckOnSexChr = false;
+    public static boolean disableCheckOnSexChr = true;
     public static boolean isIncludeLOFTEE = false;
     public static boolean isExcludeFalseLOFTEE = false;
 
