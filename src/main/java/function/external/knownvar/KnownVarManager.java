@@ -21,9 +21,9 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2021_4";
-    public static final String clinVarTable = "knownvar.clinvar_2022_01_10";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2022_01_10";
+    public static final String hgmdTable = "knownvar.hgmd_2022_1";
+    public static final String clinVarTable = "knownvar.clinvar_2022_04_08";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2022_04_08";
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
     private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
     private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<>();
@@ -43,7 +43,7 @@ public class KnownVarManager {
                 + "AND pos BETWEEN ? AND ? "
                 + "AND (ClinSig like 'Pathogenic%' "
                 + "OR ClinSig like 'Likely_pathogenic%' "
-                + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like 'pathogenic%' OR ClinSigConf like 'Likely_pathogenic%')))";
+                + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like '%pathogenic%' and ClinSigConf not like '%benign%')))";
         preparedStatement4ClinVarPLPVariantFlankingCount = DBManager.initPreparedStatement(sql);
     }
 

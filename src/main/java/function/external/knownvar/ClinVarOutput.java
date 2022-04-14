@@ -32,14 +32,14 @@ public class ClinVarOutput {
         siteCount = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 0);
 
         variant2bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 2);
-        
+
         variant25bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 25);
     }
 
     public static void main(String[] args) {
         System.out.println("Pathogenic,_drug_response".contains("pathogenic"));
     }
-    
+
     /*
      1. get ClinVar by matching chr-pos-ref-alt
      2. or return site accumulated ClinVar
@@ -65,23 +65,21 @@ public class ClinVarOutput {
 
                 if (tmpClinvar.getClinSig().startsWith("Pathogenic")
                         || tmpClinvar.getClinSig().startsWith("Likely_pathogenic")
-                        || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity") 
-                            && (tmpClinvar.getClinSigConf().startsWith("Pathogenic") || tmpClinvar.getClinSigConf().startsWith("Likely_pathogenic")))) {
+                        || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity")
+                        && (tmpClinvar.getClinSigConf().startsWith("Pathogenic") || tmpClinvar.getClinSigConf().startsWith("Likely_pathogenic"))
+                        && !tmpClinvar.getClinSigConf().contains("Benign") && !tmpClinvar.getClinSigConf().contains("Likely_benign"))) {
                     isClinVarPLP = true;
                 }
-                
+
                 /*
                     ClinVar B/LB
                     1. exact B or LB
                     2. treat conflicting as benign only when B/LB count > 1 and no P/LP
-                */
+                 */
                 if (tmpClinvar.getClinSig().startsWith("Benign")
                         || tmpClinvar.getClinSig().startsWith("Likely_benign")
-                        || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity") 
-                            && !tmpClinvar.getClinSigConf().contains("Pathogenic") && !tmpClinvar.getClinSigConf().contains("Likely_pathogenic")
-                            && ((tmpClinvar.getClinSigConf().startsWith("Benign") && !tmpClinvar.getClinSigConf().startsWith("Benign(1)")) 
-                            || tmpClinvar.getClinSigConf().startsWith("Benign(1),Likely_benign") 
-                            || (tmpClinvar.getClinSigConf().startsWith("Likely_benign") && !tmpClinvar.getClinSigConf().startsWith("Likely_benign(1)"))))) {
+                        || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity")
+                        && tmpClinvar.getClinSigConf().startsWith("Uncertain_significance"))) {
                     isClinVarBLB = true;
                 }
 
@@ -113,7 +111,7 @@ public class ClinVarOutput {
     public boolean isClinVar() {
         return isClinVar;
     }
-    
+
     public boolean isClinVarPLP() {
         return isClinVarPLP;
     }
@@ -121,7 +119,7 @@ public class ClinVarOutput {
     public ClinVar getClinVar() {
         return clinvar;
     }
-    
+
     public boolean isClinVarPLPSite() {
         return siteCount > 0;
     }
@@ -129,11 +127,11 @@ public class ClinVarOutput {
     public boolean isClinVarBLB() {
         return isClinVarBLB;
     }
-    
+
     public boolean isPLP2bpFlankingValid() {
         return variant2bpflanks > 0;
     }
-    
+
     public boolean isPLP25bpFlankingValid() {
         return variant25bpflanks >= 6;
     }
@@ -141,7 +139,7 @@ public class ClinVarOutput {
     public StringJoiner getStringJoiner() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add(FormatManager.getInteger(siteCount));        
+        sj.add(FormatManager.getInteger(siteCount));
         sj.add(FormatManager.getInteger(variant2bpflanks));
         sj.add(FormatManager.getInteger(variant25bpflanks));
         sj.add(clinvar.getClinRevStar());
