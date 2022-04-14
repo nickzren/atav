@@ -101,62 +101,62 @@ public class SingletonOutput extends Output {
             tierFlag4SingleVar = 1;
 
             if (calledVar.getKnownVar().isOMIMDominant()) {
-                setVariantPrioritization("01_TIER1_OMIM_DOM");
+//                setVariantPrioritization("01_TIER1_OMIM_DOM");
             }
         } else if (calledVar.isHomozygousTier1(cCarrier)) {
             tierFlag4SingleVar = 1;
 
             if (calledVar.getKnownVar().isOMIMRecessive()) {
-                setVariantPrioritization("02_TIER1_OMIM_REC");
+//                setVariantPrioritization("02_TIER1_OMIM_REC");
             }
         } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
                 && calledVar.isCaseVarTier2(cCarrier)) {
             tierFlag4SingleVar = 2;
 
             if (cCarrier.getGT() == Index.HET && calledVar.getKnownVar().isOMIMDominant()) {
-                setVariantPrioritization("03_TIER2_OMIM_DOM");
+//                setVariantPrioritization("03_TIER2_OMIM_DOM");
             } else if (cCarrier.getGT() == Index.HOM && calledVar.getKnownVar().isOMIMRecessive()) {
-                setVariantPrioritization("04_TIER2_OMIM_REC");
+//                setVariantPrioritization("04_TIER2_OMIM_REC");
             }
         }
 
         if (isLoFDominantAndHaploinsufficient == 1) {
-            setVariantPrioritization("05_LOF_GENE");
+            setVariantPrioritization("01_LOF_GENE");
         }
 
         if (tierFlag4SingleVar == 1 && cCarrier.getGT() == Index.HOM) {
-            setVariantPrioritization("06_TIER1_HOMO_HEMI");
+            setVariantPrioritization("02_TIER1_HOMO_HEMI");
         }
 
         if (isKnownPathogenicVariant == 1) {
-            setVariantPrioritization("07_KNOWN_VAR");
+            setVariantPrioritization("03_KNOWN_VAR");
         } else {
             if (calledVar.getKnownVar().isClinVarPLPSite()) {
-                setVariantPrioritization("08_CLINVAR_SITE");
+                setVariantPrioritization("04_CLINVAR_SITE");
             }
 
             if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
-                setVariantPrioritization("09_CLINVAR_2BP");
+                setVariantPrioritization("05_CLINVAR_2BP");
             }
 
             if (calledVar.getKnownVar().isHGMDDMSite()) {
-                setVariantPrioritization("10_HGMD_SITE");
+                setVariantPrioritization("06_HGMD_SITE");
             }
         }
 
         if (isMissenseDominantAndHaploinsufficient == 1
                 && calledVar.isClinVar25bpFlankingValid()) {
-            setVariantPrioritization("11_MISSENSE_HS");
+            setVariantPrioritization("07_MISSENSE_HS");
         }
 
         if (tierFlag4SingleVar == 1
                 && (calledVar.isMissense() || calledVar.isInframe())
                 && calledVar.isMissenseMisZValid()) {
-            setVariantPrioritization("12_MIS_INFRAME");
+            setVariantPrioritization("08_MIS_INFRAME");
         }
 
         if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
-            setVariantPrioritization("13_ACMG_GENE");
+            setVariantPrioritization("09_ACMG_GENE");
         }
         
         initBioinformaticsSignatures();
