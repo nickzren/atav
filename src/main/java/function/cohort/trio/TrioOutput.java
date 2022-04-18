@@ -744,7 +744,7 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getShort(mDPBin));
         sj.add(getGenoStr(fGeno));
         sj.add(FormatManager.getShort(fDPBin));
-        getGenoStatData(sj);
+//        getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
         return sj.toString();

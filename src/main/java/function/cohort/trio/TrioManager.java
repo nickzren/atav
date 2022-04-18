@@ -79,7 +79,7 @@ public class TrioManager {
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
-        sj.merge(Output.getCohortLevelHeader());
+//        sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
         sj.add("Summary");
 

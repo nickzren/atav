@@ -66,7 +66,7 @@ public class SingletonOutput extends Output {
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
-        sj.merge(Output.getCohortLevelHeader());
+//        sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
         sj.add("Summary");
 
@@ -536,7 +536,7 @@ public class SingletonOutput extends Output {
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
-        getGenoStatData(sj);
+//        getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
         return sj.toString();
