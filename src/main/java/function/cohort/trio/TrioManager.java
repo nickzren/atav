@@ -55,9 +55,9 @@ public class TrioManager {
         sj.add("Father");
         sj.add("Gene Name");
         sj.add("Gene Link");
-        sj.add("ACMG Classification");
-        sj.add("ACMG Pathogenic Criteria");
-        sj.add("ACMG Benign Criteria");
+//        sj.add("ACMG Classification");
+//        sj.add("ACMG Pathogenic Criteria");
+//        sj.add("ACMG Benign Criteria");
         sj.add("Variant Prioritization");
         sj.add("Bioinformatics Signatures");
         sj.add("Compound Var");

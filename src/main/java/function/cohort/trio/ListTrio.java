@@ -137,7 +137,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initDenovoFlag(trio.getChild());
                         output1.initTierFlag4SingleVar();
-                        output1.initACMG();
+//                        output1.initACMG();
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
@@ -147,7 +147,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                                 // init variant denovo flag for finding potential comp het
                                 output2.initDenovoFlag(trio.getChild());
                                 output2.initTierFlag4SingleVar();
-                                output2.initACMG();
+//                                output2.initACMG();
 
                                 outputCompHet(output1, output2);
                             }
@@ -183,9 +183,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.fatherName);
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
-        sj.add(output.getACMGClassification());
-        sj.add(output.getACMGPathogenicCriteria());
-        sj.add(output.getACMGBenignCriteria());
+//        sj.add(output.getACMGClassification());
+//        sj.add(output.getACMGPathogenicCriteria());
+//        sj.add(output.getACMGBenignCriteria());
         sj.add(output.getVariantPrioritization());
         sj.add(output.getBioinformaticsSignatures());
         sj.add(Data.STRING_NA);
@@ -261,7 +261,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
             Output.tier2CompoundVarCount++;
         }
 
-        initACMGPM3orBP2(output1, output2);
+//        initACMGPM3orBP2(output1, output2);
 
         // single var tier 1 or 2 or LoF or KV
         boolean hasSingleVarFlagged
@@ -326,9 +326,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.fatherName);
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
-        sj.add(output.getACMGClassification());
-        sj.add(output.getACMGPathogenicCriteria());
-        sj.add(output.getACMGBenignCriteria());
+//        sj.add(output.getACMGClassification());
+//        sj.add(output.getACMGPathogenicCriteria());
+//        sj.add(output.getACMGBenignCriteria());
         sj.add(output.getVariantPrioritization());
         sj.add(output.getBioinformaticsSignatures());
         sj.add(compHetVar);

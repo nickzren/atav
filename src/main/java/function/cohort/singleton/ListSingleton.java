@@ -145,7 +145,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initTierFlag4SingleVar();
-                        output1.initACMG();
+//                        output1.initACMG();
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             SingletonOutput output2 = geneOutputList.get(j);
@@ -153,7 +153,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
                             if (output2.isQualifiedGeno(output2.cGeno)) {
                                 output2.initTierFlag4SingleVar();
-                                output2.initACMG();
+//                                output2.initACMG();
 
                                 outputCompHet(output1, output2);
                             }
@@ -187,9 +187,9 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         sj.add(output.child.getBroadPhenotype());
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
-        sj.add(output.getACMGClassification());
-        sj.add(output.getACMGPathogenicCriteria());
-        sj.add(output.getACMGBenignCriteria());
+//        sj.add(output.getACMGClassification());
+//        sj.add(output.getACMGPathogenicCriteria());
+//        sj.add(output.getACMGBenignCriteria());
         sj.add(output.getVariantPrioritization());
         sj.add(output.getBioinformaticsSignatures());
         sj.add(Data.STRING_NA);
@@ -251,7 +251,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             Output.tier2CompoundVarCount++;
         }
 
-        initACMGPM3orBP2(output1, output2);
+//        initACMGPM3orBP2(output1, output2);
 
         // single var tier 1 or 2 or LoF or KV
         boolean hasSingleVarFlagged
@@ -311,9 +311,9 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         sj.add(output.child.getBroadPhenotype());
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
-        sj.add(output.getACMGClassification());
-        sj.add(output.getACMGPathogenicCriteria());
-        sj.add(output.getACMGBenignCriteria());
+//        sj.add(output.getACMGClassification());
+//        sj.add(output.getACMGPathogenicCriteria());
+//        sj.add(output.getACMGBenignCriteria());
         sj.add(output.getVariantPrioritization());
         sj.add(output.getBioinformaticsSignatures());
         sj.add(compHetVar);
