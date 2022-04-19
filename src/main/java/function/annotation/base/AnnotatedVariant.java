@@ -578,6 +578,10 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getExternalData(StringJoiner sj) {
+        if (KnownVarCommand.isInclude) {
+            sj.merge(getKnownVarStringJoiner());
+        }
+
         if (EvsCommand.isInclude) {
             sj.merge(getEvsStringJoiner());
         }
@@ -596,10 +600,6 @@ public class AnnotatedVariant extends Variant {
 
         if (GnomADCommand.isIncludeGeneMetrics) {
             sj.merge(getGeneMetrics());
-        }
-
-        if (KnownVarCommand.isInclude) {
-            sj.merge(getKnownVarStringJoiner());
         }
 
         if (RvisCommand.isInclude) {

@@ -122,6 +122,10 @@ public class Output {
     public static StringJoiner getExternalDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
+        if (KnownVarCommand.isInclude) {
+            sj.add(KnownVarManager.getHeader());
+        }
+
         if (EvsCommand.isInclude) {
             sj.add(EvsManager.getHeader());
         }
@@ -140,10 +144,6 @@ public class Output {
 
         if (GnomADCommand.isIncludeGeneMetrics) {
             sj.add(GnomADManager.getGeneMetricsHeader());
-        }
-
-        if (KnownVarCommand.isInclude) {
-            sj.add(KnownVarManager.getHeader());
         }
 
         if (RvisCommand.isInclude) {
