@@ -266,11 +266,18 @@ public class TrioOutput extends Output {
 
         if (isMissenseDominantAndHaploinsufficient == 1
                 && calledVar.isClinVar25bpFlankingValid()) {
-            setVariantPrioritization("11_MISSENSE_HS");
+            setVariantPrioritization("11_MIS_HOT_SPOT");
         }
 
+        if (tierFlag4SingleVar == 1
+                && calledVar.getKnownVar().isOMIMGene()
+                && (calledVar.isMissense() || calledVar.isInframe())
+                && calledVar.isMissenseMisZValid()) {
+            setVariantPrioritization("12_TIER1_OMIM_MIS_INFRAME");
+        }
+        
         if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
-            setVariantPrioritization("12_ACMG_GENE");
+            setVariantPrioritization("13_ACMG_GENE");
         }
 
         initBioinformaticsSignatures();
@@ -415,6 +422,13 @@ public class TrioOutput extends Output {
         if (isMissenseDominantAndHaploinsufficient == 1
                 && calledVar.isClinVar25bpFlankingValid()) {
             bioinformaticsSignatureSet.add("MIS_HOT_SPOT");
+        }
+        
+        if (tierFlag4SingleVar == 1
+                && calledVar.getKnownVar().isOMIMGene()
+                && (calledVar.isMissense() || calledVar.isInframe())
+                && calledVar.isMissenseMisZValid()) {
+            bioinformaticsSignatureSet.add("TIER1_OMIM_MIS_INFRAME");
         }
 
         if (calledVar.isLoFPLIValid()) {

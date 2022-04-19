@@ -100,24 +100,24 @@ public class SingletonOutput extends Output {
         if (calledVar.isHeterozygousTier1(cCarrier)) {
             tierFlag4SingleVar = 1;
 
-            if (calledVar.getKnownVar().isOMIMDominant()) {
+//            if (calledVar.getKnownVar().isOMIMDominant()) {
 //                setVariantPrioritization("01_TIER1_OMIM_DOM");
-            }
+//            }
         } else if (calledVar.isHomozygousTier1(cCarrier)) {
             tierFlag4SingleVar = 1;
 
-            if (calledVar.getKnownVar().isOMIMRecessive()) {
+//            if (calledVar.getKnownVar().isOMIMRecessive()) {
 //                setVariantPrioritization("02_TIER1_OMIM_REC");
-            }
+//            }
         } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
                 && calledVar.isCaseVarTier2(cCarrier)) {
             tierFlag4SingleVar = 2;
 
-            if (cCarrier.getGT() == Index.HET && calledVar.getKnownVar().isOMIMDominant()) {
+//            if (cCarrier.getGT() == Index.HET && calledVar.getKnownVar().isOMIMDominant()) {
 //                setVariantPrioritization("03_TIER2_OMIM_DOM");
-            } else if (cCarrier.getGT() == Index.HOM && calledVar.getKnownVar().isOMIMRecessive()) {
+//            } else if (cCarrier.getGT() == Index.HOM && calledVar.getKnownVar().isOMIMRecessive()) {
 //                setVariantPrioritization("04_TIER2_OMIM_REC");
-            }
+//            }
         }
 
         if (isLoFDominantAndHaploinsufficient == 1) {
@@ -146,13 +146,14 @@ public class SingletonOutput extends Output {
 
         if (isMissenseDominantAndHaploinsufficient == 1
                 && calledVar.isClinVar25bpFlankingValid()) {
-            setVariantPrioritization("07_MISSENSE_HS");
+            setVariantPrioritization("07_MIS_HOT_SPOT");
         }
 
         if (tierFlag4SingleVar == 1
+                && calledVar.getKnownVar().isOMIMGene()
                 && (calledVar.isMissense() || calledVar.isInframe())
                 && calledVar.isMissenseMisZValid()) {
-            setVariantPrioritization("08_MIS_INFRAME");
+            setVariantPrioritization("08_TIER1_OMIM_MIS_INFRAME");
         }
 
         if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
@@ -236,6 +237,13 @@ public class SingletonOutput extends Output {
             bioinformaticsSignatureSet.add("MIS_HOT_SPOT");
         }
 
+        if (tierFlag4SingleVar == 1
+                && calledVar.getKnownVar().isOMIMGene()
+                && (calledVar.isMissense() || calledVar.isInframe())
+                && calledVar.isMissenseMisZValid()) {
+            bioinformaticsSignatureSet.add("TIER1_OMIM_MIS_INFRAME");
+        }
+        
         if (calledVar.isLoFPLIValid()) {
             bioinformaticsSignatureSet.add("PLI");
         }
