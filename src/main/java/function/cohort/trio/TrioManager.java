@@ -55,9 +55,6 @@ public class TrioManager {
         sj.add("Father");
         sj.add("Gene Name");
         sj.add("Gene Link");
-//        sj.add("ACMG Classification");
-//        sj.add("ACMG Pathogenic Criteria");
-//        sj.add("ACMG Benign Criteria");
         sj.add("Variant Prioritization");
         sj.add("Bioinformatics Signatures");
         sj.add("Compound Var");
@@ -70,6 +67,9 @@ public class TrioManager {
         sj.add("Denovo HZ[E]");
         sj.add("ClinGen/Var [LoF]");
         sj.add("LoF depleted/pLI");
+        sj.add("ACMG Classification");
+        sj.add("ACMG Pathogenic Criteria");
+        sj.add("ACMG Benign Criteria");
         sj.add("Denovo Flag");
         sj.add("Inherited From");
         sj.merge(Output.getVariantDataHeader());
@@ -79,7 +79,7 @@ public class TrioManager {
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
-//        sj.merge(Output.getCohortLevelHeader());
+        sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
         sj.add("Summary");
 

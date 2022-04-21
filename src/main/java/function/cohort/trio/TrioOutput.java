@@ -749,6 +749,9 @@ public class TrioOutput extends Output {
                 && calledVar.getMgi().split(",")[1].equals("1") ? 1 : 0));
         sj.add(FormatManager.getInteger(isClinGenVarLoF));
         sj.add(FormatManager.getInteger(isLoFdepletedpLI));
+        sj.add(getACMGClassification());
+        sj.add(getACMGPathogenicCriteria());
+        sj.add(getACMGBenignCriteria());
         sj.add(denovoFlag);
         sj.add(getInheritedFrom().name());
         calledVar.getVariantData(sj);
@@ -758,7 +761,7 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getShort(mDPBin));
         sj.add(getGenoStr(fGeno));
         sj.add(FormatManager.getShort(fDPBin));
-//        getGenoStatData(sj);
+        getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
         return sj.toString();

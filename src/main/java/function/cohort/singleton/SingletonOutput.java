@@ -51,9 +51,6 @@ public class SingletonOutput extends Output {
         sj.add("Broad Phenotype");
         sj.add("Gene Name");
         sj.add("Gene Link");
-//        sj.add("ACMG Classification");
-//        sj.add("ACMG Pathogenic Criteria");
-//        sj.add("ACMG Benign Criteria");
         sj.add("Variant Prioritization");
         sj.add("Bioinformatics Signatures");
         sj.add("Compound Var");
@@ -63,10 +60,13 @@ public class SingletonOutput extends Output {
         sj.add("Pass Tier 2 Inclusion Criteria");
         sj.add("LoF Dominant and Haploinsufficient Gene");
         sj.add("Known Pathogenic Variant");
+        sj.add("ACMG Classification");
+        sj.add("ACMG Pathogenic Criteria");
+        sj.add("ACMG Benign Criteria");
         sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
-//        sj.merge(Output.getCohortLevelHeader());
+        sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
         sj.add("Summary");
 
@@ -159,7 +159,7 @@ public class SingletonOutput extends Output {
         if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
             setVariantPrioritization("09_ACMG_GENE");
         }
-        
+
         initBioinformaticsSignatures();
     }
 
@@ -243,7 +243,7 @@ public class SingletonOutput extends Output {
                 && calledVar.isMissenseMisZValid()) {
             bioinformaticsSignatureSet.add("TIER1_OMIM_MIS_INFRAME");
         }
-        
+
         if (calledVar.isLoFPLIValid()) {
             bioinformaticsSignatureSet.add("PLI");
         }
@@ -256,7 +256,7 @@ public class SingletonOutput extends Output {
             bioinformaticsSignatureSet.add("REPEAT_REGION");
         }
     }
-    
+
     public String getVariantPrioritization() {
         if (variantPrioritization.isEmpty()) {
             return Data.STRING_NA;
@@ -278,7 +278,7 @@ public class SingletonOutput extends Output {
 
         return bioinformaticsSignatures.toString();
     }
-    
+
     public byte getTierFlag4SingleVar() {
         return tierFlag4SingleVar;
     }
@@ -541,10 +541,13 @@ public class SingletonOutput extends Output {
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
+        sj.add(getACMGClassification());
+        sj.add(getACMGPathogenicCriteria());
+        sj.add(getACMGBenignCriteria());
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
-//        getGenoStatData(sj);
+        getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
         return sj.toString();
