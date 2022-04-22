@@ -88,7 +88,7 @@ public class KnownVarManager {
         sj.add("ClinGen");
         sj.add("OMIM Disease");
         sj.add("OMIM Inheritance");
-        sj.add("ACMG");
+        sj.add("ACMG 73");
 
         return sj.toString();
     }

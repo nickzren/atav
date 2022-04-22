@@ -101,10 +101,18 @@ public class Variant extends Region {
 
     public void getVariantData(StringJoiner sj) {
         sj.add(variantIdStr);
-        sj.add("\"=HYPERLINK(\"\"http://atavdb.org/variant/"+variantIdStr+"\"\",\"\"ATAV\"\")\"");
         sj.add(getType());
         sj.add(refAllele);
         sj.add(allele);
         sj.add(getRsNumberStr());
+    }
+    
+    public String getATAVLINK() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"=HYPERLINK(\"\"http://atavdb.org/variant/");
+        sb.append(variantIdStr);
+        sb.append("\"\",\"\"ATAV\"\")\"");
+        
+        return sb.toString();
     }
 }

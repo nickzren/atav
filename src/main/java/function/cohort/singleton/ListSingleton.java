@@ -181,13 +181,16 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         output.countSingleVar();
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
-        sj.add(output.child.getAncestry());
-        sj.add(output.child.getBroadPhenotype());
-        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
-        sj.add(output.getCalledVariant().getGeneLink());
+        sj.add(output.child.getFamilyId());
         sj.add(output.getVariantPrioritization());
+        sj.add(output.getCalledVariant().getATAVLINK());
+        sj.add(output.getCalledVariant().getGeneLink());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getVariantIdStr());
+        sj.add(output.getCalledVariant().getImpact());
+        sj.add(output.getCalledVariant().getEffect());
+        sj.add(output.getCalledVariant().getCanonicalEffect());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
@@ -301,13 +304,16 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         outputCarrierSet.add(carrierIDSB.toString());
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
-        sj.add(output.child.getAncestry());
-        sj.add(output.child.getBroadPhenotype());
-        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
-        sj.add(output.getCalledVariant().getGeneLink());
+        sj.add(output.child.getFamilyId());
         sj.add(output.getVariantPrioritization());
+        sj.add(output.getCalledVariant().getATAVLINK());
+        sj.add(output.getCalledVariant().getGeneLink());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getVariantIdStr());
+        sj.add(output.getCalledVariant().getImpact());
+        sj.add(output.getCalledVariant().getEffect());
+        sj.add(output.getCalledVariant().getCanonicalEffect());
         sj.add(compHetVar);
         sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));

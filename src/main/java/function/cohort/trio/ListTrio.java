@@ -85,7 +85,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
     }
 
     @Override
-    public void processVariant(CalledVariant calledVar) {        
+    public void processVariant(CalledVariant calledVar) {
         try {
             TrioOutput output = new TrioOutput(calledVar);
 
@@ -171,19 +171,30 @@ public class ListTrio extends AnalysisBase4CalledVar {
         if (outputCarrierSet.contains(carrierIDSB.toString())) {
             return;
         }
-        
+
         output.countSingleVar();
-        
+
         StringJoiner sj = new StringJoiner(",");
-        sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
-        sj.add(output.child.getAncestry());
-        sj.add(output.child.getBroadPhenotype());
+        sj.add(output.child.getFamilyId());
         sj.add(output.motherName);
         sj.add(output.fatherName);
-        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
-        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(output.getVariantPrioritization());
+        sj.add(output.getCalledVariant().getATAVLINK());
+        sj.add(output.getCalledVariant().getGeneLink());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getVariantIdStr());
+        sj.add(output.getCalledVariant().getImpact());
+        sj.add(output.getCalledVariant().getEffect());
+        sj.add(output.getCalledVariant().getCanonicalEffect());
+        sj.add(output.denovoFlag);
+        sj.add(output.getInheritedFrom().name());
+        sj.add(FormatManager.getInteger(
+                output.denovoFlag.contains("DE NOVO")
+                && output.isHotZone == 1
+                && output.getCalledVariant().getMgi().split(",")[1].equals("1") ? 1 : 0));
+        sj.add(FormatManager.getInteger(output.isClinGenVarLoF));
+        sj.add(FormatManager.getInteger(output.isLoFdepletedpLI));
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
@@ -304,7 +315,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
             String compHetVar, boolean hasSingleVarFlagged) throws Exception {
         output.initClinGenVarLoF4CHET();
         output.initLoFdepletedpLI4CHET();
-        
+
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
         carrierIDSB.append("-");
@@ -314,15 +325,26 @@ public class ListTrio extends AnalysisBase4CalledVar {
         outputCarrierSet.add(carrierIDSB.toString());
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
-        sj.add(output.child.getAncestry());
-        sj.add(output.child.getBroadPhenotype());
+        sj.add(output.child.getFamilyId());
         sj.add(output.motherName);
         sj.add(output.fatherName);
-        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
-        sj.add(output.getCalledVariant().getGeneLink());
         sj.add(output.getVariantPrioritization());
+        sj.add(output.getCalledVariant().getATAVLINK());
+        sj.add(output.getCalledVariant().getGeneLink());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getVariantIdStr());
+        sj.add(output.getCalledVariant().getImpact());
+        sj.add(output.getCalledVariant().getEffect());
+        sj.add(output.getCalledVariant().getCanonicalEffect());
+        sj.add(output.denovoFlag);
+        sj.add(output.getInheritedFrom().name());
+        sj.add(FormatManager.getInteger(
+                output.denovoFlag.contains("DE NOVO")
+                && output.isHotZone == 1
+                && output.getCalledVariant().getMgi().split(",")[1].equals("1") ? 1 : 0));
+        sj.add(FormatManager.getInteger(output.isClinGenVarLoF));
+        sj.add(FormatManager.getInteger(output.isLoFdepletedpLI));
         sj.add(compHetVar);
         sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));

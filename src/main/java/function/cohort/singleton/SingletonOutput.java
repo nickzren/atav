@@ -45,14 +45,16 @@ public class SingletonOutput extends Output {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
+        sj.add("Proband ID");
         sj.add("Family ID");
-        sj.add("Proband");
-        sj.add("Ancestry");
-        sj.add("Broad Phenotype");
-        sj.add("Gene Name");
-        sj.add("Gene Link");
         sj.add("Single Variant Prioritization");
-//        sj.add("Bioinformatics Signatures");
+        sj.add("ATAV Link");
+        sj.add("Gene Link");
+        sj.add("Gene Name");
+        sj.add("Variant ID");
+        sj.add("Impact");
+        sj.add("Effect");
+        sj.add("Canonical Transcript Effect");
         sj.add("Compound Var");
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
         sj.add("Tier Flag (Compound Var)");
@@ -60,10 +62,10 @@ public class SingletonOutput extends Output {
         sj.add("Pass Tier 2 Inclusion Criteria");
         sj.add("LoF Dominant and Haploinsufficient Gene");
         sj.add("Known Pathogenic Variant");
-        sj.add("ACMG Classification");
-        sj.add("ACMG Pathogenic Criteria");
-        sj.add("ACMG Benign Criteria");
-        sj.merge(Output.getVariantDataHeader());
+        sj.add("ATAV ACMG Classification");
+        sj.add("ATAV ACMG Pathogenic Criteria");
+        sj.add("ATAV ACMG Benign Criteria");
+//        sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
         sj.merge(Output.getCohortLevelHeader());
@@ -248,7 +250,6 @@ public class SingletonOutput extends Output {
 //            bioinformaticsSignatureSet.add("REPEAT_REGION");
 //        }
 //    }
-
     public String getVariantPrioritization() {
         if (variantPrioritizationSet.isEmpty()) {
             return Data.STRING_NA;
@@ -276,7 +277,6 @@ public class SingletonOutput extends Output {
 //
 //        return bioinformaticsSignatures.toString();
 //    }
-
     public byte getTierFlag4SingleVar() {
         return tierFlag4SingleVar;
     }
@@ -542,7 +542,7 @@ public class SingletonOutput extends Output {
         sj.add(getACMGClassification());
         sj.add(getACMGPathogenicCriteria());
         sj.add(getACMGBenignCriteria());
-        calledVar.getVariantData(sj);
+//        calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
         getGenoStatData(sj);

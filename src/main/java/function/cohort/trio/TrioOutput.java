@@ -741,18 +741,10 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
-        sj.add(FormatManager.getInteger(
-                denovoFlag.contains("DE NOVO")
-                && isHotZone == 1
-                && calledVar.getMgi().split(",")[1].equals("1") ? 1 : 0));
-        sj.add(FormatManager.getInteger(isClinGenVarLoF));
-        sj.add(FormatManager.getInteger(isLoFdepletedpLI));
         sj.add(getACMGClassification());
         sj.add(getACMGPathogenicCriteria());
         sj.add(getACMGBenignCriteria());
-        sj.add(denovoFlag);
-        sj.add(getInheritedFrom().name());
-        calledVar.getVariantData(sj);
+//        calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
         sj.add(getGenoStr(mGeno));

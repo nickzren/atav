@@ -487,10 +487,12 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getAnnotationData(StringJoiner sj) {
-        sj.add(impact);
-        sj.add(effect);
-        sj.add(getCanonicalEffect());
-        sj.add("'" + geneName + "'");
+        if (!SingletonCommand.isList && !TrioCommand.isList) {
+            sj.add(impact);
+            sj.add(effect);
+            sj.add(getCanonicalEffect());
+            sj.add("'" + geneName + "'");
+        }
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
         sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
         sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
@@ -503,6 +505,10 @@ public class AnnotatedVariant extends Variant {
         sj.add(FormatManager.getFloat(polyphenHumvar));
         sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
+    }
+    
+    public String getImpact() {
+        return impact;
     }
 
     public String getStableId() {
@@ -518,7 +524,7 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
-    private String getCanonicalEffect() {
+    public String getCanonicalEffect() {
         StringJoiner sj = new StringJoiner("|");
         for (int id : canonicalEffectIdList) {
             sj.add(EffectManager.getEffectById(id));
