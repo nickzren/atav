@@ -184,7 +184,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
         sj.add(output.getVariantPrioritization());
-        sj.add(output.getBioinformaticsSignatures());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
@@ -323,11 +322,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.fatherName);
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
-//        sj.add(output.getACMGClassification());
-//        sj.add(output.getACMGPathogenicCriteria());
-//        sj.add(output.getACMGBenignCriteria());
         sj.add(output.getVariantPrioritization());
-        sj.add(output.getBioinformaticsSignatures());
         sj.add(compHetVar);
         sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));

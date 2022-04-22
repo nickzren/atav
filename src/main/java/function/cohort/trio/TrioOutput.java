@@ -53,7 +53,7 @@ public class TrioOutput extends Output {
     boolean isBP2 = false;
 
     private LinkedHashSet<String> variantPrioritizationSet = new LinkedHashSet<>();
-    private LinkedHashSet<String> bioinformaticsSignatureSet = new LinkedHashSet<>();
+//    private LinkedHashSet<String> bioinformaticsSignatureSet = new LinkedHashSet<>();
 
     public TrioOutput(CalledVariant c) {
         super(c);
@@ -278,7 +278,7 @@ public class TrioOutput extends Output {
             variantPrioritizationSet.add("13_ACMG_GENE");
         }
 
-        initBioinformaticsSignatures();
+//        initBioinformaticsSignatures();
     }
 
     // ClinGen/Var [LoF]- A protein-truncating predicted variant found in a ClinGen defined dosage sensitive gene, 
@@ -338,103 +338,103 @@ public class TrioOutput extends Output {
         }
     }
 
-    public void initBioinformaticsSignatures() {
-        if (denovoFlag.contains("DE NOVO")) {
-            bioinformaticsSignatureSet.add("DNM");
-        } else if (denovoFlag.contains("HOMOZYGOUS")) {
-            bioinformaticsSignatureSet.add("HOMO");
-        } else if (denovoFlag.contains("HEMIZYGOUS")) {
-            bioinformaticsSignatureSet.add("HEMI");
-        } else if (denovoFlag.contains("COMPOUND DELETION")) {
-            bioinformaticsSignatureSet.add("C_DEL");
-        }
-
-        if (calledVar.isGenotypeAbsentAmongControl(cCarrier.getGT())) {
-            bioinformaticsSignatureSet.add("ULTRA_RARE");
-        }
-
-        if (calledVar.isLOF()) {
-            bioinformaticsSignatureSet.add("LOF_VAR");
-        }
-
-        if (calledVar.hasCCDS()) {
-            bioinformaticsSignatureSet.add("CCDS");
-        }
-
-        if (cCarrier.getGT() == Index.HET) {
-            if (calledVar.getKnownVar().isInClinGenSufficientOrSomeEvidence()) {
-                bioinformaticsSignatureSet.add("CLINGEN_GENE");
-            }
-
-            if (calledVar.getKnownVar().isOMIMDominant()) {
-                bioinformaticsSignatureSet.add("OMIM_GENE");
-            }
-        } else if (cCarrier.getGT() == Index.HOM) {
-            if (calledVar.getKnownVar().isInClinGenRecessiveEvidence()) {
-                bioinformaticsSignatureSet.add("CLINGEN_GENE");
-            }
-
-            if (calledVar.getKnownVar().isOMIMRecessive()) {
-                bioinformaticsSignatureSet.add("OMIM_GENE");
-            }
-        }
-
-        if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
-            bioinformaticsSignatureSet.add("ACMG_GENE");
-        }
-
-        if (calledVar.getMgi().split(",")[1].equals("1")) {
-            bioinformaticsSignatureSet.add("MGI_ESSENTIAL");
-        }
-
-        if (calledVar.getKnownVar().isClinVarPLP()) {
-            bioinformaticsSignatureSet.add("CLINVAR_PLP");
-        } else if (calledVar.getKnownVar().isClinVarPLPSite()) {
-            bioinformaticsSignatureSet.add("CLINVAR_PLP_SITE");
-        } else if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
-            bioinformaticsSignatureSet.add("CLINVAR_PLP_2BP");
-        }
-
-        if (calledVar.isInClinVarPathoratio()) {
-            bioinformaticsSignatureSet.add("CLINVAR_PATHORATIO");
-        }
-
-        if (calledVar.getKnownVar().isHGMDDM()) {
-            bioinformaticsSignatureSet.add("HGMD_DM");
-        } else if (calledVar.getKnownVar().isHGMDDMSite()) {
-            bioinformaticsSignatureSet.add("HGMD_DM_SITE");
-        } else if (calledVar.getKnownVar().isHGMD2bpFlankingValid()) {
-            bioinformaticsSignatureSet.add("HGMD_DM_2BP");
-        }
-
-        if (isHotZone == 1) {
-            bioinformaticsSignatureSet.add("HOT_ZONE");
-        }
-
-        if (isMissenseDominantAndHaploinsufficient == 1
-                && calledVar.isClinVar25bpFlankingValid()) {
-            bioinformaticsSignatureSet.add("MIS_HOT_SPOT");
-        }
-
-        if (tierFlag4SingleVar == 1
-                && calledVar.getKnownVar().isOMIMGene()
-                && (calledVar.isMissense() || calledVar.isInframe())
-                && calledVar.isMissenseMisZValid()) {
-            bioinformaticsSignatureSet.add("TIER1_OMIM_MIS_INFRAME");
-        }
-
-        if (calledVar.isLoFPLIValid()) {
-            bioinformaticsSignatureSet.add("PLI");
-        }
-
-        if (calledVar.isMissenseMisZValid()) {
-            bioinformaticsSignatureSet.add("MIS_Z");
-        }
-
-        if (calledVar.isRepeatRegion()) {
-            bioinformaticsSignatureSet.add("REPEAT_REGION");
-        }
-    }
+//    public void initBioinformaticsSignatures() {
+//        if (denovoFlag.contains("DE NOVO")) {
+//            bioinformaticsSignatureSet.add("DNM");
+//        } else if (denovoFlag.contains("HOMOZYGOUS")) {
+//            bioinformaticsSignatureSet.add("HOMO");
+//        } else if (denovoFlag.contains("HEMIZYGOUS")) {
+//            bioinformaticsSignatureSet.add("HEMI");
+//        } else if (denovoFlag.contains("COMPOUND DELETION")) {
+//            bioinformaticsSignatureSet.add("C_DEL");
+//        }
+//
+//        if (calledVar.isGenotypeAbsentAmongControl(cCarrier.getGT())) {
+//            bioinformaticsSignatureSet.add("ULTRA_RARE");
+//        }
+//
+//        if (calledVar.isLOF()) {
+//            bioinformaticsSignatureSet.add("LOF_VAR");
+//        }
+//
+//        if (calledVar.hasCCDS()) {
+//            bioinformaticsSignatureSet.add("CCDS");
+//        }
+//
+//        if (cCarrier.getGT() == Index.HET) {
+//            if (calledVar.getKnownVar().isInClinGenSufficientOrSomeEvidence()) {
+//                bioinformaticsSignatureSet.add("CLINGEN_GENE");
+//            }
+//
+//            if (calledVar.getKnownVar().isOMIMDominant()) {
+//                bioinformaticsSignatureSet.add("OMIM_GENE");
+//            }
+//        } else if (cCarrier.getGT() == Index.HOM) {
+//            if (calledVar.getKnownVar().isInClinGenRecessiveEvidence()) {
+//                bioinformaticsSignatureSet.add("CLINGEN_GENE");
+//            }
+//
+//            if (calledVar.getKnownVar().isOMIMRecessive()) {
+//                bioinformaticsSignatureSet.add("OMIM_GENE");
+//            }
+//        }
+//
+//        if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
+//            bioinformaticsSignatureSet.add("ACMG_GENE");
+//        }
+//
+//        if (calledVar.getMgi().split(",")[1].equals("1")) {
+//            bioinformaticsSignatureSet.add("MGI_ESSENTIAL");
+//        }
+//
+//        if (calledVar.getKnownVar().isClinVarPLP()) {
+//            bioinformaticsSignatureSet.add("CLINVAR_PLP");
+//        } else if (calledVar.getKnownVar().isClinVarPLPSite()) {
+//            bioinformaticsSignatureSet.add("CLINVAR_PLP_SITE");
+//        } else if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
+//            bioinformaticsSignatureSet.add("CLINVAR_PLP_2BP");
+//        }
+//
+//        if (calledVar.isInClinVarPathoratio()) {
+//            bioinformaticsSignatureSet.add("CLINVAR_PATHORATIO");
+//        }
+//
+//        if (calledVar.getKnownVar().isHGMDDM()) {
+//            bioinformaticsSignatureSet.add("HGMD_DM");
+//        } else if (calledVar.getKnownVar().isHGMDDMSite()) {
+//            bioinformaticsSignatureSet.add("HGMD_DM_SITE");
+//        } else if (calledVar.getKnownVar().isHGMD2bpFlankingValid()) {
+//            bioinformaticsSignatureSet.add("HGMD_DM_2BP");
+//        }
+//
+//        if (isHotZone == 1) {
+//            bioinformaticsSignatureSet.add("HOT_ZONE");
+//        }
+//
+//        if (isMissenseDominantAndHaploinsufficient == 1
+//                && calledVar.isClinVar25bpFlankingValid()) {
+//            bioinformaticsSignatureSet.add("MIS_HOT_SPOT");
+//        }
+//
+//        if (tierFlag4SingleVar == 1
+//                && calledVar.getKnownVar().isOMIMGene()
+//                && (calledVar.isMissense() || calledVar.isInframe())
+//                && calledVar.isMissenseMisZValid()) {
+//            bioinformaticsSignatureSet.add("TIER1_OMIM_MIS_INFRAME");
+//        }
+//
+//        if (calledVar.isLoFPLIValid()) {
+//            bioinformaticsSignatureSet.add("PLI");
+//        }
+//
+//        if (calledVar.isMissenseMisZValid()) {
+//            bioinformaticsSignatureSet.add("MIS_Z");
+//        }
+//
+//        if (calledVar.isRepeatRegion()) {
+//            bioinformaticsSignatureSet.add("REPEAT_REGION");
+//        }
+//    }
 
     public String getVariantPrioritization() {
         if (variantPrioritizationSet.isEmpty()) {
@@ -450,19 +450,19 @@ public class TrioOutput extends Output {
         return variantPrioritizations.toString();
     }
 
-    public String getBioinformaticsSignatures() {
-        if (bioinformaticsSignatureSet.isEmpty()) {
-            return Data.STRING_NA;
-        }
-
-        StringJoiner bioinformaticsSignatures = new StringJoiner("|");
-        Iterator itr = bioinformaticsSignatureSet.iterator();
-        while (itr.hasNext()) {
-            bioinformaticsSignatures.add((String) itr.next());
-        }
-
-        return bioinformaticsSignatures.toString();
-    }
+//    public String getBioinformaticsSignatures() {
+//        if (bioinformaticsSignatureSet.isEmpty()) {
+//            return Data.STRING_NA;
+//        }
+//
+//        StringJoiner bioinformaticsSignatures = new StringJoiner("|");
+//        Iterator itr = bioinformaticsSignatureSet.iterator();
+//        while (itr.hasNext()) {
+//            bioinformaticsSignatures.add((String) itr.next());
+//        }
+//
+//        return bioinformaticsSignatures.toString();
+//    }
 
     public byte getTierFlag4SingleVar() {
         return tierFlag4SingleVar;

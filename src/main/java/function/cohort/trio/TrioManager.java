@@ -55,8 +55,8 @@ public class TrioManager {
         sj.add("Father");
         sj.add("Gene Name");
         sj.add("Gene Link");
-        sj.add("Variant Prioritization");
-        sj.add("Bioinformatics Signatures");
+        sj.add("Single Variant Prioritization");
+//        sj.add("Bioinformatics Signatures");
         sj.add("Compound Var");
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
         sj.add("Tier Flag (Compound Var)");
