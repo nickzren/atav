@@ -39,7 +39,7 @@ public class SingletonOutput extends Output {
     boolean isPM3 = false;
     boolean isBP2 = false;
 
-    private String variantPrioritization;
+    private LinkedHashSet<String> variantPrioritizationSet = new LinkedHashSet<>();
     private LinkedHashSet<String> bioinformaticsSignatureSet = new LinkedHashSet<>();
 
     public static String getHeader() {
@@ -51,7 +51,7 @@ public class SingletonOutput extends Output {
         sj.add("Broad Phenotype");
         sj.add("Gene Name");
         sj.add("Gene Link");
-        sj.add("Variant Prioritization");
+        sj.add("Single Variant Prioritization");
         sj.add("Bioinformatics Signatures");
         sj.add("Compound Var");
         sj.add("Var Ctrl Freq #1 & #2 (co-occurance)");
@@ -75,8 +75,6 @@ public class SingletonOutput extends Output {
 
     public SingletonOutput(CalledVariant c) {
         super(c);
-
-        variantPrioritization = "";
     }
 
     public void initSingletonData(Singleton singleton) {
@@ -87,7 +85,7 @@ public class SingletonOutput extends Output {
     }
 
     public void initTierFlag4SingleVar() {
-        if (!variantPrioritization.isEmpty()) {
+        if (!variantPrioritizationSet.isEmpty()) {
             return;
         }
 
@@ -101,72 +99,66 @@ public class SingletonOutput extends Output {
             tierFlag4SingleVar = 1;
 
 //            if (calledVar.getKnownVar().isOMIMDominant()) {
-//                setVariantPrioritization("01_TIER1_OMIM_DOM");
+//                variantPrioritizationSet.add("01_TIER1_OMIM_DOM");
 //            }
         } else if (calledVar.isHomozygousTier1(cCarrier)) {
             tierFlag4SingleVar = 1;
 
 //            if (calledVar.getKnownVar().isOMIMRecessive()) {
-//                setVariantPrioritization("02_TIER1_OMIM_REC");
+//                variantPrioritizationSet.add("02_TIER1_OMIM_REC");
 //            }
         } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
                 && calledVar.isCaseVarTier2(cCarrier)) {
             tierFlag4SingleVar = 2;
 
 //            if (cCarrier.getGT() == Index.HET && calledVar.getKnownVar().isOMIMDominant()) {
-//                setVariantPrioritization("03_TIER2_OMIM_DOM");
+//                variantPrioritizationSet.add("03_TIER2_OMIM_DOM");
 //            } else if (cCarrier.getGT() == Index.HOM && calledVar.getKnownVar().isOMIMRecessive()) {
-//                setVariantPrioritization("04_TIER2_OMIM_REC");
+//                variantPrioritizationSet.add("04_TIER2_OMIM_REC");
 //            }
         }
 
         if (isLoFDominantAndHaploinsufficient == 1) {
-            setVariantPrioritization("01_LOF_GENE");
+            variantPrioritizationSet.add("01_LOF_GENE");
         }
 
         if (tierFlag4SingleVar == 1 && cCarrier.getGT() == Index.HOM) {
-            setVariantPrioritization("02_TIER1_HOMO_HEMI");
+            variantPrioritizationSet.add("02_TIER1_HOMO_HEMI");
         }
 
         if (isKnownPathogenicVariant == 1) {
-            setVariantPrioritization("03_KNOWN_VAR");
+            variantPrioritizationSet.add("03_KNOWN_VAR");
         } else {
             if (calledVar.getKnownVar().isClinVarPLPSite()) {
-                setVariantPrioritization("04_CLINVAR_SITE");
+                variantPrioritizationSet.add("04_CLINVAR_SITE");
             }
 
             if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
-                setVariantPrioritization("05_CLINVAR_2BP");
+                variantPrioritizationSet.add("05_CLINVAR_2BP");
             }
 
             if (calledVar.getKnownVar().isHGMDDMSite()) {
-                setVariantPrioritization("06_HGMD_SITE");
+                variantPrioritizationSet.add("06_HGMD_SITE");
             }
         }
 
         if (isMissenseDominantAndHaploinsufficient == 1
                 && calledVar.isClinVar25bpFlankingValid()) {
-            setVariantPrioritization("07_MIS_HOT_SPOT");
+            variantPrioritizationSet.add("07_MIS_HOT_SPOT");
         }
 
         if (tierFlag4SingleVar == 1
                 && calledVar.getKnownVar().isOMIMGene()
                 && (calledVar.isMissense() || calledVar.isInframe())
                 && calledVar.isMissenseMisZValid()) {
-            setVariantPrioritization("08_TIER1_OMIM_MIS_INFRAME");
+            variantPrioritizationSet.add("08_TIER1_OMIM_MIS_INFRAME");
         }
 
         if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
-            setVariantPrioritization("09_ACMG_GENE");
+            variantPrioritizationSet.add("09_ACMG_GENE");
         }
 
         initBioinformaticsSignatures();
-    }
-
-    public void setVariantPrioritization(String str) {
-        if (variantPrioritization.isEmpty()) {
-            variantPrioritization = str;
-        }
     }
 
     public void initBioinformaticsSignatures() {
@@ -258,11 +250,17 @@ public class SingletonOutput extends Output {
     }
 
     public String getVariantPrioritization() {
-        if (variantPrioritization.isEmpty()) {
+        if (variantPrioritizationSet.isEmpty()) {
             return Data.STRING_NA;
         }
 
-        return variantPrioritization;
+        StringJoiner variantPrioritizations = new StringJoiner("|");
+        Iterator itr = variantPrioritizationSet.iterator();
+        while (itr.hasNext()) {
+            variantPrioritizations.add((String) itr.next());
+        }
+
+        return variantPrioritizations.toString();
     }
 
     public String getBioinformaticsSignatures() {
