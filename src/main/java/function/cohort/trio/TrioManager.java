@@ -52,6 +52,7 @@ public class TrioManager {
         sj.add("Mother ID");
         sj.add("Father ID");
         sj.add("Single Variant Prioritization");
+        sj.add("Compound Het Variant Prioritization");
         sj.add("ATAV Link");
         sj.add("Gene Link");
         sj.add("Gene Name");
