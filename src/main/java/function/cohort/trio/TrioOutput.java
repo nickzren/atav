@@ -305,7 +305,8 @@ public class TrioOutput extends Output {
     // A protein-truncating predicted de novo allele found in a gene reported to be loss-of-function depleted (FDR<0.01, Petrovski et al.), 
     // or defined as LoF intolerant based on the ExAC paper (p>0.9). Restricted to de novo mutations. For recessive genotypes (HEM, HOM, CHET), pLI/pREC>0.9.
     public byte initLoFdepletedpLI4SingleVar() {
-        if (calledVar.isLOF()) {
+        if (calledVar.isLOF() 
+                && calledVar.isGenotypeAbsentAmongControl(cCarrier.getGT())) {
             if (denovoFlag.contains("DE NOVO")) {
                 if (calledVar.isFDRValid() || calledVar.isPLIValid()) {
                     return 1;
