@@ -60,7 +60,7 @@ public class VariantLevelFilterCommand {
     public static boolean isExcludeMultiallelicVariant2 = false;
     public static boolean isExcludeSnv = false;
     public static boolean isExcludeIndel = false;
-    public static boolean disableCheckOnSexChr = false;
+    public static boolean disableCheckOnSexChr = true;
     public static boolean isIncludeLOFTEE = false;
     public static boolean isExcludeFalseLOFTEE = false;
 
@@ -586,6 +586,7 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--exclude-repeat-region":
                     CHMCommand.isExclude = true;
+                    CHMCommand.isFlag = true;
                     break;
                 case "--include-gme":
                     GMECommand.getInstance().isInclude = true;

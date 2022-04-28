@@ -48,8 +48,11 @@ public class EffectManager {
     private static final String MODIFIER_IMPACT = "('HIGH'),('MODERATE'),('LOW'),('MODIFIER')";
 
     public static HashSet<Integer> MISSENSE_EFFECT_ID_SET = new HashSet<>();
+    public static HashSet<Integer> SYNONYMOUS_EFFECT_ID_SET = new HashSet<>();
+    public static HashSet<Integer> INFRAME_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<Integer> LOF_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<String> LOF_EFFECT_SET = new HashSet<>();
+    private static int stopLostEffectID;
 
     private static boolean isUsed = false;
 
@@ -113,12 +116,24 @@ public class EffectManager {
                 impactEffect2IdMap.put(impactEffect, id);
                 effect2IdMap.put(effect, id);
 
-                if (effect.startsWith("missense_variant") ||
-                        effect.equals("disruptive_inframe_deletion") ||
-                        effect.equals("disruptive_inframe_insertion") ||
-                        effect.equals("conservative_inframe_deletion") ||
-                        effect.equals("conservative_inframe_insertion")) {
+                if (effect.startsWith("missense_variant")) {
                     MISSENSE_EFFECT_ID_SET.add(id);
+                }
+
+                if (effect.equals("disruptive_inframe_deletion")
+                        || effect.equals("disruptive_inframe_insertion")
+                        || effect.equals("conservative_inframe_deletion")
+                        || effect.equals("conservative_inframe_insertion")) {
+                    MISSENSE_EFFECT_ID_SET.add(id); // treat inframe same as missense downstream
+                    INFRAME_EFFECT_ID_SET.add(id);
+                }
+
+                if (effect.contains("synonymous_variant")) {
+                    SYNONYMOUS_EFFECT_ID_SET.add(id);
+                }
+                
+                if(effect.equals("stop_lost")) {
+                    stopLostEffectID = id;
                 }
             }
 
@@ -320,7 +335,7 @@ public class EffectManager {
     public static String getImpactById(int id) {
         return id2ImpactMap.get(id);
     }
-    
+
     public static String getEffectById(int id) {
         return id2EffectMap.get(id);
     }
@@ -332,11 +347,23 @@ public class EffectManager {
     public static boolean isMISSENSE(int effectID) {
         return MISSENSE_EFFECT_ID_SET.contains(effectID);
     }
+
+    public static boolean isINFRAME(int effectID) {
+        return INFRAME_EFFECT_ID_SET.contains(effectID);
+    }
     
+    public static boolean isSYNONYMOUS(int effectID) {
+        return SYNONYMOUS_EFFECT_ID_SET.contains(effectID);
+    }
+
     public static boolean isLOF(int effectID) {
         return LOF_EFFECT_ID_SET.contains(effectID);
     }
 
+    public static boolean isStopLost(int effectID) {
+        return effectID == stopLostEffectID;
+    }
+    
     public static boolean isLOF(String effect) {
         return LOF_EFFECT_SET.contains(effect);
     }

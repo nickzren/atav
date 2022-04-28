@@ -145,6 +145,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initTierFlag4SingleVar();
+                        output1.initACMG();
 
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             SingletonOutput output2 = geneOutputList.get(j);
@@ -152,6 +153,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
                             if (output2.isQualifiedGeno(output2.cGeno)) {
                                 output2.initTierFlag4SingleVar();
+                                output2.initACMG();
 
                                 outputCompHet(output1, output2);
                             }
@@ -179,12 +181,17 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         output.countSingleVar();
 
         StringJoiner sj = new StringJoiner(",");
-        sj.add(output.child.getFamilyId());
         sj.add(output.child.getName());
-        sj.add(output.child.getAncestry());
-        sj.add(output.child.getBroadPhenotype());
-        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.child.getFamilyId());
+        sj.add(output.getSingleVariantPrioritization());
+        sj.add(Data.STRING_NA);
+        sj.add(output.getCalledVariant().getATAVLINK());
         sj.add(output.getCalledVariant().getGeneLink());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getVariantIdStr());
+        sj.add(output.getCalledVariant().getImpact());
+        sj.add(output.getCalledVariant().getEffect());
+        sj.add(output.getCalledVariant().getCanonicalEffect());
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
         sj.add(Data.STRING_NA);
@@ -224,6 +231,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
 
+        // init CH variant prioritization
+        String chVariantPrioritization = Data.STRING_NA;
+        boolean isOneOfCompVarSynonymous = output1.getCalledVariant().isSynonymous()
+                || output2.getCalledVariant().isSynonymous();
+
         // tier 1
         if (coFreq[Index.CTRL] == 0
                 // for each one of the variants, restrict to High or Moderate impact or with TraP >= 0.4
@@ -234,6 +246,10 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
             tierFlag4CompVar = 1;
             Output.tier1CompoundVarCount++;
+            
+            if (!isOneOfCompVarSynonymous) {
+                chVariantPrioritization = "01_TIER1";
+            }
         } else if ( // tier 2
                 // if one of the variant meets tier 2 inclusion criteria
                 (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
@@ -242,7 +258,13 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
             tierFlag4CompVar = 2;
             Output.tier2CompoundVarCount++;
+            
+            if (!isOneOfCompVarSynonymous) {
+                chVariantPrioritization = "02_TIER2";
+            }
         }
+
+        initACMGPM3orBP2(output1, output2);
 
         // single var tier 1 or 2 or LoF or KV
         boolean hasSingleVarFlagged
@@ -251,11 +273,41 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 || output2.getTierFlag4SingleVar() != Data.BYTE_NA
                 || output2.isFlag();
 
-        doCompHetOutput(tierFlag4CompVar, output1, coFreq, compHetVar1, hasSingleVarFlagged);
-        doCompHetOutput(tierFlag4CompVar, output2, coFreq, compHetVar2, hasSingleVarFlagged);
+        doCompHetOutput(tierFlag4CompVar, chVariantPrioritization, output1, coFreq, compHetVar1, hasSingleVarFlagged);
+        doCompHetOutput(tierFlag4CompVar, chVariantPrioritization, output2, coFreq, compHetVar2, hasSingleVarFlagged);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output, float[] coFreq,
+    private void initACMGPM3orBP2(SingletonOutput output1, SingletonOutput output2) {
+        boolean isV1KVandV2NonKV = output1.getCalledVariant().getKnownVar().isKnownVariant()
+                && !output2.getCalledVariant().getKnownVar().isKnownVariant();
+
+        boolean isV2KVandV1NonKV = output2.getCalledVariant().getKnownVar().isKnownVariant()
+                && !output1.getCalledVariant().getKnownVar().isKnownVariant();
+
+        // OMIM Recessive and comphet and one of the var is KV
+        // Only non-KV variant will be labeled PM3
+        if (output1.getCalledVariant().getKnownVar().isOMIMRecessive()) {
+            output2.isPM3 = isV1KVandV2NonKV;
+            output1.isPM3 = isV2KVandV1NonKV;
+        }
+
+        // OMIM Dominant and comphet and one of the var is KV
+        // Only non-KV variant will be labeled BP2 
+        if (output1.getCalledVariant().getKnownVar().isOMIMDominant()) {
+            output2.isBP2 = isV1KVandV2NonKV;
+            output1.isBP2 = isV2KVandV1NonKV;
+        }
+
+        if (output1.isPM3 || output1.isBP2) {
+            output1.initACMG();
+        }
+
+        if (output2.isPM3 || output2.isBP2) {
+            output2.initACMG();
+        }
+    }
+
+    private void doCompHetOutput(byte tierFlag4CompVar, String chVariantPrioritization, SingletonOutput output, float[] coFreq,
             String compHetVar, boolean hasSingleVarFlagged) throws Exception {
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
@@ -265,13 +317,18 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         output.countSingleVar();
         outputCarrierSet.add(carrierIDSB.toString());
 
-        StringJoiner sj = new StringJoiner(","); 
-        sj.add(output.child.getFamilyId());
+        StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getName());
-        sj.add(output.child.getAncestry());
-        sj.add(output.child.getBroadPhenotype());
-        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.child.getFamilyId());
+        sj.add(output.getSingleVariantPrioritization());
+        sj.add(chVariantPrioritization);
+        sj.add(output.getCalledVariant().getATAVLINK());
         sj.add(output.getCalledVariant().getGeneLink());
+        sj.add("'" + output.getCalledVariant().getGeneName() + "'");
+        sj.add(output.getCalledVariant().getVariantIdStr());
+        sj.add(output.getCalledVariant().getImpact());
+        sj.add(output.getCalledVariant().getEffect());
+        sj.add(output.getCalledVariant().getCanonicalEffect());
         sj.add(compHetVar);
         sj.add(FormatManager.getFloat(coFreq[Index.CTRL]));
         sj.add(FormatManager.getByte(tierFlag4CompVar));

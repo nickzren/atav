@@ -16,7 +16,7 @@ import utils.FormatManager;
  */
 public class IGMAFManager {
 
-    private static final String table = "igm_af.variant_010322";
+    private static final String table = "igm_af.variant_042022";
     private static PreparedStatement preparedStatement;
 
     public static void init() {

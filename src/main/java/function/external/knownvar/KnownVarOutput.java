@@ -66,10 +66,26 @@ public class KnownVarOutput {
                 || clinVarOutput.isClinVarPLP();
     }
     
+    public boolean isHGMDDM() {
+        return hgmdOutput.isHGMDDM();
+    }
+    
+    public boolean isClinVarPLP() {
+        return clinVarOutput.isClinVarPLP();
+    }
+    
     // a site has variant is either HGMD "DM" (not CinVar B/LB) or ClinVar P/LP
     public boolean isKnownVariantSite() {
         return hgmdOutput.isHGMDDMSite()
                 || clinVarOutput.isClinVarPLPSite();
+    }
+    
+    public boolean isClinVarPLPSite() {
+        return clinVarOutput.isClinVarPLPSite();
+    }
+    
+    public boolean isHGMDDMSite() {
+        return hgmdOutput.isHGMDDMSite();
     }
 
     // a variant is ClinVar B/LB
@@ -79,6 +95,10 @@ public class KnownVarOutput {
         }
 
         return true;
+    }
+    
+    public boolean isClinVarBLB() {
+        return clinVarOutput.isClinVarBLB();
     }
 
     public boolean isOMIMGene() {
@@ -204,10 +224,22 @@ public class KnownVarOutput {
         return hgmdOutput.is2bpFlankingValid() || clinVarOutput.isPLP2bpFlankingValid();
     }
     
+    public boolean isHGMD2bpFlankingValid() {
+        return hgmdOutput.is2bpFlankingValid();
+    }
+    
+    public boolean isClinVar2bpFlankingValid() {
+        return clinVarOutput.isPLP2bpFlankingValid();
+    }
+    
     public boolean isClinVar25bpFlankingValid() {
         return clinVarOutput.isPLP25bpFlankingValid();
     }
 
+    public String getACMG() {
+        return acmg;
+    }
+    
     @Override
     public String toString() {
         return getStringJoiner().toString();

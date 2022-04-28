@@ -418,8 +418,8 @@ public class CalledVariant extends AnnotatedVariant {
         return isKnownVar2bpFlankingValid()
                 || isInClinGenOrOMIM(carrier)
                 || isInClinVarPathoratio()
-                || isGnomADGenePLIValid()
-                || isGeneMisZValid()
+                || isLoFPLIValid()
+                || isMissenseMisZValid()
                 || isClinVar25bpFlankingValid();
     }
 
@@ -530,5 +530,35 @@ public class CalledVariant extends AnnotatedVariant {
         }
 
         return false;
+    }
+
+    // Automated interpretation of ACMG criteria
+    // genotype is absent among IGM controls and gnomAD (WES & WGS) controls
+    public boolean isPM2(Carrier carrier) {
+        return isGenotypeAbsentAmongControl(carrier.getGT());
+    }
+
+    // De novo (TRIO)
+    public boolean isPS2(boolean isTrio, String denovoFlag) {
+        return isTrio && denovoFlag.equals("DE NOVO");
+    }
+
+    // De novo (DUO) or possible De novo (TRIO)
+    public boolean isPM6(boolean isTrio, String denovoFlag) {
+        if (isTrio) {
+            return !denovoFlag.equals("DE NOVO")
+                    && denovoFlag.contains("DE NOVO");
+        } else {
+            return denovoFlag.equals("DE NOVO");
+        }
+    }
+
+    // LoF variant and occurs within a ClinGen/OMIM gene and genotype is consistent with inheritance
+    // LoF variant and occurs within a ClinVar Pathogenic gene that has pathogenic/likely pathogenic indel or spice/nonsense SNV
+    // LoF variant in gnomAD LoF depleted genes with pLI >= 0.9
+    public boolean isPVS1(Carrier carrier) {
+        return isInClinGenOrOMIM(carrier)
+                || isInClinVarPathoratio()
+                || isLoFPLIValid();
     }
 }

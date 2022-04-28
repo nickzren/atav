@@ -7,6 +7,8 @@ import function.variant.base.Output;
 import function.cohort.base.Sample;
 import global.Data;
 import global.Index;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.StringJoiner;
 import utils.FormatManager;
 
@@ -36,6 +38,22 @@ public class TrioOutput extends Output {
     byte isMissenseDominantAndHaploinsufficient;
     byte isKnownPathogenicVariant;
     byte isHotZone;
+    byte isClinGenVarLoF;
+    byte isLoFdepletedpLI;
+
+    // ACMG
+    private String acmgPathogenicCriteria;
+    private String acmgBenignCriteria;
+    private short acmgPSCount;
+    private short acmgPMCount;
+    private short acmgPPCount;
+    private short acmgBSCount;
+    private short acmgBPCount;
+    boolean isPM3 = false;
+    boolean isBP2 = false;
+
+    private LinkedHashSet<String> singleVariantPrioritizationSet = new LinkedHashSet<>();
+//    private LinkedHashSet<String> bioinformaticsSignatureSet = new LinkedHashSet<>();
 
     public TrioOutput(CalledVariant c) {
         super(c);
@@ -179,21 +197,43 @@ public class TrioOutput extends Output {
     }
 
     public void initTierFlag4SingleVar() {
+        if (!singleVariantPrioritizationSet.isEmpty()) {
+            return;
+        }
+
+        isHotZone = calledVar.isHotZone();
+        isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
+        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
+        isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
+        isClinGenVarLoF = initClinGenVarLoF4SingleVar();
+        isLoFdepletedpLI = initLoFdepletedpLI4SingleVar();
+
         tierFlag4SingleVar = Data.BYTE_NA;
 
         // denovo or hom
         if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
-            if (isDenovoTier1()
-                    || isHomozygousTier1()
+            if (isDenovoTier1()) {
+                if (isHotZone == 1) {
+                    singleVariantPrioritizationSet.add("01_TIER1_DNM_HZ");
+                } else {
+                    singleVariantPrioritizationSet.add("02_TIER1_DNM");
+                }
+                tierFlag4SingleVar = 1;
+            } else if (isHomozygousTier1()
                     || isHemizygousTier1()
                     || isCompoundDeletionTier1()) {
+                singleVariantPrioritizationSet.add("03_TIER1_HOMO_HEMI");
                 tierFlag4SingleVar = 1;
-            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                    && (isDenovoTier2()
-                    || isHomozygousTier2()
-                    || isHemizygousTier2())
-                    || isCompoundDeletionTier2()) {
-                tierFlag4SingleVar = 2;
+            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)) {
+                if (isDenovoTier2()) {
+                    singleVariantPrioritizationSet.add("04_TIER2_DNM");
+                    tierFlag4SingleVar = 2;
+                } else if (isHomozygousTier2()
+                        || isHemizygousTier2()
+                        || isCompoundDeletionTier2()) {
+                    singleVariantPrioritizationSet.add("05_TIER2_HOMO_HEMI");
+                    tierFlag4SingleVar = 2;
+                }
             }
         } else {
             if (calledVar.isMetTier2InclusionCriteria(cCarrier)
@@ -202,11 +242,228 @@ public class TrioOutput extends Output {
             }
         }
 
-        isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
-        isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
-        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
-        isHotZone = calledVar.isHotZone();
+        if (isLoFDominantAndHaploinsufficient == 1) {
+            singleVariantPrioritizationSet.add("06_LOF_GENE");
+        }
+
+        if (isKnownPathogenicVariant == 1) {
+            singleVariantPrioritizationSet.add("07_KNOWN_VAR");
+        } else {
+            if (calledVar.getKnownVar().isClinVarPLPSite()) {
+                singleVariantPrioritizationSet.add("08_CLINVAR_SITE");
+            }
+
+            if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
+                singleVariantPrioritizationSet.add("09_CLINVAR_2BP");
+            }
+
+            if (calledVar.getKnownVar().isHGMDDMSite()) {
+                singleVariantPrioritizationSet.add("10_HGMD_SITE");
+            }
+        }
+
+        if (isMissenseDominantAndHaploinsufficient == 1
+                && calledVar.isClinVar25bpFlankingValid()) {
+            singleVariantPrioritizationSet.add("11_MIS_HOT_SPOT");
+        }
+
+        if (tierFlag4SingleVar == 1
+                && calledVar.getKnownVar().isOMIMGene()
+                && (calledVar.isMissense() || calledVar.isInframe())
+                && calledVar.isMissenseMisZValid()) {
+            singleVariantPrioritizationSet.add("12_TIER1_OMIM_MIS_INFRAME");
+        }
+
+        if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
+            singleVariantPrioritizationSet.add("13_ACMG_GENE");
+        }
+
+//        initBioinformaticsSignatures();
     }
+
+    // ClinGen/Var [LoF]- A protein-truncating predicted variant found in a ClinGen defined dosage sensitive gene, 
+    // or a gene where at least one ClinVar "Pathogenic" loss-of-function allele has been reported. Screen is applied across all four models DNM, HEM, HOM, CHET
+    public byte initClinGenVarLoF4SingleVar() {
+        if (calledVar.isLOF()) {
+            if (denovoFlag.contains("DE NOVO")) {
+                if (calledVar.getKnownVar().isInClinGenSufficientOrSomeEvidence()
+                        || calledVar.isInClinVarPathoratio()) {
+                    return 1;
+                }
+            } else if (denovoFlag.contains("HOMOZYGOUS")
+                    || denovoFlag.contains("HEMIZYGOUS")) {
+                if (calledVar.getKnownVar().isInClinGenRecessiveEvidence()
+                        || calledVar.isInClinVarPathoratio()) {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    // A protein-truncating predicted de novo allele found in a gene reported to be loss-of-function depleted (FDR<0.01, Petrovski et al.), 
+    // or defined as LoF intolerant based on the ExAC paper (p>0.9). Restricted to de novo mutations. For recessive genotypes (HEM, HOM, CHET), pLI/pREC>0.9.
+    public byte initLoFdepletedpLI4SingleVar() {
+        if (calledVar.isLOF() 
+                && calledVar.isGenotypeAbsentAmongControl(cCarrier.getGT())) {
+            if (denovoFlag.contains("DE NOVO")) {
+                if (calledVar.isFDRValid() || calledVar.isPLIValid()) {
+                    return 1;
+                }
+            } else if (denovoFlag.contains("HOMOZYGOUS")
+                    || denovoFlag.contains("HEMIZYGOUS")) {
+                if (calledVar.isPLIValid() || calledVar.isPRECValid()) {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    public void initClinGenVarLoF4CHET() {
+        if (isClinGenVarLoF == 0
+                && calledVar.isLOF()
+                && (calledVar.getKnownVar().isInClinGenRecessiveEvidence()
+                || calledVar.isInClinVarPathoratio())) {
+            isClinGenVarLoF = 1;
+        }
+    }
+
+    public void initLoFdepletedpLI4CHET() {
+        if (isLoFdepletedpLI == 0
+                && calledVar.isLOF()
+                && (calledVar.isPLIValid() || calledVar.isPRECValid())) {
+            isLoFdepletedpLI = 1;
+        }
+    }
+
+//    public void initBioinformaticsSignatures() {
+//        if (denovoFlag.contains("DE NOVO")) {
+//            bioinformaticsSignatureSet.add("DNM");
+//        } else if (denovoFlag.contains("HOMOZYGOUS")) {
+//            bioinformaticsSignatureSet.add("HOMO");
+//        } else if (denovoFlag.contains("HEMIZYGOUS")) {
+//            bioinformaticsSignatureSet.add("HEMI");
+//        } else if (denovoFlag.contains("COMPOUND DELETION")) {
+//            bioinformaticsSignatureSet.add("C_DEL");
+//        }
+//
+//        if (calledVar.isGenotypeAbsentAmongControl(cCarrier.getGT())) {
+//            bioinformaticsSignatureSet.add("ULTRA_RARE");
+//        }
+//
+//        if (calledVar.isLOF()) {
+//            bioinformaticsSignatureSet.add("LOF_VAR");
+//        }
+//
+//        if (calledVar.hasCCDS()) {
+//            bioinformaticsSignatureSet.add("CCDS");
+//        }
+//
+//        if (cCarrier.getGT() == Index.HET) {
+//            if (calledVar.getKnownVar().isInClinGenSufficientOrSomeEvidence()) {
+//                bioinformaticsSignatureSet.add("CLINGEN_GENE");
+//            }
+//
+//            if (calledVar.getKnownVar().isOMIMDominant()) {
+//                bioinformaticsSignatureSet.add("OMIM_GENE");
+//            }
+//        } else if (cCarrier.getGT() == Index.HOM) {
+//            if (calledVar.getKnownVar().isInClinGenRecessiveEvidence()) {
+//                bioinformaticsSignatureSet.add("CLINGEN_GENE");
+//            }
+//
+//            if (calledVar.getKnownVar().isOMIMRecessive()) {
+//                bioinformaticsSignatureSet.add("OMIM_GENE");
+//            }
+//        }
+//
+//        if (!calledVar.getKnownVar().getACMG().equals(Data.STRING_NA)) {
+//            bioinformaticsSignatureSet.add("ACMG_GENE");
+//        }
+//
+//        if (calledVar.getMgi().split(",")[1].equals("1")) {
+//            bioinformaticsSignatureSet.add("MGI_ESSENTIAL");
+//        }
+//
+//        if (calledVar.getKnownVar().isClinVarPLP()) {
+//            bioinformaticsSignatureSet.add("CLINVAR_PLP");
+//        } else if (calledVar.getKnownVar().isClinVarPLPSite()) {
+//            bioinformaticsSignatureSet.add("CLINVAR_PLP_SITE");
+//        } else if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
+//            bioinformaticsSignatureSet.add("CLINVAR_PLP_2BP");
+//        }
+//
+//        if (calledVar.isInClinVarPathoratio()) {
+//            bioinformaticsSignatureSet.add("CLINVAR_PATHORATIO");
+//        }
+//
+//        if (calledVar.getKnownVar().isHGMDDM()) {
+//            bioinformaticsSignatureSet.add("HGMD_DM");
+//        } else if (calledVar.getKnownVar().isHGMDDMSite()) {
+//            bioinformaticsSignatureSet.add("HGMD_DM_SITE");
+//        } else if (calledVar.getKnownVar().isHGMD2bpFlankingValid()) {
+//            bioinformaticsSignatureSet.add("HGMD_DM_2BP");
+//        }
+//
+//        if (isHotZone == 1) {
+//            bioinformaticsSignatureSet.add("HOT_ZONE");
+//        }
+//
+//        if (isMissenseDominantAndHaploinsufficient == 1
+//                && calledVar.isClinVar25bpFlankingValid()) {
+//            bioinformaticsSignatureSet.add("MIS_HOT_SPOT");
+//        }
+//
+//        if (tierFlag4SingleVar == 1
+//                && calledVar.getKnownVar().isOMIMGene()
+//                && (calledVar.isMissense() || calledVar.isInframe())
+//                && calledVar.isMissenseMisZValid()) {
+//            bioinformaticsSignatureSet.add("TIER1_OMIM_MIS_INFRAME");
+//        }
+//
+//        if (calledVar.isLoFPLIValid()) {
+//            bioinformaticsSignatureSet.add("PLI");
+//        }
+//
+//        if (calledVar.isMissenseMisZValid()) {
+//            bioinformaticsSignatureSet.add("MIS_Z");
+//        }
+//
+//        if (calledVar.isRepeatRegion()) {
+//            bioinformaticsSignatureSet.add("REPEAT_REGION");
+//        }
+//    }
+
+    public String getSingleVariantPrioritization() {
+        if (singleVariantPrioritizationSet.isEmpty()) {
+            return Data.STRING_NA;
+        }
+
+        StringJoiner variantPrioritizations = new StringJoiner("|");
+        Iterator itr = singleVariantPrioritizationSet.iterator();
+        while (itr.hasNext()) {
+            variantPrioritizations.add((String) itr.next());
+        }
+
+        return variantPrioritizations.toString();
+    }
+
+//    public String getBioinformaticsSignatures() {
+//        if (bioinformaticsSignatureSet.isEmpty()) {
+//            return Data.STRING_NA;
+//        }
+//
+//        StringJoiner bioinformaticsSignatures = new StringJoiner("|");
+//        Iterator itr = bioinformaticsSignatureSet.iterator();
+//        while (itr.hasNext()) {
+//            bioinformaticsSignatures.add((String) itr.next());
+//        }
+//
+//        return bioinformaticsSignatures.toString();
+//    }
 
     public byte getTierFlag4SingleVar() {
         return tierFlag4SingleVar;
@@ -228,25 +485,245 @@ public class TrioOutput extends Output {
             Output.lofDominantAndHaploinsufficientCount++;
         }
 
-        if (isMissenseDominantAndHaploinsufficient == 1) {
-            Output.missenseDominantAndHaploinsufficientCount++;
-        }
-
         if (isKnownPathogenicVariant == 1) {
             Output.knownPathogenicVarCount++;
         }
+    }
 
-        if (isHotZone == 1) {
-            Output.hotZoneVarCount++;
+    public String getACMGClassification() {
+        boolean isPathogenic = false;
+        boolean isLikelyPathogenic = false;
+        boolean isBenign = false;
+        boolean isLikeBenign = false;
+
+        boolean isPVS1 = calledVar.isPVS1(cCarrier);
+
+        if (isPVS1
+                && (acmgPSCount >= 1
+                || acmgPMCount >= 2
+                || (acmgPMCount == 1 && acmgPPCount == 1)
+                || acmgPPCount >= 2)) {
+            isPathogenic = true;
         }
+
+        if (acmgPSCount >= 2) {
+            isPathogenic = true;
+        }
+
+        if (acmgPSCount == 1
+                && (acmgPMCount >= 3
+                || (acmgPMCount == 2 && acmgPPCount >= 2)
+                || (acmgPMCount == 1 && acmgPPCount >= 4))) {
+            isPathogenic = true;
+        }
+
+        if ((isPVS1 && acmgPMCount == 1)
+                || (acmgPSCount == 1 && acmgPMCount >= 1)
+                || (acmgPSCount == 1 && acmgPPCount >= 2)
+                || acmgPMCount >= 3
+                || (acmgPMCount == 2 && acmgPPCount >= 2)
+                || (acmgPMCount == 1 && acmgPPCount >= 4)) {
+            isLikelyPathogenic = true;
+        }
+
+        if (calledVar.isBA1() || acmgBSCount >= 2) {
+            isBenign = true;
+        }
+
+        if ((acmgBSCount == 1 && acmgBPCount == 1)
+                || acmgBPCount >= 2) {
+            isLikeBenign = true;
+        }
+
+        if ((!isPathogenic && !isLikelyPathogenic && !isBenign && !isLikeBenign) // Other criteria shown above are not met
+                || ((isPathogenic || isLikelyPathogenic)) && (isBenign || isLikeBenign) // the criteria for benign and pathogenic are contradictory
+                ) {
+            return "Uncertain significance";
+        }
+
+        if (isPathogenic) {
+            return "Pathogenic";
+        } else if (isLikelyPathogenic) {
+            return "Likely pathogenic";
+        } else if (isBenign) {
+            return "Benign";
+        } else if (isLikeBenign) {
+            return "Like benign";
+        } else {
+            return "Uncertain significance";
+        }
+    }
+
+    public void initACMG() {
+        acmgPSCount = 0;
+        acmgPMCount = 0;
+        acmgPPCount = 0;
+        acmgBSCount = 0;
+        acmgBPCount = 0;
+
+        initACMGPathogenicCriteria();
+        initACMGBenignCriteria();
+    }
+
+    private void initACMGPathogenicCriteria() {
+        StringJoiner sj = new StringJoiner("|");
+
+        if (calledVar.isPVS1(cCarrier)) {
+            sj.add("PVS1");
+        }
+
+        // PS1 not clear
+        // Same amino acid change as a previously established pathogenic variant regardless of nucleotide change
+        //
+        if (calledVar.isPS2(!isDUO, denovoFlag)) {
+            sj.add("PS2");
+            acmgPSCount++;
+        }
+
+        // PS3 not clear
+        // Well-established in vitro or in vivo functional studies supportive of a damaging effect on the gene or gene product
+        //
+        // PS4 not clear
+        // The prevalence of the variant in affected individuals is significantly increased compared to the prevalence in controls
+        //
+        if (calledVar.isPM1()) {
+            sj.add("PM1");
+            acmgPMCount++;
+        }
+
+        if (calledVar.isPM2(cCarrier)) {
+            sj.add("PM2");
+            acmgPMCount++;
+        }
+
+        if (isPM3) {
+            sj.add("PM3");
+            acmgPMCount++;
+        }
+
+        if (calledVar.isPM4()) {
+            sj.add("PM4");
+            acmgPMCount++;
+        }
+
+        if (calledVar.isPM5()) {
+            sj.add("PM5");
+            acmgPMCount++;
+        }
+
+        if (calledVar.isPM6(!isDUO, denovoFlag)) {
+            sj.add("PM6");
+            acmgPMCount++;
+        }
+
+        // PP1 not clear
+        // Co-segregation with disease in multiple affected family members in a gene definitively known to cause the disease
+        //
+        if (calledVar.isPP2()) {
+            sj.add("PP2");
+            acmgPPCount++;
+        }
+
+        if (calledVar.isPP3()) {
+            sj.add("PP3");
+            acmgPPCount++;
+        }
+
+        // PP4 not clear
+        // Patient’s phenotype or family history is highly specific for a disease with a single genetic etiology
+        if (calledVar.isPP5()) {
+            sj.add("PP5");
+            acmgPPCount++;
+        }
+
+        acmgPathogenicCriteria = sj.toString();
+
+        if (acmgPathogenicCriteria.isEmpty()) {
+            acmgPathogenicCriteria = Data.STRING_NA;
+        }
+    }
+
+    public String getACMGPathogenicCriteria() {
+        return acmgPathogenicCriteria;
+    }
+
+    private void initACMGBenignCriteria() {
+        StringJoiner sj = new StringJoiner("|");
+
+        if (calledVar.isBA1()) {
+            sj.add("BA1");
+        }
+
+        if (calledVar.isBS1()) {
+            sj.add("BS1");
+            acmgBSCount++;
+        }
+
+        if (calledVar.isBS2()) {
+            sj.add("BS2");
+            acmgBSCount++;
+        }
+
+        // BS3 not clear
+        // Well-established in vitro or in vivo functional studies shows no damaging effect on protein function or splicing
+        //
+        // BS4 not clear
+        // Lack of segregation in affected members of a family
+        //
+        if (calledVar.isBP1()) {
+            sj.add("BP1");
+            acmgBPCount++;
+        }
+
+        // BP2 not clear
+        // Observed in trans with a pathogenic variant for a fully penetrant dominant gene/disorder; or observed in cis with a pathogenic variant in any inheritance pattern
+        //
+        if (calledVar.isBP3()) {
+            sj.add("BP3");
+            acmgBPCount++;
+        }
+
+        if (calledVar.isBP4()) {
+            sj.add("BP4");
+            acmgBPCount++;
+        }
+
+        // BP5 not clear
+        // Variant found in a case with an alternate molecular basis for disease
+        //
+        if (calledVar.isBP6()) {
+            sj.add("BP6");
+            acmgBPCount++;
+        }
+
+        if (calledVar.isBP7()) {
+            sj.add("BP7");
+            acmgBPCount++;
+        }
+
+        acmgBenignCriteria = sj.toString();
+
+        if (acmgBenignCriteria.isEmpty()) {
+            acmgBenignCriteria = Data.STRING_NA;
+        }
+    }
+
+    public String getACMGBenignCriteria() {
+        return acmgBenignCriteria;
     }
 
     public String getSummary() {
         StringJoiner sj = new StringJoiner("\n");
 
-        sj.add("'" + calledVar.getGeneName() + "'");
+        sj.add(calledVar.getGeneName());
         sj.add(calledVar.getVariantIdStr());
         sj.add(isDUO ? "DUO" : "TRIO");
+        if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
+            sj.add(denovoFlag);
+        }
+        if (getInheritedFrom() != INHERITED_FROM.NA) {
+            sj.add("Inherited from " + getInheritedFrom().name());
+        }
         sj.add(calledVar.getEffect());
         sj.add(calledVar.getStableId());
         sj.add(calledVar.getHGVS_c());
@@ -264,12 +741,11 @@ public class TrioOutput extends Output {
 
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
-        sj.add(FormatManager.getByte(isMissenseDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
-        sj.add(FormatManager.getByte(isHotZone));
-        sj.add(denovoFlag);
-        sj.add(getInheritedFrom().name());
-        calledVar.getVariantData(sj);
+        sj.add(getACMGClassification());
+        sj.add(getACMGPathogenicCriteria());
+        sj.add(getACMGBenignCriteria());
+//        calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
         sj.add(getGenoStr(mGeno));

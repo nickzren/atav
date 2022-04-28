@@ -37,6 +37,8 @@ import function.cohort.base.Carrier;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
+import function.cohort.singleton.SingletonCommand;
+import function.cohort.trio.TrioCommand;
 import function.external.chm.CHMCommand;
 import function.external.chm.CHMManager;
 import function.external.dbnsfp.DBNSFPCommand;
@@ -81,15 +83,12 @@ public class Output {
     public static int tier1CompoundVarCount;
     public static int tier2CompoundVarCount;
     public static int lofDominantAndHaploinsufficientCount;
-    public static int missenseDominantAndHaploinsufficientCount;
     public static int knownPathogenicVarCount;
-    public static int hotZoneVarCount;
 
     public static StringJoiner getVariantDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
         sj.add("Variant ID");
-        sj.add("ATAV");
         sj.add("Variant Type");
         sj.add("Ref Allele");
         sj.add("Alt Allele");
@@ -101,10 +100,12 @@ public class Output {
     public static StringJoiner getAnnotationDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("Impact");
-        sj.add("Effect");
-        sj.add("Canonical Transcript Effect");
-        sj.add("Gene Name");
+        if (!SingletonCommand.isList && !TrioCommand.isList) {
+            sj.add("Impact");
+            sj.add("Effect");
+            sj.add("Canonical Transcript Effect");
+            sj.add("Gene Name");
+        }
         sj.add("UpToDate Gene Name");
         sj.add("All Gene Symbols");
         sj.add("All Gene Transcript Count");
@@ -124,6 +125,10 @@ public class Output {
     public static StringJoiner getExternalDataHeader() {
         StringJoiner sj = new StringJoiner(",");
 
+        if (KnownVarCommand.isInclude) {
+            sj.add(KnownVarManager.getHeader());
+        }
+
         if (EvsCommand.isInclude) {
             sj.add(EvsManager.getHeader());
         }
@@ -142,10 +147,6 @@ public class Output {
 
         if (GnomADCommand.isIncludeGeneMetrics) {
             sj.add(GnomADManager.getGeneMetricsHeader());
-        }
-
-        if (KnownVarCommand.isInclude) {
-            sj.add(KnownVarManager.getHeader());
         }
 
         if (RvisCommand.isInclude) {
@@ -291,6 +292,8 @@ public class Output {
         sj.add("Sample Name");
         sj.add("Sample Type");
         sj.add("Sample Phenotype");
+        sj.add("Ancestry");
+        sj.add("Broad Phenotype");
         sj.add("GT");
         sj.add("DP");
         sj.add("DP Bin");
@@ -376,6 +379,8 @@ public class Output {
         sj.add(sample.getName());
         sj.add(sample.getType());
         sj.add(sample.getPhenotype());
+        sj.add(sample.getAncestry());
+        sj.add(sample.getBroadPhenotype());
         sj.add(getGenoStr(calledVar.getGT(sample.getIndex())));
         sj.add(FormatManager.getShort(carrier != null ? carrier.getDP() : Data.SHORT_NA));
         sj.add(FormatManager.getShort(calledVar.getDPBin(sample.getIndex())));
@@ -430,8 +435,6 @@ public class Output {
         LogManager.writeAndPrintNoNewLine("Tier 1 Single Var genotype count: " + tier1SingleVarCount);
         LogManager.writeAndPrintNoNewLine("Tier 2 Single Var genotype count: " + tier2SingleVarCount);
         LogManager.writeAndPrintNoNewLine("LoF Dominant And Haploinsufficient Var genotype count: " + lofDominantAndHaploinsufficientCount);
-        LogManager.writeAndPrintNoNewLine("Missense Dominant And Haploinsufficient Var genotype count: " + missenseDominantAndHaploinsufficientCount);
         LogManager.writeAndPrintNoNewLine("Known Pathogenic Var genotype count: " + knownPathogenicVarCount);
-        LogManager.writeAndPrintNoNewLine("Hot Zone Var genotype count: " + hotZoneVarCount);
     }
 }

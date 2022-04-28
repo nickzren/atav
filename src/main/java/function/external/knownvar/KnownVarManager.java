@@ -26,9 +26,9 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2021_4";
-    public static final String clinVarTable = "knownvar.clinvar_2022_01_10";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2022_01_10";
+    public static final String hgmdTable = "knownvar.hgmd_2022_1";
+    public static final String clinVarTable = "knownvar.clinvar_2022_04_08";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2022_04_08";
     public static final String clingenFile =  Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
     public static final String genemap2File = Data.ATAV_HOME + "data/omim/genemap2.txt";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
@@ -59,7 +59,7 @@ public class KnownVarManager {
                 + "AND pos BETWEEN ? AND ? "
                 + "AND (ClinSig like 'Pathogenic%' "
                 + "OR ClinSig like 'Likely_pathogenic%' "
-                + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like 'pathogenic%' OR ClinSigConf like 'Likely_pathogenic%')))";
+                + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like '%pathogenic%' and ClinSigConf not like '%benign%')))";
         preparedStatement4ClinVarPLPVariantFlankingCount = DBManager.initPreparedStatement(sql);
     }
 
@@ -88,7 +88,7 @@ public class KnownVarManager {
         sj.add("ClinGen");
         sj.add("OMIM Disease");
         sj.add("OMIM Inheritance");
-        sj.add("ACMG");
+        sj.add("ACMG 73");
 
         return sj.toString();
     }
@@ -166,7 +166,7 @@ public class KnownVarManager {
             if (KnownVarCommand.isKnownVarPathogenicOnly) {
                 sql += " WHERE ClinSig like 'Pathogenic%' "
                         + "OR ClinSig like 'Likely_pathogenic%' "
-                        + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like 'pathogenic%' OR ClinSigConf like 'Likely_pathogenic%'))";
+                        + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like '%pathogenic%' and ClinSigConf not like '%benign%'))";
             }
 
             ResultSet rs = DBManager.executeQuery(sql);

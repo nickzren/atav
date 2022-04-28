@@ -59,7 +59,8 @@ public class ClinVarOutput {
                 if (tmpClinvar.getClinSig().startsWith("Pathogenic")
                         || tmpClinvar.getClinSig().startsWith("Likely_pathogenic")
                         || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity")
-                        && (tmpClinvar.getClinSigConf().startsWith("Pathogenic") || tmpClinvar.getClinSigConf().startsWith("Likely_pathogenic")))) {
+                        && (tmpClinvar.getClinSigConf().startsWith("Pathogenic") || tmpClinvar.getClinSigConf().startsWith("Likely_pathogenic"))
+                        && !tmpClinvar.getClinSigConf().contains("Benign") && !tmpClinvar.getClinSigConf().contains("Likely_benign"))) {
                     isClinVarPLP = true;
                 }
 
@@ -71,10 +72,7 @@ public class ClinVarOutput {
                 if (tmpClinvar.getClinSig().startsWith("Benign")
                         || tmpClinvar.getClinSig().startsWith("Likely_benign")
                         || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity")
-                        && !tmpClinvar.getClinSigConf().contains("Pathogenic") && !tmpClinvar.getClinSigConf().contains("Likely_pathogenic")
-                        && ((tmpClinvar.getClinSigConf().startsWith("Benign") && !tmpClinvar.getClinSigConf().startsWith("Benign(1)"))
-                        || tmpClinvar.getClinSigConf().startsWith("Benign(1),Likely_benign")
-                        || (tmpClinvar.getClinSigConf().startsWith("Likely_benign") && !tmpClinvar.getClinSigConf().startsWith("Likely_benign(1)"))))) {
+                        && tmpClinvar.getClinSigConf().startsWith("Uncertain_significance"))) {
                     isClinVarBLB = true;
                 }
 

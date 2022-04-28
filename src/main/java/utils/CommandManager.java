@@ -350,9 +350,12 @@ public class CommandManager {
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
                     RvisCommand.isInclude = true;
+                    SubRvisCommand.isInclude = true;
                     TrapCommand.isInclude = true;
                     MgiCommand.isInclude = true;
                     RevelCommand.isInclude = true;
+                    DBNSFPCommand.isInclude = true;
+                    MTRCommand.isInclude = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -409,9 +412,12 @@ public class CommandManager {
                     GnomADCommand.isIncludeGeneMetrics = true;
                     KnownVarCommand.isInclude = true;
                     RvisCommand.isInclude = true;
+                    SubRvisCommand.isInclude = true;
                     TrapCommand.isInclude = true;
                     MgiCommand.isInclude = true;
                     RevelCommand.isInclude = true;
+                    DBNSFPCommand.isInclude = true;
+                    MTRCommand.isInclude = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;

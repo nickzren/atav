@@ -35,6 +35,7 @@ import function.external.gevir.GeVIRManager;
 import function.external.gme.GMECommand;
 import function.external.gme.GMEManager;
 import function.external.gnomad.GnomADExomeCommand;
+import function.external.gnomad.GnomADGene;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADGenomeCommand;
 import function.external.gnomad.GnomADManager;
@@ -110,6 +111,7 @@ public class AnnotatedVariant extends Variant {
     private ExAC exac;
     private GnomADExome gnomADExome;
     private GnomADGenome gnomADGenome;
+    private GnomADGene gnomADGene;
     private Evs evs;
     private float gerpScore;
     private float trapScore;
@@ -153,9 +155,12 @@ public class AnnotatedVariant extends Variant {
             isValid = knownVarOutput.isExcludeClinVarBLB();
         }
 
-        if (isValid && CHMCommand.isExclude) {
+        if (isValid && CHMCommand.isFlag) {
             isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
-            isValid = !isRepeatRegion; // invalid when variant's repeat region is true
+
+            if (CHMCommand.isExclude) {
+                isValid = !isRepeatRegion; // invalid when variant's repeat region is true
+            }
         }
 
         if (isValid && IGMAFCommand.getInstance().isInclude) {
@@ -351,6 +356,10 @@ public class AnnotatedVariant extends Variant {
         if (DBNSFPCommand.isInclude) {
             dbNSFP = DBNSFPManager.getDBNSFP(chrStr, startPosition, allele, isSnv(), transcriptSet);
         }
+
+        if (GnomADCommand.isIncludeGeneMetrics) {
+            gnomADGene = GnomADManager.getGnomADGene(geneName);
+        }
     }
 
     public boolean isValid() {
@@ -428,10 +437,10 @@ public class AnnotatedVariant extends Variant {
     // init MTR score based on most damaging transcript and applied filter
     private boolean isMTRValid() {
         if (MTRCommand.isInclude) {
+            mtr = new MTR(chrStr, startPosition);
+
             // MTR filters will only apply missense variants
             if (effect.startsWith("missense_variant")) {
-                mtr = new MTR(chrStr, startPosition);
-
                 return mtr.isValid();
             }
         }
@@ -478,10 +487,12 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getAnnotationData(StringJoiner sj) {
-        sj.add(impact);
-        sj.add(effect);
-        sj.add(getCanonicalEffect());
-        sj.add("'" + geneName + "'");
+        if (!SingletonCommand.isList && !TrioCommand.isList) {
+            sj.add(impact);
+            sj.add(effect);
+            sj.add(getCanonicalEffect());
+            sj.add("'" + geneName + "'");
+        }
         sj.add("'" + GeneManager.getUpToDateGene(geneName) + "'");
         sj.add(GeneManager.getAllGeneSymbol(geneTranscriptCountMap.keySet()));
         sj.add(GeneManager.getAllGeneTranscriptCount(geneTranscriptCountMap));
@@ -494,6 +505,10 @@ public class AnnotatedVariant extends Variant {
         sj.add(FormatManager.getFloat(polyphenHumvar));
         sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
+    }
+    
+    public String getImpact() {
+        return impact;
     }
 
     public String getStableId() {
@@ -509,7 +524,7 @@ public class AnnotatedVariant extends Variant {
         }
     }
 
-    private String getCanonicalEffect() {
+    public String getCanonicalEffect() {
         StringJoiner sj = new StringJoiner("|");
         for (int id : canonicalEffectIdList) {
             sj.add(EffectManager.getEffectById(id));
@@ -569,6 +584,10 @@ public class AnnotatedVariant extends Variant {
     }
 
     public void getExternalData(StringJoiner sj) {
+        if (KnownVarCommand.isInclude) {
+            sj.merge(getKnownVarStringJoiner());
+        }
+
         if (EvsCommand.isInclude) {
             sj.merge(getEvsStringJoiner());
         }
@@ -587,10 +606,6 @@ public class AnnotatedVariant extends Variant {
 
         if (GnomADCommand.isIncludeGeneMetrics) {
             sj.merge(getGeneMetrics());
-        }
-
-        if (KnownVarCommand.isInclude) {
-            sj.merge(getKnownVarStringJoiner());
         }
 
         if (RvisCommand.isInclude) {
@@ -638,7 +653,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (MTRCommand.isInclude) {
-            sj.add(getMTR());
+            sj.add(getMTRStr());
         }
 
         if (RevelCommand.isInclude) {
@@ -662,10 +677,6 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (CHMCommand.isFlag) {
-            if (isRepeatRegion == null) {
-                isRepeatRegion = CHMManager.isRepeatRegion(chrStr, startPosition);
-            }
-
             sj.add(FormatManager.getBoolean(isRepeatRegion));
         }
 
@@ -715,7 +726,17 @@ public class AnnotatedVariant extends Variant {
     }
 
     public StringJoiner getGeneMetrics() {
-        return GnomADManager.getGeneMetrics(getGeneName());
+        if (gnomADGene == null) {
+            StringJoiner sj = new StringJoiner(",");
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            sj.add(Data.STRING_NA);
+            return sj;
+        } else {
+            return gnomADGene.getGeneMetricsSJ();
+        }
     }
 
     public StringJoiner getKnownVarStringJoiner() {
@@ -770,12 +791,16 @@ public class AnnotatedVariant extends Variant {
         return discovEHR.toString();
     }
 
-    public String getMTR() {
+    public String getMTRStr() {
         if (mtr != null) {
             return mtr.toString();
         } else {
             return "NA,NA,NA";
         }
+    }
+
+    public MTR getMTR() {
+        return mtr;
     }
 
     public String getMPC() {
@@ -849,14 +874,47 @@ public class AnnotatedVariant extends Variant {
     }
 
     // LoF variant in gnomAD LoF depleted genes with pLI >= 0.9
-    public boolean isGnomADGenePLIValid() {
-        return isLOF()
-                && GnomADManager.isGenePLIValid(geneName);
+    public boolean isLoFPLIValid() {
+        return isLOF() && isPLIValid();
+    }
+
+    // LoF variant in gnomAD LoF depleted genes with pREC >= 0.9
+    public boolean isLoFPRECValid() {
+        return isLOF() && isPRECValid();
     }
 
     // Missense variant in gnomAD gene with mis_z >= 2
-    public boolean isGeneMisZValid() {
-        return isMissense() && GnomADManager.isGeneMisZValid(geneName);
+    public boolean isMissenseMisZValid() {
+        return isMissense() && isMisZValid();
+    }
+
+    public boolean isPLIValid() {
+        if (gnomADGene == null) {
+            return false;
+        } else {
+            return gnomADGene.pli >= 0.9;
+        }
+    }
+
+    public boolean isPRECValid() {
+        if (gnomADGene == null) {
+            return false;
+        } else {
+            return gnomADGene.pRec >= 0.9;
+        }
+    }
+
+    public boolean isMisZValid() {
+        if (gnomADGene == null) {
+            return false;
+        } else {
+            return gnomADGene.misZ >= 2;
+        }
+    }
+
+    public boolean isFDRValid() {
+        return mtr.getFDR() != Data.FLOAT_NA
+                && mtr.getFDR() < 0.01;
     }
 
     // any variants in 2bp flanking regions either HGMD DM or ClinVar PLP
@@ -920,7 +978,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     // High or Moderate impacts or TraP >= 0.4
-    public boolean isImpactHighOrModerate() {        
+    public boolean isImpactHighOrModerate() {
         return impact.equals("HIGH")
                 || impact.equals("MODERATE")
                 || trapScore >= 0.4;
@@ -928,5 +986,130 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isMissense() {
         return EffectManager.isMISSENSE(effectID);
+    }
+
+    public boolean isSynonymous() {
+        return EffectManager.isSYNONYMOUS(effectID);
+    }
+
+    public boolean isInframe() {
+        return EffectManager.isINFRAME(effectID);
+    }
+
+    public boolean isStopLost() {
+        return EffectManager.isStopLost(effectID);
+    }
+
+    // Automated interpretation of ACMG criteria
+    // IGM and gnomAD control AF > 5%
+    public boolean isBA1() {
+        return defaultControl.getAF() > 0.05f
+                && gnomADExome.getControlAF() > 0.05f
+                && gnomADGenome.getControlAF() > 0.05f;
+
+    }
+
+    // IGM and gnomAD control AF >= 1%
+    public boolean isBS1() {
+        return defaultControl.getAF() > 0.01f
+                && gnomADExome.getControlAF() > 0.01f
+                && gnomADGenome.getControlAF() > 0.01f;
+
+    }
+
+    /*
+        OMIM Inheritance NA --> do not apply
+        OMIM Dominant & Recessive / X-Linked with IGM and gnomAD control HOM/HEMI count >= 3
+        OMIM Recessive/X-Linked with IGM and gnomAD control HOM/HEMI count >= 3
+        OMIM Dominant with IGM and gnomAD control HET count >= 3
+     */
+    public boolean isBS2() {
+        if (knownVarOutput.getOMIMInheritance().equals(Data.STRING_NA)) {
+            return false;
+        } else {
+            if (knownVarOutput.isOMIMDominant() && knownVarOutput.isOMIMRecessive()) {
+                return defaultControl.getNHOM()
+                        + gnomADExome.getControlNHOM()
+                        + gnomADGenome.getControlNHOM() >= 3;
+            } else if (knownVarOutput.isOMIMRecessive()) {
+                return defaultControl.getNHOM()
+                        + gnomADExome.getControlNHOM()
+                        + gnomADGenome.getControlNHOM() >= 3;
+            } else if (knownVarOutput.isOMIMDominant()) {
+                return defaultControl.getControlNHET()
+                        + gnomADExome.getControlNHET()
+                        + gnomADGenome.getControlNHET() >= 3;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    // when effect contains/end with 'synonymous_variant' and TraP < 0.4
+    public boolean isBP7() {
+        return isSynonymous() && trapScore < 0.4;
+    }
+
+    // missense variant and gene fall into intervar bp1_genes list
+    public boolean isBP1() {
+        return isMissense() && GeneManager.isInterVarBP1Gene(geneName);
+    }
+
+    // missense variant in 25bp flanking regions with >= 6 ClinVar P/LP
+    public boolean isPM1() {
+        return isMissense() && isClinVar25bpFlankingValid();
+    }
+
+    // missense variant and gene fall into intervar pp2_gene list
+    public boolean isPP2() {
+        return isMissense() && GeneManager.isInterVarPP2Gene(geneName);
+    }
+
+    // missense variant and (polyphenHumvar < 0.4335 or REVEL < 0.2 or SubRVIS exon/domain centile > 50)
+    public boolean isBP4() {
+        return isMissense()
+                && ((polyphenHumvar < 0.4335 && polyphenHumvar != Data.FLOAT_NA)
+                || (revel < 0.2 && revel != Data.FLOAT_NA)
+                || subRvisOutput.getExonPercentile() > 50
+                || subRvisOutput.getDomainPercentile() > 50);
+    }
+
+    // missense variant and (polyphenHumvar >= 0.9035 or REVEL > 0.8 or SubRVIS exon/domain centile < 35 || dbNSFP siftPred is D || dbNSFP polyphen2HDIVPred is D || dbNSFP polyphen2HVARPred is D)
+    public boolean isPP3() {
+        return isMissense()
+                && (polyphenHumvar >= 0.9035
+                || revel >= 0.8
+                || subRvisOutput.getExonPercentile() <= 35
+                || subRvisOutput.getDomainPercentile() <= 35
+                || dbNSFP.isValid(stableId));
+    }
+
+    // missense variant in 2bp flanking regions either HGMD DM (not ClinVar B/LB) or ClinVar P/LP
+    public boolean isPM5() {
+        return isMissense() && isKnownVar2bpFlankingValid();
+    }
+
+    // In-frame in/del in repeat region
+    public boolean isBP3() {
+        return isInframe() && isRepeatRegion;
+    }
+
+    // in-frame in/del in a non-repeat region or stop-loss variant
+    public boolean isPM4() {
+        return (isInframe() && !isRepeatRegion) || isStopLost();
+    }
+
+    public boolean isRepeatRegion() {
+        return isRepeatRegion;
+    }
+
+    // Known Pathogenic Variant
+    public boolean isPP5() {
+        return knownVarOutput.isKnownVariant();
+    }
+
+    // ClinVar B/LB
+    public boolean isBP6() {
+        return knownVarOutput.isClinVarBLB();
     }
 }
