@@ -9,6 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 import java.util.zip.GZIPInputStream;
 import utils.ErrorManager;
@@ -21,6 +24,9 @@ public class DPBinParser {
 
     private static String input = "/Users/nick/Desktop/gvcf/IGM-CUIMC-LMEC109B.hard-filtered.gvcf.gz";
     private static String output = "/Users/nick/Desktop/gvcf/IGM-CUIMC-LMEC109B.DP_bins.txt";
+
+    private static Set<String> chrSet = new HashSet<>(Arrays.asList(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+        "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "M"}));
 
     private static BufferedReader br;
     private static BufferedWriter bw;
@@ -65,22 +71,24 @@ public class DPBinParser {
                 // FORMAT value
                 String[] tmp = lineStr.split("\t");
 
-                String chr = tmp[0];
+                String chr = tmp[0].replace("chr", "");
                 int pos = Integer.parseInt(tmp[1]);
                 String alt = tmp[4];
                 String info = tmp[7];
                 String format = tmp[8];
                 String formatValue = tmp[9];
 
-//                if(chr.equals("chr1")) {
-//                    continue;
-//                }
-//                
-//                if (chr.equals("chr2") && pos == 10475) {
-//                    System.out.println("");
-//                }
+                if(!chrSet.contains(chr)) {
+                    continue;
+                }
+                
+                if (!currentChr.equals(Data.STRING_NA)
+                        && !currentChr.equals(chr)) {
+                    int blockInteval = startPos + 1000 - currentPosition;
+                    addDPBinToStack(dpBinStack, blockInteval + "a");
 
-                if (!currentChr.equals(chr)) {
+                    outputDPBin(lineStr, blockId, dpBinStack);
+
                     currentPosition = Data.INTEGER_NA;
                     blockId = Data.INTEGER_NA;
                     startPos = Data.INTEGER_NA;
@@ -173,10 +181,6 @@ public class DPBinParser {
                         currentPosition++;
                     }
                 }
-
-//                if (blockId == 137) {
-//                    break;
-//                }
             }
 
             bw.flush();
