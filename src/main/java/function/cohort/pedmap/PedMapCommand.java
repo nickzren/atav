@@ -28,6 +28,8 @@ public class PedMapCommand {
     public static boolean keepPed = false;
     public static boolean outputExperimentId = false;
     
+    public static boolean isTrio = false;
+    
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
         while (iterator.hasNext()) {
@@ -70,7 +72,10 @@ public class PedMapCommand {
                     break;
                 case "--output-experiment-id":
                     outputExperimentId = true;
-                    break;                    
+                    break;
+                case "--trio":
+                    isTrio = true;
+                    break;
                 default:
                     continue;
             }

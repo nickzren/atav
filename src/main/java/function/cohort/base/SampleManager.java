@@ -261,19 +261,25 @@ public class SampleManager {
 
     // only trio or singleton or coverage summary analysis support sample name as input for --sample
     private static void addSampleToList(String sampleName) {
-        if (!SingletonCommand.isList && !TrioCommand.isList && !CoverageCommand.isCoverageSummary) {
+        if (!SingletonCommand.isList 
+                && !TrioCommand.isList 
+                && !CoverageCommand.isCoverageSummary
+                && !PedMapCommand.isPedMap) {
             LogManager.writeAndPrintNoNewLine("\nError sample (" + sampleName + ") in sample file.");
-            ErrorManager.print("Only --list-trio or --list-singleton or --coverage-summary allows input sample name for option --sample.", ErrorManager.INPUT_PARSING);
+            ErrorManager.print("Only --list-trio or --list-singleton "
+                    + "or --coverage-summary or --ped-map allows input sample name for option --sample.", ErrorManager.INPUT_PARSING);
         }
 
         try {
             if (SingletonCommand.isList
-                    || (CoverageCommand.isCoverageSummary && !CoverageCommand.isTrio)) {
+                    || (CoverageCommand.isCoverageSummary && !CoverageCommand.isTrio)
+                    || (PedMapCommand.isPedMap && !PedMapCommand.isTrio)) {
                 addSampleToSingletonList(sampleName);
             }
 
             if (TrioCommand.isList
-                    || (CoverageCommand.isCoverageSummary && CoverageCommand.isTrio)) {
+                    || (CoverageCommand.isCoverageSummary && CoverageCommand.isTrio)
+                    || (PedMapCommand.isPedMap && PedMapCommand.isTrio)) {
                 addSampleToTrioList(sampleName);
             }
         } catch (Exception e) {

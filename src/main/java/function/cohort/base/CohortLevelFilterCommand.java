@@ -1,5 +1,6 @@
 package function.cohort.base;
 
+import function.cohort.pedmap.PedMapCommand;
 import function.cohort.singleton.SingletonCommand;
 import function.cohort.trio.TrioCommand;
 import function.coverage.base.CoverageCommand;
@@ -59,7 +60,7 @@ public class CohortLevelFilterCommand {
             switch (option.getName()) {
                 case "--sample":
                     // diagnostic analysis allow input sample name
-                    if (SingletonCommand.isList || TrioCommand.isList || CoverageCommand.isCoverageSummary) {
+                    if (SingletonCommand.isList || TrioCommand.isList || CoverageCommand.isCoverageSummary || PedMapCommand.isPedMap) {
                         inputSample = option.getValue();
                     } else {
                         inputSample = getValidPath(option);
