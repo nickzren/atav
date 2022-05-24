@@ -28,6 +28,10 @@ public class DPBinParser {
     private static Set<String> chrSet = new HashSet<>(Arrays.asList(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
         "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "M"}));
 
+    private static final String DP_LESS_THAN_10_BIN = "a";
+    private static final String DP_LARGER_OR_EQUAL_THAN_10_BIN = "b";
+    private static final int DP_BIN_BLOCK_LENGTH = 1000; // fixed 1000bp
+
     private static BufferedReader br;
     private static BufferedWriter bw;
 
@@ -35,7 +39,7 @@ public class DPBinParser {
         run();
     }
 
-    public static void initReadWrite() throws Exception {
+    private static void initReadWrite() throws Exception {
         File f = new File(input);
         GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
         Reader decoder = new InputStreamReader(in);
@@ -48,17 +52,19 @@ public class DPBinParser {
         try {
             initReadWrite();
 
-            String lineStr = "";
             Stack<String> dpBinStack = new Stack<>(); // per block dp bin stack
             String currentChr = Data.STRING_NA;
-            int currentPosition = Data.INTEGER_NA;
-            int blockId = Data.INTEGER_NA;
-            int startPos = Data.INTEGER_NA;
+            int currentPos = Data.INTEGER_NA;
+            int currentBlockId = Data.INTEGER_NA;
+            int currentStartPos = Data.INTEGER_NA; // start pos of the block
+
+            String lineStr = "";
             while ((lineStr = br.readLine()) != null) {
                 if (lineStr.startsWith("#")) {
                     continue;
                 }
 
+                // gvcf columns:
                 // #CHROM 0
                 // POS    1
                 // ID     2 
@@ -73,112 +79,93 @@ public class DPBinParser {
 
                 String chr = tmp[0].replace("chr", "");
                 int pos = Integer.parseInt(tmp[1]);
-                String alt = tmp[4];
+                String alt = tmp[4]; // w or wo <NON_REF>
                 String info = tmp[7];
                 String format = tmp[8];
                 String formatValue = tmp[9];
 
-                if(!chrSet.contains(chr)) {
+                if (!chrSet.contains(chr)) {
                     continue;
                 }
-                
+
+                // when reaching to new chr - complete the last block from previous chr
                 if (!currentChr.equals(Data.STRING_NA)
                         && !currentChr.equals(chr)) {
-                    int blockInteval = startPos + 1000 - currentPosition;
-                    addDPBinToStack(dpBinStack, blockInteval + "a");
+                    int blockInteval = currentStartPos + DP_BIN_BLOCK_LENGTH - currentPos;
+                    addDPBinToStack(dpBinStack, blockInteval + DP_LESS_THAN_10_BIN);
+                    outputDPBin(currentBlockId, dpBinStack);
+                    currentPos = Data.INTEGER_NA;
 
-                    outputDPBin(lineStr, blockId, dpBinStack);
-
-                    currentPosition = Data.INTEGER_NA;
-                    blockId = Data.INTEGER_NA;
-                    startPos = Data.INTEGER_NA;
+                    currentBlockId = Data.INTEGER_NA;
+                    currentStartPos = Data.INTEGER_NA;
                 }
 
-                if (blockId != Data.INTEGER_NA
-                        && blockId < Math.floorDiv(pos, 1000)) {
-                    int blockInteval = startPos + 1000 - currentPosition;
-                    addDPBinToStack(dpBinStack, blockInteval + "a");
-
-                    outputDPBin(lineStr, blockId, dpBinStack);
-                    currentPosition = Data.INTEGER_NA;
+                // when reaching to new block - complete the previous block
+                if (currentBlockId != Data.INTEGER_NA
+                        && currentBlockId < Math.floorDiv(pos, DP_BIN_BLOCK_LENGTH)) {
+                    int blockInteval = currentStartPos + DP_BIN_BLOCK_LENGTH - currentPos;
+                    addDPBinToStack(dpBinStack, blockInteval + DP_LESS_THAN_10_BIN);
+                    outputDPBin(currentBlockId, dpBinStack);
+                    currentPos = Data.INTEGER_NA;
                 }
 
-                blockId = Math.floorDiv(pos, 1000);
-                startPos = blockId * 1000;
+                currentBlockId = Math.floorDiv(pos, DP_BIN_BLOCK_LENGTH);
+                currentStartPos = currentBlockId * DP_BIN_BLOCK_LENGTH;
 
-                if (currentPosition == Data.INTEGER_NA) {
-                    if (pos > startPos) {
-                        int interval = pos - startPos;
-                        addDPBinToStack(dpBinStack, interval + "a");
-                    }
-                } else if (currentPosition < pos) {
-                    int interval = pos - currentPosition;
-                    addDPBinToStack(dpBinStack, interval + "a");
+                // when reaching to start pos of new chr 
+                if (currentPos == Data.INTEGER_NA) {
+                    int interval = pos - currentStartPos;
+                    addDPBinToStack(dpBinStack, interval + DP_LESS_THAN_10_BIN);
+                } // when reaching to next pos the current block
+                else if (currentPos < pos) {
+                    int interval = pos - currentPos;
+                    addDPBinToStack(dpBinStack, interval + DP_LESS_THAN_10_BIN);
                 }
 
                 currentChr = chr;
-                currentPosition = pos;
+                currentPos = pos;
 
+                // non variant sites
                 if (alt.equals("<NON_REF>")) {
-                    // NON_REF sites only
-
-                    if (!format.split(":")[4].equals("MIN_DP")) {
-                        System.out.println("MIN_DP order changed from FORMAT field");
-                        System.out.println(lineStr);
-                        System.exit(1);
-                    }
-
-                    int minDP = Integer.valueOf(formatValue.split(":")[4]);
+                    int minDP = getMinDP(format, formatValue);
                     String bin = getBinByDP(minDP);
 
-                    int end = Integer.valueOf(info.replace("END=", ""));
-                    int interval = end - pos + 1;
+                    int endPos = Integer.valueOf(info.replace("END=", ""));
+                    int interval = endPos - pos + 1;
 
-                    while (currentPosition + interval >= startPos + 1000) {
-                        int blockInteval = startPos + 1000 - currentPosition;
+                    // when interval covered more than one blocks
+                    while (currentPos + interval >= currentStartPos + DP_BIN_BLOCK_LENGTH) {
+                        int blockInteval = currentStartPos + DP_BIN_BLOCK_LENGTH - currentPos;
                         addDPBinToStack(dpBinStack, blockInteval + bin);
-
-                        outputDPBin(lineStr, blockId, dpBinStack);
+                        outputDPBin(currentBlockId, dpBinStack);
 
                         interval = interval - blockInteval;
-                        startPos = startPos + 1000;
-                        currentPosition = startPos;
-                        blockId += 1;
+                        currentStartPos = currentStartPos + DP_BIN_BLOCK_LENGTH;
+                        currentPos = currentStartPos;
+                        currentBlockId++;
                     }
 
+                    // process the last part of the original interval
                     if (interval != 0) {
                         addDPBinToStack(dpBinStack, interval + bin);
-                        currentPosition = end + 1;
+                        currentPos = endPos + 1;
                     }
-                } else {
-                    // variants site
-                    if (!info.startsWith("DP=")) {
-                        System.out.println("DP order changed from INFO field");
-                        System.out.println(lineStr);
-                        System.exit(1);
-                    }
-
-                    String dpStr = info.split(";")[0]; // DP=XX
-                    int dp = Integer.valueOf(dpStr.split("=")[1]);
-
+                } // variants site
+                else {
+                    int dp = getDP(info);
                     String bin = getBinByDP(dp);
 
-                    int interval = 1;
-                    while (currentPosition + interval >= startPos + 1000) {
-                        int blockInteval = startPos + 1000 - currentPosition;
-                        addDPBinToStack(dpBinStack, blockInteval + bin);
-
-                        outputDPBin(lineStr, blockId, dpBinStack);
-
-                        interval = interval - blockInteval;
-                        startPos = startPos + 1000;
-                        currentPosition = startPos;
-                        blockId += 1;
-                    }
-
-                    if (interval != 0) {
+                    int interval = 1; // variant site always 1bp
+                    if (currentPos + interval == currentStartPos + DP_BIN_BLOCK_LENGTH) {
                         addDPBinToStack(dpBinStack, interval + bin);
-                        currentPosition++;
+                        outputDPBin(currentBlockId, dpBinStack);
+
+                        currentStartPos = currentStartPos + DP_BIN_BLOCK_LENGTH;
+                        currentPos = currentStartPos;
+                        currentBlockId++;
+                    } else {
+                        addDPBinToStack(dpBinStack, interval + bin);
+                        currentPos++;
                     }
                 }
             }
@@ -190,56 +177,79 @@ public class DPBinParser {
         }
     }
 
-    public static void outputDPBin(String lineStr, int blockId, Stack<String> dpBinStack) throws IOException {
+    // get MIN_DP from NON_REF sites
+    private static int getMinDP(String format, String formatValue) {
+        if (!format.split(":")[4].equals("MIN_DP")) {
+            ErrorManager.print("MIN_DP order changed from FORMAT field: " + format, ErrorManager.UNEXPECTED_FAIL);
+        }
+
+        return Integer.valueOf(formatValue.split(":")[4]);
+    }
+
+    // get DP from variant site
+    private static int getDP(String info) {
+        if (!info.startsWith("DP=")) {
+            ErrorManager.print("DP order changed from INFO field" + info, ErrorManager.UNEXPECTED_FAIL);
+        }
+
+        return Integer.valueOf(info.split(";")[0].split("=")[1]);
+    }
+
+    private static void outputDPBin(int blockId, Stack<String> dpBinStack) throws IOException {
         StringBuilder dpBinStrSB = new StringBuilder();
 
         int interval = 0;
         while (!dpBinStack.isEmpty()) {
             String bin = dpBinStack.remove(0);
-            interval += Integer.valueOf(bin.substring(0, bin.length() - 1));
             dpBinStrSB.append(bin);
+            interval += Integer.valueOf(bin.substring(0, bin.length() - 1));
+        }
+
+        if (interval != DP_BIN_BLOCK_LENGTH) {
+            ErrorManager.print("interval != 1000, blockId: " + blockId, ErrorManager.UNEXPECTED_FAIL);
         }
 
         String dpBinStr = dpBinStrSB.toString();
-
-        if (!dpBinStr.equals("1000a")) {
+        if (!dpBinStr.equals("1000a")) { // skip to output if all site's DP < 10
             bw.write(String.valueOf(blockId));
             bw.write("\t");
             bw.write(dpBinStrSB.toString());
             bw.newLine();
         }
-
-        if (interval != 1000) {
-            System.out.println(lineStr);
-            bw.flush();
-            bw.close();
-            System.exit(1);
-        }
     }
 
-    public static void addDPBinToStack(Stack<String> dpBinStack, String intervalDPBin) {
+    // add interval DP Bin to 1000bp DP Bin stack and potentially combined with previous DP Bin 
+    private static void addDPBinToStack(Stack<String> dpBinStack, String currentIntervalDPBin) {
         if (dpBinStack.isEmpty()) {
-            dpBinStack.add(intervalDPBin);
+            dpBinStack.add(currentIntervalDPBin);
         } else {
-            String bin = dpBinStack.pop();
+            String previousIntervalDPBin = dpBinStack.pop();
 
-            if (bin.charAt(bin.length() - 1) == intervalDPBin.charAt(intervalDPBin.length() - 1)) {
-                int interval = Integer.valueOf(bin.substring(0, bin.length() - 1))
-                        + Integer.valueOf(intervalDPBin.substring(0, intervalDPBin.length() - 1));
-                intervalDPBin = interval + intervalDPBin.substring(intervalDPBin.length() - 1);
+            char previousBin = previousIntervalDPBin.charAt(previousIntervalDPBin.length() - 1);
+            char currentBin = currentIntervalDPBin.charAt(currentIntervalDPBin.length() - 1);
+
+            // check: if current bin is the same as previous bin 
+            // yes: merged two dp bins into current interval dp bin
+            // no: add previous dp bin back to stack
+            if (previousBin == currentBin) {
+                int previousInterval = Integer.valueOf(previousIntervalDPBin.substring(0, previousIntervalDPBin.length() - 1));
+                int currentInteval = Integer.valueOf(currentIntervalDPBin.substring(0, currentIntervalDPBin.length() - 1));
+
+                int interval = previousInterval + currentInteval;
+                currentIntervalDPBin = interval + String.valueOf(currentBin);
             } else {
-                dpBinStack.add(bin);
+                dpBinStack.add(previousIntervalDPBin);
             }
 
-            dpBinStack.add(intervalDPBin);
+            dpBinStack.add(currentIntervalDPBin);
         }
     }
 
-    public static String getBinByDP(int dp) {
+    private static String getBinByDP(int dp) {
         if (dp < 10) {
-            return "a";
+            return DP_LESS_THAN_10_BIN;
         } else {
-            return "b";
+            return DP_LARGER_OR_EQUAL_THAN_10_BIN;
         }
     }
 }
