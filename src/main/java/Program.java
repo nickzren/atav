@@ -121,6 +121,8 @@ import function.external.topmed.ListTopMed;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapManager;
+import function.nondb.gvcf.GVCFCommand;
+import function.nondb.gvcf.GVCFParser;
 import function.test.Test;
 import function.test.TestCommand;
 import utils.EmailManager;
@@ -338,6 +340,8 @@ public class Program {
                 runAnalysis(new ListIranome());
             } else if (TestCommand.isTest) { // Test Functions
                 runAnalysis(new Test());
+            } else if (GVCFCommand.isRun) {
+                runAnalysis(new GVCFParser());
             }
         } catch (Exception e) {
             ErrorManager.send(e);

@@ -1,5 +1,6 @@
 package function.nondb.gvcf;
 
+import function.AnalysisBase;
 import global.Data;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,48 +11,76 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.zip.GZIPInputStream;
+import utils.CommonCommand;
 import utils.ErrorManager;
 
 /**
  *
  * @author nick
  */
-public class DPBinParser {
+public class GVCFParser extends AnalysisBase {
 
-    private static String input = "/Users/nick/Desktop/gvcf/IGM-CUIMC-LMEC109B.hard-filtered.gvcf.gz";
-    private static String output = "/Users/nick/Desktop/gvcf/IGM-CUIMC-LMEC109B.DP_bins.txt";
+    private static final String[] chrArray = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+        "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "M"};
+    private static Set<String> chrSet = new HashSet<>(Arrays.asList(chrArray));
 
-    private static Set<String> chrSet = new HashSet<>(Arrays.asList(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-        "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "M"}));
+    public static HashMap<String, BufferedWriter> dpBinChrBWMap = new HashMap<>();
 
     private static final String DP_LESS_THAN_10_BIN = "a";
     private static final String DP_LARGER_OR_EQUAL_THAN_10_BIN = "b";
     private static final int DP_BIN_BLOCK_LENGTH = 1000; // fixed 1000bp
 
-    private static BufferedReader br;
-    private static BufferedWriter bw;
+    private static BufferedReader gvcfBR;
 
-    public static void main(String[] args) {
-        run();
-    }
-
-    private static void initReadWrite() throws Exception {
-        File f = new File(input);
-        GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
-        Reader decoder = new InputStreamReader(in);
-        br = new BufferedReader(decoder);
-
-        bw = new BufferedWriter(new FileWriter(output));
-    }
-
-    public static void run() {
+    @Override
+    public void initOutput() {
         try {
-            initReadWrite();
+            File f = new File(GVCFCommand.gvcfFilePath);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            gvcfBR = new BufferedReader(decoder);
 
+            for (String chr : chrArray) {
+                String outputFileName = CommonCommand.realOutputPath + File.separator + "DP_bins_chr" + chr;
+                dpBinChrBWMap.put(chr, new BufferedWriter(new FileWriter(new File(outputFileName))));
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    @Override
+    public void closeOutput() {
+        try {
+            for (String chr : chrArray) {
+                dpBinChrBWMap.get(chr).flush();
+                dpBinChrBWMap.get(chr).close();
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    @Override
+    public void doAfterCloseOutput() {
+    }
+
+    @Override
+    public void beforeProcessDatabaseData() {
+    }
+
+    @Override
+    public void afterProcessDatabaseData() {
+    }
+
+    @Override
+    public void processDatabaseData() {
+        try {
             Stack<String> dpBinStack = new Stack<>(); // per block dp bin stack
             String currentChr = Data.STRING_NA;
             int currentPos = Data.INTEGER_NA;
@@ -59,7 +88,7 @@ public class DPBinParser {
             int currentStartPos = Data.INTEGER_NA; // start pos of the block
 
             String lineStr = "";
-            while ((lineStr = br.readLine()) != null) {
+            while ((lineStr = gvcfBR.readLine()) != null) {
                 if (lineStr.startsWith("#")) {
                     continue;
                 }
@@ -93,7 +122,7 @@ public class DPBinParser {
                         && !currentChr.equals(chr)) {
                     int blockInteval = currentStartPos + DP_BIN_BLOCK_LENGTH - currentPos;
                     addDPBinToStack(dpBinStack, blockInteval + DP_LESS_THAN_10_BIN);
-                    outputDPBin(currentBlockId, dpBinStack);
+                    outputDPBin(currentChr, currentBlockId, dpBinStack);
                     currentPos = Data.INTEGER_NA;
 
                     currentBlockId = Data.INTEGER_NA;
@@ -105,7 +134,7 @@ public class DPBinParser {
                         && currentBlockId < Math.floorDiv(pos, DP_BIN_BLOCK_LENGTH)) {
                     int blockInteval = currentStartPos + DP_BIN_BLOCK_LENGTH - currentPos;
                     addDPBinToStack(dpBinStack, blockInteval + DP_LESS_THAN_10_BIN);
-                    outputDPBin(currentBlockId, dpBinStack);
+                    outputDPBin(currentChr, currentBlockId, dpBinStack);
                     currentPos = Data.INTEGER_NA;
                 }
 
@@ -137,7 +166,7 @@ public class DPBinParser {
                     while (currentPos + interval >= currentStartPos + DP_BIN_BLOCK_LENGTH) {
                         int blockInteval = currentStartPos + DP_BIN_BLOCK_LENGTH - currentPos;
                         addDPBinToStack(dpBinStack, blockInteval + bin);
-                        outputDPBin(currentBlockId, dpBinStack);
+                        outputDPBin(currentChr, currentBlockId, dpBinStack);
 
                         interval = interval - blockInteval;
                         currentStartPos = currentStartPos + DP_BIN_BLOCK_LENGTH;
@@ -158,7 +187,7 @@ public class DPBinParser {
                     int interval = 1; // variant site always 1bp
                     if (currentPos + interval == currentStartPos + DP_BIN_BLOCK_LENGTH) {
                         addDPBinToStack(dpBinStack, interval + bin);
-                        outputDPBin(currentBlockId, dpBinStack);
+                        outputDPBin(currentChr, currentBlockId, dpBinStack);
 
                         currentStartPos = currentStartPos + DP_BIN_BLOCK_LENGTH;
                         currentPos = currentStartPos;
@@ -169,9 +198,6 @@ public class DPBinParser {
                     }
                 }
             }
-
-            bw.flush();
-            bw.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -195,7 +221,7 @@ public class DPBinParser {
         return Integer.valueOf(info.split(";")[0].split("=")[1]);
     }
 
-    private static void outputDPBin(int blockId, Stack<String> dpBinStack) throws IOException {
+    private static void outputDPBin(String chr, int blockId, Stack<String> dpBinStack) throws IOException {
         StringBuilder dpBinStrSB = new StringBuilder();
 
         int interval = 0;
@@ -211,6 +237,7 @@ public class DPBinParser {
 
         String dpBinStr = dpBinStrSB.toString();
         if (!dpBinStr.equals("1000a")) { // skip to output if all site's DP < 10
+            BufferedWriter bw = dpBinChrBWMap.get(chr);
             bw.write(String.valueOf(blockId));
             bw.write("\t");
             bw.write(dpBinStrSB.toString());
@@ -251,5 +278,10 @@ public class DPBinParser {
         } else {
             return DP_LARGER_OR_EQUAL_THAN_10_BIN;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Start running gvcf parser function";
     }
 }

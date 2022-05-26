@@ -48,6 +48,7 @@ import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
 import function.external.synrvis.SynRvisCommand;
 import function.external.topmed.TopMedCommand;
+import function.nondb.gvcf.GVCFCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
 import java.io.BufferedReader;
@@ -597,6 +598,11 @@ public class CommandManager {
                     CommonCommand.isNonSampleAnalysis = true;
                     TestCommand.isTest = true;
                     break;
+                case "--parse-gvcf-for-atav-db":
+                    GVCFCommand.isRun = true;
+                    CommonCommand.isNonDBAnalysis = true;
+                    CommonCommand.isNonSampleAnalysis = true;
+                    break;
                 default:
                     continue;
             }
@@ -659,6 +665,8 @@ public class CommandManager {
 
         } else if (TestCommand.isTest) { // Test Functions
             TestCommand.initOptions(optionList.iterator());
+        } else if (GVCFCommand.isRun) {
+            GVCFCommand.initOptions(optionList.iterator());
         }
     }
 
