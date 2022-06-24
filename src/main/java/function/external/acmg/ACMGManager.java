@@ -14,11 +14,11 @@ import utils.FormatManager;
  */
 public class ACMGManager {
 
-    public static final String acmgTable = "knownvar.acmg_v3";
+    public static final String acmgTable = "knownvar.acmg_v3_1";
     private static final HashMap<String, String> acmgMap = new HashMap<>();
 
     public static String getHeader() {
-        return "ACMG";
+        return "ACMG Disease";
     }
 
     public static String getVersion() {
