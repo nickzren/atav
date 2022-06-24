@@ -32,7 +32,7 @@ public class KnownVarManager {
     public static final String clingenFile =  Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
     public static final String genemap2File = Data.ATAV_HOME + "data/omim/genemap2.txt";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
-    public static final String acmgTable = "knownvar.acmg_v3";
+    public static final String acmgTable = "knownvar.acmg_v3_1";
     public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
 
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
@@ -88,7 +88,7 @@ public class KnownVarManager {
         sj.add("ClinGen");
         sj.add("OMIM Disease");
         sj.add("OMIM Inheritance");
-        sj.add("ACMG 73");
+        sj.add("ACMG Disease");
 
         return sj.toString();
     }
