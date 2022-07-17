@@ -82,6 +82,15 @@ public class Annotation {
 
         polyphenHumdivCCDS = isCCDS ? polyphenHumdiv : Data.FLOAT_NA;
         polyphenHumvarCCDS = isCCDS ? polyphenHumvar : Data.FLOAT_NA;
+
+        checkValid();
+    }
+
+    private void checkValid() {
+        isValid = GeneManager.isValid(this, chr, pos, indelLength)
+                && TranscriptManager.isTranscriptBoundaryValid(stableId, pos, indelLength)
+                && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
+                && isEnsembleMissenseValid();
     }
 
     public void setValid(boolean value) {
