@@ -373,7 +373,8 @@ public class AnnotatedVariant extends Variant {
                 && isPextValid()
                 && RevelCommand.isValid(revel, effect)
                 && PrimateAICommand.isValid(primateAI, effect)
-                && isMPCValid();
+                && isMPCValid()
+                && GeneManager.isTTNPSIValid(geneName, effectID, startPosition);
     }
 
     // Trio or Singleton analysis only

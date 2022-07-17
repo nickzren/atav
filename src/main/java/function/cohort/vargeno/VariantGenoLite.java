@@ -111,7 +111,7 @@ public class VariantGenoLite {
         ref = tmp[2];
         alt = tmp[3];
         indelLength = alt.length() - ref.length();
-        
+
         isSNV = ref.length() == alt.length();
 
         // init to apply per annotation
@@ -194,22 +194,12 @@ public class VariantGenoLite {
                     && annotation.isEnsembleMissenseValid()
                     && TranscriptManager.isCCDSValid(chr, stableId)
                     && TranscriptManager.isCanonicalValid(chr, stableId)
-                    && DBNSFPManager.isValid(dbNSFP, stableId, effect)) {
-                if (!mostDamagingAnnotation.isValid()) {
-                    mostDamagingAnnotation.setValid(true);
-                }
+                    && DBNSFPManager.isValid(dbNSFP, stableId, effect)
+                    && TranscriptManager.isTranscriptBoundaryValid(stableId, pos, indelLength)) {
 
                 // reset gene name to gene domain name so the downstream procedure could match correctly
                 // only for gene boundary input
                 geneName = GeneManager.getGeneDomainName(geneName, chr, pos);
-
-                if (mostDamagingAnnotation.effect == null) {
-                    mostDamagingAnnotation.effect = effect;
-                    mostDamagingAnnotation.stableId = stableId;
-                    mostDamagingAnnotation.HGVS_c = HGVS_c;
-                    mostDamagingAnnotation.HGVS_p = HGVS_p;
-                    mostDamagingAnnotation.geneName = geneName;
-                }
 
                 StringJoiner geneTranscriptSJ = new StringJoiner("|");
                 geneTranscriptSJ.add(effect);
@@ -226,6 +216,20 @@ public class VariantGenoLite {
                 }
                 if (stableId != Data.INTEGER_NA) {
                     transcriptSet.add(stableId);
+                }
+
+                // init most damging annotation
+                if (mostDamagingAnnotation.effect == null) {
+                    mostDamagingAnnotation.effect = effect;
+                    mostDamagingAnnotation.stableId = stableId;
+                    mostDamagingAnnotation.HGVS_c = HGVS_c;
+                    mostDamagingAnnotation.HGVS_p = HGVS_p;
+                    mostDamagingAnnotation.geneName = geneName;
+                    mostDamagingAnnotation.polyphenHumdiv = polyphenHumdiv;
+
+                    if (mostDamagingAnnotation.isEnsembleMissenseValid()) {
+                        mostDamagingAnnotation.setValid(true);
+                    }
                 }
 
                 mostDamagingAnnotation.polyphenHumdiv = MathManager.max(mostDamagingAnnotation.polyphenHumdiv, polyphenHumdiv);
@@ -594,8 +598,8 @@ public class VariantGenoLite {
     public float getTrapScore() {
         return trapScore;
     }
-    
+
     public String getATAVLink() {
-        return "\"=HYPERLINK(\"\"http://atavdb.org/variant/"+variantID+"\"\",\"\"ATAV\"\")\"";
+        return "\"=HYPERLINK(\"\"http://atavdb.org/variant/" + variantID + "\"\",\"\"ATAV\"\")\"";
     }
 }
