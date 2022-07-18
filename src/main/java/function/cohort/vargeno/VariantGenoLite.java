@@ -227,7 +227,9 @@ public class VariantGenoLite {
                     mostDamagingAnnotation.geneName = geneName;
                     mostDamagingAnnotation.polyphenHumdiv = polyphenHumdiv;
 
-                    if (mostDamagingAnnotation.isEnsembleMissenseValid()) {
+                    int effectId = EffectManager.getIdByEffect(effect);
+
+                    if (GeneManager.isTTNPSIValid(geneName, effectId, pos)) {
                         mostDamagingAnnotation.setValid(true);
                     }
                 }
