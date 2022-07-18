@@ -18,7 +18,7 @@ import utils.ErrorManager;
  */
 public class MgiManager {
 
-    private static final String MGI_PATH = "data/mgi/mouse_essential_gene_040822.csv.gz";
+    private static final String MGI_PATH = "data/mgi/mouse_essential_gene_071822.csv.gz";
 
     public static String header;
     private static final HashMap<String, String> mgiMap = new HashMap<>();
