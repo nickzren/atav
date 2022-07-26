@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -173,7 +174,7 @@ public class GeneManager {
     }
 
     private static void initTTNTranscriptsLowPSIRegionArray() {
-        if (!AnnotationLevelFilterCommand.excludeTTNLowPSILofVar) {
+        if (!VariantLevelFilterCommand.excludeTTNLowPSILofVar) {
             return;
         }
 
@@ -207,7 +208,7 @@ public class GeneManager {
     }
 
     public static boolean isTTNPSIValid(String geneName, int effectID, int pos) {
-        if (!AnnotationLevelFilterCommand.excludeTTNLowPSILofVar) {
+        if (!VariantLevelFilterCommand.excludeTTNLowPSILofVar) {
             return true;
         }
 

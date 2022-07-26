@@ -356,6 +356,7 @@ public class CommandManager {
                     RevelCommand.isInclude = true;
                     DBNSFPCommand.isInclude = true;
                     MTRCommand.isInclude = true;
+                    VariantLevelFilterCommand.excludeTTNLowPSILofVar = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -418,6 +419,7 @@ public class CommandManager {
                     RevelCommand.isInclude = true;
                     DBNSFPCommand.isInclude = true;
                     MTRCommand.isInclude = true;
+                    VariantLevelFilterCommand.excludeTTNLowPSILofVar = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;

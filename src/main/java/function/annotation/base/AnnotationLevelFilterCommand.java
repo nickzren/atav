@@ -29,7 +29,6 @@ public class AnnotationLevelFilterCommand {
     public static String polyphenHumvar = Data.NO_FILTER_STR;
     public static boolean ensembleMissense = false;
     public static boolean ensembleMissense2 = false;
-    public static boolean excludeTTNLowPSILofVar = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -80,9 +79,6 @@ public class AnnotationLevelFilterCommand {
                     break;
                 case "--ensemble-missense-2":
                     ensembleMissense2 = true;
-                    break;
-                case "--exclude-ttn-low-psi-lof-var":
-                    excludeTTNLowPSILofVar = true;
                     break;
                 default:
                     continue;

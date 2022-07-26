@@ -63,6 +63,7 @@ public class VariantLevelFilterCommand {
     public static boolean disableCheckOnSexChr = true;
     public static boolean isIncludeLOFTEE = false;
     public static boolean isExcludeFalseLOFTEE = false;
+    public static boolean excludeTTNLowPSILofVar = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -608,6 +609,9 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-dbnsfp":
                     DBNSFPCommand.isInclude = true;
+                    break;
+                case "--exclude-ttn-low-psi-lof-var":
+                    excludeTTNLowPSILofVar = true;
                     break;
                 default:
                     continue;
