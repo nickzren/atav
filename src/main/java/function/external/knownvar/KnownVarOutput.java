@@ -73,12 +73,24 @@ public class KnownVarOutput {
                 || clinVarOutput.isClinVarPLPSite();
     }
     
+    public boolean isClinVarPLPSite() {
+        return clinVarOutput.isClinVarPLPSite();
+    }
+    
+    public boolean isHGMDDMSite() {
+        return hgmdOutput.isHGMDDMSite();
+    }
+    
     public ClinVarPathoratio getClinVarPathoratio() {
         return clinVarPathoratio;
     }
     
     public boolean isKnownVar2bpFlankingValid() {
         return hgmdOutput.is2bpFlankingValid() || clinVarOutput.isPLP2bpFlankingValid();
+    }
+    
+    public boolean isClinVar2bpFlankingValid() {
+        return clinVarOutput.isPLP2bpFlankingValid();
     }
     
     public boolean isClinVar25bpFlankingValid() {

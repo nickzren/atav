@@ -73,7 +73,6 @@ import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
-import function.variant.base.Output;
 import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import global.Index;
@@ -1090,5 +1089,13 @@ public class AnnotatedVariant extends Variant {
 
     public boolean isMissense() {
         return EffectManager.isMISSENSE(effectID);
+    }
+    
+    public boolean isInframe() {
+        return EffectManager.isINFRAME(effectID);
+    }
+    
+    public boolean isSynonymous() {
+        return EffectManager.isSYNONYMOUS(effectID);
     }
 }

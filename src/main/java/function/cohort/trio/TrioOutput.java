@@ -7,6 +7,8 @@ import function.variant.base.Output;
 import function.cohort.base.Sample;
 import global.Data;
 import global.Index;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.StringJoiner;
 import utils.FormatManager;
 
@@ -40,6 +42,8 @@ public class TrioOutput extends Output {
     byte isMissenseDominantAndHaploinsufficient;
     byte isKnownPathogenicVariant;
     byte isHotZone;
+
+    private LinkedHashSet<String> singleVariantPrioritizationSet = new LinkedHashSet<>();
 
     public TrioOutput(CalledVariant c) {
         super(c);
@@ -189,35 +193,100 @@ public class TrioOutput extends Output {
     }
 
     public void initTierFlag4SingleVar() {
-        tierFlag4SingleVar = Data.BYTE_NA;
-
-        // denovo or hom
-        if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
-            if (isDenovoTier1()
-                    || isHomozygousTier1()
-                    || isHemizygousTier1()
-                    || isCompoundDeletionTier1()) {
-                tierFlag4SingleVar = 1;
-            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                    && (isDenovoTier2()
-                    || isHomozygousTier2()
-                    || isHemizygousTier2())
-                    || isCompoundDeletionTier2()) {
-                tierFlag4SingleVar = 2;
-            }
-        } else { // child variant
-            if (calledVar.isMetTier2InclusionCriteria(cCarrier)
-                    && calledVar.isCaseVarTier2(cCarrier)) {
-                tierFlag4SingleVar = 2;
-            }
+        if (!singleVariantPrioritizationSet.isEmpty()) {
+            return;
         }
 
         isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
         isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
         isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
         isHotZone = calledVar.isHotZone();
+        
+        tierFlag4SingleVar = Data.BYTE_NA;
+
+        // denovo or hom
+        if (!denovoFlag.equals("NO FLAG") && !denovoFlag.equals(Data.STRING_NA)) {
+            if (isDenovoTier1()) {
+                if (isHotZone == 1) {
+                    singleVariantPrioritizationSet.add("01_TIER1_DNM_HZ");
+                } else {
+                    singleVariantPrioritizationSet.add("02_TIER1_DNM");
+                }
+                tierFlag4SingleVar = 1;
+            } else if (isHomozygousTier1()
+                    || isHemizygousTier1()
+                    || isCompoundDeletionTier1()) {
+                singleVariantPrioritizationSet.add("03_TIER1_HOMO_HEMI");
+                tierFlag4SingleVar = 1;
+            } else if (calledVar.isMetTier2InclusionCriteria(cCarrier)) {
+                if (isDenovoTier2()) {
+                    singleVariantPrioritizationSet.add("04_TIER2_DNM");
+                    tierFlag4SingleVar = 2;
+                } else if (isHomozygousTier2()
+                        || isHemizygousTier2()
+                        || isCompoundDeletionTier2()) {
+                    singleVariantPrioritizationSet.add("05_TIER2_HOMO_HEMI");
+                    tierFlag4SingleVar = 2;
+                }
+            }
+        } else {
+            if (calledVar.isMetTier2InclusionCriteria(cCarrier)
+                    && calledVar.isCaseVarTier2(cCarrier)) {
+                tierFlag4SingleVar = 2;
+            }
+        }
+
+        if (isLoFDominantAndHaploinsufficient == 1) {
+            singleVariantPrioritizationSet.add("06_LOF_GENE");
+        }
+
+        if (isKnownPathogenicVariant == 1) {
+            singleVariantPrioritizationSet.add("07_KNOWN_VAR");
+        } else {
+            if (calledVar.getKnownVar().isClinVarPLPSite()) {
+                singleVariantPrioritizationSet.add("08_CLINVAR_SITE");
+            }
+
+            if (calledVar.getKnownVar().isClinVar2bpFlankingValid()) {
+                singleVariantPrioritizationSet.add("09_CLINVAR_2BP");
+            }
+
+            if (calledVar.getKnownVar().isHGMDDMSite()) {
+                singleVariantPrioritizationSet.add("10_HGMD_SITE");
+            }
+        }
+
+        if (isMissenseDominantAndHaploinsufficient == 1
+                && calledVar.isClinVar25bpFlankingValid()) {
+            singleVariantPrioritizationSet.add("11_MIS_HOT_SPOT");
+        }
+
+        if (tierFlag4SingleVar == 1
+                && calledVar.isOMIMGene()
+                && (calledVar.isMissense() || calledVar.isInframe())
+                && calledVar.isGeneMisZValid()) {
+            singleVariantPrioritizationSet.add("12_TIER1_OMIM_MIS_INFRAME");
+        }
+
+        if (!calledVar.getACMG().equals(Data.STRING_NA)) {
+            singleVariantPrioritizationSet.add("13_ACMG_GENE");
+        }
     }
 
+    public String getSingleVariantPrioritization() {
+        if (singleVariantPrioritizationSet.isEmpty()) {
+            return Data.STRING_NA;
+        }
+
+        StringJoiner variantPrioritizations = new StringJoiner("|");
+        Iterator itr = singleVariantPrioritizationSet.iterator();
+        while (itr.hasNext()) {
+            variantPrioritizations.add((String) itr.next());
+        }
+
+        return variantPrioritizations.toString();
+    }
+    
     public byte getTierFlag4SingleVar() {
         return tierFlag4SingleVar;
     }
