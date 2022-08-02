@@ -736,6 +736,10 @@ public class AnnotatedVariant extends Variant {
         if (DBNSFPCommand.isInclude) {
             sj.add(dbNSFP.toString());
         }
+        
+        if(VariantLevelFilterCommand.isIncludeTTNLowPSI) {
+            sj.add(GeneManager.getTTNLowPSI(geneName, effectID, startPosition));
+        }
     }
 
     public StringJoiner getEvsStringJoiner() {

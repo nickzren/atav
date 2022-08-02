@@ -269,6 +269,10 @@ public class Output {
         if (DBNSFPCommand.isInclude) {
             sj.add(DBNSFPManager.getHeader());
         }
+        
+        if (VariantLevelFilterCommand.isIncludeTTNLowPSI) {
+            sj.add("TTN LOW PSI");
+        }
 
         return sj;
     }

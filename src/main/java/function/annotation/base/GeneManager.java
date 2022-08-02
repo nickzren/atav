@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -36,6 +37,9 @@ public class GeneManager {
     public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_040320.tsv.gz";
     public static final String ALL_GENE_SYMBOL_MAP_PATH = "data/gene/hgnc_complete_set_to_GRCh37.87_040320.tsv.gz";
     public static final String ALL_GENE_TRANSCRIPT_COUNT_MAP_PATH = "data/gene/gencode_gene_transcript_count_v24lift37.tsv.gz";
+    public static final String TTN_TRANSCRIPTS_PSI_PATH = "data/gene/ttn_transcripts_psi.csv.gz";
+    
+    private static int[][] ttnTranscriptsLowPSIRegionArray = new int[176][2]; // tnn transcript data has exact 176 records' PSI < 90
 
     private static HashMap<String, HashSet<Gene>> geneMap = new HashMap<>();
     private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
@@ -81,6 +85,8 @@ public class GeneManager {
         initAllGeneMapAndResetRegionList();
 
         initTempTable();
+        
+        initTTNTranscriptsLowPSIRegionArray();
     }
 
     private static void initPreparedStatement4GeneChrom() {
@@ -163,6 +169,67 @@ public class GeneManager {
         }
     }
 
+    private static void initTTNTranscriptsLowPSIRegionArray() {
+        if (!VariantLevelFilterCommand.isIncludeTTNLowPSI) {
+            return;
+        }
+
+        try {
+            File f = new File(Data.ATAV_HOME + TTN_TRANSCRIPTS_PSI_PATH);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
+            String line = "";
+            int index = 0; // the source data listed pair coordinates order from high to low
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("Exon Number")) {
+                    String[] tmp = line.split(",");
+
+                    float psi = Float.parseFloat(tmp[3]);
+
+                    if (psi < 90) {
+                        ttnTranscriptsLowPSIRegionArray[index][0] = Integer.parseInt(tmp[2]); // Hg19 end is actually start pos
+                        ttnTranscriptsLowPSIRegionArray[index++][1] = Integer.parseInt(tmp[1]); // Hg19 start is actually end pos
+                    }
+                }
+            }
+
+            br.close();
+            decoder.close();
+            in.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    public static String getTTNLowPSI(String geneName, int effectID, int pos) {
+        if (!VariantLevelFilterCommand.isIncludeTTNLowPSI) {
+            return Data.STRING_NA;
+        }
+
+        if (!geneName.equals("TTN")) {
+            return Data.STRING_NA;
+        }
+
+        if(!EffectManager.isLOF(effectID)) {
+            return Data.STRING_NA;
+        }
+        
+        return isLowPSIRegion(pos) ? "1" : "0";
+    }
+
+    private static boolean isLowPSIRegion(int pos) {
+        for (int i = 0; i < ttnTranscriptsLowPSIRegionArray.length; i++) {
+            if(pos >= ttnTranscriptsLowPSIRegionArray[i][0]
+                    && pos <= ttnTranscriptsLowPSIRegionArray[i][1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
     private static void initGeneName() throws Exception {
         if (AnnotationLevelFilterCommand.geneInput.isEmpty()) {
             return;

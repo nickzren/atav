@@ -359,6 +359,7 @@ public class CommandManager {
                     MgiCommand.isInclude = true;
                     RevelCommand.isInclude = true;
                     VariantLevelFilterCommand.disableCheckOnSexChr = true;
+                    VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -421,6 +422,7 @@ public class CommandManager {
                     MgiCommand.isInclude = true;
                     RevelCommand.isInclude = true;
                     VariantLevelFilterCommand.disableCheckOnSexChr = true;
+                    VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;
@@ -468,6 +470,7 @@ public class CommandManager {
                     IGMAFCommand.getInstance().isInclude = true;
                     DefaultControlCommand.getInstance().isInclude = true;
                     DBNSFPCommand.isInclude = true;
+                    VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
                     break;
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
