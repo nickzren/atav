@@ -179,6 +179,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
         StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getName());
+        sj.add(output.getSingleVariantPrioritization());
+        sj.add(Data.STRING_NA);
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
         sj.add(Data.STRING_NA);
@@ -208,7 +210,12 @@ public class ListSingleton extends AnalysisBase4CalledVar {
     private void doCompHetOutput(SingletonOutput output1, SingletonOutput output2) throws Exception {
         // apply tier rules
         byte tierFlag4CompVar = Data.BYTE_NA;
-
+        
+        // init CH variant prioritization
+        String chVariantPrioritization = Data.STRING_NA;
+        boolean isOneOfCompVarSynonymous = output1.getCalledVariant().isSynonymous()
+                || output2.getCalledVariant().isSynonymous();
+        
         // tier 1
         if ( // for each one of the variants, restrict to High or Moderate impact or with TraP >= 0.4
                 output1.getCalledVariant().isImpactHighOrModerate() && output2.getCalledVariant().isImpactHighOrModerate()
@@ -218,6 +225,10 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
             tierFlag4CompVar = 1;
             Output.tier1CompoundVarCount++;
+            
+            if (!isOneOfCompVarSynonymous) {
+                chVariantPrioritization = "01_TIER1";
+            }
         } else if ( // tier 2
                 // if one of the variant meets tier 2 inclusion criteria
                 (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
@@ -226,6 +237,10 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
             tierFlag4CompVar = 2;
             Output.tier2CompoundVarCount++;
+            
+            if (!isOneOfCompVarSynonymous) {
+                chVariantPrioritization = "02_TIER2";
+            }
         }
 
         StringBuilder compHetVarSB = new StringBuilder();
@@ -243,11 +258,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 || output2.getTierFlag4SingleVar() != Data.BYTE_NA
                 || output2.isFlag();
 
-        doCompHetOutput(tierFlag4CompVar, output1, compHetVar1, hasSingleVarFlagged);
-        doCompHetOutput(tierFlag4CompVar, output2, compHetVar2, hasSingleVarFlagged);
+        doCompHetOutput(tierFlag4CompVar, chVariantPrioritization, output1, compHetVar1, hasSingleVarFlagged);
+        doCompHetOutput(tierFlag4CompVar, chVariantPrioritization, output2, compHetVar2, hasSingleVarFlagged);
     }
 
-    private void doCompHetOutput(byte tierFlag4CompVar, SingletonOutput output,
+    private void doCompHetOutput(byte tierFlag4CompVar, String chVariantPrioritization, SingletonOutput output,
             String compHetVar, boolean hasSingleVarFlagged) throws Exception {
         StringBuilder carrierIDSB = new StringBuilder();
         carrierIDSB.append(output.getCalledVariant().variantId);
@@ -259,6 +274,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
         StringJoiner sj = new StringJoiner(",");
         sj.add(output.child.getName());
+        sj.add(output.getSingleVariantPrioritization());
+        sj.add(chVariantPrioritization);
         sj.add("'" + output.getCalledVariant().getGeneName() + "'");
         sj.add(output.getCalledVariant().getGeneLink());
         sj.add(compHetVar);
