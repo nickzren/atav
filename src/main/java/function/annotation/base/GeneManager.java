@@ -174,7 +174,7 @@ public class GeneManager {
     }
 
     private static void initTTNTranscriptsLowPSIRegionArray() {
-        if (!VariantLevelFilterCommand.excludeTTNLowPSILofVar) {
+        if (!VariantLevelFilterCommand.isIncludeTTNLowPSI) {
             return;
         }
 
@@ -207,25 +207,33 @@ public class GeneManager {
         }
     }
 
-    public static boolean isTTNPSIValid(String geneName, int effectID, int pos) {
+    public static boolean isTTNPSIValid(byte value) {
         if (!VariantLevelFilterCommand.excludeTTNLowPSILofVar) {
             return true;
         }
 
-        if (!geneName.equals("TTN")) {
-            return true;
+        return value != 1;
+    }
+
+    public static byte getTTNLowPSI(String geneName, int effectID, int pos) {
+        if (!VariantLevelFilterCommand.isIncludeTTNLowPSI) {
+            return Data.BYTE_NA;
         }
 
-        if(!EffectManager.isLOF(effectID)) {
-            return true;
+        if (!geneName.equals("TTN")) {
+            return Data.BYTE_NA;
         }
-        
-        return !isLowPSIRegion(pos);
+
+        if (!EffectManager.isLOF(effectID)) {
+            return Data.BYTE_NA;
+        }
+
+        return isLowPSIRegion(pos) ? (byte) 1 : (byte) 0;
     }
 
     private static boolean isLowPSIRegion(int pos) {
         for (int i = 0; i < ttnTranscriptsLowPSIRegionArray.length; i++) {
-            if(pos >= ttnTranscriptsLowPSIRegionArray[i][0]
+            if (pos >= ttnTranscriptsLowPSIRegionArray[i][0]
                     && pos <= ttnTranscriptsLowPSIRegionArray[i][1]) {
                 return true;
             }

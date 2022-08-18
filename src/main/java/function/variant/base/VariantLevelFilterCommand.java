@@ -64,7 +64,8 @@ public class VariantLevelFilterCommand {
     public static boolean isIncludeLOFTEE = false;
     public static boolean isExcludeFalseLOFTEE = false;
     public static boolean excludeTTNLowPSILofVar = false;
-
+    public static boolean isIncludeTTNLowPSI = false;
+    
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
         CommandOption option;
@@ -612,6 +613,10 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--exclude-ttn-low-psi-lof-var":
                     excludeTTNLowPSILofVar = true;
+                    isIncludeTTNLowPSI = true;
+                    break;
+                case "--include-ttn-low-psi":
+                    isIncludeTTNLowPSI = true;
                     break;
                 default:
                     continue;
