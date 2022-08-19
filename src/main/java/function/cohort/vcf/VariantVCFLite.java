@@ -174,8 +174,9 @@ public class VariantVCFLite {
                     mostDamagingAnnotation.HGVS_p = HGVS_p;
                     mostDamagingAnnotation.geneName = geneName;
                     int effectId = EffectManager.getIdByEffect(effect);
-
-                    if (GeneManager.isTTNPSIValid(geneName, effectId, pos)) {
+                    
+                    byte ttnPSI = GeneManager.getTTNLowPSI(geneName, effectId, pos);
+                    if (GeneManager.isTTNPSIValid(ttnPSI)) {
                         mostDamagingAnnotation.setValid(true);
                     }
                 }

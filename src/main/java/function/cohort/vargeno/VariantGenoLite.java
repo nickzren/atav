@@ -228,8 +228,9 @@ public class VariantGenoLite {
                     mostDamagingAnnotation.polyphenHumdiv = polyphenHumdiv;
 
                     int effectId = EffectManager.getIdByEffect(effect);
-
-                    if (GeneManager.isTTNPSIValid(geneName, effectId, pos)) {
+                    
+                    byte ttnPSI = GeneManager.getTTNLowPSI(geneName, effectId, pos);
+                    if (GeneManager.isTTNPSIValid(ttnPSI)) {
                         mostDamagingAnnotation.setValid(true);
                     }
                 }
