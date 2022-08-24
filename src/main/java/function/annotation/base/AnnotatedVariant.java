@@ -286,13 +286,8 @@ public class AnnotatedVariant extends Variant {
             isValid = VariantLevelFilterCommand.isLOFTEEValid(isLOFTEEHCinCCDS);
         }
         
-        if (isValid && VariantLevelFilterCommand.isIncludeTTNLowPSI){ 
-            ttnLowPSI = GeneManager.getTTNLowPSI(geneName, effectID, startPosition);
-            
-            isValid = GeneManager.isTTNPSIValid(ttnLowPSI);
-        }
     }
-
+    
     public void update(Annotation annotation) {
         if (isValid) {
             if (effect.isEmpty()) { // init most damaging effect annotations
@@ -307,6 +302,12 @@ public class AnnotatedVariant extends Variant {
                 // only need to init once per variant
                 revel = annotation.revel;
                 primateAI = annotation.primateAI;
+                
+                if (isValid && VariantLevelFilterCommand.isIncludeTTNLowPSI){ 
+                    ttnLowPSI = GeneManager.getTTNLowPSI(geneName, effectID, startPosition);
+            
+                    isValid = GeneManager.isTTNPSIValid(ttnLowPSI);
+                }
             }
 
             StringJoiner annotationSJ = new StringJoiner("|");
