@@ -204,8 +204,8 @@ public class GnomADExome {
         GnomADExomeCommand.getInstance().resetPopAFValid();
     }
 
-    public boolean isValid() {
-        return GnomADExomeCommand.getInstance().isAFValid(maxAF, minAF)
+    public boolean isValid(boolean isKnownVariant) {
+        return GnomADExomeCommand.getInstance().isAFValid(maxAF, minAF, isKnownVariant)
                 && GnomADExomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
                 && GnomADExomeCommand.getInstance().isFilterPass(filter)
                 && GnomADExomeCommand.getInstance().isPopAFValid();

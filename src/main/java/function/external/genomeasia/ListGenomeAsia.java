@@ -56,7 +56,7 @@ public class ListGenomeAsia extends AnalysisBase {
             for (String variantId : VariantManager.getIncludeVariantSet()) {
                 float af = GenomeAsiaManager.getAF(variantId);
 
-                if (GenomeAsiaCommand.getInstance().isAFValid(af)) {
+                if (GenomeAsiaCommand.getInstance().isAFValid(af, false)) {
                     bwGenomeAsia.write(variantId + ",");
                     bwGenomeAsia.write(FormatManager.getFloat(af));
                     bwGenomeAsia.newLine();

@@ -161,8 +161,8 @@ public class ExAC {
         vqslod = Data.FLOAT_NA;
     }
 
-    public boolean isValid() {
-        return ExACCommand.getInstance().isAFValid(maxAF, minAF)
+    public boolean isValid(boolean isKnownVariant) {
+        return ExACCommand.getInstance().isAFValid(maxAF, minAF, isKnownVariant)
                 && ExACCommand.isVqslodValid(vqslod, isSnv)
                 && ExACCommand.isMeanCoverageValid(meanCoverage);
     }

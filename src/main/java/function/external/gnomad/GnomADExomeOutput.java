@@ -25,7 +25,7 @@ public class GnomADExomeOutput {
     }
 
     public boolean isValid() {
-        return gnomADExome.isValid();
+        return gnomADExome.isValid(false);
     }
 
     @Override

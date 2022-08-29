@@ -79,9 +79,9 @@ public class Evs {
         return maf;
     }
 
-    public boolean isValid() {
+    public boolean isValid(boolean isKnownVariant) {
         return EvsCommand.isEvsStatusValid(filterStatus)
-                && EvsCommand.isEvsMafValid(getMaxMaf());
+                && EvsCommand.isEvsMafValid(getMaxMaf(), isKnownVariant);
     }
 
     public String getVariantId() {

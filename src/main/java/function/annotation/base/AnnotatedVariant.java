@@ -167,105 +167,61 @@ public class AnnotatedVariant extends Variant {
         if (isValid && IGMAFCommand.getInstance().isInclude) {
             igmAF = IGMAFManager.getAF(chrStr, variantId);
 
-            isValid = IGMAFCommand.getInstance().isAFValid(igmAF);
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                // AF <= 10% is default
-                isValid = isValid || (getKnownVar().isKnownVariant() && igmAF <= 0.1);
-            }
+            isValid = IGMAFCommand.getInstance().isAFValid(igmAF, getKnownVar().isKnownVariant());
         }
 
         if (isValid && DefaultControlCommand.getInstance().isInclude) {
             defaultControl = DefaultControlManager.getDefaultControlAF(chrStr, variantId);
 
-            isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF());
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                // AF <= 10% is default
-                isValid = isValid || (getKnownVar().isKnownVariant() && defaultControl.getAF() <= 0.1);
-            }
+            isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF(), getKnownVar().isKnownVariant());
         }
 
         if (isValid && GMECommand.getInstance().isInclude) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
-            isValid = GMECommand.getInstance().isAFValid(gmeAF);
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                // AF <= 10% is default
-                isValid = isValid || (getKnownVar().isKnownVariant() && gmeAF <= 0.1);
-            }
+            isValid = GMECommand.getInstance().isAFValid(gmeAF, getKnownVar().isKnownVariant());
         }
 
         if (isValid && IranomeCommand.getInstance().isInclude) {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
-            isValid = IranomeCommand.getInstance().isAFValid(iranomeAF);
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                // AF <= 10% is default
-                isValid = isValid || (getKnownVar().isKnownVariant() && iranomeAF <= 0.1);
-            }
+            isValid = IranomeCommand.getInstance().isAFValid(iranomeAF, getKnownVar().isKnownVariant());
         }
 
         if (isValid && TopMedCommand.getInstance().isInclude) {
             topmedAF = TopMedManager.getAF(variantIdStr);
 
-            isValid = TopMedCommand.getInstance().isAFValid(topmedAF);
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || (getKnownVar().isKnownVariant() && topmedAF <= 0.1);
-            }
+            isValid = TopMedCommand.getInstance().isAFValid(topmedAF, getKnownVar().isKnownVariant());
         }
 
         if (isValid && GenomeAsiaCommand.getInstance().isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
-            isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || (getKnownVar().isKnownVariant() && genomeasiaAF <= 0.1);
-            }
+            isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF, getKnownVar().isKnownVariant());
         }
 
         if (isValid && GnomADExomeCommand.getInstance().isInclude) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
-            isValid = gnomADExome.isValid();
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || (getKnownVar().isKnownVariant() && gnomADExome.getControlAF() <= 0.1);
-            }
+            isValid = gnomADExome.isValid(getKnownVar().isKnownVariant());
         }
 
         if (isValid && GnomADGenomeCommand.getInstance().isInclude) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
-            isValid = gnomADGenome.isValid();
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || (getKnownVar().isKnownVariant() && gnomADGenome.getControlAF() <= 0.1);
-            }
+            isValid = gnomADGenome.isValid(getKnownVar().isKnownVariant());
         }
 
         if (isValid && ExACCommand.getInstance().isInclude) {
             exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
-            isValid = exac.isValid();
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isKnownVariant();
-            }
+            isValid = exac.isValid(getKnownVar().isKnownVariant());
         }
 
         if (isValid && EvsCommand.isInclude) {
             evs = new Evs(chrStr, startPosition, refAllele, allele);
 
-            isValid = evs.isValid();
-
-            if (SingletonCommand.isList || TrioCommand.isList) {
-                isValid = isValid || getKnownVar().isKnownVariant();
-            }
+            isValid = evs.isValid(getKnownVar().isKnownVariant());
         }
 
         if (isValid && GerpCommand.isInclude) {
@@ -285,9 +241,9 @@ public class AnnotatedVariant extends Variant {
 
             isValid = VariantLevelFilterCommand.isLOFTEEValid(isLOFTEEHCinCCDS);
         }
-        
+
     }
-    
+
     public void update(Annotation annotation) {
         if (isValid) {
             if (effect.isEmpty()) { // init most damaging effect annotations
@@ -302,10 +258,10 @@ public class AnnotatedVariant extends Variant {
                 // only need to init once per variant
                 revel = annotation.revel;
                 primateAI = annotation.primateAI;
-                
-                if (isValid && VariantLevelFilterCommand.isIncludeTTNLowPSI){ 
+
+                if (isValid && VariantLevelFilterCommand.isIncludeTTNLowPSI) {
                     ttnLowPSI = GeneManager.getTTNLowPSI(geneName, effectID, startPosition);
-            
+
                     isValid = GeneManager.isTTNPSIValid(ttnLowPSI);
                 }
             }
@@ -514,7 +470,7 @@ public class AnnotatedVariant extends Variant {
         sj.add(PolyphenManager.getPrediction(polyphenHumvar, effect));
         sj.add(FormatManager.appendDoubleQuote(getAllAnnotation()));
     }
-    
+
     public String getImpact() {
         return impact;
     }
@@ -715,10 +671,10 @@ public class AnnotatedVariant extends Variant {
         if (DBNSFPCommand.isInclude) {
             sj.add(dbNSFP.toString());
         }
-        
-        if(VariantLevelFilterCommand.isIncludeTTNLowPSI) {
-             sj.add(FormatManager.getByte(ttnLowPSI));
-         }
+
+        if (VariantLevelFilterCommand.isIncludeTTNLowPSI) {
+            sj.add(FormatManager.getByte(ttnLowPSI));
+        }
     }
 
     public StringJoiner getEvsStringJoiner() {

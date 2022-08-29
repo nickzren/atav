@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.external.base.VariantAFCommand;
 import function.external.ccr.CCRCommand;
 import function.external.chm.CHMCommand;
 import function.external.dbnsfp.DBNSFPCommand;
@@ -617,6 +618,10 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-ttn-low-psi":
                     isIncludeTTNLowPSI = true;
+                    break;
+                case "--max-known-variant-af":
+                    checkValueValid(1, 0, option);
+                    VariantAFCommand.maxKnownVariantAF = getValidFloat(option);
                     break;
                 default:
                     continue;

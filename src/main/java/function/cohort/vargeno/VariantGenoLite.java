@@ -458,7 +458,7 @@ public class VariantGenoLite {
             return true;
         }
 
-        return exac.isValid();
+        return exac.isValid(false);
     }
 
     private boolean isGnomADExomeValid() {
@@ -466,7 +466,7 @@ public class VariantGenoLite {
             return true;
         }
 
-        return gnomADExome.isValid();
+        return gnomADExome.isValid(false);
     }
 
     private boolean isGnomADGenomeValid() {
@@ -474,7 +474,7 @@ public class VariantGenoLite {
             return true;
         }
 
-        return gnomADGenome.isValid();
+        return gnomADGenome.isValid(false);
     }
 
     private boolean isSubRVISValid() {
@@ -579,23 +579,23 @@ public class VariantGenoLite {
     }
 
     private boolean isGMEAFValid() {
-        return GMECommand.getInstance().isAFValid(gmeAF);
+        return GMECommand.getInstance().isAFValid(gmeAF, false);
     }
 
     private boolean isTopMedAFValid() {
-        return TopMedCommand.getInstance().isAFValid(topmedAF);
+        return TopMedCommand.getInstance().isAFValid(topmedAF, false);
     }
 
     private boolean isGenomeAsiaAFValid() {
-        return GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
+        return GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF, false);
     }
 
     private boolean isIranomeAFValid() {
-        return IranomeCommand.getInstance().isAFValid(iranomeAF);
+        return IranomeCommand.getInstance().isAFValid(iranomeAF, false);
     }
 
     private boolean isIGMAFValid() {
-        return IGMAFCommand.getInstance().isAFValid(igmAF);
+        return IGMAFCommand.getInstance().isAFValid(igmAF, false);
     }
 
     public float getTrapScore() {

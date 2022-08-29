@@ -1,5 +1,6 @@
 package function.external.evs;
 
+import static function.external.base.VariantAFCommand.maxKnownVariantAF;
 import global.Data;
 
 /**
@@ -17,9 +18,14 @@ public class EvsCommand {
     public static double evsMaf = Data.NO_FILTER;
     public static boolean isExcludeEvsQcFailed = false;
 
-    public static boolean isEvsMafValid(float value) {
+    public static boolean isEvsMafValid(float value, boolean isKnownVariant) {
         if (evsMaf == Data.NO_FILTER) {
             return true;
+        }
+        
+        if(maxKnownVariantAF != Data.NO_FILTER &&
+                isKnownVariant) {
+            evsMaf = maxKnownVariantAF;
         }
 
         return value <= evsMaf

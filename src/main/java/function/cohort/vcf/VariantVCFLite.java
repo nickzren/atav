@@ -420,7 +420,7 @@ public class VariantVCFLite {
         if (ExACCommand.getInstance().isInclude) {
             ExAC exac = new ExAC(chr, pos, ref, alt);
 
-            return exac.isValid();
+            return exac.isValid(false);
         }
 
         return true;
@@ -430,7 +430,7 @@ public class VariantVCFLite {
         if (GnomADExomeCommand.getInstance().isInclude) {
             GnomADExome gnomADExome = new GnomADExome(chr, pos, ref, alt);
 
-            return gnomADExome.isValid();
+            return gnomADExome.isValid(false);
         }
 
         return true;
@@ -440,7 +440,7 @@ public class VariantVCFLite {
         if (GnomADGenomeCommand.getInstance().isInclude) {
             GnomADGenome gnomADGenome = new GnomADGenome(chr, pos, ref, alt);
 
-            return gnomADGenome.isValid();
+            return gnomADGenome.isValid(false);
         }
 
         return true;

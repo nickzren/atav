@@ -20,7 +20,7 @@ public class ExACOutput {
     }
 
     public boolean isValid() {
-        return exac.isValid();
+        return exac.isValid(false);
     }
 
     @Override

@@ -15,25 +15,33 @@ public class VariantAFCommand {
     public float maxMAF = Data.NO_FILTER;
     public float minMAF = Data.NO_FILTER;
 
-    public boolean isAFValid(float value) {
-        return isMaxAFValid(value)
+    // global known variant AF cutoff
+    public static float maxKnownVariantAF = Data.NO_FILTER;
+
+    public boolean isAFValid(float value, boolean isKnownVariant) {
+        return isMaxAFValid(value, isKnownVariant)
                 && isMinAFValid(value)
                 && isMaxMAFValid(value)
                 && isMinMAFValid(value);
 
     }
 
-    public boolean isAFValid(float max, float min) {
-        return isMaxAFValid(max)
+    public boolean isAFValid(float max, float min, boolean isKnownVariant) {
+        return isMaxAFValid(max, isKnownVariant)
                 && isMinAFValid(max)
                 && isMaxMAFValid(max, min)
                 && isMinMAFValid(max, min);
 
     }
 
-    private boolean isMaxAFValid(float value) {
+    private boolean isMaxAFValid(float value, boolean isKnownVariant) {
         if (maxAF == Data.NO_FILTER) {
             return true;
+        }
+        
+        if(maxKnownVariantAF != Data.NO_FILTER &&
+                isKnownVariant) {
+            maxAF = maxKnownVariantAF;
         }
 
         return value <= maxAF
