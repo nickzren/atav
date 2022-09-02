@@ -30,7 +30,6 @@ public class CoverageCommand {
     public static boolean isCoverageComparison = false;
     public static boolean isSiteCoverageComparison = false;
     public static boolean isRelativeDifference = false;
-    public static boolean isLinear = false;
     
     // site coverage comparison
     public static boolean isIncludeSiteSummary = false;
@@ -44,10 +43,6 @@ public class CoverageCommand {
                 case "--exon-max-percent-cov-difference":
                     checkValueValid(1, 0, option);
                     exonCleanCutoff = getValidFloat(option);
-                    break;
-                case "--quantitative":
-                    isLinear = true;
-                    StatisticsCommand.quantitativeFile = getValidPath(option);
                     break;
                 case "--relative-difference":
                     isRelativeDifference = true;

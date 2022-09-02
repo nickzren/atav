@@ -1,6 +1,5 @@
 package function.cohort.statistics;
 
-import function.cohort.base.GenotypeLevelFilterCommand;
 import global.Data;
 
 import java.util.Iterator;
