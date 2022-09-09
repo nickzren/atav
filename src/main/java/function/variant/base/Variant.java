@@ -21,6 +21,9 @@ public class Variant extends Region {
     private boolean isIndel;
     private boolean isMNV;
 
+    public Variant() {
+    }
+
     public Variant(String chr, int v_id, ResultSet rset) throws Exception {
         variantId = v_id;
 
@@ -38,19 +41,21 @@ public class Variant extends Region {
 
         variantIdStr = chrStr + "-" + pos + "-" + refAllele + "-" + allele;
     }
-    
-    public Variant(String values[]) throws Exception {
+
+    public void initVariant(String values[]) {
         String chr = values[0];
         int pos = Integer.valueOf(values[1]);
-        refAllele = values[3];
-        allele = values[4];
-        
-        isMNV = refAllele.length() > 1 && allele.length() > 1
-                && allele.length() == refAllele.length();
-        
         initRegion(chr, pos, pos);
 
-        variantIdStr = chrStr + "-" + pos + "-" + refAllele + "-" + allele;
+        //Skip values[2] if it contains rsNumber
+        int skipValue = values.length == 4 ? 0 : 1;
+        refAllele = values[2 + skipValue];
+        allele = values[3 + skipValue];
+
+        isMNV = refAllele.length() > 1 && allele.length() > 1
+                && allele.length() == refAllele.length();
+
+        isIndel = refAllele.length() != allele.length();
     }
 
     public int getVariantId() {
@@ -86,7 +91,7 @@ public class Variant extends Region {
             if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
-            
+
             return Data.STRING_NA;
         }
 
@@ -100,7 +105,7 @@ public class Variant extends Region {
     public boolean isIndel() {
         return isIndel;
     }
-    
+
     public boolean isMNV() {
         return isMNV;
     }
@@ -120,13 +125,13 @@ public class Variant extends Region {
         sj.add(allele);
         sj.add(getRsNumberStr());
     }
-    
+
     public String getATAVLINK() {
         StringBuilder sb = new StringBuilder();
         sb.append("\"=HYPERLINK(\"\"http://atavdb.org/variant/");
         sb.append(variantIdStr);
         sb.append("\"\",\"\"ATAV\"\")\"");
-        
+
         return sb.toString();
     }
 }
