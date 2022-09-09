@@ -318,7 +318,7 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (DBNSFPCommand.isInclude) {
-            dbNSFP = DBNSFPManager.getDBNSFP(chrStr, startPosition, allele, isSnv(), transcriptSet);
+            dbNSFP = DBNSFPManager.getDBNSFP(chrStr, startPosition, allele, isSNV(), transcriptSet);
         }
 
         if (GnomADCommand.isIncludeGeneMetrics) {

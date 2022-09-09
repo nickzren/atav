@@ -66,7 +66,7 @@ public class VariantLevelFilterCommand {
     public static boolean isExcludeFalseLOFTEE = false;
     public static boolean excludeTTNLowPSILofVar = false;
     public static boolean isIncludeTTNLowPSI = false;
-    
+
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
         CommandOption option;
@@ -622,6 +622,7 @@ public class VariantLevelFilterCommand {
                 case "--max-known-variant-af":
                     checkValueValid(1, 0, option);
                     VariantAFCommand.maxKnownVariantAF = getValidFloat(option);
+                    KnownVarCommand.isInclude = true;
                     break;
                 default:
                     continue;

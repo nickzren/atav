@@ -14,6 +14,8 @@ import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADGenomeCommand;
+import function.external.knownvar.KnownVarCommand;
+import function.external.knownvar.KnownVarOutput;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.mtr.MTR;
@@ -22,6 +24,7 @@ import function.external.primateai.PrimateAICommand;
 import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
 import function.external.revel.RevelManager;
+import function.variant.base.Variant;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -38,18 +41,13 @@ import utils.MathManager;
  *
  * @author nick
  */
-public class VariantVCFLite {
-
-    private String variantID;
-    private String rsNumber;
+public class VariantVCFLite extends Variant {
     private String chr;
     private int pos;
-    private String ref;
-    private String alt;
+    private String rsNumber;
+    //Indel attributes
     private int indelLength;
-    private boolean isSNV;
-    private boolean isMNV;
-
+    
     // annotations
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
@@ -71,26 +69,17 @@ public class VariantVCFLite {
     public float revel = Data.FLOAT_NA;
     public float primateAI = Data.FLOAT_NA;
 
+    public KnownVarOutput knownVarOutput;
+    
     private boolean isValid = true;
 
-    public VariantVCFLite(String values[]) {
+    public VariantVCFLite(String values[]) throws Exception {
+        super(values);
         chr = values[0];
         pos = Integer.valueOf(values[1]);
         rsNumber = values[2];
-        ref = values[3];
-        alt = values[4];
 
-        indelLength = alt.length() - ref.length();
-        isSNV = ref.length() == alt.length();
-        isMNV = ref.length() > 1 && alt.length() > 1
-                && alt.length() == ref.length();
-
-        StringJoiner sj = new StringJoiner("-");
-        sj.add(chr);
-        sj.add(values[1]);
-        sj.add(ref);
-        sj.add(alt);
-        variantID = sj.toString();
+        indelLength = allele.length() - refAllele.length();
 
         initAllAnnotation(values[7]); // info: NS=X;AF=X;ANN=X
 
@@ -107,6 +96,10 @@ public class VariantVCFLite {
         // isValid to false means no annotations passed the filters
         mostDamagingAnnotation.setValid(false);
 
+        if (KnownVarCommand.isInclude){
+            initKnownVar();
+        }
+        
         // init revel and primateai once and potentially used for ensemble filters
         initRevel();
         initPrimateAI();
@@ -174,7 +167,7 @@ public class VariantVCFLite {
                     mostDamagingAnnotation.HGVS_p = HGVS_p;
                     mostDamagingAnnotation.geneName = geneName;
                     int effectId = EffectManager.getIdByEffect(effect);
-                    
+
                     byte ttnPSI = GeneManager.getTTNLowPSI(geneName, effectId, pos);
                     if (GeneManager.isTTNPSIValid(ttnPSI)) {
                         mostDamagingAnnotation.setValid(true);
@@ -285,8 +278,8 @@ public class VariantVCFLite {
         sj.add(chr);
         sj.add(FormatManager.getInteger(pos));
         sj.add(rsNumber);
-        sj.add(ref);
-        sj.add(alt);
+        sj.add(refAllele);
+        sj.add(allele);
         sj.add(Data.VCF_NA);
         sj.add(Data.VCF_NA);
 
@@ -358,8 +351,8 @@ public class VariantVCFLite {
 
         return isValid
                 && mostDamagingAnnotation.isValid()
-                && VariantManager.isVariantIdIncluded(variantID)
-                && !VariantManager.isVariantIdExcluded(variantID)
+                && VariantManager.isVariantIdIncluded(variantIdStr)
+                && !VariantManager.isVariantIdExcluded(variantIdStr)
                 && !geneList.isEmpty()
                 && !transcriptSet.isEmpty()
                 && CohortLevelFilterCommand.isAFValid(af)
@@ -372,9 +365,9 @@ public class VariantVCFLite {
                 && isPrimateAIValid();
     }
 
-    public String getVariantID() {
-        return variantID;
-    }
+   // public String getVariantID() {
+     //   return variantIdStr;
+   // }
 
     public Annotation getMostDamagingAnnotation() {
         return mostDamagingAnnotation;
@@ -390,10 +383,6 @@ public class VariantVCFLite {
 
     public HashSet<Integer> getTranscriptSet() {
         return transcriptSet;
-    }
-
-    public boolean isSNV() {
-        return isSNV;
     }
 
     public byte[] getGTArr() {
@@ -418,9 +407,9 @@ public class VariantVCFLite {
 
     private boolean isExACValid() {
         if (ExACCommand.getInstance().isInclude) {
-            ExAC exac = new ExAC(chr, pos, ref, alt);
+            ExAC exac = new ExAC(chr, pos, refAllele, allele);
 
-            return exac.isValid(false);
+            return exac.isValid(knownVarOutput.isKnownVariant());
         }
 
         return true;
@@ -428,9 +417,9 @@ public class VariantVCFLite {
 
     private boolean isGnomADExomeValid() {
         if (GnomADExomeCommand.getInstance().isInclude) {
-            GnomADExome gnomADExome = new GnomADExome(chr, pos, ref, alt);
+            GnomADExome gnomADExome = new GnomADExome(chr, pos, refAllele, allele);
 
-            return gnomADExome.isValid(false);
+            return gnomADExome.isValid(knownVarOutput.isKnownVariant());
         }
 
         return true;
@@ -438,9 +427,9 @@ public class VariantVCFLite {
 
     private boolean isGnomADGenomeValid() {
         if (GnomADGenomeCommand.getInstance().isInclude) {
-            GnomADGenome gnomADGenome = new GnomADGenome(chr, pos, ref, alt);
+            GnomADGenome gnomADGenome = new GnomADGenome(chr, pos, refAllele, allele);
 
-            return gnomADGenome.isValid(false);
+            return gnomADGenome.isValid(knownVarOutput.isKnownVariant());
         }
 
         return true;
@@ -460,15 +449,21 @@ public class VariantVCFLite {
         return true;
     }
 
+    private void initKnownVar() {
+        if (KnownVarCommand.isInclude) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
+    }
+
     private void initRevel() {
         if (RevelCommand.isInclude) {
-            revel = RevelManager.getRevel(chr, pos, ref, alt, isMNV);
+            revel = RevelManager.getRevel(chr, pos, refAllele, allele, isMNV());
         }
     }
 
     private void initPrimateAI() {
         if (PrimateAICommand.isInclude) {
-            primateAI = PrimateAIManager.getPrimateAI(chr, pos, ref, alt, isMNV);
+            primateAI = PrimateAIManager.getPrimateAI(chr, pos, refAllele, allele, isMNV());
         }
     }
 

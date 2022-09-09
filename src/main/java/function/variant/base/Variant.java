@@ -38,6 +38,20 @@ public class Variant extends Region {
 
         variantIdStr = chrStr + "-" + pos + "-" + refAllele + "-" + allele;
     }
+    
+    public Variant(String values[]) throws Exception {
+        String chr = values[0];
+        int pos = Integer.valueOf(values[1]);
+        refAllele = values[3];
+        allele = values[4];
+        
+        isMNV = refAllele.length() > 1 && allele.length() > 1
+                && allele.length() == refAllele.length();
+        
+        initRegion(chr, pos, pos);
+
+        variantIdStr = chrStr + "-" + pos + "-" + refAllele + "-" + allele;
+    }
 
     public int getVariantId() {
         return variantId;
@@ -79,7 +93,7 @@ public class Variant extends Region {
         return "rs" + rsNumber;
     }
 
-    public boolean isSnv() {
+    public boolean isSNV() {
         return !isIndel;
     }
 
