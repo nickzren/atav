@@ -32,11 +32,10 @@ public class Trio {
     }
 
     public boolean isValid() {
-        if (fatherId != Data.INTEGER_NA || motherId != Data.INTEGER_NA) {
-            return true;
+        if (TrioCommand.isExcludeDUO && this.isDUO()) {
+            return false;
         }
-
-        return false;
+        return (fatherId != Data.INTEGER_NA || motherId != Data.INTEGER_NA);
     }
 
     public Sample getChild() {
