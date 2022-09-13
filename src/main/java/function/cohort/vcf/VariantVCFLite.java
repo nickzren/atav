@@ -74,8 +74,9 @@ public class VariantVCFLite extends Variant {
 
     public VariantVCFLite(String values[]) throws Exception {
         rsNumber = values[2];
-        initVariant(values);
-        variantIdStr = chrStr + "-" + startPosition + "-" + refAllele + "-" + allele;
+        String v_id_str = values[0] + "-" + values[1] + "-" + values[2] + "-" + values[3];
+        
+        initByVariantIDStr(v_id_str);
         
         indelLength = allele.length() - refAllele.length();
 

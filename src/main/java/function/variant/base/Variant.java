@@ -42,20 +42,21 @@ public class Variant extends Region {
         variantIdStr = chrStr + "-" + pos + "-" + refAllele + "-" + allele;
     }
 
-    public void initVariant(String values[]) {
+    public void initByVariantIDStr(String v_id_str) {
+        variantIdStr = v_id_str; 
+        String[] values = variantIdStr.split("-");
+
         String chr = values[0];
         int pos = Integer.valueOf(values[1]);
-        initRegion(chr, pos, pos);
+        refAllele = values[2];
+        allele = values[3];
 
-        //Skip values[2] if it contains rsNumber
-        int skipValue = values.length == 4 ? 0 : 1;
-        refAllele = values[2 + skipValue];
-        allele = values[3 + skipValue];
+        isIndel = refAllele.length() != allele.length();
 
         isMNV = refAllele.length() > 1 && allele.length() > 1
                 && allele.length() == refAllele.length();
 
-        isIndel = refAllele.length() != allele.length();
+        initRegion(chr, pos, pos);
     }
 
     public int getVariantId() {

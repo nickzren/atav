@@ -101,8 +101,8 @@ public class VariantGenoLite extends Variant {
     private CSVRecord record;
 
     public VariantGenoLite(CSVRecord record) throws Exception {
-        variantIdStr = record.get(ListVarGenoLite.VARIANT_ID_HEADER);
-        initVariant(variantIdStr.split("-"));
+        String v_id_str = record.get(ListVarGenoLite.VARIANT_ID_HEADER);
+        initByVariantIDStr(v_id_str);
         
         this.record = record;
         indelLength = allele.length() - refAllele.length();
