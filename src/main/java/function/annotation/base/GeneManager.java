@@ -216,7 +216,7 @@ public class GeneManager {
             return Data.STRING_NA;
         }
         
-        return isLowPSIRegion(pos) ? "1" : "0";
+        return isLowPSIRegion(pos) ? "1" : Data.STRING_NA;
     }
 
     private static boolean isLowPSIRegion(int pos) {
