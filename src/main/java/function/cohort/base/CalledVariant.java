@@ -114,7 +114,10 @@ public class CalledVariant extends AnnotatedVariant {
 
     private boolean checkCoveredSamplePercentage() {
         isValid = CohortLevelFilterCommand.isMinCoveredCasePercentageValid(coveredSamplePercentage[Index.CASE])
-                && CohortLevelFilterCommand.isMinCoveredCtrlPercentageValid(coveredSamplePercentage[Index.CTRL]);
+                && CohortLevelFilterCommand.isMinCoveredCtrlPercentageValid(coveredSamplePercentage[Index.CTRL])
+                && CohortLevelFilterCommand.isSiteMaxPercentCovDifferenceValid(
+                        coveredSamplePercentage[Index.CASE],
+                        coveredSamplePercentage[Index.CTRL]);
 
         return isValid;
     }
