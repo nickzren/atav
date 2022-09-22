@@ -61,8 +61,7 @@ public abstract class CoverageComparisonBase extends CoverageAnalysisBase {
     public void beforeProcessDatabaseData() {
         super.beforeProcessDatabaseData();
 
-        if (!CoverageCommand.isLinear
-                && (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0)) {
+        if (SampleManager.getCaseNum() == 0 || SampleManager.getCtrlNum() == 0) {
             ErrorManager.print("Error: this function does not support to run with case only or control only sample file", ErrorManager.INPUT_PARSING);
         }
     }

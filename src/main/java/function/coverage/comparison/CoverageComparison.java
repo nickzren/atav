@@ -13,8 +13,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.StringJoiner;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 import utils.FormatManager;
 import utils.MathManager;
 
@@ -31,7 +29,6 @@ public class CoverageComparison extends CoverageComparisonBase {
     final String cleanedExonList = CommonCommand.outputPath + "exon.clean.txt";
 
     ExonClean regionClean = new ExonClean();
-    ExonCleanLinear exonCleanLinear = new ExonCleanLinear();
 
     @Override
     public void initOutput() {
@@ -40,9 +37,6 @@ public class CoverageComparison extends CoverageComparisonBase {
 
             bwCoverageSummaryByExon = new BufferedWriter(new FileWriter(coverageSummaryByExon));
             bwCoverageSummaryByExon.write("EXON,Chr,Start,End,AvgCase,AvgCtrl,CovDiff,Length");
-            if (CoverageCommand.isLinear) {
-                bwCoverageSummaryByExon.write(",P Value,R2,Variance");
-            }
             bwCoverageSummaryByExon.newLine();
 
             bwExonClean = new BufferedWriter(new FileWriter(cleanedExonList));
@@ -68,11 +62,7 @@ public class CoverageComparison extends CoverageComparisonBase {
     @Override
     public void afterProcessDatabaseData() {
         try {
-            if (CoverageCommand.isLinear) {
-                outputCleanedExonListLinear();
-            } else {
-                outputCleanedExonList();
-            }
+            outputCleanedExonList();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -81,9 +71,6 @@ public class CoverageComparison extends CoverageComparisonBase {
     @Override
     public void processExon(HashMap<Integer, Integer> sampleCoveredLengthMap, Gene gene, Exon exon) {
         try {
-            SimpleRegression sr = new SimpleRegression(true);
-            SummaryStatistics lss = new SummaryStatistics();
-
             float caseAvg = 0;
             float ctrlAvg = 0;
             for (Sample sample : SampleManager.getList()) {
@@ -97,8 +84,6 @@ public class CoverageComparison extends CoverageComparisonBase {
                 } else {
                     coveredLength = 0;
                 }
-
-                addRegressionData(sr, lss, sample, coveredLength, exon.getLength());
             }
 
             caseAvg = MathManager.devide(caseAvg, SampleManager.getCaseNum());
@@ -126,7 +111,7 @@ public class CoverageComparison extends CoverageComparisonBase {
             sj.add(FormatManager.getFloat(covDiff));
             sj.add(FormatManager.getInteger(exon.getLength()));
 
-            addExon(sj, name, caseAvg, ctrlAvg, covDiff, exon.getLength(), sr, lss);
+            addExon(name, caseAvg, ctrlAvg, covDiff, exon.getLength());
 
             bwCoverageSummaryByExon.write(sj.toString());
             bwCoverageSummaryByExon.newLine();
@@ -135,51 +120,8 @@ public class CoverageComparison extends CoverageComparisonBase {
         }
     }
 
-    private void addRegressionData(SimpleRegression sr, SummaryStatistics lss, Sample sample, int coveredLength, int exonLength) {
-        if (CoverageCommand.isLinear) {
-            float x = sample.getQuantitativeTrait();
-            float y = MathManager.devide(coveredLength, exonLength);
-            sr.addData(x, y);
-            lss.addValue(y);
-        }
-    }
-
-    private void addExon(StringJoiner sj, String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize,
-            SimpleRegression sr, SummaryStatistics lss) {
-        if (CoverageCommand.isLinear) {
-            double r2 = sr.getRSquare();
-            double pValue = sr.getSignificance();
-            double variance = lss.getVariance();
-            if (Double.isNaN(pValue)) { //happens if all coverages are the same
-                pValue = 1;
-                r2 = 0;
-            } else {
-                r2 *= 100;
-            }
-            sj.add(FormatManager.getDouble(pValue));
-            sj.add(FormatManager.getDouble(r2));
-            sj.add(FormatManager.getDouble(variance));
-
-            exonCleanLinear.addExon(name, caseAvg, ctrlAvg, covDiff,
-                    regionSize, pValue, r2, variance);
-        } else {
-            regionClean.addExon(name, caseAvg, ctrlAvg, covDiff, regionSize);
-        }
-    }
-
-    private void outputCleanedExonListLinear() {
-        try {
-            exonCleanLinear.initCleanedRegionMap();
-            exonCleanLinear.outputLog();
-
-            for (Gene gene : GeneManager.getGeneBoundaryList()) {
-                writeToFile(exonCleanLinear.getCleanedGeneStrByExon(gene), bwExonClean);
-
-                writeToFile(exonCleanLinear.getCleanedGeneSummaryStrByExon(gene), bwGeneSummaryClean);
-            }
-        } catch (Exception ex) {
-            ErrorManager.send(ex);
-        }
+    private void addExon(String name, float caseAvg, float ctrlAvg, float covDiff, int regionSize) {
+        regionClean.addExon(name, caseAvg, ctrlAvg, covDiff, regionSize);
     }
 
     private void outputCleanedExonList() {

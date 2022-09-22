@@ -97,6 +97,7 @@ public class VariantGenoLite extends Variant {
     private float igmAF;
     private DBNSFP dbNSFP;
     private int[] qcFailSample = new int[2];
+    private float[] coveredSamplePercentage = new float[2];
     private float looAF;
     private CSVRecord record;
 
@@ -139,7 +140,8 @@ public class VariantGenoLite extends Variant {
 
             qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
             qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
-
+            coveredSamplePercentage[Index.CASE] = FormatManager.getFloat(record.get(ListVarGenoLite.COVERED_CASE_PERCENTAGE_HEADER));
+            coveredSamplePercentage[Index.CTRL] = FormatManager.getFloat(record.get(ListVarGenoLite.COVERED_CTRL_PERCENTAGE_HEADER));
             looAF = FormatManager.getFloat(record.get(ListVarGenoLite.LOO_AF_HEADER));
         }
     }
@@ -415,13 +417,22 @@ public class VariantGenoLite extends Variant {
                 && isIranomeAFValid()
                 && isIGMAFValid()
                 && CohortLevelFilterCommand.isLooAFValid(looAF)
-                && isMaxQcFailSampleValid();
+                && isMaxQcFailSampleValid()
+                && checkCoveredSamplePercentage();
     }
 
     private boolean isMaxQcFailSampleValid() {
         int totalQCFailSample = qcFailSample[Index.CASE] + qcFailSample[Index.CTRL];
 
         return CohortLevelFilterCommand.isMaxQcFailSampleValid(totalQCFailSample);
+    }
+
+    private boolean checkCoveredSamplePercentage() {
+        return CohortLevelFilterCommand.isMinCoveredCasePercentageValid(coveredSamplePercentage[Index.CASE])
+                && CohortLevelFilterCommand.isMinCoveredCtrlPercentageValid(coveredSamplePercentage[Index.CTRL])
+                && CohortLevelFilterCommand.isSiteMaxPercentCovDifferenceValid(
+                        coveredSamplePercentage[Index.CASE],
+                        coveredSamplePercentage[Index.CTRL]);
     }
 
     public CSVRecord getRecord() {

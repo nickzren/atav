@@ -228,7 +228,7 @@ public class GeneManager {
             return Data.BYTE_NA;
         }
 
-        return isLowPSIRegion(pos) ? (byte) 1 : (byte) 0;
+        return isLowPSIRegion(pos) ? (byte) 1 : Data.BYTE_NA;
     }
 
     private static boolean isLowPSIRegion(int pos) {
