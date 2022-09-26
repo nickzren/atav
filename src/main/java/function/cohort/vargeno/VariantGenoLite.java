@@ -26,6 +26,7 @@ import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADGenomeCommand;
+import function.external.igmaf.IGMAF;
 import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
