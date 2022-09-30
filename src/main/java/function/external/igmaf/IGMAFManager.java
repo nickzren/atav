@@ -21,7 +21,7 @@ public class IGMAFManager {
 
     public static void init() {
         if (IGMAFCommand.getInstance().isInclude) {
-            String sql = "SELECT af FROM " + table + " WHERE chr=? AND variant_id=?";
+            String sql = "SELECT af, ac, ns, nhom FROM " + table + " WHERE chr=? AND variant_id=?";
             preparedStatement = DBManager.initPreparedStatement(sql);
         }
     }
