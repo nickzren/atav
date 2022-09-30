@@ -396,7 +396,6 @@ public class VariantGenoLite extends Variant {
                 && VariantManager.isVariantIdIncluded(variantIdStr)
                 && !VariantManager.isVariantIdExcluded(variantIdStr)
                 && !geneList.isEmpty()
-                && !transcriptSet.isEmpty()
                 && isExacValid()
                 && isGnomADExomeValid()
                 && isGnomADGenomeValid()
