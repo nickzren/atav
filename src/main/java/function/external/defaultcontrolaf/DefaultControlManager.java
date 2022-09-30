@@ -14,7 +14,7 @@ import utils.ErrorManager;
  */
 public class DefaultControlManager {
 
-    private static final String table = "igm_af.default_control_variant_030421";
+    private static final String table = "igm_af.default_control_variant_092622";
     private static PreparedStatement preparedStatement;
 
     public static void init() {
