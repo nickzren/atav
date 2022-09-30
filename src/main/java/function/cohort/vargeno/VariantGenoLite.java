@@ -460,7 +460,7 @@ public class VariantGenoLite extends Variant {
             return true;
         }
 
-        return exac.isValid(knownVarOutput.isKnownVariant());
+        return exac.isValid(knownVarOutput);
     }
 
     private boolean isGnomADExomeValid() {
@@ -468,7 +468,7 @@ public class VariantGenoLite extends Variant {
             return true;
         }
 
-        return gnomADExome.isValid(knownVarOutput.isKnownVariant());
+        return gnomADExome.isValid(knownVarOutput);
     }
 
     private boolean isGnomADGenomeValid() {
@@ -476,7 +476,7 @@ public class VariantGenoLite extends Variant {
             return true;
         }
 
-        return gnomADGenome.isValid(knownVarOutput.isKnownVariant());
+        return gnomADGenome.isValid(knownVarOutput);
     }
 
     private boolean isSubRVISValid() {
@@ -580,30 +580,30 @@ public class VariantGenoLite extends Variant {
         return pext.isValid();
     }
 
-    private boolean isGMEAFValid() {
-        return GMECommand.getInstance().isAFValid(gmeAF, knownVarOutput.isKnownVariant());
+    private boolean isGMEAFValid() {                
+        return GMECommand.getInstance().isAFValid(gmeAF, knownVarOutput);
     }
 
     private boolean isTopMedAFValid() {
-        return TopMedCommand.getInstance().isAFValid(topmedAF, knownVarOutput.isKnownVariant());
+        return TopMedCommand.getInstance().isAFValid(topmedAF, knownVarOutput);
     }
 
     private boolean isGenomeAsiaAFValid() {
-        return GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF, knownVarOutput.isKnownVariant());
+        return GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF, knownVarOutput);
     }
 
     private boolean isIranomeAFValid() {
-        return IranomeCommand.getInstance().isAFValid(iranomeAF, knownVarOutput.isKnownVariant());
+        return IranomeCommand.getInstance().isAFValid(iranomeAF, knownVarOutput);
     }
 
     private boolean isIGMAFValid() {
-        return IGMAFCommand.getInstance().isAFValid(igmAF, knownVarOutput.isKnownVariant());
+        return IGMAFCommand.getInstance().isAFValid(igmAF, knownVarOutput);
     }
 
     public float getTrapScore() {
         return trapScore;
     }
-
+    
     public String getATAVLink() {
         return "\"=HYPERLINK(\"\"http://atavdb.org/variant/" + variantIdStr + "\"\",\"\"ATAV\"\")\"";
     }

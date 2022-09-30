@@ -1,5 +1,6 @@
 package function.external.evs;
 
+import function.external.knownvar.KnownVarOutput;
 import global.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -79,9 +80,9 @@ public class Evs {
         return maf;
     }
 
-    public boolean isValid(boolean isKnownVariant) {
+    public boolean isValid(KnownVarOutput knownVarOutput) {
         return EvsCommand.isEvsStatusValid(filterStatus)
-                && EvsCommand.isEvsMafValid(getMaxMaf(), isKnownVariant);
+                && EvsCommand.isEvsMafValid(getMaxMaf(), knownVarOutput);
     }
 
     public String getVariantId() {

@@ -25,7 +25,7 @@ public class GnomADGenomeOutput {
     }
 
     public boolean isValid() {
-        return gnomADGenome.isValid(false);
+        return gnomADGenome.isValid(null);
     }
 
     @Override

@@ -167,61 +167,61 @@ public class AnnotatedVariant extends Variant {
         if (isValid && IGMAFCommand.getInstance().isInclude) {
             igmAF = IGMAFManager.getAF(chrStr, variantId);
 
-            isValid = IGMAFCommand.getInstance().isAFValid(igmAF, getKnownVar().isKnownVariant());
+            isValid = IGMAFCommand.getInstance().isAFValid(igmAF, getKnownVar());
         }
 
         if (isValid && DefaultControlCommand.getInstance().isInclude) {
             defaultControl = DefaultControlManager.getDefaultControlAF(chrStr, variantId);
 
-            isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF(), getKnownVar().isKnownVariant());
+            isValid = DefaultControlCommand.getInstance().isAFValid(defaultControl.getAF(), getKnownVar());
         }
 
         if (isValid && GMECommand.getInstance().isInclude) {
             gmeAF = GMEManager.getAF(variantIdStr);
 
-            isValid = GMECommand.getInstance().isAFValid(gmeAF, getKnownVar().isKnownVariant());
+            isValid = GMECommand.getInstance().isAFValid(gmeAF, getKnownVar());
         }
 
         if (isValid && IranomeCommand.getInstance().isInclude) {
             iranomeAF = IranomeManager.getAF(variantIdStr);
 
-            isValid = IranomeCommand.getInstance().isAFValid(iranomeAF, getKnownVar().isKnownVariant());
+            isValid = IranomeCommand.getInstance().isAFValid(iranomeAF, getKnownVar());
         }
 
         if (isValid && TopMedCommand.getInstance().isInclude) {
             topmedAF = TopMedManager.getAF(variantIdStr);
 
-            isValid = TopMedCommand.getInstance().isAFValid(topmedAF, getKnownVar().isKnownVariant());
+            isValid = TopMedCommand.getInstance().isAFValid(topmedAF, getKnownVar());
         }
 
         if (isValid && GenomeAsiaCommand.getInstance().isInclude) {
             genomeasiaAF = GenomeAsiaManager.getAF(variantIdStr);
 
-            isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF, getKnownVar().isKnownVariant());
+            isValid = GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF, getKnownVar());
         }
 
         if (isValid && GnomADExomeCommand.getInstance().isInclude) {
             gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
-            isValid = gnomADExome.isValid(getKnownVar().isKnownVariant());
+            isValid = gnomADExome.isValid(getKnownVar());
         }
 
         if (isValid && GnomADGenomeCommand.getInstance().isInclude) {
             gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
-            isValid = gnomADGenome.isValid(getKnownVar().isKnownVariant());
+            isValid = gnomADGenome.isValid(getKnownVar());
         }
 
         if (isValid && ExACCommand.getInstance().isInclude) {
             exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
-            isValid = exac.isValid(getKnownVar().isKnownVariant());
+            isValid = exac.isValid(getKnownVar());
         }
 
         if (isValid && EvsCommand.isInclude) {
             evs = new Evs(chrStr, startPosition, refAllele, allele);
 
-            isValid = evs.isValid(getKnownVar().isKnownVariant());
+            isValid = evs.isValid(getKnownVar());
         }
 
         if (isValid && GerpCommand.isInclude) {

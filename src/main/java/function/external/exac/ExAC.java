@@ -1,5 +1,6 @@
 package function.external.exac;
 
+import function.external.knownvar.KnownVarOutput;
 import global.Data;
 import java.sql.PreparedStatement;
 import utils.ErrorManager;
@@ -161,8 +162,8 @@ public class ExAC {
         vqslod = Data.FLOAT_NA;
     }
 
-    public boolean isValid(boolean isKnownVariant) {
-        return ExACCommand.getInstance().isAFValid(maxAF, minAF, isKnownVariant)
+    public boolean isValid(KnownVarOutput knownVarOutput) {
+        return ExACCommand.getInstance().isAFValid(maxAF, minAF, knownVarOutput)
                 && ExACCommand.isVqslodValid(vqslod, isSnv)
                 && ExACCommand.isMeanCoverageValid(meanCoverage);
     }

@@ -407,7 +407,7 @@ public class VariantVCFLite extends Variant {
         if (ExACCommand.getInstance().isInclude) {
             ExAC exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
-            return exac.isValid(knownVarOutput.isKnownVariant());
+            return exac.isValid(knownVarOutput);
         }
 
         return true;
@@ -417,7 +417,7 @@ public class VariantVCFLite extends Variant {
         if (GnomADExomeCommand.getInstance().isInclude) {
             GnomADExome gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
-            return gnomADExome.isValid(knownVarOutput.isKnownVariant());
+            return gnomADExome.isValid(knownVarOutput);
         }
 
         return true;
@@ -427,7 +427,7 @@ public class VariantVCFLite extends Variant {
         if (GnomADGenomeCommand.getInstance().isInclude) {
             GnomADGenome gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
-            return gnomADGenome.isValid(knownVarOutput.isKnownVariant());
+            return gnomADGenome.isValid(knownVarOutput);
         }
 
         return true;

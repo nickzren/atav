@@ -1,5 +1,6 @@
 package function.external.base;
 
+import function.external.knownvar.KnownVarOutput;
 import global.Data;
 
 /**
@@ -18,29 +19,29 @@ public class VariantAFCommand {
     // global known variant AF cutoff
     public static float maxKnownVariantAF = Data.NO_FILTER;
 
-    public boolean isAFValid(float value, boolean isKnownVariant) {
-        return isMaxAFValid(value, isKnownVariant)
+    public boolean isAFValid(float value, KnownVarOutput knownVarOutput) {
+        return isMaxAFValid(value, knownVarOutput)
                 && isMinAFValid(value)
                 && isMaxMAFValid(value)
                 && isMinMAFValid(value);
 
     }
 
-    public boolean isAFValid(float max, float min, boolean isKnownVariant) {
-        return isMaxAFValid(max, isKnownVariant)
+    public boolean isAFValid(float max, float min, KnownVarOutput knownVarOutput) {
+        return isMaxAFValid(max, knownVarOutput)
                 && isMinAFValid(max)
                 && isMaxMAFValid(max, min)
                 && isMinMAFValid(max, min);
 
     }
 
-    private boolean isMaxAFValid(float value, boolean isKnownVariant) {
+    private boolean isMaxAFValid(float value, KnownVarOutput knownVarOutput) {
         if (maxAF == Data.NO_FILTER) {
             return true;
         }
         
         if(maxKnownVariantAF != Data.NO_FILTER &&
-                isKnownVariant) {
+                knownVarOutput != null && knownVarOutput.isKnownVariant()) {
             maxAF = maxKnownVariantAF;
         }
 

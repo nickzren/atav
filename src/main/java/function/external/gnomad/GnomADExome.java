@@ -1,5 +1,6 @@
 package function.external.gnomad;
 
+import function.external.knownvar.KnownVarOutput;
 import global.Data;
 import java.sql.PreparedStatement;
 import utils.ErrorManager;
@@ -204,8 +205,8 @@ public class GnomADExome {
         GnomADExomeCommand.getInstance().resetPopAFValid();
     }
 
-    public boolean isValid(boolean isKnownVariant) {
-        return GnomADExomeCommand.getInstance().isAFValid(maxAF, minAF, isKnownVariant)
+    public boolean isValid(KnownVarOutput knownVarOutput) {
+        return GnomADExomeCommand.getInstance().isAFValid(maxAF, minAF, knownVarOutput)
                 && GnomADExomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
                 && GnomADExomeCommand.getInstance().isFilterPass(filter)
                 && GnomADExomeCommand.getInstance().isPopAFValid();

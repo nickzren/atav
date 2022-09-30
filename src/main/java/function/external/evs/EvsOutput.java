@@ -20,7 +20,7 @@ public class EvsOutput {
     }
 
     public boolean isValid() {
-        return evs.isValid(false);
+        return evs.isValid(null);
     }
 
     @Override
