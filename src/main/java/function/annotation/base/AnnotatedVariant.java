@@ -39,6 +39,7 @@ import function.external.gnomad.GnomADGene;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADGenomeCommand;
 import function.external.gnomad.GnomADManager;
+import function.external.igmaf.IGMAF;
 import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
@@ -133,7 +134,7 @@ public class AnnotatedVariant extends Variant {
     private float topmedAF;
     private float genomeasiaAF;
     private float iranomeAF;
-    private float igmAF;
+    private IGMAF igmAF;
     private DefaultControl defaultControl;
     private DBNSFP dbNSFP;
     private byte ttnLowPSI;
@@ -165,9 +166,9 @@ public class AnnotatedVariant extends Variant {
         }
 
         if (isValid && IGMAFCommand.getInstance().isInclude) {
-            igmAF = IGMAFManager.getAF(chrStr, variantId);
+            igmAF = IGMAFManager.getIGMAF(chrStr, variantId);
 
-            isValid = IGMAFCommand.getInstance().isAFValid(igmAF, getKnownVar());
+            isValid = IGMAFCommand.getInstance().isAFValid(igmAF.getAF(), getKnownVar());
         }
 
         if (isValid && DefaultControlCommand.getInstance().isInclude) {
@@ -792,7 +793,7 @@ public class AnnotatedVariant extends Variant {
     }
 
     public String getIGMAF() {
-        return FormatManager.getFloat(igmAF);
+        return igmAF.toString();
     }
 
     public StringJoiner getDefaultControlStringJoiner() {
