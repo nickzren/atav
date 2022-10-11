@@ -84,8 +84,9 @@ public class VariantVCFLite extends Variant {
 
         if (mostDamagingAnnotation.isValid()) {
             initAllGenotype(values);
-
+        
             initAF();
+            initKnownVar();
         }
     }
 
@@ -94,10 +95,6 @@ public class VariantVCFLite extends Variant {
 
         // isValid to false means no annotations passed the filters
         mostDamagingAnnotation.setValid(false);
-
-        if (KnownVarCommand.isInclude) {
-            initKnownVar();
-        }
 
         // init revel and primateai once and potentially used for ensemble filters
         initRevel();
