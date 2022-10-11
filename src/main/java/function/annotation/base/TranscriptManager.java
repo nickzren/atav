@@ -324,9 +324,9 @@ public class TranscriptManager {
 
         return idSB.toString();
     }
-    
+
     public static int getIntStableId(String value) {
-        if (value.equals(Data.STRING_NA)) {
+        if (value.equals(Data.STRING_NA) || value.equals(Data.VCF_NA)) {
             return Data.INTEGER_NA;
         } else {
             return Integer.valueOf(value.substring(4)); // remove ENST
