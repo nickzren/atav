@@ -255,5 +255,9 @@ public class CollapsingLite extends ListVarGenoLite {
 
     private void gzipFiles() {
         ThirdPartyToolManager.gzipFile(matrixFilePath);
+        
+        if (CommonCommand.gzip) {
+            ThirdPartyToolManager.gzipFile(genotypeLiteFilePath);
+        }
     }
 }

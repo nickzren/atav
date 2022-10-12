@@ -46,6 +46,7 @@ import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.LogManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -140,6 +141,10 @@ public class ListVarGenoLite {
             }
 
             closeOutput();
+
+            if (CommonCommand.gzip) {
+                ThirdPartyToolManager.gzipFile(genotypeLiteFilePath);
+            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
