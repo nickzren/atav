@@ -59,7 +59,7 @@ public class GenotypeLevelFilterCommand {
             switch (option.getName()) {
                 case "--min-coverage":
                 case "--min-dp-bin":
-                    checkValueValid(new String[]{"10", "20", "30", "50", "200"}, option);
+                    checkValueValid(new String[]{"10"}, option);
                     minDpBin = getValidInteger(option);
                     break;
                 case "--min-dp":
