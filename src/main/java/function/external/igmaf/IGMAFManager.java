@@ -21,7 +21,7 @@ public class IGMAFManager {
 
     public static void init() {
         if (IGMAFCommand.getInstance().isInclude) {
-            String sql = "SELECT af, ac, ns, nhom FROM " + table + " WHERE chr=? AND variant_id=?";
+            String sql = "SELECT ac, af, ns, nhom FROM " + table + " WHERE chr=? AND variant_id=?";
             preparedStatement = DBManager.initPreparedStatement(sql);
         }
     }
@@ -29,8 +29,8 @@ public class IGMAFManager {
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
-        sj.add("IGM AF");
         sj.add("IGM AC");
+        sj.add("IGM AF");
         sj.add("IGM NS");
         sj.add("IGM NHOM");
 

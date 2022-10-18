@@ -27,6 +27,7 @@ public class IGMAF {
 
         sj.add(FormatManager.getInteger(ac));
         sj.add(FormatManager.getFloat(af));
+        sj.add(FormatManager.getInteger(ns));
         sj.add(FormatManager.getInteger(nhom));
 
         return sj;
