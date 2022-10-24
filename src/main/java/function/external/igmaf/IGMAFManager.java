@@ -1,10 +1,10 @@
 package function.external.igmaf;
 
 import function.external.base.DataManager;
-import global.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.StringJoiner;
 import org.apache.commons.csv.CSVRecord;
 import utils.DBManager;
 import utils.ErrorManager;
@@ -21,28 +21,45 @@ public class IGMAFManager {
 
     public static void init() {
         if (IGMAFCommand.getInstance().isInclude) {
-            String sql = "SELECT af FROM " + table + " WHERE chr=? AND variant_id=?";
+            String sql = "SELECT ac, af, ns, nhom FROM " + table + " WHERE chr=? AND variant_id=?";
             preparedStatement = DBManager.initPreparedStatement(sql);
         }
     }
 
     public static String getHeader() {
-        return "IGM AF";
+        StringJoiner sj = new StringJoiner(",");
+
+        sj.add("IGM AC");
+        sj.add("IGM AF");
+        sj.add("IGM NS");
+        sj.add("IGM NHOM");
+
+        return sj.toString();
     }
 
     public static String getVersion() {
         return "IGM AF: " + DataManager.getVersion(table) + "\n";
     }
 
-    public static float getAF(String chr, int variantID) {
-        float af = Data.FLOAT_NA;
+    public static float getAF(CSVRecord record) {
+        return FormatManager.getFloat(record, "IGM AF");
+    }
+
+
+    public static IGMAF getIGMAF(String chr, int variantID) {
+        IGMAF igmAF = new IGMAF();
 
         try {
             preparedStatement.setString(1, chr);
             preparedStatement.setInt(2, variantID);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                af = rs.getFloat("af");
+                int ac = rs.getInt("ac");
+                float af = rs.getFloat("af");
+                int ns = rs.getInt("ns");
+                int nhom = rs.getInt("nhom");
+
+                igmAF.init(ac, af, ns, nhom);
             }
 
             rs.close();
@@ -50,10 +67,6 @@ public class IGMAFManager {
             ErrorManager.send(ex);
         }
 
-        return af;
-    }
-
-    public static float getAF(CSVRecord record) {
-        return FormatManager.getFloat(record, getHeader());
+        return igmAF;
     }
 }

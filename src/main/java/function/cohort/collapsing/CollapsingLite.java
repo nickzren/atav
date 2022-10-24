@@ -118,7 +118,7 @@ public class CollapsingLite extends ListVarGenoLite {
                     outputGenotype(variantLite);
                 }
 
-                previousVariantID = variantLite.getVariantID();
+                previousVariantID = variantLite.getVariantIdStr();
             }
 
             outputSummary();
@@ -162,7 +162,7 @@ public class CollapsingLite extends ListVarGenoLite {
         summary.countQualifiedVariantBySample(geno, sample.getIndex());
 
         // only count variant once per gene
-        if (!previousVariantID.equals(variantLite.getVariantID())) {
+        if (!previousVariantID.equals(variantLite.getVariantIdStr())) {
             summary.updateVariantCount(variantLite.isSNV());
         }
     }

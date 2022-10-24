@@ -26,10 +26,13 @@ import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADGenomeCommand;
+import function.external.igmaf.IGMAF;
 import function.external.igmaf.IGMAFCommand;
 import function.external.igmaf.IGMAFManager;
 import function.external.iranome.IranomeCommand;
 import function.external.iranome.IranomeManager;
+import function.external.knownvar.KnownVarCommand;
+import function.external.knownvar.KnownVarOutput;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.mpc.MPCCommand;
@@ -48,6 +51,7 @@ import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapCommand;
 import function.external.trap.TrapManager;
+import function.variant.base.Variant;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -65,15 +69,9 @@ import utils.MathManager;
  *
  * @author nick
  */
-public class VariantGenoLite {
+public class VariantGenoLite extends Variant {
 
-    private String variantID;
-    private String chr;
-    private int pos;
-    private String ref;
-    private String alt;
     private int indelLength;
-    private boolean isSNV;
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
     private List<String> geneList = new ArrayList();
     private HashSet<Integer> transcriptSet = new HashSet<>();
@@ -84,6 +82,7 @@ public class VariantGenoLite {
     private SubRvisOutput subrvis;
     private LIMBROutput limbr;
     private CCROutput ccr;
+    private KnownVarOutput knownVarOutput;
     private float trapScore;
     private DiscovEHR discovEHR;
     private Boolean isLOFTEEHCinCCDS;
@@ -103,17 +102,12 @@ public class VariantGenoLite {
     private float looAF;
     private CSVRecord record;
 
-    public VariantGenoLite(CSVRecord record) {
+    public VariantGenoLite(CSVRecord record) throws Exception {
+        String v_id_str = record.get(ListVarGenoLite.VARIANT_ID_HEADER);
+        initByVariantIDStr(v_id_str);
+        
         this.record = record;
-        variantID = record.get(ListVarGenoLite.VARIANT_ID_HEADER);
-        String[] tmp = variantID.split("-");
-        chr = tmp[0];
-        pos = Integer.valueOf(tmp[1]);
-        ref = tmp[2];
-        alt = tmp[3];
-        indelLength = alt.length() - ref.length();
-
-        isSNV = ref.length() == alt.length();
+        indelLength = allele.length() - refAllele.length();
 
         // init to apply per annotation
         initREVEL(record);
@@ -143,6 +137,7 @@ public class VariantGenoLite {
             initGenomeAsia(record);
             initIranome(record);
             initIGMAF(record);
+            initKnownVar();
 
             qcFailSample[Index.CASE] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CASE_HEADER));
             qcFailSample[Index.CTRL] = FormatManager.getInteger(record.get(ListVarGenoLite.QC_FAIL_CTRL_HEADER));
@@ -191,17 +186,17 @@ public class VariantGenoLite {
             // --canonical-only
             // --filter-dbnsfp-all & --filter-dbnsfp-one
             if (EffectManager.isEffectContained(effect)
-                    && GeneManager.isValid(geneName, chr, pos, indelLength)
+                    && GeneManager.isValid(geneName, chrStr, startPosition, indelLength)
                     && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
                     && annotation.isEnsembleMissenseValid()
-                    && TranscriptManager.isCCDSValid(chr, stableId)
-                    && TranscriptManager.isCanonicalValid(chr, stableId)
+                    && TranscriptManager.isCCDSValid(chrStr, stableId)
+                    && TranscriptManager.isCanonicalValid(chrStr, stableId)
                     && DBNSFPManager.isValid(dbNSFP, stableId, effect)
-                    && TranscriptManager.isTranscriptBoundaryValid(stableId, pos, indelLength)) {
+                    && TranscriptManager.isTranscriptBoundaryValid(stableId, startPosition, indelLength)) {
 
                 // reset gene name to gene domain name so the downstream procedure could match correctly
                 // only for gene boundary input
-                geneName = GeneManager.getGeneDomainName(geneName, chr, pos);
+                geneName = GeneManager.getGeneDomainName(geneName, chrStr, startPosition);
 
                 StringJoiner geneTranscriptSJ = new StringJoiner("|");
                 geneTranscriptSJ.add(effect);
@@ -231,7 +226,7 @@ public class VariantGenoLite {
 
                     int effectId = EffectManager.getIdByEffect(effect);
 
-                    byte ttnPSI = GeneManager.getTTNLowPSI(geneName, effectId, pos);
+                    byte ttnPSI = GeneManager.getTTNLowPSI(geneName, effectId, startPosition);
                     if (GeneManager.isTTNPSIValid(ttnPSI)) {
                         mostDamagingAnnotation.setValid(true);
                     }
@@ -240,7 +235,7 @@ public class VariantGenoLite {
                 mostDamagingAnnotation.polyphenHumdiv = MathManager.max(mostDamagingAnnotation.polyphenHumdiv, polyphenHumdiv);
                 mostDamagingAnnotation.polyphenHumvar = MathManager.max(mostDamagingAnnotation.polyphenHumvar, polyphenHumvar);
 
-                boolean isCCDS = TranscriptManager.isCCDSTranscript(chr, stableId);
+                boolean isCCDS = TranscriptManager.isCCDSTranscript(chrStr, stableId);
 
                 if (isCCDS) {
                     mostDamagingAnnotation.polyphenHumdivCCDS = MathManager.max(mostDamagingAnnotation.polyphenHumdivCCDS, polyphenHumdiv);
@@ -254,19 +249,19 @@ public class VariantGenoLite {
 
     private void initEXAC(CSVRecord record) {
         if (ExACCommand.getInstance().isInclude) {
-            exac = new ExAC(chr, pos, ref, alt, record);
+            exac = new ExAC(chrStr, startPosition, refAllele, allele, record);
         }
     }
 
     private void initGnomADExome(CSVRecord record) {
         if (GnomADExomeCommand.getInstance().isInclude) {
-            gnomADExome = new GnomADExome(chr, pos, ref, alt, record);
+            gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele, record);
         }
     }
 
     private void initGnomADGenome(CSVRecord record) {
         if (GnomADGenomeCommand.getInstance().isInclude) {
-            gnomADGenome = new GnomADGenome(chr, pos, ref, alt, record);
+            gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele, record);
         }
     }
 
@@ -293,8 +288,7 @@ public class VariantGenoLite {
 
         if (TrapCommand.isInclude) {
             if (TrapCommand.minTrapScore != Data.NO_FILTER) {
-                boolean isMNV = ref.length() > 1 && alt.length() > 1 && alt.length() == ref.length();
-                trapScore = TrapManager.getScore(chr, pos, alt, isMNV, mostDamagingAnnotation.geneName);
+                trapScore = TrapManager.getScore(chrStr, startPosition, allele, isMNV(), mostDamagingAnnotation.geneName);
             } else {
                 trapScore = TrapManager.getScore(record);
             }
@@ -315,7 +309,7 @@ public class VariantGenoLite {
 
     private void initMTR(CSVRecord record) {
         if (MTRCommand.isInclude) {
-            mtr = new MTR(chr, pos, record);
+            mtr = new MTR(chrStr, startPosition, record);
         }
     }
 
@@ -379,25 +373,30 @@ public class VariantGenoLite {
         }
     }
 
+    private void initKnownVar() {
+        if (KnownVarCommand.isInclude) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
+    }
+
     public boolean isValid() throws SQLException {
         if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
-                && VariantManager.isMultiallelicVariant(chr, pos)) {
+                && VariantManager.isMultiallelicVariant(chrStr, startPosition)) {
             // exclude Multiallelic site > 1 variant
             return false;
         } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant2
-                && VariantManager.isMultiallelicVariant2(chr, pos)) {
+                && VariantManager.isMultiallelicVariant2(chrStr, startPosition)) {
             // exclude Multiallelic site > 2 variants
             return false;
         } else if (CHMCommand.isExclude
-                && CHMManager.isRepeatRegion(chr, pos)) {
+                && CHMManager.isRepeatRegion(chrStr, startPosition)) {
             return false;
         }
 
         return mostDamagingAnnotation.isValid()
-                && VariantManager.isVariantIdIncluded(variantID)
-                && !VariantManager.isVariantIdExcluded(variantID)
+                && VariantManager.isVariantIdIncluded(variantIdStr)
+                && !VariantManager.isVariantIdExcluded(variantIdStr)
                 && !geneList.isEmpty()
-                && !transcriptSet.isEmpty()
                 && isExacValid()
                 && isGnomADExomeValid()
                 && isGnomADGenomeValid()
@@ -436,10 +435,6 @@ public class VariantGenoLite {
                         coveredSamplePercentage[Index.CTRL]);
     }
 
-    public String getVariantID() {
-        return variantID;
-    }
-
     public CSVRecord getRecord() {
         return record;
     }
@@ -460,16 +455,12 @@ public class VariantGenoLite {
         return transcriptSet;
     }
 
-    public boolean isSNV() {
-        return isSNV;
-    }
-
     private boolean isExacValid() {
         if (exac == null) {
             return true;
         }
 
-        return exac.isValid();
+        return exac.isValid(knownVarOutput);
     }
 
     private boolean isGnomADExomeValid() {
@@ -477,7 +468,7 @@ public class VariantGenoLite {
             return true;
         }
 
-        return gnomADExome.isValid();
+        return gnomADExome.isValid(knownVarOutput);
     }
 
     private boolean isGnomADGenomeValid() {
@@ -485,7 +476,7 @@ public class VariantGenoLite {
             return true;
         }
 
-        return gnomADGenome.isValid();
+        return gnomADGenome.isValid(knownVarOutput);
     }
 
     private boolean isSubRVISValid() {
@@ -589,31 +580,31 @@ public class VariantGenoLite {
         return pext.isValid();
     }
 
-    private boolean isGMEAFValid() {
-        return GMECommand.getInstance().isAFValid(gmeAF);
+    private boolean isGMEAFValid() {                
+        return GMECommand.getInstance().isAFValid(gmeAF, knownVarOutput);
     }
 
     private boolean isTopMedAFValid() {
-        return TopMedCommand.getInstance().isAFValid(topmedAF);
+        return TopMedCommand.getInstance().isAFValid(topmedAF, knownVarOutput);
     }
 
     private boolean isGenomeAsiaAFValid() {
-        return GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF);
+        return GenomeAsiaCommand.getInstance().isAFValid(genomeasiaAF, knownVarOutput);
     }
 
     private boolean isIranomeAFValid() {
-        return IranomeCommand.getInstance().isAFValid(iranomeAF);
+        return IranomeCommand.getInstance().isAFValid(iranomeAF, knownVarOutput);
     }
 
     private boolean isIGMAFValid() {
-        return IGMAFCommand.getInstance().isAFValid(igmAF);
+        return IGMAFCommand.getInstance().isAFValid(igmAF, knownVarOutput);
     }
 
     public float getTrapScore() {
         return trapScore;
     }
-
+    
     public String getATAVLink() {
-        return "\"=HYPERLINK(\"\"http://atavdb.org/variant/" + variantID + "\"\",\"\"ATAV\"\")\"";
+        return "\"=HYPERLINK(\"\"http://atavdb.org/variant/" + variantIdStr + "\"\",\"\"ATAV\"\")\"";
     }
 }

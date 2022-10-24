@@ -34,6 +34,7 @@ import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
+import function.external.base.VariantAFCommand;
 import function.external.chm.CHMCommand;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.defaultcontrolaf.DefaultControlCommand;
@@ -358,6 +359,7 @@ public class CommandManager {
                     MTRCommand.isInclude = true;
                     VariantLevelFilterCommand.excludeTTNLowPSILofVar = true;
                     VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
+                    VariantAFCommand.maxKnownVariantAF = (float) 0.1;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -422,6 +424,7 @@ public class CommandManager {
                     MTRCommand.isInclude = true;
                     VariantLevelFilterCommand.excludeTTNLowPSILofVar = true;
                     VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
+                    VariantAFCommand.maxKnownVariantAF = (float) 0.1;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;
@@ -641,7 +644,7 @@ public class CommandManager {
         } else if (SiblingCommand.isSiblingCompHet) {
 
         } else if (TrioCommand.isList) {
-            
+            TrioCommand.initOptions(optionList.iterator());
         } else if (ParentalCommand.isParentalMosaic) {
             ParentalCommand.initOptions(optionList.iterator());
         } else if (PedMapCommand.isPedMap) {

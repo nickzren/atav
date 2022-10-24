@@ -134,7 +134,14 @@ public class FormatManager {
             return Data.FLOAT_NA;
         }
     }
-
+    
+    public static int getInteger(CSVRecord record, String column) {
+        if (record.isMapped(column)) {
+            return getInteger(record.get(column));
+        } else {
+            return Data.INTEGER_NA;
+        }
+    }
     public static float getFloat(String str) {
         if (str == null || str.equals(Data.STRING_NA) || str.equals(Data.VCF_NA)) {
             return Data.FLOAT_NA;

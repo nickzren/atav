@@ -21,6 +21,9 @@ public class Variant extends Region {
     private boolean isIndel;
     private boolean isMNV;
 
+    public Variant() {
+    }
+
     public Variant(String chr, int v_id, ResultSet rset) throws Exception {
         variantId = v_id;
 
@@ -37,6 +40,23 @@ public class Variant extends Region {
         initRegion(chr, pos, pos);
 
         variantIdStr = chrStr + "-" + pos + "-" + refAllele + "-" + allele;
+    }
+
+    public void initByVariantIDStr(String v_id_str) {
+        variantIdStr = v_id_str; 
+        String[] values = variantIdStr.split("-");
+
+        String chr = values[0];
+        int pos = Integer.valueOf(values[1]);
+        refAllele = values[2];
+        allele = values[3];
+
+        isIndel = refAllele.length() != allele.length();
+
+        isMNV = refAllele.length() > 1 && allele.length() > 1
+                && allele.length() == refAllele.length();
+
+        initRegion(chr, pos, pos);
     }
 
     public int getVariantId() {
@@ -72,21 +92,21 @@ public class Variant extends Region {
             if (VCFCommand.isOutputVCF) {
                 return Data.VCF_NA;
             }
-            
+
             return Data.STRING_NA;
         }
 
         return "rs" + rsNumber;
     }
 
-    public boolean isSnv() {
+    public boolean isSNV() {
         return !isIndel;
     }
 
     public boolean isIndel() {
         return isIndel;
     }
-    
+
     public boolean isMNV() {
         return isMNV;
     }
@@ -106,13 +126,13 @@ public class Variant extends Region {
         sj.add(allele);
         sj.add(getRsNumberStr());
     }
-    
+
     public String getATAVLINK() {
         StringBuilder sb = new StringBuilder();
         sb.append("\"=HYPERLINK(\"\"http://atavdb.org/variant/");
         sb.append(variantIdStr);
         sb.append("\"\",\"\"ATAV\"\")\"");
-        
+
         return sb.toString();
     }
 }

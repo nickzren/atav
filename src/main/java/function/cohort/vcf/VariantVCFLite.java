@@ -14,6 +14,8 @@ import function.external.gnomad.GnomADExome;
 import function.external.gnomad.GnomADExomeCommand;
 import function.external.gnomad.GnomADGenome;
 import function.external.gnomad.GnomADGenomeCommand;
+import function.external.knownvar.KnownVarCommand;
+import function.external.knownvar.KnownVarOutput;
 import function.external.limbr.LIMBRCommand;
 import function.external.limbr.LIMBROutput;
 import function.external.mtr.MTR;
@@ -22,6 +24,7 @@ import function.external.primateai.PrimateAICommand;
 import function.external.primateai.PrimateAIManager;
 import function.external.revel.RevelCommand;
 import function.external.revel.RevelManager;
+import function.variant.base.Variant;
 import function.variant.base.VariantLevelFilterCommand;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -38,17 +41,11 @@ import utils.MathManager;
  *
  * @author nick
  */
-public class VariantVCFLite {
+public class VariantVCFLite extends Variant {
 
-    private String variantID;
     private String rsNumber;
-    private String chr;
-    private int pos;
-    private String ref;
-    private String alt;
+    //Indel attributes
     private int indelLength;
-    private boolean isSNV;
-    private boolean isMNV;
 
     // annotations
     private StringJoiner allAnnotationSJ = new StringJoiner(",");
@@ -71,33 +68,25 @@ public class VariantVCFLite {
     public float revel = Data.FLOAT_NA;
     public float primateAI = Data.FLOAT_NA;
 
+    public KnownVarOutput knownVarOutput;
+
     private boolean isValid = true;
 
-    public VariantVCFLite(String values[]) {
-        chr = values[0];
-        pos = Integer.valueOf(values[1]);
+    public VariantVCFLite(String values[]) throws Exception {
         rsNumber = values[2];
-        ref = values[3];
-        alt = values[4];
-
-        indelLength = alt.length() - ref.length();
-        isSNV = ref.length() == alt.length();
-        isMNV = ref.length() > 1 && alt.length() > 1
-                && alt.length() == ref.length();
-
-        StringJoiner sj = new StringJoiner("-");
-        sj.add(chr);
-        sj.add(values[1]);
-        sj.add(ref);
-        sj.add(alt);
-        variantID = sj.toString();
+        String v_id_str = values[0] + "-" + values[1] + "-" + values[2] + "-" + values[3];
+        
+        initByVariantIDStr(v_id_str);
+        
+        indelLength = allele.length() - refAllele.length();
 
         initAllAnnotation(values[7]); // info: NS=X;AF=X;ANN=X
 
         if (mostDamagingAnnotation.isValid()) {
             initAllGenotype(values);
-
+        
             initAF();
+            initKnownVar();
         }
     }
 
@@ -138,16 +127,16 @@ public class VariantVCFLite {
             // --ccds-only
             // --canonical-only
             if (EffectManager.isEffectContained(effect)
-                    && GeneManager.isValid(geneName, chr, pos, indelLength)
+                    && GeneManager.isValid(geneName, chrStr, startPosition, indelLength)
                     && PolyphenManager.isValid(polyphenHumdiv, polyphenHumvar, effect)
                     && annotation.isEnsembleMissenseValid()
-                    && TranscriptManager.isCCDSValid(chr, stableId)
-                    && TranscriptManager.isCanonicalValid(chr, stableId)
-                    && TranscriptManager.isTranscriptBoundaryValid(stableId, pos, indelLength)) {
+                    && TranscriptManager.isCCDSValid(chrStr, stableId)
+                    && TranscriptManager.isCanonicalValid(chrStr, stableId)
+                    && TranscriptManager.isTranscriptBoundaryValid(stableId, startPosition, indelLength)) {
 
                 // reset gene name to gene domain name so the downstream procedure could match correctly
                 // only for gene boundary input
-                geneName = GeneManager.getGeneDomainName(geneName, chr, pos);
+                geneName = GeneManager.getGeneDomainName(geneName, chrStr, startPosition);
 
                 StringJoiner geneTranscriptSJ = new StringJoiner("|");
                 geneTranscriptSJ.add(effect);
@@ -174,8 +163,8 @@ public class VariantVCFLite {
                     mostDamagingAnnotation.HGVS_p = HGVS_p;
                     mostDamagingAnnotation.geneName = geneName;
                     int effectId = EffectManager.getIdByEffect(effect);
-                    
-                    byte ttnPSI = GeneManager.getTTNLowPSI(geneName, effectId, pos);
+
+                    byte ttnPSI = GeneManager.getTTNLowPSI(geneName, effectId, startPosition);
                     if (GeneManager.isTTNPSIValid(ttnPSI)) {
                         mostDamagingAnnotation.setValid(true);
                     }
@@ -184,7 +173,7 @@ public class VariantVCFLite {
                 mostDamagingAnnotation.polyphenHumdiv = MathManager.max(mostDamagingAnnotation.polyphenHumdiv, polyphenHumdiv);
                 mostDamagingAnnotation.polyphenHumvar = MathManager.max(mostDamagingAnnotation.polyphenHumvar, polyphenHumvar);
 
-                boolean isCCDS = TranscriptManager.isCCDSTranscript(chr, stableId);
+                boolean isCCDS = TranscriptManager.isCCDSTranscript(chrStr, stableId);
 
                 if (isCCDS) {
                     mostDamagingAnnotation.polyphenHumdivCCDS = MathManager.max(mostDamagingAnnotation.polyphenHumdivCCDS, polyphenHumdiv);
@@ -282,11 +271,11 @@ public class VariantVCFLite {
     public String toString() {
         StringJoiner sj = new StringJoiner("\t");
 
-        sj.add(chr);
-        sj.add(FormatManager.getInteger(pos));
+        sj.add(chrStr);
+        sj.add(FormatManager.getInteger(startPosition));
         sj.add(rsNumber);
-        sj.add(ref);
-        sj.add(alt);
+        sj.add(refAllele);
+        sj.add(allele);
         sj.add(Data.VCF_NA);
         sj.add(Data.VCF_NA);
 
@@ -347,19 +336,19 @@ public class VariantVCFLite {
      */
     public boolean isValid() throws SQLException {
         if (VariantLevelFilterCommand.isExcludeMultiallelicVariant
-                && VariantManager.isMultiallelicVariant(chr, pos)) {
+                && VariantManager.isMultiallelicVariant(chrStr, startPosition)) {
             // exclude Multiallelic site > 1 variant
             return false;
         } else if (VariantLevelFilterCommand.isExcludeMultiallelicVariant2
-                && VariantManager.isMultiallelicVariant2(chr, pos)) {
+                && VariantManager.isMultiallelicVariant2(chrStr, startPosition)) {
             // exclude Multiallelic site > 2 variants
             return false;
         }
 
         return isValid
                 && mostDamagingAnnotation.isValid()
-                && VariantManager.isVariantIdIncluded(variantID)
-                && !VariantManager.isVariantIdExcluded(variantID)
+                && VariantManager.isVariantIdIncluded(variantIdStr)
+                && !VariantManager.isVariantIdExcluded(variantIdStr)
                 && !geneList.isEmpty()
                 && !transcriptSet.isEmpty()
                 && CohortLevelFilterCommand.isAFValid(af)
@@ -372,10 +361,9 @@ public class VariantVCFLite {
                 && isPrimateAIValid();
     }
 
-    public String getVariantID() {
-        return variantID;
-    }
-
+    // public String getVariantID() {
+    //   return variantIdStr;
+    // }
     public Annotation getMostDamagingAnnotation() {
         return mostDamagingAnnotation;
     }
@@ -392,10 +380,6 @@ public class VariantVCFLite {
         return transcriptSet;
     }
 
-    public boolean isSNV() {
-        return isSNV;
-    }
-
     public byte[] getGTArr() {
         return gtArr;
     }
@@ -403,7 +387,7 @@ public class VariantVCFLite {
     // init LIMBR score base on most damaging gene and applied filter
     private boolean isLIMBRValid() {
         if (LIMBRCommand.isInclude) {
-            LIMBROutput limbrOutput = new LIMBROutput(mostDamagingAnnotation.geneName, chr, pos);
+            LIMBROutput limbrOutput = new LIMBROutput(mostDamagingAnnotation.geneName, chrStr, startPosition);
 
             // LIMBR filters will only apply missense variants except gene boundary option at domain level used
             if (mostDamagingAnnotation.effect.startsWith("missense_variant") || GeneManager.hasGeneDomainInput()) {
@@ -418,9 +402,9 @@ public class VariantVCFLite {
 
     private boolean isExACValid() {
         if (ExACCommand.getInstance().isInclude) {
-            ExAC exac = new ExAC(chr, pos, ref, alt);
+            ExAC exac = new ExAC(chrStr, startPosition, refAllele, allele);
 
-            return exac.isValid();
+            return exac.isValid(knownVarOutput);
         }
 
         return true;
@@ -428,9 +412,9 @@ public class VariantVCFLite {
 
     private boolean isGnomADExomeValid() {
         if (GnomADExomeCommand.getInstance().isInclude) {
-            GnomADExome gnomADExome = new GnomADExome(chr, pos, ref, alt);
+            GnomADExome gnomADExome = new GnomADExome(chrStr, startPosition, refAllele, allele);
 
-            return gnomADExome.isValid();
+            return gnomADExome.isValid(knownVarOutput);
         }
 
         return true;
@@ -438,9 +422,9 @@ public class VariantVCFLite {
 
     private boolean isGnomADGenomeValid() {
         if (GnomADGenomeCommand.getInstance().isInclude) {
-            GnomADGenome gnomADGenome = new GnomADGenome(chr, pos, ref, alt);
+            GnomADGenome gnomADGenome = new GnomADGenome(chrStr, startPosition, refAllele, allele);
 
-            return gnomADGenome.isValid();
+            return gnomADGenome.isValid(knownVarOutput);
         }
 
         return true;
@@ -451,7 +435,7 @@ public class VariantVCFLite {
         if (MTRCommand.isInclude) {
             // MTR filters will only apply missense variants
             if (mostDamagingAnnotation.effect.startsWith("missense_variant")) {
-                MTR mtr = new MTR(chr, pos);
+                MTR mtr = new MTR(chrStr, startPosition);
 
                 return mtr.isValid();
             }
@@ -460,15 +444,21 @@ public class VariantVCFLite {
         return true;
     }
 
+    private void initKnownVar() {
+        if (KnownVarCommand.isInclude) {
+            knownVarOutput = new KnownVarOutput(this);
+        }
+    }
+
     private void initRevel() {
         if (RevelCommand.isInclude) {
-            revel = RevelManager.getRevel(chr, pos, ref, alt, isMNV);
+            revel = RevelManager.getRevel(chrStr, startPosition, refAllele, allele, isMNV());
         }
     }
 
     private void initPrimateAI() {
         if (PrimateAICommand.isInclude) {
-            primateAI = PrimateAIManager.getPrimateAI(chr, pos, ref, alt, isMNV);
+            primateAI = PrimateAIManager.getPrimateAI(chrStr, startPosition, refAllele, allele, isMNV());
         }
     }
 

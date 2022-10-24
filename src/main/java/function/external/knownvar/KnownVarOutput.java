@@ -1,7 +1,7 @@
 package function.external.knownvar;
 
-import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.GeneManager;
+import function.variant.base.Variant;
 import global.Data;
 import java.util.StringJoiner;
 import utils.FormatManager;
@@ -27,9 +27,9 @@ public class KnownVarOutput {
                 + KnownVarManager.getHeader();
     }
 
-    public KnownVarOutput(AnnotatedVariant annotatedVar) {
-        hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
-        clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
+    public KnownVarOutput(Variant var) {
+        hgmdOutput = KnownVarManager.getHGMDOutput(var);
+        clinVarOutput = KnownVarManager.getClinVarOutput(var);
     }
 
     public void init(String gene) {

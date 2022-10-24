@@ -1,5 +1,6 @@
 package function.external.gnomad;
 
+import function.external.knownvar.KnownVarOutput;
 import global.Data;
 import java.sql.PreparedStatement;
 import utils.ErrorManager;
@@ -202,8 +203,8 @@ public class GnomADGenome {
         GnomADGenomeCommand.getInstance().resetPopAFValid();
     }
 
-    public boolean isValid() {
-        return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF)
+    public boolean isValid(KnownVarOutput knownVarOutput) {
+        return GnomADGenomeCommand.getInstance().isAFValid(maxAF, minAF, knownVarOutput)
                 && GnomADGenomeCommand.getInstance().isRfTpProbabilityValid(rf_tp_probability, isSnv)
                 && GnomADGenomeCommand.getInstance().isFilterPass(filter)
                 && GnomADGenomeCommand.getInstance().isPopAFValid();

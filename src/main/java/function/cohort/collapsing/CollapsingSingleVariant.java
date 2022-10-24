@@ -133,7 +133,7 @@ public class CollapsingSingleVariant extends CollapsingBase {
             // only count qualified variant once per gene or region
             if (hasQualifiedVariant) {
                 for (CollapsingSummary summary : summaryList) {
-                    summary.updateVariantCount(output.getCalledVariant().isSnv());
+                    summary.updateVariantCount(output.getCalledVariant().isSNV());
                 }
             }
         } catch (Exception e) {
