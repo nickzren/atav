@@ -306,7 +306,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         if (PedMapCommand.flashPCAPlinkPruning) {
             LogManager.writeAndPrint("Finding outliers using plink ibs clustering");
 
-            FlashPCAManager.findOutliers();
+            FlashPCAManager.findOutliers(bedFileName);
 
             //read each line of outlier nearest file and filter based on Z-score
             HashSet<String> outlierSet = FlashPCAManager.getOutliers(
