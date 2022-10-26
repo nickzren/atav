@@ -35,14 +35,19 @@ public class VariantAFCommand {
 
     }
 
+    /*
+        if --max-known-variant-af applied, KV filtered by max kv af, non-KV filtered by regular AF
+        else all variants apply to regular AF filters
+     */
     private boolean isMaxAFValid(float value, KnownVarOutput knownVarOutput) {
+        if (maxKnownVariantAF != Data.NO_FILTER
+                && knownVarOutput != null && knownVarOutput.isKnownVariant()) {
+            return value <= maxKnownVariantAF
+                    || value == Data.FLOAT_NA;
+        }
+
         if (maxAF == Data.NO_FILTER) {
             return true;
-        }
-        
-        if(maxKnownVariantAF != Data.NO_FILTER &&
-                knownVarOutput != null && knownVarOutput.isKnownVariant()) {
-            maxAF = maxKnownVariantAF;
         }
 
         return value <= maxAF
