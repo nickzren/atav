@@ -42,10 +42,10 @@ public class CoverageManager {
                 + " WHERE block_id in (" + getBlockIdStr(region) + ")"
                 + " AND sample_id = input_sample_id ";
     }
-
+ 
     private static String getBlockIdStr(Region region) {
-        int startPosBlockId = Math.floorDiv(region.getStartPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
-        int endPosBlockId = Math.floorDiv(region.getEndPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
+        int startPosBlockId = Math.floorDiv(region.getStartPosition() - 1, DPBinBlockManager.DP_BIN_BLOCK_SIZE);
+        int endPosBlockId = Math.floorDiv(region.getEndPosition() - 1, DPBinBlockManager.DP_BIN_BLOCK_SIZE);
 
         if (startPosBlockId == endPosBlockId) {
             return Integer.toString(startPosBlockId);
@@ -65,7 +65,7 @@ public class CoverageManager {
             while (rs.next()) {
                 int blockId = rs.getInt("block_id");
                 String dpStr = rs.getString("DP_string");
-                if(dpStr == null) {
+                if (dpStr == null) {
                     continue;
                 }
 
@@ -98,7 +98,7 @@ public class CoverageManager {
             ResultSet rs = DBManager.executeQuery(strQuery);
             while (rs.next()) {
                 String dpStr = rs.getString("DP_string");
-                if(dpStr == null) {
+                if (dpStr == null) {
                     continue;
                 }
                 int blockId = rs.getInt("block_id");
@@ -144,9 +144,9 @@ public class CoverageManager {
 
                 if (dpBin >= GenotypeLevelFilterCommand.minDpBin) {
                     list.add(new CoverageInterval(
-                            blockId, 
+                            blockId,
                             DPBinBlockManager.getCoverageByBinIndex(dpBin),
-                            startIndex, 
+                            startIndex,
                             endIndex));
                 }
 
