@@ -62,8 +62,11 @@ public class DPBinBlockManager {
             HashMap<Integer, Carrier> carrierMap,
             HashMap<Integer, NonCarrier> noncarrierMap) {
         int posIndex = var.getStartPosition() % DP_BIN_BLOCK_SIZE;
+        if(posIndex == 0) {
+            posIndex = DP_BIN_BLOCK_SIZE;
+        }
 
-        int blockId = Math.floorDiv(var.getStartPosition(), DP_BIN_BLOCK_SIZE);
+        int blockId = Math.floorDiv(var.getStartPosition() - 1, DP_BIN_BLOCK_SIZE);
 
         if (blockId == currentBlockId) {
             for (SampleDPBin sampleDPBin : currentBlockList) {

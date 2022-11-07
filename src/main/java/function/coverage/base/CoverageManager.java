@@ -44,8 +44,8 @@ public class CoverageManager {
     }
 
     private static String getBlockIdStr(Region region) {
-        int startPosBlockId = Math.floorDiv(region.getStartPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
-        int endPosBlockId = Math.floorDiv(region.getEndPosition(), DPBinBlockManager.DP_BIN_BLOCK_SIZE);
+        int startPosBlockId = Math.floorDiv(region.getStartPosition() - 1, DPBinBlockManager.DP_BIN_BLOCK_SIZE);
+        int endPosBlockId = Math.floorDiv(region.getEndPosition() - 1, DPBinBlockManager.DP_BIN_BLOCK_SIZE);
 
         if (startPosBlockId == endPosBlockId) {
             return Integer.toString(startPosBlockId);
