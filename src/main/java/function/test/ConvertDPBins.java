@@ -5,8 +5,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import utils.ErrorManager;
 import utils.LogManager;
 
@@ -16,10 +19,8 @@ import utils.LogManager;
  */
 public class ConvertDPBins {
 
-    private static String input = "/nfs/goldstein/datasets/tmp/DP_bins_chr21.txt";
-    private static String output = "/nfs/goldstein/datasets/tmp/DP_bins_10_only_base36_chr21.txt";
-//    private static String input = "/Users/nick/Desktop/DP_bins_chr21.txt";
-//    private static String output = "/Users/nick/Desktop/DP_bins_10_only_base36_chr21.txt";
+    private static String input = "/nfs/goldstein/datasets/tmp/dp_bin/DP_bins_chr21.txt";
+    private static String output = "/nfs/goldstein/datasets/tmp/dp_bin/DP_bins_chr21_converted_nick.txt";
 
     private static HashSet<Character> binSet = new HashSet<>();
 
@@ -27,6 +28,9 @@ public class ConvertDPBins {
     private static BufferedWriter bw;
 
     private static final int BASE = 36;
+
+    private static Pattern b_to_c_only_Pattern = Pattern.compile("^(?=.*[bc])(?!.*[d-g]).*");
+    private static Pattern c_to_g_only_Pattern = Pattern.compile("^(?=.*[c-g])(?!.*[b]).*");
 
     public static void init() throws Exception {
         binSet.add('b');
@@ -128,8 +132,12 @@ public class ConvertDPBins {
                 }
 
                 sj.add(sbLine.toString());
-                
+
                 if (totalInterval != 1000) {
+                    if (checkPatterns(DP_string, sj)) {
+                        continue;
+                    }
+
                     LogManager.writeAndPrint(lineStr);
                     LogManager.writeAndPrint(sj.toString());
                 }
@@ -144,7 +152,24 @@ public class ConvertDPBins {
             ErrorManager.send(e);
         }
     }
-    
+
+    // b-c only or c-g only
+    private static boolean checkPatterns(String DP_string, StringJoiner sj) throws IOException {
+        if (b_to_c_only_Pattern.matcher(DP_string).matches()) {
+            sj.add(DP_string);
+            bw.write(sj.toString());
+            bw.newLine();
+            return true;
+        } else if (c_to_g_only_Pattern.matcher(DP_string).matches()) {
+            sj.add("RSc");
+            bw.write(sj.toString());
+            bw.newLine();
+            return true;
+        }
+
+        return false;
+    }
+
     private static String getBaseStr(int value) {
         return Integer.toString(value, BASE).toUpperCase();
     }
