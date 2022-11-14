@@ -8,8 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.StringJoiner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.LogManager;
 
@@ -31,6 +31,7 @@ public class ConvertDPBins {
 
     private static Pattern b_to_c_only_Pattern = Pattern.compile("^(?=.*[bc])(?!.*[d-g]).*");
     private static Pattern c_to_g_only_Pattern = Pattern.compile("^(?=.*[c-g])(?!.*[b]).*");
+    private static Pattern d_to_g_Pattern = Pattern.compile("^(?=.*[d-g]).*");
 
     public static void init() throws Exception {
         binSet.add('b');
@@ -43,6 +44,13 @@ public class ConvertDPBins {
         br = new BufferedReader(new FileReader(new File(input)));
         bw = new BufferedWriter(new FileWriter(output));
     }
+
+//    public static void main(String[] args) {
+//        input = "/Users/nick/Desktop/test.txt";
+//        output = "/Users/nick/Desktop/output.txt";
+//
+//        run();
+//    }
 
     public static void run() {
         try {
@@ -100,6 +108,7 @@ public class ConvertDPBins {
                             }
                         } else // bin >= c
                         {
+                            bin = 'c';
                             if (previousBin == 'b') {
                                 sbLine.append(getBaseStr(previousInterval));
                                 sbLine.append(previousBin);
@@ -113,7 +122,7 @@ public class ConvertDPBins {
                                 }
                             } else {
                                 previousInterval += inteval;
-                                previousBin = 'c';
+                                previousBin = bin;
 
                                 // when it reach to the end pos and bin = previous bin
                                 if (pos == DP_string.length() - 1) {
@@ -128,6 +137,13 @@ public class ConvertDPBins {
 
                         previousInterval = inteval;
                         previousBin = bin;
+                    }
+                }
+
+                // for debug problem cases only
+                if (CommonCommand.isDebug) {
+                    if (d_to_g_Pattern.matcher(sbLine.toString()).matches()) {
+                        LogManager.writeAndPrint(lineStr);
                     }
                 }
 
