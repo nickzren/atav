@@ -1,15 +1,16 @@
 package function.test;
 
-import java.io.BufferedReader;
+import function.variant.base.RegionManager;
+import global.Data;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.HashSet;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import utils.CommonCommand;
+import utils.DBManager;
 import utils.ErrorManager;
 import utils.LogManager;
 
@@ -17,15 +18,15 @@ import utils.LogManager;
  *
  * @author nick
  */
-public class ConvertDPBins {
+public class ConvertDPBins2 {
 
-    private static String input = "/nfs/goldstein/datasets/tmp/dp_bin/DP_bins_chr21.txt";
-    private static String output = "/nfs/goldstein/datasets/tmp/dp_bin/DP_bins_chr21_converted_nick.txt";
+    private static String outputRaw = "/nfs/goldstein/datasets/tmp/dp_bin/db/DP_bins_chrREPLACE_CHR.txt";
+    private static String outputConvert = "/nfs/goldstein/datasets/tmp/dp_bin/db/DP_bins_chrREPLACE_CHR_converted_nick.txt";
 
     private static HashSet<Character> binSet = new HashSet<>();
 
-    private static BufferedReader br;
-    private static BufferedWriter bw;
+    private static BufferedWriter bwRaw;
+    private static BufferedWriter bwConvert;
 
     private static final int BASE = 36;
 
@@ -41,30 +42,38 @@ public class ConvertDPBins {
         binSet.add('f');
         binSet.add('g');
 
-        br = new BufferedReader(new FileReader(new File(input)));
-        bw = new BufferedWriter(new FileWriter(output));
+        if (RegionManager.chrInput.equals(Data.NO_FILTER_STR)) {
+            ErrorManager.print("--chromosome is required input option.", ErrorManager.COMMAND_PARSING);
+        }
+
+        bwRaw = new BufferedWriter(new FileWriter(outputRaw.replace("REPLACE_CHR", RegionManager.chrInput)));
+        bwConvert = new BufferedWriter(new FileWriter(outputConvert.replace("REPLACE_CHR", RegionManager.chrInput)));
     }
 
-//    public static void main(String[] args) {
-//        input = "/Users/nick/Desktop/test.txt";
-//        output = "/Users/nick/Desktop/output.txt";
-//
-//        run();
-//    }
     public static void run() {
         try {
             init();
 
-            String lineStr = "";
+            String sql = "select * from DP_bins_chr" + RegionManager.chrInput;
 
-            while ((lineStr = br.readLine()) != null) {
-                String[] tmp = lineStr.split("\t");
+            ResultSet rset = DBManager.executeConcurReadOnlyQuery(sql);
 
-                StringJoiner sj = new StringJoiner("\t");
-                sj.add(tmp[0]);
-                sj.add(tmp[1]);
+            while (rset.next()) {
+                StringJoiner sjRaw = new StringJoiner("\t");
+                StringJoiner sjConvert = new StringJoiner("\t");
 
-                String DP_string = tmp[2];
+                String sampleId = rset.getString("sample_id");
+                String block_id = rset.getString("block_id");
+                String DP_string = rset.getString("DP_string");
+
+                sjRaw.add(sampleId);
+                sjRaw.add(block_id);
+                sjRaw.add(DP_string);
+                bwRaw.write(sjRaw.toString());
+                bwRaw.newLine();
+
+                sjConvert.add(sampleId);
+                sjConvert.add(block_id);
 
                 int previousInterval = 0;
                 char previousBin = Character.MIN_VALUE;
@@ -147,22 +156,24 @@ public class ConvertDPBins {
                 }
 
                 if (totalInterval == 1000) {
-                    sj.add(sbLine.toString());
+                    sjConvert.add(sbLine.toString());
                 } else {
-                    if (checkPatterns(DP_string, sj)) {
+                    if (checkPatterns(DP_string, sjConvert)) {
                         continue;
                     }
 
                     LogManager.writeAndPrint(DP_string);
-                    LogManager.writeAndPrint(sj.toString());
+                    LogManager.writeAndPrint(sjConvert.toString());
                 }
 
-                bw.write(sj.toString());
-                bw.newLine();
+                bwConvert.write(sjConvert.toString());
+                bwConvert.newLine();
             }
 
-            bw.flush();
-            bw.close();
+            bwRaw.flush();
+            bwRaw.close();
+            bwConvert.flush();
+            bwConvert.close();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
@@ -172,13 +183,13 @@ public class ConvertDPBins {
     private static boolean checkPatterns(String DP_string, StringJoiner sj) throws IOException {
         if (b_to_c_only_Pattern.matcher(DP_string).matches()) {
             sj.add(DP_string);
-            bw.write(sj.toString());
-            bw.newLine();
+            bwConvert.write(sj.toString());
+            bwConvert.newLine();
             return true;
         } else if (c_to_g_only_Pattern.matcher(DP_string).matches()) {
             sj.add("RSc");
-            bw.write(sj.toString());
-            bw.newLine();
+            bwConvert.write(sj.toString());
+            bwConvert.newLine();
             return true;
         }
 
