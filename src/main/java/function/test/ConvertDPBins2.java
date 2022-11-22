@@ -20,8 +20,8 @@ import utils.LogManager;
  */
 public class ConvertDPBins2 {
 
-    private static String outputRaw = "/nfs/goldstein/datasets/tmp/dp_bin/db/DP_bins_chrREPLACE_CHR.txt";
-    private static String outputConvert = "/nfs/goldstein/datasets/tmp/dp_bin/db/DP_bins_chrREPLACE_CHR_converted_nick.txt";
+    private static String outputRaw = "/nfs/goldstein/datasets/tmp/dp_bin/DP_bins_chrREPLACE_CHR.txt";
+    private static String outputConvert = "/nfs/goldstein/datasets/tmp/dp_bin/DP_bins_chrREPLACE_CHR_converted_nick.txt";
 
     private static HashSet<Character> binSet = new HashSet<>();
 
@@ -66,6 +66,10 @@ public class ConvertDPBins2 {
                 String block_id = rset.getString("block_id");
                 String DP_string = rset.getString("DP_string");
 
+                if (DP_string == null) {
+                    continue;
+                }
+
                 sjRaw.add(sampleId);
                 sjRaw.add(block_id);
                 sjRaw.add(DP_string);
@@ -82,6 +86,8 @@ public class ConvertDPBins2 {
                 StringBuilder sbLine = new StringBuilder();
                 int totalInterval = 0;
 
+                int endPos = DP_string.length() - 1;
+
                 for (int pos = 0; pos < DP_string.length(); pos++) {
                     char bin = DP_string.charAt(pos);
                     if (!binSet.contains(bin)) {
@@ -95,7 +101,7 @@ public class ConvertDPBins2 {
                                 previousInterval += inteval;
 
                                 // when it reach to the end pos and bin = previous bin
-                                if (pos == DP_string.length() - 1) {
+                                if (pos == endPos) {
                                     sbLine.append(getBaseStr(previousInterval));
                                     sbLine.append(previousBin);
                                     totalInterval += previousInterval;
@@ -108,7 +114,7 @@ public class ConvertDPBins2 {
                                 totalInterval += previousInterval;
 
                                 // when it reach to the end pos and bin != previous bin
-                                if (pos == DP_string.length() - 1) {
+                                if (pos == endPos) {
                                     sbLine.append(getBaseStr(inteval));
                                     sbLine.append(bin);
                                     totalInterval += inteval;
@@ -123,7 +129,7 @@ public class ConvertDPBins2 {
                                 totalInterval += previousInterval;
 
                                 // when it reach to the end pos and bin != previous bin
-                                if (pos == DP_string.length() - 1) {
+                                if (pos == endPos) {
                                     sbLine.append(getBaseStr(inteval));
                                     sbLine.append(bin);
                                     totalInterval += inteval;
@@ -133,7 +139,7 @@ public class ConvertDPBins2 {
                                 previousBin = bin;
 
                                 // when it reach to the end pos and bin = previous bin
-                                if (pos == DP_string.length() - 1) {
+                                if (pos == endPos) {
                                     sbLine.append(getBaseStr(previousInterval));
                                     sbLine.append(previousBin);
                                     totalInterval += previousInterval;
@@ -148,6 +154,12 @@ public class ConvertDPBins2 {
                     }
                 }
 
+                if (!binSet.contains(DP_string.charAt(endPos))) {
+                    sbLine.append(getBaseStr(previousInterval));
+                    sbLine.append(previousBin);
+                    totalInterval += previousInterval;
+                }
+
                 // for debug problem cases only
                 if (CommonCommand.isDebug) {
                     if (d_to_g_Pattern.matcher(sbLine.toString()).matches()) {
@@ -155,13 +167,9 @@ public class ConvertDPBins2 {
                     }
                 }
 
-                if (totalInterval == 1000) {
-                    sjConvert.add(sbLine.toString());
-                } else {
-                    if (checkPatterns(DP_string, sjConvert)) {
-                        continue;
-                    }
+                sjConvert.add(sbLine.toString());
 
+                if (totalInterval != 1000) {
                     LogManager.writeAndPrint(DP_string);
                     LogManager.writeAndPrint(sjConvert.toString());
                 }
