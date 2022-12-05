@@ -23,9 +23,12 @@ public class ThirdPartyToolManager {
     public static String KING;
     public static String PLINK;
     public static String TABIX;
+    public static String PHENOLYZER;
 
     public static String PYTHON;
     public static String RSCRIPT;
+    public static String PERL;
+
 
     private static final String COLLAPSED_REGRESSION_R = Data.ATAV_HOME + "lib/collapsed_regression_2.0.R";
     private static final String PVALS_QQPLOT_R = Data.ATAV_HOME + "lib/pvals_qqplot.R";
@@ -53,9 +56,12 @@ public class ThirdPartyToolManager {
             KING = prop.getProperty("king");
             PLINK = prop.getProperty("plink");
             TABIX = prop.getProperty("tabix");
-
+            PHENOLYZER = prop.getProperty("phenolyzer");
+            
             PYTHON = prop.getProperty("python");
             RSCRIPT = prop.getProperty("rscript");
+            PERL = prop.getProperty("perl");
+            
         } catch (IOException e) {
             ErrorManager.send(e);
         }

@@ -31,11 +31,14 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
     BufferedWriter bwSingletonGenoNoFlag = null;
     final String genotypesFilePathNoFlag = CommonCommand.outputPath + "singleton_genotypes_noflag.csv";
-
+    
+    BufferedWriter bwSingletonGeneName = null;
+    final String geneNamesFilePath = CommonCommand.outputPath + "singleton_gene_names.csv";
+    
     HashMap<String, List<SingletonOutput>> geneVariantListMap = new HashMap<>();
     // avoid output duplicate carrier (comp var & single var)
     HashSet<String> outputCarrierSet = new HashSet<>();
-
+     
     @Override
     public void initOutput() {
         try {
@@ -46,6 +49,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             bwSingletonGenoNoFlag = new BufferedWriter(new FileWriter(genotypesFilePathNoFlag));
             bwSingletonGenoNoFlag.write(SingletonOutput.getHeader());
             bwSingletonGenoNoFlag.newLine();
+            
+            if (SingletonCommand.isPhenolyzer){
+                bwSingletonGeneName = new BufferedWriter(new FileWriter(geneNamesFilePath));
+                bwSingletonGenoNoFlag.newLine();
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -66,6 +74,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
             bwSingletonGenoNoFlag.flush();
             bwSingletonGenoNoFlag.close();
+            
+            if (SingletonCommand.isPhenolyzer){
+                bwSingletonGeneName.flush();
+                bwSingletonGeneName.close();
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -80,7 +93,11 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         if (CommonCommand.gzip) {
             ThirdPartyToolManager.gzipFile(genotypesFilePath);
         }
-
+        
+        if (SingletonCommand.isPhenolyzer){
+            doPhenolyzer();
+        }
+        
         Output.logTierVariantCount();
     }
 
@@ -125,14 +142,28 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         try {
             for (Map.Entry<String, List<SingletonOutput>> entry : geneVariantListMap.entrySet()) {
                 LogManager.writeAndPrint("Processing variants in gene:" + entry.getKey());
+                
+                if (SingletonCommand.isPhenolyzer){
+                    outputGeneList(entry.getKey());
+                }
 
+                
                 doOutput(entry.getValue());
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-
+    
+    private void outputGeneList(String geneName){   
+        try {
+            bwSingletonGeneName.write(geneName);
+            bwSingletonGeneName.newLine();
+        } catch(Exception e){
+            ErrorManager.send(e);
+        }
+    }
+    
     private void doOutput(List<SingletonOutput> geneOutputList) {
         try {
             outputCarrierSet.clear();
@@ -206,7 +237,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         } else {
             bwSingletonGenoNoFlag.write(sj.toString());
             bwSingletonGenoNoFlag.newLine();
-        }
+        } 
     }
 
     private void outputCompHet(SingletonOutput output1, SingletonOutput output2) throws Exception {
@@ -345,6 +376,14 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         }
     }
 
+     private void doPhenolyzer() {
+        String cmd = ThirdPartyToolManager.PERL 
+                + " " + ThirdPartyToolManager.PHENOLYZER
+                + " -ph -f " + SingletonCommand.phenolyzerPhenotypePath
+                + " --gene " + geneNamesFilePath
+                + " --out " + CommonCommand.realOutputPath;
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+     }
     private void clearList() {
         geneVariantListMap.clear();
     }
