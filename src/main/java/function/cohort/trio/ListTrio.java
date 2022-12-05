@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import utils.FormatManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -30,6 +31,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     BufferedWriter bwTrioGenotypeNoFlag = null;
     final String trioGenotypeFilePathNoFlag = CommonCommand.outputPath + "trio_genotypes_noflag.csv";
+
+    BufferedWriter bwTrioGeneName = null;
+    final String trioGeneNamesFilePath = CommonCommand.outputPath + "trio_gene_names.csv";
 
     HashMap<String, List<TrioOutput>> geneVariantListMap = new HashMap<>();
     // avoid output duplicate carrier (comp var & single var)
@@ -45,6 +49,11 @@ public class ListTrio extends AnalysisBase4CalledVar {
             bwTrioGenotypeNoFlag = new BufferedWriter(new FileWriter(trioGenotypeFilePathNoFlag));
             bwTrioGenotypeNoFlag.write(TrioManager.getHeader());
             bwTrioGenotypeNoFlag.newLine();
+
+            if (TrioCommand.isPhenolyzer) {
+                bwTrioGeneName = new BufferedWriter(new FileWriter(trioGeneNamesFilePath));
+                bwTrioGeneName.newLine();
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -65,6 +74,11 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
             bwTrioGenotypeNoFlag.flush();
             bwTrioGenotypeNoFlag.close();
+
+            if (TrioCommand.isPhenolyzer) {
+                bwTrioGeneName.flush();
+                bwTrioGeneName.close();
+            }
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -72,6 +86,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
+        if (TrioCommand.isPhenolyzer) {
+            doPhenolyzer();
+        }
         Output.logTierVariantCount();
     }
 
@@ -117,13 +134,25 @@ public class ListTrio extends AnalysisBase4CalledVar {
             for (Map.Entry<String, List<TrioOutput>> entry : geneVariantListMap.entrySet()) {
                 LogManager.writeAndPrint("Processing variants in gene:" + entry.getKey());
 
+                if (TrioCommand.isPhenolyzer){
+                    outputGeneList(entry.getKey());
+                }
+                
                 doOutput(entry.getValue());
             }
         } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-
+    
+    private void outputGeneList(String geneName){   
+        try {
+            bwTrioGeneName.write(geneName);
+            bwTrioGeneName.newLine();
+        } catch(Exception e){
+            ErrorManager.send(e);
+        }
+    }
     private void doOutput(List<TrioOutput> geneOutputList) {
         try {
             outputCarrierSet.clear();
@@ -374,6 +403,15 @@ public class ListTrio extends AnalysisBase4CalledVar {
             bwTrioGenotypeNoFlag.write(sj.toString());
             bwTrioGenotypeNoFlag.newLine();
         }
+    }
+
+    private void doPhenolyzer() {
+        String cmd = ThirdPartyToolManager.PERL
+                + " " + ThirdPartyToolManager.PHENOLYZER
+                + " -ph -f " + TrioCommand.phenolyzerPhenotypePath
+                + " --gene " + trioGeneNamesFilePath
+                + " --out " + CommonCommand.realOutputPath;
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
 
     private void clearList() {
