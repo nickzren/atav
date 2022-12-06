@@ -410,7 +410,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                 + " " + ThirdPartyToolManager.PHENOLYZER
                 + " -ph -f " + TrioCommand.phenolyzerPhenotypePath
                 + " --gene " + trioGeneNamesFilePath
-                + " --out " + CommonCommand.realOutputPath;
+                + " --out " + CommonCommand.realOutputPath + "/phenolyzer/phenolyzer";
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
     }
 

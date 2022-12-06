@@ -381,7 +381,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                 + " " + ThirdPartyToolManager.PHENOLYZER
                 + " -ph -f " + SingletonCommand.phenolyzerPhenotypePath
                 + " --gene " + geneNamesFilePath
-                + " --out " + CommonCommand.realOutputPath;
+                + " --out " + CommonCommand.realOutputPath + "/phenolyzer/phenolyzer";
         ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
      }
     private void clearList() {
