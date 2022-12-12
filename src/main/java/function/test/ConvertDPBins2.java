@@ -33,6 +33,7 @@ public class ConvertDPBins2 {
     private static Pattern b_to_c_only_Pattern = Pattern.compile("^(?=.*[bc])(?!.*[d-g]).*");
     private static Pattern c_to_g_only_Pattern = Pattern.compile("^(?=.*[c-g])(?!.*[b]).*");
     private static Pattern d_to_g_Pattern = Pattern.compile("^(?=.*[d-g]).*");
+    private static Pattern b_to_g_Pattern = Pattern.compile("^(?=.*[b-g]).*");
 
     public static void init() throws Exception {
         binSet.add('b');
@@ -172,6 +173,10 @@ public class ConvertDPBins2 {
                 if (totalInterval != 1000) {
                     LogManager.writeAndPrint(DP_string);
                     LogManager.writeAndPrint(sjConvert.toString());
+                    
+                    if (!b_to_g_Pattern.matcher(sbLine.toString()).matches()) {
+                        continue;
+                    }
                 }
 
                 bwConvert.write(sjConvert.toString());
