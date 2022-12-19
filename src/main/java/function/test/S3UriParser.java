@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import org.apache.commons.csv.CSVFormat;
@@ -34,6 +37,9 @@ public class S3UriParser {
     private static HashSet<String> wesSet;
     private static HashSet<String> wgsSet;
     private static HashSet<String> ccSet;
+
+    private static final String DUP_BAM = sourceDir + "duplicate_bam_s3.txt";
+    private static final String DUP_FASTQ = sourceDir + "duplicate_fastq_s3.txt";
 
     // s3 bucket: igm-fastq-archive
     private static final String IN_igm_fastq_archive_FASTQ = inputDir + "igm-fastq-archive-FASTQ.csv";
@@ -61,26 +67,27 @@ public class S3UriParser {
     private static final String IN_igm_annodb_BAM = inputDir + "igm-annodb-BAM.csv";
     private static final String OUT_igm_annodb_BAM = outputDir + "igm-annodb-BAM.tsv";
 
-    private static final String[] INPUT_HEADER = {
-        "bucket", "key", "size"
-    };
-
-//    public static void main(String[] args) {
+    public static void main(String[] args) {
 //        run();
-//    }
+        markDuplicate(DUP_BAM);
+        markDuplicate(DUP_FASTQ);
+    }
 
     public static void run() {
-        initSampleSet();
+//        initSampleSet();
+//
+//        parse(IN_aws_fastq16_FASTQ, OUT_aws_fastq16_FASTQ);
+//        parse(IN_igm_fastq_archive_FASTQ, OUT_igm_fastq_archive_FASTQ);
+//        parse(IN_seq_archive_FASTQ, OUT_seq_archive_FASTQ);
+//        parse(IN_igm_projects_archive_FASTQ, OUT_igm_projects_archive_FASTQ);
+//
+//        parse(IN_igm_fastq_archive_BAM, OUT_igm_fastq_archive_BAM);
+//        parse(IN_seq_archive_BAM, OUT_seq_archive_BAM);
+//        parse(IN_igm_projects_archive_BAM, OUT_igm_projects_archive_BAM);
+//        parse(IN_igm_annodb_BAM, OUT_igm_annodb_BAM);
 
-        parse(IN_aws_fastq16_FASTQ, OUT_aws_fastq16_FASTQ);
-        parse(IN_igm_fastq_archive_FASTQ, OUT_igm_fastq_archive_FASTQ);
-        parse(IN_seq_archive_FASTQ, OUT_seq_archive_FASTQ);
-        parse(IN_igm_projects_archive_FASTQ, OUT_igm_projects_archive_FASTQ);
-
-        parse(IN_igm_fastq_archive_BAM, OUT_igm_fastq_archive_BAM);
-        parse(IN_seq_archive_BAM, OUT_seq_archive_BAM);
-        parse(IN_igm_projects_archive_BAM, OUT_igm_projects_archive_BAM);
-        parse(IN_igm_annodb_BAM, OUT_igm_annodb_BAM);
+        markDuplicate(DUP_BAM);
+        markDuplicate(DUP_FASTQ);
     }
 
     private static void initSampleSet() {
@@ -104,17 +111,17 @@ public class S3UriParser {
         }
     }
 
-    public static void parse(String inputS3FASTQ, String outputS3FASTQ) {
+    public static void parse(String input, String output) {
         String problemKey = "";
         try {
-            LogManager.writeAndPrint("Start parsing: " + inputS3FASTQ);
+            LogManager.writeAndPrint("Start parsing: " + input);
 
-            BufferedWriter bw = new BufferedWriter(new FileWriter(outputS3FASTQ));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 
-            Reader decoder = new FileReader(inputS3FASTQ);
+            Reader decoder = new FileReader(input);
 
             Iterable<CSVRecord> records = CSVFormat.DEFAULT
-                    .withHeader(INPUT_HEADER)
+                    .withHeader(new String[]{"bucket", "key", "size"})
                     .withFirstRecordAsHeader()
                     .parse(decoder);
 
@@ -131,6 +138,7 @@ public class S3UriParser {
 
                 problemKey = key;
                 String size = record.get("size");
+                String e_tag = record.get("e_tag");
 
                 String sampleName = "Unknown";
                 String sampleType = "Unknown";
@@ -183,6 +191,7 @@ public class S3UriParser {
                 sj.add(bucket);
                 sj.add(key);
                 sj.add(size);
+                sj.add(e_tag);
 
                 bw.write(sj.toString());
                 bw.newLine();
@@ -191,9 +200,127 @@ public class S3UriParser {
             bw.flush();
             bw.close();
 
-            LogManager.writeAndPrint("Complete parsing: " + inputS3FASTQ);
+            LogManager.writeAndPrint("Complete parsing: " + input);
         } catch (Exception e) {
             LogManager.writeAndPrint("Problem key: " + problemKey);
+            e.printStackTrace();
+        }
+    }
+
+    public static void markDuplicate(String input) {
+        try {
+            LogManager.writeAndPrint("Start parsing: " + input);
+
+            BufferedWriter bwKeep = new BufferedWriter(new FileWriter(input.replace(".txt", "_keep.txt")));
+            BufferedWriter bwDelete = new BufferedWriter(new FileWriter(input.replace(".txt", "_delete.txt")));
+
+            Reader decoder = new FileReader(input);
+
+            Iterable<CSVRecord> records = CSVFormat.TDF
+                    .withHeader(new String[]{"e_tag", "size", "bucket", "key"})
+                    .withFirstRecordAsHeader()
+                    .parse(decoder);
+
+            int totalKeepCount = 0;
+            int totalDeleteCount = 0;
+
+            long totalSizeToDelete = 0;
+
+            String previousETAG = "";
+            for (CSVRecord record : records) {
+                String e_tag = record.get("e_tag");
+                String size = record.get("size");
+                String bucket = record.get("bucket");
+                String key = record.get("key");
+
+                StringJoiner sj = new StringJoiner("\t");
+                sj.add(e_tag);
+                sj.add(size);
+                sj.add(bucket);
+                sj.add(key);
+
+                if (!previousETAG.equals(e_tag)) {
+                    bwKeep.write(sj.toString());
+                    bwKeep.newLine();
+                    totalKeepCount++;
+                } else {
+                    bwDelete.write(sj.toString());
+                    bwDelete.newLine();
+                    totalDeleteCount++;
+
+                    totalSizeToDelete += Long.parseLong(size);
+                }
+
+                previousETAG = e_tag;
+            }
+
+            bwKeep.flush();
+            bwKeep.close();
+            bwDelete.flush();
+            bwDelete.close();
+
+            LogManager.writeAndPrint("Total number of files to keep: " + totalKeepCount);
+            LogManager.writeAndPrint("Total number of files to delete: " + totalDeleteCount);
+            LogManager.writeAndPrint("Total file size to delete: " + totalSizeToDelete);
+
+            LogManager.writeAndPrint("Complete parsing: " + input);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void reorderDuplicate(String input) {
+        try {
+            LogManager.writeAndPrint("Start parsing: " + input);
+
+            BufferedWriter bwReorder = new BufferedWriter(new FileWriter(input.replace(".txt", "_reorder.txt")));
+
+            Reader decoder = new FileReader(input);
+
+            Iterable<CSVRecord> records = CSVFormat.TDF
+                    .withHeader(new String[]{"e_tag", "size", "bucket", "key"})
+                    .withFirstRecordAsHeader()
+                    .parse(decoder);
+
+            String previousETAG = "";
+
+            List<String> etagList = new ArrayList<>();
+            HashMap<String, ArrayList<S3Uri>> etagMap = new HashMap<>();
+
+            for (CSVRecord record : records) {
+                String e_tag = record.get("e_tag");
+                String size = record.get("size");
+                String bucket = record.get("bucket");
+                String key = record.get("key");
+
+                if (!etagList.contains(e_tag)) {
+                    etagList.add(e_tag);
+                }
+
+                S3Uri s3Uri = new S3Uri(e_tag, size, bucket, key);
+
+                ArrayList<S3Uri> list = etagMap.getOrDefault(e_tag, new ArrayList<>());
+
+                if (list.isEmpty()) {
+                    etagMap.put(e_tag, list);
+                }
+
+                list.add(s3Uri);
+            }
+
+            for (String etag : etagList) {
+                ArrayList<S3Uri> list = etagMap.get(etag);
+
+                while (!list.isEmpty()) {
+
+                }
+            }
+
+            bwReorder.flush();
+            bwReorder.close();
+
+            LogManager.writeAndPrint("Complete parsing: " + input);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
