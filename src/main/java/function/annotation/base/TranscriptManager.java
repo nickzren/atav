@@ -154,7 +154,7 @@ public class TranscriptManager {
                 // create table
                 stmt.executeUpdate("CREATE TEMPORARY TABLE " + TMP_TRANSCRIPT_TABLE + chr + "("
                         + "input_transcript_stable_id int(11) NOT NULL, "
-                        + "PRIMARY KEY (input_transcript_stable_id)) ENGINE=TokuDB;");
+                        + "PRIMARY KEY (input_transcript_stable_id));");
             }
 
             for (String chr : RegionManager.getChrList()) {
