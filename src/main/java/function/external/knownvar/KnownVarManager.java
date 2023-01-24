@@ -29,7 +29,7 @@ public class KnownVarManager {
     public static final String hgmdTable = "knownvar.hgmd_2022_3";
     public static final String clinVarTable = "knownvar.clinvar_2022_10_05";
     public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2022_10_05";
-    public static final String clingenFile =  Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
+    public static final String clingenFile = Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
     public static final String genemap2File = Data.ATAV_HOME + "data/omim/genemap2.txt";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
     public static final String acmgTable = "knownvar.acmg_v3_1";
@@ -65,7 +65,7 @@ public class KnownVarManager {
 
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add("HGMD DM Site Count");
         sj.add("HGMD DM 2bpflanks Count");
         sj.add("HGMD Disease");
@@ -79,6 +79,14 @@ public class KnownVarManager {
         sj.add("ClinVar ClinSig");
         sj.add("ClinVar ClinSigConf");
         sj.add("ClinVar DiseaseName");
+        sj.add(getGeneHeader());
+
+        return sj.toString();
+    }
+
+    public static String getGeneHeader() {
+        StringJoiner sj = new StringJoiner(",");
+
         sj.add("ClinVar Pathogenic Indel Count");
         sj.add("Clinvar Pathogenic CNV Count");
         sj.add("ClinVar Pathogenic SNV Splice Count");
@@ -108,21 +116,23 @@ public class KnownVarManager {
 
             initClinVarMap();
 
-            initClinVarPathoratioMap();
+            init4Gene();
 
-            initClinGenMap();
-
-            initOMIMMap();
-
-//            initRecessiveCarrierMap();
-            initACMGMap();
-
-//            initDBDSMMap();
             if (KnownVarCommand.isKnownVarOnly
                     || KnownVarCommand.isKnownVarPathogenicOnly) {
                 VariantManager.reset2KnownVarSet();
             }
         }
+    }
+
+    public static void init4Gene() throws SQLException {
+        initClinVarPathoratioMap();
+
+        initClinGenMap();
+
+        initOMIMMap();
+
+        initACMGMap();
     }
 
     private static void initHGMDMap() {
@@ -179,7 +189,7 @@ public class KnownVarManager {
 
                 String ClinRevStar = FormatManager.getInteger(FormatManager.getInt(rs, "ClinRevStar"));
                 String ClinSig = FormatManager.getString(rs.getString("ClinSig"));
-                String ClinSigConf= FormatManager.getString(rs.getString("ClinSigConf"));
+                String ClinSigConf = FormatManager.getString(rs.getString("ClinSigConf"));
                 String DiseaseName = FormatManager.getString(rs.getString("DiseaseName"));
 
                 ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
@@ -232,7 +242,7 @@ public class KnownVarManager {
     public static void main(String[] args) {
         initClinGenMap();
     }
-    
+
     private static void initClinGenMap() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File(clingenFile)));

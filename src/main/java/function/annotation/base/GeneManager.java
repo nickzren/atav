@@ -14,6 +14,7 @@ import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -46,6 +47,7 @@ public class GeneManager {
     private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
     private static final HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<>();
+    private static ArrayList<String> geneList = new ArrayList<>();
     // key: existing dragendb gene name, value: up to date gene name
     private static HashMap<String, String> hgncGeneMap = new HashMap<>();
     private static HashMap<String, String> allGeneSymbolMap = new HashMap<>();
@@ -262,6 +264,10 @@ public class GeneManager {
                     HashSet<Gene> set = new HashSet<>();
                     set.add(gene);
                     geneMapByName.put(geneName, set);
+
+                    if (!geneList.contains(gene.getName())) {
+                        geneList.add(gene.getName());
+                    }
                 }
 
                 if (!gene.isExist()) {
@@ -292,6 +298,10 @@ public class GeneManager {
                     HashSet<Gene> set = new HashSet<>();
                     set.add(gene);
                     geneMapByName.put(lineStr, set);
+
+                    if (!geneList.contains(gene.getName())) {
+                        geneList.add(gene.getName());
+                    }
                 }
 
                 if (!gene.isExist()) {
@@ -403,6 +413,9 @@ public class GeneManager {
                     }
                 }
             }
+
+            geneMapByName.clear();
+            geneMapByBoundaries.clear();
         }
     }
 
@@ -656,5 +669,9 @@ public class GeneManager {
 
     public static boolean isInterVarPP2Gene(String gene) {
         return pp2GeneSet.contains(gene);
+    }
+    
+    public static List<String> getList() {
+        return geneList;
     }
 }

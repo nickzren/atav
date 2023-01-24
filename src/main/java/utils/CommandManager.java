@@ -1,6 +1,7 @@
 package utils;
 
 import function.annotation.base.AnnotationLevelFilterCommand;
+import function.annotation.geneanno.GeneAnnoCommand;
 import global.Data;
 import function.annotation.varanno.VarAnnoCommand;
 import function.cohort.af.AFCommand;
@@ -474,6 +475,12 @@ public class CommandManager {
                     DBNSFPCommand.isInclude = true;
                     VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
                     break;
+                    
+                // Gene Annotation Functions
+                case "--list-gene-anno":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    GeneAnnoCommand.isList = true;
+                    
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
                     CoverageCommand.isCoverageSummary = true;
@@ -650,6 +657,8 @@ public class CommandManager {
         } else if (PedMapCommand.isPedMap) {
             PedMapCommand.initOptions(optionList.iterator());
         } else if (VarAnnoCommand.isList) { // Variant Annotation Functions
+
+        } else if (GeneAnnoCommand.isList) { // Gene Annotation Functions
 
         } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
             CoverageCommand.initCoverageSummary(optionList.iterator());
