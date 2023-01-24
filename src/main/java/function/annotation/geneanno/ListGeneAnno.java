@@ -1,12 +1,16 @@
 package function.annotation.geneanno;
 
 import function.annotation.base.AnalysisBase4AnnotatedGene;
+import function.external.gevir.GeVIRManager;
+import function.external.gnomad.GnomADManager;
 import function.external.knownvar.KnownVarManager;
+import function.external.mgi.MgiManager;
+import function.external.rvis.RvisManager;
+import function.external.synrvis.SynRvisManager;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.sql.SQLException;
 
 /**
  *
@@ -20,6 +24,13 @@ public class ListGeneAnno extends AnalysisBase4AnnotatedGene {
     @Override
     public void initOutput() {
         try {
+            KnownVarManager.init4Gene();
+            GnomADManager.initGeneMap();
+            RvisManager.initRvisMap();
+            GeVIRManager.initGeVIRMap();
+            SynRvisManager.initSynRvisMap();
+            MgiManager.initMgiMap();
+            
             bwAnnotations = new BufferedWriter(new FileWriter(annotationsFilePath));
             bwAnnotations.write(GeneAnnoOutput.getHeader());
             bwAnnotations.newLine();
@@ -44,11 +55,6 @@ public class ListGeneAnno extends AnalysisBase4AnnotatedGene {
 
     @Override
     public void beforeProcessDatabaseData() {
-        try {
-            KnownVarManager.init4Gene();
-        } catch (SQLException ex) {
-            ErrorManager.send(ex);
-        }
     }
 
     @Override

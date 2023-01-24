@@ -164,7 +164,7 @@ public class GnomADManager {
         return "gnomAD Gene Metrics: " + DataManager.getVersion(GENE_METRICS_PATH) + "\n";
     }
 
-    private static void initGeneMap() {
+    public static void initGeneMap() {
         try {
             File f = new File(Data.ATAV_HOME + GENE_METRICS_PATH);
             GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));

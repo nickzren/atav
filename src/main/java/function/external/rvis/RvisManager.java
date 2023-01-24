@@ -58,7 +58,7 @@ public class RvisManager {
         }
     }
 
-    private static void initRvisMap() {
+    public static void initRvisMap() {
         try {
             Iterable<CSVRecord> records = getRecords();
             for (CSVRecord record : records) {

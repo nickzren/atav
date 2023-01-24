@@ -38,7 +38,7 @@ public class MgiManager {
         }
     }
 
-    private static void initMgiMap() {
+    public static void initMgiMap() {
         try {
             File f = new File(Data.ATAV_HOME + MGI_PATH);
             GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
