@@ -129,7 +129,7 @@ public class CalledVariant extends AnnotatedVariant {
 
         return isValid;
     }
-
+    
     private int getCaseCarrier() {
         return genoCount[Index.HOM][Index.CASE]
                 + genoCount[Index.HET][Index.CASE];
@@ -511,7 +511,6 @@ public class CalledVariant extends AnnotatedVariant {
     public boolean isHomozygousTier1(Carrier carrier) {
         return carrier.getGT() == Index.HOM
                 && isCarrieHomPercAltReadValid(carrier)
-                && isImpactHighOrModerate()
                 && isNotObservedInHomAmongControl()
                 && isControlAFValid()
                 && carrier.getMQ() >= 40;

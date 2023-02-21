@@ -42,6 +42,8 @@ public class TrioOutput extends Output {
     byte isLoFdepletedpLI;
 
     // ACMG
+    private boolean isACMGPLP = false;
+    private String acmgClassification;
     private String acmgPathogenicCriteria;
     private String acmgBenignCriteria;
     private short acmgPSCount;
@@ -134,7 +136,6 @@ public class TrioOutput extends Output {
         return denovoFlag.contains("HEMIZYGOUS")
                 && isMotherHetAndFatherNotHom()
                 && calledVar.isCarrieHomPercAltReadValid(cCarrier)
-                && calledVar.isImpactHighOrModerate()
                 && calledVar.isNotObservedInHomAmongControl()
                 && cCarrier.getMQ() >= 40;
     }
@@ -305,7 +306,7 @@ public class TrioOutput extends Output {
     // A protein-truncating predicted de novo allele found in a gene reported to be loss-of-function depleted (FDR<0.01, Petrovski et al.), 
     // or defined as LoF intolerant based on the ExAC paper (p>0.9). Restricted to de novo mutations. For recessive genotypes (HEM, HOM, CHET), pLI/pREC>0.9.
     public byte initLoFdepletedpLI4SingleVar() {
-        if (calledVar.isLOF() 
+        if (calledVar.isLOF()
                 && calledVar.isGenotypeAbsentAmongControl(cCarrier.getGT())) {
             if (denovoFlag.contains("DE NOVO")) {
                 if (calledVar.isFDRValid() || calledVar.isPLIValid()) {
@@ -436,7 +437,6 @@ public class TrioOutput extends Output {
 //            bioinformaticsSignatureSet.add("REPEAT_REGION");
 //        }
 //    }
-
     public String getSingleVariantPrioritization() {
         if (singleVariantPrioritizationSet.isEmpty()) {
             return Data.STRING_NA;
@@ -464,14 +464,17 @@ public class TrioOutput extends Output {
 //
 //        return bioinformaticsSignatures.toString();
 //    }
-
     public byte getTierFlag4SingleVar() {
         return tierFlag4SingleVar;
     }
 
+    // TRUE when flag in Single Variant Prioritization and (Tier 1 or 2 or LOF or KV or ATAV classified as P/LP)
     public boolean isFlag() {
-        return isLoFDominantAndHaploinsufficient == 1
-                || calledVar.getKnownVar().isKnownVariant();
+        return !singleVariantPrioritizationSet.isEmpty()
+                && (tierFlag4SingleVar != Data.BYTE_NA
+                || isLoFDominantAndHaploinsufficient == 1
+                || calledVar.getKnownVar().isKnownVariant()
+                || isACMGPLP);
     }
 
     public void countSingleVar() {
@@ -490,7 +493,7 @@ public class TrioOutput extends Output {
         }
     }
 
-    public String getACMGClassification() {
+    public void initACMGClassification() {
         boolean isPathogenic = false;
         boolean isLikelyPathogenic = false;
         boolean isBenign = false;
@@ -538,19 +541,21 @@ public class TrioOutput extends Output {
         if ((!isPathogenic && !isLikelyPathogenic && !isBenign && !isLikeBenign) // Other criteria shown above are not met
                 || ((isPathogenic || isLikelyPathogenic)) && (isBenign || isLikeBenign) // the criteria for benign and pathogenic are contradictory
                 ) {
-            return "Uncertain significance";
+            acmgClassification = "Uncertain significance";
         }
 
         if (isPathogenic) {
-            return "Pathogenic";
+            acmgClassification = "Pathogenic";
+            isACMGPLP = true;
         } else if (isLikelyPathogenic) {
-            return "Likely pathogenic";
+            acmgClassification = "Likely pathogenic";
+            isACMGPLP = true;
         } else if (isBenign) {
-            return "Benign";
+            acmgClassification = "Benign";
         } else if (isLikeBenign) {
-            return "Like benign";
+            acmgClassification = "Like benign";
         } else {
-            return "Uncertain significance";
+            acmgClassification = "Uncertain significance";
         }
     }
 
@@ -563,6 +568,7 @@ public class TrioOutput extends Output {
 
         initACMGPathogenicCriteria();
         initACMGBenignCriteria();
+        initACMGClassification();
     }
 
     private void initACMGPathogenicCriteria() {
@@ -643,10 +649,6 @@ public class TrioOutput extends Output {
         }
     }
 
-    public String getACMGPathogenicCriteria() {
-        return acmgPathogenicCriteria;
-    }
-
     private void initACMGBenignCriteria() {
         StringJoiner sj = new StringJoiner("|");
 
@@ -708,10 +710,6 @@ public class TrioOutput extends Output {
         }
     }
 
-    public String getACMGBenignCriteria() {
-        return acmgBenignCriteria;
-    }
-
     public String getSummary() {
         StringJoiner sj = new StringJoiner("\n");
 
@@ -742,9 +740,9 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
-        sj.add(getACMGClassification());
-        sj.add(getACMGPathogenicCriteria());
-        sj.add(getACMGBenignCriteria());
+        sj.add(acmgClassification);
+        sj.add(acmgPathogenicCriteria);
+        sj.add(acmgBenignCriteria);
 //        calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);

@@ -203,8 +203,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
         sj.add(output.toString());
         sj.add(FormatManager.appendDoubleQuote(output.getSummary()));
 
-        if (output.getTierFlag4SingleVar() != Data.BYTE_NA
-                || output.isFlag()) {
+        if (output.isFlag() && output.getCalledVariant().isNotSynonymousAndNotSliceOrHighTraP()) {
             bwTrioGenotype.write(sj.toString());
             bwTrioGenotype.newLine();
         } else {
@@ -249,47 +248,38 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
         // init CH variant prioritization
         String chVariantPrioritization = Data.STRING_NA;
-        boolean isOneOfCompVarSynonymous = output1.getCalledVariant().isSynonymous()
-                || output2.getCalledVariant().isSynonymous();
 
-        // tier 1
-        if (output1.isParentsNotHom() && output2.isParentsNotHom()
-                // co-occurance freq in controls is 0
-                && coFreq[Index.CTRL] == 0
-                // for each one of the variants, restrict to High or Moderate impact or with TraP >= 0.4
-                && output1.getCalledVariant().isImpactHighOrModerate() && output2.getCalledVariant().isImpactHighOrModerate()
-                // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
-                // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
-            tierFlag4CompVar = 1;
-            Output.tier1CompoundVarCount++;
-
-            if (!isOneOfCompVarSynonymous) {
+        if (output1.getCalledVariant().isNotSynonymousAndNotSliceOrHighTraP()
+                && output2.getCalledVariant().isNotSynonymousAndNotSliceOrHighTraP()) {
+            // tier 1
+            if (output1.isParentsNotHom() && output2.isParentsNotHom()
+                    // co-occurance freq in controls is 0
+                    && coFreq[Index.CTRL] == 0
+                    // for both variants, genotype is not observed in Hemizygous or Homozygous from IGM default controls and gnomAD (WES & WGS) controls
+                    && output1.getCalledVariant().isNotObservedInHomAmongControl() && output2.getCalledVariant().isNotObservedInHomAmongControl()
+                    // for both variants, max 0.5% AF to IGM default controls and gnomAD (WES & WGS) controls
+                    && output1.getCalledVariant().isControlAFValid() && output2.getCalledVariant().isControlAFValid()) {
+                tierFlag4CompVar = 1;
                 chVariantPrioritization = "01_TIER1";
-            }
-        } else if ( // tier 2
-                // if one of the variant meets tier 2 inclusion criteria
-                (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
-                || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
-                // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
-                && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
-            tierFlag4CompVar = 2;
-            Output.tier2CompoundVarCount++;
-
-            if (!isOneOfCompVarSynonymous) {
+                Output.tier1CompoundVarCount++;
+            } else if ( // tier 2
+                    // if one of the variant meets tier 2 inclusion criteria
+                    (output1.getCalledVariant().isMetTier2InclusionCriteria(output1.cCarrier)
+                    || output2.getCalledVariant().isMetTier2InclusionCriteria(output2.cCarrier))
+                    // for both variants, less than 10 homozygous observed from IGM default controls + gnomAD (WES & WGS) controls
+                    && output1.getCalledVariant().isNHomFromControlsValid(10) && output2.getCalledVariant().isNHomFromControlsValid(10)) {
+                tierFlag4CompVar = 2;
                 chVariantPrioritization = "02_TIER2";
+                Output.tier2CompoundVarCount++;
             }
         }
 
         initACMGPM3orBP2(output1, output2);
 
-        // single var tier 1 or 2 or LoF or KV
+        // single var (tier 1 or 2 or LoF or KV) and isNotSynonymousAndNotSliceOrHighTraP
         boolean hasSingleVarFlagged
-                = output1.getTierFlag4SingleVar() != Data.BYTE_NA
-                || output1.isFlag()
-                || output2.getTierFlag4SingleVar() != Data.BYTE_NA
-                || output2.isFlag();
+                = (output1.isFlag() && output1.getCalledVariant().isNotSynonymousAndNotSliceOrHighTraP())
+                || (output2.isFlag() && output2.getCalledVariant().isNotSynonymousAndNotSliceOrHighTraP());
 
         doCompHetOutput(tierFlag4CompVar, chVariantPrioritization, output1, coFreq, compHetVar1, hasSingleVarFlagged);
         doCompHetOutput(tierFlag4CompVar, chVariantPrioritization, output2, coFreq, compHetVar2, hasSingleVarFlagged);

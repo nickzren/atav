@@ -946,19 +946,25 @@ public class AnnotatedVariant extends Variant {
         return 0;
     }
 
-    // High or Moderate impacts or TraP >= 0.4
-    public boolean isImpactHighOrModerate() {
-        return impact.equals("HIGH")
-                || impact.equals("MODERATE")
-                || trapScore >= 0.4;
-    }
-
     public boolean isMissense() {
         return EffectManager.isMISSENSE(effectID);
     }
 
+    public boolean isNotSynonymousAndNotSlice() {
+        return !isSynonymous() && !isSplice();
+    }
+
+    public boolean isNotSynonymousAndNotSliceOrHighTraP() {
+        return isNotSynonymousAndNotSlice()
+                || trapScore >= 0.4;
+    }
+
     public boolean isSynonymous() {
         return EffectManager.isSYNONYMOUS(effectID);
+    }
+
+    public boolean isSplice() {
+        return EffectManager.isSPLICE(effectID);
     }
 
     public boolean isInframe() {
