@@ -818,7 +818,7 @@ public class AnnotatedVariant extends Variant {
 
     // LoF effects
     public boolean isLOF() {
-        return EffectManager.isLOF(effectID) || trapScore >= 0.676;
+        return EffectManager.isLOF(effectID);
     }
 
     // LoF variant and occurs within a ClinGen/OMIM disease gene and genotype is consistent with inheritance
