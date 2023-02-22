@@ -418,12 +418,12 @@ public class CalledVariant extends AnnotatedVariant {
 
     // tier 2 inclusion criteria
     public boolean isMetTier2InclusionCriteria(Carrier carrier) {
-        return isKnownVar2bpFlankingValid()
+        return knownVarOutput.isKnownVariantSite()
                 || isInClinGenOrOMIM(carrier)
                 || isInClinVarPathoratio()
-                || isLoFPLIValid()
-                || isMissenseMisZValid()
-                || isClinVar25bpFlankingValid();
+                || isLoFPLIValid();
+//                || isMissenseMisZValid()
+//                || isClinVar25bpFlankingValid();
     }
 
     /*

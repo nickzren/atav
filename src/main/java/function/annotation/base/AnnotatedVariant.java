@@ -886,6 +886,10 @@ public class AnnotatedVariant extends Variant {
                 && mtr.getFDR() < 0.01;
     }
 
+    public boolean isKnownVarSiteValid() {
+        return knownVarOutput.isClinVarPLPSite() || knownVarOutput.isHGMDDMSite();
+    }
+    
     // any variants in 2bp flanking regions either HGMD DM or ClinVar PLP
     public boolean isKnownVar2bpFlankingValid() {
         return knownVarOutput.isKnownVar2bpFlankingValid();
