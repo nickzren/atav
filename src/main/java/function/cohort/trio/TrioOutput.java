@@ -204,7 +204,7 @@ public class TrioOutput extends Output {
 
         isHotZone = calledVar.isHotZone();
         isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
-        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
+        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant(cCarrier);
         isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
         isClinGenVarLoF = initClinGenVarLoF4SingleVar();
         isLoFdepletedpLI = initLoFdepletedpLI4SingleVar();
@@ -451,6 +451,10 @@ public class TrioOutput extends Output {
         return variantPrioritizations.toString();
     }
 
+    public void clearSingleVariantPrioritization() {
+        singleVariantPrioritizationSet.clear();
+    }
+    
 //    public String getBioinformaticsSignatures() {
 //        if (bioinformaticsSignatureSet.isEmpty()) {
 //            return Data.STRING_NA;

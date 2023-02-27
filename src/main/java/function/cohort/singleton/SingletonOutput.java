@@ -96,7 +96,7 @@ public class SingletonOutput extends Output {
 
         isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
         isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
-        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
+        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant(cCarrier);
         isHotZone = calledVar.isHotZone();
 
         tierFlag4SingleVar = Data.BYTE_NA;
@@ -265,6 +265,10 @@ public class SingletonOutput extends Output {
         }
 
         return variantPrioritizations.toString();
+    }
+
+    public void clearSingleVariantPrioritization() {
+        singleVariantPrioritizationSet.clear();
     }
 
 //    public String getBioinformaticsSignatures() {

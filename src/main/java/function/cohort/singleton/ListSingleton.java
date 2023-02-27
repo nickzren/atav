@@ -97,7 +97,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             SingletonOutput output = new SingletonOutput(calledVar);
-
+            
             addVariantToGeneList(output);
         } catch (Exception e) {
             ErrorManager.send(e);
@@ -206,6 +206,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             bwSingletonGenoNoFlag.write(sj.toString());
             bwSingletonGenoNoFlag.newLine();
         }
+
+        output.clearSingleVariantPrioritization();
     }
 
     private void outputCompHet(SingletonOutput output1, SingletonOutput output2) throws Exception {
@@ -333,6 +335,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             bwSingletonGenoNoFlag.write(sj.toString());
             bwSingletonGenoNoFlag.newLine();
         }
+
+        output.clearSingleVariantPrioritization();
     }
 
     private void clearList() {

@@ -210,6 +210,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
             bwTrioGenotypeNoFlag.write(sj.toString());
             bwTrioGenotypeNoFlag.newLine();
         }
+        
+        output.clearSingleVariantPrioritization();
     }
 
     private void outputCompHet(TrioOutput output1, TrioOutput output2) throws Exception {
@@ -364,6 +366,8 @@ public class ListTrio extends AnalysisBase4CalledVar {
             bwTrioGenotypeNoFlag.write(sj.toString());
             bwTrioGenotypeNoFlag.newLine();
         }
+        
+        output.clearSingleVariantPrioritization();
     }
 
     private void clearList() {
