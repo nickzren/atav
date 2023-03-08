@@ -83,9 +83,9 @@ public class CollapsingBase extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        generatePvaluesQQPlot();
-
         gzipFiles();
+
+        generatePvaluesQQPlot();
     }
 
     @Override

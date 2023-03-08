@@ -135,9 +135,9 @@ public class CollapsingVCFLite extends ListVCFLite {
 
             outputSummary();
             closeOutput();
-
-            generatePvaluesQQPlot();
+            
             gzipFiles();
+            generatePvaluesQQPlot();
         } catch (Exception e) {
             ErrorManager.send(e);
         }
