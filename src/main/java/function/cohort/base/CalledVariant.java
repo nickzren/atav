@@ -432,7 +432,7 @@ public class CalledVariant extends AnnotatedVariant {
         3. variant occurs witin a ClinGen gene with "Sufficient" or "Some" evidence OR OMIM dominant gene
         4. minimum coverage of 10 reads
         5. at least 25% reads support the variant call
-        6. GATK: QUAL >= 50 & QD >= 2 & GQ >= 50 & MQ >= 40
+        6. GATK: QUAL >= 40 & QD >= 2
         7. variant call <= 5 obvservations amoung non-parental internal and external controls
         8. variant affects and resides within a CCDS transcript
      */
@@ -441,9 +441,9 @@ public class CalledVariant extends AnnotatedVariant {
                 && isLOF() // 2
                 && (getKnownVar().isInClinGenSufficientOrSomeEvidence()
                 || getKnownVar().isOMIMDominant()) // 3
-                && carrier.getDP() >= 10 // 4
+                && carrier.getDPBin() >= 10 // 4
                 && carrier.getPercAltRead() > 0.25 // 5
-                && carrier.getQual() >= 50 && carrier.getQD() >= 2 && carrier.getGQ() >= 50 && carrier.getMQ() >= 40 // 6
+                && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 6
                 && isNHetFromControlsValid(5) // 7
                 && hasCCDS() // 8
                 ) {
@@ -480,7 +480,7 @@ public class CalledVariant extends AnnotatedVariant {
      */
     public byte isKnownPathogenicVariant(Carrier carrier) {
         if (getKnownVar().isKnownVariant() // 1
-                && carrier.getDP() >= 10 // 2
+                && carrier.getDPBin() >= 10 // 2
                 && carrier.getPercAltRead() > 0.25 // 3
                 && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
                 && hasCCDS() // 5
