@@ -5,8 +5,10 @@ import function.cohort.base.Carrier;
 import function.cohort.base.Enum.INHERITED_FROM;
 import function.variant.base.Output;
 import function.cohort.base.Sample;
+import static function.cohort.trio.TrioCommand.isPhenolyzer;
 import global.Data;
 import global.Index;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.StringJoiner;
@@ -41,6 +43,8 @@ public class TrioOutput extends Output {
     byte isClinGenVarLoF;
     byte isLoFdepletedpLI;
 
+    int phenolyzerRank;
+    
     // ACMG
     private boolean isACMGPLP = false;
     private String acmgClassification;
@@ -88,7 +92,7 @@ public class TrioOutput extends Output {
                 mGenotype, mDPBin,
                 fGenotype, fDPBin);
     }
-
+    
     /*
      * convert all missing genotype to hom ref for parents
      */
@@ -197,6 +201,12 @@ public class TrioOutput extends Output {
         }
     }
 
+    
+    public void initPhenolyzerRank(HashMap<String, Integer> phenolyzerRankMap){
+        String geneName = calledVar.getGeneName();        
+        phenolyzerRank = phenolyzerRankMap.containsKey(geneName) ? phenolyzerRankMap.get(geneName) : Data.INTEGER_NA;
+    }
+    
     public void initTierFlag4SingleVar() {
         if (!singleVariantPrioritizationSet.isEmpty()) {
             return;
@@ -652,6 +662,10 @@ public class TrioOutput extends Output {
             acmgPathogenicCriteria = Data.STRING_NA;
         }
     }
+    
+    public int getPhenolyzerRank(){
+        return phenolyzerRank;
+    }
 
     private void initACMGBenignCriteria() {
         StringJoiner sj = new StringJoiner("|");
@@ -754,6 +768,11 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getShort(mDPBin));
         sj.add(getGenoStr(fGeno));
         sj.add(FormatManager.getShort(fDPBin));
+        
+        if (TrioCommand.isPhenolyzer){
+            sj.add(FormatManager.getInteger(getPhenolyzerRank()));
+        }
+        
         getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
