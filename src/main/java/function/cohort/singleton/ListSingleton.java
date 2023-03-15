@@ -2,20 +2,30 @@ package function.cohort.singleton;
 
 import function.cohort.base.CalledVariant;
 import function.cohort.base.AnalysisBase4CalledVar;
+import function.cohort.base.CohortLevelFilterCommand;
 import static function.cohort.singleton.SingletonManager.COMP_HET_FLAG;
 import function.variant.base.Output;
+import function.variant.base.RegionManager;
+import function.variant.base.VariantManager;
 import global.Data;
 import global.Index;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import utils.DBManager;
 import utils.FormatManager;
 import utils.LogManager;
 import utils.ThirdPartyToolManager;
@@ -31,10 +41,20 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
     BufferedWriter bwSingletonGenoNoFlag = null;
     final String genotypesFilePathNoFlag = CommonCommand.outputPath + "singleton_genotypes_noflag.csv";
-
+    
+    BufferedWriter bwSingletonGeneName = null;
+    final String singletonGeneNamesFilePath = CommonCommand.outputPath + "singleton_gene_names.csv";
+    
     HashMap<String, List<SingletonOutput>> geneVariantListMap = new HashMap<>();
     // avoid output duplicate carrier (comp var & single var)
     HashSet<String> outputCarrierSet = new HashSet<>();
+    
+    HashSet<String> geneSet = new HashSet<>();
+    private static final String phenolyzerOutputPath = CommonCommand.realOutputPath + "/phenolyzer";
+            
+    private static final String phenolyzerRankFilePath = phenolyzerOutputPath + ".annotated_gene_list";
+   
+    public HashMap<String, Integer> phenolyzerRankMap = new HashMap<>();
 
     @Override
     public void initOutput() {
@@ -46,6 +66,12 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             bwSingletonGenoNoFlag = new BufferedWriter(new FileWriter(genotypesFilePathNoFlag));
             bwSingletonGenoNoFlag.write(SingletonOutput.getHeader());
             bwSingletonGenoNoFlag.newLine();
+            
+            if(SingletonCommand.isPhenolyzer){
+                bwSingletonGeneName = new BufferedWriter(new FileWriter(singletonGeneNamesFilePath));
+                bwSingletonGeneName.newLine();
+            }
+            
         } catch (Exception ex) {
             ErrorManager.send(ex);
         }
@@ -86,9 +112,78 @@ public class ListSingleton extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
+        // init unique gene list file 
+            // Copy get annotation from analyssiBase4Variant
+        // select distinct gene from variant_chr1 ... (for loop)
+        // run Phenolyzer
+        // parse Phenolyzer output and keep gene score in HashMap<String,Integer>
+        // add new field into output "Phenolyzer Rank"
+    
+        if (SingletonCommand.isPhenolyzer) {
+            try {
+                processGeneList();
+                for(String geneName : geneSet){
+                    if (geneName != null){
+                        outputGeneList(geneName);
+                    }
+                } 
+                bwSingletonGeneName.flush();
+                bwSingletonGeneName.close();
+            } catch (Exception ex) {
+                ErrorManager.send(ex);
+            }
+            
+            doPhenolyzer();
+            parsePhenolyzerOutput();
+        }
         SingletonManager.init();
     }
+    
+    private void outputGeneList(String geneName){   
+        try {
+            bwSingletonGeneName.write(geneName);
+            bwSingletonGeneName.newLine();
+        } catch(Exception e){
+            ErrorManager.send(e);
+        }
+    }
+    
+    private void parsePhenolyzerOutput() {
+        try{
+            phenolyzerRankMap = (HashMap<String, Integer>) Files.readAllLines(Paths.get(phenolyzerRankFilePath))
+                    .stream()
+                    .skip(1)
+                    .collect(Collectors.toMap(
+                            data -> String.valueOf(data.split("\t")[1]), 
+                            data -> Integer.parseInt(data.split("\t")[0])));
+            
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
+    
+    public void processGeneList() throws Exception {
+        for (String chrStr: RegionManager.getChrList()) {
+
+            // when --case-only used and case num > 0
+            VariantManager.initCaseVariantTable(chrStr);
+
+            rset = getAnnotationList(chrStr);
+           
+            while (rset.next()) {
+                String nextGene = rset.getString("gene"); 
+                geneSet.add(nextGene);
+            }
+            
+            rset.close();
+            
+            // clear temp case variant able
+            VariantManager.dropCaseVariantTable(chrStr); 
+        }
+
+    }
+    
     @Override
     public void afterProcessDatabaseData() {
     }
@@ -104,6 +199,19 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         }
     }
 
+    protected static ResultSet getAnnotationList(String chrStr) throws SQLException {
+        String sql = "SELECT DISTINCT gene "
+                + "FROM variant_chr" + chrStr + " ";
+
+        // case only filter - add tmp table
+        if (CohortLevelFilterCommand.isCaseOnlyValid2CreateTempTable()) {
+            sql += ", tmp_case_variant_id_chr" + chrStr + " ";
+            sql += "WHERE variant_id = case_variant_id ";
+        }
+
+        return DBManager.executeConcurReadOnlyQuery(sql);
+    }
+    
     private void addVariantToGeneList(SingletonOutput output) {
         List<SingletonOutput> geneOutputList
                 = geneVariantListMap.get(output.getCalledVariant().getGeneName());
@@ -146,7 +254,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initTierFlag4SingleVar();
                         output1.initACMG();
-
+                        output1.initPhenolyzerRank(phenolyzerRankMap);
+                        
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             SingletonOutput output2 = geneOutputList.get(j);
                             output2.initSingletonData(singleton);
@@ -154,7 +263,8 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                             if (output2.isQualifiedGeno(output2.cGeno)) {
                                 output2.initTierFlag4SingleVar();
                                 output2.initACMG();
-
+                                output2.initPhenolyzerRank(phenolyzerRankMap);
+                                
                                 outputCompHet(output1, output2);
                             }
                         }
@@ -339,6 +449,15 @@ public class ListSingleton extends AnalysisBase4CalledVar {
         output.clearSingleVariantPrioritization();
     }
 
+     private void doPhenolyzer() {
+        String cmd = ThirdPartyToolManager.PERL
+                + " " + ThirdPartyToolManager.PHENOLYZER
+                + " -ph -f " + SingletonCommand.phenolyzerPhenotypePath
+                + " --gene " + singletonGeneNamesFilePath
+                + " --out " + phenolyzerOutputPath;
+        ThirdPartyToolManager.systemCall(new String[]{"/bin/sh", "-c", cmd});
+    }
+    
     private void clearList() {
         geneVariantListMap.clear();
     }

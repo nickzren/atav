@@ -75,7 +75,6 @@ public class ListTrio extends AnalysisBase4CalledVar {
             
             if(TrioCommand.isPhenolyzer){
                 bwTrioGeneName = new BufferedWriter(new FileWriter(trioGeneNamesFilePath));
-                bwTrioGeneName.write(TrioManager.getHeader());
                 bwTrioGeneName.newLine();
             }
         } catch (Exception ex) {

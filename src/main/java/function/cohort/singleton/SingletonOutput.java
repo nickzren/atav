@@ -6,6 +6,7 @@ import function.variant.base.Output;
 import function.cohort.base.Sample;
 import global.Data;
 import global.Index;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.StringJoiner;
@@ -28,6 +29,8 @@ public class SingletonOutput extends Output {
     byte isKnownPathogenicVariant;
     byte isHotZone;
 
+    int phenolyzerRank;
+    
     // ACMG
     private boolean isACMGPLP = false;
     private String acmgClassification;
@@ -71,6 +74,11 @@ public class SingletonOutput extends Output {
 //        sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
+        
+        if (SingletonCommand.isPhenolyzer) {
+            sj.add("Phenolyzer Rank");
+        }
+        
         sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
         sj.add("Summary");
@@ -88,7 +96,12 @@ public class SingletonOutput extends Output {
         cDPBin = calledVar.getDPBin(child.getIndex());
         cCarrier = calledVar.getCarrier(singleton.getChild().getId());
     }
-
+    
+    public void initPhenolyzerRank(HashMap<String, Integer> phenolyzerRankMap){
+        String geneName = calledVar.getGeneName();        
+        phenolyzerRank = phenolyzerRankMap.containsKey(geneName) ? phenolyzerRankMap.get(geneName) : Data.INTEGER_NA;
+    }
+  
     public void initTierFlag4SingleVar() {
         if (!singleVariantPrioritizationSet.isEmpty()) {
             return;
@@ -312,7 +325,11 @@ public class SingletonOutput extends Output {
             Output.knownPathogenicVarCount++;
         }
     }
-
+    
+    public int getPhenolyzerRank(){
+        return phenolyzerRank;
+    }
+    
     public void initACMGClassification() {
         boolean isPathogenic = false;
         boolean isLikelyPathogenic = false;
@@ -551,6 +568,11 @@ public class SingletonOutput extends Output {
 //        calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
+
+        if (SingletonCommand.isPhenolyzer){
+            sj.add(FormatManager.getInteger(getPhenolyzerRank()));
+        }
+        
         getGenoStatData(sj);
         calledVar.getExternalData(sj);
 
