@@ -288,27 +288,17 @@ public class KnownVarManager {
                     continue;
                 }
 
-                String phenotype = tmp[12];
+                String phenotype = tmp[12]; // Phenotypes
 
-                String g = tmp[8];
+                String g = tmp[8]; // Approved Gene Symbol
                 if (!g.isEmpty() && !phenotype.isEmpty()) {
                     omimMap.put(g.toUpperCase(), phenotype);
                 }
 
-                String[] geneSymbols = tmp[6].replaceAll("( )+", "").split(",");
-                boolean isFirst = true;
+                String[] geneSymbols = tmp[6].replaceAll("( )+", "").split(","); // Gene Symbols
                 for (String gene : geneSymbols) {
-                    if (!gene.isEmpty() && !phenotype.isEmpty()) {
-                        if (isFirst) {
-                            isFirst = false;
-                            if (!omimMap.containsKey(gene.toUpperCase())) {
-                                omimMap.put(gene.toUpperCase(), phenotype);
-                            }
-                        } else {
-                            if (!omimMap.containsKey(gene.toUpperCase())) {
-                                omimMap.put(gene.toUpperCase(), phenotype);
-                            }
-                        }
+                    if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene.toUpperCase())) {
+                         omimMap.put(gene.toUpperCase(), phenotype);
                     }
                 }
             }
