@@ -43,7 +43,8 @@ public class TrioOutput extends Output {
     byte isClinGenVarLoF;
     byte isLoFdepletedpLI;
 
-    int phenolyzerRank;
+    int phenolyzerRank = Data.INTEGER_NA;
+    float phenolyzerScore = Data.FLOAT_NA;
     
     // ACMG
     private boolean isACMGPLP = false;
@@ -202,9 +203,12 @@ public class TrioOutput extends Output {
     }
 
     
-    public void initPhenolyzerRank(HashMap<String, Integer> phenolyzerRankMap){
-        String geneName = calledVar.getGeneName();        
-        phenolyzerRank = phenolyzerRankMap.containsKey(geneName) ? phenolyzerRankMap.get(geneName) : Data.INTEGER_NA;
+    public void initPhenolyzerResult(HashMap<String, String[]> phenolyzerResultMap){
+        String geneName = calledVar.getGeneName();
+        if (phenolyzerResultMap.containsKey(geneName)){
+            phenolyzerRank = Integer.valueOf(phenolyzerResultMap.get(geneName)[0]);
+            phenolyzerScore = Float.valueOf(phenolyzerResultMap.get(geneName)[3]);
+        }
     }
     
     public void initTierFlag4SingleVar() {
@@ -666,7 +670,11 @@ public class TrioOutput extends Output {
     public int getPhenolyzerRank(){
         return phenolyzerRank;
     }
-
+    
+    public float getPhenolyzerScore(){
+        return phenolyzerScore;
+    }
+    
     private void initACMGBenignCriteria() {
         StringJoiner sj = new StringJoiner("|");
 
@@ -771,6 +779,7 @@ public class TrioOutput extends Output {
         
         if (TrioCommand.isPhenolyzer){
             sj.add(FormatManager.getInteger(getPhenolyzerRank()));
+            sj.add(FormatManager.getFloat(getPhenolyzerScore()));
         }
         
         getGenoStatData(sj);

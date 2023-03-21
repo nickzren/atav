@@ -30,6 +30,7 @@ public class SingletonOutput extends Output {
     byte isHotZone;
 
     int phenolyzerRank;
+    float phenolyzerScore = Data.FLOAT_NA;
     
     // ACMG
     private boolean isACMGPLP = false;
@@ -77,6 +78,7 @@ public class SingletonOutput extends Output {
         
         if (SingletonCommand.isPhenolyzer) {
             sj.add("Phenolyzer Rank");
+            sj.add("Phenolyzer Score");
         }
         
         sj.merge(Output.getCohortLevelHeader());
@@ -97,9 +99,12 @@ public class SingletonOutput extends Output {
         cCarrier = calledVar.getCarrier(singleton.getChild().getId());
     }
     
-    public void initPhenolyzerRank(HashMap<String, Integer> phenolyzerRankMap){
-        String geneName = calledVar.getGeneName();        
-        phenolyzerRank = phenolyzerRankMap.containsKey(geneName) ? phenolyzerRankMap.get(geneName) : Data.INTEGER_NA;
+    public void initPhenolyzerResult(HashMap<String, String[]> phenolyzerResultMap){
+        String geneName = calledVar.getGeneName();
+        if (phenolyzerResultMap.containsKey(geneName)){
+            phenolyzerRank = Integer.valueOf(phenolyzerResultMap.get(geneName)[0]);
+            phenolyzerScore = Float.valueOf(phenolyzerResultMap.get(geneName)[3]);
+        }
     }
   
     public void initTierFlag4SingleVar() {
@@ -330,6 +335,9 @@ public class SingletonOutput extends Output {
         return phenolyzerRank;
     }
     
+    public float getPhenolyzerScore(){
+        return phenolyzerScore;
+    }
     public void initACMGClassification() {
         boolean isPathogenic = false;
         boolean isLikelyPathogenic = false;
@@ -571,6 +579,7 @@ public class SingletonOutput extends Output {
 
         if (SingletonCommand.isPhenolyzer){
             sj.add(FormatManager.getInteger(getPhenolyzerRank()));
+            sj.add(FormatManager.getFloat(getPhenolyzerScore()));
         }
         
         getGenoStatData(sj);

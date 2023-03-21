@@ -54,7 +54,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
             
     private static final String phenolyzerRankFilePath = phenolyzerOutputPath + ".annotated_gene_list";
    
-    public HashMap<String, Integer> phenolyzerRankMap = new HashMap<>();
+    public HashMap<String, String[]> phenolyzerResultMap = new HashMap<>();
 
     @Override
     public void initOutput() {
@@ -111,14 +111,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
     }
 
     @Override
-    public void beforeProcessDatabaseData() {
-        // init unique gene list file 
-            // Copy get annotation from analyssiBase4Variant
-        // select distinct gene from variant_chr1 ... (for loop)
-        // run Phenolyzer
-        // parse Phenolyzer output and keep gene score in HashMap<String,Integer>
-        // add new field into output "Phenolyzer Rank"
-    
+    public void beforeProcessDatabaseData() {    
         if (SingletonCommand.isPhenolyzer) {
             try {
                 processGeneList();
@@ -150,12 +143,12 @@ public class ListSingleton extends AnalysisBase4CalledVar {
     
     private void parsePhenolyzerOutput() {
         try{
-            phenolyzerRankMap = (HashMap<String, Integer>) Files.readAllLines(Paths.get(phenolyzerRankFilePath))
+            phenolyzerResultMap = (HashMap<String, String[]>) Files.readAllLines(Paths.get(phenolyzerRankFilePath))
                     .stream()
                     .skip(1)
                     .collect(Collectors.toMap(
-                            data -> String.valueOf(data.split("\t")[1]), 
-                            data -> Integer.parseInt(data.split("\t")[0])));
+                            data -> String.valueOf(data.split("\t")[1]),
+                            data -> data.split("\t")));
             
         } catch (IOException e){
             e.printStackTrace();
@@ -254,7 +247,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                     if (output1.isQualifiedGeno(output1.cGeno)) {
                         output1.initTierFlag4SingleVar();
                         output1.initACMG();
-                        output1.initPhenolyzerRank(phenolyzerRankMap);
+                        output1.initPhenolyzerResult(phenolyzerResultMap);
                         
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             SingletonOutput output2 = geneOutputList.get(j);
@@ -263,7 +256,7 @@ public class ListSingleton extends AnalysisBase4CalledVar {
                             if (output2.isQualifiedGeno(output2.cGeno)) {
                                 output2.initTierFlag4SingleVar();
                                 output2.initACMG();
-                                output2.initPhenolyzerRank(phenolyzerRankMap);
+                                output2.initPhenolyzerResult(phenolyzerResultMap);
                                 
                                 outputCompHet(output1, output2);
                             }
