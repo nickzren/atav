@@ -88,6 +88,7 @@ public class TrioManager {
         
         if (TrioCommand.isPhenolyzer) {
             sj.add("Phenolyzer Rank");
+            sj.add("Phenolyzer Score");
         }
         
         sj.merge(Output.getCohortLevelHeader());

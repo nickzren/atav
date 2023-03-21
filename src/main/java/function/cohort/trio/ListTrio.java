@@ -46,22 +46,21 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     BufferedWriter bwTrioGenotypeNoFlag = null;
     final String trioGenotypeFilePathNoFlag = CommonCommand.outputPath + "trio_genotypes_noflag.csv";
-    
+
     BufferedWriter bwTrioGeneName = null;
-    final String trioGeneNamesFilePath = CommonCommand.outputPath + "trio_gene_names.csv"; 
-    
+    final String trioGeneNamesFilePath = CommonCommand.outputPath + "trio_gene_names.csv";
+
     HashMap<String, List<TrioOutput>> geneVariantListMap = new HashMap<>();
     // avoid output duplicate carrier (comp var & single var)
     HashSet<String> outputCarrierSet = new HashSet<>();
 
-    
     HashSet<String> geneSet = new HashSet<>();
     private static final String phenolyzerOutputPath = CommonCommand.realOutputPath + "/phenolyzer";
-            
+
     private static final String phenolyzerRankFilePath = phenolyzerOutputPath + ".annotated_gene_list";
-   
-    public HashMap<String, Integer> phenolyzerRankMap = new HashMap<>();
-       
+
+    public HashMap<String, String[]> phenolyzerResultMap = new HashMap<>();
+
     @Override
     public void initOutput() {
         try {
@@ -72,10 +71,9 @@ public class ListTrio extends AnalysisBase4CalledVar {
             bwTrioGenotypeNoFlag = new BufferedWriter(new FileWriter(trioGenotypeFilePathNoFlag));
             bwTrioGenotypeNoFlag.write(TrioManager.getHeader());
             bwTrioGenotypeNoFlag.newLine();
-            
-            if(TrioCommand.isPhenolyzer){
+
+            if (TrioCommand.isPhenolyzer) {
                 bwTrioGeneName = new BufferedWriter(new FileWriter(trioGeneNamesFilePath));
-                bwTrioGeneName.write(TrioManager.getHeader());
                 bwTrioGeneName.newLine();
             }
         } catch (Exception ex) {
@@ -110,80 +108,71 @@ public class ListTrio extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
-        // init unique gene list file 
-            // Copy get annotation from analyssiBase4Variant
-        // select distinct gene from variant_chr1 ... (for loop)
-        // run Phenolyzer
-        // parse Phenolyzer output and keep gene score in HashMap<String,Integer>
-        // add new field into output "Phenolyzer Rank"
-    
         if (TrioCommand.isPhenolyzer) {
             try {
                 processGeneList();
-                for(String geneName : geneSet){
-                    if (geneName != null){
+                for (String geneName : geneSet) {
+                    if (geneName != null) {
                         outputGeneList(geneName);
                     }
-                } 
+                }
                 bwTrioGeneName.flush();
                 bwTrioGeneName.close();
             } catch (Exception ex) {
                 ErrorManager.send(ex);
             }
-            
+
             doPhenolyzer();
             parsePhenolyzerOutput();
         }
         TrioManager.init();
-       
-        
+
     }
-    
-    private void outputGeneList(String geneName){   
+
+    private void outputGeneList(String geneName) {
         try {
             bwTrioGeneName.write(geneName);
             bwTrioGeneName.newLine();
-        } catch(Exception e){
+        } catch (Exception e) {
             ErrorManager.send(e);
         }
     }
-    
+
     private void parsePhenolyzerOutput() {
-        try{
-            phenolyzerRankMap = (HashMap<String, Integer>) Files.readAllLines(Paths.get(phenolyzerRankFilePath))
+        try {
+            phenolyzerResultMap = (HashMap<String, String[]>) Files.readAllLines(Paths.get(phenolyzerRankFilePath))
                     .stream()
                     .skip(1)
                     .collect(Collectors.toMap(
-                            data -> String.valueOf(data.split("\t")[1]), 
-                            data -> Integer.parseInt(data.split("\t")[0])));
+                            data -> String.valueOf(data.split("\t")[1]),
+                            data -> data.split("\t")));
             
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    
     public void processGeneList() throws Exception {
-        for (String chrStr: RegionManager.getChrList()) {
+        for (String chrStr : RegionManager.getChrList()) {
 
             // when --case-only used and case num > 0
             VariantManager.initCaseVariantTable(chrStr);
 
             rset = getAnnotationList(chrStr);
-           
+
             while (rset.next()) {
-                String nextGene = rset.getString("gene"); 
+                String nextGene = rset.getString("gene");
                 geneSet.add(nextGene);
             }
-            
+
             rset.close();
-            
+
             // clear temp case variant able
-            VariantManager.dropCaseVariantTable(chrStr); 
+            VariantManager.dropCaseVariantTable(chrStr);
         }
 
     }
-    
+
     @Override
     public void afterProcessDatabaseData() {
     }
@@ -198,7 +187,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
             ErrorManager.send(e);
         }
     }
-    
+
     protected static ResultSet getAnnotationList(String chrStr) throws SQLException {
         String sql = "SELECT DISTINCT gene "
                 + "FROM variant_chr" + chrStr + " ";
@@ -212,14 +201,13 @@ public class ListTrio extends AnalysisBase4CalledVar {
         return DBManager.executeConcurReadOnlyQuery(sql);
     }
 
-    
     private void addVariantToGeneList(TrioOutput output) {
         List<TrioOutput> geneOutputList
                 = geneVariantListMap.get(output.getCalledVariant().getGeneName());
 
         if (geneOutputList == null) {
             geneOutputList = new ArrayList<>();
-            
+
             geneOutputList.add(output);
             geneVariantListMap.put(output.getCalledVariant().getGeneName(), geneOutputList);
         } else {
@@ -257,7 +245,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                         output1.initDenovoFlag(trio.getChild());
                         output1.initTierFlag4SingleVar();
                         output1.initACMG();
-                        output1.initPhenolyzerRank(phenolyzerRankMap);
+                        output1.initPhenolyzerResult(phenolyzerResultMap);
                         for (int j = i + 1; j < geneOutputList.size(); j++) {
                             TrioOutput output2 = geneOutputList.get(j);
                             output2.initTrioData(trio);
@@ -267,7 +255,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
                                 output2.initDenovoFlag(trio.getChild());
                                 output2.initTierFlag4SingleVar();
                                 output2.initACMG();
-                                output2.initPhenolyzerRank(phenolyzerRankMap);
+                                output2.initPhenolyzerResult(phenolyzerResultMap);
                                 outputCompHet(output1, output2);
                             }
                         }
@@ -329,7 +317,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
             bwTrioGenotypeNoFlag.write(sj.toString());
             bwTrioGenotypeNoFlag.newLine();
         }
-        
+
         output.clearSingleVariantPrioritization();
     }
 
@@ -485,7 +473,7 @@ public class ListTrio extends AnalysisBase4CalledVar {
             bwTrioGenotypeNoFlag.write(sj.toString());
             bwTrioGenotypeNoFlag.newLine();
         }
-        
+
         output.clearSingleVariantPrioritization();
     }
 
