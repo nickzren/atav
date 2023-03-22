@@ -29,7 +29,7 @@ public class SingletonOutput extends Output {
     byte isKnownPathogenicVariant;
     byte isHotZone;
 
-    int phenolyzerRank;
+    int phenolyzerRank = Data.INTEGER_NA;
     float phenolyzerScore = Data.FLOAT_NA;
     
     // ACMG
