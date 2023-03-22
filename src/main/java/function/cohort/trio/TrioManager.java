@@ -85,16 +85,17 @@ public class TrioManager {
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
-        
+
+        sj.merge(Output.getCohortLevelHeader());
+        sj.merge(Output.getExternalDataHeader());
+
         if (TrioCommand.isPhenolyzer) {
             sj.add("Phenolyzer Rank");
             sj.add("Phenolyzer Score");
         }
-        
-        sj.merge(Output.getCohortLevelHeader());
-        sj.merge(Output.getExternalDataHeader());
+
         sj.add("Summary");
-        
+
         return sj.toString();
     }
 
@@ -135,7 +136,7 @@ public class TrioManager {
             ErrorManager.print("Missing trio from --sample.", ErrorManager.INPUT_PARSING);
         } else {
             LogManager.writeAndPrint("Total trios: "
-                + trioList.size() + " (" + trioNum + " trios and " + duoNum + " DUOs)");
+                    + trioList.size() + " (" + trioNum + " trios and " + duoNum + " DUOs)");
         }
     }
 

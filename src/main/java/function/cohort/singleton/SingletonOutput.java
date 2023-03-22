@@ -31,7 +31,7 @@ public class SingletonOutput extends Output {
 
     int phenolyzerRank = Data.INTEGER_NA;
     float phenolyzerScore = Data.FLOAT_NA;
-    
+
     // ACMG
     private boolean isACMGPLP = false;
     private String acmgClassification;
@@ -75,14 +75,14 @@ public class SingletonOutput extends Output {
 //        sj.merge(Output.getVariantDataHeader());
         sj.merge(Output.getAnnotationDataHeader());
         sj.merge(Output.getCarrierDataHeader());
+        sj.merge(Output.getCohortLevelHeader());
+        sj.merge(Output.getExternalDataHeader());
         
         if (SingletonCommand.isPhenolyzer) {
             sj.add("Phenolyzer Rank");
             sj.add("Phenolyzer Score");
         }
-        
-        sj.merge(Output.getCohortLevelHeader());
-        sj.merge(Output.getExternalDataHeader());
+
         sj.add("Summary");
 
         return sj.toString();
@@ -98,15 +98,15 @@ public class SingletonOutput extends Output {
         cDPBin = calledVar.getDPBin(child.getIndex());
         cCarrier = calledVar.getCarrier(singleton.getChild().getId());
     }
-    
-    public void initPhenolyzerResult(HashMap<String, String[]> phenolyzerResultMap){
+
+    public void initPhenolyzerResult(HashMap<String, String[]> phenolyzerResultMap) {
         String geneName = calledVar.getGeneName();
-        if (phenolyzerResultMap.containsKey(geneName)){
+        if (phenolyzerResultMap.containsKey(geneName)) {
             phenolyzerRank = Integer.valueOf(phenolyzerResultMap.get(geneName)[0]);
             phenolyzerScore = Float.valueOf(phenolyzerResultMap.get(geneName)[3]);
         }
     }
-  
+
     public void initTierFlag4SingleVar() {
         if (!singleVariantPrioritizationSet.isEmpty()) {
             return;
@@ -330,14 +330,15 @@ public class SingletonOutput extends Output {
             Output.knownPathogenicVarCount++;
         }
     }
-    
-    public int getPhenolyzerRank(){
+
+    public int getPhenolyzerRank() {
         return phenolyzerRank;
     }
-    
-    public float getPhenolyzerScore(){
+
+    public float getPhenolyzerScore() {
         return phenolyzerScore;
     }
+
     public void initACMGClassification() {
         boolean isPathogenic = false;
         boolean isLikelyPathogenic = false;
@@ -577,13 +578,13 @@ public class SingletonOutput extends Output {
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
 
-        if (SingletonCommand.isPhenolyzer){
+        getGenoStatData(sj);
+        calledVar.getExternalData(sj);
+        
+        if (SingletonCommand.isPhenolyzer) {
             sj.add(FormatManager.getInteger(getPhenolyzerRank()));
             sj.add(FormatManager.getFloat(getPhenolyzerScore()));
         }
-        
-        getGenoStatData(sj);
-        calledVar.getExternalData(sj);
 
         return sj.toString();
     }

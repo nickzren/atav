@@ -776,14 +776,13 @@ public class TrioOutput extends Output {
         sj.add(FormatManager.getShort(mDPBin));
         sj.add(getGenoStr(fGeno));
         sj.add(FormatManager.getShort(fDPBin));
+        getGenoStatData(sj);
+        calledVar.getExternalData(sj);
         
         if (TrioCommand.isPhenolyzer){
             sj.add(FormatManager.getInteger(getPhenolyzerRank()));
             sj.add(FormatManager.getFloat(getPhenolyzerScore()));
         }
-        
-        getGenoStatData(sj);
-        calledVar.getExternalData(sj);
 
         return sj.toString();
     }
