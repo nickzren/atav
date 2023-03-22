@@ -26,9 +26,9 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2022_3";
-    public static final String clinVarTable = "knownvar.clinvar_2022_10_05";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2022_10_05";
+    public static final String hgmdTable = "knownvar.hgmd_2022_4";
+    public static final String clinVarTable = "knownvar.clinvar_2023_03_20";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2023_03_20";
     public static final String clingenFile = Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
     public static final String genemap2File = Data.ATAV_HOME + "data/omim/genemap2.txt";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
