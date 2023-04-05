@@ -123,6 +123,8 @@ import function.external.topmed.ListTopMed;
 import function.external.topmed.TopMedCommand;
 import function.external.topmed.TopMedManager;
 import function.external.trap.TrapManager;
+import function.nondb.dpbin.DPBinCommand;
+import function.nondb.dpbin.DPBinParser;
 import function.nondb.gvcf.GVCFCommand;
 import function.nondb.gvcf.GVCFParser;
 import function.test.Test;
@@ -346,6 +348,8 @@ public class Program {
                 runAnalysis(new Test());
             } else if (GVCFCommand.isRun) {
                 runAnalysis(new GVCFParser());
+            } else if (DPBinCommand.isRun) {
+                DPBinParser.run();
             }
         } catch (Exception e) {
             ErrorManager.send(e);

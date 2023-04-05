@@ -50,6 +50,7 @@ import function.external.mpc.MPCCommand;
 import function.external.pext.PextCommand;
 import function.external.synrvis.SynRvisCommand;
 import function.external.topmed.TopMedCommand;
+import function.nondb.dpbin.DPBinCommand;
 import function.nondb.gvcf.GVCFCommand;
 import function.test.TestCommand;
 import function.variant.base.VariantLevelFilterCommand;
@@ -618,6 +619,11 @@ public class CommandManager {
                     CommonCommand.isNonDBAnalysis = true;
                     CommonCommand.isNonSampleAnalysis = true;
                     break;
+                case "--parse-dp-bin-for-10-only":
+                    DPBinCommand.isRun = true;
+                    CommonCommand.isNonDBAnalysis = true;
+                    CommonCommand.isNonSampleAnalysis = true;
+                    break;
                 default:
                     continue;
             }
@@ -684,6 +690,8 @@ public class CommandManager {
             TestCommand.initOptions(optionList.iterator());
         } else if (GVCFCommand.isRun) {
             GVCFCommand.initOptions(optionList.iterator());
+        } else if (DPBinCommand.isRun) {
+            DPBinCommand.initOptions(optionList.iterator());
         }
     }
 
