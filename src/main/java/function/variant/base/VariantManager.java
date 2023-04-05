@@ -318,7 +318,7 @@ public class VariantManager {
     }
 
     public static boolean isValid(Variant var) throws Exception {
-        if (VariantLevelFilterCommand.isExcludeSnv && var.isSnv()) {
+        if (VariantLevelFilterCommand.isExcludeSnv && var.isSNV()) {
             // exclude snv
             return false;
         } else if (VariantLevelFilterCommand.isExcludeIndel && var.isIndel()) {

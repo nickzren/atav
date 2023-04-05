@@ -49,6 +49,7 @@ public class EffectManager {
 
     public static HashSet<Integer> MISSENSE_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<Integer> SYNONYMOUS_EFFECT_ID_SET = new HashSet<>();
+    public static HashSet<Integer> SPLICE_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<Integer> INFRAME_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<Integer> LOF_EFFECT_ID_SET = new HashSet<>();
     public static HashSet<String> LOF_EFFECT_SET = new HashSet<>();
@@ -130,6 +131,10 @@ public class EffectManager {
 
                 if (effect.contains("synonymous_variant")) {
                     SYNONYMOUS_EFFECT_ID_SET.add(id);
+                }
+                
+                if (effect.startsWith("splice_region_variant")) {
+                    SPLICE_EFFECT_ID_SET.add(id);
                 }
                 
                 if(effect.equals("stop_lost")) {
@@ -354,6 +359,10 @@ public class EffectManager {
     
     public static boolean isSYNONYMOUS(int effectID) {
         return SYNONYMOUS_EFFECT_ID_SET.contains(effectID);
+    }
+    
+    public static boolean isSPLICE(int effectID) {
+        return SPLICE_EFFECT_ID_SET.contains(effectID);
     }
 
     public static boolean isLOF(int effectID) {

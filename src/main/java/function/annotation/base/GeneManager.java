@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import function.variant.base.RegionManager;
+import function.variant.base.VariantLevelFilterCommand;
 import global.Data;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -31,6 +33,9 @@ public class GeneManager {
     public static final String HGNC_GENE_MAP_PATH = "data/gene/hgnc_gene_map_040320.tsv.gz";
     public static final String ALL_GENE_SYMBOL_MAP_PATH = "data/gene/hgnc_complete_set_to_GRCh37.87_040320.tsv.gz";
     public static final String ALL_GENE_TRANSCRIPT_COUNT_MAP_PATH = "data/gene/gencode_gene_transcript_count_v24lift37.tsv.gz";
+    public static final String TTN_TRANSCRIPTS_PSI_PATH = "data/gene/ttn_transcripts_psi.csv.gz";
+
+    private static int[][] ttnTranscriptsLowPSIRegionArray = new int[176][2]; // tnn transcript data has exact 176 records' PSI < 90
 
     // InterVar data
     public static final String INTERVAR_BP1_GENE_PATH = "data/intervar/BP1.genes.hg19.gz";
@@ -42,6 +47,7 @@ public class GeneManager {
     private static HashMap<String, StringJoiner> chrAllGeneMap = new HashMap<>();
     private static HashMap<String, HashSet<Gene>> geneMapByName = new HashMap<>();
     private static final HashMap<String, HashSet<Gene>> geneMapByBoundaries = new HashMap<>();
+    private static ArrayList<String> geneList = new ArrayList<>();
     // key: existing dragendb gene name, value: up to date gene name
     private static HashMap<String, String> hgncGeneMap = new HashMap<>();
     private static HashMap<String, String> allGeneSymbolMap = new HashMap<>();
@@ -85,6 +91,8 @@ public class GeneManager {
             initInterVarBP1GeneSet();
             initInterVarPP2GeneSet();
         }
+
+        initTTNTranscriptsLowPSIRegionArray();
     }
 
     private static void initPreparedStatement4GeneChrom() {
@@ -167,6 +175,75 @@ public class GeneManager {
         }
     }
 
+    private static void initTTNTranscriptsLowPSIRegionArray() {
+        if (!VariantLevelFilterCommand.isIncludeTTNLowPSI) {
+            return;
+        }
+
+        try {
+            File f = new File(Data.ATAV_HOME + TTN_TRANSCRIPTS_PSI_PATH);
+            GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
+            Reader decoder = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(decoder);
+
+            String line = "";
+            int index = 0; // the source data listed pair coordinates order from high to low
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("Exon Number")) {
+                    String[] tmp = line.split(",");
+
+                    float psi = Float.parseFloat(tmp[3]);
+
+                    if (psi < 90) {
+                        ttnTranscriptsLowPSIRegionArray[index][0] = Integer.parseInt(tmp[2]); // Hg19 end is actually start pos
+                        ttnTranscriptsLowPSIRegionArray[index++][1] = Integer.parseInt(tmp[1]); // Hg19 start is actually end pos
+                    }
+                }
+            }
+
+            br.close();
+            decoder.close();
+            in.close();
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    public static boolean isTTNPSIValid(byte value) {
+        if (!VariantLevelFilterCommand.excludeTTNLowPSILofVar) {
+            return true;
+        }
+
+        return value != 1;
+    }
+
+    public static byte getTTNLowPSI(String geneName, int effectID, int pos) {
+        if (!VariantLevelFilterCommand.isIncludeTTNLowPSI) {
+            return Data.BYTE_NA;
+        }
+
+        if (!geneName.equals("TTN")) {
+            return Data.BYTE_NA;
+        }
+
+        if (!EffectManager.isLOF(effectID)) {
+            return Data.BYTE_NA;
+        }
+
+        return isLowPSIRegion(pos) ? (byte) 1 : Data.BYTE_NA;
+    }
+
+    private static boolean isLowPSIRegion(int pos) {
+        for (int i = 0; i < ttnTranscriptsLowPSIRegionArray.length; i++) {
+            if (pos >= ttnTranscriptsLowPSIRegionArray[i][0]
+                    && pos <= ttnTranscriptsLowPSIRegionArray[i][1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static void initGeneName() throws Exception {
         if (AnnotationLevelFilterCommand.geneInput.isEmpty()) {
             return;
@@ -187,6 +264,10 @@ public class GeneManager {
                     HashSet<Gene> set = new HashSet<>();
                     set.add(gene);
                     geneMapByName.put(geneName, set);
+
+                    if (!geneList.contains(gene.getName())) {
+                        geneList.add(gene.getName());
+                    }
                 }
 
                 if (!gene.isExist()) {
@@ -217,6 +298,10 @@ public class GeneManager {
                     HashSet<Gene> set = new HashSet<>();
                     set.add(gene);
                     geneMapByName.put(lineStr, set);
+
+                    if (!geneList.contains(gene.getName())) {
+                        geneList.add(gene.getName());
+                    }
                 }
 
                 if (!gene.isExist()) {
@@ -328,6 +413,9 @@ public class GeneManager {
                     }
                 }
             }
+
+            geneMapByName.clear();
+            geneMapByBoundaries.clear();
         }
     }
 
@@ -555,7 +643,7 @@ public class GeneManager {
             ErrorManager.send(ex);
         }
     }
-    
+
     private static void initInterVarPP2GeneSet() {
         try {
             File f = new File(Data.ATAV_HOME + INTERVAR_PP2_GENE_PATH);
@@ -574,12 +662,16 @@ public class GeneManager {
             ErrorManager.send(ex);
         }
     }
-    
+
     public static boolean isInterVarBP1Gene(String gene) {
         return bp1GeneSet.contains(gene);
     }
-    
+
     public static boolean isInterVarPP2Gene(String gene) {
         return pp2GeneSet.contains(gene);
+    }
+    
+    public static List<String> getList() {
+        return geneList;
     }
 }

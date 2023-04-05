@@ -20,6 +20,7 @@ import numpy as np
 import random
 import seaborn as sns
 import sys
+import gzip
 
 sns.set_style('darkgrid')
 
@@ -150,6 +151,22 @@ def read_matrix_file(matrix_file, ngenes):
     return col_matrix
 
 
+def read_matrix_file_gzip(matrix_file, ngenes):
+    """
+    Read in matrix file
+    :param matrix_file: (string) name of matrix file
+    :param ngenes: (int) number of genes (or general collapsing units)
+    """
+    with gzip.open(matrix_file, 'rb') as infile:
+        samps = infile.readline().strip().split('\t')
+        nsamps = len(samps) - 1
+        col_matrix = np.zeros((ngenes, nsamps))
+        for i, line in enumerate(infile):
+            line = line.strip().split('\t')
+            col_matrix[i, :] = line[1:]
+    return col_matrix
+
+
 def plot_qq(qq_file, exp, obs, lower, upper, sorted_genes):
     """
     Create QQ-plot of observed and expected FET p-values, with 2.5%ile and 97.5%ile
@@ -245,6 +262,10 @@ if __name__ == '__main__':
                         help='Write the values from the QQ plot to a separate file.')    
     # parser.set_defaults(save_qq_values=False)
     args = parser.parse_args()
+
+    if(os.path.isfile(args.matrix_file + ".gz")):
+        args.matrix_file += ".gz"
+
     print args
     if args.save_qq_values:
         folder = os.path.dirname(args.matrix_file)
@@ -272,7 +293,10 @@ if __name__ == '__main__':
     ngenes = len(genes)
 
     # read matrix file to build collapsing matrix
-    col_matrix = read_matrix_file(args.matrix_file, ngenes)
+    if args.matrix_file.endswith(".gz"):
+        col_matrix = read_matrix_file_gzip(args.matrix_file, ngenes)
+    else:
+        col_matrix = read_matrix_file(args.matrix_file, ngenes)
 
     # calculate number of samples
     nsamps = col_matrix.shape[1]

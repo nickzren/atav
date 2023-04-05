@@ -10,6 +10,8 @@ import utils.DBManager;
 import utils.ErrorManager;
 import utils.LogManager;
 import function.AnalysisBase;
+import function.annotation.geneanno.GeneAnnoCommand;
+import function.annotation.geneanno.ListGeneAnno;
 import function.cohort.collapsing.CollapsingCompHet;
 import function.cohort.collapsing.CollapsingSingleVariant;
 import function.coverage.comparison.CoverageComparison;
@@ -286,6 +288,8 @@ public class Program {
                 runAnalysis(new PedMapGenerator());
             } else if (VarAnnoCommand.isList) { // Variant Annotation Functions
                 runAnalysis(new ListVarAnno());
+            } else if (GeneAnnoCommand.isList) { // Gene Annotation Functions
+                runAnalysis(new ListGeneAnno());
             } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
                 runAnalysis(new CoverageSummary());
             } else if (CoverageCommand.isSiteCoverageSummary) {

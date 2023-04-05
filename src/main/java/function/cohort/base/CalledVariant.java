@@ -114,7 +114,10 @@ public class CalledVariant extends AnnotatedVariant {
 
     private boolean checkCoveredSamplePercentage() {
         isValid = CohortLevelFilterCommand.isMinCoveredCasePercentageValid(coveredSamplePercentage[Index.CASE])
-                && CohortLevelFilterCommand.isMinCoveredCtrlPercentageValid(coveredSamplePercentage[Index.CTRL]);
+                && CohortLevelFilterCommand.isMinCoveredCtrlPercentageValid(coveredSamplePercentage[Index.CTRL])
+                && CohortLevelFilterCommand.isSiteMaxPercentCovDifferenceValid(
+                        coveredSamplePercentage[Index.CASE],
+                        coveredSamplePercentage[Index.CTRL]);
 
         return isValid;
     }
@@ -415,23 +418,34 @@ public class CalledVariant extends AnnotatedVariant {
 
     // tier 2 inclusion criteria
     public boolean isMetTier2InclusionCriteria(Carrier carrier) {
-        return isKnownVar2bpFlankingValid()
+        return knownVarOutput.isKnownVariantSite()
                 || isInClinGenOrOMIM(carrier)
                 || isInClinVarPathoratio()
-                || isLoFPLIValid()
-                || isMissenseMisZValid()
-                || isClinVar25bpFlankingValid();
+                || isLoFPLIValid();
+//                || isMissenseMisZValid()
+//                || isClinVar25bpFlankingValid();
     }
 
     /*
         1. variant is het call
-        2. LoF variant and occurs witin a ClinGen gene with "Sufficient" or "Some" evidence
+        2. LoF variant
+        3. variant occurs witin a ClinGen gene with "Sufficient" or "Some" evidence OR OMIM dominant gene
+        4. minimum coverage of 10 reads
+        5. at least 25% reads support the variant call
+        6. GATK: QUAL >= 40 & QD >= 2
+        7. variant call <= 5 obvservations amoung non-parental internal and external controls
+        8. variant affects and resides within a CCDS transcript
      */
     public byte isLoFDominantAndHaploinsufficient(Carrier carrier) {
         if (carrier.getGT() == Index.HET // 1
-                && isLOF()
+                && isLOF() // 2
                 && (getKnownVar().isInClinGenSufficientOrSomeEvidence()
-                || getKnownVar().isOMIMDominant()) // 2
+                || getKnownVar().isOMIMDominant()) // 3
+                && carrier.getDPBin() >= 10 // 4
+                && carrier.getPercAltRead() > 0.25 // 5
+                && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 6
+                && isNHetFromControlsValid(5) // 7
+                && hasCCDS() // 8
                 ) {
             return 1;
         }
@@ -457,10 +471,22 @@ public class CalledVariant extends AnnotatedVariant {
     }
 
     /*
-        same variant curated as "DM" in HGMD or PLP in ClinVar
+        1. same variant curated as "DM" in HGMD or PLP in ClinVar
+        2. minimum coverage of 10 reads
+        3. at least 25% reads support the variant call
+        4. GATK: QUAL >= 40 & QD >= 2
+        5. variant affects and resides within a CCDS transcript
+        6. genotype is consistent with OMIM defined inheritance
      */
-    public byte isKnownPathogenicVariant() {
-        if (getKnownVar().isKnownVariant()) {
+    public byte isKnownPathogenicVariant(Carrier carrier) {
+        if (getKnownVar().isKnownVariant() // 1
+                && carrier.getDPBin() >= 10 // 2
+                && carrier.getPercAltRead() > 0.25 // 3
+                && carrier.getQual() >= 40 && carrier.getQD() >= 2 // 4
+                && hasCCDS() // 5
+                && ((carrier.getGT() == Index.HET && getKnownVar().isOMIMDominant()) 
+                || (carrier.getGT() == Index.HOM && getKnownVar().isOMIMRecessive()))) // 6
+        {
             return 1;
         }
 
@@ -508,7 +534,6 @@ public class CalledVariant extends AnnotatedVariant {
     public boolean isHomozygousTier1(Carrier carrier) {
         return carrier.getGT() == Index.HOM
                 && isCarrieHomPercAltReadValid(carrier)
-                && isImpactHighOrModerate()
                 && isNotObservedInHomAmongControl()
                 && isControlAFValid()
                 && carrier.getMQ() >= 40;

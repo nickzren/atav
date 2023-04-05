@@ -18,7 +18,7 @@ import utils.ErrorManager;
  */
 public class MgiManager {
 
-    private static final String MGI_PATH = "data/mgi/mouse_essential_gene_040822.csv.gz";
+    private static final String MGI_PATH = "data/mgi/mouse_essential_gene_032023.csv.gz";
 
     public static String header;
     private static final HashMap<String, String> mgiMap = new HashMap<>();
@@ -38,7 +38,7 @@ public class MgiManager {
         }
     }
 
-    private static void initMgiMap() {
+    public static void initMgiMap() {
         try {
             File f = new File(Data.ATAV_HOME + MGI_PATH);
             GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));

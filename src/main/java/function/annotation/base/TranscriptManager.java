@@ -154,7 +154,7 @@ public class TranscriptManager {
                 // create table
                 stmt.executeUpdate("CREATE TEMPORARY TABLE " + TMP_TRANSCRIPT_TABLE + chr + "("
                         + "input_transcript_stable_id int(11) NOT NULL, "
-                        + "PRIMARY KEY (input_transcript_stable_id)) ENGINE=TokuDB;");
+                        + "PRIMARY KEY (input_transcript_stable_id));");
             }
 
             for (String chr : RegionManager.getChrList()) {
@@ -324,9 +324,9 @@ public class TranscriptManager {
 
         return idSB.toString();
     }
-    
+
     public static int getIntStableId(String value) {
-        if (value.equals(Data.STRING_NA)) {
+        if (value.equals(Data.STRING_NA) || value.equals(Data.VCF_NA)) {
             return Data.INTEGER_NA;
         } else {
             return Integer.valueOf(value.substring(4)); // remove ENST

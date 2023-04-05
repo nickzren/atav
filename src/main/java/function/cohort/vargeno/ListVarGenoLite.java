@@ -46,6 +46,7 @@ import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
 import utils.LogManager;
+import utils.ThirdPartyToolManager;
 
 /**
  *
@@ -96,6 +97,8 @@ public class ListVarGenoLite {
     public static final String QC_FAIL_CTRL_HEADER = "QC Fail Ctrl";
     public static final String LOO_AF_HEADER = "LOO AF";
     public static final String TRAP_HEADER = "TraP Score";
+    public static final String COVERED_CASE_PERCENTAGE_HEADER = "Covered Case Percentage";
+    public static final String COVERED_CTRL_PERCENTAGE_HEADER = "Covered Ctrl Percentage";
     public static int TRAP_HEADER_INDEX = Data.INTEGER_NA;
 
     public void initOutput() {
@@ -138,6 +141,10 @@ public class ListVarGenoLite {
             }
 
             closeOutput();
+
+            if (CommonCommand.gzip) {
+                ThirdPartyToolManager.gzipFile(genotypeLiteFilePath);
+            }
         } catch (Exception e) {
             ErrorManager.send(e);
         }

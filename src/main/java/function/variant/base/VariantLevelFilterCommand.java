@@ -1,5 +1,6 @@
 package function.variant.base;
 
+import function.external.base.VariantAFCommand;
 import function.external.ccr.CCRCommand;
 import function.external.chm.CHMCommand;
 import function.external.dbnsfp.DBNSFPCommand;
@@ -63,6 +64,8 @@ public class VariantLevelFilterCommand {
     public static boolean disableCheckOnSexChr = true;
     public static boolean isIncludeLOFTEE = false;
     public static boolean isExcludeFalseLOFTEE = false;
+    public static boolean excludeTTNLowPSILofVar = false;
+    public static boolean isIncludeTTNLowPSI = false;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -608,6 +611,18 @@ public class VariantLevelFilterCommand {
                     break;
                 case "--include-dbnsfp":
                     DBNSFPCommand.isInclude = true;
+                    break;
+                case "--exclude-ttn-low-psi-lof-var":
+                    excludeTTNLowPSILofVar = true;
+                    isIncludeTTNLowPSI = true;
+                    break;
+                case "--include-ttn-low-psi":
+                    isIncludeTTNLowPSI = true;
+                    break;
+                case "--max-known-variant-af":
+                    checkValueValid(1, 0, option);
+                    VariantAFCommand.maxKnownVariantAF = getValidFloat(option);
+                    KnownVarCommand.isInclude = true;
                     break;
                 default:
                     continue;

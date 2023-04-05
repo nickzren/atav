@@ -1,5 +1,6 @@
 package function.cohort.base;
 
+import function.cohort.pedmap.PedMapCommand;
 import function.cohort.singleton.SingletonCommand;
 import function.cohort.trio.TrioCommand;
 import function.coverage.base.CoverageCommand;
@@ -13,6 +14,7 @@ import static utils.CommandManager.getValidFloat;
 import static utils.CommandManager.getValidInteger;
 import static utils.CommandManager.getValidPath;
 import utils.CommandOption;
+import utils.MathManager;
 
 /**
  *
@@ -49,6 +51,7 @@ public class CohortLevelFilterCommand {
     public static int maxCaseOnlyNumber = 3000;
     public static float maxLooAF = Data.NO_FILTER;
     public static float maxLooMAF = Data.NO_FILTER;
+    public static float siteMaxPercentCovDifference = Data.NO_FILTER;
 
     public static void initOptions(Iterator<CommandOption> iterator)
             throws Exception {
@@ -59,7 +62,7 @@ public class CohortLevelFilterCommand {
             switch (option.getName()) {
                 case "--sample":
                     // diagnostic analysis allow input sample name
-                    if (SingletonCommand.isList || TrioCommand.isList || CoverageCommand.isCoverageSummary) {
+                    if (SingletonCommand.isList || TrioCommand.isList || CoverageCommand.isCoverageSummary || PedMapCommand.isPedMap) {
                         inputSample = option.getValue();
                     } else {
                         inputSample = getValidPath(option);
@@ -170,6 +173,10 @@ public class CohortLevelFilterCommand {
                     break;
                 case "--case-only":
                     isCaseOnly = true;
+                    break;
+                case "--site-max-percent-cov-difference":
+                    checkValueValid(1, 0, option);
+                    siteMaxPercentCovDifference = getValidFloat(option);
                     break;
                 default:
                     continue;
@@ -341,11 +348,23 @@ public class CohortLevelFilterCommand {
         return value >= minCoveredSamplePercentage[Index.CTRL];
     }
 
+    public static boolean isSiteMaxPercentCovDifferenceValid(
+            float coveredCasePercentage,
+            float coveredCtrlPercentage) {
+        if (siteMaxPercentCovDifference == Data.NO_FILTER) {
+            return true;
+        }
+
+        float covDiff = MathManager.abs(coveredCasePercentage, coveredCtrlPercentage) / 100;
+
+        return covDiff <= siteMaxPercentCovDifference;
+    }
+
     /*
         only init case variants tmp tables when:
         1) total case# < 500 
         2) --variant not used 
-    */
+     */
     public static boolean isCaseOnlyValid2CreateTempTable() {
         return isCaseOnly
                 && SampleManager.getCaseNum() > 0

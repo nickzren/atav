@@ -194,7 +194,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
             byte geno = calledVar.getGT(sample.getIndex());
             switch (geno) {
                 case Index.HOM:
-                    if (calledVar.isSnv()) {
+                    if (calledVar.isSNV()) {
                         bwTmpPed.write(calledVar.getAllele() + calledVar.getAllele());
                     } else if (calledVar.isDel()) {
                         bwTmpPed.write("DD");
@@ -203,14 +203,14 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
                     }
                     break;
                 case Index.HET:
-                    if (calledVar.isSnv()) {
+                    if (calledVar.isSNV()) {
                         bwTmpPed.write(calledVar.getRefAllele() + calledVar.getAllele());
                     } else {
                         bwTmpPed.write("ID");
                     }
                     break;
                 case Index.REF:
-                    if (calledVar.isSnv()) {
+                    if (calledVar.isSNV()) {
                         bwTmpPed.write(calledVar.getRefAllele() + calledVar.getRefAllele());
                     } else if (calledVar.isDel()) {
                         bwTmpPed.write("II");
@@ -306,7 +306,7 @@ public class PedMapGenerator extends AnalysisBase4CalledVar {
         if (PedMapCommand.flashPCAPlinkPruning) {
             LogManager.writeAndPrint("Finding outliers using plink ibs clustering");
 
-            FlashPCAManager.findOutliers();
+            FlashPCAManager.findOutliers(bedFileName);
 
             //read each line of outlier nearest file and filter based on Z-score
             HashSet<String> outlierSet = FlashPCAManager.getOutliers(

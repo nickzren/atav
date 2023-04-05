@@ -37,7 +37,7 @@ public class Test extends AnalysisBase {
         try {
 //            OutputSubsetSample.run();
 //            ConvertTSVToVCF.run();
-            ConvertVCFToTSV.run();
+            S3UriParser.run();
         } catch (Exception ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }

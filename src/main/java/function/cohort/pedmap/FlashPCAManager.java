@@ -98,9 +98,9 @@ public class FlashPCAManager {
         }
     }
 
-    public static void findOutliers() {
+    public static void findOutliers(String bedFileName) {
         String cmd = ThirdPartyToolManager.PLINK
-                + " --bfile " + CommonCommand.outputPath + "flashpca_plink"
+                + " --bfile " + CommonCommand.outputPath + bedFileName
                 + " --neighbour 1 " + String.valueOf(PedMapCommand.flashPCANumNeighbor)
                 + " --out " + CommonCommand.outputPath + "flashpca_plink_outlier"
                 + " 2>&1 >> " + CommonCommand.outputPath + "flashpca.log";

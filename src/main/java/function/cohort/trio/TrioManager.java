@@ -44,6 +44,9 @@ public class TrioManager {
     private static final byte MEDIUM = 1;
     private static final byte LOW = 0;
 
+    private static int trioNum = 0;
+    private static int duoNum = 0;
+
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
 
@@ -82,8 +85,15 @@ public class TrioManager {
         sj.add("DP Bin (mother)");
         sj.add("GT (father)");
         sj.add("DP Bin (father)");
+
         sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
+
+        if (TrioCommand.isPhenolyzer) {
+            sj.add("Phenolyzer Rank");
+            sj.add("Phenolyzer Score");
+        }
+
         sj.add("Summary");
 
         return sj.toString();
@@ -112,6 +122,12 @@ public class TrioManager {
                     if (trio.getMotherId() != Data.INTEGER_NA) {
                         parentIdSet.add(trio.getMotherId());
                     }
+
+                    if (!trio.isDUO()) {
+                        trioNum++;
+                    } else {
+                        duoNum++;
+                    }
                 }
             }
         }
@@ -119,7 +135,8 @@ public class TrioManager {
         if (trioList.isEmpty()) {
             ErrorManager.print("Missing trio from --sample.", ErrorManager.INPUT_PARSING);
         } else {
-            LogManager.writeAndPrint("Total trios: " + trioList.size());
+            LogManager.writeAndPrint("Total trios: "
+                    + trioList.size() + " (" + trioNum + " trios and " + duoNum + " DUOs)");
         }
     }
 

@@ -6,6 +6,7 @@ import function.variant.base.Output;
 import function.cohort.base.Sample;
 import global.Data;
 import global.Index;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.StringJoiner;
@@ -28,7 +29,12 @@ public class SingletonOutput extends Output {
     byte isKnownPathogenicVariant;
     byte isHotZone;
 
+    int phenolyzerRank = Data.INTEGER_NA;
+    float phenolyzerScore = Data.FLOAT_NA;
+
     // ACMG
+    private boolean isACMGPLP = false;
+    private String acmgClassification;
     private String acmgPathogenicCriteria;
     private String acmgBenignCriteria;
     private int acmgPSCount;
@@ -71,6 +77,12 @@ public class SingletonOutput extends Output {
         sj.merge(Output.getCarrierDataHeader());
         sj.merge(Output.getCohortLevelHeader());
         sj.merge(Output.getExternalDataHeader());
+        
+        if (SingletonCommand.isPhenolyzer) {
+            sj.add("Phenolyzer Rank");
+            sj.add("Phenolyzer Score");
+        }
+
         sj.add("Summary");
 
         return sj.toString();
@@ -87,6 +99,14 @@ public class SingletonOutput extends Output {
         cCarrier = calledVar.getCarrier(singleton.getChild().getId());
     }
 
+    public void initPhenolyzerResult(HashMap<String, String[]> phenolyzerResultMap) {
+        String geneName = calledVar.getGeneName();
+        if (phenolyzerResultMap.containsKey(geneName)) {
+            phenolyzerRank = Integer.valueOf(phenolyzerResultMap.get(geneName)[0]);
+            phenolyzerScore = Float.valueOf(phenolyzerResultMap.get(geneName)[3]);
+        }
+    }
+
     public void initTierFlag4SingleVar() {
         if (!singleVariantPrioritizationSet.isEmpty()) {
             return;
@@ -94,7 +114,7 @@ public class SingletonOutput extends Output {
 
         isLoFDominantAndHaploinsufficient = calledVar.isLoFDominantAndHaploinsufficient(cCarrier);
         isMissenseDominantAndHaploinsufficient = calledVar.isMissenseDominantAndHaploinsufficient(cCarrier);
-        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant();
+        isKnownPathogenicVariant = calledVar.isKnownPathogenicVariant(cCarrier);
         isHotZone = calledVar.isHotZone();
 
         tierFlag4SingleVar = Data.BYTE_NA;
@@ -265,6 +285,10 @@ public class SingletonOutput extends Output {
         return variantPrioritizations.toString();
     }
 
+    public void clearSingleVariantPrioritization() {
+        singleVariantPrioritizationSet.clear();
+    }
+
 //    public String getBioinformaticsSignatures() {
 //        if (bioinformaticsSignatureSet.isEmpty()) {
 //            return Data.STRING_NA;
@@ -282,9 +306,13 @@ public class SingletonOutput extends Output {
         return tierFlag4SingleVar;
     }
 
+    // TRUE when flag in Single Variant Prioritization and (Tier 1 or 2 or LOF or KV or ATAV classified as P/LP)
     public boolean isFlag() {
-        return isLoFDominantAndHaploinsufficient == 1
-                || calledVar.getKnownVar().isKnownVariant();
+        return !singleVariantPrioritizationSet.isEmpty()
+                && (tierFlag4SingleVar != Data.BYTE_NA
+                || isLoFDominantAndHaploinsufficient == 1
+                || calledVar.getKnownVar().isKnownVariant()
+                || isACMGPLP);
     }
 
     public void countSingleVar() {
@@ -303,7 +331,15 @@ public class SingletonOutput extends Output {
         }
     }
 
-    public String getACMGClassification() {
+    public int getPhenolyzerRank() {
+        return phenolyzerRank;
+    }
+
+    public float getPhenolyzerScore() {
+        return phenolyzerScore;
+    }
+
+    public void initACMGClassification() {
         boolean isPathogenic = false;
         boolean isLikelyPathogenic = false;
         boolean isBenign = false;
@@ -351,19 +387,21 @@ public class SingletonOutput extends Output {
         if ((!isPathogenic && !isLikelyPathogenic && !isBenign && !isLikeBenign) // Other criteria shown above are not met
                 || ((isPathogenic || isLikelyPathogenic)) && (isBenign || isLikeBenign) // the criteria for benign and pathogenic are contradictory
                 ) {
-            return "Uncertain significance";
+            acmgClassification = "Uncertain significance";
         }
 
         if (isPathogenic) {
-            return "Pathogenic";
+            acmgClassification = "Pathogenic";
+            isACMGPLP = true;
         } else if (isLikelyPathogenic) {
-            return "Likely pathogenic";
+            acmgClassification = "Likely pathogenic";
+            isACMGPLP = true;
         } else if (isBenign) {
-            return "Benign";
+            acmgClassification = "Benign";
         } else if (isLikeBenign) {
-            return "Like benign";
+            acmgClassification = "Like benign";
         } else {
-            return "Uncertain significance";
+            acmgClassification = "Uncertain significance";
         }
     }
 
@@ -376,6 +414,7 @@ public class SingletonOutput extends Output {
 
         initACMGPathogenicCriteria();
         initACMGBenignCriteria();
+        initACMGClassification();
     }
 
     private void initACMGPathogenicCriteria() {
@@ -447,10 +486,6 @@ public class SingletonOutput extends Output {
         }
     }
 
-    public String getACMGPathogenicCriteria() {
-        return acmgPathogenicCriteria;
-    }
-
     private void initACMGBenignCriteria() {
         StringJoiner sj = new StringJoiner("|");
 
@@ -512,10 +547,6 @@ public class SingletonOutput extends Output {
         }
     }
 
-    public String getACMGBenignCriteria() {
-        return acmgBenignCriteria;
-    }
-
     public String getSummary() {
         StringJoiner sj = new StringJoiner("\n");
 
@@ -540,14 +571,20 @@ public class SingletonOutput extends Output {
         sj.add(FormatManager.getInteger(calledVar.isMetTier2InclusionCriteria(cCarrier) ? 1 : 0));
         sj.add(FormatManager.getByte(isLoFDominantAndHaploinsufficient));
         sj.add(FormatManager.getByte(isKnownPathogenicVariant));
-        sj.add(getACMGClassification());
-        sj.add(getACMGPathogenicCriteria());
-        sj.add(getACMGBenignCriteria());
+        sj.add(acmgClassification);
+        sj.add(acmgPathogenicCriteria);
+        sj.add(acmgBenignCriteria);
 //        calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, cCarrier, child);
+
         getGenoStatData(sj);
         calledVar.getExternalData(sj);
+        
+        if (SingletonCommand.isPhenolyzer) {
+            sj.add(FormatManager.getInteger(getPhenolyzerRank()));
+            sj.add(FormatManager.getFloat(getPhenolyzerScore()));
+        }
 
         return sj.toString();
     }

@@ -1,7 +1,7 @@
 package function.external.knownvar;
 
-import function.annotation.base.AnnotatedVariant;
 import function.annotation.base.GeneManager;
+import function.variant.base.Variant;
 import global.Data;
 import java.util.StringJoiner;
 import utils.FormatManager;
@@ -27,9 +27,12 @@ public class KnownVarOutput {
                 + KnownVarManager.getHeader();
     }
 
-    public KnownVarOutput(AnnotatedVariant annotatedVar) {
-        hgmdOutput = KnownVarManager.getHGMDOutput(annotatedVar);
-        clinVarOutput = KnownVarManager.getClinVarOutput(annotatedVar);
+    public KnownVarOutput(Variant var) {
+        hgmdOutput = KnownVarManager.getHGMDOutput(var);
+        clinVarOutput = KnownVarManager.getClinVarOutput(var);
+    }
+    
+    public KnownVarOutput() {
     }
 
     public void init(String gene) {
@@ -39,9 +42,7 @@ public class KnownVarOutput {
         clinGen = KnownVarManager.getClinGen(geneName);
         omimDiseaseName = KnownVarManager.getOMIM(geneName);
         omimInheritance = getOMIMInheritance();
-//        recessiveCarrier = KnownVarManager.getRecessiveCarrier(geneName);
         acmg = KnownVarManager.getACMG(geneName);
-//        dbDSMOutput = KnownVarManager.getDBDSMOutput(annotatedVar);
     }
 
     public StringJoiner getStringJoiner() {
@@ -49,13 +50,19 @@ public class KnownVarOutput {
 
         sj.merge(hgmdOutput.getStringJoiner());
         sj.merge(clinVarOutput.getStringJoiner());        
+        sj.merge(getStringJoiner4Gene());
+
+        return sj;
+    }
+    
+    public StringJoiner getStringJoiner4Gene() {
+        StringJoiner sj = new StringJoiner(",");
+       
         sj.merge(clinVarPathoratio.getStringJoiner());
         sj.add(clinGen);
         sj.add(FormatManager.appendDoubleQuote(omimDiseaseName));
         sj.add(omimInheritance);
-//        sj.add(FormatManager.getInteger(recessiveCarrier));
         sj.add(acmg);
-//        sj.merge(dbDSMOutput.getStringJoiner());
 
         return sj;
     }

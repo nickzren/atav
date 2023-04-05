@@ -246,7 +246,7 @@ public class CollapsingCompHet extends CollapsingBase {
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {
         if (!variantIdSet.contains(output.getCalledVariant().getVariantId())) {
-            summary.updateVariantCount(output.getCalledVariant().isSnv());
+            summary.updateVariantCount(output.getCalledVariant().isSNV());
             variantIdSet.add(output.getCalledVariant().getVariantId());
         }
     }

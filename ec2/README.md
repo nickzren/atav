@@ -53,7 +53,7 @@ export PATH=$PATH:atav/lib/
 
 #### Install King
 ```
-wget http://people.virginia.edu/~wc9c/KING/Linux-king.tar.gz
+wget https://www.kingrelatedness.com/Linux-king.tar.gz
 tar -xzvf Linux-king.tar.gz -C atav/lib/
 ```
 

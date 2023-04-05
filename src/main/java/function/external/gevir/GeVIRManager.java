@@ -38,7 +38,7 @@ public class GeVIRManager {
         }
     }
 
-    private static void initGeVIRMap() {
+    public static void initGeVIRMap() {
         try {
             File f = new File(Data.ATAV_HOME + GeVIR_PATH);
             GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));

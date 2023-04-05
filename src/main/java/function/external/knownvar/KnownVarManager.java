@@ -26,13 +26,13 @@ import utils.FormatManager;
  */
 public class KnownVarManager {
 
-    public static final String hgmdTable = "knownvar.hgmd_2022_1";
-    public static final String clinVarTable = "knownvar.clinvar_2022_04_08";
-    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2022_04_08";
-    public static final String clingenFile =  Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
+    public static final String hgmdTable = "knownvar.hgmd_2022_4";
+    public static final String clinVarTable = "knownvar.clinvar_2023_03_20";
+    public static final String clinVarPathoratioTable = "knownvar.clinvar_pathoratio_2023_03_20";
+    public static final String clingenFile = Data.ATAV_HOME + "data/clingen/ClinGen_gene_curation_list_GRCh37.tsv";
     public static final String genemap2File = Data.ATAV_HOME + "data/omim/genemap2.txt";
     public static final String recessiveCarrierTable = "knownvar.RecessiveCarrier_2015_12_09";
-    public static final String acmgTable = "knownvar.acmg_v3";
+    public static final String acmgTable = "knownvar.acmg_v3_1";
     public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
 
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
@@ -65,7 +65,7 @@ public class KnownVarManager {
 
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
-        
+
         sj.add("HGMD DM Site Count");
         sj.add("HGMD DM 2bpflanks Count");
         sj.add("HGMD Disease");
@@ -79,6 +79,14 @@ public class KnownVarManager {
         sj.add("ClinVar ClinSig");
         sj.add("ClinVar ClinSigConf");
         sj.add("ClinVar DiseaseName");
+        sj.add(getGeneHeader());
+
+        return sj.toString();
+    }
+
+    public static String getGeneHeader() {
+        StringJoiner sj = new StringJoiner(",");
+
         sj.add("ClinVar Pathogenic Indel Count");
         sj.add("Clinvar Pathogenic CNV Count");
         sj.add("ClinVar Pathogenic SNV Splice Count");
@@ -88,7 +96,7 @@ public class KnownVarManager {
         sj.add("ClinGen");
         sj.add("OMIM Disease");
         sj.add("OMIM Inheritance");
-        sj.add("ACMG 73");
+        sj.add("ACMG Disease");
 
         return sj.toString();
     }
@@ -108,21 +116,23 @@ public class KnownVarManager {
 
             initClinVarMap();
 
-            initClinVarPathoratioMap();
+            init4Gene();
 
-            initClinGenMap();
-
-            initOMIMMap();
-
-//            initRecessiveCarrierMap();
-            initACMGMap();
-
-//            initDBDSMMap();
             if (KnownVarCommand.isKnownVarOnly
                     || KnownVarCommand.isKnownVarPathogenicOnly) {
                 VariantManager.reset2KnownVarSet();
             }
         }
+    }
+
+    public static void init4Gene() throws SQLException {
+        initClinVarPathoratioMap();
+
+        initClinGenMap();
+
+        initOMIMMap();
+
+        initACMGMap();
     }
 
     private static void initHGMDMap() {
@@ -179,7 +189,7 @@ public class KnownVarManager {
 
                 String ClinRevStar = FormatManager.getInteger(FormatManager.getInt(rs, "ClinRevStar"));
                 String ClinSig = FormatManager.getString(rs.getString("ClinSig"));
-                String ClinSigConf= FormatManager.getString(rs.getString("ClinSigConf"));
+                String ClinSigConf = FormatManager.getString(rs.getString("ClinSigConf"));
                 String DiseaseName = FormatManager.getString(rs.getString("DiseaseName"));
 
                 ClinVar clinVar = new ClinVar(chr, pos, ref, alt,
@@ -232,7 +242,7 @@ public class KnownVarManager {
     public static void main(String[] args) {
         initClinGenMap();
     }
-    
+
     private static void initClinGenMap() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File(clingenFile)));
@@ -278,19 +288,18 @@ public class KnownVarManager {
                     continue;
                 }
 
-                String[] geneSymbols = tmp[6].replaceAll("( )+", "").split(",");
+                String phenotype = tmp[12]; // Phenotypes
 
-                String phenotype = tmp[12];
-
-                for (String gene : geneSymbols) {
-                    if (!gene.isEmpty() && !phenotype.isEmpty()) {
-                        omimMap.put(gene.toUpperCase(), phenotype);
-                    }
+                String g = tmp[8]; // Approved Gene Symbol
+                if (!g.isEmpty() && !phenotype.isEmpty()) {
+                    omimMap.put(g.toUpperCase(), phenotype);
                 }
 
-                String gene = tmp[8];
-                if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene)) {
-                    omimMap.put(gene.toUpperCase(), phenotype);
+                String[] geneSymbols = tmp[6].replaceAll("( )+", "").split(","); // Gene Symbols
+                for (String gene : geneSymbols) {
+                    if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene.toUpperCase())) {
+                         omimMap.put(gene.toUpperCase(), phenotype);
+                    }
                 }
             }
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package utils;
 
 import function.annotation.base.AnnotationLevelFilterCommand;
+import function.annotation.geneanno.GeneAnnoCommand;
 import global.Data;
 import function.annotation.varanno.VarAnnoCommand;
 import function.cohort.af.AFCommand;
@@ -34,6 +35,7 @@ import function.cohort.trio.TrioCommand;
 import function.cohort.var.VarCommand;
 import function.cohort.vargeno.VarGenoCommand;
 import function.cohort.vcf.VCFCommand;
+import function.external.base.VariantAFCommand;
 import function.external.chm.CHMCommand;
 import function.external.dbnsfp.DBNSFPCommand;
 import function.external.defaultcontrolaf.DefaultControlCommand;
@@ -357,6 +359,9 @@ public class CommandManager {
                     RevelCommand.isInclude = true;
                     DBNSFPCommand.isInclude = true;
                     MTRCommand.isInclude = true;
+                    VariantLevelFilterCommand.excludeTTNLowPSILofVar = true;
+                    VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
+                    VariantAFCommand.maxKnownVariantAF = (float) 0.1;
                     break;
                 case "--list-var-geno-lite":
                     VarGenoCommand.isListLite = true;
@@ -419,6 +424,9 @@ public class CommandManager {
                     RevelCommand.isInclude = true;
                     DBNSFPCommand.isInclude = true;
                     MTRCommand.isInclude = true;
+                    VariantLevelFilterCommand.excludeTTNLowPSILofVar = true;
+                    VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
+                    VariantAFCommand.maxKnownVariantAF = (float) 0.1;
                     break;
                 case "--list-parent-comp-het":
                     ParentCommand.isList = true;
@@ -466,7 +474,14 @@ public class CommandManager {
                     IGMAFCommand.getInstance().isInclude = true;
                     DefaultControlCommand.getInstance().isInclude = true;
                     DBNSFPCommand.isInclude = true;
+                    VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
                     break;
+                    
+                // Gene Annotation Functions
+                case "--list-gene-anno":
+                    CommonCommand.isNonSampleAnalysis = true;
+                    GeneAnnoCommand.isList = true;
+                    
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
                     CoverageCommand.isCoverageSummary = true;
@@ -642,12 +657,14 @@ public class CommandManager {
         } else if (SiblingCommand.isSiblingCompHet) {
 
         } else if (TrioCommand.isList) {
-            
+            TrioCommand.initOptions(optionList.iterator());
         } else if (ParentalCommand.isParentalMosaic) {
             ParentalCommand.initOptions(optionList.iterator());
         } else if (PedMapCommand.isPedMap) {
             PedMapCommand.initOptions(optionList.iterator());
         } else if (VarAnnoCommand.isList) { // Variant Annotation Functions
+
+        } else if (GeneAnnoCommand.isList) { // Gene Annotation Functions
 
         } else if (CoverageCommand.isCoverageSummary) { // Coverage Analysis Functions
             CoverageCommand.initCoverageSummary(optionList.iterator());

@@ -38,7 +38,7 @@ public class SynRvisManager {
         }
     }
 
-    private static void initSynRvisMap() {
+    public static void initSynRvisMap() {
         try {
             File f = new File(Data.ATAV_HOME + SynRvis_PATH);
             GZIPInputStream in = new GZIPInputStream(new FileInputStream(f));
