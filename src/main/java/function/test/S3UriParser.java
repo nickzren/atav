@@ -25,15 +25,15 @@ import utils.LogManager;
  */
 public class S3UriParser {
 
-    private static final String sourceDir = "/nfs/informatics/data/zr2180/rm_8108/";
-//    private static final String sourceDir = "/Users/nick/Desktop/rm_8108/";
+//    private static final String sourceDir = "/nfs/informatics/data/zr2180/rm_8108/";
+    private static final String sourceDir = "/Users/nick/Desktop/rm_8108/";
     private static final String inputDir = sourceDir + "aws/";
-    private static final String outputDir = CommonCommand.realOutputPath + File.separator;
-//    private static final String outputDir = sourceDir + "aws/";
+//    private static final String outputDir = CommonCommand.realOutputPath + File.separator;
+    private static final String outputDir = sourceDir + "aws/";
 
-    private static final String WES_IN_ATAV = sourceDir + "wes_in_atav_102522.txt";
-    private static final String WGS_IN_ATAV = sourceDir + "wgs_in_atav_102522.txt";
-    private static final String CC_IN_ATAV = sourceDir + "cc_in_atav_102522.txt";
+    private static final String WES_IN_ATAV = sourceDir + "wes_in_atav_040623.txt";
+    private static final String WGS_IN_ATAV = sourceDir + "wgs_in_atav_040623.txt";
+    private static final String CC_IN_ATAV = sourceDir + "cc_in_atav_040623.txt";
     private static HashSet<String> wesSet;
     private static HashSet<String> wgsSet;
     private static HashSet<String> ccSet;
@@ -62,19 +62,23 @@ public class S3UriParser {
     private static final String OUT_igm_projects_archive_FASTQ = outputDir + "igm-projects-archive-FASTQ.tsv";
     private static final String IN_igm_projects_archive_BAM = inputDir + "igm-projects-archive-BAM.csv";
     private static final String OUT_igm_projects_archive_BAM = outputDir + "igm-projects-archive-BAM.tsv";
-
+    private static final String IN_igm_projects_archive_CRAM = inputDir + "igm-projects-archive-CRAM.csv";
+    private static final String OUT_igm_projects_archive_CRAM = outputDir + "igm-projects-archive-CRAM.tsv";
+    private static final String IN_igm_projects_archive_FASTQ_GENOZIP = inputDir + "igm-projects-archive-FASTQ-GENOZIP.csv";
+    private static final String OUT_igm_projects_archive_FASTQ_GENOZIP = outputDir + "igm-projects-archive-FASTQ-GENOZIP.tsv";
+    
     // s3 bucket: igm-annodb
     private static final String IN_igm_annodb_BAM = inputDir + "igm-annodb-BAM.csv";
     private static final String OUT_igm_annodb_BAM = outputDir + "igm-annodb-BAM.tsv";
 
     public static void main(String[] args) {
-//        run();
-        markDuplicate(DUP_BAM);
-        markDuplicate(DUP_FASTQ);
+        run();
+//        markDuplicate(DUP_BAM);
+//        markDuplicate(DUP_FASTQ);
     }
 
     public static void run() {
-//        initSampleSet();
+        initSampleSet();
 //
 //        parse(IN_aws_fastq16_FASTQ, OUT_aws_fastq16_FASTQ);
 //        parse(IN_igm_fastq_archive_FASTQ, OUT_igm_fastq_archive_FASTQ);
@@ -86,8 +90,12 @@ public class S3UriParser {
 //        parse(IN_igm_projects_archive_BAM, OUT_igm_projects_archive_BAM);
 //        parse(IN_igm_annodb_BAM, OUT_igm_annodb_BAM);
 
-        markDuplicate(DUP_BAM);
-        markDuplicate(DUP_FASTQ);
+          parse(IN_igm_projects_archive_CRAM, OUT_igm_projects_archive_CRAM);
+          parse(IN_igm_projects_archive_FASTQ_GENOZIP, OUT_igm_projects_archive_FASTQ_GENOZIP);
+          
+
+//        markDuplicate(DUP_BAM);
+//        markDuplicate(DUP_FASTQ);
     }
 
     private static void initSampleSet() {
