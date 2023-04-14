@@ -3,6 +3,7 @@ package function.external.knownvar;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import function.external.base.DataManager;
+import function.variant.base.RegionManager;
 import function.variant.base.Variant;
 import function.variant.base.VariantManager;
 import global.Data;
@@ -36,32 +37,15 @@ public class KnownVarManager {
     public static final String dbDSMTable = "knownvar.dbDSM_2016_09_28";
 
     private static final Multimap<String, HGMD> hgmdMultiMap = ArrayListMultimap.create();
+    private static final HashMap<String, HashMap<Integer, Integer>> hgmdDMSiteCountMap = new HashMap<>();
     private static final Multimap<String, ClinVar> clinVarMultiMap = ArrayListMultimap.create();
+    private static final HashMap<String, HashMap<Integer, Integer>> clinvarPLPSiteCountMap = new HashMap<>();
     private static final HashMap<String, ClinVarPathoratio> clinVarPathoratioMap = new HashMap<>();
     private static final HashMap<String, String> clinGenMap = new HashMap<>();
     private static final HashMap<String, String> omimMap = new HashMap<>();
     private static final HashSet<String> recessiveCarrierSet = new HashSet<>();
     private static final HashMap<String, String> acmgMap = new HashMap<>();
     private static final Multimap<String, DBDSM> dbDSMMultiMap = ArrayListMultimap.create();
-
-    private static PreparedStatement preparedStatement4HGMDVariantFlankingCount;
-    private static PreparedStatement preparedStatement4ClinVarPLPVariantFlankingCount;
-
-    private static void initPreparedStatement() {
-        String sql = "SELECT count(*) as count From " + hgmdTable
-                + " WHERE chr=? AND pos BETWEEN ? AND ?"
-                + " AND variantClass like '%DM%' AND is_in_clinvar = 0";
-        preparedStatement4HGMDVariantFlankingCount = DBManager.initPreparedStatement(sql);
-
-        sql = "SELECT count(*) as count "
-                + "From " + clinVarTable + " "
-                + "WHERE chr=? "
-                + "AND pos BETWEEN ? AND ? "
-                + "AND (ClinSig like 'Pathogenic%' "
-                + "OR ClinSig like 'Likely_pathogenic%' "
-                + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like '%pathogenic%' and ClinSigConf not like '%benign%')))";
-        preparedStatement4ClinVarPLPVariantFlankingCount = DBManager.initPreparedStatement(sql);
-    }
 
     public static String getHeader() {
         StringJoiner sj = new StringJoiner(",");
@@ -110,8 +94,6 @@ public class KnownVarManager {
 
     public static void init() throws SQLException {
         if (KnownVarCommand.isInclude) {
-            initPreparedStatement();
-
             initHGMDMap();
 
             initClinVarMap();
@@ -145,6 +127,10 @@ public class KnownVarManager {
                         + "AND is_in_clinvar = 0";
             }
 
+            for (String chr : RegionManager.ALL_CHR) {
+                hgmdDMSiteCountMap.put(chr, new HashMap<>());
+            }
+
             ResultSet rs = DBManager.executeQuery(sql);
 
             while (rs.next()) {
@@ -161,6 +147,14 @@ public class KnownVarManager {
                         variantClass, pmid, diseaseName, isInClinVar);
 
                 hgmdMultiMap.put(hgmd.getSiteId(), hgmd);
+
+                if (hgmd.isHGMDDM()) {
+                    HashMap<Integer, Integer> map = hgmdDMSiteCountMap.get(chr);
+
+                    int count = map.getOrDefault(pos, 0) + 1;
+
+                    map.put(pos, count);
+                }
             }
 
             rs.close();
@@ -177,6 +171,10 @@ public class KnownVarManager {
                 sql += " WHERE ClinSig like 'Pathogenic%' "
                         + "OR ClinSig like 'Likely_pathogenic%' "
                         + "OR (ClinSig like 'Conflicting_interpretations_of_pathogenicity%' AND (ClinSigConf like '%pathogenic%' and ClinSigConf not like '%benign%'))";
+            }
+
+            for (String chr : RegionManager.ALL_CHR) {
+                clinvarPLPSiteCountMap.put(chr, new HashMap<>());
             }
 
             ResultSet rs = DBManager.executeQuery(sql);
@@ -199,6 +197,14 @@ public class KnownVarManager {
                         DiseaseName);
 
                 clinVarMultiMap.put(clinVar.getSiteId(), clinVar);
+
+                if (clinVar.isPLP()) {
+                    HashMap<Integer, Integer> map = clinvarPLPSiteCountMap.get(chr);
+
+                    int count = map.getOrDefault(pos, 0) + 1;
+
+                    map.put(pos, count);
+                }
             }
 
             rs.close();
@@ -298,7 +304,7 @@ public class KnownVarManager {
                 String[] geneSymbols = tmp[6].replaceAll("( )+", "").split(","); // Gene Symbols
                 for (String gene : geneSymbols) {
                     if (!gene.isEmpty() && !phenotype.isEmpty() && !omimMap.containsKey(gene.toUpperCase())) {
-                         omimMap.put(gene.toUpperCase(), phenotype);
+                        omimMap.put(gene.toUpperCase(), phenotype);
                     }
                 }
             }
@@ -355,22 +361,19 @@ public class KnownVarManager {
         return output;
     }
 
-    public static int getHGMDFlankingCount(Variant var, int width) {
-        try {
-            preparedStatement4HGMDVariantFlankingCount.setString(1, var.getChrStr());
-            preparedStatement4HGMDVariantFlankingCount.setInt(2, var.getStartPosition() - width);
-            preparedStatement4HGMDVariantFlankingCount.setInt(3, var.getStartPosition() + width);
-            ResultSet rs = preparedStatement4HGMDVariantFlankingCount.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("count");
-            }
+    public static int getHGMDDMFlankingCount(Variant var, int width) {
+        HashMap<Integer, Integer> map = hgmdDMSiteCountMap.get(var.getChrStr());
 
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
+        if (width == 0) {
+            return map.getOrDefault(var.getStartPosition(), 0);
         }
 
-        return Data.INTEGER_NA;
+        int count = 0;
+        for (int start = var.getStartPosition() - width; start <= var.getStartPosition() + width; start++) {
+            count += map.getOrDefault(start, 0);
+        }
+
+        return count;
     }
 
     public static Multimap<String, ClinVar> getClinVarMultiMap() {
@@ -385,22 +388,19 @@ public class KnownVarManager {
         return output;
     }
 
-    public static int getClinVarPathogenicVariantFlankingCount(Variant var, int width) {
-        try {
-            preparedStatement4ClinVarPLPVariantFlankingCount.setString(1, var.getChrStr());
-            preparedStatement4ClinVarPLPVariantFlankingCount.setInt(2, var.getStartPosition() - width);
-            preparedStatement4ClinVarPLPVariantFlankingCount.setInt(3, var.getStartPosition() + width);
-            ResultSet rs = preparedStatement4ClinVarPLPVariantFlankingCount.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("count");
-            }
+    public static int getClinVarPLPFlankingCount(Variant var, int width) {
+        HashMap<Integer, Integer> map = clinvarPLPSiteCountMap.get(var.getChrStr());
 
-            rs.close();
-        } catch (Exception e) {
-            ErrorManager.send(e);
+        if (width == 0) {
+            return map.getOrDefault(var.getStartPosition(), 0);
         }
 
-        return Data.INTEGER_NA;
+        int count = 0;
+        for (int start = var.getStartPosition() - width; start <= var.getStartPosition() + width; start++) {
+            count += map.getOrDefault(start, 0);
+        }
+
+        return count;
     }
 
     public static ClinVarPathoratio getClinPathoratio(String geneName) {

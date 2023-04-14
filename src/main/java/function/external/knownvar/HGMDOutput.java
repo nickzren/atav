@@ -27,8 +27,8 @@ public class HGMDOutput {
 
         hgmd = getHGMD(collection);
 
-        siteCount = KnownVarManager.getHGMDFlankingCount(var, 0);
-        variant2bpflanks = KnownVarManager.getHGMDFlankingCount(var, 2);
+        siteCount = KnownVarManager.getHGMDDMFlankingCount(var, 0);
+        variant2bpflanks = KnownVarManager.getHGMDDMFlankingCount(var, 2);
     }
 
     /*

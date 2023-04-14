@@ -28,11 +28,11 @@ public class ClinVarOutput {
 
         clinvar = getClinVar(collection);
 
-        siteCount = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 0);
+        siteCount = KnownVarManager.getClinVarPLPFlankingCount(var, 0);
 
-        variant2bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 2);
+        variant2bpflanks = KnownVarManager.getClinVarPLPFlankingCount(var, 2);
 
-        variant25bpflanks = KnownVarManager.getClinVarPathogenicVariantFlankingCount(var, 25);
+        variant25bpflanks = KnownVarManager.getClinVarPLPFlankingCount(var, 25);
     }
 
     /*
@@ -56,11 +56,7 @@ public class ClinVarOutput {
             String idStr = var.getVariantIdStr();
 
             if (idStr.equals(tmpClinvar.getVariantId())) {
-                if (tmpClinvar.getClinSig().startsWith("Pathogenic")
-                        || tmpClinvar.getClinSig().startsWith("Likely_pathogenic")
-                        || (tmpClinvar.getClinSig().startsWith("Conflicting_interpretations_of_pathogenicity")
-                        && (tmpClinvar.getClinSigConf().startsWith("Pathogenic") || tmpClinvar.getClinSigConf().startsWith("Likely_pathogenic"))
-                        && !tmpClinvar.getClinSigConf().contains("Benign") && !tmpClinvar.getClinSigConf().contains("Likely_benign"))) {
+                if (tmpClinvar.isPLP()) {
                     isClinVarPLP = true;
                 }
 
