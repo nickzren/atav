@@ -19,7 +19,7 @@ import utils.LogManager;
  */
 public class DPBinParser {
 
-    private static String dpBinOutputFile = CommonCommand.outputPath;
+    private static String dpBinOutputFile = CommonCommand.realOutputPath;
     
     private static HashSet<Character> binSet = new HashSet<>();
 
@@ -43,7 +43,7 @@ public class DPBinParser {
 
         File dpBinFile = new File(DPBinCommand.dpBinFilePath);
         br = new BufferedReader(new FileReader(dpBinFile));
-        dpBinOutputFile += dpBinFile.getName() + "_updated";
+        dpBinOutputFile += File.separator + dpBinFile.getName();
         bw = new BufferedWriter(new FileWriter(dpBinOutputFile));
     }
 
