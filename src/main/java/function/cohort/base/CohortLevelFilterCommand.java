@@ -27,6 +27,7 @@ public class CohortLevelFilterCommand {
     public static boolean isDisableCheckDuplicateSample = false;
     public static boolean isAllSample = false;
     public static boolean isAllExome = false;
+    public static String inputBroadPhenotype = "";
     public static boolean isAvailableControlUseOnly = false;
     public static boolean isExcludeIGMGnomadSample = false;
     public static boolean isExcludeLowQualitySample = false;
@@ -76,6 +77,9 @@ public class CohortLevelFilterCommand {
                     break;
                 case "--available-control-use-only":
                     isAvailableControlUseOnly = true;
+                    break;
+                case "--broad-phenotype":
+                    inputBroadPhenotype = getValidPath(option);
                     break;
                 case "--exclude-igm-gnomad-sample":
                     isExcludeIGMGnomadSample = true;

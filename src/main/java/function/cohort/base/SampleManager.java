@@ -17,8 +17,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,6 +46,7 @@ public class SampleManager {
     private static ArrayList<Sample> sampleList = new ArrayList<>();
     private static HashMap<Integer, Sample> sampleMap = new HashMap<>();
     private static HashSet<String> sampleNameSet = new HashSet<>();
+    private static HashSet<String> broadPhenotypeSet = new HashSet<>();
 
     private static int totalSampleNum; // case + ctrl
     private static int caseNum = 0;
@@ -88,6 +91,8 @@ public class SampleManager {
 
         initExcludeIGMGnomADSample();
 
+        initBroadPhenotype();
+
         if (!CohortLevelFilterCommand.inputSample.isEmpty()) {
             initExistingSampleFile();
             initFromSampleInput(CohortLevelFilterCommand.inputSample);
@@ -112,6 +117,55 @@ public class SampleManager {
         outputSampleListSummary();
 
         checkCaseCtrlOptions();
+    }
+
+    private static void initBroadPhenotype() {
+        if (!CohortLevelFilterCommand.inputBroadPhenotype.isEmpty()) {
+            // init predefined broad phenotype list from database
+            HashSet<String> existingBroadPhenotypeSet = new HashSet<>();
+            try {
+                String sqlCode = "SHOW COLUMNS FROM sample LIKE 'broad_phenotype'";
+
+                PreparedStatement preparedStatement = DBManager.initPreparedStatement(sqlCode);
+                ResultSet rs = preparedStatement.executeQuery();
+
+                if (rs.next()) {
+                    String type = rs.getString("Type");
+                    String[] enumValues = type.substring(5, type.length() - 1).split(",");
+
+                    for (String value : enumValues) {
+                        existingBroadPhenotypeSet.add(value.trim().replaceAll("'", ""));
+                    }
+                }
+            } catch (SQLException e) {
+                ErrorManager.send(e);
+            }
+
+            // init user's input broad phenotype list
+            try {
+                broadPhenotypeSet = Files.lines(Paths.get(CohortLevelFilterCommand.inputBroadPhenotype))
+                        .map(String::toLowerCase) // convert each line to lowercase
+                        .filter(line -> {
+                            if (!existingBroadPhenotypeSet.contains(line)) {
+                                LogManager.writeAndPrint("Excluding nonexistent broad phenotype: " + line);
+                                return false; // exclude line if it is not in existingBroadPhenotypeSet
+                            }
+                            return true;
+                        })
+                        .collect(Collectors.toCollection(HashSet::new));
+
+                broadPhenotypeSet.addAll(Arrays.asList(CohortLevelFilterCommand.inputBroadPhenotype.split(",")));
+            } catch (IOException e) {
+                LogManager.writeAndPrintNoNewLine("\nError input: " + CohortLevelFilterCommand.inputBroadPhenotype);
+
+                ErrorManager.send(e);
+            }
+        }
+    }
+
+    private static boolean isBroadPhenotypeValid(String broadPhenotype) {
+        return !CohortLevelFilterCommand.inputBroadPhenotype.isEmpty()
+                && broadPhenotypeSet.contains(broadPhenotype);
     }
 
     private static void initExistingSampleFile() {
@@ -261,8 +315,8 @@ public class SampleManager {
 
     // only trio or singleton or coverage summary analysis support sample name as input for --sample
     private static void addSampleToList(String sampleName) {
-        if (!SingletonCommand.isList 
-                && !TrioCommand.isList 
+        if (!SingletonCommand.isList
+                && !TrioCommand.isList
                 && !CoverageCommand.isCoverageSummary
                 && !PedMapCommand.isPedMap) {
             LogManager.writeAndPrintNoNewLine("\nError sample (" + sampleName + ") in sample file.");
@@ -375,14 +429,14 @@ public class SampleManager {
             }
 
             sql += "AND sample_finished = 1 AND sample_failure = 0 order by sample_id desc";
-            
+
             PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
             preparedStatement.setString(1, tempSample.familyId);
             ResultSet rs = preparedStatement.executeQuery();
 
             tempSample.paternalId = "0";
             tempSample.maternalId = "0";
-            
+
             while (rs.next()) {
                 String sampleName = FormatManager.getString(rs.getString("sample_name"));
                 String seqGender = FormatManager.getString(rs.getString("seq_gender"));
@@ -520,6 +574,10 @@ public class SampleManager {
                         continue;
                     }
 
+                    if (!isBroadPhenotypeValid(tempSample.broadPhenotype)) {
+                        continue;
+                    }
+
                     if (sampleMap.containsKey(tempSample.sampleId)) {
                         continue;
                     }
@@ -584,6 +642,7 @@ public class SampleManager {
                 int sampleId = rs.getInt("sample_id");
                 String familyId = rs.getString("family_id");
                 String individualId = rs.getString("sample_name");
+                familyId = familyId == null ? individualId : familyId;
 
                 if (CohortLevelFilterCommand.isExcludeIGMGnomadSample
                         && excludeIGMGnomadSampleSet.contains((individualId))) {
@@ -597,7 +656,7 @@ public class SampleManager {
                 String seqGender = FormatManager.getString(rs.getString("seq_gender"));
                 byte sex = seqGender.equals("M") ? (byte) 1 : (byte) 2;
 
-                byte pheno = 1; // control
+                byte pheno = 2; // case
                 String sampleType = rs.getString("sample_type").trim();
                 String captureKit = rs.getString("capture_kit").trim();
                 int experimentId = rs.getInt("experiment_id");
@@ -614,6 +673,10 @@ public class SampleManager {
                 Sample sample = new Sample(sampleId, familyId, individualId,
                         paternalId, maternalId, sex, pheno, sampleType, captureKit,
                         experimentId, ancestry, broadPhenotype);
+
+                if (!isBroadPhenotypeValid(broadPhenotype)) {
+                    continue;
+                }
 
                 sampleList.add(sample);
                 sampleMap.put(sampleId, sample);
