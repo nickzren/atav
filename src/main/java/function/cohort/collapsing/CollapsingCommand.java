@@ -26,8 +26,6 @@ public class CollapsingCommand {
     public static String regionBoundaryFile = "";
     public static boolean isMannWhitneyTest = false;
     public static int minCompHetVarDistance = Data.NO_FILTER;
-    public static boolean isExcludeCompHetPIDVariant = false;
-    public static boolean isExcludeCompHetHPVariant = false;
     public static String geneColumn = "";
     public static boolean isCollapsingMatrixHetHom = false;
 
@@ -103,12 +101,6 @@ public class CollapsingCommand {
                     checkValueValid(Data.NO_FILTER, 0, option);
                     minCompHetVarDistance = getValidInteger(option);
                     break;
-                case "--exclude-comp-het-pid-variant":
-                    isExcludeCompHetPIDVariant = true;
-                    break;
-                case "--exclude-comp-het-hp-variant":
-                    isExcludeCompHetHPVariant = true;
-                    break;
                 default:
                     continue;
             }
@@ -155,27 +147,5 @@ public class CollapsingCommand {
         }
 
         return value >= minCompHetVarDistance;
-    }
-
-    public static boolean isCompHetPIDVariantIdInvalid(int variantId1, int variantId2,
-            int pidVariantId1, int pidVariantId2) {
-        if (pidVariantId1 == Data.INTEGER_NA && pidVariantId2 == Data.INTEGER_NA) {
-            return false;
-        }
-
-        return variantId1 == pidVariantId2
-                || variantId2 == pidVariantId1
-                || pidVariantId1 == pidVariantId2;
-    }
-
-    public static boolean isCompHetHPVariantIdInvalid(int variantId1, int variantId2,
-            int hpVariantId1, int hpVariantId2) {
-        if (hpVariantId1 == Data.INTEGER_NA && hpVariantId2 == Data.INTEGER_NA) {
-            return false;
-        }
-
-        return variantId1 == hpVariantId2
-                || variantId2 == hpVariantId1
-                || hpVariantId1 == hpVariantId2;
     }
 }

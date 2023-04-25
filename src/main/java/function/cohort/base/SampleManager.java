@@ -164,8 +164,11 @@ public class SampleManager {
     }
 
     private static boolean isBroadPhenotypeValid(String broadPhenotype) {
-        return !CohortLevelFilterCommand.inputBroadPhenotype.isEmpty()
-                && broadPhenotypeSet.contains(broadPhenotype);
+        if(CohortLevelFilterCommand.inputBroadPhenotype.isEmpty()) {
+            return true;
+        }
+        
+        return broadPhenotypeSet.contains(broadPhenotype);
     }
 
     private static void initExistingSampleFile() {

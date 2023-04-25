@@ -2,6 +2,7 @@ package function.cohort.collapsing;
 
 import function.cohort.base.CalledVariant;
 import function.cohort.base.Carrier;
+import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.base.Sample;
 import function.cohort.base.SampleManager;
 import global.Data;
@@ -183,8 +184,8 @@ public class CollapsingCompHet extends CollapsingBase {
 
         if (var1.getVariantId() != var2.getVariantId()
                 && isMinCompHetVarDistanceValid(var1, var2)
-                && !isCompHetPIDVariantIdInvalid(var1, var2, sample)
-                && !isCompHetHPVariantIdInvalid(var1, var2, sample)) {
+                && !GenotypeLevelFilterCommand.isCompHetPIDVariantIdInvalid(var1, var2, sample)
+                && !GenotypeLevelFilterCommand.isCompHetHPVariantIdInvalid(var1, var2, sample)) {
             byte geno2 = output2.getCalledVariant().getGT(sample.getIndex());
 
             if (output2.isQualifiedGeno(geno2)) {
@@ -210,38 +211,6 @@ public class CollapsingCompHet extends CollapsingBase {
         int varDistance = Math.abs(var1.getStartPosition() - var2.getStartPosition());
 
         return CollapsingCommand.isMinCompHetVarDistanceValid(varDistance);
-    }
-
-    private boolean isCompHetPIDVariantIdInvalid(CalledVariant var1, CalledVariant var2, Sample sample) {
-        if (!CollapsingCommand.isExcludeCompHetPIDVariant) {
-            return false;
-        }
-
-        Carrier carrier1 = var1.getCarrier(sample.getId());
-        Carrier carrier2 = var2.getCarrier(sample.getId());
-
-        int pidVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getPIDVariantId();
-        int pidVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getPIDVariantId();
-
-        return CollapsingCommand.isCompHetPIDVariantIdInvalid(
-                var1.getVariantId(), var2.getVariantId(),
-                pidVariantId1, pidVariantId2);
-    }
-
-    private boolean isCompHetHPVariantIdInvalid(CalledVariant var1, CalledVariant var2, Sample sample) {
-        if (!CollapsingCommand.isExcludeCompHetHPVariant) {
-            return false;
-        }
-
-        Carrier carrier1 = var1.getCarrier(sample.getId());
-        Carrier carrier2 = var2.getCarrier(sample.getId());
-
-        int hpVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getHPVariantId();
-        int hpVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getHPVariantId();
-
-        return CollapsingCommand.isCompHetHPVariantIdInvalid(
-                var1.getVariantId(), var2.getVariantId(),
-                hpVariantId1, hpVariantId2);
     }
 
     private void updateSummaryVariantCount(CompHetOutput output, CollapsingSummary summary) {

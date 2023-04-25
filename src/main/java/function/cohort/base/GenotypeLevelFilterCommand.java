@@ -45,6 +45,8 @@ public class GenotypeLevelFilterCommand {
     public static String vcfFile = "";
     public static boolean isHomOnly = false;
     public static boolean isHetOnly = false;
+    public static boolean isExcludeCompHetPIDVariant = false;
+    public static boolean isExcludeCompHetHPVariant = false;
 
     // below variables all true will trigger ATAV only retrive high quality variants
     // QUAL >= 30, MQ >= 40, PASS+LIKELY+INTERMEDIATE, & >= 3 DP or DP Bin
@@ -176,6 +178,12 @@ public class GenotypeLevelFilterCommand {
                     break;
                 case "--het-only":
                     isHetOnly = true;
+                    break;
+                case "--exclude-comp-het-pid-variant":
+                    isExcludeCompHetPIDVariant = true;
+                    break;
+                case "--exclude-comp-het-hp-variant":
+                    isExcludeCompHetHPVariant = true;
                     break;
                 default:
                     continue;
@@ -470,7 +478,7 @@ public class GenotypeLevelFilterCommand {
 
         return value <= maxPercentAltReadBinomialP;
     }
-    
+
     public static boolean isQualifiedGeno(byte geno) {
         // --hom-only
         if (isHomOnly) {
@@ -489,5 +497,89 @@ public class GenotypeLevelFilterCommand {
 
         // default: hom alt or het is valid 
         return geno == Index.HOM || geno == Index.HET;
+    }
+
+    private static boolean isCompHetPIDVariantIdInvalid(int variantId1, int variantId2,
+            int pidVariantId1, int pidVariantId2) {
+        if (pidVariantId1 == Data.INTEGER_NA && pidVariantId2 == Data.INTEGER_NA) {
+            return false;
+        }
+
+        return variantId1 == pidVariantId2
+                || variantId2 == pidVariantId1
+                || pidVariantId1 == pidVariantId2;
+    }
+
+    private static boolean isCompHetHPVariantIdInvalid(int variantId1, int variantId2,
+            int hpVariantId1, int hpVariantId2) {
+        if (hpVariantId1 == Data.INTEGER_NA && hpVariantId2 == Data.INTEGER_NA) {
+            return false;
+        }
+
+        return variantId1 == hpVariantId2
+                || variantId2 == hpVariantId1
+                || hpVariantId1 == hpVariantId2;
+    }
+
+    public static boolean isCompHetPIDVariantIdInvalid(CalledVariant var1, CalledVariant var2, Sample sample) {
+        if (!GenotypeLevelFilterCommand.isExcludeCompHetPIDVariant) {
+            return false;
+        }
+
+        Carrier carrier1 = var1.getCarrier(sample.getId());
+        Carrier carrier2 = var2.getCarrier(sample.getId());
+
+        int pidVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getPIDVariantId();
+        int pidVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getPIDVariantId();
+
+        return GenotypeLevelFilterCommand.isCompHetPIDVariantIdInvalid(
+                var1.getVariantId(), var2.getVariantId(),
+                pidVariantId1, pidVariantId2);
+    }
+
+    public static boolean isCompHetPIDVariantIdInvalid(
+            int variantId1, int variantId2,
+            Carrier carrier1, Carrier carrier2) {
+        if (!GenotypeLevelFilterCommand.isExcludeCompHetPIDVariant) {
+            return false;
+        }
+
+        int pidVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getPIDVariantId();
+        int pidVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getPIDVariantId();
+
+        return GenotypeLevelFilterCommand.isCompHetPIDVariantIdInvalid(
+                variantId1, variantId2,
+                pidVariantId1, pidVariantId2);
+    }
+
+    public static boolean isCompHetHPVariantIdInvalid(CalledVariant var1, CalledVariant var2, Sample sample) {
+        if (!GenotypeLevelFilterCommand.isExcludeCompHetHPVariant) {
+            return false;
+        }
+
+        Carrier carrier1 = var1.getCarrier(sample.getId());
+        Carrier carrier2 = var2.getCarrier(sample.getId());
+
+        int hpVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getHPVariantId();
+        int hpVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getHPVariantId();
+
+        return GenotypeLevelFilterCommand.isCompHetHPVariantIdInvalid(
+                var1.getVariantId(), var2.getVariantId(),
+                hpVariantId1, hpVariantId2);
+    }
+
+    public static boolean isCompHetHPVariantIdInvalid(
+            int variantId1, int variantId2,
+            Carrier carrier1, Carrier carrier2) {
+        if (!GenotypeLevelFilterCommand.isExcludeCompHetHPVariant) {
+            return false;
+        }
+
+        int hpVariantId1 = carrier1 == null ? Data.INTEGER_NA : carrier1.getHPVariantId();
+        int hpVariantId2 = carrier2 == null ? Data.INTEGER_NA : carrier2.getHPVariantId();
+
+        return GenotypeLevelFilterCommand.isCompHetHPVariantIdInvalid(
+                variantId1, variantId2,
+                hpVariantId1, hpVariantId2);
     }
 }
