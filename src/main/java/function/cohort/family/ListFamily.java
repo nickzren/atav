@@ -1,0 +1,104 @@
+package function.cohort.family;
+
+import function.cohort.base.CalledVariant;
+import function.cohort.base.Sample;
+import function.cohort.base.AnalysisBase4CalledVar;
+import function.cohort.base.CohortLevelFilterCommand;
+import function.cohort.base.SampleManager;
+import function.variant.base.Output;
+import utils.CommonCommand;
+import utils.ErrorManager;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import utils.LogManager;
+import utils.ThirdPartyToolManager;
+
+/**
+ *
+ * @author nick
+ */
+public class ListFamily extends AnalysisBase4CalledVar {
+
+    BufferedWriter bwGenotypes = null;
+    final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
+
+    @Override
+    public void initOutput() {
+        try {
+            bwGenotypes = new BufferedWriter(new FileWriter(genotypesFilePath));
+            bwGenotypes.write(FamilyOutput.getHeader());
+            bwGenotypes.newLine();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
+
+    @Override
+    public void doOutput() {
+    }
+
+    @Override
+    public void closeOutput() {
+        try {
+            bwGenotypes.flush();
+            bwGenotypes.close();
+        } catch (Exception ex) {
+            ErrorManager.send(ex);
+        }
+    }
+
+    @Override
+    public void doAfterCloseOutput() {
+        if (FamilyCommand.isMannWhitneyTest) {
+            ThirdPartyToolManager.runMannWhitneyTest(genotypesFilePath);
+        }
+
+        if (CommonCommand.gzip) {
+            ThirdPartyToolManager.gzipFile(genotypesFilePath);
+        }
+    }
+
+    @Override
+    public void beforeProcessDatabaseData() {
+    }
+
+    @Override
+    public void afterProcessDatabaseData() {
+    }
+
+    @Override
+    public void processVariant(CalledVariant calledVar) {
+        try {
+            FamilyOutput output = new FamilyOutput(calledVar);
+
+            for (Sample sample : SampleManager.getList()) {
+                // --case-only
+                if (isCaseOnly(sample)) {
+                    byte geno = output.getCalledVariant().getGT(sample.getIndex());
+
+                    if (output.isQualifiedGeno(geno)) {
+                        output.calculateLooAF(sample);
+
+                        bwGenotypes.write(output.getString(sample));
+                        bwGenotypes.newLine();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ErrorManager.send(e);
+        }
+    }
+
+    private boolean isCaseOnly(Sample sample) {
+        if (CohortLevelFilterCommand.isCaseOnly) {
+            return sample.isCase();
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Start running list variant genotype function";
+    }
+}
