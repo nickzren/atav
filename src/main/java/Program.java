@@ -73,6 +73,8 @@ import function.cohort.base.DPBinBlockManager;
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.collapsing.CollapsingLite;
 import function.cohort.collapsing.CollapsingVCFLite;
+import function.cohort.family.FamilyCommand;
+import function.cohort.family.ListFamily;
 import function.cohort.parent.ListParentCompHet;
 import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
@@ -246,6 +248,8 @@ public class Program {
         try {
             if (VarGenoCommand.isList) { // Genotype Analysis Functions
                 runAnalysis(new ListVarGeno());
+            } else if (FamilyCommand.isList) {
+                runAnalysis(new ListFamily());
             } else if (SingletonCommand.isList) {
                 runAnalysis(new ListSingleton());
             } else if (VarGenoCommand.isListLite) {

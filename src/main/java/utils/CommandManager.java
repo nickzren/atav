@@ -25,6 +25,7 @@ import function.external.trap.TrapCommand;
 import function.cohort.base.CohortLevelFilterCommand;
 import function.cohort.base.GenotypeLevelFilterCommand;
 import function.cohort.collapsing.CollapsingCommand;
+import function.cohort.family.FamilyCommand;
 import function.cohort.parent.ParentCommand;
 import function.cohort.parental.ParentalCommand;
 import function.cohort.pedmap.PedMapCommand;
@@ -339,6 +340,9 @@ public class CommandManager {
                 case "--list-var-geno":
                     VarGenoCommand.isList = true;
                     break;
+                case "--list-family":
+                    FamilyCommand.isList = true;
+                    break;
                 case "--list-singleton":
                     SingletonCommand.isList = true;
                     CohortLevelFilterCommand.isCaseOnly = true;
@@ -630,7 +634,9 @@ public class CommandManager {
     private static void initSubOptions() throws Exception {
         if (VarGenoCommand.isList) { // Genotype Analysis Functions
             VarGenoCommand.initOptions(optionList.iterator());
-        } else if (SingletonCommand.isList) {
+        } else if (FamilyCommand.isList) {
+            FamilyCommand.initOptions(optionList.iterator());
+        }else if (SingletonCommand.isList) {
             SingletonCommand.initOptions(optionList.iterator());
         } else if (VarGenoCommand.isListLite) {
             VarGenoCommand.initOptions(optionList.iterator());
