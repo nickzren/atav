@@ -20,7 +20,7 @@ import utils.ThirdPartyToolManager;
 public class ListFamily extends AnalysisBase4CalledVar {
 
     BufferedWriter bwGenotypes = null;
-    final String genotypesFilePath = CommonCommand.outputPath + "genotypes.csv";
+    final String genotypesFilePath = CommonCommand.outputPath + "family_genotypes.csv";
 
     @Override
     public void initOutput() {
@@ -49,10 +49,6 @@ public class ListFamily extends AnalysisBase4CalledVar {
 
     @Override
     public void doAfterCloseOutput() {
-        if (FamilyCommand.isMannWhitneyTest) {
-            ThirdPartyToolManager.runMannWhitneyTest(genotypesFilePath);
-        }
-
         if (CommonCommand.gzip) {
             ThirdPartyToolManager.gzipFile(genotypesFilePath);
         }
@@ -60,6 +56,7 @@ public class ListFamily extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
+        FamilyManager.init();
     }
 
     @Override
@@ -70,30 +67,13 @@ public class ListFamily extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             FamilyOutput output = new FamilyOutput(calledVar);
-
-            for (Sample sample : SampleManager.getList()) {
-                // --case-only
-                if (isCaseOnly(sample)) {
-                    byte geno = output.getCalledVariant().getGT(sample.getIndex());
-
-                    if (output.isQualifiedGeno(geno)) {
-                        output.calculateLooAF(sample);
-
-                        bwGenotypes.write(output.getString(sample));
-                        bwGenotypes.newLine();
-                    }
-                }
-            }
+            
+//            for (Sample sample : SampleManager.getList()){  
+//                   
+//            }
+            
         } catch (Exception e) {
             ErrorManager.send(e);
-        }
-    }
-
-    private boolean isCaseOnly(Sample sample) {
-        if (CohortLevelFilterCommand.isCaseOnly) {
-            return sample.isCase();
-        } else {
-            return true;
         }
     }
 
