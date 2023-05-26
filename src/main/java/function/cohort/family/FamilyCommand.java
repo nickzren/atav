@@ -9,8 +9,7 @@ import utils.CommandOption;
  */
 public class FamilyCommand {
     public static boolean isList = false;
-    public static boolean isListLite = false;
-    public static boolean isMannWhitneyTest = false;
+    public static String inputFamilyId = "";
 
     public static void initOptions(Iterator<CommandOption> iterator) {
         CommandOption option;
@@ -18,8 +17,8 @@ public class FamilyCommand {
         while (iterator.hasNext()) {
             option = (CommandOption) iterator.next();
             switch (option.getName()) {
-                case "--mann-whitney-test":
-                    isMannWhitneyTest = true;
+                case "--family-id":
+                    inputFamilyId = option.getValue();
                     break;
                 default:
                     continue;
