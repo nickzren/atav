@@ -79,6 +79,6 @@ public class ListFamily extends AnalysisBase4CalledVar {
 
     @Override
     public String toString() {
-        return "Start running list variant genotype function";
+        return "Start running list family function";
     }
 }
