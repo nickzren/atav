@@ -342,6 +342,8 @@ public class CommandManager {
                     break;
                 case "--list-family":
                     FamilyCommand.isList = true;
+                    CohortLevelFilterCommand.isCaseOnly = true;
+                    CohortLevelFilterCommand.isIncludeDefaultControlSample = true;
                     break;
                 case "--list-singleton":
                     SingletonCommand.isList = true;
