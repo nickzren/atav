@@ -28,7 +28,7 @@ public class FamilyOutput extends Output {
     }
     // The value will be dynamically updated per family
     private String inheritanceModel;
-    
+
     public FamilyOutput(CalledVariant c) {
         super(c);
     }
@@ -36,7 +36,7 @@ public class FamilyOutput extends Output {
     public String getString(Sample sample) {
         StringJoiner sj = new StringJoiner(",");
         sj.add(sample.getFamilyId());
-        sj.add(FormatManager.getString(inheritanceModel)); 
+        sj.add(FormatManager.getString(inheritanceModel));
         calledVar.getVariantData(sj);
         calledVar.getAnnotationData(sj);
         getCarrierData(sj, calledVar.getCarrier(sample.getId()), sample);
@@ -45,47 +45,43 @@ public class FamilyOutput extends Output {
 
         return sj.toString();
     }
-    
-    public void calculateInheritanceModel(Family family){
-        boolean control_dom = true; // All controls are REF
-        boolean control_rec = true; // No controls are HOM
-        for (Sample sample: family.getControlList()) {
+
+    public void calculateInheritanceModel(Family family) {
+        boolean control_ref = true; // All controls are REF
+        for (Sample sample : family.getControlList()) {
             byte geno = getCalledVariant().getGT(sample.getIndex());
-            switch(geno){
-                case Index.HET:
-                    control_dom = false;
-                    break;
-                case Index.HOM:
-                    control_dom = false;
-                    control_rec = false;
-                    break;
-            }           
-        }
-                
-        boolean case_dom = true;
-        boolean case_rec = true;
-        for (Sample sample: family.getCaseList()) {
-            byte geno = getCalledVariant().getGT(sample.getIndex());
-            switch (geno) {
-                case Index.HET:
-                    case_rec = false;
-                    break;
-                case Index.HOM:
-                    case_dom = false;
-                    break;
+
+            if (geno != Index.REF) {
+                control_ref = false;
+                break;
             }
         }
-        
-        if (control_dom && case_dom){
-            inheritanceModel = "DOMINANT";
-        } else if (control_rec && case_rec){
-            inheritanceModel = "RECESSIVE";
-        } else {
-            inheritanceModel = Data.STRING_NA;
+
+        boolean case_dom = true; // All cases are HET
+        boolean case_rec = true; // All cases are HOM
+        for (Sample sample : family.getCaseList()) {
+            byte geno = getCalledVariant().getGT(sample.getIndex());
+
+            if (geno != Index.HET) {
+                case_dom = false;
+            }
+
+            if (geno != Index.HOM) {
+                case_rec = false;
+            }
+        }
+
+        inheritanceModel = Data.STRING_NA;
+        if (control_ref) {
+            if (case_dom) {
+                inheritanceModel = "DOMINANT";
+            } else if (case_rec) {
+                inheritanceModel = "RECESSIVE";
+            }
         }
     }
-    
-    public String getInheritanceModel(){
+
+    public String getInheritanceModel() {
         return inheritanceModel;
     }
 }
