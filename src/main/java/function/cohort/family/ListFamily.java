@@ -1,16 +1,13 @@
 package function.cohort.family;
 
 import function.cohort.base.CalledVariant;
-import function.cohort.base.Sample;
 import function.cohort.base.AnalysisBase4CalledVar;
-import function.cohort.base.CohortLevelFilterCommand;
-import function.cohort.base.SampleManager;
-import function.variant.base.Output;
+import function.cohort.base.Sample;
+import global.Data;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import utils.LogManager;
 import utils.ThirdPartyToolManager;
 
 /**
@@ -56,7 +53,6 @@ public class ListFamily extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
-        FamilyManager.init();
     }
 
     @Override
@@ -67,11 +63,17 @@ public class ListFamily extends AnalysisBase4CalledVar {
     public void processVariant(CalledVariant calledVar) {
         try {
             FamilyOutput output = new FamilyOutput(calledVar);
-            
-//            for (Sample sample : SampleManager.getList()){  
-//                   
-//            }
-            
+
+            for (Family family : FamilyManager.getFamilyList()) {
+                output.calculateInheritanceModel(family);
+                for (Sample sample : family.getCaseList()) {
+                    if (!output.getInheritanceModel().equals(Data.STRING_NA)) {
+                        bwGenotypes.write(output.getString(sample));
+                        bwGenotypes.newLine();
+                    }
+                }
+            }
+
         } catch (Exception e) {
             ErrorManager.send(e);
         }

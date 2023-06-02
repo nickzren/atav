@@ -2,6 +2,7 @@ package function.cohort.base;
 
 import function.cohort.collapsing.CollapsingCommand;
 import function.cohort.family.FamilyCommand;
+import function.cohort.family.FamilyManager;
 import function.cohort.pedmap.PedMapCommand;
 import function.cohort.singleton.SingletonCommand;
 import function.cohort.statistics.StatisticsCommand;
@@ -108,6 +109,7 @@ public class SampleManager {
         } else if (FamilyCommand.isList) {
             initExistingSampleFile();
             initFamilyIdInput(FamilyCommand.inputFamilyId);
+            initIncludeDefaultControlSample();
             closeExistingSampleFile();
         }
 
@@ -169,10 +171,10 @@ public class SampleManager {
     }
 
     private static boolean isBroadPhenotypeValid(String broadPhenotype) {
-        if(CohortLevelFilterCommand.inputBroadPhenotype.isEmpty()) {
+        if (CohortLevelFilterCommand.inputBroadPhenotype.isEmpty()) {
             return true;
         }
-        
+
         return broadPhenotypeSet.contains(broadPhenotype);
     }
 
@@ -303,15 +305,14 @@ public class SampleManager {
 
         initSampleFromDB(sqlCode);
     }
-    
-     private static void initFamilyIdInput(String familyIds) {
+
+    private static void initFamilyIdInput(String familyIds) {
         if (familyIds.isEmpty()) {
             return;
         }
         String[] familyIdList = familyIds.split(",");
-                
+
         for (String id : familyIdList) {
-            System.out.println(id);
             addFamilyIdToList(id);
         }
     }
@@ -333,23 +334,23 @@ public class SampleManager {
             }
         }
     }
-    
+
     private static void addFamilyIdToList(String familyId) {
-        if (!FamilyCommand.isList){
+        if (!FamilyCommand.isList) {
             LogManager.writeAndPrintNoNewLine("\nError ID (" + familyId + ") in sample file.");
             ErrorManager.print("Only --list-family allows input family id for option --family-id.", ErrorManager.INPUT_PARSING);
         }
-        
+
         try {
             addSampleToFamilyIdList(familyId);
-            
+
         } catch (Exception e) {
             LogManager.writeAndPrintNoNewLine("\nError Family ID (" + familyId + ") in sample file.");
 
             ErrorManager.send(e);
         }
     }
-        
+
     // only trio or singleton or coverage summary analysis support sample name as input for --sample
     private static void addSampleToList(String sampleName) {
         if (!SingletonCommand.isList
@@ -431,24 +432,17 @@ public class SampleManager {
         addSample(tempSample);
     }
 
-    private static void addSampleToFamilyIdList(String familyId) throws Exception {         
-        ArrayList<TempSample> tempFamily = getTempFamilySamples(familyId);
-        
-        for (TempSample tempSample: tempFamily){
-            if(tempSample.sampleId != Data.INTEGER_NA){
-                if (tempSample.isGenderMismatch()) {
-                    LogManager.writeAndPrint("Gender mismatch: " + tempSample.sampleName);
-                    return;
-                }
-            } else {
-                LogManager.writeAndPrint("Invalid sample in family: " + familyId);
-                return;
+    private static void addSampleToFamilyIdList(String familyId) throws Exception {
+        ArrayList<Sample> sampleList = getFamilySamples(familyId);
+
+        if (FamilyManager.initFamily(sampleList)) {
+
+            for (Sample sample : sampleList) {             
+                addSample(sample);
             }
-            
-            addSample(tempSample);
         }
     }
-    
+
     private static void addSampleToSingletonList(String sampleName) throws Exception {
         TempSample tempSample = getTempSample(sampleName);
 
@@ -518,6 +512,20 @@ public class SampleManager {
         }
 
         return true;
+    }
+
+    private static void addSample(Sample sample) throws Exception {
+        if (sample.isCase()) {
+            caseIDSJ.add(String.valueOf(sample.getId()));
+        }
+
+        sampleList.add(sample);
+        sampleMap.put(sample.getId(), sample);
+                
+        countSampleNum(sample);
+                
+        bwExistingSample.write(initStringLineForSampleFile(sample));
+        bwExistingSample.newLine();
     }
 
     private static void addSample(TempSample tempSample) throws Exception {
@@ -1137,12 +1145,12 @@ public class SampleManager {
         return s;
     }
 
-    private static ArrayList<TempSample> getTempFamilySamples(String familyId) throws Exception {        
-        ArrayList<TempSample> familySampleList = new ArrayList<>();
-        
+    private static ArrayList<Sample> getFamilySamples(String familyId) throws Exception {
+        ArrayList<Sample> familySampleList = new ArrayList<>();
+
         try {
-            String sql = "SELECT sample_name,sample_id,experiment_id,sample_type,capture_kit,seq_gender,self_decl_gender,"
-                    + "ancestry,broad_phenotype,family_id,family_relation_proband FROM sample "
+            String sql = "SELECT sample_name,sample_id,experiment_id,sample_type,capture_kit,seq_gender,"
+                    + "ancestry,broad_phenotype,self_decl_gender,family_id FROM sample "
                     + "WHERE family_id=? AND sample_finished = 1 AND sample_failure = 0 order by family_id desc";
 
             PreparedStatement preparedStatement = DBManager.initPreparedStatement(sql);
@@ -1150,23 +1158,37 @@ public class SampleManager {
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
-                TempSample s = new TempSample();
-                s.sampleId = Data.INTEGER_NA;
-                s.familyId = familyId;
+                //Sample s = new Sample();
+                String sampleName = FormatManager.getString(rs.getString("sample_name"));
+                int sampleId = rs.getInt("sample_id");
+                int experimentId = rs.getInt("experiment_id");
+                String sampleType = FormatManager.getString(rs.getString("sample_type"));
+                String captureKit = FormatManager.getString(rs.getString("capture_kit"));
+                String seqGender = FormatManager.getString(rs.getString("seq_gender"));
+                byte sex = seqGender.equals("M") ? (byte) 1 : (byte) 2;
+                String selfDeclGender = FormatManager.getString(rs.getString("self_decl_gender"));
+                String ancestry = FormatManager.getString(rs.getString("ancestry"));
+                String broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
 
-                s.sampleName = FormatManager.getString(rs.getString("sample_name"));
-                s.sampleId = rs.getInt("sample_id");
-                s.experimentId = rs.getInt("experiment_id");
-                s.sampleType = FormatManager.getString(rs.getString("sample_type"));
-                s.captureKit = FormatManager.getString(rs.getString("capture_kit"));
-                s.seqGender = FormatManager.getString(rs.getString("seq_gender"));
-                s.sex = s.seqGender.equals("M") ? (byte) 1 : (byte) 2;
-                s.selfDeclGender = FormatManager.getString(rs.getString("self_decl_gender"));
-                s.ancestry = FormatManager.getString(rs.getString("ancestry"));
-                s.broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
-                s.familyRelationProband = FormatManager.getString(rs.getString("family_relation_proband"));
-                
-                familySampleList.add(s);
+                if (selfDeclGender.equals("Unknown")) {
+                    ErrorManager.print("Sample gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+                }
+
+                if (seqGender.equals("Ambiguous") || seqGender.equals(Data.STRING_NA)
+                        || selfDeclGender.equals(Data.STRING_NA) || !seqGender.equals(selfDeclGender)) {
+                    ErrorManager.print("Sample gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+                }
+                                
+                byte pheno = 2;
+                if (broadPhenotype.equals("healthy family member")) {
+                    pheno = 1;
+                }
+                                
+                Sample sample = new Sample(sampleId, familyId, sampleName,
+                        "0", "0", sex, pheno, sampleType, captureKit,
+                        experimentId, ancestry, broadPhenotype);
+                                
+                familySampleList.add(sample);
             }
 
             rs.close();
@@ -1176,7 +1198,7 @@ public class SampleManager {
         }
         return familySampleList;
     }
-    
+
     private static TempSample getTempSample(String sampleName) throws Exception {
         TempSample s = new TempSample();
         s.sampleId = Data.INTEGER_NA;

@@ -1,6 +1,7 @@
 package function.cohort.family;
 
 import function.cohort.base.Sample;
+import global.Index;
 import java.util.ArrayList;
 
 /**
@@ -11,21 +12,24 @@ public class Family {
     private String familyId;
     private ArrayList<Sample> controlList = new ArrayList<Sample>();
     private ArrayList<Sample> caseList = new ArrayList<Sample>();
-    
-    
-    public Family(Sample sample) {
-        
-        familyId = sample.getFamilyId();
-        
-    }
-    
-    public void addFamilyMember(Sample sample) {
-        if (sample.getBroadPhenotype().equals("Healthy Family Member")){
-              controlList.add(sample);
-              sample.setPheno((byte) 0);
+
+    public void add(Sample sample) {
+        if (sample.getPheno() == Index.CTRL){
+            controlList.add(sample);
         } else {
             caseList.add(sample);
-            sample.setPheno( (byte) 1);
         }
+    }
+    
+    public boolean isValid(){
+        return controlList.size() >= 1 && caseList.size() >= 2;
+    }
+    
+    public ArrayList<Sample> getControlList(){
+        return controlList;
+    }
+    
+    public ArrayList<Sample> getCaseList(){
+        return caseList;
     }
 }
