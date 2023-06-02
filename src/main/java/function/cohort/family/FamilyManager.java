@@ -2,6 +2,7 @@ package function.cohort.family;
 
 import function.cohort.base.Sample;
 import java.util.ArrayList;
+import utils.LogManager;
 
 /**
  *
@@ -20,8 +21,10 @@ public class FamilyManager {
         if (family.isValid()){
             familyList.add(family);
             return true;
+        } else{
+            LogManager.writeAndPrint("Invalid Family: " + sampleList.get(0).getFamilyId());
+            return false;
         }
-        return false;
     }
         
     public static ArrayList<Family> getFamilyList(){

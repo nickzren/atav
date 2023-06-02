@@ -315,6 +315,12 @@ public class SampleManager {
         for (String id : familyIdList) {
             addFamilyIdToList(id);
         }
+        
+        if (FamilyManager.getFamilyList().isEmpty()) {
+            ErrorManager.print("Missing family ID from --family-id.", ErrorManager.INPUT_PARSING);
+        } else {
+            LogManager.writeAndPrint("Total families: " + FamilyManager.getFamilyList().size());
+        }
     }
 
     private static void initFromSampleInput(String input) {
@@ -1171,12 +1177,12 @@ public class SampleManager {
                 String broadPhenotype = FormatManager.getString(rs.getString("broad_phenotype"));
 
                 if (selfDeclGender.equals("Unknown")) {
-                    ErrorManager.print("Sample gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+                    ErrorManager.print("Sample gender mismatch: " + sampleName + " Family ID: " + familyId, ErrorManager.INPUT_PARSING);
                 }
 
                 if (seqGender.equals("Ambiguous") || seqGender.equals(Data.STRING_NA)
                         || selfDeclGender.equals(Data.STRING_NA) || !seqGender.equals(selfDeclGender)) {
-                    ErrorManager.print("Sample gender mismatch: " + sampleName, ErrorManager.INPUT_PARSING);
+                    ErrorManager.print("Sample gender mismatch: " + sampleName + " Family ID: " + familyId, ErrorManager.INPUT_PARSING);
                 }
                                 
                 byte pheno = 2;
