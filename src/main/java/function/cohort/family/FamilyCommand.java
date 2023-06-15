@@ -5,7 +5,7 @@ import utils.CommandOption;
 
 /**
  *
- * @author nick
+ * @author jaimee
  */
 public class FamilyCommand {
     public static boolean isList = false;

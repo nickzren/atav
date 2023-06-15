@@ -10,7 +10,7 @@ import utils.FormatManager;
 
 /**
  *
- * @author nick
+ * @author jaimee
  */
 public class FamilyOutput extends Output {
 

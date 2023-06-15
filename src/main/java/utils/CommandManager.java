@@ -699,8 +699,7 @@ public class CommandManager {
 
     public static void checkOptionDependency() {
         if (CollapsingCommand.isCollapsingLite) {
-            if (CohortLevelFilterCommand.inputSample.isEmpty()
-                    && !FamilyCommand.isList) {
+            if (CohortLevelFilterCommand.inputSample.isEmpty()) {
                 ErrorManager.print("Please specify your sample file: --sample $PATH", ErrorManager.INPUT_PARSING);
             } else if (GenotypeLevelFilterCommand.genotypeFile.isEmpty()) {
                 ErrorManager.print("Please specify your genotype file: --genotype $PATH", ErrorManager.INPUT_PARSING);
