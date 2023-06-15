@@ -12,7 +12,7 @@ import utils.ThirdPartyToolManager;
 
 /**
  *
- * @author nick
+ * @author jaimee
  */
 public class ListFamily extends AnalysisBase4CalledVar {
 
@@ -53,6 +53,9 @@ public class ListFamily extends AnalysisBase4CalledVar {
 
     @Override
     public void beforeProcessDatabaseData() {
+        if (!FamilyManager.isInit()) {
+            FamilyManager.initFamily();
+        }
     }
 
     @Override
