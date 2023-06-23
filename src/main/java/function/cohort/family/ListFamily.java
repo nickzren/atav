@@ -65,12 +65,13 @@ public class ListFamily extends AnalysisBase4CalledVar {
     @Override
     public void processVariant(CalledVariant calledVar) {
         try {
-            FamilyOutput output = new FamilyOutput(calledVar);
-
             for (Family family : FamilyManager.getFamilyList()) {
-                output.calculateInheritanceModel(family);
                 for (Sample sample : family.getCaseList()) {
+                    FamilyOutput output = new FamilyOutput(calledVar);
+                    output.calculateInheritanceModel(family);
                     if (!output.getInheritanceModel().equals(Data.STRING_NA)) {
+                        output.initCarrierData(sample);
+                        output.initACMG();
                         bwGenotypes.write(output.getString(sample));
                         bwGenotypes.newLine();
                     }

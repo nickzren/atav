@@ -344,6 +344,11 @@ public class CommandManager {
                     FamilyCommand.isList = true;
                     CohortLevelFilterCommand.isCaseOnly = true;
                     CohortLevelFilterCommand.isIncludeDefaultControlSample = true;
+                    KnownVarCommand.isInclude = true;
+                    SubRvisCommand.isInclude = true;
+                    TrapCommand.isInclude = true;
+                    RevelCommand.isInclude = true;
+                    DBNSFPCommand.isInclude = true;
                     break;
                 case "--list-singleton":
                     SingletonCommand.isList = true;
