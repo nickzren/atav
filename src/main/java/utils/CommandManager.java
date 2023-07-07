@@ -345,6 +345,7 @@ public class CommandManager {
                     CohortLevelFilterCommand.isCaseOnly = true;
                     CohortLevelFilterCommand.isIncludeDefaultControlSample = true;
                     KnownVarCommand.isInclude = true;
+                    CHMCommand.isFlag = true;
                     SubRvisCommand.isInclude = true;
                     TrapCommand.isInclude = true;
                     RevelCommand.isInclude = true;
@@ -486,12 +487,12 @@ public class CommandManager {
                     DBNSFPCommand.isInclude = true;
                     VariantLevelFilterCommand.isIncludeTTNLowPSI = true;
                     break;
-                    
+
                 // Gene Annotation Functions
                 case "--list-gene-anno":
                     CommonCommand.isNonSampleAnalysis = true;
                     GeneAnnoCommand.isList = true;
-                    
+
                 // Coverage Analysis Functions    
                 case "--coverage-summary":
                     CoverageCommand.isCoverageSummary = true;
@@ -643,7 +644,7 @@ public class CommandManager {
             VarGenoCommand.initOptions(optionList.iterator());
         } else if (FamilyCommand.isList) {
             FamilyCommand.initOptions(optionList.iterator());
-        }else if (SingletonCommand.isList) {
+        } else if (SingletonCommand.isList) {
             SingletonCommand.initOptions(optionList.iterator());
         } else if (VarGenoCommand.isListLite) {
             VarGenoCommand.initOptions(optionList.iterator());
