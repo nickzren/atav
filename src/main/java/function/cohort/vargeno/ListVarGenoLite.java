@@ -41,7 +41,7 @@ import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import utils.CommonCommand;
 import utils.ErrorManager;
 import utils.FormatManager;
