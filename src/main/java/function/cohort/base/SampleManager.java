@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import utils.FormatManager;
 
 /**
@@ -1038,7 +1037,7 @@ public class SampleManager {
                     + sqlTable
                     + "(input_sample_id mediumint, PRIMARY KEY (input_sample_id));";
 
-            stmt.executeUpdate(StringEscapeUtils.escapeSql(sqlQuery));
+            stmt.executeUpdate(sqlQuery);
         } catch (Exception e) {
             ErrorManager.send(e);
         }
